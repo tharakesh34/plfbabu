@@ -89,9 +89,8 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * selected Academic object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerAccountDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerAccountDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -252,9 +251,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	}
 
 	/**
-	 * This method fill the CustomerName, Branch and CIF values by using Search box. <br>
-	 * 
-	 * @throws Exception
+	 * This method fill the CustomerName, Branch and CIF values by using Search box.
 	 **/
 	public void onFulfill$custCIF(Event event) {
 		logger.debug("Entering");
@@ -278,15 +275,13 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	}
 
 	/**
-	 * This method fill the Account Details by using Search box. <br>
-	 * 
-	 * @throws Exception
+	 * This method fill the Account Details by using Search box.
 	 **/
 	public void doFillAccountDetail(long custId) {
 		if (custId != Long.MIN_VALUE && custId != 0) {
 			pagingEnquiryList.setDetailed(true);
 			this.searchObjAc = new JdbcSearchObject<Accounts>(Accounts.class);
-			//this.searchObjAc.addFilter(new Filter("acCustId", custId, Filter.OP_EQUAL));
+			// this.searchObjAc.addFilter(new Filter("acCustId", custId, Filter.OP_EQUAL));
 			this.searchObjAc.addTabelName("Accounts_AView");
 			this.accounts = getPagedListService().getSRBySearchObject(this.searchObjAc).getResult();
 			getPagedListWrapper().initList(this.accounts, this.listBoxEnquiryResult, this.pagingEnquiryList);

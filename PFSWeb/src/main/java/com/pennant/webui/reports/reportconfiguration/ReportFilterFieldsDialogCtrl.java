@@ -241,9 +241,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * selected ReportFilterFields object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReportFilterFieldsDialog(Event event) throws Exception {
+	public void onCreate$window_ReportFilterFieldsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -407,9 +406,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * when the "edit" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnEdit(Event event) throws Exception {
+	public void onClick$btnEdit(Event event) {
 		logger.debug("Entering" + event.toString());
 		doEdit();
 		doWriteBeanToComponents(getReportFilterFields());
@@ -444,9 +442,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * when the "cancel" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnCancel(Event event) throws Exception {
+	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering" + event.toString());
 		doCancel();
 		logger.debug("Leaving" + event.toString());
@@ -464,12 +461,9 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
-	 * Resets to the original status.<br>
-	 * 
-	 * @throws Exception
-	 * 
+	 * Resets to the original status.
 	 */
-	private void doCancel() throws Exception {
+	private void doCancel() {
 		logger.debug("Entering ");
 
 		doWriteBeanToComponents(this.reportFilterFields.getBefImage());
@@ -489,9 +483,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aReportFilterFields reportFilterFields
-	 * @throws Exception
 	 */
-	public void doWriteBeanToComponents(ReportFilterFields aReportFilterFields) throws Exception {
+	public void doWriteBeanToComponents(ReportFilterFields aReportFilterFields) {
 		logger.debug("Entering ");
 		this.fieldName.setValue(aReportFilterFields.getFieldName());
 		this.fieldLabel.setValue(aReportFilterFields.getFieldLabel());
@@ -767,9 +760,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReportFilterFields
-	 * @throws Exception
 	 */
-	public void doShowDialog(ReportFilterFields aReportFilterFields) throws Exception {
+	public void doShowDialog(ReportFilterFields aReportFilterFields) {
 		logger.debug("Entering");
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (enqModule) {
@@ -1265,9 +1257,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * When user clicks on "appUtilMethodName"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$fieldType(Event event) throws Exception {
+	public void onChange$fieldType(Event event) {
 		String selectedFieldType = this.fieldType.getSelectedItem().getValue().toString();
 		doClear(false);
 
@@ -1279,9 +1270,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * When user checks on "filterRequired"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$filterRequired(Event event) throws Exception {
+	public void onCheck$filterRequired(Event event) {
 		if (this.filterRequired.isChecked()) {
 			this.defaultFilter.setValue("=");
 			this.defaultFilter.setDisabled(true);
@@ -1403,9 +1393,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * When user clicks on "appUtilMethodName"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$appUtilMethodName(Event event) throws Exception {
+	public void onChange$appUtilMethodName(Event event) {
 		logger.debug("Entering " + event.toString());
 		if (!("").equals(this.appUtilMethodName.getSelectedItem().getValue())
 				&& !this.appUtilMethodName.getSelectedItem().getValue().equals(PennantConstants.List_Select)) {
@@ -1424,9 +1413,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * When user clicks on "moduleName"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$moduleName(Event event) throws Exception {
+	public void onChange$moduleName(Event event) {
 		logger.debug("Entering " + event.toString());
 		if (!("").equals(this.moduleName.getSelectedItem().getValue())
 				&& !this.moduleName.getSelectedItem().getValue().equals(PennantConstants.List_Select)) {
@@ -1505,10 +1493,9 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	/**
 	 * @param className
 	 * @param component
-	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
-	public void getAllMethods(String className, Combobox component) throws Exception {
+	public void getAllMethods(String className, Combobox component) {
 		List<ValueLabel> methodsList = new ArrayList<ValueLabel>();
 		Class value = ModuleUtil.getModuleClass(className);
 
@@ -1571,10 +1558,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.reportFilterFields);
 	}
 

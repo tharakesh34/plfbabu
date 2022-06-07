@@ -121,9 +121,8 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	 * selected ReportList object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FieldsListSelect(Event event) throws Exception {
+	public void onCreate$window_FieldsListSelect(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -171,7 +170,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 		doClose(this.btnSave.isVisible());
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -206,9 +205,8 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReportList
-	 * @throws Exception
 	 */
-	public void doShowDialog(ReportList aReportList) throws Exception {
+	public void doShowDialog(ReportList aReportList) {
 		logger.debug("Entering");
 
 		ModuleMapping mapping = PennantJavaUtil.getModuleMap(this.moduleName);
@@ -245,7 +243,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 		logger.debug("Leaving");
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() {
 		logger.debug("Entering");
 
 		boolean error = false;
@@ -467,14 +465,13 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	 * onEvent
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public final class onCheckBoxCheked implements EventListener<Event> {
 		public onCheckBoxCheked() {
 			//
 		}
 
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			logger.debug("Entering");
 
 			Checkbox checkbox = (Checkbox) event.getTarget();

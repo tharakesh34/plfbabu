@@ -27,7 +27,6 @@ package com.pennant.backend.service.systemmasters.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -96,7 +95,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 
 	@Override
 	public InterestCertificate getInterestCertificateDetails(String finReference, Date startDate, Date endDate,
-			boolean isProvCert) throws ParseException {
+			boolean isProvCert) {
 		logger.debug(Literal.ENTERING);
 		BigDecimal totalvasAmt = BigDecimal.ZERO;
 		BigDecimal totalLoanAmt = BigDecimal.ZERO;

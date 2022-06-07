@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  InterestCertificateDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : InterestCertificateDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.systemmasters;
 
@@ -59,10 +41,9 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
  */
 public interface InterestCertificateDAO {
 
-	InterestCertificate getInterestCertificateDetails(String finReference) throws ParseException;
+	InterestCertificate getInterestCertificateDetails(String finReference);
 
-	InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, Date startDate, Date endDate)
-			throws ParseException;
+	InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, Date startDate, Date endDate);
 
 	String getCollateralRef(String finReference);
 
@@ -81,8 +62,7 @@ public interface InterestCertificateDAO {
 
 	Map<String, Object> getTotalGrcRepayProfit(String finReference, Date finStartDate, Date finEndDate);
 
-	InterestCertificate getSchedPrinicipalAndProfit(String finReference, Date finStartDate, Date finEndDate)
-			throws ParseException;
+	InterestCertificate getSchedPrinicipalAndProfit(String finReference, Date finStartDate, Date finEndDate);
 
 	FinanceScheduleDetail getScheduleDetailsByFinReference(String finReference, Date finStartDate, Date finEndDate);
 

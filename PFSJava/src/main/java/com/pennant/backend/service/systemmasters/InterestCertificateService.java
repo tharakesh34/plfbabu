@@ -25,7 +25,6 @@
 
 package com.pennant.backend.service.systemmasters;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -40,8 +39,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public interface InterestCertificateService {
 
-	InterestCertificate getInterestCertificateDetails(String value, Date startDate, Date endDate, boolean isProvCert)
-			throws ParseException;
+	InterestCertificate getInterestCertificateDetails(String value, Date startDate, Date endDate, boolean isProvCert);
 
 	FinanceMain getFinanceMain(String finReference, TableType tableType);
 

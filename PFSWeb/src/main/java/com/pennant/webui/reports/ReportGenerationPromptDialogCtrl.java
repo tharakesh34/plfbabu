@@ -25,8 +25,8 @@
 package com.pennant.webui.reports;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -112,6 +112,7 @@ import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -209,9 +210,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * On creating Window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReportPromptFilterCtrl(Event event) throws Exception {
+	public void onCreate$window_ReportPromptFilterCtrl(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -291,7 +291,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * @param reportMenuCode
 	 * @return aReportConfiguration(ReportConfiguration)
 	 */
-	private ReportConfiguration getReportConfiguration(String reportMenuCode) throws Exception {
+	private ReportConfiguration getReportConfiguration(String reportMenuCode) {
 		ReportConfiguration aReportConfiguration = null;
 		logger.debug("Entering");
 		JdbcSearchObject<ReportConfiguration> searchObj = null;
@@ -333,9 +333,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	/**
 	 * This Method Renders Components by Type
 	 * 
-	 * @throws Exception
+	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private void doRenderComponents() throws Exception {
+	private void doRenderComponents()
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
 		logger.debug("Entering");
 		int j = 0;
 
@@ -699,7 +703,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * Render ComboBox
 	 */
 	@SuppressWarnings("unchecked")
-	private void renderComboBox(ReportFilterFields aReportFieldsDetails, boolean isStatic) throws Exception {
+	private void renderComboBox(ReportFilterFields aReportFieldsDetails, boolean isStatic) {
 		logger.debug("Entering");
 
 		Row staticListRow = new Row();
@@ -795,9 +799,14 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * This method fills Band box with multiple selected list box for multiple selection
 	 * 
 	 * @param listBox
+	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	@SuppressWarnings("unchecked")
-	public void renderMultiSelctionList(ReportFilterFields aReportFieldsDetails) throws Exception {
+	public void renderMultiSelctionList(ReportFilterFields aReportFieldsDetails)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
 		logger.debug("Entering");
 
 		List<ValueLabel> multiSelectionListValues = (List<ValueLabel>) Class
@@ -1735,11 +1744,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 	/**
 	 * This method call the report control to generate the report
-	 * 
-	 * @throws Exception
 	 */
-	private void doShowReport(String whereCond, String whereCond2, String fromDate, String toDate, String whereCond1)
-			throws Exception {
+	private void doShowReport(String whereCond, String whereCond2, String fromDate, String toDate, String whereCond1) {
 		logger.info(Literal.ENTERING);
 
 		Map<String, Object> argsMap = new HashMap<String, Object>(10);
@@ -1877,10 +1883,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * When user Clicks on "Add Search Template"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onClick$btnSaveTemplate(Event event) throws Exception {
+	public void onClick$btnSaveTemplate(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		reportSearchTemplateFieldsList = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false, false);
@@ -1907,10 +1912,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * When user Clicks on "Delete Search Template"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onClick$btnDeleteTemplate(Event event) throws Exception {
+	public void onClick$btnDeleteTemplate(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		final String msg = Labels.getLabel("label_ReportGenerationDialgCtrl_Delete_Template") + "\n\n --> "
@@ -1949,9 +1952,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * 
 	 * @param reportSearchTemplateList
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doSaveTemplate(long reportId, long usrId, String templateName) throws InterruptedException {
+	protected boolean doSaveTemplate(long reportId, long usrId, String templateName) {
 		logger.debug("Entering");
 		int recordCount = getReportConfigurationService().getRecordCountByTemplateName(reportId, usrId, templateName);
 		if (recordCount > 0) {
@@ -1977,9 +1979,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * When select Premise code ComboBox
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onSelect$cbSelectTemplate(Event event) throws Exception {
+	public void onSelect$cbSelectTemplate(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 		List<ReportSearchTemplate> aReportSearchTemplateList = null;
 		doClearComponents();
@@ -2007,11 +2012,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * When we select template from ComBo Box all components will be filled against that template .This method fills all
 	 * components and filters against Template
 	 * 
-	 * @throws Exception
-	 * 
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-
-	private void doSetSearchTemplate(Map<Long, ReportSearchTemplate> reportSearchTemplateMap) throws Exception {
+	private void doSetSearchTemplate(Map<Long, ReportSearchTemplate> reportSearchTemplateMap)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 		for (int i = 0; i < reportConfiguration.getListReportFieldsDetails().size(); i++) {
 			ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(i);
@@ -2034,10 +2040,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * 
 	 * @param aReportFilterField
 	 * @param reportSearchTemplate
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	private void doSetValueOrClearOpertionOnFields(ReportFilterFields aReportFilterField,
-			ReportSearchTemplate reportSearchTemplate, boolean isClearComponents) throws Exception {
+			ReportSearchTemplate reportSearchTemplate, boolean isClearComponents)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String filedId;
 		if (aReportFilterField.getFieldType().contains("RANGE")) {
 			filedId = "From_" + aReportFilterField.getFieldID();
@@ -2277,10 +2286,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * set LovSearch Values against Template
 	 * 
 	 * @param bandBox
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void setLovSearchValue(ReportFilterFields aReportFilterField, String filedValue, Textbox displaytextBox)
-			throws Exception {
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 		String values[] = filedValue.split(",");
 		String fieldDbName = aReportFilterField.getLovHiddenFieldMethod().replace("get", "");
@@ -2320,10 +2332,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * When user Clicks on "Search"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onClick$btnSearch(Event event) throws Exception {
+	public void onClick$btnSearch(Event event) {
 		logger.info(Literal.ENTERING);
 		searchClick = true;
 
@@ -2642,9 +2653,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * When user Clicks on "Search"
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnClear(Event event) throws Exception {
+	public void onClick$btnClear(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 		doClearComponents();
 		renderMap.clear();
@@ -2684,7 +2698,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			Checkbox checkbox = (Checkbox) event.getTarget();
 			Listitem listItem = (Listitem) checkbox.getParent().getParent();
 			Bandbox bandBox = (Bandbox) listItem.getParent().getParent().getParent();
@@ -2752,10 +2766,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * On LovSearch Button Clicked
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onLovButtonClicked(Event event) throws Exception {
+	public void onLovButtonClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		CustomArgument customArgument = (CustomArgument) event.getData();
@@ -2877,7 +2890,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private Filter[] doLovFilter(ReportFilterFields aReportFieldsDetails) throws Exception {
+	private Filter[] doLovFilter(ReportFilterFields aReportFieldsDetails) {
 		logger.debug("Entering");
 
 		Filter[] filters = null;
@@ -2904,7 +2917,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		}
 
 		if (StringUtils.trimToNull(message.toString()) != null) {
-			throw new Exception(message.insert(0, "Please select the below fields:").toString());
+			throw new AppException(message.insert(0, "Please select the below fields:").toString());
 		}
 
 		if (StringUtils.equals(reportMenuCode, "menu_Item_NoObjectionCertificate")) {
@@ -3065,9 +3078,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	/**
 	 * Clear all the components
 	 * 
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private void doClearComponents() throws Exception {
+	private void doClearComponents() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		for (int i = 0; i < reportConfiguration.getListReportFieldsDetails().size(); i++) {
 			ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(i);
 			doSetValueOrClearOpertionOnFields(aReportFieldsDetails, null, true);
@@ -3076,10 +3091,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 	/**
 	 * Clear components
-	 * 
-	 * @throws Exception
 	 */
-	private void doClearFields(ReportFilterFields aReportFieldsDetails) throws Exception {
+	private void doClearFields(ReportFilterFields aReportFieldsDetails) {
 		logger.debug("Entering");
 		long fieldID = aReportFieldsDetails.getFieldID();
 
@@ -3153,7 +3166,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.debug("Leaving ");
 	}
 
-	private boolean validateGstInvoiceReportInputs(String fromDate, String toDate) throws ParseException {
+	private boolean validateGstInvoiceReportInputs(String fromDate, String toDate) {
 		boolean isValidInput = true;
 		Date fromDateValue = DateUtil.parse(fromDate, "yyyy-MM-dd");
 		Date toDateValue = DateUtil.parse(toDate, "yyyy-MM-dd");

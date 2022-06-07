@@ -108,9 +108,8 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 	 * OnCreate window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DialyDownloadReport(Event event) throws Exception {
+	public void onCreate$window_DialyDownloadReport(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		try {
@@ -225,9 +224,9 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 	 * Method for Exporting Reports in Excel Format
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws SQLException
 	 */
-	public void onClick$button_ExportToExcel(Event event) throws Exception {
+	public void onClick$button_ExportToExcel(Event event) throws SQLException {
 		logger.debug("Entering" + event.toString());
 
 		verifyValidation(false);
@@ -262,9 +261,9 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 	 * Method for Exporting Reports in Excel Format
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws SQLException
 	 */
-	public void onClick$button_ExportToZIP(Event event) throws Exception {
+	public void onClick$button_ExportToZIP(Event event) throws SQLException {
 		logger.debug("Entering" + event.toString());
 		verifyValidation(true);
 		ExportExcelFilesToZIP();
@@ -403,9 +402,9 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 	 * This Method Imports reports with As Excel
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws SQLException
 	 */
-	private void ExportExcelFilesToZIP() throws Exception {
+	private void ExportExcelFilesToZIP() throws SQLException {
 		logger.debug("Entering");
 
 		File folder = null;
