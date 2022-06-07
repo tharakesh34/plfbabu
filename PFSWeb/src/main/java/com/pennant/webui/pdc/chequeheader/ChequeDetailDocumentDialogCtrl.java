@@ -73,9 +73,8 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ChequeDetailDocumentDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ChequeDetailDocumentDialog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -180,9 +179,8 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -204,8 +202,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerDocument
-	 *            CustomerDocument
+	 * @param aCustomerDocument CustomerDocument
 	 */
 	public void doWriteBeanToComponents(ChequeDetail chequeDetail) {
 		logger.debug(Literal.ENTERING);
@@ -279,7 +276,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 				docType = PennantConstants.DOC_TYPE_RAR;
 			}
 
-			//Process for Correct Format Document uploading
+			// Process for Correct Format Document uploading
 			String fileName = media.getName();
 			byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
 			// Data Fill by QR Bar Code Reader

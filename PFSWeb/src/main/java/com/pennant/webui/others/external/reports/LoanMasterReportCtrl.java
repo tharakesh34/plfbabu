@@ -70,9 +70,8 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	 * On creating Window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LoanMasterReport(Event event) throws Exception {
+	public void onCreate$window_LoanMasterReport(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -94,9 +93,8 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	 * When user Clicks on "Search"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSearch(Event event) throws Exception {
+	public void onClick$btnSearch(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		String finRef = this.finReference.getValue();
 		Integer year = loanStartYear.getValue();
@@ -131,9 +129,8 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	 * When user Clicks on "Search"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClear(Event event) throws Exception {
+	public void onClick$btnClear(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		this.finReference.setValue("");
 		logger.debug(Literal.LEAVING + event.toString());

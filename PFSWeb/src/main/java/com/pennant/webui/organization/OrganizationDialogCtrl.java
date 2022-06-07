@@ -75,7 +75,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		super.pageRightName = "OrganizationSchoolDialog";
 	}
 
-	public void onCreate$window_OrganizationDialog(Event event) throws Exception {
+	public void onCreate$window_OrganizationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.

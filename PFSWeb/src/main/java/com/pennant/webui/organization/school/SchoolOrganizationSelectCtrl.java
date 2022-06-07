@@ -55,7 +55,7 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 		super();
 	}
 
-	public void onCreate$window_SchoolOrganizationSelect(Event event) throws Exception {
+	public void onCreate$window_SchoolOrganizationSelect(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		this.incomeExpenseHeader = (IncomeExpenseHeader) arguments.get("incomeExpenseHeader");
@@ -115,8 +115,7 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);

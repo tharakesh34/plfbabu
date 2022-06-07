@@ -74,7 +74,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_SelectPaymentHeaderDialog(Event event) throws Exception {
+	public void onCreate$window_SelectPaymentHeaderDialog(Event event) {
 		logger.debug("Entering");
 
 		try {
@@ -97,7 +97,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	/**
 	 * Opens the SelectPaymentHeaderDialog window modal.
 	 */
-	private void showSelectPaymentHeaderDialog() throws InterruptedException {
+	private void showSelectPaymentHeaderDialog() {
 		logger.debug("Entering");
 		try {
 			this.window_SelectPaymentHeaderDialog.doModal();
@@ -135,9 +135,8 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		if (!doFieldValidation()) {

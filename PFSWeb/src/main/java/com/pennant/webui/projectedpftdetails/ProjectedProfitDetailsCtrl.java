@@ -3,6 +3,7 @@ package com.pennant.webui.projectedpftdetails;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +55,8 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public static final Logger logger = LogManager.getLogger(ProjectedProfitDetailsCtrl.class);
 
 	protected Window window_ProjectedProfitDetails;
-	protected Datebox valueDate; //autowire
-	protected Button btnExecute; //autowire
+	protected Datebox valueDate; // autowire
+	protected Button btnExecute; // autowire
 	protected Timer timer;
 
 	ProcessExecution calc;
@@ -80,7 +81,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	int calcPercentage = 0;
 	int postingPercentage = 0;
 
-	public void onCreate$window_ProjectedProfitDetails(Event event) throws Exception {
+	public void onCreate$window_ProjectedProfitDetails(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -127,7 +128,8 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 		try {
 
-			// To Check Last Day income Adding One Day to Value Date(Because Calculation will Follow End Of the Day process )
+			// To Check Last Day income Adding One Day to Value Date(Because Calculation will Follow End Of the Day
+			// process )
 			String valueDate = DateUtility.formatToShortDate(this.valueDate.getValue());
 
 			accrualProcess = AccrualProcess.getInstance(getAmortizationService(), DateUtility.getDate(valueDate),
@@ -152,9 +154,8 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * Method for Rendering Step Execution Details List
 	 * 
 	 * @param stepExecution
-	 * @throws Exception
 	 */
-	private void doFillExecutions(AccrualProcess accrualProcess) throws Exception {
+	private void doFillExecutions(AccrualProcess accrualProcess) {
 		logger.debug("Entering");
 		this.calc.setProcess(accrualProcess.getCalculation());
 		this.calc.render();
@@ -171,9 +172,9 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * When the Projected Profit Details print button is clicked.
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws SQLException
 	 */
-	public void onClick$button_ProjectedProfitDetails_Print(Event event) throws Exception {
+	public void onClick$button_ProjectedProfitDetails_Print(Event event) throws SQLException {
 		logger.debug("Entering " + event.toString());
 		reportConfiguration = getReportConfiguration("ProjectedProfitDetails");
 		if (reportConfiguration == null || (reportConfiguration.isPromptRequired()
@@ -186,7 +187,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			} else {
 				isExcel = false;
 			}
-			//if prompt Required Render components else direct report 
+			// if prompt Required Render components else direct report
 			if (!reportConfiguration.isPromptRequired()) {
 				doShowReport(null, null, null);
 			}
@@ -200,7 +201,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * @param reportMenuCode
 	 * @return aReportConfiguration(ReportConfiguration)
 	 */
-	private ReportConfiguration getReportConfiguration(String reportjaspername) throws Exception {
+	private ReportConfiguration getReportConfiguration(String reportjaspername) {
 		ReportConfiguration aReportConfiguration = null;
 		logger.debug("Entering");
 		try {
@@ -238,9 +239,9 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	/**
 	 * This method call the report control to generate the report
 	 * 
-	 * @throws Exception
+	 * @throws SQLException
 	 */
-	public void doShowReport(String whereCond, String fromDate, String toDate) throws Exception {
+	public void doShowReport(String whereCond, String fromDate, String toDate) throws SQLException {
 		logger.debug("Entering");
 
 		Map<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
@@ -270,7 +271,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		reportArgumentsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
 		reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		reportArgumentsMap.put("searchCriteria", "");
-		String reportName = reportConfiguration.getReportJasperName();//This will come dynamically
+		String reportName = reportConfiguration.getReportJasperName();// This will come dynamically
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + reportName + ".jasper";
 
 		byte[] buf = null;
@@ -283,7 +284,10 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 				logger.debug("Buffer started");
 
-				reportDataSourceObj = (DataSource) SpringUtil.getBean(reportConfiguration.getDataSourceName());//This will come dynamically
+				reportDataSourceObj = (DataSource) SpringUtil.getBean(reportConfiguration.getDataSourceName());// This
+																												// will
+																												// come
+																												// dynamically
 				con = reportDataSourceObj.getConnection();
 
 				if (!isExcel) {

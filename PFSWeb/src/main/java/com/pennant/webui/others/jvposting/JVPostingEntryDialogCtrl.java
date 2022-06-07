@@ -270,9 +270,8 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	 * selected JVPostingEntry object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_JVPostingEntryDialog(Event event) throws Exception {
+	public void onCreate$window_JVPostingEntryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -426,10 +425,8 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -512,9 +509,8 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aJVPostingEntry
-	 * @throws Exception
 	 */
-	public void doShowDialog(JVPostingEntry aJVPostingEntry) throws Exception {
+	public void doShowDialog(JVPostingEntry aJVPostingEntry) {
 		logger.debug("Entering");
 
 		if (aJVPostingEntry.isNewRecord()) {
