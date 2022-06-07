@@ -60,7 +60,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	}
 
 	@Override
-	public InterestCertificate getInterestCertificateDetails(String finReference) throws ParseException {
+	public InterestCertificate getInterestCertificateDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
@@ -90,7 +90,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 
 	@Override
 	public InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, Date finStartDate,
-			Date finEndDate) throws ParseException {
+			Date finEndDate) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
@@ -324,8 +324,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	}
 
 	@Override
-	public InterestCertificate getSchedPrinicipalAndProfit(String finReference, Date startDate, Date endDate)
-			throws ParseException {
+	public InterestCertificate getSchedPrinicipalAndProfit(String finReference, Date startDate, Date endDate) {
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" SUM(PRINCIPALSCHD) RepayPriAmt ,SUM(PROFITSCHD) RepayPftAmt");

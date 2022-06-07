@@ -59,9 +59,8 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	 * Method for Creating Window for Audit Report
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AuditReport(Event event) throws Exception {
+	public void onCreate$window_AuditReport(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -79,9 +78,8 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	 * Method for Generating Report on Click Search button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_Search(Event event) throws Exception {
+	public void onClick$button_Search(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
@@ -190,7 +188,7 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	 * 
 	 * @param event An event sent to the event handler of a component.
 	 */
-	public void onClose$window_AuditReport(Event event) throws Exception {
+	public void onClose$window_AuditReport(Event event) {
 		doClose(false);
 	}
 

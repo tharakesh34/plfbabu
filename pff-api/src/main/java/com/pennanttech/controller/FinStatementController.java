@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1762,13 +1761,8 @@ public class FinStatementController extends SummaryDetailService {
 		startDate = DateUtil.getDate(year, 3, 1);
 		endDate = DateUtil.getDate(year + 1, 2, 31);
 
-		InterestCertificate intCert = null;
-		try {
-			intCert = interestCertificateService.getInterestCertificateDetails(statementRequest.getFinReference(),
-					startDate, endDate, false);
-		} catch (ParseException e) {
-			logger.error("Unable to retrieve model from service");
-		}
+		InterestCertificate intCert = interestCertificateService
+				.getInterestCertificateDetails(statementRequest.getFinReference(), startDate, endDate, false);
 		if (intCert == null) {
 			logger.error("Empty Model");
 		}

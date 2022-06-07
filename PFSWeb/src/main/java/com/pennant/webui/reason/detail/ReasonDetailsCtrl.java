@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennant.webui.reason.detail;
@@ -69,9 +68,8 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 	 * selected Reject object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReasonDetailsDialog(Event event) throws Exception {
+	public void onCreate$window_ReasonDetailsDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -186,9 +184,8 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		doSave();
@@ -200,15 +197,14 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnClose(Event event) throws InterruptedException {
+	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		doClose();
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
 		this.window_ReasonDetailsDialog
@@ -324,7 +320,7 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doSave() throws InterruptedException {
+	public void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();

@@ -182,9 +182,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	 * selected ReportConfiguration object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReportConfigurationDialog(Event event) throws Exception {
+	public void onCreate$window_ReportConfigurationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -540,9 +539,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReportConfiguration
-	 * @throws Exception
 	 */
-	public void doShowDialog(ReportConfiguration aReportConfiguration) throws Exception {
+	public void doShowDialog(ReportConfiguration aReportConfiguration) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1024,9 +1022,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	 * When user clicks on "btnNew_ReportFilterFields"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNew_ReportFilterFields(Event event) throws Exception {
+	public void onClick$btnNew_ReportFilterFields(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		ReportFilterFields reportFilterFields = new ReportFilterFields();
@@ -1057,36 +1054,12 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 
 	// OnChange Events
 
-	/*	*//**
-			 * When user clicks on "btnNew_AdditionalConditions"
-			 * 
-			 * @param event
-			 * @throws Exception
-			 *//*
-				 * public void onClick$btnNew_AdditionalConditions(Event event) throws Exception {
-				 * logger.debug("Entering " + event.toString());
-				 * 
-				 * ReportAdditionalConditions reportAdditionalConditions = new ReportAdditionalConditions();
-				 * reportAdditionalConditions.setNewRecord(true); reportAdditionalConditions.setWorkflowId(0);
-				 * Map<String, Object> map = new HashMap<String, Object>(); map.put("reportConfigurationDialogCtrl",
-				 * this); map.put("reportAdditionalConditions", reportAdditionalConditions);
-				 * map.put("reportConfiguration", getReportConfiguration()); map.put("newRecord", "true");
-				 * map.put("roleCode", getRole());
-				 * 
-				 * try { Executions.createComponents(
-				 * "/WEB-INF/pages/Reports/ReportConfiguration/ReportAdditionalConditionsDialog.zul", null, map); }
-				 * catch (Exception e) { MessageUtil.showError(e);
-				 * 
-				 * } logger.debug("Leaving " + event.toString()); }
-				 */
-
 	/**
 	 * When user double clicks "ReportFilterFields"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onReportFilterFieldsItemDoubleClicked(Event event) throws Exception {
+	public void onReportFilterFieldsItemDoubleClicked(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		final Listitem item = this.listBoxReportFilterFields.getSelectedItem();
@@ -1160,7 +1133,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		}
 
 		@Override
-		public void render(Listitem item, ReportFilterFields reportFilterFields, int count) throws Exception {
+		public void render(Listitem item, ReportFilterFields reportFilterFields, int count) {
 			Listcell lc;
 			lc = new Listcell(reportFilterFields.getFieldName());
 			lc.setParent(item);
@@ -1208,9 +1181,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	 * When user clicks on "onlineProcess"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$promptRequired(Event event) throws Exception {
+	public void onCheck$promptRequired(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		if (!this.promptRequired.isChecked()) {
@@ -1263,10 +1235,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.reportConfiguration);
 	}
 
