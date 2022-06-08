@@ -72,10 +72,9 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_RuleResultValues(Event event) throws Exception {
+	public void onCreate$window_RuleResultValues(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -154,8 +153,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);

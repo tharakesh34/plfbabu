@@ -67,9 +67,8 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 	 * selected TransactionEntry object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_TransactionEntryRuleResult(Event event) throws Exception {
+	public void onCreate$window_TransactionEntryRuleResult(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -149,8 +148,7 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);

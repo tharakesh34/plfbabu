@@ -232,9 +232,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 * selected Promotion object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PromotionDialog(Event event) throws Exception {
+	public void onCreate$window_PromotionDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

@@ -121,9 +121,8 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinTypePartnerBankDialog(Event event) throws Exception {
+	public void onCreate$window_FinTypePartnerBankDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -616,9 +615,8 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	 * Set the Rule Return Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$purpose(Event event) throws Exception {
+	public void onChange$purpose(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		String purposeValue = this.purpose.getSelectedItem().getValue();
@@ -639,9 +637,8 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	 * Set the Rule Return Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$paymentMode(Event event) throws Exception {
+	public void onChange$paymentMode(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		setPartnerBankProperties();

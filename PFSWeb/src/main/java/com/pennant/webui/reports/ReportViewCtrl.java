@@ -32,7 +32,7 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 	private int docFormat = 0;
 	private String reportName = "PFSReport.pdf";
 	private boolean searchClick = true;
-	// For customer360 Report should displayed as  modal  
+	// For customer360 Report should displayed as modal
 	private boolean isCustomer360 = false;
 	private boolean fromFinance = false;
 	private boolean isModelWindow = false;
@@ -46,7 +46,7 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_Report(Event event) throws Exception {
+	public void onCreate$window_Report(Event event) {
 		logger.info(Literal.ENTERING + event.toString());
 
 		// Set the page level components.

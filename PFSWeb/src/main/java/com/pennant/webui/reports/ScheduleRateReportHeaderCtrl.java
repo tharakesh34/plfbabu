@@ -97,9 +97,8 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 	 * On creating Window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ScheduleRateReportHeaderDialogCtrl(Event event) throws Exception {
+	public void onCreate$window_ScheduleRateReportHeaderDialogCtrl(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.

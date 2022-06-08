@@ -111,10 +111,9 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 	 * selected RuleResult object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_RuleResultDialog(Event event) throws Exception {
+	public void onCreate$window_RuleResultDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
