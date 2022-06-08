@@ -67,7 +67,7 @@ public class CustomerStatusCodeListModelItemRenderer implements ListitemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, CustomerStatusCode customerStatusCode, int count) throws Exception {
+	public void render(Listitem item, CustomerStatusCode customerStatusCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customerStatusCode.getCustStsCode());

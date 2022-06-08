@@ -75,7 +75,7 @@ public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, S
 	private static final long serialVersionUID = 1552059797117039294L;
 
 	@Override
-	public void render(Listitem item, Customer customer, int count) throws Exception {
+	public void render(Listitem item, Customer customer, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customer.getCustCIF());

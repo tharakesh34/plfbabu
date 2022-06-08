@@ -70,7 +70,7 @@ public class CustomerPRelationListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, CustomerPRelation customerPRelation, int count) throws Exception {
+	public void render(Listitem item, CustomerPRelation customerPRelation, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(String.valueOf(customerPRelation.getPRCustID())));

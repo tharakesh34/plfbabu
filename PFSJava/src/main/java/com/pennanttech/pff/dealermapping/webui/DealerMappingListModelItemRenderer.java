@@ -19,7 +19,7 @@ public class DealerMappingListModelItemRenderer implements ListitemRenderer<Deal
 	}
 
 	@Override
-	public void render(Listitem item, DealerMapping dealerMapping, int count) throws Exception {
+	public void render(Listitem item, DealerMapping dealerMapping, int count) {
 
 		Listcell lc;
 

@@ -66,7 +66,7 @@ public class CustomerRatingListModelItemRenderer implements ListitemRenderer<Cus
 	}
 
 	@Override
-	public void render(Listitem item, CustomerRating customerRating, int count) throws Exception {
+	public void render(Listitem item, CustomerRating customerRating, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customerRating.getLovDescCustCIF());

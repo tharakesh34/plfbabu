@@ -66,7 +66,7 @@ public class DPDBucketListModelItemRenderer implements ListitemRenderer<DPDBucke
 	}
 
 	@Override
-	public void render(Listitem item, DPDBucket dPDBucket, int count) throws Exception {
+	public void render(Listitem item, DPDBucket dPDBucket, int count) {
 
 		Listcell lc;
 		lc = new Listcell(dPDBucket.getBucketCode());

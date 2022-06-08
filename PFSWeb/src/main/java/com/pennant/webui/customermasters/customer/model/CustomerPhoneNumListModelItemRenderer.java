@@ -65,7 +65,7 @@ public class CustomerPhoneNumListModelItemRenderer implements ListitemRenderer<C
 	}
 
 	@Override
-	public void render(Listitem item, CustomerPhoneNumber customerPhoneNumber, int count) throws Exception {
+	public void render(Listitem item, CustomerPhoneNumber customerPhoneNumber, int count) {
 		Listcell lc;
 		lc = new Listcell(StringUtils.trimToEmpty(customerPhoneNumber.getPhoneTypeCode()));
 		lc.setParent(item);

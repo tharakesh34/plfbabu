@@ -68,7 +68,7 @@ public class DPDBucketConfigurationListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, DPDBucketConfiguration dPDBucketConfiguration, int count) throws Exception {
+	public void render(Listitem item, DPDBucketConfiguration dPDBucketConfiguration, int count) {
 
 		Listcell lc;
 		lc = new Listcell(dPDBucketConfiguration.getProductCode());

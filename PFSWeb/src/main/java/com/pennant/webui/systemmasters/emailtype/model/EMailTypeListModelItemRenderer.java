@@ -68,7 +68,7 @@ public class EMailTypeListModelItemRenderer implements ListitemRenderer<EMailTyp
 	}
 
 	@Override
-	public void render(Listitem item, EMailType eMailType, int count) throws Exception {
+	public void render(Listitem item, EMailType eMailType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(eMailType.getEmailTypeCode());

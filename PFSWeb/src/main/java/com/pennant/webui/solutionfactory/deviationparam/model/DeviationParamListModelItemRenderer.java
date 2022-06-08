@@ -67,7 +67,7 @@ public class DeviationParamListModelItemRenderer implements ListitemRenderer<Dev
 	}
 
 	@Override
-	public void render(Listitem item, DeviationParam deviationParam, int count) throws Exception {
+	public void render(Listitem item, DeviationParam deviationParam, int count) {
 
 		Listcell lc;
 		lc = new Listcell(deviationParam.getCode());

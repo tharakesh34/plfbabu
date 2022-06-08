@@ -67,7 +67,7 @@ public class DesignationListModelItemRenderer implements ListitemRenderer<Design
 	}
 
 	@Override
-	public void render(Listitem item, Designation designation, int count) throws Exception {
+	public void render(Listitem item, Designation designation, int count) {
 
 		Listcell lc;
 		lc = new Listcell(designation.getDesgCode());

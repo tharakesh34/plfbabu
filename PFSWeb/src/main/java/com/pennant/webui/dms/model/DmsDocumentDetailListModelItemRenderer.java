@@ -18,7 +18,7 @@ public class DmsDocumentDetailListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, DMSDocumentDetails data, int index) throws Exception {
+	public void render(Listitem item, DMSDocumentDetails data, int index) {
 		Listcell lc;
 		lc = new Listcell(data.getFinReference());
 		lc.setParent(item);

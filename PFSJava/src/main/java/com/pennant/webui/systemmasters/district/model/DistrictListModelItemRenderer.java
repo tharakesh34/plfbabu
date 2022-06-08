@@ -48,7 +48,7 @@ public class DistrictListModelItemRenderer implements ListitemRenderer<District>
 	}
 
 	@Override
-	public void render(Listitem item, District district, int count) throws Exception {
+	public void render(Listitem item, District district, int count) {
 
 		Listcell lc;
 		lc = new Listcell(district.getCode());
