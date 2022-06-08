@@ -68,7 +68,7 @@ public class RatingTypeListModelItemRenderer implements ListitemRenderer<RatingT
 	}
 
 	@Override
-	public void render(Listitem item, RatingType ratingType, int count) throws Exception {
+	public void render(Listitem item, RatingType ratingType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(ratingType.getRatingType());

@@ -65,7 +65,7 @@ public class SecurityGroupListModelItemRenderer implements ListitemRenderer<Secu
 	}
 
 	@Override
-	public void render(Listitem item, SecurityGroup securityGroups, int count) throws Exception {
+	public void render(Listitem item, SecurityGroup securityGroups, int count) {
 
 		Listcell lc;
 		lc = new Listcell(securityGroups.getGrpCode());

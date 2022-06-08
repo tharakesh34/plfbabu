@@ -65,7 +65,7 @@ public class RuleListModelItemRenderer implements ListitemRenderer<Rule>, Serial
 	}
 
 	@Override
-	public void render(Listitem item, Rule rule, int count) throws Exception {
+	public void render(Listitem item, Rule rule, int count) {
 
 		Listcell lc;
 		lc = new Listcell(rule.getRuleEvent());

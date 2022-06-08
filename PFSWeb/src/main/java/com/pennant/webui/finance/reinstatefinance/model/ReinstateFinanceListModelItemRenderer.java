@@ -51,7 +51,7 @@ public class ReinstateFinanceListModelItemRenderer implements ListitemRenderer<R
 	}
 
 	@Override
-	public void render(Listitem item, ReinstateFinance reinstateFinance, int count) throws Exception {
+	public void render(Listitem item, ReinstateFinance reinstateFinance, int count) {
 
 		Listcell lc;
 		lc = new Listcell(reinstateFinance.getFinType());

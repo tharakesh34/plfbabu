@@ -68,7 +68,7 @@ public class ScoringGroupListModelItemRenderer implements ListitemRenderer<Scori
 	}
 
 	@Override
-	public void render(Listitem item, ScoringGroup scoringGroup, int count) throws Exception {
+	public void render(Listitem item, ScoringGroup scoringGroup, int count) {
 
 		Listcell lc;
 		lc = new Listcell(scoringGroup.getScoreGroupCode());

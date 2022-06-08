@@ -72,7 +72,7 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, FinReceiptHeader header, int count) throws Exception {
+	public void render(Listitem item, FinReceiptHeader header, int count) {
 
 		Listcell lc;
 		lc = new Listcell(header.getReference());

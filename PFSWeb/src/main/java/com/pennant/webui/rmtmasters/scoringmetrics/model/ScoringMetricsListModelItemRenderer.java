@@ -66,7 +66,7 @@ public class ScoringMetricsListModelItemRenderer implements ListitemRenderer<Sco
 	}
 
 	@Override
-	public void render(Listitem item, ScoringMetrics scoringMetrics, int count) throws Exception {
+	public void render(Listitem item, ScoringMetrics scoringMetrics, int count) {
 
 		Listcell lc;
 		lc = new Listcell(scoringMetrics.getLovDescScoringCode());

@@ -23,7 +23,7 @@ public class RepayEnquiryListModelItemRenderer implements ListitemRenderer<Finan
 	}
 
 	@Override
-	public void render(Listitem item, FinanceRepayments repayment, int count) throws Exception {
+	public void render(Listitem item, FinanceRepayments repayment, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(

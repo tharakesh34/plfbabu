@@ -66,7 +66,7 @@ public class ScoringTypeListModelItemRenderer implements ListitemRenderer<Scorin
 	}
 
 	@Override
-	public void render(Listitem item, ScoringType scoringType, int count) throws Exception {
+	public void render(Listitem item, ScoringType scoringType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(scoringType.getScoType());

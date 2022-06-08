@@ -65,7 +65,7 @@ public class ReasonCategoryListModelItemRenderer implements ListitemRenderer<Rea
 	}
 
 	@Override
-	public void render(Listitem item, ReasonCategory reasonCategory, int count) throws Exception {
+	public void render(Listitem item, ReasonCategory reasonCategory, int count) {
 
 		Listcell lc;
 		lc = new Listcell(reasonCategory.getCode());

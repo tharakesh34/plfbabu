@@ -15,7 +15,7 @@ public class SecurityOperationRoleModelItemRenderer implements ListitemRenderer<
 	SecurityRight secRights;
 
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, Object data, int count) {
 
 		secRights = (SecurityRight) data;
 		Listcell lc = new Listcell(String.valueOf(secRights.getRightName()));

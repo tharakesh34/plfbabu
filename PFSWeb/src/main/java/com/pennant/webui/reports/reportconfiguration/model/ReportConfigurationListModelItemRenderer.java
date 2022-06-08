@@ -66,7 +66,7 @@ public class ReportConfigurationListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, ReportConfiguration reportConfiguration, int count) throws Exception {
+	public void render(Listitem item, ReportConfiguration reportConfiguration, int count) {
 		Listcell lc;
 		lc = new Listcell(reportConfiguration.getReportName());
 		lc.setParent(item);

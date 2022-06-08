@@ -67,7 +67,7 @@ public class SalesOfficerListModelItemRenderer implements ListitemRenderer<Sales
 	}
 
 	@Override
-	public void render(Listitem item, SalesOfficer salesOfficer, int count) throws Exception {
+	public void render(Listitem item, SalesOfficer salesOfficer, int count) {
 
 		Listcell lc;
 		lc = new Listcell(salesOfficer.getSalesOffCode());

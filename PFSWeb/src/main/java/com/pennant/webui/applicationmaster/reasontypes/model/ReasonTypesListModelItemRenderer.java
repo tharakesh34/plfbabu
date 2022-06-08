@@ -65,7 +65,7 @@ public class ReasonTypesListModelItemRenderer implements ListitemRenderer<Reason
 	}
 
 	@Override
-	public void render(Listitem item, ReasonTypes reasonTypes, int count) throws Exception {
+	public void render(Listitem item, ReasonTypes reasonTypes, int count) {
 
 		Listcell lc;
 		lc = new Listcell(reasonTypes.getCode());

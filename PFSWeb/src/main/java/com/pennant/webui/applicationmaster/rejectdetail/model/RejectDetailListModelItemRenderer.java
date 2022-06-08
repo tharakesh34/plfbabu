@@ -67,7 +67,7 @@ public class RejectDetailListModelItemRenderer implements ListitemRenderer<Rejec
 	}
 
 	@Override
-	public void render(Listitem item, RejectDetail rejectDetail, int count) throws Exception {
+	public void render(Listitem item, RejectDetail rejectDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(rejectDetail.getRejectCode());

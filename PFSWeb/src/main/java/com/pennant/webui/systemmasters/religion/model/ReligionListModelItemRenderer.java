@@ -66,7 +66,7 @@ public class ReligionListModelItemRenderer implements ListitemRenderer<Religion>
 	}
 
 	@Override
-	public void render(Listitem item, Religion religion, int count) throws Exception {
+	public void render(Listitem item, Religion religion, int count) {
 
 		Listcell lc;
 		lc = new Listcell(religion.getReligionCode());
