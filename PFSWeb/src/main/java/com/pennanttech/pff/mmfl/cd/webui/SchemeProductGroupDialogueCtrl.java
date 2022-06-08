@@ -696,7 +696,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 				getOverideMap());
 	}
 
-	public void onClick$btnSchemeId(Event event) throws Exception {
+	public void onClick$btnSchemeId(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_schemeProductGroupDialogue, "Promotion",
 				String.valueOf(this.schemeId.getValue()), null);
