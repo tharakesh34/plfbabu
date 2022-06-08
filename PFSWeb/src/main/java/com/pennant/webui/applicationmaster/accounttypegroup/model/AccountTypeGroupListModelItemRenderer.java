@@ -19,7 +19,7 @@ public class AccountTypeGroupListModelItemRenderer implements ListitemRenderer<A
 	}
 
 	@Override
-	public void render(Listitem item, AccountTypeGroup accountTypeGroup, int count) throws Exception {
+	public void render(Listitem item, AccountTypeGroup accountTypeGroup, int count) {
 
 		Listcell lc;
 		lc = new Listcell(accountTypeGroup.getGroupCode());

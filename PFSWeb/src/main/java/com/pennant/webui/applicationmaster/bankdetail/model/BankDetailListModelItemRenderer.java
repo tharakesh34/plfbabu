@@ -67,7 +67,7 @@ public class BankDetailListModelItemRenderer implements ListitemRenderer<BankDet
 	}
 
 	@Override
-	public void render(Listitem item, BankDetail bankDetail, int count) throws Exception {
+	public void render(Listitem item, BankDetail bankDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(bankDetail.getBankCode());

@@ -66,7 +66,7 @@ public class CityListModelItemRenderer implements ListitemRenderer<City>, Serial
 	}
 
 	@Override
-	public void render(Listitem item, City city, int count) throws Exception {
+	public void render(Listitem item, City city, int count) {
 
 		Listcell lc;
 		lc = new Listcell(city.getPCCountry() + "-" + city.getLovDescPCCountryName());

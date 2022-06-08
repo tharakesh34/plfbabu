@@ -67,7 +67,7 @@ public class AssignmentListModelItemRenderer implements ListitemRenderer<Assignm
 	}
 
 	@Override
-	public void render(Listitem item, Assignment assignment, int count) throws Exception {
+	public void render(Listitem item, Assignment assignment, int count) {
 
 		Listcell lc;
 		lc = new Listcell(String.format("%08d", assignment.getId()));

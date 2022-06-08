@@ -68,7 +68,7 @@ public class AssetClassificationHeaderListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, AssetClassificationHeader assetClassificationHeader, int count) throws Exception {
+	public void render(Listitem item, AssetClassificationHeader assetClassificationHeader, int count) {
 
 		Listcell lc;
 		lc = new Listcell(assetClassificationHeader.getCode());

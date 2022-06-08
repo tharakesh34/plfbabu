@@ -67,7 +67,7 @@ public class CasteListModelItemRenderer implements ListitemRenderer<Caste>, Seri
 	}
 
 	@Override
-	public void render(Listitem item, Caste caste, int count) throws Exception {
+	public void render(Listitem item, Caste caste, int count) {
 
 		Listcell lc;
 		//caste code

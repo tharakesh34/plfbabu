@@ -66,7 +66,7 @@ public class ClusterListModelItemRenderer implements ListitemRenderer<Cluster>, 
 	}
 
 	@Override
-	public void render(Listitem item, Cluster cluster, int count) throws Exception {
+	public void render(Listitem item, Cluster cluster, int count) {
 
 		Listcell lc;
 		lc = new Listcell(cluster.getEntity() + " - " + cluster.getEntityDesc());

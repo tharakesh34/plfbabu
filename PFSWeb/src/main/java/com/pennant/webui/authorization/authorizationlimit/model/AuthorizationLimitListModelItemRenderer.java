@@ -71,7 +71,7 @@ public class AuthorizationLimitListModelItemRenderer implements ListitemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, AuthorizationLimit authorizationLimit, int count) throws Exception {
+	public void render(Listitem item, AuthorizationLimit authorizationLimit, int count) {
 
 		Listcell lc;
 		lc = new Listcell(authorizationLimit.getUsrLogin());

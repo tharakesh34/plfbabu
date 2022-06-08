@@ -64,7 +64,7 @@ public class CollateralSetupListModelItemRenderer implements ListitemRenderer<Co
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, CollateralSetup collateralSetup, int count) throws Exception {
+	public void render(Listitem item, CollateralSetup collateralSetup, int count) {
 
 		Listcell lc;
 

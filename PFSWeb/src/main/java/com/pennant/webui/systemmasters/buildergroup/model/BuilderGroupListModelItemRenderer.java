@@ -65,7 +65,7 @@ public class BuilderGroupListModelItemRenderer implements ListitemRenderer<Build
 	}
 
 	@Override
-	public void render(Listitem item, BuilderGroup builderGroup, int count) throws Exception {
+	public void render(Listitem item, BuilderGroup builderGroup, int count) {
 
 		Listcell lc;
 		lc = new Listcell(builderGroup.getName());

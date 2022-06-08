@@ -68,7 +68,7 @@ public class ChequeHeaderListModelItemRenderer implements ListitemRenderer<Chequ
 	}
 
 	@Override
-	public void render(Listitem item, ChequeHeader chequeHeader, int count) throws Exception {
+	public void render(Listitem item, ChequeHeader chequeHeader, int count) {
 
 		Listcell lc;
 		lc = new Listcell(chequeHeader.getFinReference());

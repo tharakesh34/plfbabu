@@ -62,7 +62,7 @@ public class BankBranchListModelItemRenderer implements ListitemRenderer<BankBra
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, BankBranch bankBranch, int count) throws Exception {
+	public void render(Listitem item, BankBranch bankBranch, int count) {
 
 		Listcell lc;
 		lc = new Listcell(bankBranch.getBankCode());

@@ -67,7 +67,7 @@ public class BlackListReasonCodeListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, BlackListReasonCode blackListReasonCode, int count) throws Exception {
+	public void render(Listitem item, BlackListReasonCode blackListReasonCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(blackListReasonCode.getBLRsnCode());

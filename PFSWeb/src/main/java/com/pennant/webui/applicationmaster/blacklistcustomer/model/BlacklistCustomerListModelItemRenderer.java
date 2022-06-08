@@ -21,7 +21,7 @@ public class BlacklistCustomerListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, BlackListCustomers blacklistCustomer, int count) throws Exception {
+	public void render(Listitem item, BlackListCustomers blacklistCustomer, int count) {
 
 		Listcell lc;
 		lc = new Listcell(blacklistCustomer.getCustCIF());

@@ -66,7 +66,7 @@ public class AssignmentPartnerListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, AssignmentPartner assignmentPartner, int count) throws Exception {
+	public void render(Listitem item, AssignmentPartner assignmentPartner, int count) {
 
 		Listcell lc;
 		lc = new Listcell(assignmentPartner.getCode());

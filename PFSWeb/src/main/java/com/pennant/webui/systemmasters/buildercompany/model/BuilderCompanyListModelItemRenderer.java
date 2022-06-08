@@ -65,7 +65,7 @@ public class BuilderCompanyListModelItemRenderer implements ListitemRenderer<Bui
 	}
 
 	@Override
-	public void render(Listitem item, BuilderCompany builderCompany, int count) throws Exception {
+	public void render(Listitem item, BuilderCompany builderCompany, int count) {
 
 		Listcell lc;
 		lc = new Listcell(builderCompany.getName());

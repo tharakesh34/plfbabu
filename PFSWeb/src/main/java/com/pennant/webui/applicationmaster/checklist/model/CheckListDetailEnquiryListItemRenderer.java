@@ -22,7 +22,7 @@ public class CheckListDetailEnquiryListItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, FinanceCheckListReference financeCheckListReference, int count) throws Exception {
+	public void render(Listitem item, FinanceCheckListReference financeCheckListReference, int count) {
 
 		Listcell lc;
 		lc = new Listcell(String.valueOf(financeCheckListReference.getQuestionId()));

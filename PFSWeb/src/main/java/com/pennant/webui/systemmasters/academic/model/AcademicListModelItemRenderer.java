@@ -65,7 +65,7 @@ public class AcademicListModelItemRenderer implements ListitemRenderer<Academic>
 	}
 
 	@Override
-	public void render(Listitem item, Academic academic, int count) throws Exception {
+	public void render(Listitem item, Academic academic, int count) {
 
 		Listcell lc;
 		lc = new Listcell(academic.getAcademicLevel());
