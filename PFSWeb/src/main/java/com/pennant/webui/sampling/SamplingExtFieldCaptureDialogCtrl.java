@@ -48,7 +48,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SamplingExtendedFieldDialog(Event event) throws Exception {
+	public void onCreate$window_SamplingExtendedFieldDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_SamplingExtendedFieldDialog);
