@@ -68,7 +68,7 @@ public class ExtInterfaceConfigurationListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, InterfaceConfiguration interfaceConfiguration, int count) throws Exception {
+	public void render(Listitem item, InterfaceConfiguration interfaceConfiguration, int count) {
 
 		Listcell lc;
 		lc = new Listcell(interfaceConfiguration.getCode());

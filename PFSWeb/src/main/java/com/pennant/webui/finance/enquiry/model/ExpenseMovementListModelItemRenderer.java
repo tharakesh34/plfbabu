@@ -20,7 +20,7 @@ public class ExpenseMovementListModelItemRenderer implements ListitemRenderer<Fi
 	}
 
 	@Override
-	public void render(Listitem item, FinExpenseMovements detail, int count) throws Exception {
+	public void render(Listitem item, FinExpenseMovements detail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(detail.getModeType());

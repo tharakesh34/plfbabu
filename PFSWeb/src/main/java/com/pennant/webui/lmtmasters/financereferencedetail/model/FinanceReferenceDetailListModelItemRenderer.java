@@ -73,7 +73,7 @@ public class FinanceReferenceDetailListModelItemRenderer implements ListitemRend
 	}
 
 	@Override
-	public void render(Listitem item, FinanceWorkFlow financeWorkflow, int count) throws Exception {
+	public void render(Listitem item, FinanceWorkFlow financeWorkflow, int count) {
 
 		Listcell lc;
 		lc = new Listcell(financeWorkflow.getFinType().toUpperCase());

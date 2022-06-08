@@ -23,7 +23,7 @@ public class FieldInvestigationListModelItemRenderer implements ListitemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, FieldInvestigation fi, int count) throws Exception {
+	public void render(Listitem item, FieldInvestigation fi, int count) {
 		Listcell lc;
 		lc = new Listcell(String.valueOf(fi.getCif()));
 		lc.setParent(item);

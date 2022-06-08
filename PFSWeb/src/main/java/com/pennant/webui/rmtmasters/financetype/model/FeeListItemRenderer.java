@@ -68,7 +68,7 @@ public class FeeListItemRenderer implements ListitemRenderer<Rule>, Serializable
 	}
 
 	@Override
-	public void render(Listitem item, Rule fee, int count) throws Exception {
+	public void render(Listitem item, Rule fee, int count) {
 
 		logger.debug("Entering");
 		Listcell lc;

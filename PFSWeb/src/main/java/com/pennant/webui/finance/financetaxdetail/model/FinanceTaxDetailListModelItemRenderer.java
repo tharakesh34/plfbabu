@@ -50,7 +50,7 @@ public class FinanceTaxDetailListModelItemRenderer implements ListitemRenderer<F
 	}
 
 	@Override
-	public void render(Listitem item, FinanceTaxDetail financeTaxDetail, int count) throws Exception {
+	public void render(Listitem item, FinanceTaxDetail financeTaxDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(financeTaxDetail.getFinReference());

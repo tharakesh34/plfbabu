@@ -65,7 +65,7 @@ public class FinanceStatusCodeListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, FinanceStatusCode financeStatusCode, int count) throws Exception {
+	public void render(Listitem item, FinanceStatusCode financeStatusCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(financeStatusCode.getStatusCode());

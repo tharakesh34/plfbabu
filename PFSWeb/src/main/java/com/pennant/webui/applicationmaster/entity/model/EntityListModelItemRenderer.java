@@ -66,7 +66,7 @@ public class EntityListModelItemRenderer implements ListitemRenderer<Entity>, Se
 	}
 
 	@Override
-	public void render(Listitem item, Entity entity, int count) throws Exception {
+	public void render(Listitem item, Entity entity, int count) {
 
 		Listcell lc;
 		lc = new Listcell(entity.getEntityCode());

@@ -67,7 +67,7 @@ public class EODConfigListModelItemRenderer implements ListitemRenderer<EODConfi
 	}
 
 	@Override
-	public void render(Listitem item, EODConfig eODConfig, int count) throws Exception {
+	public void render(Listitem item, EODConfig eODConfig, int count) {
 
 		Listcell lc;
 		lc = new Listcell();

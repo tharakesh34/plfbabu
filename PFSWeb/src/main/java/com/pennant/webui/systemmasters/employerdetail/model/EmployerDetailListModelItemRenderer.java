@@ -68,7 +68,7 @@ public class EmployerDetailListModelItemRenderer implements ListitemRenderer<Emp
 	}
 
 	@Override
-	public void render(Listitem item, EmployerDetail employerDetail, int count) throws Exception {
+	public void render(Listitem item, EmployerDetail employerDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(String.valueOf(employerDetail.getEmployerId()));

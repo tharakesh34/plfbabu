@@ -24,7 +24,7 @@ public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeD
 	}
 
 	@Override
-	public void render(Listitem item, FinFeeDetail finFeeDetail, int count) throws Exception {
+	public void render(Listitem item, FinFeeDetail finFeeDetail, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(finFeeDetail.getFinEvent()));

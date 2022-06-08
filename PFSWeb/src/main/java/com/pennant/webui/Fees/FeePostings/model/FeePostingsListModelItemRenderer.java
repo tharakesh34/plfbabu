@@ -72,7 +72,7 @@ public class FeePostingsListModelItemRenderer implements ListitemRenderer<FeePos
 	}
 
 	@Override
-	public void render(Listitem item, FeePostings feePostings, int count) throws Exception {
+	public void render(Listitem item, FeePostings feePostings, int count) {
 		Listcell lc;
 		lc = new Listcell(PennantStaticListUtil.getlabelDesc(StringUtils.equals(null, feePostings.getPostAgainst())
 				? feePostings.getPostAgainst() : feePostings.getPostAgainst().trim(),

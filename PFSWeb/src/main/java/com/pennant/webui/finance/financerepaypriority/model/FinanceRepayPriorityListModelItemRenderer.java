@@ -67,7 +67,7 @@ public class FinanceRepayPriorityListModelItemRenderer implements ListitemRender
 	}
 
 	@Override
-	public void render(Listitem item, FinanceRepayPriority financeRepayPriority, int count) throws Exception {
+	public void render(Listitem item, FinanceRepayPriority financeRepayPriority, int count) {
 
 		Listcell lc;
 		lc = new Listcell(financeRepayPriority.getFinType() + "-" + financeRepayPriority.getLovDescFinTypeName());

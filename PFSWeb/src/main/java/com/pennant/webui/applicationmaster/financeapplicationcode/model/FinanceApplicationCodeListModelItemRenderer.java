@@ -68,7 +68,7 @@ public class FinanceApplicationCodeListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, FinanceApplicationCode financeApplicationCode, int count) throws Exception {
+	public void render(Listitem item, FinanceApplicationCode financeApplicationCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(financeApplicationCode.getFinAppType());

@@ -67,7 +67,7 @@ public class EmpStsCodeListModelItemRenderer implements ListitemRenderer<EmpStsC
 	}
 
 	@Override
-	public void render(Listitem item, EmpStsCode empStsCode, int count) throws Exception {
+	public void render(Listitem item, EmpStsCode empStsCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(empStsCode.getEmpStsCode());

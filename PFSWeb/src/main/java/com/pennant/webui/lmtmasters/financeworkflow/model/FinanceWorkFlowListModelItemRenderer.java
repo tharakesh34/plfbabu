@@ -72,7 +72,7 @@ public class FinanceWorkFlowListModelItemRenderer implements ListitemRenderer<Fi
 	private static final long serialVersionUID = 4456074071015876144L;
 
 	@Override
-	public void render(Listitem item, FinanceWorkFlow financeWorkFlow, int count) throws Exception {
+	public void render(Listitem item, FinanceWorkFlow financeWorkFlow, int count) {
 
 		Listcell lc;
 		lc = new Listcell(financeWorkFlow.getFinType());

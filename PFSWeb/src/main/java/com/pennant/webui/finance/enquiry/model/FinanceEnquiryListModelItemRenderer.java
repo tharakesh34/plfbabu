@@ -25,7 +25,7 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 	}
 
 	@Override
-	public void render(Listitem item, FinanceEnquiry enquiry, int count) throws Exception {
+	public void render(Listitem item, FinanceEnquiry enquiry, int count) {
 
 		Listcell lc;
 		lc = new Listcell(enquiry.getFinType());
