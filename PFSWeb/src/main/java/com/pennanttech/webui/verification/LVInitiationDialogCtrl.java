@@ -558,11 +558,12 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 					if (newDoc.getDocumentType() == DocumentType.COLLATRL.getKey()
 							&& newDoc.getDocumentId().equals(oldDoc.getDocumentId())) {
 						Verification vrf = new Verification();
-						vrf.setId(oldDoc.getVerificationId());
-						if (!newDoc.getDocumentRefId().equals(oldDoc.getDocumentRefId())
-								&& verificationService.isVerificationInRecording(vrf, VerificationType.LV)
-								&& !oldDocumentRefIds.contains(String.valueOf(newDoc.getDocumentRefId()))) {
-							changedDocuments.put(newDoc.getDocumentRefId(), String.valueOf(newDoc.getDocumentId()));
+						if (newDoc.getDocumentRefId() != null && oldDoc.getDocumentRefId() != null) {
+							if (!newDoc.getDocumentRefId().equals(oldDoc.getDocumentRefId())
+									&& verificationService.isVerificationInRecording(vrf, VerificationType.LV)
+									&& !oldDocumentRefIds.contains(String.valueOf(newDoc.getDocumentRefId()))) {
+								changedDocuments.put(newDoc.getDocumentRefId(), String.valueOf(newDoc.getDocumentId()));
+							}
 						}
 					}
 				}

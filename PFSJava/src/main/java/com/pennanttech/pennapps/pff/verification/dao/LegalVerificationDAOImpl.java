@@ -251,19 +251,10 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 				LVDocument document = lvDocuments.get(i);
 				ps.setLong(1, document.getVerificationId());
 				ps.setInt(2, i + 1);
-				if (document.getDocumentId() == null) {
-					ps.setLong(3, 0);
-				} else {
-					ps.setLong(3, document.getDocumentId());
-				}
-
+				ps.setObject(3, document.getDocumentId());
 				ps.setInt(4, document.getDocumentType());
 				ps.setString(5, document.getDocumentSubId());
-				if (document.getDocumentRefId() == null) {
-					ps.setLong(6, 0);
-				} else {
-					ps.setLong(6, document.getDocumentRefId());
-				}
+				ps.setObject(6, document.getDocumentRefId());
 				ps.setString(7, document.getDocumentUri());
 				ps.setInt(8, document.getVersion());
 				ps.setTimestamp(9, document.getLastMntOn());
