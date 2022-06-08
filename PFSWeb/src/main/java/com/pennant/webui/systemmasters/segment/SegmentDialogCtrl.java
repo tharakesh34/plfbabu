@@ -97,9 +97,8 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	 * selected Segment object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SegmentDialog(Event event) throws Exception {
+	public void onCreate$window_SegmentDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -329,9 +328,8 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSegment
-	 * @throws Exception
 	 */
-	public void doShowDialog(Segment aSegment) throws Exception {
+	public void doShowDialog(Segment aSegment) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -758,10 +756,8 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.segment);
 	}
 

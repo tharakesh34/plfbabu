@@ -142,9 +142,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 * selected Province object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ProvinceDialog(Event event) throws Exception {
+	public void onCreate$window_ProvinceDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -407,7 +406,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	}
 
 	// Double click GSTIN Mapping Details list
-	public void onTaxDetailItemDoubleClicked(Event event) throws Exception {
+	public void onTaxDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Listitem item = this.listBoxTaxDetails.getSelectedItem();
@@ -593,9 +592,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProvince
-	 * @throws Exception
 	 */
-	public void doShowDialog(Province aProvince) throws Exception {
+	public void doShowDialog(Province aProvince) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1125,10 +1123,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.province);
 	}
 

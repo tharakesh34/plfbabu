@@ -107,9 +107,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	 * selected PhoneType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PhoneTypeDialog(Event event) throws Exception {
+	public void onCreate$window_PhoneTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -370,9 +369,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aPhoneType
-	 * @throws Exception
 	 */
-	public void doShowDialog(PhoneType aPhoneType) throws Exception {
+	public void doShowDialog(PhoneType aPhoneType) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -806,10 +804,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.phoneType);
 	}
 
