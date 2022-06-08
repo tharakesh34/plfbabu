@@ -129,9 +129,8 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 * selected StepPolicyHeader object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_StepPolicyDialog(Event event) throws Exception {
+	public void onCreate$window_StepPolicyDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -439,9 +438,8 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aStepPolicyHeader
-	 * @throws Exception
 	 */
-	public void doShowDialog(StepPolicyHeader aStepPolicyHeader) throws Exception {
+	public void doShowDialog(StepPolicyHeader aStepPolicyHeader) {
 		logger.debug("Entering");
 
 		if (aStepPolicyHeader.isNewRecord()) {
@@ -915,7 +913,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	/**
 	 * Call the StepPolicyDetail dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_StepPolicyDialog_btnNew_StepPolicyDetail(Event event) throws Exception {
+	public void onClick$button_StepPolicyDialog_btnNew_StepPolicyDetail(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// create a new StepPolicyDetail object, We GET it from the backEnd.
@@ -1033,10 +1031,8 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.stepPolicyHeader);
 	}
 

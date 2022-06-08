@@ -69,7 +69,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		super.pageRightName = "DealerGroupDialog";
 	}
 
-	public void onCreate$window_DealerGroupDialog(Event event) throws Exception {
+	public void onCreate$window_DealerGroupDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -213,7 +213,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		}
 	}
 
-	public void onClick$btnchannels(Event event) throws Exception {
+	public void onClick$btnchannels(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_DealerGroupDialog, "ChannelTypes",
 				String.valueOf(this.txtchannel.getValue()), null);
@@ -225,7 +225,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 
 	}
 
-	public void onClick$btndealerCode(Event event) throws Exception {
+	public void onClick$btndealerCode(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_DealerGroupDialog, "DealerMapping",
 				String.valueOf(this.dealerCode.getValue()), null);

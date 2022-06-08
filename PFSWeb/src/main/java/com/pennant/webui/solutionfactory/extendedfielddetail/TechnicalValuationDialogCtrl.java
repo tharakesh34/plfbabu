@@ -97,9 +97,8 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	 * selected ExtendedFieldDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_TechValuationFieldDialog(Event event) throws Exception {
+	public void onCreate$window_TechValuationFieldDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -135,7 +134,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 				dialogCtrl.getClass().getMethod("setTechnicalValuationDialogCtrl", this.getClass()).invoke(dialogCtrl,
 						this);
 
-				//this.extendedFieldHeader.setWorkflowId(0);
+				// this.extendedFieldHeader.setWorkflowId(0);
 				if (arguments.containsKey("newRecord")) {
 					setNewRecord(true);
 				} else {
@@ -244,8 +243,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -268,8 +266,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aExtendedFieldDetail
-	 *            ExtendedFieldDetail
+	 * @param aExtendedFieldDetail ExtendedFieldDetail
 	 */
 	public void doWriteBeanToComponents(ExtendedFieldHeader aExtendedFieldHeader) {
 		logger.debug("Entering");
@@ -309,12 +306,12 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 			wve.add(we);
 		}
 		try {
-			//aExtendedFieldHeader.setNumberOfColumns(this.numberOfColumns.getSelectedItem().getValue().toString());
+			// aExtendedFieldHeader.setNumberOfColumns(this.numberOfColumns.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//adding the list to bean
+		// adding the list to bean
 		for (ExtendedFieldDetail efd : getTechValuationFieldDetailsList()) {
 			efd.setExtendedType(ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION);
 		}
@@ -361,9 +358,8 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aExtendedFieldDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(ExtendedFieldHeader aExtendedFieldHeader) throws Exception {
+	public void doShowDialog(ExtendedFieldHeader aExtendedFieldHeader) {
 		logger.debug("Entering");
 
 		// if aExtendedFieldDetail == null then we opened the Dialog without
@@ -426,7 +422,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		}
 
 		this.tabHeading.setReadonly(isReadOnly("ExtendedFieldDialog_tabHeading"));
-		//TODO
+		// TODO
 		/*
 		 * this.radio_column1.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
 		 * this.radio_column2.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
@@ -476,12 +472,9 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
+	 * Saves the components to table.
 	 */
-
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.extendedFieldHeader);
 	}
 
@@ -493,9 +486,6 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 
 	/**
 	 * To show the Message
-	 * 
-	 * @throws Exception
-	 * 
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -520,7 +510,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		this.tabHeading.setErrorMessage("");
 	}
 
-	public void onClick$btnNew_FieldDet(Event event) throws Exception {
+	public void onClick$btnNew_FieldDet(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		ExtendedFieldDetail aExtendedFieldDetail = new ExtendedFieldDetail();
@@ -546,7 +536,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onTechnicalValuationItemDoubleClicked(Event event) throws Exception {
+	public void onTechnicalValuationItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected invoiceHeader object
@@ -561,7 +551,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 			map.put("technicalValuationDialogCtrl", this);
 			map.put("roleCode", getRole());
 			map.put("firstTaskRole", this.firstTaskRole);
-			//map.put("layoutDesign", numberOfColumns.getSelectedItem().getValue());
+			// map.put("layoutDesign", numberOfColumns.getSelectedItem().getValue());
 			// call the zul-file with the parameters packed in a map
 			try {
 				Executions.createComponents(
@@ -576,7 +566,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	}
 
 	// ******************************************************//
-	// *********        Field Detail List		   **********//
+	// ********* Field Detail List **********//
 	// ******************************************************//
 
 	/**
@@ -617,7 +607,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		logger.debug("Leaving");
 	}
 
-	//Getting the table name from map
+	// Getting the table name from map
 	private void setTableName(List<ExtendedFieldDetail> extendedFieldDetails) {
 		for (ExtendedFieldDetail efd : extendedFieldDetails) {
 			if (efd.getLovDescModuleName() == null) {
@@ -634,7 +624,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 
 			String tableName = CollateralConstants.VERIFICATION_MODULE;
 			tableName = tableName.concat("_").concat(getExtendedFieldHeader().getSubModuleName()).concat("_TV");
-			efd.setLovDescTableName(tableName);//PennantStaticListUtil.getModuleName(efd)
+			efd.setLovDescTableName(tableName);// PennantStaticListUtil.getModuleName(efd)
 		}
 	}
 
@@ -695,7 +685,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		}
 
 		@Override
-		public void render(Listitem item, ExtendedFieldDetail detail, int count) throws Exception {
+		public void render(Listitem item, ExtendedFieldDetail detail, int count) {
 
 			Listcell lc;
 			lc = new Listcell(detail.getFieldName());

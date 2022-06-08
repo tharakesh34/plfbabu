@@ -98,9 +98,8 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * selected PRelationCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PRelationCodeDialog(Event event) throws Exception {
+	public void onCreate$window_PRelationCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -333,9 +332,8 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aPRelationCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(PRelationCode aPRelationCode) throws Exception {
+	public void doShowDialog(PRelationCode aPRelationCode) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -763,10 +761,8 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.mPRelationCode);
 	}
 

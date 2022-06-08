@@ -130,9 +130,8 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * selected DivisionDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DivisionDetailDialog(Event event) throws Exception {
+	public void onCreate$window_DivisionDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -265,10 +264,8 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -291,9 +288,8 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDivisionDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(DivisionDetail aDivisionDetail) throws Exception {
+	public void doShowDialog(DivisionDetail aDivisionDetail) {
 		logger.debug("Entering");
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aDivisionDetail.isNewRecord()) {

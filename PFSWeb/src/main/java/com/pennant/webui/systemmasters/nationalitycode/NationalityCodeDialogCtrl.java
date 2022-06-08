@@ -98,9 +98,8 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	 * selected NationalityCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_NationalityCodeDialog(Event event) throws Exception {
+	public void onCreate$window_NationalityCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -339,9 +338,8 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aNationalityCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(NationalityCode aNationalityCode) throws Exception {
+	public void doShowDialog(NationalityCode aNationalityCode) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -772,10 +770,8 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.nationalityCode);
 	}
 

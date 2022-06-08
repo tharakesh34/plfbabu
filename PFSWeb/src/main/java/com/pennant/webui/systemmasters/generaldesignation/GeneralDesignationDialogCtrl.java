@@ -99,9 +99,8 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * selected GeneralDesignation object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_GeneralDesignationDialog(Event event) throws Exception {
+	public void onCreate$window_GeneralDesignationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -337,9 +336,8 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aGeneralDesignation
-	 * @throws Exception
 	 */
-	public void doShowDialog(GeneralDesignation aGeneralDesignation) throws Exception {
+	public void doShowDialog(GeneralDesignation aGeneralDesignation) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -772,10 +770,8 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.generalDesignation);
 	}
 

@@ -165,9 +165,8 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_ExtFieldConfigDialog(Event event) throws Exception {
+	public void onCreate$window_ExtFieldConfigDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -671,9 +670,8 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		// Pre Validation Checking for Validated or not
@@ -801,10 +799,8 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aAcademic
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(ExtendedFieldHeader extendedFieldHeader, boolean validationReq)
-			throws Exception {
+	public void doWriteComponentsToBean(ExtendedFieldHeader extendedFieldHeader, boolean validationReq) {
 		logger.debug(Literal.ENTERING);
 		doSetLOVValidation();
 
@@ -1159,11 +1155,9 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	}
 
 	/**
-	 * Method for Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Method for Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		final ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();

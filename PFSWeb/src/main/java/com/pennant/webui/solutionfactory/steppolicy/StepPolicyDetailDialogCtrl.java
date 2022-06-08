@@ -115,9 +115,8 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 * selected stepPolicyDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_StepPolicyDetailDialog(Event event) throws Exception {
+	public void onCreate$window_StepPolicyDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -387,9 +386,8 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aStepPolicyDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(StepPolicyDetail aStepPolicyDetail) throws Exception {
+	public void doShowDialog(StepPolicyDetail aStepPolicyDetail) {
 		logger.debug("Entering");
 		if (aStepPolicyDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
@@ -709,7 +707,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.stepPolicyDetail);
 	}
 
