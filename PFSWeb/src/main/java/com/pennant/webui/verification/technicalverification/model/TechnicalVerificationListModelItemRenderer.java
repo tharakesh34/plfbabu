@@ -25,7 +25,7 @@ public class TechnicalVerificationListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, TechnicalVerification tv, int count) throws Exception {
+	public void render(Listitem item, TechnicalVerification tv, int count) {
 		Listcell lc;
 
 		String customerName = tv.getCif();

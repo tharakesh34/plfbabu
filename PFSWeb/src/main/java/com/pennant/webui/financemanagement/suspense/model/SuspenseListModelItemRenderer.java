@@ -69,7 +69,7 @@ public class SuspenseListModelItemRenderer implements ListitemRenderer<FinanceSu
 	}
 
 	@Override
-	public void render(Listitem item, FinanceSuspHead suspHead, int count) throws Exception {
+	public void render(Listitem item, FinanceSuspHead suspHead, int count) {
 
 		int format = CurrencyUtil.getFormat(suspHead.getFinCcy());
 		Listcell lc;

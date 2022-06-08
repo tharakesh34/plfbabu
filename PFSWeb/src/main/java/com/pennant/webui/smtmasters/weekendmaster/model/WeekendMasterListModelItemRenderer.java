@@ -68,7 +68,7 @@ public class WeekendMasterListModelItemRenderer implements ListitemRenderer<Week
 	}
 
 	@Override
-	public void render(Listitem item, WeekendMaster weekendMaster, int count) throws Exception {
+	public void render(Listitem item, WeekendMaster weekendMaster, int count) {
 
 		Listcell lc;
 		lc = new Listcell(weekendMaster.getWeekendCode());

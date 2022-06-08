@@ -69,7 +69,7 @@ public class VasMovementListModelItemRenderer implements ListitemRenderer<VasMov
 	}
 
 	@Override
-	public void render(Listitem item, VasMovement vasMoment, int count) throws Exception {
+	public void render(Listitem item, VasMovement vasMoment, int count) {
 
 		Listcell lc;
 		lc = new Listcell(vasMoment.getFinType());

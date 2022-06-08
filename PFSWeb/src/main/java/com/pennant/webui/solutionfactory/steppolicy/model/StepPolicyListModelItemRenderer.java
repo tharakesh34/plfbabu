@@ -67,7 +67,7 @@ public class StepPolicyListModelItemRenderer implements ListitemRenderer<StepPol
 	}
 
 	@Override
-	public void render(Listitem item, StepPolicyHeader stepPolicyHeader, int count) throws Exception {
+	public void render(Listitem item, StepPolicyHeader stepPolicyHeader, int count) {
 
 		Listcell lc;
 		lc = new Listcell(stepPolicyHeader.getPolicyCode());

@@ -67,7 +67,7 @@ public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<Fin
 	}
 
 	@Override
-	public void render(Listitem item, FinanceMain wIFFinanceMain, int count) throws Exception {
+	public void render(Listitem item, FinanceMain wIFFinanceMain, int count) {
 
 		Listcell lc;
 		lc = new Listcell(wIFFinanceMain.getFinReference());

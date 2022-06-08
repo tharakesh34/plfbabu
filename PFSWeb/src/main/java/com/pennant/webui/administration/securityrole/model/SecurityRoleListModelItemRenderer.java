@@ -69,7 +69,7 @@ public class SecurityRoleListModelItemRenderer implements ListitemRenderer<Secur
 	}
 
 	@Override
-	public void render(Listitem item, SecurityRole securityRole, int count) throws Exception {
+	public void render(Listitem item, SecurityRole securityRole, int count) {
 		logger.debug("Entering ");
 		Listcell lc;
 		lc = new Listcell(securityRole.getLovDescRoleAppName());

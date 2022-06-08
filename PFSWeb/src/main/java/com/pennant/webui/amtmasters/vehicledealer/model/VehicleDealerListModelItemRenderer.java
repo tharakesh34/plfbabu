@@ -52,7 +52,7 @@ public class VehicleDealerListModelItemRenderer implements ListitemRenderer<Vehi
 	}
 
 	@Override
-	public void render(Listitem item, VehicleDealer vehicleDealer, int count) throws Exception {
+	public void render(Listitem item, VehicleDealer vehicleDealer, int count) {
 		Listcell lc;
 		lc = new Listcell(PennantAppUtil.getlabelDesc(StringUtils.trimToEmpty(vehicleDealer.getDealerType()),
 				PennantStaticListUtil.getDealerType()));

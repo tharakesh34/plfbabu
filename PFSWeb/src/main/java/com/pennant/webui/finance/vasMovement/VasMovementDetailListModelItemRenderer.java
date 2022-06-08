@@ -72,7 +72,7 @@ public class VasMovementDetailListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, VasMovementDetail vasMovementDetail, int count) throws Exception {
+	public void render(Listitem item, VasMovementDetail vasMovementDetail, int count) {
 
 		if (item instanceof Listgroup) {
 			Listcell cell = new Listcell(vasMovementDetail.getVasReference());

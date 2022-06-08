@@ -62,7 +62,7 @@ public class SysNotificationListModelItemRenderer implements ListitemRenderer<Sy
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, SysNotification sysNotification, int count) throws Exception {
+	public void render(Listitem item, SysNotification sysNotification, int count) {
 
 		Listcell lc;
 		lc = new Listcell(sysNotification.getQueryCode());

@@ -67,7 +67,7 @@ public class SubSectorListModelItemRenderer implements ListitemRenderer<SubSecto
 	}
 
 	@Override
-	public void render(Listitem item, SubSector subSector, int count) throws Exception {
+	public void render(Listitem item, SubSector subSector, int count) {
 
 		Listcell lc;
 		lc = new Listcell(subSector.getSectorCode());

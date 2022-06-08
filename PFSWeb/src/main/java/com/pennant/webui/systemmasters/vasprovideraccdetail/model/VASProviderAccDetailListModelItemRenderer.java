@@ -66,7 +66,7 @@ public class VASProviderAccDetailListModelItemRenderer implements ListitemRender
 	}
 
 	@Override
-	public void render(Listitem item, VASProviderAccDetail vASProviderAccDetail, int count) throws Exception {
+	public void render(Listitem item, VASProviderAccDetail vASProviderAccDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(String.valueOf(vASProviderAccDetail.getProviderDesc()));

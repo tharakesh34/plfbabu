@@ -67,7 +67,7 @@ public class SubSegmentListModelItemRenderer implements ListitemRenderer<SubSegm
 	}
 
 	@Override
-	public void render(Listitem item, SubSegment subSegment, int count) throws Exception {
+	public void render(Listitem item, SubSegment subSegment, int count) {
 
 		Listcell lc;
 		lc = new Listcell(subSegment.getSegmentCode());

@@ -69,7 +69,7 @@ public class SuspenseDetailListModelItemRenderer implements ListitemRenderer<Fin
 	private static final long serialVersionUID = -4554647022945989420L;
 
 	@Override
-	public void render(Listitem item, FinanceSuspDetails suspDetails, int count) throws Exception {
+	public void render(Listitem item, FinanceSuspDetails suspDetails, int count) {
 
 		Listcell lc;
 		lc = new Listcell(DateUtility.formatToLongDate(suspDetails.getFinTrfDate()));

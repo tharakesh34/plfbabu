@@ -68,7 +68,7 @@ public class SplRateListModelItemRenderer implements ListitemRenderer<SplRate>, 
 	}
 
 	@Override
-	public void render(Listitem item, SplRate splRate, int count) throws Exception {
+	public void render(Listitem item, SplRate splRate, int count) {
 
 		Listcell lc;
 		lc = new Listcell(splRate.getSRType() + "-" + splRate.getLovDescSRTypeName());

@@ -49,7 +49,7 @@ public class SecurityUserListModelItemRenderer implements ListitemRenderer<Secur
 	}
 
 	@Override
-	public void render(Listitem item, SecurityUser securityUser, int count) throws Exception {
+	public void render(Listitem item, SecurityUser securityUser, int count) {
 
 		Listcell lc;
 		lc = new Listcell(securityUser.getUsrLogin());

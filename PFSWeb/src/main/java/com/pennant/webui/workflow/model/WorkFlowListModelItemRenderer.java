@@ -65,7 +65,7 @@ public class WorkFlowListModelItemRenderer implements ListitemRenderer<WorkFlowD
 	}
 
 	@Override
-	public void render(Listitem item, WorkFlowDetails data, int count) throws Exception {
+	public void render(Listitem item, WorkFlowDetails data, int count) {
 
 		String status = null;
 		final WorkFlowDetails workFlowDetails = (WorkFlowDetails) data;
