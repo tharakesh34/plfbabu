@@ -65,7 +65,7 @@ public class FinFeeRefundsListModelItemRenderer implements ListitemRenderer<FinF
 	}
 
 	@Override
-	public void render(Listitem item, FinFeeRefundHeader finFeeRefund, int count) throws Exception {
+	public void render(Listitem item, FinFeeRefundHeader finFeeRefund, int count) {
 
 		Listcell lc;
 

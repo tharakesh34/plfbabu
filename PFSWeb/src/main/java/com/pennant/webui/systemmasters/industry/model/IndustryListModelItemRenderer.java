@@ -67,7 +67,7 @@ public class IndustryListModelItemRenderer implements ListitemRenderer<Industry>
 	}
 
 	@Override
-	public void render(Listitem item, Industry industry, int count) throws Exception {
+	public void render(Listitem item, Industry industry, int count) {
 
 		Listcell lc;
 		lc = new Listcell(industry.getIndustryCode());

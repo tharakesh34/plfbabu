@@ -68,7 +68,7 @@ public class GuarantorDetailListModelItemRenderer implements ListitemRenderer<Gu
 	}
 
 	@Override
-	public void render(Listitem item, GuarantorDetail guarantorDetail, int count) throws Exception {
+	public void render(Listitem item, GuarantorDetail guarantorDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell();

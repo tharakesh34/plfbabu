@@ -65,7 +65,7 @@ public class FinChangeCustomerListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, FinChangeCustomer finChangeCustomer, int count) throws Exception {
+	public void render(Listitem item, FinChangeCustomer finChangeCustomer, int count) {
 
 		Listcell lc;
 		lc = new Listcell(finChangeCustomer.getFinReference());

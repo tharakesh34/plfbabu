@@ -18,7 +18,7 @@ public class InsPaymentUploadListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, InsurancePaymentInstructions instructions, int index) throws Exception {
+	public void render(Listitem item, InsurancePaymentInstructions instructions, int index) {
 		Listcell lc;
 		lc = new Listcell(instructions.getEntityCode());
 		lc.setParent(item);

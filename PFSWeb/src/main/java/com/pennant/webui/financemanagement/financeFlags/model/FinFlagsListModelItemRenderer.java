@@ -22,7 +22,7 @@ public class FinFlagsListModelItemRenderer implements ListitemRenderer<FinanceFl
 	}
 
 	@Override
-	public void render(Listitem item, FinanceFlag financeFlag, int count) throws Exception {
+	public void render(Listitem item, FinanceFlag financeFlag, int count) {
 
 		Listcell lc;
 		lc = new Listcell(financeFlag.getFinType());

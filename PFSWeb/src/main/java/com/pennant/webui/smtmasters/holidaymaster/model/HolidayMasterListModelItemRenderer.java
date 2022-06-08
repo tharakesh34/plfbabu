@@ -68,7 +68,7 @@ public class HolidayMasterListModelItemRenderer implements ListitemRenderer<Holi
 	}
 
 	@Override
-	public void render(Listitem item, HolidayMaster holidayMaster, int count) throws Exception {
+	public void render(Listitem item, HolidayMaster holidayMaster, int count) {
 
 		Listcell lc;
 		lc = new Listcell(holidayMaster.getHolidayCode());

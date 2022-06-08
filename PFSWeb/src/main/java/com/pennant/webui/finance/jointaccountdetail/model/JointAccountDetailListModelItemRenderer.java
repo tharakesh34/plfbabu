@@ -66,7 +66,7 @@ public class JointAccountDetailListModelItemRenderer implements ListitemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, JointAccountDetail jointAccountDetail, int count) throws Exception {
+	public void render(Listitem item, JointAccountDetail jointAccountDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(jointAccountDetail.getCustCIF() + "-" + jointAccountDetail.getLovDescCIFName());

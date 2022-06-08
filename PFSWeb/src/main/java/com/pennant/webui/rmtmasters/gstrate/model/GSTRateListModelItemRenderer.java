@@ -76,7 +76,7 @@ public class GSTRateListModelItemRenderer implements ListitemRenderer<GSTRate>, 
 	}
 
 	@Override
-	public void render(Listitem item, GSTRate gSTRate, int count) throws Exception {
+	public void render(Listitem item, GSTRate gSTRate, int count) {
 
 		Listcell lc;
 		lc = new Listcell(gSTRate.getFromState() + " - " + gSTRate.getFromStateName());

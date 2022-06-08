@@ -67,7 +67,7 @@ public class FlagListModelItemRenderer implements ListitemRenderer<Flag>, Serial
 	}
 
 	@Override
-	public void render(Listitem item, Flag flag, int count) throws Exception {
+	public void render(Listitem item, Flag flag, int count) {
 
 		Listcell lc;
 		lc = new Listcell(flag.getFlagCode());

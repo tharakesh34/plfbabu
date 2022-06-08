@@ -67,7 +67,7 @@ public class FinSuspHoldListModelItemRenderer implements ListitemRenderer<FinSus
 	}
 
 	@Override
-	public void render(Listitem item, FinSuspHold finSuspHold, int count) throws Exception {
+	public void render(Listitem item, FinSuspHold finSuspHold, int count) {
 
 		Listcell lc;
 		lc = new Listcell(finSuspHold.getProduct());

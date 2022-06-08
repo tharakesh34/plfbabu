@@ -22,7 +22,7 @@ public class FinApprovalStsInquiryListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, CustomerFinanceDetail enquiry, int count) throws Exception {
+	public void render(Listitem item, CustomerFinanceDetail enquiry, int count) {
 
 		Listcell lc;
 		lc = new Listcell(enquiry.getCustCIF());

@@ -71,7 +71,7 @@ public class FinOptionTypeListModelItemRenderer implements ListitemRenderer<FinO
 	}
 
 	@Override
-	public void render(Listitem item, FinOptionType finOptionType, int count) throws Exception {
+	public void render(Listitem item, FinOptionType finOptionType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(finOptionType.getCode());

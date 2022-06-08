@@ -67,7 +67,7 @@ public class GroupStatusCodeListModelItemRenderer implements ListitemRenderer<Gr
 	}
 
 	@Override
-	public void render(Listitem item, GroupStatusCode groupStatusCode, int count) throws Exception {
+	public void render(Listitem item, GroupStatusCode groupStatusCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(groupStatusCode.getGrpStsCode());
