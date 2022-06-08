@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ActivityLogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-12-2017    														*
- *                                                                  						*
- * Modified Date    :  12-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ActivityLogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-12-2017 * * Modified Date
+ * : 12-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui;
@@ -101,7 +83,7 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 
 	private ActivityLogService activityLogService;
 
-	//private String moduleCode;
+	// private String moduleCode;
 	private String moduleCode;
 	private Object keyValue;
 	List<Notes> notesList;
@@ -111,9 +93,8 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 	 * selected record data like moduleCode,keyValue,label and value in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ActivityLog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ActivityLog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 			// Get the arguments.
@@ -154,10 +135,8 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param moduleCode
-	 *            (String)
-	 * @param map
-	 *            (LinkedHashMap<?, ?>)
+	 * @param moduleCode (String)
+	 * @param map        (LinkedHashMap<?, ?>)
 	 */
 	public void doWriteBeanToComponents(String moduleCode, Map<?, ?> map) {
 		logger.debug(Literal.ENTERING);
@@ -239,12 +218,11 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 	 * 
 	 * @param userNotesList
 	 * @return
-	 * @throws Exception
 	 */
-	public Listbox renderNotes(List<Notes> userNotesList) throws Exception {
+	public Listbox renderNotes(List<Notes> userNotesList) {
 		logger.debug("Entering");
 
-		//Retrieve Notes List By Module Reference
+		// Retrieve Notes List By Module Reference
 		Listbox listboxNotes = new Listbox();
 		Listitem item = null;
 		Listcell lc = null;
@@ -371,7 +349,7 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 			}
 			cell.setParent(item);
 
-			//Display Notes Button
+			// Display Notes Button
 			cell = new Listcell();
 			btn_Notes = new Button("Notes");
 			btn_Notes.setParent(cell);
@@ -413,8 +391,7 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 	/**
 	 * gives the Latest Audit data of the Record.
 	 * 
-	 * @param activities
-	 *            (List<Activity>)
+	 * @param activities (List<Activity>)
 	 * 
 	 * @return The list of filtered Activities.
 	 */

@@ -72,7 +72,7 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_VerificationEnquiry(Event event) throws Exception {
+	public void onCreate$window_VerificationEnquiry(Event event) {
 		setPageComponents(window_VerificationEnquiry);
 
 		finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");

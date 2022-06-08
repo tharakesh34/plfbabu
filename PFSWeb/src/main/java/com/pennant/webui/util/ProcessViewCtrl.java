@@ -70,9 +70,8 @@ public class ProcessViewCtrl extends GFCBaseCtrl<WorkFlowDetails> implements Ser
 	 * selected Record AuditData List in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$processViewWindow(Event event) throws Exception {
+	public void onCreate$processViewWindow(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		long workFlowId = (long) arguments.get("workFlowId");

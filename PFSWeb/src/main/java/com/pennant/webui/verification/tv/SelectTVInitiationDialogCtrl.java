@@ -101,7 +101,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_SelectTechnicalVerificationInitiationDialog(Event event) throws Exception {
+	public void onCreate$window_SelectTechnicalVerificationInitiationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -196,9 +196,8 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		if (!doFieldValidation()) {

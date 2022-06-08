@@ -116,7 +116,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 
 		// Listener for Last Login
 		EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
-			public void onEvent(Event event) throws Exception {
+			public void onEvent(Event event) {
 				doShowLastLogin();
 			}
 		});

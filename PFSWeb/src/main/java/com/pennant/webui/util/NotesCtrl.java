@@ -156,10 +156,9 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 * selected bankDetails object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_notesDialog(Event event) throws Exception {
+	public void onCreate$window_notesDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -402,7 +401,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doShowDialog(Notes aNotes) throws Exception {
+	public void doShowDialog(Notes aNotes) {
 		logger.debug("Entering");
 
 		try {
@@ -454,9 +453,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
 	public void doSave() {
 		logger.debug("Entering");

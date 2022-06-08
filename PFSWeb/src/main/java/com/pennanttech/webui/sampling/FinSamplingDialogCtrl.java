@@ -1,5 +1,6 @@
 package com.pennanttech.webui.sampling;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_FinSamplingDialog(Event event) throws Exception {
+	public void onCreate$window_FinSamplingDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_FinSamplingDialog);
@@ -188,7 +189,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnSampling(Event event) throws Exception {
+	public void onClick$btnSampling(Event event) throws IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
 		if (this.sampling == null) {
@@ -234,8 +235,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param sampling
-	 *            Sampling
+	 * @param sampling Sampling
 	 */
 	public void doWriteBeanToComponents(Sampling sampling) {
 		logger.debug(Literal.ENTERING);

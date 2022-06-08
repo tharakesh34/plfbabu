@@ -37,7 +37,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_ImageView(Event event) throws Exception {
+	public void onCreate$window_ImageView(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -168,7 +168,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		this.window_ImageView.onClose();
 	}
 }

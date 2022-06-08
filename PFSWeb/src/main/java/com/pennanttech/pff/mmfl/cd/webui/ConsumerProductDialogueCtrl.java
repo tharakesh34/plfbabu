@@ -85,9 +85,8 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_consumerProductDialogue(Event event) throws AppException {
+	public void onCreate$window_consumerProductDialogue(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_consumerProductDialogue);
@@ -816,7 +815,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		this.consumerProductService = consumerProductService;
 	}
 
-	public void onClick$btnNames(Event event) throws Exception {
+	public void onClick$btnNames(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_consumerProductDialogue, "Manufacturer",
 				String.valueOf(this.txtNames.getValue()), null);
@@ -828,7 +827,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 
 	}
 
-	public void onClick$btnchannels(Event event) throws Exception {
+	public void onClick$btnchannels(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_consumerProductDialogue, "ChannelTypes",
 				String.valueOf(this.txtchannel.getValue()), null);

@@ -64,7 +64,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinalValuationDialog(Event event) throws Exception {
+	public void onCreate$window_FinalValuationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_FinalValuationDialog);
