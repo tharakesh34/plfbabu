@@ -100,9 +100,8 @@ public class FrequencyDialogCtrl extends GFCBaseCtrl<Frequency> {
 	 * selected Frequency object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FrequencyDialog(Event event) throws Exception {
+	public void onCreate$window_FrequencyDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -329,9 +328,8 @@ public class FrequencyDialogCtrl extends GFCBaseCtrl<Frequency> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFrequency
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(Frequency aFrequency) throws InterruptedException {
+	public void doShowDialog(Frequency aFrequency) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -755,10 +753,8 @@ public class FrequencyDialogCtrl extends GFCBaseCtrl<Frequency> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.frequency);
 	}
 

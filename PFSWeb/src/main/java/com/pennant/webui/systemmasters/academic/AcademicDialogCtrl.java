@@ -77,9 +77,8 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_AcademicDialog(Event event) throws Exception {
+	public void onCreate$window_AcademicDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

@@ -112,9 +112,8 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 * selected City object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CityDialog(Event event) throws Exception {
+	public void onCreate$window_CityDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -464,10 +463,8 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCity
-	 * 
-	 * @throws Exception
 	 */
-	public void doShowDialog(City aCity) throws Exception {
+	public void doShowDialog(City aCity) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -924,10 +921,8 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.city);
 	}
 

@@ -96,9 +96,8 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	 * selected IdentityDetails object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_IdentityDetailsDialog(Event event) throws Exception {
+	public void onCreate$window_IdentityDetailsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -318,9 +317,8 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aIdentityDetails
-	 * @throws Exception
 	 */
-	public void doShowDialog(IdentityDetails aIdentityDetails) throws Exception {
+	public void doShowDialog(IdentityDetails aIdentityDetails) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -751,10 +749,8 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.identityDetails);
 	}
 

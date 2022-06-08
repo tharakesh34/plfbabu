@@ -100,9 +100,8 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	 * selected BlackListReasonCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_BlackListReasonCodeDialog(Event event) throws Exception {
+	public void onCreate$window_BlackListReasonCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -341,9 +340,8 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBlackListReasonCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(BlackListReasonCode aBlackListReasonCode) throws Exception {
+	public void doShowDialog(BlackListReasonCode aBlackListReasonCode) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -780,10 +778,8 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.blackListReasonCode);
 	}
 

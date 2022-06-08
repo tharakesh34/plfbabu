@@ -112,10 +112,9 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * selected ExtendedFieldHeader object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_ExtendedFieldHeaderDialog(Event event) throws Exception {
+	public void onCreate$window_ExtendedFieldHeaderDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -392,9 +391,8 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aExtendedFieldHeader
-	 * @throws Exception
 	 */
-	public void doShowDialog(ExtendedFieldHeader aExtendedFieldHeader) throws Exception {
+	public void doShowDialog(ExtendedFieldHeader aExtendedFieldHeader) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -861,7 +859,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.extendedFieldHeader);
 	}
 

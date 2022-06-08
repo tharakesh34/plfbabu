@@ -100,9 +100,8 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	 * selected Language object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LanguageDialog(Event event) throws Exception {
+	public void onCreate$window_LanguageDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -337,9 +336,8 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aLanguage
-	 * @throws Exception
 	 */
-	public void doShowDialog(Language aLanguage) throws Exception {
+	public void doShowDialog(Language aLanguage) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -783,10 +781,8 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.language);
 	}
 

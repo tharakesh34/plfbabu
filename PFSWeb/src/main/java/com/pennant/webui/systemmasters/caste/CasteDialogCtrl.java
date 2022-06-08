@@ -97,9 +97,8 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 	 * selected Caste object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CasteDialog(Event event) throws Exception {
+	public void onCreate$window_CasteDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -344,9 +343,8 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCaste
-	 * @throws Exception
 	 */
-	public void doShowDialog(Caste aCaste) throws Exception {
+	public void doShowDialog(Caste aCaste) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -794,10 +792,8 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.caste);
 	}
 

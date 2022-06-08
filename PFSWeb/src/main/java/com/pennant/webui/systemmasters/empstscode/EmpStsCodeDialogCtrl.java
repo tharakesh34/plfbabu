@@ -99,9 +99,8 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	 * selected EmpStsCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_EmpStsCodeDialog(Event event) throws Exception {
+	public void onCreate$window_EmpStsCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -335,9 +334,8 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aEmpStsCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(EmpStsCode aEmpStsCode) throws Exception {
+	public void doShowDialog(EmpStsCode aEmpStsCode) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -770,10 +768,8 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.stsCode);
 	}
 

@@ -108,9 +108,8 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	 * selected Country object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CountryDialog(Event event) throws Exception {
+	public void onCreate$window_CountryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -385,9 +384,8 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCountry
-	 * @throws Exception
 	 */
-	public void doShowDialog(Country aCountry) throws Exception {
+	public void doShowDialog(Country aCountry) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -848,10 +846,8 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.country);
 	}
 

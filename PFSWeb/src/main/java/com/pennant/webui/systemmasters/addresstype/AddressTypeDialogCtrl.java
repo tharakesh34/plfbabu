@@ -106,9 +106,8 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 	 * selected AddressType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AddressTypeDialog(Event event) throws Exception {
+	public void onCreate$window_AddressTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -357,9 +356,8 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAddressType
-	 * @throws Exception
 	 */
-	public void doShowDialog(AddressType aAddressType) throws Exception {
+	public void doShowDialog(AddressType aAddressType) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -806,10 +804,8 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.addressType);
 	}
 
