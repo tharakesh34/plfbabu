@@ -186,9 +186,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * 
 	 * @param extendedFieldHeader
 	 * @param newRecord
-	 * @throws ParseException
 	 */
-	public void renderWindow(ExtendedFieldHeader fieldHeader, boolean newRecord) throws ParseException {
+	public void renderWindow(ExtendedFieldHeader fieldHeader, boolean newRecord) {
 		logger.debug(Literal.ENTERING);
 
 		if (tabHeight > 0) {
@@ -306,11 +305,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param newRecord
 	 * @param columnCount
 	 * @param inputElemetswithParents
-	 * @throws ParseException
 	 */
 	private void processChildElements(boolean newRecord, int columnCount,
-			List<ExtendedFieldDetail> inputElemetswithParents, ExtendedFieldDetail containerElement)
-			throws ParseException {
+			List<ExtendedFieldDetail> inputElemetswithParents, ExtendedFieldDetail containerElement) {
 		List<ExtendedFieldDetail> childlist = getChilds(inputElemetswithParents, containerElement);
 		if (childlist != null && !childlist.isEmpty()) {
 			Collections.sort(childlist, new ExtendedFieldsComparator());
@@ -339,10 +336,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param isReadOnly
 	 * @param newRecord
 	 * @param i
-	 * @throws ParseException
 	 */
 	private void renderComponents(ExtendedFieldDetail detail, int columnCount, Component parentComponent,
-			boolean isReadOnly, boolean newRecord, int i) throws ParseException {
+			boolean isReadOnly, boolean newRecord, int i) {
 
 		if (rowWidth == 0) {
 			rowWidth = 220;// default

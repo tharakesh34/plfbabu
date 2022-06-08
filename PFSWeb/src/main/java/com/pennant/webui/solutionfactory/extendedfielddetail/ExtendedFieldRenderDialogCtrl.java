@@ -98,10 +98,9 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * Method for creating window dynamically
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_ExtendedFieldRenderDialog(Event event) throws Exception {
+	public void onCreate$window_ExtendedFieldRenderDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -162,7 +161,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			this.isCommodity = (boolean) arguments.get("isCommodity");
 		}
 
-		//Set the listbox height...
+		// Set the listbox height...
 		this.listBoxExtendedFieldRenderdetails.setHeight(borderLayoutHeight - 195 + "px");
 
 		doCheckRights();
@@ -216,9 +215,12 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * Method for Double Click of Extended Field Details edition
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onExtendedFieldItemDoubleClicked(Event event) throws Exception {
+	public void onExtendedFieldItemDoubleClicked(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 
 		final Listitem item = this.listBoxExtendedFieldRenderdetails.getSelectedItem();
@@ -286,9 +288,12 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * Method for Rendering Extended field components dynamically onClick New button
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnNew(Event event) throws Exception {
+	public void onClick$btnNew(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 
 		ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
@@ -330,8 +335,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		logger.debug("Leaving");
 	}
 
-	private int getFormat() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException {
+	private int getFormat() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		int ccyFormat = 0;
 		if (getDialogCtrl() != null) {
 			ccyFormat = (int) getDialogCtrl().getClass().getMethod("getCcyFormat").invoke(getDialogCtrl());
@@ -607,7 +611,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 
 					}
 
-					//Setting Value to List Cell
+					// Setting Value to List Cell
 					if (!ExtendedFieldConstants.FIELDTYPE_BOOLEAN.equals(fieldType)) {
 						lc.setLabel(cellValue);
 					}
@@ -631,7 +635,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 					curValue = new BigDecimal(detail.get("UNITPRICE").toString());
 				}
 
-				//Total Number of Units
+				// Total Number of Units
 				totalUnits = totalUnits + noOfUnits;
 				totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
 

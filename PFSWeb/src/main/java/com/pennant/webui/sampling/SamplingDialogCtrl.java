@@ -170,9 +170,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_SamplingDialog(Event event) throws Exception {
+	public void onCreate$window_SamplingDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -499,13 +498,13 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		}
 	}
 
-	public void onClick$userActivityLog(Event event) throws Exception {
+	public void onClick$userActivityLog(Event event) {
 		logger.debug(Literal.ENTERING);
 		doUserActivityLog();
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doUserActivityLog() throws Exception {
+	private void doUserActivityLog() {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> map = new LinkedHashMap<>();
@@ -630,7 +629,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		setEligibilityAmounts(aSampling);
 	}
 
-	public void onCustomerIncomeItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerIncomeItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 		final Listitem item = this.listBoxCustomerIncomeDetails.getSelectedItem();
 
@@ -657,7 +656,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onCustomerExtLiabilityItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerExtLiabilityItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 		// get the selected external liability object
 		final Listitem item = this.listBoxObligations.getSelectedItem();
@@ -934,7 +933,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	// New Button Event Customer Income List
-	public void onClick$btnNew_CustomerIncome(Event event) throws Exception {
+	public void onClick$btnNew_CustomerIncome(Event event) {
 		logger.debug(Literal.ENTERING);
 		CustomerIncome income = new CustomerIncome();
 		income.setNewRecord(true);
@@ -962,7 +961,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	// New Button Event For Obligation
-	public void onClick$btnNew_Obligation(Event event) throws Exception {
+	public void onClick$btnNew_Obligation(Event event) {
 		logger.debug(Literal.ENTERING);
 		CustomerExtLiability laibility = new CustomerExtLiability();
 		laibility.setNewRecord(true);
@@ -1330,7 +1329,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 	}
 
-	public void onCollateralItemDoubleClicked(Event event) throws Exception {
+	public void onCollateralItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		final Listitem item = this.listBoxCollaterals.getSelectedItem();

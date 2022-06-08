@@ -127,9 +127,8 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	 * selected ExtendedFieldDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ExtendedFieldDialog(Event event) throws Exception {
+	public void onCreate$window_ExtendedFieldDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -457,9 +456,8 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aExtendedFieldDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(ExtendedFieldHeader aExtendedFieldHeader) throws Exception {
+	public void doShowDialog(ExtendedFieldHeader aExtendedFieldHeader) {
 		logger.debug("Entering");
 
 		// if aExtendedFieldDetail == null then we opened the Dialog without
@@ -571,13 +569,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	public void doClear() {
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 */
-
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.extendedFieldHeader);
 	}
 
@@ -589,9 +581,6 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 
 	/**
 	 * To show the Message
-	 * 
-	 * @throws Exception
-	 * 
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -616,7 +605,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		this.tabHeading.setErrorMessage("");
 	}
 
-	public void onClick$btnNew_FieldDet(Event event) throws Exception {
+	public void onClick$btnNew_FieldDet(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		ExtendedFieldDetail aExtendedFieldDetail = new ExtendedFieldDetail();
@@ -645,7 +634,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onExtendedFieldItemDoubleClicked(Event event) throws Exception {
+	public void onExtendedFieldItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected invoiceHeader object
@@ -825,7 +814,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		}
 
 		@Override
-		public void render(Listitem item, ExtendedFieldDetail detail, int count) throws Exception {
+		public void render(Listitem item, ExtendedFieldDetail detail, int count) {
 
 			Listcell lc;
 			lc = new Listcell(detail.getFieldName());

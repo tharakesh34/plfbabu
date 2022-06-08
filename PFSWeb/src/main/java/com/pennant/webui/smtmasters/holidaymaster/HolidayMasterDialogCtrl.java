@@ -143,9 +143,8 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * selected HolidayMaster object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_HolidayMasterDialog(Event event) throws Exception {
+	public void onCreate$window_HolidayMasterDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -299,10 +298,8 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * when the "Search" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
-	 * 
 	 */
-	public void onFulfill$holidayCode(Event event) throws Exception {
+	public void onFulfill$holidayCode(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (this.holidayYear.getValue() != null) {
 			showCalendar();
@@ -346,10 +343,8 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * when the leaving the HolidayYear TextBox <br>
 	 * 
 	 * @param event
-	 * 
-	 * @throws Exception
 	 */
-	public void onChange$holidayYear(Event event) throws Exception {
+	public void onChange$holidayYear(Event event) {
 		logger.debug("Entering " + event.toString());
 		showCalendar();
 		holidayDetails.clear();
@@ -463,9 +458,8 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aHolidayMaster
-	 * @throws Exception
 	 */
-	public void doShowDialog(HolidayMaster aHolidayMaster) throws Exception {
+	public void doShowDialog(HolidayMaster aHolidayMaster) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -835,9 +829,6 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 
 	/**
 	 * To show the Message
-	 * 
-	 * @throws Exception
-	 * 
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -874,10 +865,8 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.holidayMaster);
 	}
 

@@ -202,9 +202,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	 * selected ExtendedFieldDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ExtendedFieldDetailDialog(Event event) throws Exception {
+	public void onCreate$window_ExtendedFieldDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -1909,7 +1908,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.extendedFieldDetail);
 	}
 
@@ -2566,9 +2565,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	 * Method for Creating new Slab Rate record on Clicking New Button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnAddFilters(ForwardEvent event) throws Exception {
+	public void onClick$btnAddFilters(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		if (this.listBoxAddtionalFilters.getItems().size() > 4) {
 			MessageUtil.showMessage(Labels.getLabel("label_ExtendedFieldDetailDialog_AdditionalFilters_Add"));
@@ -2600,9 +2598,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	 * To delete row
 	 * 
 	 * @param event (Event)
-	 * @throws Exception
 	 */
-	public void onClick_btnDeleteFilters_Delete(ForwardEvent event) throws Exception {
+	public void onClick_btnDeleteFilters_Delete(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		Button delete = (Button) event.getOrigin().getTarget();

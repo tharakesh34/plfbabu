@@ -146,9 +146,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * selected PFSParameter object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PFSParameterDialog(Event event) throws Exception {
+	public void onCreate$window_PFSParameterDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -449,13 +448,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 
 			this.dateParamValue.setVisible(true);
 			this.dateParamValue.setDisabled(false);
-			try {
-				this.dateParamValue.setValue((Date) dateformat.parse(this.sysParmValue.getValue()));
-			} catch (WrongValueException e) {
-				throw e;
-			} catch (ParseException e) {
-				throw e;
-			}
+			this.dateParamValue.setValue((Date) dateformat.parse(this.sysParmValue.getValue()));
 
 			this.txtParmValue.setDisabled(true);
 			this.comboParmValue.setDisabled(true);
@@ -590,10 +583,9 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aPFSParameter
-	 * @throws Exception
-	 *
+	 * @throws ParseException
 	 */
-	public void doShowDialog(PFSParameter aPFSParameter) throws Exception {
+	public void doShowDialog(PFSParameter aPFSParameter) throws ParseException {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -622,9 +614,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_PFSParameterDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving ");
 	}
 
@@ -702,11 +693,9 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	}
 
 	/**
-	 * Set the components for edit mode. <br>
-	 * 
-	 * @throws ParseException
+	 * Set the components for edit mode.
 	 */
-	private void doEdit() throws ParseException {
+	private void doEdit() {
 		logger.debug("Entering ");
 		this.paramDescSpace.setVisible(true);
 		this.paramValueSpace.setVisible(true);
@@ -1053,10 +1042,8 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.pFSParameter);
 	}
 
