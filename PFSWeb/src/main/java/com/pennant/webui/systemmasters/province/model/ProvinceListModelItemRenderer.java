@@ -66,7 +66,7 @@ public class ProvinceListModelItemRenderer implements ListitemRenderer<Province>
 	}
 
 	@Override
-	public void render(Listitem item, Province province, int count) throws Exception {
+	public void render(Listitem item, Province province, int count) {
 
 		Listcell lc;
 		lc = new Listcell(province.getCPCountry());

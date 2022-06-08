@@ -18,7 +18,7 @@ public class PMAYListModelItemRenderer implements ListitemRenderer<PMAY>, Serial
 	}
 
 	@Override
-	public void render(Listitem item, PMAY pmay, int count) throws Exception {
+	public void render(Listitem item, PMAY pmay, int count) {
 
 		Listcell lc;
 		lc = new Listcell(pmay.getFinReference());

@@ -68,7 +68,7 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, PresentmentHeader presentmentHeader, int count) throws Exception {
+	public void render(Listitem item, PresentmentHeader presentmentHeader, int count) {
 
 		Listcell lc;
 		lc = new Listcell(presentmentHeader.getReference());

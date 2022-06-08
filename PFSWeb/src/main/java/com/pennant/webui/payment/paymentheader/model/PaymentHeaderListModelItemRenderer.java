@@ -69,7 +69,7 @@ public class PaymentHeaderListModelItemRenderer implements ListitemRenderer<Paym
 	}
 
 	@Override
-	public void render(Listitem item, PaymentHeader paymentHeader, int count) throws Exception {
+	public void render(Listitem item, PaymentHeader paymentHeader, int count) {
 
 		Listcell lc;
 		lc = new Listcell(paymentHeader.getFinReference());

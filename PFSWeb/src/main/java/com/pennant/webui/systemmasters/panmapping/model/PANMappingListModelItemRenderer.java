@@ -67,7 +67,7 @@ public class PANMappingListModelItemRenderer implements ListitemRenderer<CustTyp
 	}
 
 	@Override
-	public void render(Listitem item, CustTypePANMapping custTypePANMapping, int count) throws Exception {
+	public void render(Listitem item, CustTypePANMapping custTypePANMapping, int count) {
 
 		Listcell lc;
 		lc = new Listcell(

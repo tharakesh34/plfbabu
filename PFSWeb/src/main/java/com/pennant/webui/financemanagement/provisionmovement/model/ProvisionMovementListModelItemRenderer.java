@@ -68,7 +68,7 @@ public class ProvisionMovementListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, ProvisionMovement provisionMovement, int count) throws Exception {
+	public void render(Listitem item, ProvisionMovement provisionMovement, int count) {
 
 		Listcell lc;
 		lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getProvMovementDate()));

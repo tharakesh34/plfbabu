@@ -67,7 +67,7 @@ public class ProfessionListModelItemRenderer implements ListitemRenderer<Profess
 	}
 
 	@Override
-	public void render(Listitem item, Profession profession, int count) throws Exception {
+	public void render(Listitem item, Profession profession, int count) {
 
 		Listcell lc;
 		lc = new Listcell(profession.getProfessionCode());

@@ -20,7 +20,7 @@ public class QueueAssignmentListModelItemRenderer implements ListitemRenderer<Qu
 	}
 
 	@Override
-	public void render(Listitem item, QueueAssignmentHeader queueAssignment, int count) throws Exception {
+	public void render(Listitem item, QueueAssignmentHeader queueAssignment, int count) {
 
 		Listcell cel = new Listcell("");
 		item.appendChild(cel);

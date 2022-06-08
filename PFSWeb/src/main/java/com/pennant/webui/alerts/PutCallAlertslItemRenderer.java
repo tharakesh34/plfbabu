@@ -25,7 +25,7 @@ public class PutCallAlertslItemRenderer implements ListitemRenderer<FinOption>, 
 	}
 
 	@Override
-	public void render(Listitem item, FinOption finOption, int index) throws Exception {
+	public void render(Listitem item, FinOption finOption, int index) {
 
 		Listcell lc;
 		lc = new Listcell(finOption.getFinReference());

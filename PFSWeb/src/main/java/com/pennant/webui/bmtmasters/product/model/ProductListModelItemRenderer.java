@@ -66,7 +66,7 @@ public class ProductListModelItemRenderer implements ListitemRenderer<Product>, 
 	}
 
 	@Override
-	public void render(Listitem item, Product product, int count) throws Exception {
+	public void render(Listitem item, Product product, int count) {
 
 		Listcell lc;
 		lc = new Listcell(product.getProductCode());

@@ -70,7 +70,7 @@ public class ProvisionListModelItemRenderer implements ListitemRenderer<Provisio
 	}
 
 	@Override
-	public void render(Listitem item, Provision provision, int count) throws Exception {
+	public void render(Listitem item, Provision provision, int count) {
 
 		int format = CurrencyUtil.getFormat(provision.getFinCcy());
 

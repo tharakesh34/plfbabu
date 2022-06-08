@@ -66,7 +66,7 @@ public class QueryCategoryListModelItemRenderer implements ListitemRenderer<Quer
 	}
 
 	@Override
-	public void render(Listitem item, QueryCategory queryCategory, int count) throws Exception {
+	public void render(Listitem item, QueryCategory queryCategory, int count) {
 
 		Listcell lc;
 		lc = new Listcell(queryCategory.getCode());
