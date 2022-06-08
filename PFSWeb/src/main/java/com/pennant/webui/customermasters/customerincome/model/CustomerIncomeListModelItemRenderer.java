@@ -71,7 +71,7 @@ public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<Cus
 	}
 
 	@Override
-	public void render(Listitem item, CustomerIncome customerIncome, int count) throws Exception {
+	public void render(Listitem item, CustomerIncome customerIncome, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(String.valueOf(customerIncome.getCustCif())));

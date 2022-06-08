@@ -66,7 +66,7 @@ public class CostOfFundCodeListModelItemRenderer implements ListitemRenderer<Cos
 	}
 
 	@Override
-	public void render(Listitem item, CostOfFundCode costOfFundCode, int count) throws Exception {
+	public void render(Listitem item, CostOfFundCode costOfFundCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(costOfFundCode.getCofCode());

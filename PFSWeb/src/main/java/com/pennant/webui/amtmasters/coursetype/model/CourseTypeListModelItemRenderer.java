@@ -66,7 +66,7 @@ public class CourseTypeListModelItemRenderer implements ListitemRenderer<CourseT
 	}
 
 	@Override
-	public void render(Listitem item, CourseType courseType, int count) throws Exception {
+	public void render(Listitem item, CourseType courseType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(courseType.getCourseTypeCode());

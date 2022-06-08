@@ -68,7 +68,7 @@ public class CustomerAdditionalDetailListModelItemRenderer
 	private static final long serialVersionUID = -8502084612633186032L;
 
 	@Override
-	public void render(Listitem item, CustomerAdditionalDetail customerAdditionalDetail, int count) throws Exception {
+	public void render(Listitem item, CustomerAdditionalDetail customerAdditionalDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customerAdditionalDetail.getLovDescCustCIF());

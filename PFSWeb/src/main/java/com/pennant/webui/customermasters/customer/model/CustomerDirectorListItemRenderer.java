@@ -42,7 +42,7 @@ public class CustomerDirectorListItemRenderer implements ListitemRenderer<Direct
 	}
 
 	@Override
-	public void render(Listitem item, DirectorDetail detail, int count) throws Exception {
+	public void render(Listitem item, DirectorDetail detail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(detail.getFirstName());

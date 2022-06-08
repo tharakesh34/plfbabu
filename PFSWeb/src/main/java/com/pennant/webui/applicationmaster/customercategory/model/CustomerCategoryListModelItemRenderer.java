@@ -67,7 +67,7 @@ public class CustomerCategoryListModelItemRenderer implements ListitemRenderer<C
 	}
 
 	@Override
-	public void render(Listitem item, CustomerCategory customerCategory, int count) throws Exception {
+	public void render(Listitem item, CustomerCategory customerCategory, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customerCategory.getCustCtgCode());

@@ -65,7 +65,7 @@ public class CustomerLimitListModelItemRenderer implements ListitemRenderer<Cust
 	}
 
 	@Override
-	public void render(Listitem item, CustomerLimit customerLimit, int count) throws Exception {
+	public void render(Listitem item, CustomerLimit customerLimit, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customerLimit.getCustCIF().trim());

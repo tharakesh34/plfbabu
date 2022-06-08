@@ -70,7 +70,7 @@ public class CommitmentListModelItemRenderer implements ListitemRenderer<Commitm
 	}
 
 	@Override
-	public void render(Listitem item, Commitment commitment, int count) throws Exception {
+	public void render(Listitem item, Commitment commitment, int count) {
 		Listcell lc;
 
 		int formatter = CurrencyUtil.getFormat(commitment.getCmtCcy());

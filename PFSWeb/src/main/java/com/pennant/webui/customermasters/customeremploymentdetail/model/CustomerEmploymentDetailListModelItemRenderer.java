@@ -67,7 +67,7 @@ public class CustomerEmploymentDetailListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, CustomerEmploymentDetail customerEmploymentDetail, int count) throws Exception {
+	public void render(Listitem item, CustomerEmploymentDetail customerEmploymentDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customerEmploymentDetail.getLovDescCustCIF());

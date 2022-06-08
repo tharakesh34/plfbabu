@@ -67,7 +67,7 @@ public class CorpRelationCodeListModelItemRenderer implements ListitemRenderer<C
 	}
 
 	@Override
-	public void render(Listitem item, CorpRelationCode corpRelationCode, int count) throws Exception {
+	public void render(Listitem item, CorpRelationCode corpRelationCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(corpRelationCode.getCorpRelationCode());

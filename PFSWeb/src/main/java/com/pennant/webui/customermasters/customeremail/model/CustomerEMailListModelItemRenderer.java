@@ -67,7 +67,7 @@ public class CustomerEMailListModelItemRenderer implements ListitemRenderer<Cust
 	}
 
 	@Override
-	public void render(Listitem item, CustomerEMail customerEMail, int count) throws Exception {
+	public void render(Listitem item, CustomerEMail customerEMail, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(String.valueOf(customerEMail.getLovDescCustCIF())));

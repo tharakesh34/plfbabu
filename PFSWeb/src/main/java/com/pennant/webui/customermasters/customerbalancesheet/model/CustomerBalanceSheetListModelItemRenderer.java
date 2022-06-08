@@ -69,7 +69,7 @@ public class CustomerBalanceSheetListModelItemRenderer implements ListitemRender
 	}
 
 	@Override
-	public void render(Listitem item, CustomerBalanceSheet data, int count) throws Exception {
+	public void render(Listitem item, CustomerBalanceSheet data, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(String.valueOf(data.getLovDescCustCIF())));

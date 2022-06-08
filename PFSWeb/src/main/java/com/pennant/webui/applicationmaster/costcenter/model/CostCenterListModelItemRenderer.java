@@ -66,7 +66,7 @@ public class CostCenterListModelItemRenderer implements ListitemRenderer<CostCen
 	}
 
 	@Override
-	public void render(Listitem item, CostCenter costCenter, int count) throws Exception {
+	public void render(Listitem item, CostCenter costCenter, int count) {
 
 		Listcell lc;
 		lc = new Listcell(costCenter.getCostCenterCode());
