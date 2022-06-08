@@ -76,12 +76,9 @@ public class SearchFilterControl implements Serializable {
 	/**
 	 * Return Filter object
 	 * 
-	 * @param fieldName
-	 *            Name of the column to filter on
-	 * @param value
-	 *            The value to compare the column with
-	 * @param sortOperator
-	 *            The type of comparison to do between the column and the value
+	 * @param fieldName    Name of the column to filter on
+	 * @param value        The value to compare the column with
+	 * @param sortOperator The type of comparison to do between the column and the value
 	 * @return Filer
 	 */
 	public static Filter getFilter(String fieldName, Object value, Listbox sortOperator) {
@@ -228,7 +225,7 @@ public class SearchFilterControl implements Serializable {
 		}
 
 		@Override
-		public void render(Listitem item, ValueLabel valueLabel, int count) throws Exception {
+		public void render(Listitem item, ValueLabel valueLabel, int count) {
 
 			final Listcell lc = new Listcell(valueLabel.getLabel());
 			lc.setParent(item);
