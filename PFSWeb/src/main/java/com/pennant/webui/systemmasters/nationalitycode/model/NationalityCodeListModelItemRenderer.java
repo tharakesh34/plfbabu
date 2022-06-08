@@ -67,7 +67,7 @@ public class NationalityCodeListModelItemRenderer implements ListitemRenderer<Na
 	}
 
 	@Override
-	public void render(Listitem item, NationalityCode nationalityCode, int count) throws Exception {
+	public void render(Listitem item, NationalityCode nationalityCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(nationalityCode.getNationalityCode());

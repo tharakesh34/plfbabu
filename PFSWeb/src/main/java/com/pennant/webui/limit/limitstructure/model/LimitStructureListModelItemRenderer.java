@@ -63,7 +63,7 @@ public class LimitStructureListModelItemRenderer implements ListitemRenderer<Lim
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, LimitStructure limitStructure, int count) throws Exception {
+	public void render(Listitem item, LimitStructure limitStructure, int count) {
 
 		Listcell lc;
 		lc = new Listcell(limitStructure.getStructureCode());

@@ -67,7 +67,7 @@ public class MaritalStatusCodeListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, MaritalStatusCode maritalStatusCode, int count) throws Exception {
+	public void render(Listitem item, MaritalStatusCode maritalStatusCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(maritalStatusCode.getMaritalStsCode());

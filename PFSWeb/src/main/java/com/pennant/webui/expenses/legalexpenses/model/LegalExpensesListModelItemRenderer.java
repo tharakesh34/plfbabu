@@ -61,7 +61,7 @@ public class LegalExpensesListModelItemRenderer implements ListitemRenderer<Lega
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, LegalExpenses legalExpenses, int count) throws Exception {
+	public void render(Listitem item, LegalExpenses legalExpenses, int count) {
 		Listcell lc;
 		lc = new Listcell(legalExpenses.getExpReference());
 		lc.setParent(item);

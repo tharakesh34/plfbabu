@@ -67,7 +67,7 @@ public class MailTemplateListModelItemRenderer implements ListitemRenderer<MailT
 	private static final long serialVersionUID = -1086618969673027251L;
 
 	@Override
-	public void render(Listitem item, MailTemplate mailTemplate, int count) throws Exception {
+	public void render(Listitem item, MailTemplate mailTemplate, int count) {
 
 		Listcell lc;
 		Checkbox cb;

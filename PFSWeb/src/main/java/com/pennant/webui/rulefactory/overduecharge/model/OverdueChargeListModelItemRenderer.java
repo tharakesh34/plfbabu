@@ -67,7 +67,7 @@ public class OverdueChargeListModelItemRenderer implements ListitemRenderer<Over
 	}
 
 	@Override
-	public void render(Listitem item, OverdueCharge overdueCharge, int count) throws Exception {
+	public void render(Listitem item, OverdueCharge overdueCharge, int count) {
 
 		Listcell lc;
 		lc = new Listcell(overdueCharge.getODCRuleCode());

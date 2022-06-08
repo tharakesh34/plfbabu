@@ -81,7 +81,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 	}
 
 	@Override
-	public void render(Listitem item, Mandate mandate, int count) throws Exception {
+	public void render(Listitem item, Mandate mandate, int count) {
 		if (multiselect) {
 			Listbox listbox = (Listbox) item.getParent();
 			listbox.setMultiple(true);

@@ -66,7 +66,7 @@ public class ManualAdviseListModelItemRenderer implements ListitemRenderer<Manua
 	}
 
 	@Override
-	public void render(Listitem item, ManualAdvise manualAdvise, int count) throws Exception {
+	public void render(Listitem item, ManualAdvise manualAdvise, int count) {
 
 		Listcell lc;
 		lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getManualAdvisePropertyTypes(),

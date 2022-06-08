@@ -64,7 +64,7 @@ public class NPABucketListModelItemRenderer implements ListitemRenderer<NPABucke
 	}
 
 	@Override
-	public void render(Listitem item, NPABucket nPABucket, int count) throws Exception {
+	public void render(Listitem item, NPABucket nPABucket, int count) {
 
 		Listcell lc;
 		lc = new Listcell(nPABucket.getBucketCode());

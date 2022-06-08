@@ -67,7 +67,7 @@ public class LimitDetailListModelItemRenderer implements ListitemRenderer<LimitH
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, LimitHeader limitHeader, int count) throws Exception {
+	public void render(Listitem item, LimitHeader limitHeader, int count) {
 
 		Listcell lc;
 		Label lb;

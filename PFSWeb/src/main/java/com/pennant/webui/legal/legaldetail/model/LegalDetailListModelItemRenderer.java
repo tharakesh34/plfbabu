@@ -68,7 +68,7 @@ public class LegalDetailListModelItemRenderer implements ListitemRenderer<LegalD
 	}
 
 	@Override
-	public void render(Listitem item, LegalDetail legalDetail, int count) throws Exception {
+	public void render(Listitem item, LegalDetail legalDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(legalDetail.getLoanReference());

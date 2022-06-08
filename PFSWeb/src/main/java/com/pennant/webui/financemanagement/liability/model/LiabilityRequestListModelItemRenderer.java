@@ -65,7 +65,7 @@ public class LiabilityRequestListModelItemRenderer implements ListitemRenderer<L
 	private static final long serialVersionUID = -3191789325449044840L;
 
 	@Override
-	public void render(Listitem item, LiabilityRequest liabilityRequest, int count) throws Exception {
+	public void render(Listitem item, LiabilityRequest liabilityRequest, int count) {
 
 		Listcell lc;
 		lc = new Listcell(liabilityRequest.getFinType());

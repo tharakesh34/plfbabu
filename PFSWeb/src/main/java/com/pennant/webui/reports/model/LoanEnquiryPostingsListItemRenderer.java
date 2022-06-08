@@ -28,7 +28,7 @@ public class LoanEnquiryPostingsListItemRenderer implements ListitemRenderer<Obj
 	}
 
 	@Override
-	public void render(Listitem item, Object data, int count) throws Exception {
+	public void render(Listitem item, Object data, int count) {
 
 		if (item instanceof Listgroup) {
 			Object groupData = (Object) data;

@@ -67,7 +67,7 @@ public class NPABucketConfigurationListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, NPABucketConfiguration nPABucketConfiguration, int count) throws Exception {
+	public void render(Listitem item, NPABucketConfiguration nPABucketConfiguration, int count) {
 
 		Listcell lc;
 		lc = new Listcell(nPABucketConfiguration.getProductCode());

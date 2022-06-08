@@ -71,7 +71,7 @@ public class OverdueChargeRecoveryListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, OverdueChargeRecovery overdueChargeRecovery, int count) throws Exception {
+	public void render(Listitem item, OverdueChargeRecovery overdueChargeRecovery, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(

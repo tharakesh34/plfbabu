@@ -65,7 +65,7 @@ public class NPAProvisionHeaderListModelItemRenderer implements ListitemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, NPAProvisionHeader header, int count) throws Exception {
+	public void render(Listitem item, NPAProvisionHeader header, int count) {
 
 		Listcell lc;
 		lc = new Listcell(header.getEntity() + " - " + header.getEntityName());
