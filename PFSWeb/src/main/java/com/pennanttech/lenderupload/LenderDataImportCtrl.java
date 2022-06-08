@@ -154,9 +154,9 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 	 * when the "Upload" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnUpload(UploadEvent event) throws IOException {
 		logger.debug(Literal.ENTERING);
 		fileName.setText("");
 		Media media = event.getMedia();
@@ -175,7 +175,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		if (StringUtils.isBlank(fileName.getValue())) {
 			MessageUtil.showError("Please upload a excel file");
 		} else {
@@ -213,9 +213,8 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 	 * when the "refresh" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doResetData();
@@ -269,9 +268,8 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 	 * reading whole excel and calling other methods to prepare LenderData object and Save the LenderData .
 	 * 
 	 * @return String
-	 * @throws Exception
 	 */
-	public void doProcessLenders(String fName) throws Exception {
+	public void doProcessLenders(String fName) {
 		logger.debug("Entering");
 		List<ExtendedFieldHeader> extendedFieldHeader = null;
 		List<LenderDataUpload> lenderDatas = new ArrayList<>();
