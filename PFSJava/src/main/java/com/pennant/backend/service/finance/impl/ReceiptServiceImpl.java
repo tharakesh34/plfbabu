@@ -5796,7 +5796,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			doProcessReceipt(rd, receiptPurpose);
 		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
-			setError(schdData, "9998", e.getMessage());
+			setError(schdData, "9999", e.getMessage());
 			logger.info(Literal.LEAVING);
 			return;
 		} catch (Exception e) {
@@ -7248,6 +7248,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	private void setError(FinScheduleData schdData, String errorCode, String... parms) {
 		ErrorDetail error = ErrorUtil.getError(errorCode, parms);
+
+		if ("9999".equals(errorCode) && parms.length > 0) {
+			error.setMessage(parms[0]);
+		}
 
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("\n");
