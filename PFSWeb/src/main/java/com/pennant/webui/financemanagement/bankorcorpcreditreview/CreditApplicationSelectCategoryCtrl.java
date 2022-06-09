@@ -152,10 +152,6 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 		fillComboBox(custCategory, "", PennantAppUtil.getcustCtgCodeList(), "");
 		fillComboBox(auditPeriod, "12", PennantStaticListUtil.getPeriodList(), "");
 		this.auditPeriod.setDisabled(true);
-		// if (!this.auditYear.isReadonly()) {
-		// this.auditYear.setConstraint(new
-		// IntValidator(4,Labels.getLabel("label_CreditApplicationReviewDialog_auditPeriod.value"), false));
-		// }
 		this.customerCategoryRow.setVisible(false);
 		this.lovDescCustCIF.setVisible(true);
 		this.window_CreditRevSelectCategory.doModal();
