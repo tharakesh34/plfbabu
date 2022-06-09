@@ -18,7 +18,7 @@ public class LoanTypeKnockOffModelItemRender implements ListitemRenderer<FinType
 	}
 
 	@Override
-	public void render(Listitem item, FinTypeKnockOff data, int index) throws Exception {
+	public void render(Listitem item, FinTypeKnockOff data, int index) {
 		Listcell lc;
 		lc = new Listcell(data.getLoanType());
 		lc.setParent(item);

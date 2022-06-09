@@ -1,6 +1,7 @@
 package com.pennant.webui.dedup.dedupparm;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -357,7 +358,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			setUserAction(0);
 			onClose();
 
@@ -374,7 +375,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			setUserAction(0);
 			setObject(null);
 			boolean iseleceted = false;
@@ -431,7 +432,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 
 		}
 
-		private boolean validateUserMultiSelection() throws InterruptedException {
+		private boolean validateUserMultiSelection() {
 			int userMultiselect = 0;
 			for (int i = 0; i < listbox.getItems().size(); i++) {
 				Listitem listitem = listbox.getItems().get(i);
@@ -462,7 +463,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			logger.debug("Entering : proceed Event");
 			setUserAction(1);
 			List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
@@ -510,7 +511,8 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void render(Listitem item, Object data, int count) throws Exception {
+		public void render(Listitem item, Object data, int count)
+				throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 			String fieldValue = "";
 			String currentFieldValue = "";
 			Date dateFieldValue = new Date();
@@ -626,7 +628,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			final PagingEvent pe = (PagingEvent) event;
 			final int pageNo = pe.getActivePage();
 			final int start = pageNo * getPageSize();

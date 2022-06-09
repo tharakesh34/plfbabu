@@ -20,7 +20,7 @@ public class TargetdetailListModelItemRender implements ListitemRenderer<TargetD
 	}
 
 	@Override
-	public void render(Listitem item, TargetDetail targetDetail, int count) throws Exception {
+	public void render(Listitem item, TargetDetail targetDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(targetDetail.getTargetCode());

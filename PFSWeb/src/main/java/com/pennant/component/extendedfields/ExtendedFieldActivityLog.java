@@ -71,9 +71,8 @@ public class ExtendedFieldActivityLog extends GFCBaseCtrl<Object> implements Com
 	 * selected record data like moduleCode,keyValue,label and value in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ExtendedFieldActivityLog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ExtendedFieldActivityLog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 			// Get the arguments.
@@ -207,9 +206,8 @@ public class ExtendedFieldActivityLog extends GFCBaseCtrl<Object> implements Com
 	 * 
 	 * @param userNotesList
 	 * @return
-	 * @throws Exception
 	 */
-	public Listbox renderNotes(List<Notes> userNotesList) throws Exception {
+	public Listbox renderNotes(List<Notes> userNotesList) {
 		logger.debug(Literal.ENTERING);
 
 		// Retrieve Notes List By Module Reference

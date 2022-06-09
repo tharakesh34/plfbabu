@@ -1,6 +1,7 @@
 package com.pennant.webui.dedup.dedupparm;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -85,8 +86,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
 	public static Object show(Component parent, List<?> dedupList, String dedupFields, FinanceDedup dedup,
@@ -197,7 +197,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 		grid.appendChild(columns);
 
 		setFinanceDedup(dedup);
-		//Rows Preparation
+		// Rows Preparation
 		Rows rows = new Rows();
 		grid.appendChild(rows);
 
@@ -307,7 +307,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			setUserAction(0);
 			onClose();
 
@@ -324,7 +324,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			setUserAction(0);
 			setObject(null);
 			onClose();
@@ -341,7 +341,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			setUserAction(1);
 			if (!isCustomerDedup) {
 				List<FinanceDedup> dedupList = new ArrayList<FinanceDedup>();
@@ -394,7 +394,8 @@ public class ShowDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void render(Listitem item, Object data, int count) throws Exception {
+		public void render(Listitem item, Object data, int count)
+				throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 			if (item instanceof Listgroup) {
 				String fieldValue = "";
 				Date dateFieldValue = new Date();
@@ -462,19 +463,20 @@ public class ShowDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void render(Listitem item, Object data, int count) throws Exception {
+		public void render(Listitem item, Object data, int count)
+				throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 			String fieldValue = "";
 			Date dateFieldValue = new Date();
 			FinanceDedup dedup = (FinanceDedup) data;
 			String ruleFields[] = StringUtils.trimToEmpty(dedup.getRules()).split(",");
-			//String OverddenRules[]=(StringUtils.trimToEmpty(dedup.getDedupList()).split(","));
+			// String OverddenRules[]=(StringUtils.trimToEmpty(dedup.getDedupList()).split(","));
 
 			String currentFieldValue = "";
 
 			for (int j = 0; j < fieldString.length; j++) {
 				final Listcell lc;
 				String fieldMethod = "get" + fieldString[j].substring(0, 1).toUpperCase() + fieldString[j].substring(1);
-				// for String Data type 
+				// for String Data type
 				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
 
 					fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
@@ -487,9 +489,9 @@ public class ShowDedupListBox extends Window implements Serializable {
 					if (StringUtils.trimToEmpty(fieldValue).endsWith(",")) {
 						fieldValue = fieldValue.substring(0, fieldValue.length() - 1);
 					}
-					//Rule is Overridden or not 
+					// Rule is Overridden or not
 
-					//if Stage is Empty then set Stage as Active.
+					// if Stage is Empty then set Stage as Active.
 					if (fieldMethod.equals("get" + Labels.getLabel("label_FinanceDeDupListStageDesc"))) {
 						if (fieldValue == null || StringUtils.isEmpty(fieldValue)) {
 							fieldValue = Labels.getLabel("label_FinanceDeDupList_ActiveStage");
@@ -507,7 +509,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 							lc.setStyle("font-weight:bold;color:green;");
 						}
 					}
-					// Matches fields show with color  	
+					// Matches fields show with color
 					for (int k = 0; k < ruleFields.length; k++) {
 						if (fieldMethod.equalsIgnoreCase("get" + ruleFields[k])) {
 							if (StringUtils.equalsIgnoreCase(fieldValue, StringUtils.trimToEmpty(currentFieldValue))) {
@@ -516,7 +518,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 						}
 					}
 
-					// For Date  Data type  
+					// For Date Data type
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
 					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
 					lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
@@ -532,7 +534,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 							}
 						}
 					}
-					// For Decimal values    
+					// For Decimal values
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(BigDecimal.class)) {
 
 					BigDecimal decfieldValue = (BigDecimal) data.getClass().getMethod(fieldMethod).invoke(data);
@@ -567,7 +569,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			final PagingEvent pe = (PagingEvent) event;
 			final int pageNo = pe.getActivePage();
 			final int start = pageNo * getPageSize();
