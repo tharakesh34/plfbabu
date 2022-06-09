@@ -55,7 +55,6 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -325,16 +324,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			logger.info("Initiating Import Process For the HeaderID{}", ruh.getId());
 
 			new Thread(() -> {
-				try {
-					receiptUploadHeaderService.initiateImport(ruh, workbook,
-							ReceiptUploadHeaderListCtrl.importStatusMap, fileImport);
-				} catch (AppException e) {
-					receiptUploadHeaderService.updateImportFail(ruh);
-					MessageUtil.showError(e.getMessage());
-				} catch (Exception e) {
-					receiptUploadHeaderService.updateImportFail(ruh);
-				}
-
+				receiptUploadHeaderService.initiateImport(ruh, workbook, ReceiptUploadHeaderListCtrl.importStatusMap,
+						fileImport);
 			}).start();
 
 			ReceiptUploadHeaderListCtrl.importStatusMap.put(ruh.getId(), 0);
@@ -343,9 +334,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			Clients.showNotification("Receipt Import is in Progress", "info", null, null, 2000);
 			closeDialog();
 
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			this.errorMsg = e.getMessage();
 			doResetData();
 			MessageUtil.showError(e);

@@ -26,7 +26,6 @@
 
 package com.pennant.backend.service.finance.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -54,10 +53,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
@@ -563,35 +558,31 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		rut.setImportStatusMap(statusMap);
 		rut.setTotalProcesses(5);
 
-		validateFileData(workbook, ruh, rudList, rut);
-
-		prepareAllocations(workbook, uadList, rut);
-
-		linkReceiptAllocations(rudList, uadList, rut);
-
-		ruh.setBefImage(ruh);
-
-		validateReceipt(ruh, rudList, rut);
-
-		ruh.setReceiptUploadList(rudList);
-
 		try {
-			fileImport.backUpFile();
-		} catch (IOException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			validateFileData(workbook, ruh, rudList, rut);
 
-		saveRecord(ruh, rut);
-		statusMap.remove(ruh.getId());
+			prepareAllocations(workbook, uadList, rut);
+
+			linkReceiptAllocations(rudList, uadList, rut);
+
+			ruh.setBefImage(ruh);
+
+			validateReceipt(ruh, rudList, rut);
+
+			ruh.setReceiptUploadList(rudList);
+
+			fileImport.backUpFile();
+
+			saveRecord(ruh, rut);
+
+			statusMap.remove(ruh.getId());
+		} catch (Exception e) {
+			updateImportFail(ruh);
+		}
 	}
 
 	public void updateImportFail(ReceiptUploadHeader ruh) {
-		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus transactionStatus = transactionManager.getTransaction(txDef);
 		updateUploadProgress(ruh.getId(), ReceiptUploadConstants.RECEIPT_IMPORTFAILED);
-		transactionManager.commit(transactionStatus);
 	}
 
 	private void saveRecord(ReceiptUploadHeader ruh, ReceiptUploadTracker rut) {
@@ -706,6 +697,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 
 			if (finID == null) {
 				setErrorToRUD(rud, "RU0004", rud.getReference());
+				rudList.add(rud);
 				continue;
 			} else {
 				rud.setFinID(finID);
