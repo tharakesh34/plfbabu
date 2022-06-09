@@ -1101,6 +1101,7 @@ public class ReceiptCalculator {
 					true);
 			if (TDSCalculator.isTDSApplicable(fm, lppFeeType) && !rd.getReceiptHeader().isExcldTdsCal()) {
 				if (ObjectUtils.isNotEmpty(finODPenaltyRate) && finODPenaltyRate.isoDTDSReq()) {
+					tdsAmount = getTDSAmount(fm, lpp.getDueAmount());
 					lpp.setPercTds(tdsPerc);
 					lpp.setTdsReq(true);
 					lpp.setTdsDue(tdsAmount);
@@ -1873,13 +1874,12 @@ public class ReceiptCalculator {
 			for (ReceiptAllocationDetail alloc : rd.getReceiptHeader().getAllocations()) {
 				if (Allocation.ODC.equals(alloc.getAllocationType()) && actualOdPaid.compareTo(BigDecimal.ZERO) > 0
 						&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(rd.getLppFeeType().getTaxComponent())) {
-					calAllocationPaidGST(fd, actualOdPaid, alloc, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
 					String taxType = FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE;
 					calAllocationPaidGST(fd, actualOdPaid, alloc, taxType);
 					TaxAmountSplit taxSplit = calculateGST(fd, taxType, actualOdPaid);
 					actualOdPaid = actualOdPaid.add(taxSplit.gettGST());
 					alloc.setTotalPaid(actualOdPaid);
-					alloc.setPaidAmount(actualOdPaid.subtract(alloc.getTdsPaidNow()));
+					alloc.setPaidAmount(actualOdPaid.subtract(alloc.getTdsPaid()));
 				}
 			}
 

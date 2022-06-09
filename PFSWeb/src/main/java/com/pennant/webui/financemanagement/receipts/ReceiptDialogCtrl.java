@@ -3530,10 +3530,19 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		boolean isManAdv = false;
 		doRemoveValidation();
 		doClearMessage();
+		
+		BigDecimal tdsAmt = receiptData.getReceiptHeader().getTdsAmount();
 
-		for (int i = 0; i < allocationList.size(); i++) {
-			createAllocateItem(allocationList.get(i), isManAdv, label, i);
+		BigDecimal totalTDS = tdsAmt;
+		int i = 0;
+		for (ReceiptAllocationDetail allocate : allocationList) {
+			createAllocateItem(allocate, isManAdv, label, ++i);
+			if (tdsAmt.compareTo(BigDecimal.ZERO) == 0) {
+				totalTDS = totalTDS.add(allocate.getTdsPaid());
+			}
 		}
+
+		receiptData.getReceiptHeader().setTdsAmount(totalTDS);
 
 		addDueFooter(formatter);
 		if (receiptData.getRemBal() != BigDecimal.ZERO) {
@@ -3542,13 +3551,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (receiptData.getPaidNow()
 				.compareTo(receiptData.getReceiptHeader().getReceiptAmount()
-						.add(receiptData.getReceiptHeader().getTdsAmount()).add(receiptData.getExcessAvailable())) > 0
+						.add(totalTDS).add(receiptData.getExcessAvailable())) > 0
 				&& !receiptData.isForeClosure()) {
 			ErrorDetail errorDetails = null;
 			String[] valueParm = new String[1];
 			String[] errParm = new String[2];
-			errParm[0] = PennantApplicationUtil.amountFormate(receiptData.getReceiptHeader().getReceiptAmount()
-					.add(receiptData.getReceiptHeader().getTdsAmount()).add(receiptData.getExcessAvailable()),
+			errParm[0] = PennantApplicationUtil.amountFormate(
+					receiptData.getReceiptHeader().getReceiptAmount().add(totalTDS).add(receiptData.getExcessAvailable()),
 					PennantConstants.defaultCCYDecPos);
 			errParm[1] = PennantApplicationUtil.amountFormate(receiptData.getPaidNow(),
 					PennantConstants.defaultCCYDecPos);
@@ -3600,8 +3609,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void createAllocateItem(ReceiptAllocationDetail allocate, boolean isManAdv, String desc, int idx) {
 		logger.debug(Literal.ENTERING);
 		String allocateMthd = getComboboxValue(this.allocationMethod);
-
-		String allocationtype = receiptData.getReceiptHeader().getAllocationType();
 
 		if (Allocation.NPFT.equals(allocate.getAllocationType())
 				|| Allocation.FUT_NPFT.equals(allocate.getAllocationType())) {
