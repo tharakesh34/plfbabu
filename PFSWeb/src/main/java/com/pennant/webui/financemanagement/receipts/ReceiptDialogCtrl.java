@@ -3536,10 +3536,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal totalTDS = tdsAmt;
 		int i = 0;
 		for (ReceiptAllocationDetail allocate : allocationList) {
-			createAllocateItem(allocate, isManAdv, label, ++i);
+			createAllocateItem(allocate, isManAdv, label, i);
 			if (tdsAmt.compareTo(BigDecimal.ZERO) == 0) {
 				totalTDS = totalTDS.add(allocate.getTdsPaid());
 			}
+			i++;
 		}
 
 		receiptData.getReceiptHeader().setTdsAmount(totalTDS);
@@ -3549,16 +3550,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			addExcessAmt();
 		}
 
-		if (receiptData.getPaidNow()
-				.compareTo(receiptData.getReceiptHeader().getReceiptAmount()
-						.add(totalTDS).add(receiptData.getExcessAvailable())) > 0
-				&& !receiptData.isForeClosure()) {
+		if (receiptData.getPaidNow().compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(totalTDS)
+				.add(receiptData.getExcessAvailable())) > 0 && !receiptData.isForeClosure()) {
 			ErrorDetail errorDetails = null;
 			String[] valueParm = new String[1];
 			String[] errParm = new String[2];
-			errParm[0] = PennantApplicationUtil.amountFormate(
-					receiptData.getReceiptHeader().getReceiptAmount().add(totalTDS).add(receiptData.getExcessAvailable()),
-					PennantConstants.defaultCCYDecPos);
+			errParm[0] = PennantApplicationUtil.amountFormate(receiptData.getReceiptHeader().getReceiptAmount()
+					.add(totalTDS).add(receiptData.getExcessAvailable()), PennantConstants.defaultCCYDecPos);
 			errParm[1] = PennantApplicationUtil.amountFormate(receiptData.getPaidNow(),
 					PennantConstants.defaultCCYDecPos);
 			valueParm[0] = "";

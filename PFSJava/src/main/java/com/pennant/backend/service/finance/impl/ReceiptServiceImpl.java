@@ -5135,6 +5135,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setReceiptDate(fm.getAppDate());
 		rd.setAllocList(rch.getAllocations());
 		rd.setForeClosure(rd.isForeClosure());
+		rd.setActualOdPaid(BigDecimal.ZERO);
 
 		if (!AllocationType.MANUAL.equals(rch.getAllocationType())) {
 			rd = receiptCalculator.recalAutoAllocation(rd, false);
@@ -5187,6 +5188,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			allocate.setWaivedGST(BigDecimal.ZERO);
 			allocate.setTdsPaid(BigDecimal.ZERO);
 			allocate.setTdsWaived(BigDecimal.ZERO);
+			
+			rd.setActualOdPaid(BigDecimal.ZERO);
 		}
 
 		receiptCalculator.initiateReceipt(rd, false);
