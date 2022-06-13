@@ -22,6 +22,7 @@ import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> implements ExtendedFieldRenderDAO {
 	private static Logger logger = LogManager.getLogger(ExtendedFieldRenderDAOImpl.class);
@@ -32,30 +33,24 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 
 	@Override
 	public ExtendedFieldRender getExtendedFieldDetails(String reference, int seqNo, String tableName, String type) {
-		ExtendedFieldRender fieldRender = null;
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("SeqNo", seqNo);
 
-		StringBuilder selectSql = new StringBuilder("Select Reference, SeqNo, ");
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId from ");
-		selectSql.append(tableName);
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" where  Reference =:Reference AND SeqNo = :SeqNo ");
+		StringBuilder sql = new StringBuilder("select Reference, SeqNo, Version, LastMntOn, LastMntBy, ");
+		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId from ");
+		sql.append(tableName);
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" where  Reference = :Reference AND SeqNo = :SeqNo ");
 
 		RowMapper<ExtendedFieldRender> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldRender.class);
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		try {
-			fieldRender = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in {} for the specified Reference >> {} and Seq No >> {}", tableName,
-					reference, seqNo);
-			fieldRender = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return fieldRender;
 	}
 
 	/**
