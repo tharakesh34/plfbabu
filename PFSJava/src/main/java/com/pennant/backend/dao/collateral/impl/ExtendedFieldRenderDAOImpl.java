@@ -20,6 +20,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -58,8 +60,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 */
 	@Override
 	public List<Map<String, Object>> getExtendedFieldMap(String reference, String tableName, String type) {
-		List<Map<String, Object>> renderMap = null;
-
 		type = StringUtils.trimToEmpty(type).toLowerCase();
 
 		StringBuilder sql = new StringBuilder();
@@ -98,14 +98,8 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", reference);
-		try {
-			renderMap = this.jdbcTemplate.queryForList(sql.toString(), source);
-		} catch (Exception e) {
-			logger.warn("Records not found in {}{} for the reference : {}", tableName, type, reference);
-			renderMap = new ArrayList<>();
-		}
 
-		return renderMap;
+		return this.jdbcTemplate.queryForList(sql.toString(), source);
 	}
 
 	/**
@@ -113,8 +107,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 */
 	@Override
 	public List<Map<String, Object>> getExtendedFieldMapByVerificationId(long verificationId, String tableName) {
-
-		List<Map<String, Object>> renderMap = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
@@ -122,16 +114,9 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		selectSql.append(tableName);
 		selectSql.append(" where  verificationId = :verificationId order by seqno");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			renderMap = this.jdbcTemplate.queryForList(selectSql.toString(), source);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exceprtion ", e);
-			renderMap = new ArrayList<>();
-		}
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		logger.debug("Leaving");
-		return renderMap;
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source);
 	}
 
 	/**
@@ -141,7 +126,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	public Map<String, Object> getExtendedField(String reference, String tableName, String type) {
 		logger.debug("Entering");
 
-		Map<String, Object> renderMap = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 
@@ -163,16 +147,13 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			selectSql.append(" where  Reference = :Reference ");
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		try {
-			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
+			return this.jdbcTemplate.queryForMap(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in {}{} for the specified Reference >> {}", tableName, type, reference);
-			renderMap = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return renderMap;
 	}
 
 	/**
@@ -182,7 +163,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	public Map<String, Object> getExtendedField(String reference, int seqNo, String tableName, String type) {
 		logger.debug("Entering");
 
-		Map<String, Object> renderMap = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("SeqNo", seqNo);
@@ -205,16 +185,13 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			selectSql.append(" where  Reference = :Reference and SeqNo= :SeqNo ");
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		try {
-			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
+			return this.jdbcTemplate.queryForMap(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exceprtion ", e);
-			renderMap = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return renderMap;
 	}
 
 	@Override
@@ -237,7 +214,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		insertSql.append(query);
 		insertSql.append(" where Reference ='").append(reference).append("' AND SeqNo = '").append(seqNo).append("'");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + insertSql.toString());
 		this.jdbcTemplate.update(insertSql.toString(), mappedValues);
 		logger.debug("Leaving");
 	}
@@ -255,7 +232,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" where Reference = :Reference AND  SeqNo = :SeqNo");
 
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + deleteSql.toString());
 		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
@@ -281,15 +258,14 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			}
 		}
 		insertSql.append(" (" + columnames + ") values (" + columnValues + ")");
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + insertSql.toString());
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), mappedValues);
 		} catch (DataIntegrityViolationException e) {
-			logger.error("Exception", e);
-			throw e;
+			throw new ConcurrencyException(e);
 		}
-		logger.debug("Leaving");
 
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -308,20 +284,16 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 
 		StringBuilder selectSql = new StringBuilder("Select  COALESCE(Max(SeqNo), 0) from ");
 		selectSql.append(tableName);
-		selectSql.append(" where  Reference =:Reference ");
+		selectSql.append(" where  Reference = :Reference ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		int maxSeqNo = 0;
 		try {
-			maxSeqNo = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception ", e);
-			maxSeqNo = 0;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		logger.debug("Leaving");
-		return maxSeqNo;
 	}
 
 	/**
@@ -337,25 +309,23 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	public void deleteList(String reference, String tableNmae, String tableType) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Delete From  ");
+		sql.append(tableNmae);
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where Reference = :Reference");
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+
 		try {
-			sql = new StringBuilder();
-			sql.append(" Delete From  ");
-			sql.append(tableNmae);
-			sql.append(StringUtils.trimToEmpty(tableType));
-			sql.append(" Where Reference = :Reference");
-			logger.debug("deleteSql: " + sql.toString());
-
-			source = new MapSqlParameterSource();
-			source.addValue("Reference", reference);
-
 			this.jdbcTemplate.update(sql.toString(), source);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -378,7 +348,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			source.addValue("Value", fieldValue);
 		}
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM ");
 		selectSql.append(tableName);
 		selectSql.append(" WHERE ");
@@ -392,17 +362,14 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 				selectSql.append(" AND " + filterColumn + "=:active");
 			}
 		}
-		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (Exception dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		return recordCount;
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
 	}
 
 	/**
@@ -435,7 +402,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		}
 		source.addValue("Value", fieldValue);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM ");
 		selectSql.append(tableName);
 		selectSql.append(" WHERE ");
@@ -445,17 +412,14 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			selectSql.append(" AND " + filterColumn);
 			selectSql.append("= :filterColumnValue");
 		}
-		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		logger.debug("Leaving");
-		return recordCount;
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
 	}
 
 	/**
@@ -486,12 +450,11 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	}
 
 	@Override
-	public List<Map<String, Object>> getExtendedFieldMap(long VerificationId, String tableName, String type) {
+	public List<Map<String, Object>> getExtendedFieldMap(long verificationId, String tableName, String type) {
 		logger.debug("Entering");
 
-		List<Map<String, Object>> renderMap = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("VerificationId", VerificationId);
+		source.addValue("VerificationId", verificationId);
 
 		StringBuilder sql = null;
 		sql = new StringBuilder("Select * from ");
@@ -499,16 +462,9 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where  VerificationId = :VerificationId ");
 
-		logger.debug("selectSql: " + sql.toString());
-		try {
-			renderMap = this.jdbcTemplate.queryForList(sql.toString(), source);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exceprtion ", e);
-			renderMap = null;
-		}
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
-		return renderMap;
+		return this.jdbcTemplate.queryForList(sql.toString(), source);
 	}
 
 	@Override
@@ -522,18 +478,15 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			source = new MapSqlParameterSource();
 			source.addValue("finreference", finReference);
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-
-		return null;
 	}
 
 	@Override
 	public Map<String, Object> getCollateralMap(String reference, String tableName, String type) {
 		logger.debug(Literal.ENTERING);
-		Map<String, Object> map = new HashMap<>();
 
 		type = type.toLowerCase();
 
@@ -562,16 +515,15 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		try {
 			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.queryForMap(sql.toString(), source);
-		} catch (DataAccessException e) {
-			logger.error(Literal.ENTERING, e);
-			return map;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new HashMap<String, Object>();
 		}
 	}
 
 	@Override
 	public Map<String, Object> getCollateralMap(String reference, int seqNo, String tableName, String type) {
 		logger.debug(Literal.ENTERING);
-		Map<String, Object> map = new HashMap<>();
 
 		type = type.toLowerCase();
 
@@ -601,9 +553,9 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		try {
 			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.queryForMap(sql.toString(), source);
-		} catch (DataAccessException e) {
-			logger.error(Literal.ENTERING, e);
-			return map;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new HashMap<String, Object>();
 		}
 	}
 
@@ -647,7 +599,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 					return mapRet;
 				}
 			});
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.error(Literal.ENTERING, e);
 			renderMap = new HashMap<String, String>();
 		}
@@ -696,7 +648,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 					return mapRet;
 				}
 			});
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.error(Literal.ENTERING, e);
 			renderMap = new HashMap<String, String>();
 		}
@@ -731,8 +683,8 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		source.addValue("reference", reference);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return 1;
 		}
 	}
@@ -770,36 +722,24 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		try {
 			return this.jdbcTemplate.queryForMap(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
 	public void deleteList(String reference, int seqNo, String tableName, String tableType) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Delete From  ");
+		sql.append(tableName);
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where Reference = :Reference And SeqNo = :SeqNo");
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(" Delete From  ");
-			sql.append(tableName);
-			sql.append(StringUtils.trimToEmpty(tableType));
-			sql.append(" Where Reference = :Reference And SeqNo = :SeqNo");
-			logger.debug("deleteSql: " + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		source.addValue("SeqNo", seqNo);
 
-			source = new MapSqlParameterSource();
-			source.addValue("Reference", reference);
-			source.addValue("SeqNo", seqNo);
-
-			this.jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		} finally {
-			source = null;
-			sql = null;
-		}
-
+		this.jdbcTemplate.update(sql.toString(), source);
 	}
 }
