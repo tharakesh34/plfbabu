@@ -5984,32 +5984,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rd.setTotalPastDues(BigDecimal.ZERO);
 		}
 
+		fm.setReceiptPurpose(receiptPurpose.code());
+
 		if (requestSource != RequestSource.UPLOAD && !"Post".equals(fsi.getReqType())) {
-			BigDecimal earlyPayAmount = rd.getRemBal();
-			String recalType = rch.getEffectSchdMethod();
-			fm.setReceiptPurpose(receiptPurpose.code());
-
-			if (receiptPurpose == ReceiptPurpose.EARLYRPY) {
-				ScheduleCalculator.recalEarlyPaySchedule(schdData, rch.getValueDate(), null, earlyPayAmount, recalType);
-				receiptCalculator.addPartPaymentAlloc(rd);
-			}
-
-			for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
-				allocate.setPaidAvailable(allocate.getPaidAmount());
-				allocate.setWaivedAvailable(allocate.getWaivedAmount());
-				allocate.setPaidAmount(BigDecimal.ZERO);
-				allocate.setPaidGST(BigDecimal.ZERO);
-				allocate.setTotalPaid(BigDecimal.ZERO);
-				allocate.setBalance(allocate.getTotalDue());
-				allocate.setWaivedAmount(BigDecimal.ZERO);
-				allocate.setWaivedGST(BigDecimal.ZERO);
-				allocate.setTdsPaid(BigDecimal.ZERO);
-				allocate.setTdsWaived(BigDecimal.ZERO);
-			}
-
-			rd.setBuildProcess("R");
-
-			receiptCalculator.initiateReceipt(rd, false);
 			prepareFinanceSummary(fd);
 			FinanceSummary summary = fd.getFinScheduleData().getFinanceSummary();
 			summary.setFinODDetail(rch.getFinODDetails());
@@ -6230,7 +6207,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
-		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 
 		BigDecimal earlyPayAmount = rd.getRemBal();
 		String recalType = rch.getEffectSchdMethod();
@@ -6253,30 +6229,28 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rd.setDueAdjusted(false);
 		}
 
-		if (RequestSource.UPLOAD == fsi.getRequestSource()) {
-			if (rd.isDueAdjusted()) {
-				for (ReceiptAllocationDetail allocate : allocations) {
-					allocate.setPaidAvailable(allocate.getPaidAmount());
-					allocate.setWaivedAvailable(allocate.getWaivedAmount());
-					allocate.setPaidAmount(BigDecimal.ZERO);
-					allocate.setPaidGST(BigDecimal.ZERO);
-					allocate.setTotalPaid(BigDecimal.ZERO);
-					allocate.setBalance(allocate.getTotalDue());
-					allocate.setWaivedAmount(BigDecimal.ZERO);
-					allocate.setWaivedGST(BigDecimal.ZERO);
-					allocate.setTdsPaid(BigDecimal.ZERO);
-					allocate.setTdsWaived(BigDecimal.ZERO);
-				}
-			} else {
-				setError(schdData, "90330", receiptPurpose.code(), "");
-				return;
-			}
-
-			rd.setBuildProcess("R");
-			receiptCalculator.initiateReceipt(rd, false);
-
-			schdData.setFinanceScheduleDetails(originalSchedules);
+		if (!rd.isDueAdjusted()) {
+			setError(schdData, "90330", receiptPurpose.code(), "");
+			return;
 		}
+
+		for (ReceiptAllocationDetail allocate : allocations) {
+			allocate.setPaidAvailable(allocate.getPaidAmount());
+			allocate.setWaivedAvailable(allocate.getWaivedAmount());
+			allocate.setPaidAmount(BigDecimal.ZERO);
+			allocate.setPaidGST(BigDecimal.ZERO);
+			allocate.setTotalPaid(BigDecimal.ZERO);
+			allocate.setBalance(allocate.getTotalDue());
+			allocate.setWaivedAmount(BigDecimal.ZERO);
+			allocate.setWaivedGST(BigDecimal.ZERO);
+			allocate.setTdsPaid(BigDecimal.ZERO);
+			allocate.setTdsWaived(BigDecimal.ZERO);
+		}
+
+		rd.setBuildProcess("R");
+		receiptCalculator.initiateReceipt(rd, false);
+
+		schdData.setFinanceScheduleDetails(originalSchedules);
 	}
 
 	/**
