@@ -660,11 +660,11 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	public boolean isReceiptDetailsExits(String reference, String receiptMode, String chequeNo, String favourNumber,
 			String type) {
 
-		StringBuilder sql = new StringBuilder("Select count(ReceiptID)");
+		StringBuilder sql = new StringBuilder("Select count(rch.ReceiptID)");
 		sql.append(" From FinReceiptHeader").append(type).append(" rch");
 		sql.append(" Inner join FinReceiptDetail").append(type).append(" rcd");
 		sql.append(" on rcd.ReceiptId = rch.ReceiptId");
-		sql.append(" Where Reference = ? and ReceiptMode = ? and rch.FavourNumber = ? and rch.ChequeacNo = ?");
+		sql.append(" Where Reference = ? and ReceiptMode = ? and rcd.FavourNumber = ? and rcd.ChequeacNo = ?");
 		sql.append(" and (rch.ReceiptModeStatus in (?) or rch.ReceiptModeStatus is null)");
 
 		logger.debug(Literal.SQL + sql.toString());
