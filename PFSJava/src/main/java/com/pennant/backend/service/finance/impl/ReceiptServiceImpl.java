@@ -3419,7 +3419,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinReceiptDetail rcd = rd.getReceiptHeader().getReceiptDetails().get(0);
 
-		if (rcd.getFundingAc() <= 0 && !ReceiptMode.isFundingAccountReq(receiptMode)
+		if (rcd.getFundingAc() <= 0 && ReceiptMode.isFundingAccountReq(receiptMode)
 				|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
 						&& ReceiptMode.CASH.equals(receiptMode))) {
 			setError(schdData, "90502", "Funding Account");
@@ -5188,7 +5188,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			allocate.setWaivedGST(BigDecimal.ZERO);
 			allocate.setTdsPaid(BigDecimal.ZERO);
 			allocate.setTdsWaived(BigDecimal.ZERO);
-			
+
 			rd.setActualOdPaid(BigDecimal.ZERO);
 		}
 

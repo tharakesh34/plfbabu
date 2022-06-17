@@ -100,7 +100,7 @@ public class ReceiptMode {
 		switch (receiptMode) {
 		case CHEQUE:
 		case DD:
-		case CASH:
+		case ONLINE:
 			return true;
 		default:
 			return false;
