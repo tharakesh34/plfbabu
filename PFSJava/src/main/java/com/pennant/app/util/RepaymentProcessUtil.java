@@ -201,14 +201,8 @@ public class RepaymentProcessUtil {
 		for (ReceiptAllocationDetail rad : rd.getReceiptHeader().getAllocations()) {
 			rad.setPaidAvailable(rad.getPaidAmount());
 			rad.setWaivedAvailable(rad.getWaivedAmount());
-			rad.setPaidAmount(BigDecimal.ZERO);
-			rad.setPaidGST(BigDecimal.ZERO);
-			rad.setTotalPaid(BigDecimal.ZERO);
 			rad.setBalance(rad.getTotalDue());
-			rad.setWaivedAmount(BigDecimal.ZERO);
-			rad.setWaivedGST(BigDecimal.ZERO);
-			rad.setTdsPaid(BigDecimal.ZERO);
-			rad.setTdsWaived(BigDecimal.ZERO);
+			receiptCalculator.resetPaidAllocations(rad);
 		}
 
 		rd = receiptCalculator.initiateReceipt(rd, true);

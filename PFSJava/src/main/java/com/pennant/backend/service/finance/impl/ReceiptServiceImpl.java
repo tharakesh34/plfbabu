@@ -2869,14 +2869,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		for (ReceiptAllocationDetail allocate : allocations) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
 			allocate.setWaivedAvailable(allocate.getWaivedAmount());
-			allocate.setPaidAmount(BigDecimal.ZERO);
-			allocate.setPaidGST(BigDecimal.ZERO);
-			allocate.setTotalPaid(BigDecimal.ZERO);
 			allocate.setBalance(allocate.getTotalDue());
-			allocate.setWaivedAmount(BigDecimal.ZERO);
-			allocate.setWaivedGST(BigDecimal.ZERO);
-			allocate.setTdsPaid(BigDecimal.ZERO);
-			allocate.setTdsWaived(BigDecimal.ZERO);
+			receiptCalculator.resetPaidAllocations(allocate);
 		}
 
 		List<FinanceScheduleDetail> finSchdDtls = copy(schedules);
@@ -5184,15 +5178,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		for (ReceiptAllocationDetail allocate : rd.getReceiptHeader().getAllocations()) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
 			allocate.setWaivedAvailable(allocate.getWaivedAmount());
-			allocate.setPaidAmount(BigDecimal.ZERO);
-			allocate.setPaidGST(BigDecimal.ZERO);
-			allocate.setTotalPaid(BigDecimal.ZERO);
 			allocate.setBalance(allocate.getTotalDue());
-			allocate.setWaivedAmount(BigDecimal.ZERO);
-			allocate.setWaivedGST(BigDecimal.ZERO);
-			allocate.setTdsPaid(BigDecimal.ZERO);
-			allocate.setTdsWaived(BigDecimal.ZERO);
-
+			receiptCalculator.resetPaidAllocations(allocate);
 			rd.setActualOdPaid(BigDecimal.ZERO);
 		}
 
@@ -6243,14 +6230,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		for (ReceiptAllocationDetail allocate : allocations) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
 			allocate.setWaivedAvailable(allocate.getWaivedAmount());
-			allocate.setPaidAmount(BigDecimal.ZERO);
-			allocate.setPaidGST(BigDecimal.ZERO);
-			allocate.setTotalPaid(BigDecimal.ZERO);
 			allocate.setBalance(allocate.getTotalDue());
-			allocate.setWaivedAmount(BigDecimal.ZERO);
-			allocate.setWaivedGST(BigDecimal.ZERO);
-			allocate.setTdsPaid(BigDecimal.ZERO);
-			allocate.setTdsWaived(BigDecimal.ZERO);
+			receiptCalculator.resetPaidAllocations(allocate);
 		}
 
 		rd.setBuildProcess("R");
