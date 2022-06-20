@@ -206,16 +206,20 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 
 		for (int i = 0; i < list.size(); i++) {
 			if (i == 0) {
-				query.append(" set ").append(list.get(i)).append("=:").append(list.get(i));
+				query.append(" set ").append(list.get(i)).append(" = :").append(list.get(i));
 			} else {
-				query.append(",").append(list.get(i)).append("=:").append(list.get(i));
+				query.append(",").append(list.get(i)).append(" = :").append(list.get(i));
 			}
 		}
 		insertSql.append(query);
-		insertSql.append(" where Reference ='").append(reference).append("' AND SeqNo = '").append(seqNo).append("'");
+		insertSql.append(" where Reference = :Reference AND SeqNo = :SeqNo");
+
+		MapSqlParameterSource source = new MapSqlParameterSource(mappedValues);
+		source.addValue("Reference", reference);
+		source.addValue("SeqNo", seqNo);
 
 		logger.debug(Literal.SQL + insertSql.toString());
-		this.jdbcTemplate.update(insertSql.toString(), mappedValues);
+		this.jdbcTemplate.update(insertSql.toString(), source);
 		logger.debug("Leaving");
 	}
 
