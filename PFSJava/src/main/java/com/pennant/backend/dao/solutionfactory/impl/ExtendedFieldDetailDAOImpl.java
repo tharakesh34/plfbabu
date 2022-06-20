@@ -61,6 +61,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ExtendedFieldDetail model</b> class.<br>
@@ -80,7 +81,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		super();
 	}
 
-
 	@Override
 	public ExtendedFieldDetail getExtendedFieldDetailById(final long id, String name, int extendedType, String type) {
 		StringBuilder sql = getSqlQuery(type);
@@ -94,10 +94,9 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper,
 					new Object[] { id, name, extendedType });
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -126,7 +125,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		}
 	}
 
-
 	@Override
 	public void deleteByExtendedFields(final long id, String type) {
 		StringBuilder sql = new StringBuilder("Delete From ExtendedFieldDetail");
@@ -137,7 +135,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		this.jdbcOperations.update(sql.toString(), id);
 	}
-
 
 	@Override
 	public long save(ExtendedFieldDetail fieldDetail, String type) {
@@ -203,7 +200,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		return fieldDetail.getId();
 	}
 
-
 	@Override
 	public void update(ExtendedFieldDetail fieldDetail, String type) {
 		StringBuilder sql = new StringBuilder("Update ExtendedFieldDetail");
@@ -225,7 +221,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-
 
 			ps.setString(index++, fieldDetail.getFieldType());
 			ps.setInt(index++, fieldDetail.getFieldLength());
@@ -301,7 +296,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		return new ArrayList<>();
 	}
-
 
 	@Override
 	public List<ExtendedFieldDetail> getExtendedFieldDetailBySubModule(String subModule, String type) {
@@ -670,7 +664,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 	}
 
-
 	@Override
 	public void saveAdditional(String primaryKeyColumn, final Serializable id, HashMap<String, Object> mappedValues,
 			String type, String tableName) {
@@ -703,7 +696,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 	}
 
-
 	@Override
 	public Map<String, Object> retrive(String tableName, String id, String type) {
 		logger.debug(Literal.ENTERING);
@@ -733,7 +725,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		logger.debug(Literal.LEAVING);
 		return map;
 	}
-
 
 	@Override
 	public Map<String, Object> retrive(String tableName, String primaryKeyColumn, Serializable id, String type) {
@@ -773,7 +764,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		return map;
 	}
 
-
 	@Override
 	public boolean isExist(String tableName, String id, String type) {
 		StringBuilder sql = new StringBuilder("Select FinReference From " + tableName);
@@ -790,7 +780,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			return false;
 		}
 	}
-
 
 	@Override
 	public boolean isExist(String tableName, String primaryKeyColumn, Serializable id, String type) {
@@ -840,7 +829,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		this.jdbcOperations.update(sql.toString(), mappedValues);
 	}
 
-
 	@Override
 	public void updateAdditional(String primaryKeyColumn, final Serializable id, HashMap<String, Object> mappedValues,
 			String type, String tableName) {
@@ -866,7 +854,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	@Override
 	public void deleteAdditional(final String id, String tableName, String type) {
 		StringBuilder sql = new StringBuilder("Delete From " + tableName);
@@ -877,7 +864,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 	}
-
 
 	@Override
 	public void deleteAdditional(String primaryKeyColumn, final Serializable id, String type, String tableName) {
@@ -932,7 +918,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		return efd.stream().sorted((fld1, fld2) -> Integer.compare(fld1.getFieldSeqOrder(), fld2.getFieldSeqOrder()))
 				.collect(Collectors.toList());
 	}
-
 
 	@Override
 	public List<ExtendedFieldDetail> getExtendedFieldDetailForRule() {
@@ -1050,8 +1035,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		return null;
 	}
 
-
-
 	@Override
 	public Map<String, Object> getValueByFieldName(String reference, String moduleName, String subModuleName,
 			String event, String field, String type) {
@@ -1080,7 +1063,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		}
 		return values;
 	}
-
 
 	@Override
 	public List<ExtendedFieldDetail> getCollateralExtDetails(String moduleName, String subModuleName) {
