@@ -1819,6 +1819,11 @@ public class ReceiptCalculator {
 				allocate.setPaidAmount(BigDecimal.ZERO);
 				allocate.setTdsPaid(BigDecimal.ZERO);
 				allocate.setPaidGST(BigDecimal.ZERO);
+				allocate.setPaidCGST(BigDecimal.ZERO);
+				allocate.setPaidSGST(BigDecimal.ZERO);
+				allocate.setPaidIGST(BigDecimal.ZERO);
+				allocate.setPaidUGST(BigDecimal.ZERO);
+				allocate.setPaidCESS(BigDecimal.ZERO);
 				allocate.setTotalPaid(BigDecimal.ZERO);
 				allocate.setBalance(allocate.getTotalDue());
 				allocate.setWaivedAvailable(allocate.getWaivedAmount());
@@ -3181,7 +3186,7 @@ public class ReceiptCalculator {
 				taxableAmount = penaltyBal.subtract(taxSplit.gettGST());
 			}
 
-			tdsAmount = getTDSAmount(fd.getFinScheduleData().getFinanceMain(), taxableAmount);
+			tdsAmount = getTDSAmount(fd.getFinScheduleData().getFinanceMain(), penaltyBal);
 			penaltyBal = penaltyBal.subtract(tdsAmount);
 
 		}
@@ -3912,12 +3917,12 @@ public class ReceiptCalculator {
 		TaxAmountSplit taxSplit = calculateGST(fd, taxType, paidAmount);
 
 		// Set the GST to allocations
-		allocation.setPaidCGST(taxSplit.getcGST());
-		allocation.setPaidSGST(taxSplit.getsGST());
-		allocation.setPaidUGST(taxSplit.getuGST());
-		allocation.setPaidIGST(taxSplit.getiGST());
-		allocation.setPaidCESS(taxSplit.getCess());
-		allocation.setPaidGST(taxSplit.gettGST());
+		allocation.setPaidCGST(allocation.getPaidCGST().add(taxSplit.getcGST()));
+		allocation.setPaidSGST(allocation.getPaidSGST().add(taxSplit.getsGST()));
+		allocation.setPaidUGST(allocation.getPaidUGST().add(taxSplit.getuGST()));
+		allocation.setPaidIGST(allocation.getPaidIGST().add(taxSplit.getiGST()));
+		allocation.setPaidCESS(allocation.getPaidCESS().add(taxSplit.getCess()));
+		allocation.setPaidGST(allocation.getPaidGST().add(taxSplit.gettGST()));
 
 		if (allocation.getTaxHeader() == null) {
 			return;
@@ -4835,6 +4840,21 @@ public class ReceiptCalculator {
 		allocate.setPaidUGST(GSTCalculator.getExclusiveTax(netAmount, allocate.getPercUGST()));
 		allocate.setPaidCESS(GSTCalculator.getExclusiveTax(netAmount, allocate.getPercCESS()));
 		allocate.setPaidGST(CalculationUtil.getTotalPaidGST(allocate));
+	}
+
+	public void resetPaidAllocations(ReceiptAllocationDetail allocate) {
+		allocate.setPaidAmount(BigDecimal.ZERO);
+		allocate.setPaidGST(BigDecimal.ZERO);
+		allocate.setPaidCGST(BigDecimal.ZERO);
+		allocate.setPaidSGST(BigDecimal.ZERO);
+		allocate.setPaidUGST(BigDecimal.ZERO);
+		allocate.setPaidIGST(BigDecimal.ZERO);
+		allocate.setPaidCESS(BigDecimal.ZERO);
+		allocate.setTotalPaid(BigDecimal.ZERO);
+		allocate.setWaivedAmount(BigDecimal.ZERO);
+		allocate.setWaivedGST(BigDecimal.ZERO);
+		allocate.setTdsPaid(BigDecimal.ZERO);
+		allocate.setTdsWaived(BigDecimal.ZERO);
 	}
 
 	// ******************************************************//

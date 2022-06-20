@@ -2869,14 +2869,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		for (ReceiptAllocationDetail allocate : allocations) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
 			allocate.setWaivedAvailable(allocate.getWaivedAmount());
-			allocate.setPaidAmount(BigDecimal.ZERO);
-			allocate.setPaidGST(BigDecimal.ZERO);
-			allocate.setTotalPaid(BigDecimal.ZERO);
 			allocate.setBalance(allocate.getTotalDue());
-			allocate.setWaivedAmount(BigDecimal.ZERO);
-			allocate.setWaivedGST(BigDecimal.ZERO);
-			allocate.setTdsPaid(BigDecimal.ZERO);
-			allocate.setTdsWaived(BigDecimal.ZERO);
+			receiptCalculator.resetPaidAllocations(allocate);
 		}
 
 		List<FinanceScheduleDetail> finSchdDtls = copy(schedules);
@@ -3183,6 +3177,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<FinanceScheduleDetail> schedules = aSchdData.getFinanceScheduleDetails();
 		Date firstInstDate = ScheduleCalculator.getFirstInstallmentDate(schedules);
 
+		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
+		RequestSource requestSource = fsi.getRequestSource();
+
 		if (DateUtil.compare(valueDate, firstInstDate) < 0) {
 			setError(schdData, "21005", "Not allowed to do Early Settlement before first installment");
 		}
@@ -3190,7 +3187,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		BigDecimal totalDues = getTotalDues(receiptData);
 		totalDues = PennantApplicationUtil.formateAmount(totalDues, CurrencyUtil.getFormat(fm.getFinCcy()));
 
-		if (totalDues.compareTo(receiptData.getReceiptHeader().getReceiptAmount()) > 0) {
+		if (RequestSource.UPLOAD == requestSource
+				&& totalDues.compareTo(receiptData.getReceiptHeader().getReceiptAmount()) > 0) {
 			setError(schdData, "RU0051");
 			return;
 		}
@@ -3419,7 +3417,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinReceiptDetail rcd = rd.getReceiptHeader().getReceiptDetails().get(0);
 
-		if (rcd.getFundingAc() <= 0 && !ReceiptMode.isFundingAccountReq(receiptMode)
+		if (rcd.getFundingAc() <= 0 && ReceiptMode.isFundingAccountReq(receiptMode)
 				|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
 						&& ReceiptMode.CASH.equals(receiptMode))) {
 			setError(schdData, "90502", "Funding Account");
@@ -4109,7 +4107,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		ReceiptPurpose receiptPurpose = fsi.getReceiptPurpose();
 
-		if (receiptPurpose != ReceiptPurpose.SCHDRPY && maturityDate.compareTo(appDate) < 0 && !normalLoanClosure
+		if (ReceiptPurpose.SCHDRPY != receiptPurpose && maturityDate.compareTo(appDate) < 0 && !normalLoanClosure
 				&& !foreClosure) {
 			setError(schdData, "RU0000", receiptPurpose.code());
 		}
@@ -5180,15 +5178,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		for (ReceiptAllocationDetail allocate : rd.getReceiptHeader().getAllocations()) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
 			allocate.setWaivedAvailable(allocate.getWaivedAmount());
-			allocate.setPaidAmount(BigDecimal.ZERO);
-			allocate.setPaidGST(BigDecimal.ZERO);
-			allocate.setTotalPaid(BigDecimal.ZERO);
 			allocate.setBalance(allocate.getTotalDue());
-			allocate.setWaivedAmount(BigDecimal.ZERO);
-			allocate.setWaivedGST(BigDecimal.ZERO);
-			allocate.setTdsPaid(BigDecimal.ZERO);
-			allocate.setTdsWaived(BigDecimal.ZERO);
-			
+			receiptCalculator.resetPaidAllocations(allocate);
 			rd.setActualOdPaid(BigDecimal.ZERO);
 		}
 
@@ -5356,7 +5347,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setReceivedDate(fsi.getReceivedDate());
 		} else {
 			rcd.setValueDate(rcd.getReceivedDate());
+			rch.setReceivedDate(rcd.getReceivedDate());
 			rch.setReceiptDate(fm.getAppDate());
+			rch.setRealizationDate(fsi.getRealizationDate());
 		}
 
 		if (rch.getReceiptMode() != null && (rch.getSubReceiptMode() == null || rch.getSubReceiptMode().isEmpty())) {
@@ -6237,14 +6230,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		for (ReceiptAllocationDetail allocate : allocations) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
 			allocate.setWaivedAvailable(allocate.getWaivedAmount());
-			allocate.setPaidAmount(BigDecimal.ZERO);
-			allocate.setPaidGST(BigDecimal.ZERO);
-			allocate.setTotalPaid(BigDecimal.ZERO);
 			allocate.setBalance(allocate.getTotalDue());
-			allocate.setWaivedAmount(BigDecimal.ZERO);
-			allocate.setWaivedGST(BigDecimal.ZERO);
-			allocate.setTdsPaid(BigDecimal.ZERO);
-			allocate.setTdsWaived(BigDecimal.ZERO);
+			receiptCalculator.resetPaidAllocations(allocate);
 		}
 
 		rd.setBuildProcess("R");

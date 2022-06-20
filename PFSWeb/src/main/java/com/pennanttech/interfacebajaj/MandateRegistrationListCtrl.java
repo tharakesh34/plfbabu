@@ -493,6 +493,15 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
 			if (filter != null) {
+				if (filter.getProperty().equals("accType")) {
+					List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
+					for (ValueLabel valueLabel : accTypeList) {
+						if (valueLabel.getValue().equals(filter.getValue())) {
+							filter.setValue(valueLabel.getLabel());
+							break;
+						}
+					}
+				}
 				searchObject.addFilter(filter);
 			}
 		}

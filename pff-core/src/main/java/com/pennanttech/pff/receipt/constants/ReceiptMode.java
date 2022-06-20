@@ -134,11 +134,15 @@ public class ReceiptMode {
 	}
 
 	public static boolean isFundingAccountReq(String receiptMode) {
-		if (isOfflineMode(receiptMode)) {
+		switch (receiptMode) {
+		case CHEQUE:
+		case DD:
+		case ONLINE:
+		case RESTRUCT:
 			return true;
+		default:
+			return false;
 		}
-
-		return RESTRUCT.equals(receiptMode);
 	}
 
 	private static Set<String> getReceiptModes() {
