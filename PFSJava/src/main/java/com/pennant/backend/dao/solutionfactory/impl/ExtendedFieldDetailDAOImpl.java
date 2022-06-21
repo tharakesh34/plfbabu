@@ -956,10 +956,9 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id, fieldName);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -980,10 +979,9 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		try {
 			return this.jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new ArrayList<String>();
 		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	public void setAuditDataSource(DataSource dataSource) {
@@ -998,10 +996,9 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		try {
 			return this.jdbcOperations.queryForObject(sql, String.class, beanParameters);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1012,10 +1009,9 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, value);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1029,21 +1025,16 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, objects);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
 	public Map<String, Object> getValueByFieldName(String reference, String moduleName, String subModuleName,
 			String event, String field, String type) {
-
-		StringBuilder sql = null;
-
-		Map<String, Object> values = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
 		sql.append(" select ".concat(field));
 		sql.append(" from ");
 		sql.append(moduleName);
@@ -1053,15 +1044,17 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		sql.append(type);
 		sql.append(" where reference = :reference");
 
-		source = new MapSqlParameterSource();
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", reference);
+
 		try {
-			values = jdbcOperations.queryForMap(sql.toString(), source);
+			return jdbcOperations.queryForMap(sql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return values;
 	}
 
 	@Override
