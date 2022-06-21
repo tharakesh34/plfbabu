@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennanttech.pennapps.pff.verification.dao;
@@ -43,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
@@ -338,7 +338,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 	@Override
 	public List<Verification> getTvValuation(List<Long> verificationIDs, String type) {
-		logger.debug(Literal.ENTERING); // Prepare the SQL. 
+		logger.debug(Literal.ENTERING); // Prepare the SQL.
 		StringBuilder sql = new StringBuilder(
 				"SELECT VERIFICATIONID AS ID, COLLATERALREF REFERENCEFOR, VALUATIONAMOUNT, AGENCYNAME, ");
 		sql.append(
@@ -347,7 +347,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" WHERE RECORDSTATUS = :RECORDSTATUS ");
 		sql.append(" AND VERIFICATIONID IN (:VERIFICATIONIDS) ");
-		// Execute the SQL, binding the arguments. 
+		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("VERIFICATIONIDS", verificationIDs);
@@ -405,20 +405,16 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		try {
 			return jdbcTemplate.queryForMap(sql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in Collateral{}_ed main and tables for the specified Reference >> {}",
-					subModuleName, collRef);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new HashMap<String, Object>();
 		}
-
-		return new HashMap<>();
 	}
 
 	@Override
 	public String getPropertyCity(String collRef, String subModuleName) {
 
 		String column = "CITY";
-		//Agency filter issue based on Collateral City
+		// Agency filter issue based on Collateral City
 		String value = ImplementationConstants.VER_TV_COLL_ED_ADDR_COLUMN;
 		if (StringUtils.isNotBlank(value)) {
 			column = value;
@@ -446,29 +442,28 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
 	public String getCollaterlType(long id) {
-		StringBuilder sql = null;
-		String collateraltype = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT collateralType From verification_tv_view ");
 		sql.append(" where verificationid = :id");
 
-		source = new MapSqlParameterSource();
+		// Execute the SQL, binding the arguments.
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("id", id);
+
 		try {
-			collateraltype = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return collateraltype;
 	}
 }
