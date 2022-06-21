@@ -480,7 +480,6 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 		this.name.setValue("");
 		this.description.setValue("");
 		this.txtchannel.setValue("");
-		;
 		this.active.setChecked(false);
 		logger.debug(Literal.LEAVING);
 	}

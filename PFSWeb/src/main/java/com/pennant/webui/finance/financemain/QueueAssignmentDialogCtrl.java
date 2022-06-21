@@ -872,7 +872,6 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 		logger.debug("Entering");
 		if (this.assigneListWrapper == null) {
 			this.assigneListWrapper = (PagedListWrapper<QueueAssignment>) SpringUtil.getBean("pagedListWrapper");
-			;
 		}
 		logger.debug("Leaving");
 		return assigneListWrapper;

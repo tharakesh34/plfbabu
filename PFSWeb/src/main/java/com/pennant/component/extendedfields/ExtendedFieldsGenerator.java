@@ -160,7 +160,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private String defaultComponentWidth = "250px";
 	private boolean overflow;
 	private boolean appendActivityLog = false;
-	private List<Object> finHeaderList = new ArrayList<>();;
+	private List<Object> finHeaderList = new ArrayList<>();
 	private int seqNo = 0;
 	private long instructionUID = Long.MIN_VALUE;
 

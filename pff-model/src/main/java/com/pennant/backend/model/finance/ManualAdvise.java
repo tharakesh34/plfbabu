@@ -123,7 +123,7 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 	private boolean holdDue;
 
 	private FeeType feeType;
-	private List<DocumentDetails> documentDetails = new ArrayList<>(1);;
+	private List<DocumentDetails> documentDetails = new ArrayList<>(1);
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public String getFinSource() {

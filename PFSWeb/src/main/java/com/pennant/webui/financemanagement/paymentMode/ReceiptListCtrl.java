@@ -157,7 +157,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private String module;
 	private ReceiptService receiptService;
 
-	private String workflowCode = FinServiceEvent.RECEIPT;;
+	private String workflowCode = FinServiceEvent.RECEIPT;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 
 	private transient WorkFlowDetails workFlowDetails = null;

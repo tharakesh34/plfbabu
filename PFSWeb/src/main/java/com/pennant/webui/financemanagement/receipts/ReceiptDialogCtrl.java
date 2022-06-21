@@ -3530,7 +3530,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		boolean isManAdv = false;
 		doRemoveValidation();
 		doClearMessage();
-		
+
 		BigDecimal tdsAmt = receiptData.getReceiptHeader().getTdsAmount();
 
 		BigDecimal totalTDS = tdsAmt;
@@ -5899,7 +5899,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Long accountSetId = Long.MIN_VALUE;
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		String finType = finMain.getFinType();
-		;
 		int moduleID = FinanceConstants.MODULEID_FINTYPE;
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 			finType = finMain.getPromotionCode();

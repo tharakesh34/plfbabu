@@ -504,7 +504,6 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finReference.setValue(header.getReference());
 		this.finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
-		;
 		this.custCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
 		this.remarks.setValue(header.getRemarks());

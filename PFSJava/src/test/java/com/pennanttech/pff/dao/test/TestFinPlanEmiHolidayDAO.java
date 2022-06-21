@@ -86,8 +86,6 @@ public class TestFinPlanEmiHolidayDAO {
 		emim.setPlanEMIHMonth(9);
 		ocr.add(emim);
 		finPlanEmiHolidayDAO.savePlanEMIHMonths(ocr, "");
-		;
-
 	}
 
 	// ==============savedates==========//

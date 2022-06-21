@@ -109,7 +109,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Listbox listBoxRetailScoRef;
 	protected Listbox listBox_CheckList;
 
-	private static final String bold = " font-weight: bold;";
+	private static final String BOLD = " font-weight: bold;";
 
 	private FinanceDetail financeDetail = null;
 	List<DeviationParam> eligibilitiesList = PennantAppUtil.getDeviationParams();
@@ -437,7 +437,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				Listgroup listgroup = new Listgroup();
 				Listcell listcell;
 				listcell = new Listcell(finRefDetail.getLovDescQuesDesc());
-				listcell.setStyle(bold);
+				listcell.setStyle(BOLD);
 				listcell.setParent(listgroup);
 				// Deviation Combobox
 				FinanceDeviations devation = getDeviationValuesifnay(finRefDetail);
@@ -497,12 +497,12 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			Listcell listcell;
 
 			listcell = new Listcell(financeScoreHeader.getGroupCode() + "-" + financeScoreHeader.getGroupCodeDesc());
-			listcell.setStyle(bold);
+			listcell.setStyle(BOLD);
 			listcell.setParent(listGroup);
 
 			listcell = new Listcell(PennantJavaUtil.concat(Labels.getLabel("label_MinScore"), " :",
 					String.valueOf(financeScoreHeader.getMinScore())));
-			listcell.setStyle(bold);
+			listcell.setStyle(BOLD);
 			listcell.setParent(listGroup);
 
 			listcell = new Listcell("");
@@ -543,15 +543,15 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			listcell = new Listcell(
 					Labels.getLabel("label_Credit_Worth") + " : " + financeScoreHeader.getCreditWorth());
-			listcell.setStyle(bold);
+			listcell.setStyle(BOLD);
 			listcell.setParent(listfoot);
 
 			listcell = new Listcell(PennantAppUtil.formatAmount(totScore, 0));
-			listcell.setStyle(bold);
+			listcell.setStyle(BOLD);
 			listcell.setParent(listfoot);
 
 			listcell = new Listcell(PennantAppUtil.formatAmount(totExeScore, 0));
-			listcell.setStyle(bold);
+			listcell.setStyle(BOLD);
 			listcell.setParent(listfoot);
 			this.listBoxRetailScoRef.appendChild(listfoot);
 		}

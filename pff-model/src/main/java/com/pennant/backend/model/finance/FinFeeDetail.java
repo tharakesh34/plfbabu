@@ -127,7 +127,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private String moduleDefiner;
 	private BigDecimal actualOldAmount = BigDecimal.ZERO;
 	// TDS
-	private BigDecimal netTDS = BigDecimal.ZERO;;
+	private BigDecimal netTDS = BigDecimal.ZERO;
 	private BigDecimal paidTDS = BigDecimal.ZERO;
 	private BigDecimal remTDS = BigDecimal.ZERO;
 	private boolean tdsReq;

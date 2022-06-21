@@ -405,7 +405,6 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		try {
 			merchantDetails.setStoreState(this.state.getValidatedValue());
 			merchantDetails.setStateName(this.state.getDescription());
-			;
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1107,7 +1106,6 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 				this.city.setErrorMessage("");
 				this.state.setErrorMessage("");
 				this.country.setErrorMessage("");
-				;
 			}
 
 		}

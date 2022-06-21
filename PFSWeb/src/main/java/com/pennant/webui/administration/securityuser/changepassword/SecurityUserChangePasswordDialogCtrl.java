@@ -182,7 +182,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		this.retypeNewPassword1.setValue("");
 		/*
 		 * this.div_PwdStatusMeter.setStyle("background-color:white"); this.label_PwdStatus.setValue("")
-		 */;
+		 */
 	}
 
 	/**

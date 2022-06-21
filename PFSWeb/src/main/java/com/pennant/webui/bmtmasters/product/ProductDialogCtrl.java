@@ -1202,7 +1202,6 @@ public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 	public void setProductAssetPagedListWrapper() {
 		if (productAssetPagedListWrapper == null) {
 			this.productAssetPagedListWrapper = (PagedListWrapper<ProductAsset>) SpringUtil.getBean("pagedListWrapper");
-			;
 		}
 	}
 

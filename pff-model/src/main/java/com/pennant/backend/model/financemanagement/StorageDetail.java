@@ -76,7 +76,6 @@ public class StorageDetail extends AbstractWorkflowEntity {
 		excludeFields.add("dmaCodeDesc");
 		excludeFields.add("branchCode");
 		excludeFields.add("oldPacketNumber");
-		;
 		excludeFields.add("oldRackNumber");
 		excludeFields.add("rcdMaintainSts");
 		return excludeFields;

@@ -599,7 +599,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		int finformatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		;
 
 		Customer customer = null;
 		if (getFinanceDetail().getCustomerDetails() != null

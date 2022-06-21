@@ -58,7 +58,7 @@ public class Promotion extends AbstractWorkflowEntity {
 	private String finBaseRateName;
 	private String finSplRate;
 	private String finSplRateName;
-	private BigDecimal finMargin = BigDecimal.ZERO;;
+	private BigDecimal finMargin = BigDecimal.ZERO;
 	private boolean applyRpyPricing;
 	private long rpyPricingMethod;
 	private int finMinTerm;

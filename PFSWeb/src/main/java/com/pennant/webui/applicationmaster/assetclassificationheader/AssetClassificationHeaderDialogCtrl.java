@@ -557,7 +557,6 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		this.code.setValue("");
 		this.description.setValue("");
 		this.stageOrder.setValue(0);
-		;
 		this.active.setChecked(false);
 		this.finType.setValue("");
 		this.finType.setTooltiptext("");

@@ -940,16 +940,11 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.onBalanceSheet.setChecked(false);
 		this.allowOverDraw.setChecked(false);
 		this.acTypeGrpId.setValue("");
-		;
 		this.profitCenter.setValue("");
-		;
 		this.costCenter.setValue("");
-		;
 		this.gSTApplicable.setChecked(false);
 		this.hSNNumber.setValue("");
-		;
 		this.natureService.setValue("");
-		;
 		this.revChargeApplicable.setChecked(false);
 		logger.debug("Leaving");
 	}

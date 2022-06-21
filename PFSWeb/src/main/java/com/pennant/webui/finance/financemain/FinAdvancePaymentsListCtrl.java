@@ -104,7 +104,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	private List<FinanceDisbursement> financeDisbursement;
 	private List<FinanceDisbursement> approvedDisbursments;
 	String moduleDefiner = "";
-	private List<VASRecording> vasRecordingList = new ArrayList<VASRecording>();;
+	private List<VASRecording> vasRecordingList = new ArrayList<VASRecording>();
 
 	/**
 	 * default constructor.<br>
