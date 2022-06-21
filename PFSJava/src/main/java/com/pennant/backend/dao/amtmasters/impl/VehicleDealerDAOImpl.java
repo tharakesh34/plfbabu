@@ -516,7 +516,6 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		VehicleDealer vehicleDealer = new VehicleDealer();
 
 		vehicleDealer.setDealerType(dealerType);
-		;
 		vehicleDealer.setDealerName(name);
 		vehicleDealer.setDealerId(id);
 

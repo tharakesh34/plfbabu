@@ -776,7 +776,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 			if (customer.getCustDOB() != null) {
 				int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
-				;
 				int months = dobMonths % 12;
 				BigDecimal age = BigDecimal.ZERO;
 				if (months <= 9) {

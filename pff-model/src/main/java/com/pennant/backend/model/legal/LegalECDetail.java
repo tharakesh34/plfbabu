@@ -39,7 +39,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class LegalECDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long legalId = Long.MIN_VALUE;;
+	private long legalId = Long.MIN_VALUE;
 	private long legalECId = Long.MIN_VALUE;
 	private int seqNum = 0;
 	private Date ecDate;

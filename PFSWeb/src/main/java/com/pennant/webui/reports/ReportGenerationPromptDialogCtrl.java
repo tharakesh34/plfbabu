@@ -172,12 +172,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 	public enum FIELDCLASSTYPE {
 		Textbox, Combobox, Datebox, Timebox, Intbox, Decimalbox, Bandbox, Checkbox, Radio
-	};
+	}
 
 	public enum FIELDTYPE {
 		TXT, DATE, TIME, DATETIME, STATICLIST, DYNAMICLIST, LOVSEARCH, DECIMAL, INTRANGE, DECIMALRANGE, NUMBER,
 		CHECKBOX, MULTISELANDLIST, MULTISELINLIST, DATERANGE, DATETIMERANGE, TIMERANGE, STATICVALUE
-	};
+	}
 
 	private boolean isExcel = false;
 	private boolean searchClick = false;

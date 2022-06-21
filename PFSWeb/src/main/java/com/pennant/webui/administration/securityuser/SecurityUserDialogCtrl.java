@@ -3003,10 +3003,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private void doRemoveClusterValidation(Component component) {
 		if (component != null && component instanceof Combobox) {
 			((Combobox) component).setConstraint("");
-			;
 		} else if (component != null && component instanceof ExtendedCombobox) {
 			((ExtendedCombobox) component).setConstraint("");
-			;
 		}
 	}
 
@@ -3029,7 +3027,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			((Combobox) component).setValue("");
 		} else if (component != null && component instanceof ExtendedCombobox) {
 			((ExtendedCombobox) component).setValue("");
-			;
 		}
 	}
 

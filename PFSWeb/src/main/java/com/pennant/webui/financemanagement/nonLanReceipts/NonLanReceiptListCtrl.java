@@ -142,7 +142,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private ReceiptService receiptService;
 	private NonLanReceiptService nonLanReceiptService;
 
-	private String workflowCode = FinServiceEvent.RECEIPT;;
+	private String workflowCode = FinServiceEvent.RECEIPT;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 
 	private transient WorkFlowDetails workFlowDetails = null;

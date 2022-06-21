@@ -80,7 +80,6 @@ public class SnapShotService extends SnapShotDataExecution {
 			switch (configuration.getExecutionType()) {
 			case 1:
 				String columns = StringUtils.join(configuration.getColumns(), ",");
-				;
 				int recordCount = 0;
 
 				for (SnapShotCondition condition : configuration.getConditions()) {
@@ -92,7 +91,7 @@ public class SnapShotService extends SnapShotDataExecution {
 
 				updateLastRunDate(configuration.getId(), runDate);
 
-				// Logging Information 
+				// Logging Information
 				StringBuffer buffer = new StringBuffer("Snap Shot Completed For Customer ID ");
 				buffer.append(custID);
 				buffer.append(" From ");
@@ -135,7 +134,6 @@ public class SnapShotService extends SnapShotDataExecution {
 			switch (configuration.getExecutionType()) {
 			case 1:
 				String columns = StringUtils.join(configuration.getColumns(), ",");
-				;
 				int recordCount = 0;
 
 				for (SnapShotCondition condition : configuration.getConditions()) {
@@ -159,7 +157,7 @@ public class SnapShotService extends SnapShotDataExecution {
 
 				updateLastRunDate(configuration.getId(), endDate);
 
-				// Logging Information 
+				// Logging Information
 				StringBuffer buffer = new StringBuffer("Snap Shot Completed For Table");
 				buffer.append(configuration.getFromTable());
 				buffer.append(" Number of Records ");

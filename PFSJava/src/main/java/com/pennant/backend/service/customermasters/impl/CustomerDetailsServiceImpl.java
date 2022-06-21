@@ -2187,7 +2187,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							if (pincode != null) {
 								adress.setCustAddrZIP(pincode.getPinCode());
 								pinCodeValidation(pincode, adress, auditDetail, errorDetail);
-								;
 							} else {
 								String[] valueParm = new String[1];
 								valueParm[0] = "PinCodeId " + String.valueOf(adress.getPinCodeId());

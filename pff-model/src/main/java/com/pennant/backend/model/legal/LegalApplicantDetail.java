@@ -51,7 +51,7 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity {
 	private long legalId = Long.MIN_VALUE;
 	private long customerId = Long.MIN_VALUE;
 	private int seqNum = 0;
-	private String legalReference;;
+	private String legalReference;
 	@XmlElement
 	private String title;
 	private String titleName;

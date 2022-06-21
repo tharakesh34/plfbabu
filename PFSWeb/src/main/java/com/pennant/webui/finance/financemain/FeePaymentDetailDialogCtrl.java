@@ -172,7 +172,6 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 
 				if (arguments.containsKey("ccyFormatter")) {
 					ccyFormatter = (Integer) arguments.get("ccyFormatter");
-					;
 				}
 
 				if (arguments.containsKey("newRecord")) {

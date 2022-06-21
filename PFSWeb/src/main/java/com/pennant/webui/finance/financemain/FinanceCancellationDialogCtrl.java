@@ -106,7 +106,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	protected Row row_ManualSchedule;
 	protected Textbox finDivisionName;
 	protected Hbox hbox_PromotionProduct;
-	private Label label_FinanceMainDialog_PromotionProduct;;
+	private Label label_FinanceMainDialog_PromotionProduct;
 	private Label label_FinanceMainDialog_FinType;
 	protected Textbox cancelRemarks;
 	protected Uppercasebox reasons;

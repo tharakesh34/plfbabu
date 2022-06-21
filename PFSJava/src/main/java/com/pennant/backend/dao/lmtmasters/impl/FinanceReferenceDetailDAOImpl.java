@@ -361,7 +361,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 					map.put(rs.getLong("FinRefId"), rs.getString("LovDescCodeLov"));
 				}
 				return map;
-			};
+			}
 		});
 		logger.debug(Literal.LEAVING);
 		return map;

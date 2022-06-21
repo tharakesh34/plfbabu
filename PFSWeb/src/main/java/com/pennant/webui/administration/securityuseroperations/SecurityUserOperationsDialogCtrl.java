@@ -1345,7 +1345,6 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	public PagedListWrapper<SecurityUserOperations> getAssigneListWrapper() {
 		if (this.assigneListWrapper == null) {
 			this.assigneListWrapper = (PagedListWrapper<SecurityUserOperations>) SpringUtil.getBean("pagedListWrapper");
-			;
 		}
 
 		return assigneListWrapper;
@@ -1356,7 +1355,6 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		if (this.unAssigneListWrapper == null) {
 			this.unAssigneListWrapper = (PagedListWrapper<SecurityUserOperations>) SpringUtil
 					.getBean("pagedListWrapper");
-			;
 		}
 
 		return unAssigneListWrapper;
@@ -1383,7 +1381,6 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		if (this.operationRolesListWrapper == null) {
 			this.operationRolesListWrapper = (PagedListWrapper<SecurityOperationRoles>) SpringUtil
 					.getBean("pagedListWrapper");
-			;
 		}
 		return operationRolesListWrapper;
 	}

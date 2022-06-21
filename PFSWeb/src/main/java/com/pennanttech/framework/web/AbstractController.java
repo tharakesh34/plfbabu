@@ -982,7 +982,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 			if (isReadOnly(rightName)) {
 				accessType = 0;
 			}
-			;
 		}
 		if (accessType == -1) {
 			readOnlyComponent(true, component);

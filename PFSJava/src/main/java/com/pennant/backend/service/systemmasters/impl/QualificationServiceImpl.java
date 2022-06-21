@@ -36,8 +36,7 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 	 * Configuration. by using qualificationDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtQualification by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -55,7 +54,7 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 		TableType tableType = TableType.MAIN_TAB;
 		if (qualification.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
-			;
+
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
@@ -79,8 +78,7 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 	 * Qualification by using qualificationDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtQualification by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -101,10 +99,8 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 	/**
 	 * getProfessionById fetch the details by using qualificationDAO's getProfessionById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Profession""
 	 */
 	@Override
@@ -116,8 +112,7 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 	 * getApprovedProfessionById fetch the details by using qualificationDAO's getProfessionById method . with parameter
 	 * id and type as blank. it fetches the approved records from the Qualification.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return Profession
 	 */
 	public Qualification getApprovedQualificationById(String id) {
@@ -135,8 +130,7 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtQualification by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -199,8 +193,7 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 	 * workFlow table by using qualificationDAO.delete with parameters profession,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtQualification by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -222,8 +215,7 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

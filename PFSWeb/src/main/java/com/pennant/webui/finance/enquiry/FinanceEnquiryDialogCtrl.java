@@ -2065,7 +2065,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.availableAmt.setReadonly(true);
 		// protected
 		this.applyODPenalty.setDisabled(true);
-		;
 		this.oDIncGrcDays.setDisabled(true);
 		this.oDChargeType.setDisabled(true);
 		this.oDGraceDays.setReadonly(true);

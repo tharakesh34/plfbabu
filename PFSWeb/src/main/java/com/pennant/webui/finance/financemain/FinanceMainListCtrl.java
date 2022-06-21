@@ -1464,8 +1464,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public ArrayList<String> getUserFinanceRoles(String[] moduleNames, String finEvent) {
 		Set<String> finRoleSet = FinanceWorkflowRoleUtil.getFinanceRoles(moduleNames, finEvent);
 		ArrayList<String> arrayRoleCode = new ArrayList<String>();
-		;
 		Object[] roles = getUserWorkspace().getUserRoleSet().toArray();
+
 		for (Object role : roles) {
 			if (finRoleSet.contains(role.toString())) {
 				arrayRoleCode.add(role.toString());

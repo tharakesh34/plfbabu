@@ -184,8 +184,8 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = new FinanceDetail();
 		financeDetail = financeDetailService.getVerificationInitiationDetails(finID, verificationtype, type);
+
 		logger.debug(Literal.LEAVING);
-		;
 		return financeDetail;
 	}
 
@@ -2317,11 +2317,11 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			Long reason = vrf.getReason();
 			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
 				// Reason values are set to be null in case values are processed with API
-				
-				if(reason == null){
+
+				if (reason == null) {
 					reason = 1L;
 				}
-				if ( reason > 0) {
+				if (reason > 0) {
 					vrf.setReason(null);
 					reason = null;
 				}

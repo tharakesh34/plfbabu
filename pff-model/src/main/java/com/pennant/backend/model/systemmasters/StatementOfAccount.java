@@ -97,7 +97,7 @@ public class StatementOfAccount {
 	private BigDecimal totalPriBal = BigDecimal.ZERO;
 	private BigDecimal totalPftPaid = BigDecimal.ZERO;
 	private BigDecimal totalPftBal = BigDecimal.ZERO;
-	private BigDecimal paidTotal = BigDecimal.ZERO;;
+	private BigDecimal paidTotal = BigDecimal.ZERO;
 	private BigDecimal totalOutStanding = BigDecimal.ZERO;
 	private BigDecimal finCurrAssetValue = BigDecimal.ZERO;
 	private BigDecimal nextRpyPri = BigDecimal.ZERO;
