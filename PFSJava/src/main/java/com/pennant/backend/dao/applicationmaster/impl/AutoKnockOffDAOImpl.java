@@ -3,7 +3,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +21,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -87,35 +87,30 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			int count = jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
+		int count = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-				ps.setString(index++, knockOff.getCode());
-				ps.setString(index++, knockOff.getDescription());
-				ps.setBoolean(index++, knockOff.isActive());
-				ps.setString(index++, knockOff.getExecutionDays());
-				ps.setInt(index++, knockOff.getVersion());
-				ps.setLong(index++, knockOff.getLastMntBy());
-				ps.setTimestamp(index++, knockOff.getLastMntOn());
-				ps.setString(index++, knockOff.getRecordStatus());
-				ps.setString(index++, knockOff.getRoleCode());
-				ps.setString(index++, knockOff.getNextRoleCode());
-				ps.setString(index++, knockOff.getTaskId());
-				ps.setString(index++, knockOff.getNextTaskId());
-				ps.setString(index++, knockOff.getRecordType());
-				ps.setLong(index++, knockOff.getWorkflowId());
+			ps.setString(index++, knockOff.getCode());
+			ps.setString(index++, knockOff.getDescription());
+			ps.setBoolean(index++, knockOff.isActive());
+			ps.setString(index++, knockOff.getExecutionDays());
+			ps.setInt(index++, knockOff.getVersion());
+			ps.setLong(index++, knockOff.getLastMntBy());
+			ps.setTimestamp(index++, knockOff.getLastMntOn());
+			ps.setString(index++, knockOff.getRecordStatus());
+			ps.setString(index++, knockOff.getRoleCode());
+			ps.setString(index++, knockOff.getNextRoleCode());
+			ps.setString(index++, knockOff.getTaskId());
+			ps.setString(index++, knockOff.getNextTaskId());
+			ps.setString(index++, knockOff.getRecordType());
+			ps.setLong(index++, knockOff.getWorkflowId());
 
-				ps.setLong(index, knockOff.getId());
-			});
+			ps.setLong(index, knockOff.getId());
+		});
 
-			if (count == 0) {
-				throw new ConcurrencyException();
-			}
-		} catch (DataAccessException e) {
-			//
+		if (count == 0) {
+			throw new ConcurrencyException();
 		}
-
 	}
 
 	@Override
@@ -145,12 +140,10 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
-
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -165,10 +158,9 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, code);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -195,13 +187,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return jdbcOperations.queryForObject(sql, Integer.class, object) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return jdbcOperations.queryForObject(sql, Integer.class, object) > 0;
 	}
 
 	public List<AutoKnockOff> getKnockOffDetails(long finID) {
@@ -221,41 +207,34 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setInt(index++, 1);
-					ps.setLong(index, finID);
-				}
-			}, new RowMapper<AutoKnockOff>() {
-				@Override
-				public AutoKnockOff mapRow(ResultSet rs, int rowNum) throws SQLException {
-					AutoKnockOff knockOff = new AutoKnockOff();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setInt(index++, 1);
+				ps.setLong(index, finID);
+			}
+		}, new RowMapper<AutoKnockOff>() {
+			@Override
+			public AutoKnockOff mapRow(ResultSet rs, int rowNum) throws SQLException {
+				AutoKnockOff knockOff = new AutoKnockOff();
 
-					knockOff.setId(rs.getLong("Id"));
-					knockOff.setFinID(rs.getLong("FinID"));
-					knockOff.setFinreference(rs.getString("Finreference"));
-					knockOff.setFinType(rs.getString("FinType"));
-					knockOff.setFinTypeDesc(rs.getString("FinTypeDesc"));
-					knockOff.setCode(rs.getString("Code"));
-					knockOff.setDescription(rs.getString("Description"));
-					knockOff.setExecutionDays(rs.getString("ExecutionDays"));
-					knockOff.setFeeTypeCode(rs.getString("FeeTypeCode"));
-					// knockOff.setFeeTypeDesc(rs.getString("FeeTypedesc"));
-					knockOff.setKnockOffOrder(rs.getString("KnockOffOrder"));
-					knockOff.setFeeOrder(rs.getInt("FeeOrder"));
+				knockOff.setId(rs.getLong("Id"));
+				knockOff.setFinID(rs.getLong("FinID"));
+				knockOff.setFinreference(rs.getString("Finreference"));
+				knockOff.setFinType(rs.getString("FinType"));
+				knockOff.setFinTypeDesc(rs.getString("FinTypeDesc"));
+				knockOff.setCode(rs.getString("Code"));
+				knockOff.setDescription(rs.getString("Description"));
+				knockOff.setExecutionDays(rs.getString("ExecutionDays"));
+				knockOff.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				// knockOff.setFeeTypeDesc(rs.getString("FeeTypedesc"));
+				knockOff.setKnockOffOrder(rs.getString("KnockOffOrder"));
+				knockOff.setFeeOrder(rs.getInt("FeeOrder"));
 
-					return knockOff;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return knockOff;
+			}
+		});
 	}
 
 	private StringBuilder getSqlQuery(TableType type) {
@@ -336,8 +315,8 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 				ps.setInt(index++, 1);
 				ps.setInt(index, 0);
 			});
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -403,10 +382,8 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 				ps.setInt(index++, 0);
 				ps.setString(index, "%" + day + "%");
 			});
-		} catch (Exception e) {
-			//
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-
-		return 0;
 	}
 }
