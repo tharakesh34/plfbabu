@@ -186,6 +186,7 @@ public class FinScheduleData implements Serializable {
 	private String oldFinReference;
 
 	private RestructureDetail restructureDetail;
+	private boolean equalInst;
 
 	public FinScheduleData() {
 		super();
@@ -280,6 +281,7 @@ public class FinScheduleData implements Serializable {
 				this.finMaintainInstruction == null ? null : this.finMaintainInstruction.copyEntity());
 		entity.setOldFinReference(this.oldFinReference);
 		entity.setRestructureDetail(this.restructureDetail == null ? null : this.restructureDetail.copyEntity());
+		entity.setEqualInst(this.equalInst);
 		return entity;
 	}
 
@@ -828,6 +830,14 @@ public class FinScheduleData implements Serializable {
 
 	public void setFinMaintainInstruction(FinMaintainInstruction finMaintainInstruction) {
 		this.finMaintainInstruction = finMaintainInstruction;
+	}
+
+	public boolean isEqualInst() {
+		return equalInst;
+	}
+
+	public void setEqualInst(boolean equalInst) {
+		this.equalInst = equalInst;
 	}
 
 }
