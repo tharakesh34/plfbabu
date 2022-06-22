@@ -13,6 +13,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.ws.log.model.APILogDetail;
 
 public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements APILogDetailDAO {
@@ -91,10 +92,9 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 						return ld;
 					});
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		
-		return null;
 	}
 
 	@Override

@@ -19,6 +19,8 @@ import com.pennant.ws.exception.APIException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APIChannelDAO {
 	private static Logger logger = LogManager.getLogger(APIChannelDAOImpl.class);
@@ -54,18 +56,13 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	/**
 	 * Fetch the Record ChannelDetails details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ChannelDetails
 	 */
 	@Override
 	public APIChannel getChannelDetailsById(final long id, String type) {
-		logger.debug("Entering ");
-
-		MapSqlParameterSource source = null;
-		RowMapper<APIChannel> typeRowMapper = null;
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT Id, Code, Description, Active,LastMntBy, LastMntOn,");
@@ -75,21 +72,19 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("  Where  Id = :Id");
 
-		logger.debug("selectSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Id", id);
 
-		typeRowMapper = BeanPropertyRowMapper.newInstance(APIChannel.class);
+		RowMapper<APIChannel> typeRowMapper = BeanPropertyRowMapper.newInstance(APIChannel.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		} finally {
-			logger.debug("Leaving ");
-			source = null;
-			typeRowMapper = null;
+			logger.debug(Literal.LEAVING);
 		}
 	}
 
@@ -97,10 +92,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	 * This method Deletes the Record from the ChannelDetails or ChannelDetails_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete ChannelDetails by key CcyCode
 	 * 
-	 * @param APIChannel
-	 *            (ChannelDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param APIChannel (ChannelDetails)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -132,10 +125,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	 * 
 	 * save ChannelDetails
 	 * 
-	 * @param ChannelDetails
-	 *            (ChannelDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param ChannelDetails (ChannelDetails)
+	 * @param type           (String) ""/_Temp/_View
 	 * @return String
 	 * 
 	 */
@@ -168,10 +159,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	 * This method updates the Record ChannelDetails or ChannelDetails_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update ChannelDetails by key CcyCode and Version
 	 * 
-	 * @param ChannelDetails
-	 *            (ChannelDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param ChannelDetails (ChannelDetails)
+	 * @param type           (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -226,30 +215,25 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	/**
 	 * Fetch the Record ChannelAuthDetails details by chaneelId,id
 	 * 
-	 * @param id
-	 *            (long)
-	 * @param ChannelId
-	 *            (long)
+	 * @param id        (long)
+	 * @param ChannelId (long)
 	 * @return APIChannelIP(object)
 	 */
 
 	@Override
 	public APIChannelIP getChannelIpDetail(long channelId, long id) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		StringBuilder selectSql = null;
-
-		selectSql = new StringBuilder();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT Id, ChannelId, IP,  Active, Version, ");
 		selectSql.append("  LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  API_CHANNEL_IP_DETAILS");
 		selectSql.append("  Where  Id = :Id AND ChannelId = :ChannelId ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Id", id);
 		source.addValue("ChannelId", channelId);
 
@@ -257,13 +241,11 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		} finally {
-			logger.debug("Leaving ");
-			source = null;
-			selectSql = null;
+			logger.debug(Literal.LEAVING);
 		}
 	}
 
@@ -271,10 +253,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	 * This method Deletes the Record from the ChannelAuthDetails or ChannelAuthDetails_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete ChannelAuthDetails by key CcyCode
 	 * 
-	 * @param APIChannelIP
-	 *            (ChannelAuthDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param APIChannelIP (ChannelAuthDetails)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -305,10 +285,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	 * 
 	 * save ChannelAuthDetails
 	 * 
-	 * @param APIChannelIP
-	 *            (ChannelAuthDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param APIChannelIP (ChannelAuthDetails)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return String
 	 * 
 	 */
@@ -338,10 +316,8 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 	 * This method updates the Record ChannelAuthDetails or ChannelAuthDetails_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update ChannelAuthDetails by key CcyCode and Version
 	 * 
-	 * @param APIChannelIP
-	 *            (ChannelAuthDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param APIChannelIP (ChannelAuthDetails)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -419,28 +395,26 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 
 	@Override
 	public long getChannelId(String channelCode, String channelIp) throws APIException {
-		logger.debug("Entering ");
-		MapSqlParameterSource source = null;
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select CD.Id from API_CHANNEL_DETAILS CD");
 		sql.append(" INNER JOIN  API_CHANNEL_IP_DETAILS CID ON CID.ChannelID = CD.ID");
 		sql.append(" Where CD.Code = :Code AND CID.IP = :IP");
 
-		logger.debug("Query: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Code", channelCode);
 		source.addValue("IP", channelIp);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			throw new APIException("99003");
 		} finally {
-			logger.debug("Leaving");
-			source = null;
+			logger.debug(Literal.LEAVING);
 		}
 	}
 }
