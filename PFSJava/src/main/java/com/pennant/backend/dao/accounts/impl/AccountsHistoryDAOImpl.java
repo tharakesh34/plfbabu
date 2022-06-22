@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountsDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-01-2012    														*
- *                                                                  						*
- * Modified Date    :  02-01-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-01-2012 * * Modified Date
+ * : 02-01-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-01-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-01-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.accounts.impl;
@@ -58,6 +40,7 @@ import com.pennant.backend.dao.accounts.AccountsHistoryDAO;
 import com.pennant.backend.model.accounts.AccountHistoryDetail;
 import com.pennant.backend.model.accounts.AccountsHistory;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements AccountsHistoryDAO {
 
@@ -70,7 +53,7 @@ public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements
 
 		int recordCount = 0;
 
-		//PREPARE BOTH UPDATE. and Insert Statements and make available for exception handling
+		// PREPARE BOTH UPDATE. and Insert Statements and make available for exception handling
 		StringBuilder updateSql = new StringBuilder("Update AccountsHistory Set ");
 		updateSql.append(" TodayDebits = (TodayDebits + :TodayDebits), ");
 		updateSql.append(" TodayCredits = (TodayCredits + :TodayCredits), ");
@@ -85,7 +68,7 @@ public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements
 		insertSql.append(" Values(:AccountId, :PostDate, :TodayDebits, :TodayCredits, ");
 		insertSql.append(" :TodayNet, :ShadowBal, :AcBalance)");
 
-		//TRY UPDATE.
+		// TRY UPDATE.
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountHist);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -93,12 +76,13 @@ public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements
 			return true;
 		}
 
-		//UPDATE FAILS TRY INSERT
+		// UPDATE FAILS TRY INSERT
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 			return true;
 		} catch (DuplicateKeyException e) {
-			//Due to huge transactions hit record j=has been created between update and insert statements. SO update now
+			// Due to huge transactions hit record j=has been created between update and insert statements. SO update
+			// now
 			recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 			if (recordCount > 0) {
@@ -114,16 +98,12 @@ public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements
 	/***
 	 * Gets the account's closing balance for the specified date.
 	 * 
-	 * @param accountId
-	 *            The account id.
-	 * @param postDate
-	 *            The posting date.
+	 * @param accountId The account id.
+	 * @param postDate  The posting date.
 	 * @return The account's closing balance for the specified date.
 	 */
 	@Override
 	public BigDecimal getClosingBalance(String accountId, Date postDate) {
-		BigDecimal acBalance = BigDecimal.ZERO;
-
 		StringBuilder sql = new StringBuilder("select AcBalance from AccountsHistory");
 		sql.append(" where AccountId = :AccountId and PostDate = (");
 		sql.append(" select max(PostDate) from AccountsHistory where AccountId = :AccountId and PostDate < :PostDate");
@@ -134,22 +114,18 @@ public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements
 		paramSource.addValue("PostDate", postDate);
 
 		try {
-			acBalance = jdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
-			acBalance = BigDecimal.ZERO;
-			//logger.error("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-
-		return acBalance;
 	}
 
 	/***
 	 * Gets the account's closing balance for the specified date.
 	 * 
-	 * @param accountId
-	 *            The account id.
-	 * @param postDate
-	 *            The posting date.
+	 * @param accountId The account id.
+	 * @param postDate  The posting date.
 	 * @return The account's closing balance for the specified date.
 	 */
 	@Override

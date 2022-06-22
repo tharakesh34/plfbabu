@@ -1,44 +1,26 @@
 /**
-
+ * 
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityGroupDAOImpl.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityGroupDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 03-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.administration.impl;
@@ -60,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -77,15 +60,13 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 	/**
 	 * Fetch the Record SecurityGroup details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SecurityGroup
 	 */
 	@Override
 	public SecurityGroup getSecurityGroupById(final long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		SecurityGroup securityGroup = new SecurityGroup();
 		securityGroup.setId(id);
 
@@ -101,27 +82,23 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 		RowMapper<SecurityGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityGroup.class);
 
 		try {
-			securityGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			securityGroup = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return securityGroup;
 	}
 
 	/**
 	 * Fetch the Record SecurityGroup details by key field
 	 * 
 	 * @param String(grpCode),
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param type             (String) ""/_Temp/_View
 	 * @return SecurityGroup
 	 */
 	@Override
 	public SecurityGroup getSecurityGroupByCode(final String grpCode, String type) {
-
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		SecurityGroup securityGroup = new SecurityGroup();
 		securityGroup.setGrpCode(grpCode);
@@ -138,23 +115,19 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 		RowMapper<SecurityGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityGroup.class);
 
 		try {
-			securityGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			securityGroup = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving ");
-		return securityGroup;
 	}
 
 	/**
 	 * This method Deletes the Record from the SecGroups or SecGroups_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete SecurityGroup by key GrpID
 	 * 
-	 * @param SecurityGroup
-	 *            (securityGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SecurityGroup (securityGroup)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -191,10 +164,8 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 	 *
 	 * save SecurityGroup
 	 * 
-	 * @param SecurityGroup
-	 *            (securityGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SecurityGroup (securityGroup)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -229,10 +200,8 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 	 * This method updates the Record SecGroups or SecGroups_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update SecurityGroup by key GrpID and Version
 	 * 
-	 * @param SecurityGroup
-	 *            (securityGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SecurityGroup (securityGroup)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountsDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-01-2012    														*
- *                                                                  						*
- * Modified Date    :  02-01-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-01-2012 * * Modified Date
+ * : 02-01-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-01-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-01-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.accounts.impl;
 
 import java.math.BigDecimal;
@@ -64,6 +46,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Accounts model</b> class.<br>
@@ -110,10 +93,8 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	/**
 	 * Fetch the Record Account Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Accounts
 	 */
 	@Override
@@ -145,22 +126,18 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 		RowMapper<Accounts> typeRowMapper = BeanPropertyRowMapper.newInstance(Accounts.class);
 
 		try {
-			accounts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			accounts = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return accounts;
 	}
 
 	/**
 	 * Fetch the Record Account Details List by key field
 	 * 
-	 * @param AcPurpose
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param AcPurpose (String)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return List<Accounts>
 	 */
 	@Override
@@ -186,10 +163,8 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	 * This method Deletes the Record from the Accounts or Accounts_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Account Details by key AccointId
 	 * 
-	 * @param Account
-	 *            Details (accounts)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Details (accounts)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -221,10 +196,8 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	 *
 	 * save Account Details
 	 * 
-	 * @param Account
-	 *            Details (accounts)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Details (accounts)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -263,10 +236,8 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	 *
 	 * save Account Details
 	 * 
-	 * @param Account
-	 *            Details (accounts)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Details (accounts)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -303,10 +274,8 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	 * This method updates the Record Accounts or Accounts_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update Account Details by key AccointId and Version
 	 * 
-	 * @param Account
-	 *            Details (accounts)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Details (accounts)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -350,10 +319,8 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 	 * This method updates the Record Accounts or Accounts_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update Account Details by key AccointId and Version
 	 * 
-	 * @param Account
-	 *            Details (accounts)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Details (accounts)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -409,7 +376,7 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 
 		int recordCount = 0;
 
-		//PREPARE BOTH UPDATE. and Insert Statements and make available for exception handling
+		// PREPARE BOTH UPDATE. and Insert Statements and make available for exception handling
 		StringBuilder updateSql = new StringBuilder("Update Accounts Set ");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" ShadowBal = (ShadowBal + :ShadowBal), ");
@@ -432,7 +399,7 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
 		insertSql.append(", :NextTaskId, :RecordType, :WorkflowId)");
 
-		//TRY UPDATE.
+		// TRY UPDATE.
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(account);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
@@ -440,12 +407,13 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 			return true;
 		}
 
-		//UPDATE FAILS TRY INSERT
+		// UPDATE FAILS TRY INSERT
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 			return true;
 		} catch (DuplicateKeyException e) {
-			//Due to huge transactions hit record j=has been created between update and insert statements. SO update now
+			// Due to huge transactions hit record j=has been created between update and insert statements. SO update
+			// now
 			recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 			if (recordCount > 0) {
