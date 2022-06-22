@@ -229,7 +229,6 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 	 */
 	@Override
 	public int getRoleIdCount(long roleId) {
-		int status;
 		logger.debug("Entering ");
 		Map<String, Long> namedParamters = Collections.singletonMap("RoleId", roleId);
 		StringBuilder selectSql = new StringBuilder(
@@ -247,7 +246,6 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 	 */
 	@Override
 	public int getOprIdCount(long oprID) {
-		int status;
 		logger.debug("Entering ");
 		Map<String, Long> namedParamters = Collections.singletonMap("UsrID", oprID);
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) FROM SecOperationRoles_View where OprID=:OprID ");

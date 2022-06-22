@@ -1,5 +1,6 @@
 package com.pennanttech.activity.log;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +40,7 @@ public class ActivityLogServiceImpl implements ActivityLogService {
 
 	@Override
 	public List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo,
-			long instructionUID) {
+			long instructionUID) throws SQLException {
 		return activityLogDAO.getExtendedFieldActivitiyLog(tableName, reference, seqNo, instructionUID);
 	}
 

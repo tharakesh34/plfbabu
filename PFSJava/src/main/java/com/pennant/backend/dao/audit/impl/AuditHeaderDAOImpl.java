@@ -74,20 +74,15 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		long id = Long.MIN_VALUE;
 		auditHeader.setAuditDate(new Timestamp(System.currentTimeMillis()));
 
-		try {
-			id = addAuditHeader(auditHeader);
-			auditHeader.setId(id);
+		id = addAuditHeader(auditHeader);
+		auditHeader.setId(id);
 
-			if (auditHeader.getAuditDetail() != null) {
-				createAuditDetails(auditHeader, auditHeader.getAuditDetail());
-			}
+		if (auditHeader.getAuditDetail() != null) {
+			createAuditDetails(auditHeader, auditHeader.getAuditDetail());
+		}
 
-			if (auditHeader.getAuditDetails() != null && auditHeader.getAuditDetails().size() > 0) {
-				createAuditDetails(auditHeader);
-			}
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		if (auditHeader.getAuditDetails() != null && auditHeader.getAuditDetails().size() > 0) {
+			createAuditDetails(auditHeader);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -222,27 +217,20 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		sql.append(whereCondition);
 		sql.append(" and Version = ? order by AuditId desc");
 
-		try {
-			return jdbcOperations.query(sql.toString(), arguments, new ResultSetExtractor<Boolean>() {
-
-				@Override
-				public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
-					if (rs.next()) {
-						if (PennantConstants.RCD_STATUS_SAVED.equals(rs.getString(1))) {
-							return true;
-						}
-						if (userId == rs.getLong(2)) {
-							return false;
-						}
+		return jdbcOperations.query(sql.toString(), arguments, new ResultSetExtractor<Boolean>() {
+			@Override
+			public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					if (PennantConstants.RCD_STATUS_SAVED.equals(rs.getString(1))) {
+						return true;
 					}
-					return true;
+					if (userId == rs.getLong(2)) {
+						return false;
+					}
 				}
+				return true;
+			}
 
-			});
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return true;
+		});
 	}
 }

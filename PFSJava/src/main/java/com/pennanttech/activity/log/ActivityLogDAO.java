@@ -1,5 +1,6 @@
 package com.pennanttech.activity.log;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ActivityLogDAO {
@@ -27,5 +28,6 @@ public interface ActivityLogDAO {
 	 */
 	List<Activity> getActivities(String tableName, String keyColumn, Object keyValue, long fromAuditId, long toAuditId);
 
-	List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo, long instructionUID);
+	List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo, long instructionUID)
+			throws SQLException;
 }

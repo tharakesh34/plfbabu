@@ -1,5 +1,6 @@
 package com.pennanttech.activity.log;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.pennant.backend.model.Notes;
@@ -40,5 +41,6 @@ public interface ActivityLogService {
 	 */
 	List<Notes> getNotesList(Object reference, List<String> moduleNames);
 
-	List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo, long instructionUID);
+	List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo, long instructionUID)
+			throws SQLException;
 }
