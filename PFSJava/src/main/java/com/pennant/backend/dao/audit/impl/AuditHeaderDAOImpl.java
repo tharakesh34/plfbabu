@@ -71,10 +71,9 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 	public long addAudit(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
-		long id = Long.MIN_VALUE;
 		auditHeader.setAuditDate(new Timestamp(System.currentTimeMillis()));
 
-		id = addAuditHeader(auditHeader);
+		long id = addAuditHeader(auditHeader);
 		auditHeader.setId(id);
 
 		if (auditHeader.getAuditDetail() != null) {

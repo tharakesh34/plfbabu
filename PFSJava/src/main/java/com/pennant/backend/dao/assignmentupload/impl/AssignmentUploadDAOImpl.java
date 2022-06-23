@@ -217,10 +217,6 @@ public class AssignmentUploadDAOImpl extends SequenceDao<AssignmentUpload> imple
 		source.addValue("FinReference", finReference);
 		source.addValue("Status", UploadConstants.REFUND_UPLOAD_STATUS_SUCCESS);
 
-		if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-			return true;
-		}
-
-		return false;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 }

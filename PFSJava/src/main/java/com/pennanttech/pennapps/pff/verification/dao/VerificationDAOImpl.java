@@ -11,7 +11,6 @@
  */
 package com.pennanttech.pennapps.pff.verification.dao;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +33,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.RequestType;
@@ -101,15 +101,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 	}
 
 	@Override
@@ -143,8 +135,6 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			entity.setId(keyHolder.getKey().longValue());
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -273,15 +263,11 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		paramMap.addValue("verificationType", verificationType);
 		paramMap.addValue("requestType", RequestType.INITIATE.getKey());
 		try {
-			Long verificationId = jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
-			if (verificationId != null) {
-				return verificationId;
-			}
-		} catch (Exception e) {
+			return jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -306,11 +292,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -392,13 +376,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			logger.debug(Literal.SQL + sql.toString());
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
-
 	}
 
 	@Override
@@ -424,14 +404,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 	}
 
 	@Override
@@ -448,13 +421,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("keyReference", keyReference);
 
-		try {
-			return jdbcTemplate.queryForList(sql.toString(), parameterSource, Integer.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.queryForList(sql.toString(), parameterSource, Integer.class);
 	}
 
 	@Override
@@ -469,24 +436,15 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		paramMap.addValue("keyReference", finReference);
 		paramMap.addValue("verificationType", verificationType);
 		paramMap.addValue("referencetype", referencetype);
-		try {
-			return jdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<Long>();
+
+		return jdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
 	}
 
 	@Override
 	public void updateDocumentId(DocumentDetails detail, Long verificationId, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
-
-		sql = new StringBuilder("update verification_lv_details");
+		StringBuilder sql = new StringBuilder("update verification_lv_details");
 		sql.append(tableType.getSuffix());
 		sql.append(" set documentid = :documentid, documentrefid = :documentrefid ");
 		sql.append(" Where verificationid = :verificationid and documentsubid = :documentsubid ");
@@ -494,20 +452,14 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("documentid", detail.getDocId());
 		source.addValue("documentrefid", detail.getDocRefId());
 		source.addValue("documentsubid", detail.getDocCategory());
 		source.addValue("verificationid", verificationId);
 
-		try {
-			jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			source = null;
-			sql = null;
-		}
+		jdbcTemplate.update(sql.toString(), source);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -515,28 +467,19 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	public void updateRCUReference(DocumentDetails detail, Long verificationId) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
-
-		sql = new StringBuilder(
+		StringBuilder sql = new StringBuilder(
 				"Update verifications set reference = :reference Where referenceFor = :referenceFor and id = :id ");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("id", verificationId);
 		source.addValue("reference", String.valueOf(detail.getDocId()));
 		source.addValue("referenceFor", detail.getDocCategory());
 
-		try {
-			jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			source = null;
-			sql = null;
-		}
+		jdbcTemplate.update(sql.toString(), source);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -577,14 +520,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		paramMap.addValue("keyReference", finReference);
 		paramMap.addValue("verificationType", verificationType);
 		paramMap.addValue("requestType", requestType);
-		try {
-			return jdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<Long>();
+
+		return jdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
 	}
 
 	@Override
@@ -603,13 +540,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		paramMap.addValue("status", tvStatus);
 		paramMap.addValue("collateralReference", collateralReference);
 		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+
+		return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -627,13 +559,13 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		paramMap.addValue("referencefor", addressType);
 		paramMap.addValue("Reference", custCif);
 		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
+
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
-		} catch (Exception e) {
-			logger.error(e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -645,16 +577,11 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("decision", decision);
 		paramMap.addValue("verificationType", verificationType);
-		try {
-			return jdbcTemplate.queryForList(sql.toString(), paramMap, String.class);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+
+		return jdbcTemplate.queryForList(sql.toString(), paramMap, String.class);
 	}
 
-	//Specific to API
+	// Specific to API
 	@Override
 	public List<Verification> getVerifications(String finReference, int verificationType, int requestType) {
 		logger.debug(Literal.ENTERING);
@@ -666,32 +593,24 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(),
-					new Object[] { finReference, verificationType, requestType }, (rs, rowNum) -> {
-						Verification vf = new Verification();
+		return this.jdbcOperations.query(sql.toString(), new Object[] { finReference, verificationType, requestType },
+				(rs, rowNum) -> {
+					Verification vf = new Verification();
 
-						vf.setId(rs.getLong("ID"));
-						vf.setReferenceFor(rs.getString("REFERENCEFOR"));
-						vf.setCustomerName(rs.getString("CUSTSHRTNAME"));
-						vf.setRequestType(rs.getInt("REQUESTTYPE"));
-						vf.setVerificationType(rs.getInt("VERIFICATIONTYPE"));
+					vf.setId(rs.getLong("ID"));
+					vf.setReferenceFor(rs.getString("REFERENCEFOR"));
+					vf.setCustomerName(rs.getString("CUSTSHRTNAME"));
+					vf.setRequestType(rs.getInt("REQUESTTYPE"));
+					vf.setVerificationType(rs.getInt("VERIFICATIONTYPE"));
 
-						return vf;
-					});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+					return vf;
+				});
 	}
 
 	@Override
 	public boolean isVerificationIdExists(String finReference, String referenceFor, String reference,
 			int verificationtype, String referenceType) {
 		logger.debug(Literal.ENTERING);
-		int count = 0;
 
 		StringBuilder sql = new StringBuilder("SELECT COUNT(ID) FROM VERIFICATIONS");
 		sql.append(" WHERE REFERENCEFOR= :referenceFor AND verificationtype= :verificationtype");
@@ -716,21 +635,14 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			paramMap.addValue("referenceType", referenceType);
 		}
 
-		try {
-			count = jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-		logger.debug("Leaving");
-		return count > 0 ? true : false;
+		return jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0;
 	}
 
 	@Override
 	public boolean isInitiatedVerfication(VerificationType verificationType, long verificationId, String type) {
-		//"verification_pd_temp"
+		// "verification_pd_temp"
 		logger.debug(Literal.ENTERING);
-		int count = 0;
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COUNT(verificationid) FROM ");
 		sql.append("VERIFICATION");
@@ -742,14 +654,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("verificationid", verificationId);
 
-		try {
-			count = jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-		logger.debug("Leaving");
-		return count > 0 ? true : false;
+		return jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0;
 	}
 
 	@Override
@@ -778,12 +683,12 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		if (verificationtype == 4) {
 			paramMap.addValue("referenceType", referenceType);
 		}
+
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 }
