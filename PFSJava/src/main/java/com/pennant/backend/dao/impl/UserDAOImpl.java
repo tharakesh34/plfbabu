@@ -57,6 +57,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>SecUser model</b> class.<br>
@@ -162,10 +163,9 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	/**
@@ -210,11 +210,9 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { userId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	private StringBuilder getSecurityUser() {
@@ -367,7 +365,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 				dbRoles.add(this.jdbcTemplate.queryForObject(sql.toString(), source, String.class));
 			}
 		} catch (EmptyResultDataAccessException e) {
-
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		logger.debug(Literal.LEAVING);
 		return dbRoles;

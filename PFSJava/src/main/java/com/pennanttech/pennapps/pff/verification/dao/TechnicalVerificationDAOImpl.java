@@ -12,9 +12,7 @@
 
 package com.pennanttech.pennapps.pff.verification.dao;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,15 +105,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -135,15 +125,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -274,10 +256,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	 */
 	@Override
 	public TechnicalVerification getTechnicalVerification(long id, String type) {
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
-
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select verificationId, agentCode, agentName, type,  verifiedDate, status, reason,");
 		sql.append(" summaryRemarks, sourceFormName, verificationFormName, observationRemarks,  valuationAmount,");
 		sql.append(" documentname, documentRef,");
@@ -295,18 +274,16 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(" Where verificationId = :verificationId ");
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("verificationId", id);
 
 		RowMapper<TechnicalVerification> typeRowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -325,15 +302,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -352,13 +321,9 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("VERIFICATIONIDS", verificationIDs);
 		paramSource.addValue("RECORDSTATUS", PennantConstants.RCD_STATUS_APPROVED);
-		try {
-			RowMapper<Verification> typeRowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
-			return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			return Collections.emptyList();
-		}
+		RowMapper<Verification> typeRowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
+
+		return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 	}
 
 	public void updateValuationAmount(Verification verification, TableType tableType) {

@@ -1,12 +1,10 @@
 package com.pennant.backend.dao.mandate.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -26,8 +24,7 @@ public class UploadSecondaryMandateDAOImpl extends BasicDao<UploadSecondaryManda
 	 * 
 	 * save SecondaryMandateStatus
 	 * 
-	 * @param SecondaryMandateStatus
-	 *            (mandateStatus)
+	 * @param SecondaryMandateStatus (mandateStatus)
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -54,34 +51,20 @@ public class UploadSecondaryMandateDAOImpl extends BasicDao<UploadSecondaryManda
 	public boolean fileIsExists(String name) {
 		logger.debug("Entering");
 
-		int count = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FileName", name);
 		StringBuilder sql = new StringBuilder("SELECT Count(*) From UploadSecondaryMandate");
 		sql.append(" Where FileName = :FileName");
 		logger.debug("selectSql: " + sql.toString());
 
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-		return exists;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
 	public List<UploadSecondaryMandate> getReportData(long uploadId, long userId, String module) {
-
 		UploadSecondaryMandate secondaryMandateStatus = new UploadSecondaryMandate();
 		secondaryMandateStatus.setUploadId(uploadId);
 		secondaryMandateStatus.setLastMntBy(userId);
-
-		List<UploadSecondaryMandate> list;
 
 		StringBuilder selectSql = new StringBuilder();
 
@@ -95,17 +78,6 @@ public class UploadSecondaryMandateDAOImpl extends BasicDao<UploadSecondaryManda
 		RowMapper<UploadSecondaryMandate> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(UploadSecondaryMandate.class);
 
-		try {
-			list = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			list = new ArrayList<>();
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return list;
-
+		return jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-
 }
