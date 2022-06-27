@@ -1,48 +1,38 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		: SecurityRoleGroupsDAOImpl.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  10-08-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SecurityRoleGroupsDAOImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 10-08-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.administration.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +55,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> implements SecurityRoleGroupsDAO {
 	private static Logger logger = LogManager.getLogger(SecurityRoleGroupsDAOImpl.class);
@@ -84,14 +75,12 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 	/**
 	 * This method Selects the SecurityRoleGroups records from SecRoleGroups
 	 * 
-	 * @param secRoles
-	 *            (SecurityRoleGroups)
+	 * @param secRoles (SecurityRoleGroups)
 	 * @return {@link List} of {@link SecurityRoleGroups}
 	 */
 	public List<SecurityRoleGroups> getSecRoleGroupsByRoleID(SecurityRole secRoles) {
 		logger.debug("Entering ");
 
-		List<SecurityRoleGroups> list = new ArrayList<SecurityRoleGroups>();
 		StringBuilder selectSql = new StringBuilder(" SELECT  RoleGrpID , GrpID , RoleID , ");
 		selectSql.append(" Version , LastMntBy , LastMntOn , RecordStatus , RoleCode , ");
 		selectSql.append(" NextRoleCode , TaskId , NextTaskId , RecordType , WorkflowId , ");
@@ -101,21 +90,14 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
 		RowMapper<SecurityRoleGroups> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRoleGroups.class);
-		try {
-			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			list = null;
-		}
-		logger.debug("Leaving ");
-		return list;
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
 	 * This method inserts new record into SecRoleGroups
 	 * 
-	 * @param securityRoleGroups
-	 *            (SecurityRoleGroups)
+	 * @param securityRoleGroups (SecurityRoleGroups)
 	 */
 	public void save(SecurityRoleGroups securityRoleGroups) {
 		if (securityRoleGroups.getRoleGrpID() == Long.MIN_VALUE) {
@@ -143,8 +125,7 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 	/**
 	 * This method deletes record from SecRoleGroups with GrpID and RoleID condition
 	 * 
-	 * @param securityRoleGroups
-	 *            (SecurityRoleGroups)
+	 * @param securityRoleGroups (SecurityRoleGroups)
 	 * @throws DataAccessException
 	 * 
 	 */
@@ -180,8 +161,8 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityRoleGroups);
 			this.jdbcTemplate.update(deleteUserRolesSql, beanParameters);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
 
 		logger.debug("Leaving ");
@@ -190,61 +171,40 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 	/**
 	 * This method get RoleIds count from SecRoleGroups_view
 	 * 
-	 * @param RoleId
-	 *            (long)
-	 * @return int
+	 * @param RoleId (long)
+	 * @return long
 	 */
 	public int getRoleIdCount(long roleId) {
-		int status;
 		logger.debug("Entering ");
 		Map<String, Long> namedParamters = Collections.singletonMap("RoleId", roleId);
 		String selectSql = "SELECT COUNT(*) FROM SecRoleGroups_view where RoleId=:RoleId ";
 		logger.debug("selectSql: " + selectSql);
 
-		try {
-			status = this.jdbcTemplate.queryForObject(selectSql, namedParamters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			status = 0;
-		}
-
-		logger.debug("Leaving ");
-		return status;
+		return this.jdbcTemplate.queryForObject(selectSql, namedParamters, Integer.class);
 	}
 
 	/**
 	 * This method get GroupIds count from SecRoleGroups_view
 	 * 
-	 * @return int
+	 * @return long
 	 */
 	public int getGroupIdCount(long groupId) {
-		int status;
 		logger.debug("Entering ");
 		Map<String, Long> namedParamters = Collections.singletonMap("GrpID", groupId);
 
 		String selectSql = "SELECT COUNT(*) FROM SecRoleGroups_view where GrpID=:GrpID ";
 		logger.debug("selectSql:" + selectSql);
 
-		try {
-			status = this.jdbcTemplate.queryForObject(selectSql, namedParamters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			status = 0;
-		}
-
-		logger.debug("Leaving ");
-		return status;
+		return this.jdbcTemplate.queryForObject(selectSql, namedParamters, Integer.class);
 	}
 
 	/**
 	 * This method fetches the records from secGroups_View a) if isAssigned is "true" fetches assigned roles from
 	 * secGroups_View b) if isAssigned is "false" fetches unassigned roles from secGroups_View
 	 * 
-	 * @param roleId
-	 *            (long)
+	 * @param roleId     (long)
 	 * 
-	 * @param isAssigned
-	 *            (boolean)
+	 * @param isAssigned (boolean)
 	 * @return {@link List} of {@link SecurityRoleGroups}
 	 **/
 	@Override
@@ -267,10 +227,8 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 	/**
 	 * This method fetches records from SecRoleGroups_AView with "roleID and groupId" condition
 	 * 
-	 * @param roleID
-	 *            (long)
-	 * @param groupId
-	 *            (long)
+	 * @param roleID  (long)
+	 * @param groupId (long)
 	 * @return secRolesGroups (SecurityRoleGroups)
 	 */
 	public SecurityRoleGroups getRoleGroupsByRoleAndGrpId(long roleID, long groupId) {
@@ -288,25 +246,22 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 		RowMapper<SecurityRoleGroups> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRoleGroups.class);
 
 		try {
-			secRolesGroups = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			secRolesGroups = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return secRolesGroups;
 	}
 
 	/**
 	 * This method Selects the SecurityRoleGroups records from SecRoleGroups
 	 * 
-	 * @param secRoles
-	 *            (SecurityRoleGroups)
+	 * @param secRoles (SecurityRoleGroups)
 	 * @return List<SecurityRoleGroups>
 	 */
 	@Override
 	public List<SecurityRoleGroups> getRoleGroupsByRoleID(long roleId, String type) {
 		logger.debug("Entering ");
-		List<SecurityRoleGroups> list = new ArrayList<SecurityRoleGroups>();
 
 		SecurityRoleGroups roleGroups = new SecurityRoleGroups();
 		roleGroups.setRoleID(roleId);
@@ -323,14 +278,8 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(roleGroups);
 		RowMapper<SecurityRoleGroups> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRoleGroups.class);
-		try {
-			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			list = null;
-		}
-		logger.debug("Leaving ");
-		return list;
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override

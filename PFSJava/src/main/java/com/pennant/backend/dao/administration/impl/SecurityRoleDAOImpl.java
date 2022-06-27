@@ -1,48 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityRoleDAOImpl.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  2-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityRoleDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 2-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *  2-08-2011        Pennant	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 2-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.administration.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -64,6 +45,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -98,10 +80,8 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	/**
 	 * Fetch the Record SecurityRole details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SecurityRole
 	 */
 	@Override
@@ -126,22 +106,18 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
 		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 		try {
-			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			secRoles = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return secRoles;
 	}
 
 	/**
 	 * Fetch the Record SecurityRole details by key field
 	 * 
-	 * @param roleCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param roleCode (String)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return SecurityRole
 	 */
 	@Override
@@ -168,23 +144,19 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
 		try {
-			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			secRoles = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return secRoles;
 	}
 
 	/**
 	 * This method Deletes the Record from the SecRoles or SecRoles_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete SecurityRole by key RoleID
 	 * 
-	 * @param SecurityRole
-	 *            (securityRole)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SecurityRole (securityRole)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -212,10 +184,8 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	 *
 	 * save SecurityRole
 	 * 
-	 * @param SecurityRole
-	 *            (securityRole)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SecurityRole (securityRole)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 */
@@ -247,10 +217,8 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	 * This method updates the Record SecRoles or SecRoles_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update SecurityRole by key RoleID and Version
 	 * 
-	 * @param SecurityRole
-	 *            (securityRole)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SecurityRole (securityRole)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -288,16 +256,14 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	/**
 	 * Fetch the Record SecurityRole details by key field
 	 * 
-	 * @param roleCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param roleCode (String)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return SecurityRole
 	 */
 	@Override
 	public List<SecurityRole> getApprovedSecurityRole() {
 		logger.debug("Entering");
-		String type = "_View"; //AView
+		String type = "_View"; // AView
 		SecurityRole secRoles = getSecurityRole();
 
 		StringBuilder selectSql = new StringBuilder("Select RoleID, RoleApp, RoleCd, RoleDesc, RoleCategory");
@@ -307,7 +273,7 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,lovDescRoleAppName ");
 		}
-		selectSql.append(" From SecRoles_View"); //SecRoles_AView
+		selectSql.append(" From SecRoles_View"); // SecRoles_AView
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
@@ -432,13 +398,6 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("usrID", userId);
 
-		try {
-			return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
 	}
 }

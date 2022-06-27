@@ -57,10 +57,12 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
@@ -86,9 +88,9 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 				return getTypeRowMapper(rs, type);
 			}, usrid);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	// DE#374 :User Creation : After approving the user, work-flow before and after image values not coming properly in
@@ -126,10 +128,9 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 				return getTypeRowMapper(rs, type);
 			}, usrLogin);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	/**
@@ -163,11 +164,9 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 				};
 			}
 		} catch (DataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
 			ErrorDetail errorDetails = getError("41006", securityUser.getUsrLogin(),
 					securityUser.getUserDetails().getLanguage());
-			throw new AppException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(errorDetails.getError());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -333,9 +332,9 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -447,11 +446,9 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 				};
 			}
 		} catch (DataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
 			ErrorDetail errorDetails = getError("41006", String.valueOf(securityUserDivBranch.getUsrID()),
 					securityUserDivBranch.getUserDetails().getLanguage());
-			throw new AppException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(errorDetails.getError());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -494,14 +491,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		RowMapper<SecurityUserDivBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	/**
@@ -560,14 +550,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		RowMapper<Entity> rowMapper = BeanPropertyRowMapper.newInstance(Entity.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -588,7 +571,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		try {
 			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			securityUser.setUsrID(0);
 		}
 		logger.debug("Leaving ");
@@ -619,14 +602,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		RowMapper<SecurityUser> rowMapper = BeanPropertyRowMapper.newInstance(SecurityUser.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -646,7 +622,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		try {
 			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			securityUser.setUsrID(0);
 		}
 		logger.debug("Leaving ");
@@ -659,11 +635,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(" set UsrAcLocked = 1, AccountLockedOn = :AccountLockedOn");
 		sql.append(", AccountUnLockedOn = null where UsrID = :UsrID");
 
-		try {
-			jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(userAccounts.toArray()));
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(userAccounts.toArray()));
 	}
 
 	@Override
