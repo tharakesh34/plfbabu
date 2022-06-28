@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -195,16 +194,7 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionMapping);
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
-			recordCount = 0;
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -227,16 +217,7 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 
 		logger.debug("SelectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-		return recordCount;
-
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
 	}
 
 	@Override
@@ -255,16 +236,6 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 
 		logger.debug("SelectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-		return recordCount;
-
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
 	}
-
 }

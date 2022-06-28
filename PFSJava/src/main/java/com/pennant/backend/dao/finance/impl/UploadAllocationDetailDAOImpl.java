@@ -38,6 +38,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.finance.UploadAllocationDetailDAO;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -84,7 +85,7 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 		sql.append("?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 			@Override
@@ -112,12 +113,12 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 		StringBuilder sql = new StringBuilder("Delete From UploadAlloctiondetails");
 		sql.append(" where UploadDetailId = ?");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
 			this.jdbcOperations.update(sql.toString(), new Object[] { uploadDetailId });
 		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -133,7 +134,7 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 		sql.append(" From UploadAlloctionDetails");
 		sql.append(" Where UploadDetailId = ?");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		upldAllctnDtlList = this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, ulDetailID);

@@ -27,7 +27,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +48,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -128,11 +128,9 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 				}
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -284,60 +282,53 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, statecode);
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, statecode);
+			}
+		}, new RowMapper<TaxDetail>() {
+			@Override
+			public TaxDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+				TaxDetail td = new TaxDetail();
+
+				td.setId(rs.getLong("Id"));
+				td.setCountry(rs.getString("Country"));
+				td.setStateCode(rs.getString("StateCode"));
+				td.setEntityCode(rs.getString("EntityCode"));
+				td.setTaxCode(rs.getString("TaxCode"));
+				td.setAddressLine1(rs.getString("AddressLine1"));
+				td.setAddressLine2(rs.getString("AddressLine2"));
+				td.setAddressLine3(rs.getString("AddressLine3"));
+				td.setAddressLine4(rs.getString("AddressLine4"));
+				td.setPinCode(rs.getString("PinCode"));
+				td.setCityCode(rs.getString("CityCode"));
+				td.setHsnNumber(rs.getString("HsnNumber"));
+				td.setNatureService(rs.getString("NatureService"));
+				td.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
+				td.setVersion(rs.getInt("Version"));
+				td.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				td.setLastMntBy(rs.getLong("LastMntBy"));
+				td.setRecordStatus(rs.getString("RecordStatus"));
+				td.setRoleCode(rs.getString("RoleCode"));
+				td.setNextRoleCode(rs.getString("NextRoleCode"));
+				td.setTaskId(rs.getString("TaskId"));
+				td.setNextTaskId(rs.getString("NextTaskId"));
+				td.setRecordType(rs.getString("RecordType"));
+				td.setWorkflowId(rs.getLong("WorkflowId"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					td.setCityName(rs.getString("CityName"));
+					td.setCountryName(rs.getString("CountryName"));
+					td.setProvinceName(rs.getString("ProvinceName"));
+					td.setEntityDesc(rs.getString("EntityDesc"));
+					td.setGstinAvailable(rs.getBoolean("GstinAvailable"));
 				}
-			}, new RowMapper<TaxDetail>() {
-				@Override
-				public TaxDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					TaxDetail td = new TaxDetail();
 
-					td.setId(rs.getLong("Id"));
-					td.setCountry(rs.getString("Country"));
-					td.setStateCode(rs.getString("StateCode"));
-					td.setEntityCode(rs.getString("EntityCode"));
-					td.setTaxCode(rs.getString("TaxCode"));
-					td.setAddressLine1(rs.getString("AddressLine1"));
-					td.setAddressLine2(rs.getString("AddressLine2"));
-					td.setAddressLine3(rs.getString("AddressLine3"));
-					td.setAddressLine4(rs.getString("AddressLine4"));
-					td.setPinCode(rs.getString("PinCode"));
-					td.setCityCode(rs.getString("CityCode"));
-					td.setHsnNumber(rs.getString("HsnNumber"));
-					td.setNatureService(rs.getString("NatureService"));
-					td.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
-					td.setVersion(rs.getInt("Version"));
-					td.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					td.setLastMntBy(rs.getLong("LastMntBy"));
-					td.setRecordStatus(rs.getString("RecordStatus"));
-					td.setRoleCode(rs.getString("RoleCode"));
-					td.setNextRoleCode(rs.getString("NextRoleCode"));
-					td.setTaskId(rs.getString("TaskId"));
-					td.setNextTaskId(rs.getString("NextTaskId"));
-					td.setRecordType(rs.getString("RecordType"));
-					td.setWorkflowId(rs.getLong("WorkflowId"));
-
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						td.setCityName(rs.getString("CityName"));
-						td.setCountryName(rs.getString("CountryName"));
-						td.setProvinceName(rs.getString("ProvinceName"));
-						td.setEntityDesc(rs.getString("EntityDesc"));
-						td.setGstinAvailable(rs.getBoolean("GstinAvailable"));
-					}
-
-					return td;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return td;
+			}
+		});
 	}
 
 	@Override
@@ -383,7 +374,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where StateCode = ? and EntityCode = ?");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -427,7 +418,6 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 
 			return td;
 		});
-
 	}
 
 	@Override

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SalesOfficerDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2011    														*
- *                                                                  						*
- * Modified Date    :  12-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SalesOfficerDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2011 * * Modified
+ * Date : 12-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +39,7 @@ import com.pennant.backend.model.applicationmaster.SalesOfficer;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>SalesOfficer model</b> class.<br>
@@ -72,10 +55,8 @@ public class SalesOfficerDAOImpl extends BasicDao<SalesOfficer> implements Sales
 	/**
 	 * Fetch the Record Sales Officers details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SalesOfficer
 	 */
 	@Override
@@ -102,23 +83,19 @@ public class SalesOfficerDAOImpl extends BasicDao<SalesOfficer> implements Sales
 		RowMapper<SalesOfficer> typeRowMapper = BeanPropertyRowMapper.newInstance(SalesOfficer.class);
 
 		try {
-			salesOfficer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			salesOfficer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return salesOfficer;
 	}
 
 	/**
 	 * This method Deletes the Record from the SalesOfficers or SalesOfficers_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Sales Officers by key SalesOffCode
 	 * 
-	 * @param Sales
-	 *            Officers (salesOfficer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Sales Officers (salesOfficer)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -152,10 +129,8 @@ public class SalesOfficerDAOImpl extends BasicDao<SalesOfficer> implements Sales
 	 *
 	 * save Sales Officers
 	 * 
-	 * @param Sales
-	 *            Officers (salesOfficer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Sales Officers (salesOfficer)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -188,10 +163,8 @@ public class SalesOfficerDAOImpl extends BasicDao<SalesOfficer> implements Sales
 	 * This method updates the Record SalesOfficers or SalesOfficers_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Sales Officers by key SalesOffCode and Version
 	 * 
-	 * @param Sales
-	 *            Officers (salesOfficer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Sales Officers (salesOfficer)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

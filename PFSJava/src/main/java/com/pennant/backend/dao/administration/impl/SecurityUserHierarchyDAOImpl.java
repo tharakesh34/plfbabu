@@ -1,54 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityUserHierarchyDAOImpl.java    	                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  30-07-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityUserHierarchyDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * *
+ * Modified Date : 30-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *  30-07-2011      Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-07-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.administration.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -180,42 +160,25 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 
 		RowMapper<SecurityUserHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(SecurityUserHierarchy.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 	}
 
 	@Override
 	public List<SecurityUserHierarchy> getUpLevelUsers(SecurityUserHierarchy userHierarchy) {
 		logger.debug(Literal.ENTERING);
+		
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		//parameterSource.addValue("ReportingTo", userHierarchy.getReportingTo());
 		parameterSource.addValue("UserId", userHierarchy.getUserId());
 		parameterSource.addValue("Depth", 1);
 
 		StringBuilder sql = new StringBuilder();
-
-		//		sql.append(" select reporting_to,depth from user_Hierarchy where userid =");
-		//		sql.append("(select userId from user_hierarchy where userId = :ReportingTo and depth = :Depth)");
-		//		sql.append(" and depth <> 0");
-
 		sql.append(" select reporting_to from user_hierarchy where userId = :UserId  and depth = :Depth");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		RowMapper<SecurityUserHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(SecurityUserHierarchy.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 	}
 
 	@Override
@@ -231,12 +194,7 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 
 		RowMapper<SecurityUserHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(SecurityUserHierarchy.class);
 
-		try {
-			jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
+		jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 	}
 
 	@Override
@@ -276,9 +234,7 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 		sql.append(" where UserId = :UserId and reporting_to = :reportingTo");
 
 		logger.trace(Literal.SQL + sql.toString());
-		//SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userHierarchy);
 
-		//this.jdbcTemplate.update(sql.toString(), beanParameters);
 		this.jdbcTemplate.update(sql.toString(), parameterSource);
 	}
 

@@ -1,45 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  UserActivityLogDAOImpl.java											*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : UserActivityLogDAOImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.impl;
 
 import java.util.List;
@@ -58,6 +49,7 @@ import com.pennant.backend.dao.UserActivityLogDAO;
 import com.pennant.backend.model.UserActivityLog;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements UserActivityLogDAO {
 	private static Logger logger = LogManager.getLogger(UserActivityLogDAOImpl.class);
@@ -110,7 +102,7 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 				try {
 					serialNo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 				} catch (EmptyResultDataAccessException e) {
-					logger.warn("Exception: ", e);
+					logger.warn(Message.NO_RECORD_FOUND);
 				}
 			}
 			serialNo = serialNo + 1;
@@ -124,15 +116,14 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 	public void updateFinStatus(String reference, String module) {
 		StringBuilder sql = new StringBuilder("Update Task_Log set Processed = ?");
 		sql.append(" Where Reference = ? and Module = ?");
-		
+
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps->{
+		this.jdbcOperations.update(sql.toString(), ps -> {
 			ps.setBoolean(1, true);
 			ps.setString(2, reference);
 			ps.setString(3, module);
 		});
-		
 	}
 
 	@Override
@@ -155,7 +146,7 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 
 		List<UserActivityLog> activities = jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 
-		// The previous role of compare role to be considered if one specified.	
+		// The previous role of compare role to be considered if one specified.
 		if (StringUtils.isNotEmpty(compareRole)) {
 			role = compareRole;
 		}

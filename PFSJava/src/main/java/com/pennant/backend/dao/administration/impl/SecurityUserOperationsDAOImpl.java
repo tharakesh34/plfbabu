@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		: SecurityUserOperationsDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-06-2011    														*
- *                                                                  						*
- * Modified Date    :  10-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityUserOperationsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-06-2011 * *
+ * Modified Date : 10-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *  10-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.administration.impl;
@@ -67,6 +49,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> implements SecurityUserOperationsDAO {
 	private static Logger logger = LogManager.getLogger(SecurityUserOperationsDAOImpl.class);
@@ -97,8 +80,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	/**
 	 * This Method selects the records from SecUserOperations_AView table with UsrID condition
 	 * 
-	 * @param secuser
-	 *            (SecUser)
+	 * @param secuser (SecUser)
 	 * @return List<SecurityUserOperations>
 	 **/
 
@@ -127,10 +109,8 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	/**
 	 * This Method selects the records from UserOperations_AView table with UsrIDand RoleID condition
 	 * 
-	 * @param userId
-	 *            (long)
-	 * @param oprId
-	 *            (long)
+	 * @param userId (long)
+	 * @param oprId  (long)
 	 * @return secUserOperations (SecurityUserOperations)
 	 */
 	public SecurityUserOperations getUserOperationsByUsrAndRoleIds(long userId, long oprId) {
@@ -150,21 +130,17 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 				.newInstance(SecurityUserOperations.class);
 
 		try {
-			secUserOperations = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			secUserOperations = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving ");
-		return secUserOperations;
 	}
 
 	/**
 	 * This method deletes the record from SecUserOperations with UsrID and RoleID condition
 	 * 
-	 * @param securityUserOperations
-	 *            (SecurityUserOperations)
+	 * @param securityUserOperations (SecurityUserOperations)
 	 * @throws DataAccessException
 	 */
 	public void delete(SecurityUserOperations securityUserOperations, String type) {
@@ -209,10 +185,8 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	/**
 	 * This method inserts new record into SecUserOperations table
 	 * 
-	 * @param securityUserOperations
-	 *            (SecurityUserOperations)
+	 * @param securityUserOperations (SecurityUserOperations)
 	 */
-
 	public long save(SecurityUserOperations securityUserOperations, String type) {
 		logger.debug("Entering ");
 
@@ -238,10 +212,8 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	 * This method updates the Record SecUsers or SecUsers_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update Security Users by key UsrID and Version
 	 * 
-	 * @param SecurityUsers
-	 *            (securityUser)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SecurityUsers (securityUser)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -275,62 +247,40 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 	/**
 	 * This method get RoleIds count from SecUserOperations_View
 	 * 
-	 * @param RoleId
-	 *            (long)
+	 * @param RoleId (long)
 	 * @return List<Long RoleIDs>
 	 */
 	public int getRoleIdCount(long roleId) {
-		int count;
 		logger.debug("Entering ");
 		Map<String, Long> namedParamters = Collections.singletonMap("RoleId", roleId);
 		StringBuilder selectSql = new StringBuilder(
 				"SELECT COUNT(*) FROM UserOperationRoles_View where RoleId=:RoleId ");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving getRoleIdCount()");
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
 	}
 
 	/**
 	 * This method get UserId count from UserOperations_View
 	 * 
-	 * @param RoleId
-	 *            (long)
+	 * @param RoleId (long)
 	 * @return List<Long RoleIDs>
 	 */
 	public int getUserIdCount(long userId) {
-		int status;
 		logger.debug("Entering ");
 		Map<String, Long> namedParamters = Collections.singletonMap("UsrID", userId);
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) FROM UserOperationRoles_View where UsrID=:UsrID ");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try {
-			status = this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			status = 0;
-		}
-
-		logger.debug("Leaving getRoleIdCount()");
-		return status;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
 	}
 
 	/**
 	 * This method fetches the records from SecOperations_View a) if isAssigned is "true" fetches assigned Operations
 	 * from SecOperations_View b) if isAssigned is "false" fetches unassigned Operations from SecOperations_View
 	 * 
-	 * @param userId
-	 *            (long)
-	 * @param isAssigned
-	 *            (boolean)
+	 * @param userId     (long)
+	 * @param isAssigned (boolean)
 	 * @return SecurityRoleList (ArrayList)
 	 * 
 	 */
@@ -373,16 +323,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		source = new MapSqlParameterSource();
 		source.addValue("OprID", oprID);
 
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
-		}
-		return 0;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	@Override

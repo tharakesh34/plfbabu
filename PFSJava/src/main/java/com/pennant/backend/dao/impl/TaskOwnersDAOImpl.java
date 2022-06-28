@@ -56,6 +56,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.model.TaskOwners;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -78,7 +80,7 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
-			logger.debug("Exception: ", e);
+			throw new ConcurrencyException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -97,13 +99,10 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwners);
-		try {
-			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		} catch (DuplicateKeyException e) {
-			logger.debug("Exception: ", e);
-		}
-		logger.debug("Leaving");
 
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
 	}
 
 	@Override
@@ -117,7 +116,7 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.debug("Exception: ", e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving ");
 	}
@@ -359,11 +358,7 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwners);
-		try {
-			this.jdbcTemplate.update(sql.toString(), beanParameters);
-		} catch (DuplicateKeyException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
 
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 	}
 }

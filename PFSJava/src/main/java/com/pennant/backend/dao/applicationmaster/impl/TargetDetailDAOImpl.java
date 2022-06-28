@@ -15,6 +15,7 @@ import com.pennant.backend.model.applicationmaster.TargetDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class TargetDetailDAOImpl extends BasicDao<TargetDetail> implements TargetDetailDAO {
 	private static Logger logger = LogManager.getLogger(TargetDetailDAOImpl.class);
@@ -42,13 +43,11 @@ public class TargetDetailDAOImpl extends BasicDao<TargetDetail> implements Targe
 		RowMapper<TargetDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(TargetDetail.class);
 
 		try {
-			targetDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			targetDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return targetDetail;
 	}
 
 	@Override
