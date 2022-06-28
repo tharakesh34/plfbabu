@@ -81,6 +81,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ReportConfiguration model</b> class.<br>
@@ -492,7 +493,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public List<FinReceiptDetail> getFinReceiptDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinReceiptDetail> list;
 		StringBuilder selectSql = new StringBuilder();
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -506,15 +506,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		RowMapper<FinReceiptDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
 
-		try {
-			list = jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
-		} catch (Exception e) {
-			list = new ArrayList<FinReceiptDetail>();
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return list;
+		return jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
 	}
 
 	/**
@@ -564,12 +556,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-
-		return null;
 	}
 
 	/**
@@ -692,7 +681,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public StatementOfAccount getSOAProductDetails(String finBranch, String finType) {
 		logger.debug(Literal.ENTERING);
 
-		StatementOfAccount statementOfAccount = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinBranch", finBranch);
 		source.addValue("FinType", finType);
@@ -708,16 +696,11 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		try {
 			RowMapper<StatementOfAccount> typeRowMapper = BeanPropertyRowMapper.newInstance(StatementOfAccount.class);
-			statementOfAccount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			statementOfAccount = null;
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug(Literal.LEAVING);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return statementOfAccount;
 	}
 
 	/**
@@ -788,7 +771,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public Date getMaxSchDate(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		Date maxSchDate = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
@@ -802,16 +784,11 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		try {
-			maxSchDate = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
-		} catch (Exception e) {
-			maxSchDate = null;
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug(Literal.LEAVING);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return maxSchDate;
 	}
 
 	/**
@@ -964,10 +941,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 	@Override
 	public EventProperties getEventPropertiesList(String configName) {
-
 		logger.debug(Literal.ENTERING);
 
-		EventProperties statementOfAccount = null;
 		MapSqlParameterSource parameterMap = new MapSqlParameterSource();
 		parameterMap = new MapSqlParameterSource();
 		parameterMap.addValue("ConfigName", configName);
@@ -979,36 +954,21 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		try {
 			RowMapper<EventProperties> typeRowMapper = BeanPropertyRowMapper.newInstance(EventProperties.class);
-			statementOfAccount = this.jdbcTemplate.queryForObject(sql.toString(), parameterMap, typeRowMapper);
-		} catch (Exception e) {
-			statementOfAccount = null;
-		} finally {
-			parameterMap = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterMap, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return statementOfAccount;
 	}
 
 	@Override
 	public List<String> getSOAFinTypes() {
-
 		logger.debug(Literal.ENTERING);
-		List<String> list = null;
+
 		StringBuilder sql = new StringBuilder("Select FinType from  SOA_FinTypes");
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			list = this.jdbcTemplate.queryForList(sql.toString(), new MapSqlParameterSource(), String.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION);
-		} finally {
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
-
-		return list;
+		return this.jdbcTemplate.queryForList(sql.toString(), new MapSqlParameterSource(), String.class);
 	}
 
 	@Override
@@ -1129,27 +1089,19 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
-		List<String> list = null;
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select finReference from FinanceMain ");
 		sql.append(" Where CustId = :CustID");
 		logger.trace(Literal.SQL + sql.toString());
-		try {
-			list = this.jdbcTemplate.queryForList(sql.toString(), source, String.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION);
-		} finally {
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
 
-		return list;
+		return this.jdbcTemplate.queryForList(sql.toString(), source, String.class);
 	}
 
 	@Override
 	public List<FinanceDisbursement> getFinanceDisbursementByFinRef(String finReference) {
 		logger.debug("Entering");
-		List<FinanceDisbursement> financeDisbursements = null;
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
@@ -1161,14 +1113,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<FinanceDisbursement> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceDisbursement.class);
 
-		try {
-			financeDisbursements = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeDisbursements = null;
-		}
-		logger.debug("Leaving");
-		return financeDisbursements;
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -1293,7 +1238,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public List<FinFeeRefundDetails> getFinFeeRefundDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinFeeRefundDetails> list;
 		StringBuilder selectSql = new StringBuilder();
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -1310,15 +1254,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		RowMapper<FinFeeRefundDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundDetails.class);
 
-		try {
-			list = jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
-		} catch (Exception e) {
-			list = new ArrayList<FinFeeRefundDetails>();
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return list;
+		return jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
 	}
 
 	@Override
@@ -1332,10 +1268,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		String providerGSTIN = null;
-
 		try {
-			providerGSTIN = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { stateCode, entityCode },
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { stateCode, entityCode },
 					new RowMapper<String>() {
 						@Override
 						public String mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1343,11 +1277,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return providerGSTIN;
 	}
 
 	@Override
@@ -1363,10 +1295,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		StatementOfAccount soa = new StatementOfAccount();
-
 		try {
-			soa = jdbcOperations.queryForObject(sql.toString(), new Object[] { finType },
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finType },
 					new RowMapper<StatementOfAccount>() {
 						@Override
 						public StatementOfAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1381,11 +1311,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new StatementOfAccount();
 		}
-
-		logger.debug(Literal.LEAVING);
-		return soa;
 	}
 
 	@Override
@@ -1400,10 +1328,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		StatementOfAccount soa = new StatementOfAccount();
-
 		try {
-			soa = jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
 					new RowMapper<StatementOfAccount>() {
 						@Override
 						public StatementOfAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1416,11 +1342,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new StatementOfAccount();
 		}
-
-		logger.debug(Literal.LEAVING);
-		return soa;
 	}
 
 	public Map<Long, Integer> getInstNumber(String finReference) {
