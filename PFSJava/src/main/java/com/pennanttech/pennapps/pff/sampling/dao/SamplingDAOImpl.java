@@ -29,6 +29,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.sampling.model.SamplingCollateral;
 import com.pennanttech.pff.core.TableType;
@@ -105,18 +106,15 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append("select coalesce(max(linkid), 0) from link_sampling_incomes");
 		sql.append(" where custid=:custid and samplingid =:id");
 
-		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custId);
 		source.addValue("id", samplinId);
 		try {
-			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			return jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return linkid;
 	}
 
 	@Override
@@ -149,18 +147,15 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(
 				"select coalesce(max(linkid), 0) from link_sampling_liabilities where custid=:custid and samplingid = :id");
 
-		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custId);
 		source.addValue("id", samplingId);
 		try {
-			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			return jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return linkid;
 	}
 
 	@Override
@@ -194,19 +189,15 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(type);
 		sql.append(" where samplingid = :id and collateralreference=:collateralreference");
 
-		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("collateralreference", collateralreference);
 		source.addValue("id", samplingId);
 		try {
-			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			return jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return linkid;
 	}
 
 	public void update(Sampling sampling, TableType tableType) {
@@ -252,13 +243,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("samplingid", samplingId);
 		RowMapper<SamplingCollateral> rowMapper = BeanPropertyRowMapper.newInstance(SamplingCollateral.class);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	public void delete(Sampling sampling, TableType tableType) {
@@ -315,16 +301,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		RowMapper<CustomerIncome> rowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			return new ArrayList<>();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 
 	}
 
@@ -343,16 +320,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		paramSource.addValue("samplingid", samplingid);
 		RowMapper<CustomerExtLiability> rowMapper = BeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			return new ArrayList<>();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 
 	}
 
@@ -396,8 +364,6 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	public List<Customer> getCustomers(String keyreference, String type) {
 		logger.debug(Literal.LEAVING);
 
-		List<Customer> list = new ArrayList<>();
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("select 1 custTypeCode, cu.custid, cu.custCif, cu.custshrtname, cu.phonenumber,");
 		sql.append(" ca.custaddrtype custAddlVar1, 0 includeincome ");
@@ -419,14 +385,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("keyreference", keyreference);
 		source.addValue("custaddrpriority", 5);
 		RowMapper<Customer> rowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
-		try {
-			list = jdbcTemplate.query(sql.toString(), source, rowMapper);
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return list;
+		return jdbcTemplate.query(sql.toString(), source, rowMapper);
 	}
 
 	@Override
@@ -509,22 +469,17 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("rulecode", Arrays.asList(Sampling.RULE_CODE_FOIRAMT, Sampling.RULE_CODE_IIRMAX,
 				Sampling.RULE_CODE_EMI, Sampling.RULE_CODE_LCRMAXEL, Sampling.RULE_CODE_LTVAMOUN));
 
-		try {
-			jdbcTemplate.query(sql.toString(), source, new RowCallbackHandler() {
-				@Override
-				public void processRow(ResultSet rs) throws SQLException {
-					rules.put(rs.getString(1), rs.getString(2));
-				}
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		jdbcTemplate.query(sql.toString(), source, new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				rules.put(rs.getString(1), rs.getString(2));
+			}
+		});
 
 		return rules;
 	}
 
 	public ExtendedFieldRender getCollateralExtendedFields(String collReference, String tableName, String type) {
-		ExtendedFieldRender extRender = null;
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from ");
 		sql.append(tableName).append(type);
@@ -536,19 +491,15 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		paramSource.addValue("collReference", collReference);
 
 		try {
-			extRender = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return extRender;
 	}
 
 	public Map<String, Object> getExtendedField(String linkId, int seqNo, String tableName, String type) {
 		logger.debug(Literal.ENTERING);
-
-		Map<String, Object> renderMap = null;
 
 		type = type.toLowerCase();
 
@@ -577,14 +528,11 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("linkid", linkId);
 		source.addValue("seqno", seqNo);
 		try {
-			renderMap = this.jdbcTemplate.queryForMap(sql.toString(), source);
-		} catch (Exception e) {
-			logger.warn(e);
-			renderMap = new HashMap<>();
+			return this.jdbcTemplate.queryForMap(sql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new HashMap<>();
 		}
-
-		logger.debug(Literal.LEAVING);
-		return renderMap;
 	}
 
 	@Override
@@ -594,20 +542,10 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where keyreference=:keyreference");
 
-		int count = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("keyreference", finReference);
-		try {
-			count = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
 
-		}
-
-		if (count == 0) {
-			return false;
-		} else {
-			return true;
-		}
+		return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
@@ -639,18 +577,15 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append("select coalesce(max(linkid), 0) from link_sampling_incomes_snap");
 		sql.append(" where samplingid = :samplingid and custid=:custid");
 
-		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("samplingid", samplingId);
 		source.addValue("custid", custId);
 		try {
-			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			return jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return linkid;
 	}
 
 	@Override
@@ -682,18 +617,15 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append("select coalesce(max(linkid), 0) from link_sampling_liabilities_snap");
 		sql.append(" where samplingid = :samplingid and custid=:custid");
 
-		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("samplingid", samplingId);
 		source.addValue("custid", custId);
 		try {
-			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			return jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return linkid;
 	}
 
 	@Override
@@ -732,12 +664,10 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("rulecode", eligibilityRule);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-
-		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -790,17 +720,14 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(tableName);
 		sql.append(" where samplingid=:samplingid");
 
-		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("samplingid", samplingId);
 		try {
-			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			return jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return linkid;
 	}
 
 	@Override
@@ -813,8 +740,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("samplingid", samplingId);
 		try {
 			jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -827,11 +754,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(" recordtype=:recordType, workflowid=:workflowId");
 		sql.append(" where linkid in  (select linkid from link_sampling_incomes where samplingid = :id)");
 
-		try {
-			jdbcTemplate.update(sql.toString(), new BeanPropertySqlParameterSource(sampling));
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		jdbcTemplate.update(sql.toString(), new BeanPropertySqlParameterSource(sampling));
 	}
 
 	@Override
@@ -859,11 +782,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("workflowId", sampling.getWorkflowId());
 		source.addValue("reference", getCollateralLinkIds(sampling.getId()));
 
-		try {
-			jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		jdbcTemplate.update(sql.toString(), source);
 	}
 
 	@Override
@@ -876,8 +795,8 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("samplingid", samplingId);
 		try {
 			jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -890,11 +809,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(" recordtype=:recordType, workflowid=:workflowId");
 		sql.append(" where linkid in  (select linkid from link_sampling_liabilities where samplingid = :id)");
 
-		try {
-			jdbcTemplate.update(sql.toString(), new BeanPropertySqlParameterSource(sampling));
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		jdbcTemplate.update(sql.toString(), new BeanPropertySqlParameterSource(sampling));
 	}
 
 	@Override
@@ -926,8 +841,6 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 	public List<String> getCollateralLinkIds(long samplingId) {
 		logger.debug(Literal.ENTERING);
 
-		List<String> list = new ArrayList<>();
-
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 
@@ -937,11 +850,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("samplingId", samplingId);
 
-		try {
-			list = jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
-		} catch (Exception e) {
-			return list;
-		}
+		List<String> list = jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
 
 		List<String> mainList = new ArrayList<>();
 		for (String linkId : list) {
@@ -979,17 +888,15 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append("external_liabilities_view ");
 		sql.append("where linkId=:linkId");
 
-		int seqNo = 1;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("linkId", linkId);
-		try {
-			seqNo = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		return seqNo;
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 1;
+		}
 	}
 
 	@Override
@@ -1010,16 +917,6 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		RowMapper<CustomerIncome> rowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			return new ArrayList<>();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 }
