@@ -6200,6 +6200,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 
 		BigDecimal earlyPayAmount = rd.getRemBal();
 		String recalType = rch.getEffectSchdMethod();
@@ -6220,6 +6221,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && !checkDueAdjusted(allocations, rd)) {
 			adjustToExcess(rd);
 			rd.setDueAdjusted(false);
+		}
+
+		if (RequestSource.UPLOAD != fsi.getRequestSource()) {
+			return;
 		}
 
 		if (!rd.isDueAdjusted()) {
