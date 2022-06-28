@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SalutationDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SalutationDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified
+ * Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.systemmasters.impl;
@@ -60,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -77,10 +60,8 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 	/**
 	 * Fetch the Record Salutations details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Salutation
 	 */
 	@Override
@@ -105,14 +86,11 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		RowMapper<Salutation> typeRowMapper = BeanPropertyRowMapper.newInstance(Salutation.class);
 
 		try {
-			salutation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			salutation = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return salutation;
 	}
 
 	@Override
@@ -256,16 +234,13 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
-		String dftSalutationCode = "";
-		try {
-			dftSalutationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			dftSalutationCode = "";
-		}
 
-		logger.debug(Literal.LEAVING);
-		return dftSalutationCode;
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
+		}
 	}
 
 	@Override
@@ -293,7 +268,6 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = null;
-		int count = 0;
 
 		StringBuilder selectSql = new StringBuilder("Select Count(*) from BMTSalutations");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -303,16 +277,7 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		source = new MapSqlParameterSource();
 		source.addValue("SalutationGenderCode", genderCode);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -320,7 +285,6 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = null;
-		int count = 0;
 
 		StringBuilder selectSql = new StringBuilder("Select Count(*) from BMTSalutations");
 		selectSql.append(" Where SalutationGenderCode = :SalutationGenderCode  AND SALUTATIONCODE = :SALUTATIONCODE");
@@ -330,15 +294,6 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		source.addValue("SalutationGenderCode", salutationGenderCode);
 		source.addValue("SALUTATIONCODE", salutationCode);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 }

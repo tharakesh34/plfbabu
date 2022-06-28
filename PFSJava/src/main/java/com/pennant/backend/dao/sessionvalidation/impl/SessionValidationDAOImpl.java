@@ -22,8 +22,7 @@ public class SessionValidationDAOImpl implements SessionValidationDAO {
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	/**
-	 * @param dataSource
-	 *            the dataSource to set
+	 * @param dataSource the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -81,11 +80,7 @@ public class SessionValidationDAOImpl implements SessionValidationDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sessionValidation);
 
-		try {
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.debug("Error" + e.getMessage());
-		}
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}

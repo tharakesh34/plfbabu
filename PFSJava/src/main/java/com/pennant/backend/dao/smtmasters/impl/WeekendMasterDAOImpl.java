@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  WeekendMasterDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-07-2011    														*
- *                                                                  						*
- * Modified Date    :  11-07-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : WeekendMasterDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-07-2011 * * Modified
+ * Date : 11-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-07-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-07-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -62,6 +44,7 @@ import com.pennant.backend.model.smtmasters.WeekendMaster;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>WeekendMaster model</b> class.<br>
@@ -77,10 +60,8 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 	/**
 	 * Fetch the Record Weekend Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return WeekendMaster
 	 */
 	@Override
@@ -101,13 +82,11 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 		RowMapper<WeekendMaster> typeRowMapper = BeanPropertyRowMapper.newInstance(WeekendMaster.class);
 
 		try {
-			weekendMaster = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			weekendMaster = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return weekendMaster;
 	}
 
 	@Override
@@ -159,10 +138,8 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 	 * This method Deletes the Record from the SMTWeekendMaster or SMTWeekendMaster_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Weekend Details by key WeekendCode
 	 * 
-	 * @param Weekend
-	 *            Details (weekendMaster)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Weekend Details (weekendMaster)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -198,10 +175,8 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 	 * 
 	 * save Weekend Details
 	 * 
-	 * @param Weekend
-	 *            Details (weekendMaster)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Weekend Details (weekendMaster)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -232,10 +207,8 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 	 * This method updates the Record SMTWeekendMaster or SMTWeekendMaster_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Weekend Details by key WeekendCode and Version
 	 * 
-	 * @param Weekend
-	 *            Details (weekendMaster)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Weekend Details (weekendMaster)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
