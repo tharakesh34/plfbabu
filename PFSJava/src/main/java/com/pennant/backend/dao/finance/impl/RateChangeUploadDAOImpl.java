@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.model.ratechangeupload.RateChangeUpload;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -103,11 +104,9 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			}, keyHolder);
 
 			return keyHolder.getKey().longValue();
-		} catch (Exception e) {
-			//
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -140,21 +139,17 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setInt(index++, rcuh.getTotalRecords());
-				ps.setInt(index++, rcuh.getSucessRecords());
-				ps.setInt(index++, rcuh.getFailureRecords());
-				ps.setString(index++, rcuh.getStatus());
+			ps.setInt(index++, rcuh.getTotalRecords());
+			ps.setInt(index++, rcuh.getSucessRecords());
+			ps.setInt(index++, rcuh.getFailureRecords());
+			ps.setString(index++, rcuh.getStatus());
 
-				ps.setObject(index++, rcuh.getId());
+			ps.setObject(index++, rcuh.getId());
 
-			});
-		} catch (Exception e) {
-			//
-		}
+		});
 	}
 
 	@Override
@@ -163,13 +158,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, brCode) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, brCode) > 0;
 	}
 
 	public boolean getsplRateCodes(String srCode) {
@@ -177,13 +166,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, srCode) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, srCode) > 0;
 	}
 
 	@Override
@@ -227,19 +210,15 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setLong(index++, rcUpload.getFinID());
-				ps.setString(index++, StringUtils.trimToEmpty(rcUpload.getUploadStatusRemarks()));
-				ps.setString(index++, rcUpload.getStatus());
-				ps.setObject(index++, rcUpload.getId());
+			ps.setLong(index++, rcUpload.getFinID());
+			ps.setString(index++, StringUtils.trimToEmpty(rcUpload.getUploadStatusRemarks()));
+			ps.setString(index++, rcUpload.getStatus());
+			ps.setObject(index++, rcUpload.getId());
 
-			});
-		} catch (Exception e) {
-			//
-		}
+		});
 	}
 
 	public void updateDeRemarks(RateChangeUploadHeader header, DataEngineStatus deStatus) {
@@ -255,19 +234,14 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
-				ps.setString(index++, remarks.toString());
-				ps.setString(index++, deStatus.getStatus());
-				ps.setString(index++, header.getBatchRef());
+			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+			ps.setString(index++, remarks.toString());
+			ps.setString(index++, deStatus.getStatus());
+			ps.setString(index++, header.getBatchRef());
 
-			});
-		} catch (Exception e) {
-			//
-		}
+		});
 	}
-
 }

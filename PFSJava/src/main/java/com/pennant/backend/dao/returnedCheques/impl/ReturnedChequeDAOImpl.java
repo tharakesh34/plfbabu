@@ -21,6 +21,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -37,10 +38,8 @@ public class ReturnedChequeDAOImpl extends BasicDao<ReturnedChequeDetails> imple
 	/**
 	 * Fetch the Record ReturnedCheque details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ReturnedCheque
 	 */
 	@Override
@@ -66,14 +65,11 @@ public class ReturnedChequeDAOImpl extends BasicDao<ReturnedChequeDetails> imple
 		RowMapper<ReturnedChequeDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnedChequeDetails.class);
 
 		try {
-			returnCheque = this.jdbcTemplate.queryForObject(selectSql.toString(), beanparameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanparameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			returnCheque = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return returnCheque;
 	}
 
 	@Override

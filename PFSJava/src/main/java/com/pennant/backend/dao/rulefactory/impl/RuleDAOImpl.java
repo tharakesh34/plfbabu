@@ -55,6 +55,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>
@@ -237,11 +238,9 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 				}
 			}, id, module, event, active);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -313,14 +312,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
-		try {
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<Rule>();
+
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -884,23 +877,14 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	public List<String> getAEAmountCodesList(String event) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		List<String> aeAmountCodesList = new ArrayList<String>();
-
 		StringBuilder selectSql = new StringBuilder("Select AmountCode From BmtAmountCodes");
 		selectSql.append(" Where AllowedEvent = :AllowedEvent");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AllowedEvent", event);
 
-		try {
-			aeAmountCodesList = this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return aeAmountCodesList;
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
 
 	@Override
@@ -940,18 +924,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		logger.trace("selectSql: " + sql.toString());
 
-		Integer count = 0;
-		try {
-			count = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		if (count > 0) {
-			logger.debug(Literal.ENTERING);
-			return true;
-		}
-		return false;
+		return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 
 	// ### 08-05-2018 End Development Iteam 81
@@ -1053,12 +1026,6 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
 
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			return 0;
-		}
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-
 }

@@ -22,6 +22,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implements RestructureDAO {
 
@@ -154,10 +155,9 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -295,13 +295,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		RestructureDetailRowMapper rowMapper = new RestructureDetailRowMapper();
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 	}
 
 	private StringBuilder sqlSelectQuery(String type) {
@@ -474,9 +468,8 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 				}
 			}).length;
 
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -575,13 +568,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Boolean.class, rstTypeId);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Boolean.class, rstTypeId);
 	}
 
 	@Override
@@ -590,14 +577,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Boolean.class, CalculationConstants.RESTRUCTURE_REASON, 1,
-					code);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Boolean.class, CalculationConstants.RESTRUCTURE_REASON, 1, code);
 	}
 
 	@Override
@@ -606,13 +586,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID, "LAEP");
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Boolean.class, finID, "LAEP");
 	}
 
 	@Override

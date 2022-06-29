@@ -198,18 +198,10 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		List<ReceiptAllocationDetail> allocations = null;
+		RowMapper<ReceiptAllocationDetail> typeRowMapper = BeanPropertyRowMapper
+				.newInstance(ReceiptAllocationDetail.class);
 
-		try {
-			RowMapper<ReceiptAllocationDetail> typeRowMapper = BeanPropertyRowMapper
-					.newInstance(ReceiptAllocationDetail.class);
-			allocations = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-		return allocations;
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 	}
 

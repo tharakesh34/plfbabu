@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,6 +21,7 @@ import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -34,26 +36,22 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 	@Override
 	public long save(ReasonHeader reasonHeader) {
 		logger.debug(Literal.ENTERING);
-		try {
-			long id = saveHeader(reasonHeader);
-			List<ReasonDetails> details = reasonHeader.getDetailsList();
 
-			if (details != null && !details.isEmpty()) {
-				for (ReasonDetails reasonDetails : details) {
-					reasonDetails.setHeaderId(id);
-				}
-				saveDetails(details);
+		long id = saveHeader(reasonHeader);
+		List<ReasonDetails> details = reasonHeader.getDetailsList();
+
+		if (details != null && !details.isEmpty()) {
+			for (ReasonDetails reasonDetails : details) {
+				reasonDetails.setHeaderId(id);
 			}
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			saveDetails(details);
 		}
-		logger.debug(Literal.LEAVING);
 
+		logger.debug(Literal.LEAVING);
 		return reasonHeader.getId();
 	}
 
-	private long saveHeader(ReasonHeader reasonHeader) throws Exception {
+	private long saveHeader(ReasonHeader reasonHeader) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Insert Into  ReasonHeader ");
@@ -68,10 +66,10 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reasonHeader);
 			this.jdbcTemplate.update(sql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
+
 		return reasonHeader.getId();
 	}
 
@@ -86,9 +84,8 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		try {
 			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(detailsList.toArray());
 			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -140,11 +137,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 
 		RowMapper<ReasonHeader> mapper = BeanPropertyRowMapper.newInstance(ReasonHeader.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), source, mapper);
-		} catch (Exception e) {
-			return null;
-		}
+		return jdbcTemplate.query(sql.toString(), source, mapper);
 	}
 
 	@Override

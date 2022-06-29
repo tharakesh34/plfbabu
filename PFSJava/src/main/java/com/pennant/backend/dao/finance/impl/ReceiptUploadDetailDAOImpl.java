@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -47,6 +46,7 @@ import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
@@ -110,18 +110,16 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 	public ReceiptUploadDetail getUploadReceiptDetail(long headerId, long detailId) {
 		StringBuilder sql = sqlSelectQuery();
 		sql.append(" Where UploadheaderId = ? and UploadDetailId = ? ");
-
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		ReceiptUploadDetailRowMapper rowMapper = new ReceiptUploadDetailRowMapper();
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, headerId, detailId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -187,8 +185,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 	@Override
 	public void delete(long uploadHeaderId) {
 		String sql = "Delete From ReceiptUploaddetails Where UploadHeaderId = ?";
-
-		logger.debug(Literal.SQL, sql);
+		logger.debug(Literal.SQL + sql);
 
 		jdbcOperations.update(sql, ps -> {
 			int index = 1;
@@ -208,57 +205,42 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		}
 
 		String sql = "Update ReceiptUploadDetails Set ProcessingStatus = ?, Reason = ? Where UploadDetailId = ?";
-
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setInt(index++, rud.getProcessingStatus());
-				ps.setString(index++, rud.getReason());
-				ps.setLong(index++, rud.getUploadDetailId());
-			});
-		} catch (DataAccessException e) {
-			//
-		}
+			ps.setInt(index++, rud.getProcessingStatus());
+			ps.setString(index++, rud.getReason());
+			ps.setLong(index++, rud.getUploadDetailId());
+		});
 	}
 
 	@Override
 	public void updateReceiptId(long uploadDetailId, long receiptId) {
 		String sql = "Update ReceiptUploaddetails Set ReceiptId = ? Where UploadDetailId = ?";
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug(Literal.SQL, sql);
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
-
-				ps.setLong(index++, receiptId);
-				ps.setLong(index++, uploadDetailId);
-			});
-		} catch (DataAccessException e) {
-			//
-		}
+			ps.setLong(index++, receiptId);
+			ps.setLong(index++, uploadDetailId);
+		});
 	}
 
 	@Override
 	public void updateRejectStatusById(String id, String errorMsg) {
 		String sql = "Update ReceiptUploaddetails Set Reason = ? Where UploadHeaderId = ?";
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug(Literal.SQL, sql);
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+			ps.setString(index++, errorMsg);
+			ps.setString(index++, id);
 
-				ps.setString(index++, errorMsg);
-				ps.setString(index++, id);
-
-			});
-		} catch (DataAccessException e) {
-			//
-		}
+		});
 	}
 
 	@Override
@@ -278,17 +260,15 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 					new Object[] { receiptFileName, ReceiptUploadConstants.RECEIPT_DEFAULT,
 							ReceiptUploadConstants.RECEIPT_DOWNLOADED, finReference,
 							ReceiptDetailStatus.SUCCESS.getValue() });
-		} catch (DataAccessException e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public List<Long> getListofReceiptUploadDetails(long uploadHeaderId) {
 		String sql = "Select UploadDetailId From ReceiptUploadDetails Where UploadHeaderId = ?";
-
-		logger.debug(Literal.SQL, sql);
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, uploadHeaderId), (rs, rowNum) -> {
 			return JdbcUtil.getLong(rs.getObject("UploadDetailId"));
@@ -323,8 +303,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 	public ReceiptUploadDetail getUploadReceiptDetail(long detailID) {
 		StringBuilder sql = sqlSelectQuery();
 		sql.append(" Where UploadDetailId = ?");
-
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		ReceiptUploadDetailRowMapper rowMapper = new ReceiptUploadDetailRowMapper();
 
@@ -333,10 +312,9 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), rowMapper, detailID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -354,8 +332,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(" Where UploadHeaderId in (");
 		sql.append(commaJoin(uploadHeaderIdList));
 		sql.append(") and ProcessingStatus = ? order by Fincount");
-
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -453,8 +430,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(" Where UploadHeaderid in ( ");
 		sql.append(commaJoin(uploadHeaderIdList));
 		sql.append(") and ProcessingStatus = ?  and ReceiptId is null");
-
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -510,14 +486,8 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			Object[] object = new Object[] { finReference, ReceiptDetailStatus.SUCCESS.getValue(), 0 };
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, object) > 0 ? true : false;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		Object[] object = new Object[] { finReference, ReceiptDetailStatus.SUCCESS.getValue(), 0 };
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, object) > 0 ? true : false;
 	}
 
 	private StringBuilder sqlSelectQuery() {
