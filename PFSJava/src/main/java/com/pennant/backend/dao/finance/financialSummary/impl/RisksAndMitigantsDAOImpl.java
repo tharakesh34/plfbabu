@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPhoneNumberDAOImpl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPhoneNumberDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
@@ -45,7 +27,6 @@ package com.pennant.backend.dao.finance.financialSummary.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,7 +34,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -103,44 +83,37 @@ public class RisksAndMitigantsDAOImpl extends SequenceDao<RisksAndMitigants> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<RisksAndMitigants>() {
-				@Override
-				public RisksAndMitigants mapRow(ResultSet rs, int rowNum) throws SQLException {
-					RisksAndMitigants rm = new RisksAndMitigants();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, finReference);
+				ps.setString(index++, finReference);
+			}
+		}, new RowMapper<RisksAndMitigants>() {
+			@Override
+			public RisksAndMitigants mapRow(ResultSet rs, int rowNum) throws SQLException {
+				RisksAndMitigants rm = new RisksAndMitigants();
 
-					rm.setId(rs.getLong("Id"));
-					rm.setSeqNo(rs.getLong("SeqNo"));
-					rm.setRisk(rs.getString("Risk"));
-					rm.setMitigants(rs.getString("Mitigants"));
-					rm.setFinReference(rs.getString("FinReference"));
-					rm.setVersion(rs.getInt("Version"));
-					rm.setLastMntBy(rs.getLong("LastMntBy"));
-					rm.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					rm.setRecordStatus(rs.getString("RecordStatus"));
-					rm.setRoleCode(rs.getString("RoleCode"));
-					rm.setNextRoleCode(rs.getString("NextRoleCode"));
-					rm.setTaskId(rs.getString("TaskId"));
-					rm.setNextTaskId(rs.getString("NextTaskId"));
-					rm.setRecordType(rs.getString("RecordType"));
-					rm.setWorkflowId(rs.getLong("WorkflowId"));
+				rm.setId(rs.getLong("Id"));
+				rm.setSeqNo(rs.getLong("SeqNo"));
+				rm.setRisk(rs.getString("Risk"));
+				rm.setMitigants(rs.getString("Mitigants"));
+				rm.setFinReference(rs.getString("FinReference"));
+				rm.setVersion(rs.getInt("Version"));
+				rm.setLastMntBy(rs.getLong("LastMntBy"));
+				rm.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				rm.setRecordStatus(rs.getString("RecordStatus"));
+				rm.setRoleCode(rs.getString("RoleCode"));
+				rm.setNextRoleCode(rs.getString("NextRoleCode"));
+				rm.setTaskId(rs.getString("TaskId"));
+				rm.setNextTaskId(rs.getString("NextTaskId"));
+				rm.setRecordType(rs.getString("RecordType"));
+				rm.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return rm;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return rm;
+			}
+		});
 	}
 
 	public List<DueDiligenceCheckList> getDueDiligenceCheckListDetails() {
