@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -254,9 +255,8 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 			inputs.put("@MODULE", PennantConstants.WORFLOW_MODULE_FINANCE);
 			new StoredProcedureUtil(this.dataSource, "SP_ReassignFinRecords", inputParamMap, outputParamMap)
 					.execute(inputs);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			logger.info("Queue Assignment Updation failed");
+		} catch (DataAccessException e) {
+			logger.warn("Queue Assignment Updation failed");
 		}
 		logger.debug("Leaving");
 	}
@@ -352,8 +352,8 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		logger.debug("Leaving");
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -464,8 +464,8 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		logger.debug("Leaving");
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 

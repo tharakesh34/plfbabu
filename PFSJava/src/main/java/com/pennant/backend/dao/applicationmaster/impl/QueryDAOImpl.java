@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QueryDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-07-2013    														*
- *                                                                  						*
- * Modified Date    :  04-07-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : QueryDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-07-2013 * * Modified Date :
+ * 04-07-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-07-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-07-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +39,7 @@ import com.pennant.backend.model.applicationmaster.Query;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Query model</b> class.<br>
@@ -73,10 +56,8 @@ public class QueryDAOImpl extends BasicDao<Query> implements QueryDAO {
 	/**
 	 * Fetch the Record Query Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Query
 	 */
 	@Override
@@ -104,23 +85,19 @@ public class QueryDAOImpl extends BasicDao<Query> implements QueryDAO {
 		RowMapper<Query> typeRowMapper = BeanPropertyRowMapper.newInstance(Query.class);
 
 		try {
-			query = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			query = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return query;
 	}
 
 	/**
 	 * This method Deletes the Record from the Queries or Queries_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Query Details by key QueryCode
 	 * 
-	 * @param Query
-	 *            Details (query)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Query Details (query)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -153,15 +130,12 @@ public class QueryDAOImpl extends BasicDao<Query> implements QueryDAO {
 	 *
 	 * save Query Details
 	 * 
-	 * @param Query
-	 *            Details (query)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Query Details (query)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public String save(Query query, String type) {
 		logger.debug("Entering");
@@ -187,10 +161,8 @@ public class QueryDAOImpl extends BasicDao<Query> implements QueryDAO {
 	 * This method updates the Record Queries or Queries_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update Query Details by key QueryCode and Version
 	 * 
-	 * @param Query
-	 *            Details (query)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Query Details (query)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

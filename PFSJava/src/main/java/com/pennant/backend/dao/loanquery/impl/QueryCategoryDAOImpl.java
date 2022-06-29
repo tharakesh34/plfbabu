@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QueryCategoryDAOImpl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-05-2018    														*
- *                                                                  						*
- * Modified Date    :  08-05-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : QueryCategoryDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-05-2018 * * Modified
+ * Date : 08-05-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-05-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.loanquery.impl;
 
 import org.apache.logging.log4j.LogManager;
@@ -59,6 +41,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -96,14 +79,11 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 		RowMapper<QueryCategory> rowMapper = BeanPropertyRowMapper.newInstance(QueryCategory.class);
 
 		try {
-			queryCategory = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			queryCategory = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return queryCategory;
 	}
 
 	@Override
