@@ -1,48 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SnapShotColumnDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-02-2018    														*
- *                                                                  						*
- * Modified Date    :  16-02-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SnapShotColumnDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-02-2018 * *
+ * Modified Date : 16-02-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-02-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-02-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.eodsnapshot.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -61,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -99,14 +81,11 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 		RowMapper<SnapShotColumn> rowMapper = BeanPropertyRowMapper.newInstance(SnapShotColumn.class);
 
 		try {
-			snapShotColumn = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			snapShotColumn = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return snapShotColumn;
 	}
 
 	@Override
@@ -197,7 +176,6 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 
 	@Override
 	public List<SnapShotColumn> getActiveTableColumns(long id) {
-		List<SnapShotColumn> columns = new ArrayList<SnapShotColumn>();
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -216,14 +194,6 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotColumn);
 		RowMapper<SnapShotColumn> rowMapper = BeanPropertyRowMapper.newInstance(SnapShotColumn.class);
 
-		try {
-			columns = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return columns;
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
-
 }

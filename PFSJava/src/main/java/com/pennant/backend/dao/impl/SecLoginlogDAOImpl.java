@@ -42,7 +42,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -73,7 +72,7 @@ public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecL
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL, sql);
+		logger.trace(Literal.SQL + sql);
 
 		jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
@@ -124,38 +123,30 @@ public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecL
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			List<String> query = jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setDate(index++, JdbcUtil.getDate(loginTime));
-				}
-
-			}, new RowMapper<String>() {
-				@Override
-				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getString("LoginUsrLogin");
-				}
-			});
-
-			if (query.size() == 0) {
-				return null;
-			} else {
-				int i = 0;
-				String[] activeUsers = new String[query.size()];
-				for (String user : query) {
-					activeUsers[i] = user;
-					i++;
-				}
-				return activeUsers;
+		List<String> query = jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setDate(index++, JdbcUtil.getDate(loginTime));
 			}
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+
+		}, new RowMapper<String>() {
+			@Override
+			public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getString("LoginUsrLogin");
+			}
+		});
+
+		if (query.size() == 0) {
+			return null;
+		} else {
+			int i = 0;
+			String[] activeUsers = new String[query.size()];
+			for (String user : query) {
+				activeUsers[i] = user;
+				i++;
+			}
+			return activeUsers;
 		}
-		logger.debug(Literal.LEAVING);
-
-		return null;
 	}
-
 }

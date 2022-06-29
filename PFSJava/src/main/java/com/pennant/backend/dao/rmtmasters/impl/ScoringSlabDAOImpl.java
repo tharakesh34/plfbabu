@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringSlabDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-12-2011    														*
- *                                                                  						*
- * Modified Date    :  05-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringSlabDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-12-2011 * * Modified
+ * Date : 05-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -62,6 +44,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ScoringSlab model</b> class.<br>
@@ -112,10 +95,8 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 	/**
 	 * Fetch the Record Scoring Slab Details details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ScoringSlab
 	 */
 	@Override
@@ -141,20 +122,17 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		RowMapper<ScoringSlab> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringSlab.class);
 
 		try {
-			scoringSlab = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			scoringSlab = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return scoringSlab;
 	}
 
 	public List<ScoringSlab> getScoringSlabsByScoreGrpId(final long scoreGrpId, String type) {
 		logger.debug("Entering");
 		ScoringSlab scoringSlab = new ScoringSlab();
 		scoringSlab.setScoreGroupId(scoreGrpId);
-		List<ScoringSlab> scoringSlabList;
 
 		StringBuilder selectSql = new StringBuilder("Select ScoreGroupId, ScoringSlab, CreditWorthness");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
@@ -171,24 +149,15 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
 		RowMapper<ScoringSlab> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringSlab.class);
 
-		try {
-			scoringSlabList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			scoringSlabList = null;
-		}
-		logger.debug("Leaving");
-		return scoringSlabList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
 	 * This method Deletes the Record from the RMTScoringSlab or RMTScoringSlab_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Scoring Slab Details by key ScoreGroupId
 	 * 
-	 * @param Scoring
-	 *            Slab Details (scoringSlab)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Scoring Slab Details (scoringSlab)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -240,15 +209,12 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 	 *
 	 * save Scoring Slab Details
 	 * 
-	 * @param Scoring
-	 *            Slab Details (scoringSlab)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Scoring Slab Details (scoringSlab)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public long save(ScoringSlab scoringSlab, String type) {
 		logger.debug("Entering");
@@ -278,15 +244,12 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 	 * This method updates the Record RMTScoringSlab or RMTScoringSlab_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Scoring Slab Details by key ScoreGroupId and Version
 	 * 
-	 * @param Scoring
-	 *            Slab Details (scoringSlab)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Scoring Slab Details (scoringSlab)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public void update(ScoringSlab scoringSlab, String type) {
 		int recordCount = 0;

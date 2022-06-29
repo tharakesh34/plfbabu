@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-11-2011    														*
- *                                                                  						*
- * Modified Date    :  08-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-11-2011 * * Modified
+ * Date : 08-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.bmtmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +41,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ScoringType model</b> class.<br>
@@ -109,10 +92,8 @@ public class ScoringTypeDAOImpl extends BasicDao<ScoringType> implements Scoring
 	/**
 	 * Fetch the Record SCoring Type Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ScoringType
 	 */
 	@Override
@@ -133,23 +114,19 @@ public class ScoringTypeDAOImpl extends BasicDao<ScoringType> implements Scoring
 		RowMapper<ScoringType> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringType.class);
 
 		try {
-			scoringType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			scoringType = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return scoringType;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTScoringType or BMTScoringType_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete SCoring Type Detail by key ScoType
 	 * 
-	 * @param SCoring
-	 *            Type Detail (scoringType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SCoring Type Detail (scoringType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -181,10 +158,8 @@ public class ScoringTypeDAOImpl extends BasicDao<ScoringType> implements Scoring
 	 *
 	 * save SCoring Type Detail
 	 * 
-	 * @param SCoring
-	 *            Type Detail (scoringType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SCoring Type Detail (scoringType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -215,10 +190,8 @@ public class ScoringTypeDAOImpl extends BasicDao<ScoringType> implements Scoring
 	 * This method updates the Record BMTScoringType or BMTScoringType_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update SCoring Type Detail by key ScoType and Version
 	 * 
-	 * @param SCoring
-	 *            Type Detail (scoringType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SCoring Type Detail (scoringType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
