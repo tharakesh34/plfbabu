@@ -19,6 +19,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.mchange.util.DuplicateElementException;
 import com.pennant.backend.dao.servicetasklog.ServiceTaskDAO;
 import com.pennant.backend.model.servicetask.ServiceTaskDetail;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -59,12 +60,11 @@ public class ServiceTaskDAOImpl extends SequenceDao<ServiceTaskDetail> implement
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(serviceTaskDetail);
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-			//commit
+			// commit
 			transactionManager.commit(txStatus);
-		} catch (DuplicateElementException dee) {
-			logger.error("Exception", dee);
+		} catch (DuplicateElementException e) {
 			transactionManager.rollback(txStatus);
-			throw dee;
+			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
