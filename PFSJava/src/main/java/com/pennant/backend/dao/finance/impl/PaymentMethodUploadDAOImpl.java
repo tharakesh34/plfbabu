@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,6 +18,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUpload;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUploadHeader;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -32,13 +33,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, name) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, name) > 0;
 	}
 
 	@Override
@@ -67,11 +62,9 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 			}, keyHolder);
 
 			return keyHolder.getKey().longValue();
-		} catch (Exception e) {
-			//
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -80,21 +73,17 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setInt(index++, header.getTotalRecords());
-				ps.setInt(index++, header.getSucessRecords());
-				ps.setInt(index++, header.getFailureRecords());
-				ps.setString(index++, header.getStatus());
+			ps.setInt(index++, header.getTotalRecords());
+			ps.setInt(index++, header.getSucessRecords());
+			ps.setInt(index++, header.getFailureRecords());
+			ps.setString(index++, header.getStatus());
 
-				ps.setObject(index++, header.getId());
+			ps.setObject(index++, header.getId());
 
-			});
-		} catch (Exception e) {
-			//
-		}
+		});
 	}
 
 	@Override
@@ -208,19 +197,15 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setLong(index++, pu.getFinID());
-				ps.setString(index++, StringUtils.trimToEmpty(pu.getUploadStatusRemarks()));
-				ps.setString(index++, pu.getStatus());
-				ps.setObject(index++, pu.getId());
+			ps.setLong(index++, pu.getFinID());
+			ps.setString(index++, StringUtils.trimToEmpty(pu.getUploadStatusRemarks()));
+			ps.setString(index++, pu.getStatus());
+			ps.setObject(index++, pu.getId());
 
-			});
-		} catch (Exception e) {
-			//
-		}
+		});
 	}
 
 	@Override
@@ -229,18 +214,14 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setString(index++, changePayment.getFinRepayMethod());
-				ps.setObject(index++, changePayment.getMandateId());
-				ps.setObject(index++, changePayment.getFinID());
+			ps.setString(index++, changePayment.getFinRepayMethod());
+			ps.setObject(index++, changePayment.getMandateId());
+			ps.setObject(index++, changePayment.getFinID());
 
-			});
-		} catch (Exception e) {
-			//
-		}
+		});
 	}
 
 	@Override
@@ -249,13 +230,6 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, mandateId) > 0;
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, mandateId) > 0;
 	}
-
 }

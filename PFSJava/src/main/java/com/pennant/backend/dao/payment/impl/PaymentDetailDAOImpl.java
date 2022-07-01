@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PaymentDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2017    														*
- *                                                                  						*
- * Modified Date    :  27-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PaymentDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * * Modified
+ * Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.payment.impl;
 
 import java.util.List;
@@ -62,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -100,14 +83,11 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentDetail);
 		RowMapper<PaymentDetail> rowMapper = BeanPropertyRowMapper.newInstance(PaymentDetail.class);
 		try {
-			paymentDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			paymentDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return paymentDetail;
 	}
 
 	@Override
@@ -280,13 +260,7 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 
 		paramSource.addValue("paymentId", paymentId);
 		RowMapper<PaymentDetail> rowMapper = BeanPropertyRowMapper.newInstance(PaymentDetail.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
 
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+	}
 }

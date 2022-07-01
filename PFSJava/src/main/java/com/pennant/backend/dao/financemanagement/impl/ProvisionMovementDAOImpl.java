@@ -40,6 +40,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ProvisionMovement model</b> class.<br>
@@ -102,10 +103,9 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 				return pm;
 			}, finID, movementDate, finID, movementDate);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

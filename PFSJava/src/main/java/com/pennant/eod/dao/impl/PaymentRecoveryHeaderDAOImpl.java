@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.eod.beans.PaymentRecoveryHeader;
 import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class PaymentRecoveryHeaderDAOImpl extends BasicDao<PaymentRecoveryHeader> implements PaymentRecoveryHeaderDAO {
 	private static Logger logger = LogManager.getLogger(PaymentRecoveryHeaderDAOImpl.class);
@@ -55,8 +56,8 @@ public class PaymentRecoveryHeaderDAOImpl extends BasicDao<PaymentRecoveryHeader
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 }

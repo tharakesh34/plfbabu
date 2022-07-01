@@ -27,8 +27,6 @@ package com.pennant.backend.dao.partnerbank.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -52,6 +50,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -143,10 +142,9 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 				}
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -361,15 +359,8 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<PartnerBankModes> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBankModes.class);
-		List<PartnerBankModes> PartnerBankModeList = new ArrayList<PartnerBankModes>();
-		try {
-			PartnerBankModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return PartnerBankModeList;
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -410,15 +401,8 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<PartnerBranchModes> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBranchModes.class);
-		List<PartnerBranchModes> PartnerBranchModeList = new ArrayList<PartnerBranchModes>();
-		try {
-			PartnerBranchModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return PartnerBranchModeList;
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -500,16 +484,8 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		selectSql.append(" WHERE Entity= :Entity");
 
 		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
 
-		return recordCount > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
@@ -525,11 +501,9 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(Literal.EXCEPTION, dae);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -584,11 +558,9 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(Literal.EXCEPTION, dae);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -640,10 +612,9 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 			}, partnerBankId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 }

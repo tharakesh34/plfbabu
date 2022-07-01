@@ -8,12 +8,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.model.PrimaryAccount;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
@@ -31,8 +33,7 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 	 *
 	 * save cust_kyv_validation
 	 * 
-	 * @param PrimaryAccount
-	 *            (primaryAccount)
+	 * @param PrimaryAccount (primaryAccount)
 	 * 
 	 * @return void
 	 * @throws DataAccessException
@@ -67,8 +68,8 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(primaryAccount);
 		try {
 			this.jdbcTemplate.update(sql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -89,16 +90,8 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 		selectSql.append(" from CUST_KYC_VALIDATION");
 		selectSql.append(" Where Document_Number =:DocumentNumber");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(primaryAccount);
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
-			recordCount = 0;
-		}
-		logger.debug(Literal.LEAVING);
 
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override

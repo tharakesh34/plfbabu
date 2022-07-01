@@ -47,6 +47,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -57,6 +58,7 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -267,11 +269,9 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 				}
 			});
 
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-
 	}
 
 	// FIXME CH to be changed to Batch Update

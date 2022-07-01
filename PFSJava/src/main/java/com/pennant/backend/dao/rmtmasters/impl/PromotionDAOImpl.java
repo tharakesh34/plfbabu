@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Promotion model</b> class.<br>
@@ -83,11 +84,9 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { promotionCode }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	/**
@@ -120,7 +119,6 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
 			throw new DependencyFoundException(e);
 		}
 
@@ -443,11 +441,9 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { promotionId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	/**
@@ -461,8 +457,6 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	public Promotion getPromotionByReferenceId(long referenceId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT PromotionId, promotionCode, promotionDesc, finType, startDate, endDate");
 		sql.append(", finIsDwPayRequired, downPayRule, actualInterestRate, finBaseRate, finSplRate, finMargin");
@@ -475,7 +469,6 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 			sql.append(", finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc");
 			sql.append(", productCategory");
 		}
-
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
 		sql.append(" From Promotions");
@@ -483,19 +476,16 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		sql.append(" Where ReferenceID = :ReferenceID");
 		logger.debug(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReferenceID", referenceId);
 		RowMapper<Promotion> typeRowMapper = BeanPropertyRowMapper.newInstance(Promotion.class);
+
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-
-		} finally {
-			source = null;
-			sql = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	private StringBuilder getSqlQuery(String type) {
@@ -618,7 +608,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 
-		int recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -644,11 +634,9 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 			return this.jdbcOperations.queryForObject(sql.toString(),
 					new Object[] { promotion.getPromotionCode(), promotion.getReferenceID() }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -686,9 +674,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 				return p;
 			}, code);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 }

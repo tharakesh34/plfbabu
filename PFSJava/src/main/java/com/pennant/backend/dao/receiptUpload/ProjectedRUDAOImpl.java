@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennant.backend.dao.receiptUpload;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -152,8 +150,6 @@ public class ProjectedRUDAOImpl extends BasicDao<ReceiptUploadQueuing> implement
 
 	@Override
 	public void updateStatusQueue(long uploadHeaderId, long uploadDetailId, int progress) {
-		//logger.debug(Literal.ENTERING);
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("UploadHeaderId", uploadHeaderId);
 		source.addValue("uploadDetailId", uploadDetailId);
@@ -167,7 +163,6 @@ public class ProjectedRUDAOImpl extends BasicDao<ReceiptUploadQueuing> implement
 		logger.trace(Literal.SQL + sql.toString());
 
 		this.jdbcTemplate.update(sql.toString(), source);
-		//logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -195,29 +190,21 @@ public class ProjectedRUDAOImpl extends BasicDao<ReceiptUploadQueuing> implement
 		source.addValue("ThreadId", threadId);
 		source.addValue("AcThreadId", 0);
 
-		try {
-			if (rowNum == 0) {
+		if (rowNum == 0) {
 
-				logger.debug("selectSql: " + UPDATE_SQL);
-				return this.jdbcTemplate.update(UPDATE_SQL, source);
+			logger.debug("selectSql: " + UPDATE_SQL);
+			return this.jdbcTemplate.update(UPDATE_SQL, source);
 
-			} else {
-				StringBuilder sql = new StringBuilder("UPDATE ReceiptUploadQueuing set ThreadId = :ThreadId ");
-				sql.append(" where finreference in (Select finreference from ( ");
-				sql.append(" Select finreference,row_number() over(order by finreference) row_numb from ");
-				sql.append(" (Select distinct finreference from ReceiptUploadQueuing)T)T1 ");
-				sql.append(" where row_numb<=:RowCount) and ThreadId=:AcThreadId ");
+		} else {
+			StringBuilder sql = new StringBuilder("UPDATE ReceiptUploadQueuing set ThreadId = :ThreadId ");
+			sql.append(" where finreference in (Select finreference from ( ");
+			sql.append(" Select finreference,row_number() over(order by finreference) row_numb from ");
+			sql.append(" (Select distinct finreference from ReceiptUploadQueuing)T)T1 ");
+			sql.append(" where row_numb<=:RowCount) and ThreadId=:AcThreadId ");
 
-				logger.trace(Literal.SQL + sql.toString());
+			logger.trace(Literal.SQL + sql.toString());
 
-				return this.jdbcTemplate.update(sql.toString(), source);
-			}
-
-		} catch (DataAccessException dae) {
-			logger.error("Exception: ", dae);
+			return this.jdbcTemplate.update(sql.toString(), source);
 		}
-
-		logger.debug("Leaving");
-		return 0;
 	}
 }

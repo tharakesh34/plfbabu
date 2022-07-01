@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OfflineUserMessagesBackupDAOImpl.java                                               * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-03-2012    														*
- *                                                                  						*
- * Modified Date    :  20-03-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OfflineUserMessagesBackupDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-03-2012
+ * * * Modified Date : 20-03-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  **/
 package com.pennant.backend.dao.messages.impl;
@@ -51,12 +33,13 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.pennant.backend.dao.messages.OfflineUserMessagesBackupDAO;
 import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -120,7 +103,7 @@ public class OfflineUserMessagesBackupDAOImpl extends BasicDao<OfflineUsersMessa
 		sql.append("?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
@@ -174,11 +157,10 @@ public class OfflineUserMessagesBackupDAOImpl extends BasicDao<OfflineUsersMessa
 					ps.setString(1, fromUsrId);
 				}
 			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-
 }

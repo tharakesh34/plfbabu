@@ -17,6 +17,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -148,14 +149,11 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 		RowMapper<ProductGroup> rowMapper = BeanPropertyRowMapper.newInstance(ProductGroup.class);
 
 		try {
-			productGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			productGroup = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return productGroup;
 	}
 
 	@Override
@@ -185,42 +183,21 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 		paramSource.addValue("modelId", modelId);
 		// paramSource.addValue("groupId", groupId);
 
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return jdbcTemplate.queryForObject(sql, paramSource, Integer.class) > 0;
 	}
 
 	@Override
 	public boolean isIdExists(long id) {
 		logger.debug("Entering");
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
 
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select COUNT(*) from ProductGroup ");
 		sql.append(" Where productGroupId = :productGroupId ");
 		logger.debug("Sql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("productGroupId", id);
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
-		}
-		return false;
-	}
 
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
+	}
 }

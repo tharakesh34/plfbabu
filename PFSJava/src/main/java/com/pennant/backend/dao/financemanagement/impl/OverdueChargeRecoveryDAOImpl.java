@@ -46,6 +46,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>OverdueChargeRecovery model</b> class.<br>
@@ -89,9 +90,9 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 			OverdueChargeRecoveryRowMapper rowMapper = new OverdueChargeRecoveryRowMapper(type);
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, finSchDate, finOdFor);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -138,10 +139,9 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 			}, finID, finSchDate, finOdFor);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -330,13 +330,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 	@Override
@@ -417,10 +411,9 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 				return odcr;
 			}, finID, schDate);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -472,12 +465,10 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 				return odcr;
 			}, ocr.getFinID());
-
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return ocr;
 		}
-
-		return ocr;
 	}
 
 	private StringBuilder getSelectQuery(String type) {

@@ -43,6 +43,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -82,11 +83,11 @@ public class PhoneTypeDAOImpl extends BasicDao<PhoneType> implements PhoneTypeDA
 		RowMapper<PhoneType> typeRowMapper = BeanPropertyRowMapper.newInstance(PhoneType.class);
 
 		try {
-			phoneType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return phoneType;
 		}
-		return phoneType;
 	}
 
 	/**
