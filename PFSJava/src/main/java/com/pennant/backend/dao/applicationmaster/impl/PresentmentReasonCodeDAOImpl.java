@@ -15,6 +15,7 @@ import com.pennant.backend.model.applicationmaster.PresentmentReasonCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class PresentmentReasonCodeDAOImpl extends BasicDao<PresentmentReasonCode> implements PresentmentReasonCodeDAO {
 	private static Logger logger = LogManager.getLogger(PresentmentReasonCodeDAOImpl.class);
@@ -42,14 +43,11 @@ public class PresentmentReasonCodeDAOImpl extends BasicDao<PresentmentReasonCode
 		RowMapper<PresentmentReasonCode> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentReasonCode.class);
 
 		try {
-			presentmentReasonCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			presentmentReasonCode = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return presentmentReasonCode;
 	}
 
 	@Override

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProductAssetDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-11-2011    														*
- *                                                                  						*
- * Modified Date    :  19-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProductAssetDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-11-2011 * * Modified
+ * Date : 19-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-11-2011       Pennant~	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-11-2011 Pennant~ 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -64,6 +46,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ProductAsset model</b> class.<br>
@@ -111,10 +94,8 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	/**
 	 * Fetch the Record Product Asset Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Product Asset
 	 */
 	@Override
@@ -140,22 +121,18 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 		RowMapper<ProductAsset> typeRowMapper = BeanPropertyRowMapper.newInstance(ProductAsset.class);
 
 		try {
-			productAsset = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			productAsset = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return productAsset;
 	}
 
 	/**
 	 * Fetch the Record Product Asset details by product Code field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ProductAsset
 	 */
 	@Override
@@ -186,10 +163,8 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	/**
 	 * To fetch finance Purpose details by AssetId
 	 * 
-	 * @param id
-	 *            (list)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (list)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ProductAsset details list
 	 */
 	@Override
@@ -213,10 +188,8 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	 * This method Deletes the Record from the RMTProductAssets or RMTProductAssets_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Product Asset Details by key ProductCode
 	 * 
-	 * @param Product
-	 *            Asset Details (productAsset)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Product Asset Details (productAsset)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -249,10 +222,8 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	 * This method Deletes the Record from the RMTProductAssets or RMTProductAssets_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Product Asset Details by key ProductCode
 	 * 
-	 * @param Product
-	 *            Asset Details (productAsset)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Product Asset Details (productAsset)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -289,10 +260,8 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	 *
 	 * save Product Asset Details
 	 * 
-	 * @param Product
-	 *            Assets Details (productAsset)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Product Assets Details (productAsset)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -326,10 +295,8 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 	 * This method updates the Record RMTProductAssets or RMTProductAssets_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Product Asset Details by key FinType and Version
 	 * 
-	 * @param Product
-	 *            Asset (productAsset)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Product Asset (productAsset)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

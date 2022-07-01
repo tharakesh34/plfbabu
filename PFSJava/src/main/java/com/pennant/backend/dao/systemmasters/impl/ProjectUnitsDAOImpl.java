@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class ProjectUnitsDAOImpl extends SequenceDao<ProjectUnits> implements ProjectUnitsDAO {
 	private static Logger logger = LogManager.getLogger(ProjectUnitsDAOImpl.class);
@@ -163,14 +164,11 @@ public class ProjectUnitsDAOImpl extends SequenceDao<ProjectUnits> implements Pr
 		RowMapper<ProjectUnits> rowMapper = BeanPropertyRowMapper.newInstance(ProjectUnits.class);
 
 		try {
-			projectUnit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			projectUnit = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return projectUnit;
 	}
 
 	@Override
@@ -197,17 +195,8 @@ public class ProjectUnitsDAOImpl extends SequenceDao<ProjectUnits> implements Pr
 		projectUnit.setProjectId(projectId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(projectUnit);
-		List<ProjectUnits> projectUnits = null;
 		RowMapper<ProjectUnits> rowMapper = BeanPropertyRowMapper.newInstance(ProjectUnits.class);
-		try {
-			projectUnits = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			projectUnits = null;
-		}
 
-		logger.debug(Literal.LEAVING);
-		return projectUnits;
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
-
 }

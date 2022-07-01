@@ -8,6 +8,7 @@ import com.pennant.backend.dao.financemanagement.PartnerBankModeConfigDAO;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class PartnerBankModeConfigDAOImpl extends SequenceDao<PartnerBank> implements PartnerBankModeConfigDAO {
 	private static Logger logger = LogManager.getLogger(PartnerBankModeConfigDAOImpl.class);
@@ -22,10 +23,9 @@ public class PartnerBankModeConfigDAOImpl extends SequenceDao<PartnerBank> imple
 			Object[] obj = new Object[] { mode, partnerBankID, type, reqType };
 			return jdbcOperations.queryForObject(sql.toString(), String.class, obj);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public String getConfigNameByMode(String mode, String type, String reqType) {
@@ -38,9 +38,8 @@ public class PartnerBankModeConfigDAOImpl extends SequenceDao<PartnerBank> imple
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), String.class, mode, type, reqType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 }

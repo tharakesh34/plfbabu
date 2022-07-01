@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
@@ -50,6 +51,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortization>
@@ -140,10 +142,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		try {
 			return this.jdbcOperations.queryForObject(sql, String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -306,10 +307,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 				return pa;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -488,10 +488,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, 2);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -561,10 +560,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 				return pa;
 			}, EodConstants.PROGRESS_FAILED);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -623,13 +621,11 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 				return pa;
 			}, EodConstants.PROGRESS_FAILED);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public long saveCalAvgPOSLog(ProjectedAmortization pa) {
 		String sql = "Insert Into CalAvgPOSLog (Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy) Values(?, ?, ?, ?, ?, ?)";
@@ -864,8 +860,8 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			logger.debug(Literal.SQL + sql);
 
 			this.jdbcOperations.update(sql);
-		} catch (Exception e) {
-			logger.warn("Index(Idx_ProjIncAmz_Eom) is not found");
+		} catch (DataAccessException e) {
+			logger.warn("Index (Idx_ProjIncAmz_Eom) not found.");
 		}
 
 		sql = "TRUNCATE TABLE PROJECTEDINCOMEAMZ";
@@ -890,11 +886,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
+		this.jdbcOperations.update(sql);
 	}
 
 	@Override
@@ -980,40 +972,33 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 	@Override
 	public int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId) {
-		try {
-			if (noOfRows == 0) {
-				return defaultUpdate(threadId);
+		if (noOfRows == 0) {
+			return defaultUpdate(threadId);
+		} else {
+			if (App.DATABASE == Database.SQL_SERVER) {
+				logger.trace(Literal.SQL + UPDATE_SQL_RC);
+
+				return this.jdbcOperations.update(UPDATE_SQL_RC, ps -> {
+					int index = 1;
+
+					ps.setLong(index++, noOfRows);
+					ps.setInt(index++, threadId);
+					ps.setInt(index++, 0);
+				});
+			} else if (App.DATABASE == Database.ORACLE) {
+				logger.trace(Literal.SQL + UPDATE_ORCL_RC);
+
+				return this.jdbcOperations.update(UPDATE_ORCL_RC, ps -> {
+					int index = 1;
+
+					ps.setInt(index++, threadId);
+					ps.setInt(index++, 0);
+					ps.setLong(index++, noOfRows);
+				});
 			} else {
-				if (App.DATABASE == Database.SQL_SERVER) {
-					logger.trace(Literal.SQL + UPDATE_SQL_RC);
-
-					return this.jdbcOperations.update(UPDATE_SQL_RC, ps -> {
-						int index = 1;
-
-						ps.setLong(index++, noOfRows);
-						ps.setInt(index++, threadId);
-						ps.setInt(index++, 0);
-					});
-				} else if (App.DATABASE == Database.ORACLE) {
-					logger.trace(Literal.SQL + UPDATE_ORCL_RC);
-
-					return this.jdbcOperations.update(UPDATE_ORCL_RC, ps -> {
-						int index = 1;
-
-						ps.setInt(index++, threadId);
-						ps.setInt(index++, 0);
-						ps.setLong(index++, noOfRows);
-					});
-				} else {
-					return defaultUpdate(threadId);
-				}
+				return defaultUpdate(threadId);
 			}
-
-		} catch (EmptyResultDataAccessException dae) {
-			//
 		}
-
-		return 0;
 	}
 
 	private int defaultUpdate(int threadId) {

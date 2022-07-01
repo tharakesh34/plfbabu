@@ -37,6 +37,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -103,10 +104,9 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 				return psl;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -232,10 +232,9 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 		try {
 			return this.jdbcOperations.queryForObject(sql, String.class, pslcategory);
 		} catch (EmptyResultDataAccessException dae) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -244,13 +243,7 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, weakerSectionCode);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, weakerSectionCode);
 	}
 
 	@Override
@@ -259,13 +252,7 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, endCode, purposeCode);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, endCode, purposeCode);
 	}
 
 	@Override
@@ -274,13 +261,6 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, code, categoryCode);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, code, categoryCode);
 	}
-
 }

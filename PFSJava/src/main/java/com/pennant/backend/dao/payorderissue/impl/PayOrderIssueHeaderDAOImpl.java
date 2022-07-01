@@ -10,6 +10,7 @@ import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> implements PayOrderIssueHeaderDAO {
 	private static Logger logger = LogManager.getLogger(PayOrderIssueHeaderDAOImpl.class);
@@ -157,10 +158,9 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public void delete(PayOrderIssueHeader poi, String type) {

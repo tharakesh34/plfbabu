@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> implements PennyDropDAO {
 	private static Logger logger = LogManager.getLogger(PennyDropDAOImpl.class);
@@ -45,16 +46,7 @@ public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> impleme
 		source.addValue("ifsc", ifsc);
 		source.addValue("status", true);
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			recordCount = 0;
-		}
-		logger.debug(Literal.LEAVING);
-		return recordCount;
-
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -80,10 +72,8 @@ public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> impleme
 				return pds;
 			}, accNum, ifsc);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
-
 }
