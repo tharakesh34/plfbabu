@@ -50,6 +50,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -247,8 +248,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			throw e;
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -263,8 +263,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			throw e;
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -50,6 +50,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -81,16 +82,7 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 		RowMapper<AssetClassificationDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationDetail.class);
 
-		List<AssetClassificationDetail> headerIdList = null;
-		try {
-			headerIdList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			headerIdList = new ArrayList<>();
-		}
-
-		logger.debug(Literal.LEAVING);
-		return headerIdList;
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -345,14 +337,11 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 		RowMapper<NPAProvisionDetail> rowMapper = BeanPropertyRowMapper.newInstance(NPAProvisionDetail.class);
 
 		try {
-			nPAProvisionDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			nPAProvisionDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return nPAProvisionDetail;
 	}
 
 	public static List<NPAProvisionDetail> sortByAssetStageOrder(List<NPAProvisionDetail> npaProvisionDetails) {
