@@ -47,8 +47,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * DAO methods implementation for the <b>OtherBankFinanceType model</b> class.<br>
- * 
+ * DAO methods implementation for the <b>OtherBankFinanceType model</b> class.
  */
 public class OtherBankFinanceTypeDAOImpl extends BasicDao<OtherBankFinanceType> implements OtherBankFinanceTypeDAO {
 	private static Logger logger = LogManager.getLogger(OtherBankFinanceTypeDAOImpl.class);
