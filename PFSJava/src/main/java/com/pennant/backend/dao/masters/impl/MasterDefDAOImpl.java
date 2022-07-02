@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MasterDefDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-05-2018    														*
- *                                                                  						*
- * Modified Date    :  19-05-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MasterDefDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-05-2018 * * Modified
+ * Date : 19-05-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-05-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-05-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.masters.impl;
 
 import java.util.HashMap;
@@ -72,10 +54,8 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 	/**
 	 * Fetch the Record MasterDef details by key field
 	 * 
-	 * @param masterType
-	 *            (String)
-	 * @param keyType
-	 *            (String)
+	 * @param masterType (String)
+	 * @param keyType    (String)
 	 * 
 	 * @return KeyCode (String)
 	 */
@@ -104,10 +84,8 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 	/**
 	 * Fetch the Record MasterDef details by key field
 	 * 
-	 * @param masterType
-	 *            (String)
-	 * @param KeyCode
-	 *            (String)
+	 * @param masterType (String)
+	 * @param KeyCode    (String)
 	 * 
 	 * @return keyType (String)
 	 */
@@ -146,14 +124,12 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("MasterType", masterType);
-		try {
-			SqlRowSet rowSet = this.jdbcTemplate.queryForRowSet(selectSql.toString(), parameterSource);
-			while (rowSet.next()) {
-				map.put(rowSet.getString(1), rowSet.getString(2));
-			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+
+		SqlRowSet rowSet = this.jdbcTemplate.queryForRowSet(selectSql.toString(), parameterSource);
+		while (rowSet.next()) {
+			map.put(rowSet.getString(1), rowSet.getString(2));
 		}
+
 		logger.debug(Literal.LEAVING);
 		return map;
 	}

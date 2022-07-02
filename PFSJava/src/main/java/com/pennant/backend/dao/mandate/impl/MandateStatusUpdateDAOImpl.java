@@ -15,6 +15,7 @@ import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class MandateStatusUpdateDAOImpl extends SequenceDao<MandateStatusUpdate> implements MandateStatusUpdateDAO {
 	private static Logger logger = LogManager.getLogger(MandateStatusUpdateDAOImpl.class);
@@ -26,10 +27,8 @@ public class MandateStatusUpdateDAOImpl extends SequenceDao<MandateStatusUpdate>
 	/**
 	 * Fetch the Record MandateStatus details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FileUpload
 	 */
 	@Override
@@ -52,23 +51,19 @@ public class MandateStatusUpdateDAOImpl extends SequenceDao<MandateStatusUpdate>
 		RowMapper<MandateStatusUpdate> typeRowMapper = BeanPropertyRowMapper.newInstance(MandateStatusUpdate.class);
 
 		try {
-			mandateStatusUpdate = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			mandateStatusUpdate = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return mandateStatusUpdate;
 	}
 
 	/**
 	 * This method Deletes the Record from the FileUpload or FileUpload_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete FileUpload by key FileHeaderId
 	 * 
-	 * @param MandateStatusUpdate
-	 *            (mandateStatusUpdate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param MandateStatusUpdate (mandateStatusUpdate)
+	 * @param type                (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -102,15 +97,12 @@ public class MandateStatusUpdateDAOImpl extends SequenceDao<MandateStatusUpdate>
 	 *
 	 * save FileUpload
 	 * 
-	 * @param MandateStatusUpdate
-	 *            (fileUpload)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param MandateStatusUpdate (fileUpload)
+	 * @param type                (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public long save(MandateStatusUpdate mandateStatusUpdate, String type) {
 		logger.debug("Entering");
@@ -136,15 +128,12 @@ public class MandateStatusUpdateDAOImpl extends SequenceDao<MandateStatusUpdate>
 	 * This method updates the Record FileUpload or FileUpload_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update FileUpload by key MandateID and Version
 	 * 
-	 * @param MandateStatusUpdate
-	 *            (fileUpload)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param MandateStatusUpdate (fileUpload)
+	 * @param type                (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public void update(MandateStatusUpdate mandateStatusUpdate, String type) {
 		int recordCount = 0;
@@ -186,12 +175,6 @@ public class MandateStatusUpdateDAOImpl extends SequenceDao<MandateStatusUpdate>
 
 		logger.debug("Leaving");
 
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			return 0;
-		}
+		return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
 	}
-
 }

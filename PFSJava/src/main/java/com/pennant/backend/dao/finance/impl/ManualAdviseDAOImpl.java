@@ -51,6 +51,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.core.TableType;
@@ -77,12 +78,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, adviseID);
-
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -96,12 +95,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, receiptID);
-
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -575,11 +572,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				return mar;
 			}, receiptSeqID, payAgainstID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
-
 	}
 
 	@Override
@@ -740,10 +735,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, receiptId);
 		} catch (EmptyResultDataAccessException ede) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -795,10 +789,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				return fm;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public List<ManualAdvise> getAMZManualAdviseDetails(long finID, String type) {
@@ -856,13 +849,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, 1);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, 1);
 	}
 
 	@Override
@@ -877,10 +864,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, adviseID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1268,13 +1254,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" Where  FinID = ? and AdviseType = ? and ValueDate > ?");
 		sql.append(" and (AdviseAmount - PaidAmount - WaivedAmount) > 0");
 
-		try {
-			return jdbcOperations.queryForObject(sql.toString(), Date.class, finID, adviseType, valueDate);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return jdbcOperations.queryForObject(sql.toString(), Date.class, finID, adviseType, valueDate);
 	}
 
 	@Override
@@ -1397,10 +1377,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				return mam;
 			}, receiptID, receiptSeqID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1464,13 +1443,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, adviseID) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, adviseID) > 0;
 	}
 
 	@Override
@@ -1482,10 +1455,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, adviseID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1556,9 +1528,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				return mam;
 			}, receiptID, receiptSeqID, adviseId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -1576,13 +1548,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, 1, "BOUNCE");
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, 1, "BOUNCE");
 	}
 
 	private StringBuilder getManualAdvicequery(String type) {
@@ -1682,13 +1648,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Date.class, finID, 1);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID, 1);
 	}
 
 	@Override

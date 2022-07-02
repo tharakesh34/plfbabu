@@ -15,6 +15,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.Manufacturer;
@@ -48,13 +49,11 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 		RowMapper<Manufacturer> rowMapper = BeanPropertyRowMapper.newInstance(Manufacturer.class);
 
 		try {
-			manufacturer = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return manufacturer;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return manufacturer;
 	}
 
 	@Override

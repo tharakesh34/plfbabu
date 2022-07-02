@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import com.pennant.backend.dao.finance.MiscPostingUploadDAO;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -29,10 +30,8 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -67,10 +66,8 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 	 * 
 	 * save Finance Types
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -112,15 +109,12 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 	 * This method updates the Record MiscPostingUploads or MiscPostingUploads_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public void update(MiscPostingUpload miscPostingUpload) {
 		int recordCount = 0;
@@ -152,11 +146,9 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 	/**
 	 * This method initialize the Record.
 	 * 
-	 * @param FinanceType
-	 *            (financeType)
+	 * @param FinanceType (financeType)
 	 * @return FinanceType
 	 */
-
 	@Override
 	public void deleteByUploadId(long uploadId) {
 		logger.debug(Literal.ENTERING);
@@ -172,7 +164,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			throw new DependencyFoundException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -198,18 +190,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 		source.addValue("Reference", reference);
 		source.addValue("Status", "SUCCESS");
 
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
-		return false;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
