@@ -372,6 +372,12 @@ public class ReceiptCalculator {
 							String taxType = allocate.getTaxType();
 							if (StringUtils.isNotBlank(taxType)
 									&& allocate.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
+								allocate.setWaivedCGST(BigDecimal.ZERO);
+								allocate.setWaivedSGST(BigDecimal.ZERO);
+								allocate.setWaivedIGST(BigDecimal.ZERO);
+								allocate.setWaivedUGST(BigDecimal.ZERO);
+								allocate.setWaivedGST(BigDecimal.ZERO);
+								allocate.setWaivedCESS(BigDecimal.ZERO);
 								calAllocationWaiverGST(receiptData.getFinanceDetail(), allocate.getWaivedAmount(),
 										allocate);
 							}
@@ -1880,6 +1886,12 @@ public class ReceiptCalculator {
 				if (Allocation.ODC.equals(alloc.getAllocationType()) && actualOdPaid.compareTo(BigDecimal.ZERO) > 0
 						&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(rd.getLppFeeType().getTaxComponent())) {
 					String taxType = FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE;
+					alloc.setPaidCGST(BigDecimal.ZERO);
+					alloc.setPaidSGST(BigDecimal.ZERO);
+					alloc.setPaidIGST(BigDecimal.ZERO);
+					alloc.setPaidUGST(BigDecimal.ZERO);
+					alloc.setPaidGST(BigDecimal.ZERO);
+					alloc.setPaidCESS(BigDecimal.ZERO);
 					calAllocationPaidGST(fd, actualOdPaid, alloc, taxType);
 					TaxAmountSplit taxSplit = calculateGST(fd, taxType, actualOdPaid);
 					actualOdPaid = actualOdPaid.add(taxSplit.gettGST());
@@ -3096,6 +3108,12 @@ public class ReceiptCalculator {
 		 */
 		if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
 			// always we are taking the inclusive type here because we are doing reverse calculation here
+			allocate.setPaidCGST(BigDecimal.ZERO);
+			allocate.setPaidSGST(BigDecimal.ZERO);
+			allocate.setPaidUGST(BigDecimal.ZERO);
+			allocate.setPaidIGST(BigDecimal.ZERO);
+			allocate.setPaidCESS(BigDecimal.ZERO);
+			allocate.setPaidGST(BigDecimal.ZERO);
 			calAllocationPaidGST(fd, allocate.getTotalPaid(), allocate, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 		}
 
@@ -3180,15 +3198,10 @@ public class ReceiptCalculator {
 			TaxAmountSplit taxSplit = calculateGST(fd, taxType, penaltyBal);
 			penaltyBal = penaltyBal.add(taxSplit.gettGST());
 		}
+
 		if (allocate.isTdsReq() && !rch.isExcldTdsCal()) {
-			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
-				TaxAmountSplit taxSplit = calculateGST(fd, taxType, taxableAmount);
-				taxableAmount = penaltyBal.subtract(taxSplit.gettGST());
-			}
-
-			tdsAmount = getTDSAmount(fd.getFinScheduleData().getFinanceMain(), penaltyBal);
+			tdsAmount = getTDSAmount(fd.getFinScheduleData().getFinanceMain(), taxableAmount);
 			penaltyBal = penaltyBal.subtract(tdsAmount);
-
 		}
 
 		// Adjust Paid Amount
