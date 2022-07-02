@@ -372,6 +372,9 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return new HashMap<String, Object>();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return new HashMap<String, Object>();
 		}
 	}
 
