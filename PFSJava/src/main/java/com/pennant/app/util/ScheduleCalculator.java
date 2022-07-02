@@ -10242,8 +10242,12 @@ public class ScheduleCalculator {
 			BigDecimal repayDiff = prvSchd.getRepayAmount().subtract(curSchd.getRepayAmount());
 
 			curSchd.setRepayAmount(curSchd.getRepayAmount().add(repayDiff));
-			curSchd.setPrincipalSchd(curSchd.getPrincipalSchd().add(repayDiff));
-			curSchd.setClosingBalance(curSchd.getClosingBalance().subtract(repayDiff));
+			prvSchd.setProfitBalance(repayDiff);
+
+			curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, fm.isCpzPosIntact(), fm, true));
+			curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
+			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+			curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, fm.getRepayRateBasis(), fm.isCpzPosIntact()));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -10259,13 +10263,13 @@ public class ScheduleCalculator {
 		String repayRateBasis = fm.getRepayRateBasis();
 
 		curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, fm, true));
-		curSchd.setPrincipalSchd(prvSchd.getClosingBalance().subtract(fm.getExpectedEndBal()));
+		curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, cpzPOSIntact));
 		curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+		curSchd.setPrincipalSchd(prvSchd.getClosingBalance().subtract(fm.getExpectedEndBal()));
 		curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, repayRateBasis, cpzPOSIntact));
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
