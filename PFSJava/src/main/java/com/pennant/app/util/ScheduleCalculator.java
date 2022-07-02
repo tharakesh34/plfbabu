@@ -5016,8 +5016,8 @@ public class ScheduleCalculator {
 			}
 
 			Date recalToDate = fm.getRecalToDate();
-			if (finScheduleData.isEqualInst() && recalToDate.compareTo(derivedMDT) != 0
-					&& curSchDate.compareTo(recalToDate) == 0) {
+			if (finScheduleData.isEqualInst() && DateUtil.compare(recalToDate, derivedMDT) != 0
+					&& DateUtil.compare(curSchDate, recalToDate) == 0) {
 				procTDTRecord(finScheduleData, i, cpzPOSIntact);
 			}
 
