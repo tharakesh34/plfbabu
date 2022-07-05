@@ -2,7 +2,6 @@ package com.pennanttech.pennapps.pff.verification.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +23,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -147,14 +147,8 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		source.addValue("verificationId", id);
 
 		RowMapper<LVDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -242,12 +236,10 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 				jdbcTemplate.update(sql.toString(), paramSource);
 			}
 		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			throw new DependencyFoundException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
@@ -262,11 +254,9 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -279,14 +269,8 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		paramSource.addValue("verificationId", verificationId);
 
 		RowMapper<LVDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 	}
 
 	@Override
@@ -305,15 +289,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 
 		RowMapper<LegalVetting> rowMapper = BeanPropertyRowMapper.newInstance(LegalVetting.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -469,26 +445,14 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 
 	@Override
 	public boolean isVettingExists(long id) {
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder("Select count(*) FROM  verification_vt_view  Where verificationId = :verificationId");
+		StringBuilder sql = new StringBuilder(
+				"Select count(*) FROM  verification_vt_view  Where verificationId = :verificationId");
 
 		logger.trace(Literal.SQL + sql.toString());
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("verificationId", id);
 
-		try {
-			int recordCount = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-			if (recordCount > 0) {
-				return true;
-			}
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return false;
+		return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
@@ -535,15 +499,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 
 		RowMapper<LVDocument> rowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -567,16 +523,8 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		paramMap.addValue("verificationType", VerificationType.VETTING.getKey());
 		paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
 
-		try {
-			logger.debug(Literal.SQL + sql.toString());
-			return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		logger.debug(Literal.SQL + sql.toString());
+		return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -593,13 +541,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		paramSource.addValue("verificationType", VerificationType.VETTING.getKey());
 		paramSource.addValue("referenceId", collateralRef);
 
-		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return 0;
+		return jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
 	}
 
 	@Override
@@ -618,14 +560,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		source.addValue("documentType", DocumentType.COLLATRL.getKey());
 		source.addValue("referenceId", collateralRef);
 
-		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return 0;
+		return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -655,12 +590,8 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
-
 }
