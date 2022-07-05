@@ -1,7 +1,6 @@
 package com.pennant.backend.dao.limit.impl;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +28,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -236,14 +236,11 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		RowMapper<LimitHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitHeader.class);
 
 		try {
-			limitHeader = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			limitHeader = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return limitHeader;
-
 	}
 
 	/**
@@ -389,13 +386,11 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		RowMapper<LimitHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitHeader.class);
 
 		try {
-			limitHeader = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			// logger.warn("Exception: ", e);
-			limitHeader = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return limitHeader;
 	}
 
 	@Override
@@ -424,7 +419,6 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isCustomerExists(long customerId, String type) {
 		logger.debug(Literal.ENTERING);
@@ -447,8 +441,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		try {
 			count = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			limitHeader = null;
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -607,7 +600,6 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		sql.append(" where CustomerId = :CustomerId and Blocklimit = :Blocklimit");
 
 		LimitHeader limitHeader = getLimitHeader();
-		long count = 0;
 		limitHeader.setCustomerId(custID);
 		limitHeader.setBlocklimit(limitBlock);
 
@@ -615,12 +607,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return count;
+		return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Long.class);
 	}
 
 	@Override
@@ -673,10 +660,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -693,10 +679,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -725,13 +710,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		return new ArrayList<FinanceMain>();
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	@Override
@@ -771,13 +750,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		return new ArrayList<FinanceMain>();
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	@Override

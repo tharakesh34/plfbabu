@@ -12,6 +12,7 @@ import org.springframework.dao.DuplicateKeyException;
 import com.pennant.backend.dao.finance.LowerTaxDeductionDAO;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -155,8 +156,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 				ps.setLong(1, ltd.getFinID());
 			});
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
-
 }

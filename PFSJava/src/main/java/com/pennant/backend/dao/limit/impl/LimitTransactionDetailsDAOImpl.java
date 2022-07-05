@@ -18,8 +18,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.model.limit.LimitTransactionDetail;
 import com.pennant.backend.util.LimitConstants;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransactionDetail>
 		implements LimitTransactionDetailsDAO {
@@ -50,16 +52,9 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 
 		RowMapper<LimitTransactionDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
-		try {
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
 
 		logger.debug(Literal.LEAVING);
-
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -99,10 +94,9 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 						return ltd;
 					});
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -121,17 +115,14 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 
 		RowMapper<LimitTransactionDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
-		try {
-			LimitTransactionDetail limitTranDetail = this.jdbcTemplate.queryForObject(sql.toString(), source,
-					typeRowMapper);
-			if (limitTranDetail.getLimitAmount() == null) {
-				limitTranDetail.setLimitAmount(BigDecimal.ZERO);
-			}
-			return limitTranDetail;
-		} catch (EmptyResultDataAccessException e) {
-			//
+
+		LimitTransactionDetail limitTranDetail = this.jdbcTemplate.queryForObject(sql.toString(), source,
+				typeRowMapper);
+		if (limitTranDetail.getLimitAmount() == null) {
+			limitTranDetail.setLimitAmount(BigDecimal.ZERO);
 		}
-		return null;
+
+		return limitTranDetail;
 	}
 
 	@Override
@@ -193,7 +184,7 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -251,12 +242,11 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), source);
-
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -320,10 +310,10 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), source);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 
+		logger.debug("Leaving");
 	}
 
 	@Override
@@ -339,13 +329,9 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		try {
-			this.jdbcTemplate.update(deleteSql.toString(), source);
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-		}
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(deleteSql.toString(), source);
 
+		logger.debug("Leaving");
 	}
 
 	@Override
@@ -360,13 +346,8 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		try {
-			this.jdbcTemplate.update(deleteSql.toString(), source);
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-		}
+		this.jdbcTemplate.update(deleteSql.toString(), source);
+
 		logger.debug("Leaving");
-
 	}
-
 }
