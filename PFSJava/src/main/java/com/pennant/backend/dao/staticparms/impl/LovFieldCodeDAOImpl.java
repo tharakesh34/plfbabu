@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LovFieldCodeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-10-2011    														*
- *                                                                  						*
- * Modified Date    :  04-10-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LovFieldCodeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-10-2011 * * Modified
+ * Date : 04-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-10-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -58,6 +40,7 @@ import com.pennant.backend.model.staticparms.LovFieldCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>LovFieldCode model</b> class.<br>
@@ -73,10 +56,8 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 	/**
 	 * Fetch the Record Field Code details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LovFieldCode
 	 */
 	@Override
@@ -101,23 +82,19 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 		RowMapper<LovFieldCode> typeRowMapper = BeanPropertyRowMapper.newInstance(LovFieldCode.class);
 
 		try {
-			lovFieldCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			lovFieldCode = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return lovFieldCode;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTLovFieldCode or BMTLovFieldCode_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Field Code by key FieldCode
 	 * 
-	 * @param Field
-	 *            Code (lovFieldCode)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Field Code (lovFieldCode)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -150,10 +127,8 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 	 *
 	 * save Field Code
 	 * 
-	 * @param Field
-	 *            Code (lovFieldCode)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Field Code (lovFieldCode)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -185,15 +160,12 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 	 * This method updates the Record BMTLovFieldCode or BMTLovFieldCode_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Field Code by key FieldCode and Version
 	 * 
-	 * @param Field
-	 *            Code (lovFieldCode)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Field Code (lovFieldCode)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public void update(LovFieldCode lovFieldCode, String type) {
 		logger.debug("Entering");

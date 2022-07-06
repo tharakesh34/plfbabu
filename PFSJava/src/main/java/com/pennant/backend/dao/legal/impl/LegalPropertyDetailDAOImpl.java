@@ -1,51 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalPropertyDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-06-2018    														*
- *                                                                  						*
- * Modified Date    :  16-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalPropertyDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-06-2018 * *
+ * Modified Date : 16-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.legal.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -131,63 +112,56 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, legalId);
-				}
-			}, new RowMapper<LegalPropertyDetail>() {
-				@Override
-				public LegalPropertyDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					LegalPropertyDetail lpd = new LegalPropertyDetail();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, legalId);
+			}
+		}, new RowMapper<LegalPropertyDetail>() {
+			@Override
+			public LegalPropertyDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LegalPropertyDetail lpd = new LegalPropertyDetail();
 
-					lpd.setLegalId(rs.getLong("LegalId"));
-					lpd.setLegalPropertyId(rs.getLong("LegalPropertyId"));
-					lpd.setScheduleType(rs.getString("ScheduleType"));
-					lpd.setPropertySchedule(rs.getString("PropertySchedule"));
-					lpd.setPropertyType(rs.getString("PropertyType"));
-					lpd.setNorthBy(rs.getString("NorthBy"));
-					lpd.setSouthBy(rs.getString("SouthBy"));
-					lpd.setEastBy(rs.getString("EastBy"));
-					lpd.setWestBy(rs.getString("WestBy"));
-					lpd.setMeasurement(rs.getBigDecimal("Measurement"));
-					lpd.setRegistrationOffice(rs.getString("RegistrationOffice"));
-					lpd.setRegistrationDistrict(rs.getString("RegistrationDistrict"));
-					lpd.setPropertyOwner(rs.getString("PropertyOwner"));
-					lpd.setUrbanLandCeiling(rs.getString("UrbanLandCeiling"));
-					lpd.setMinorshareInvolved(rs.getString("MinorshareInvolved"));
-					lpd.setPropertyIsGramanatham(rs.getString("PropertyIsGramanatham"));
-					lpd.setPropertyReleased(rs.getString("PropertyReleased"));
-					lpd.setPropOriginalsAvailable(rs.getString("PropOriginalsAvailable"));
-					lpd.setPropertyIsAgricultural(rs.getString("PropertyIsAgricultural"));
-					lpd.setNocObtainedFromLPA(rs.getString("NocObtainedFromLPA"));
-					lpd.setAnyMortgagePending(rs.getString("AnyMortgagePending"));
-					lpd.setNorthSideEastByWest(rs.getString("NorthSideEastByWest"));
-					lpd.setSouthSideWestByEast(rs.getString("SouthSideWestByEast"));
-					lpd.setEastSideNorthBySouth(rs.getString("EastSideNorthBySouth"));
-					lpd.setWestSideSouthByNorth(rs.getString("WestSideSouthByNorth"));
-					lpd.setVersion(rs.getInt("Version"));
-					lpd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					lpd.setLastMntBy(rs.getLong("LastMntBy"));
-					lpd.setRecordStatus(rs.getString("RecordStatus"));
-					lpd.setRoleCode(rs.getString("RoleCode"));
-					lpd.setNextRoleCode(rs.getString("NextRoleCode"));
-					lpd.setTaskId(rs.getString("TaskId"));
-					lpd.setNextTaskId(rs.getString("NextTaskId"));
-					lpd.setRecordType(rs.getString("RecordType"));
-					lpd.setWorkflowId(rs.getLong("WorkflowId"));
+				lpd.setLegalId(rs.getLong("LegalId"));
+				lpd.setLegalPropertyId(rs.getLong("LegalPropertyId"));
+				lpd.setScheduleType(rs.getString("ScheduleType"));
+				lpd.setPropertySchedule(rs.getString("PropertySchedule"));
+				lpd.setPropertyType(rs.getString("PropertyType"));
+				lpd.setNorthBy(rs.getString("NorthBy"));
+				lpd.setSouthBy(rs.getString("SouthBy"));
+				lpd.setEastBy(rs.getString("EastBy"));
+				lpd.setWestBy(rs.getString("WestBy"));
+				lpd.setMeasurement(rs.getBigDecimal("Measurement"));
+				lpd.setRegistrationOffice(rs.getString("RegistrationOffice"));
+				lpd.setRegistrationDistrict(rs.getString("RegistrationDistrict"));
+				lpd.setPropertyOwner(rs.getString("PropertyOwner"));
+				lpd.setUrbanLandCeiling(rs.getString("UrbanLandCeiling"));
+				lpd.setMinorshareInvolved(rs.getString("MinorshareInvolved"));
+				lpd.setPropertyIsGramanatham(rs.getString("PropertyIsGramanatham"));
+				lpd.setPropertyReleased(rs.getString("PropertyReleased"));
+				lpd.setPropOriginalsAvailable(rs.getString("PropOriginalsAvailable"));
+				lpd.setPropertyIsAgricultural(rs.getString("PropertyIsAgricultural"));
+				lpd.setNocObtainedFromLPA(rs.getString("NocObtainedFromLPA"));
+				lpd.setAnyMortgagePending(rs.getString("AnyMortgagePending"));
+				lpd.setNorthSideEastByWest(rs.getString("NorthSideEastByWest"));
+				lpd.setSouthSideWestByEast(rs.getString("SouthSideWestByEast"));
+				lpd.setEastSideNorthBySouth(rs.getString("EastSideNorthBySouth"));
+				lpd.setWestSideSouthByNorth(rs.getString("WestSideSouthByNorth"));
+				lpd.setVersion(rs.getInt("Version"));
+				lpd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				lpd.setLastMntBy(rs.getLong("LastMntBy"));
+				lpd.setRecordStatus(rs.getString("RecordStatus"));
+				lpd.setRoleCode(rs.getString("RoleCode"));
+				lpd.setNextRoleCode(rs.getString("NextRoleCode"));
+				lpd.setTaskId(rs.getString("TaskId"));
+				lpd.setNextTaskId(rs.getString("NextTaskId"));
+				lpd.setRecordType(rs.getString("RecordType"));
+				lpd.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return lpd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return lpd;
+			}
+		});
 	}
 
 	@Override

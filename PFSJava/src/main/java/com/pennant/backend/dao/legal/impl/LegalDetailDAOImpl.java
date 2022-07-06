@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-06-2018    														*
- *                                                                  						*
- * Modified Date    :  16-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-06-2018 * * Modified
+ * Date : 16-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.legal.impl;
 
 import java.sql.ResultSet;
@@ -63,6 +45,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -136,11 +119,9 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -336,22 +317,13 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		tempSql.append(" Where loanReference = :loanReference and collateralReference = :collateralReference ");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-
 		source.addValue("loanReference", reference);
 		source.addValue("collateralReference", collateralRef);
 		source.addValue("active", active);
 
-		try {
-			jdbcTemplate.update(mainSql.toString(), source);
-			jdbcTemplate.update(tempSql.toString(), source);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			throw e;
-		} finally {
-			source = null;
-			tempSql = null;
-			mainSql = null;
-		}
+		jdbcTemplate.update(mainSql.toString(), source);
+		jdbcTemplate.update(tempSql.toString(), source);
+
 		logger.debug(Literal.LEAVING);
 	}
 

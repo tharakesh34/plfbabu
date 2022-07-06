@@ -35,6 +35,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> implements LoanMasterReportDAO {
@@ -44,7 +45,7 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 	@Override
 	public List<LoanReport> getLoanReports(String finreference, Date fromDate, Date toDate) {
 		logger.debug(Literal.ENTERING);
-		List<LoanReport> loanReport = null;
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("Select * from loanReport_view ");
 		if (StringUtils.isNotBlank(finreference)) {
@@ -53,64 +54,58 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 			selectSql.append("where finstartdate>=? and finstartdate<=? ");
 		}
 		logger.trace(Literal.SQL + selectSql.toString());
-		try {
-			loanReport = this.jdbcOperations.query(selectSql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					if (StringUtils.isNotBlank(finreference)) {
-						ps.setString(1, finreference);
-					} else if (fromDate != null && toDate != null) {
-						ps.setDate(1, DateUtil.getSqlDate(fromDate));
-						ps.setDate(2, DateUtil.getSqlDate(toDate));
-					}
-				}
-			}, new RowMapper<LoanReport>() {
-				@Override
-				public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
-					LoanReport loanReport = new LoanReport();
-					loanReport.setFinReference(rs.getString("FinReference"));
-					loanReport.setCustName(rs.getString("CustShrtName"));
-					loanReport.setCustCIF(rs.getString("CustCif"));
-					loanReport.setCustCategory(rs.getString("CustCtgDesc"));
-					loanReport.setCustomerType(rs.getString("custctgcode"));
-					loanReport.setProductDescription(rs.getString("loanpurposedesc"));
-					loanReport.setOriginalROI(rs.getBigDecimal("RepayProfitRate"));
-					loanReport.setCustCategory(rs.getString("CustCtgDesc"));
-					loanReport.setFinType(rs.getString("FinType"));
-					loanReport.setSanctioAmount(rs.getBigDecimal("FinAssetValue"));
-					loanReport.setDisbursementAmount(rs.getBigDecimal("FinCurrAssetValue"));
-					loanReport.setLoanStatus(rs.getBoolean("FinIsActive"));
-					loanReport.setFinStartDate(rs.getDate("FinStartDate"));
-					loanReport.setCalMaturity(rs.getDate("CalMaturity"));
-					loanReport.setNumberOfTerms(rs.getInt("numberOfTerms"));
-					loanReport.setAlwGrcPeriod(rs.getBoolean("allowGrcPeriod"));
-					loanReport.setRepayRateBasis(rs.getString("repayRateBasis"));
-					loanReport.setRepayBaseRate(rs.getString("repayBaseRate"));
-					loanReport.setFinCcy(rs.getString("finccy"));
-					loanReport.setRepaySpecialRate(rs.getString("repaySpecialRate"));
-					loanReport.setRepayMargin(rs.getBigDecimal("repaymargin"));
-					loanReport.setRpyMinRate(rs.getBigDecimal("rpyMinRate"));
-					loanReport.setRpyMaxRate(rs.getBigDecimal("rpymaxRate"));
-					loanReport.setEntity(rs.getString("FinDivision"));
-					loanReport.setCaptilizedIntrest(rs.getBigDecimal("TotalPftCpz"));
-					loanReport.setNextRepayDate(rs.getDate("nextRepayDate"));
-					loanReport.setRoundingMode(rs.getString("roundingMode"));
-					loanReport.setGraceTerms(rs.getInt("GraceTerms"));
-					loanReport.setCaste(rs.getString("castedesc"));
-					loanReport.setBranchState(rs.getString("cpprovincename"));
-					loanReport.setQuickDisb(rs.getBoolean("quickDisb"));
-					loanReport.setFinAmount(rs.getBigDecimal("finAmount"));
-					loanReport.setRoundingTarget(rs.getInt("RoundingTarget"));
-					loanReport.setMaturityDate(rs.getDate("maturitydate"));
-					return loanReport;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return loanReport;
 
+		return this.jdbcOperations.query(selectSql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				if (StringUtils.isNotBlank(finreference)) {
+					ps.setString(1, finreference);
+				} else if (fromDate != null && toDate != null) {
+					ps.setDate(1, DateUtil.getSqlDate(fromDate));
+					ps.setDate(2, DateUtil.getSqlDate(toDate));
+				}
+			}
+		}, new RowMapper<LoanReport>() {
+			@Override
+			public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LoanReport loanReport = new LoanReport();
+				loanReport.setFinReference(rs.getString("FinReference"));
+				loanReport.setCustName(rs.getString("CustShrtName"));
+				loanReport.setCustCIF(rs.getString("CustCif"));
+				loanReport.setCustCategory(rs.getString("CustCtgDesc"));
+				loanReport.setCustomerType(rs.getString("custctgcode"));
+				loanReport.setProductDescription(rs.getString("loanpurposedesc"));
+				loanReport.setOriginalROI(rs.getBigDecimal("RepayProfitRate"));
+				loanReport.setCustCategory(rs.getString("CustCtgDesc"));
+				loanReport.setFinType(rs.getString("FinType"));
+				loanReport.setSanctioAmount(rs.getBigDecimal("FinAssetValue"));
+				loanReport.setDisbursementAmount(rs.getBigDecimal("FinCurrAssetValue"));
+				loanReport.setLoanStatus(rs.getBoolean("FinIsActive"));
+				loanReport.setFinStartDate(rs.getDate("FinStartDate"));
+				loanReport.setCalMaturity(rs.getDate("CalMaturity"));
+				loanReport.setNumberOfTerms(rs.getInt("numberOfTerms"));
+				loanReport.setAlwGrcPeriod(rs.getBoolean("allowGrcPeriod"));
+				loanReport.setRepayRateBasis(rs.getString("repayRateBasis"));
+				loanReport.setRepayBaseRate(rs.getString("repayBaseRate"));
+				loanReport.setFinCcy(rs.getString("finccy"));
+				loanReport.setRepaySpecialRate(rs.getString("repaySpecialRate"));
+				loanReport.setRepayMargin(rs.getBigDecimal("repaymargin"));
+				loanReport.setRpyMinRate(rs.getBigDecimal("rpyMinRate"));
+				loanReport.setRpyMaxRate(rs.getBigDecimal("rpymaxRate"));
+				loanReport.setEntity(rs.getString("FinDivision"));
+				loanReport.setCaptilizedIntrest(rs.getBigDecimal("TotalPftCpz"));
+				loanReport.setNextRepayDate(rs.getDate("nextRepayDate"));
+				loanReport.setRoundingMode(rs.getString("roundingMode"));
+				loanReport.setGraceTerms(rs.getInt("GraceTerms"));
+				loanReport.setCaste(rs.getString("castedesc"));
+				loanReport.setBranchState(rs.getString("cpprovincename"));
+				loanReport.setQuickDisb(rs.getBoolean("quickDisb"));
+				loanReport.setFinAmount(rs.getBigDecimal("finAmount"));
+				loanReport.setRoundingTarget(rs.getInt("RoundingTarget"));
+				loanReport.setMaturityDate(rs.getDate("maturitydate"));
+				return loanReport;
+			}
+		});
 	}
 
 	@Override
@@ -120,18 +115,13 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		logger.debug(Literal.SQL + sql.toString());
 		FinanceScheduleDetailDAOImpl daoImpl = new FinanceScheduleDetailDAOImpl();
 		RowMapper<FinanceScheduleDetail> rowMapper = daoImpl.new ScheduleDetailRowMapper(false);
-		try {
-			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, id);
-				}
-			}, rowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
 
-		return new ArrayList<>();
+		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, id);
+			}
+		}, rowMapper);
 	}
 
 	private StringBuilder getScheduleDetailQuery(String finReference) {
@@ -157,7 +147,7 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 	@Override
 	public List<FinRepayHeader> getFinRepayHeader(String reference) {
 		logger.debug(Literal.ENTERING);
-		List<FinRepayHeader> finRepayHeaders = null;
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select finrepay.PriAmount,finrepay.finevent from finRepayHeader finrepay ");
 		sql.append("join finreceiptdetail finrecdt on finrepay.receiptseqid=finrecdt.receiptseqid ");
@@ -165,28 +155,23 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		sql.append(" Where finrepay.FinReference = ? and finreceipt.ReceiptModeStatus in ('R','A')");
 
 		logger.debug(Literal.SQL + sql.toString());
-		try {
-			finRepayHeaders = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					if (reference != null) {
-						ps.setString(1, reference);
-					}
+
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				if (reference != null) {
+					ps.setString(1, reference);
 				}
-			}, new RowMapper<FinRepayHeader>() {
-				@Override
-				public FinRepayHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinRepayHeader finRepayHeader = new FinRepayHeader();
-					finRepayHeader.setPriAmount(rs.getBigDecimal("PriAmount"));
-					finRepayHeader.setFinEvent(rs.getString("FinEvent"));
-					return finRepayHeader;
-				}
-			});
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION);
-		}
-		logger.debug(Literal.LEAVING);
-		return finRepayHeaders;
+			}
+		}, new RowMapper<FinRepayHeader>() {
+			@Override
+			public FinRepayHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+				FinRepayHeader finRepayHeader = new FinRepayHeader();
+				finRepayHeader.setPriAmount(rs.getBigDecimal("PriAmount"));
+				finRepayHeader.setFinEvent(rs.getString("FinEvent"));
+				return finRepayHeader;
+			}
+		});
 	}
 
 	@Override
@@ -197,19 +182,14 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = daoImpl.new ScheduleDetailRowMapper(false);
-		try {
-			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, id);
-					ps.setDate(2, JdbcUtil.getDate(appDate));
-				}
-			}, rowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
 
-		return new ArrayList<>();
+		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, id);
+				ps.setDate(2, JdbcUtil.getDate(appDate));
+			}
+		}, rowMapper);
 	}
 
 	public int getMaxPendingOverDuePayment(String custCIF) {
@@ -271,14 +251,8 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
 		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return null;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -300,24 +274,18 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
 
 		try {
-			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			financeScheduleDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return financeScheduleDetail;
 	}
 
 	/**
 	 * Fetch the List of Finance Disbursement Detail Records by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return WIFFinanceDisbursement
 	 */
 	@Override
@@ -335,22 +303,15 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("  Where FinReference = ?");
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<LoanReport>() {
-				@Override
-				public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
-					LoanReport loanReport = new LoanReport();
-					loanReport.setFirstDisbDate(rs.getDate("FirstDisbDate"));
-					loanReport.setLastDisbDate(rs.getDate("LastDisbDate"));
-					return loanReport;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<LoanReport>() {
+			@Override
+			public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LoanReport loanReport = new LoanReport();
+				loanReport.setFirstDisbDate(rs.getDate("FirstDisbDate"));
+				loanReport.setLastDisbDate(rs.getDate("LastDisbDate"));
+				return loanReport;
+			}
+		});
 	}
 
 	/**
@@ -373,30 +334,24 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, reference);
-					ps.setString(2, moduleName);
-				}
-			}, new RowMapper<CollateralAssignment>() {
-				@Override
-				public CollateralAssignment mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CollateralAssignment collateralAssignment = new CollateralAssignment();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, reference);
+				ps.setString(2, moduleName);
+			}
+		}, new RowMapper<CollateralAssignment>() {
+			@Override
+			public CollateralAssignment mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CollateralAssignment collateralAssignment = new CollateralAssignment();
 
-					collateralAssignment.setCollateralValue(rs.getBigDecimal("CollateralValue"));
-					collateralAssignment.setCollateralType(rs.getString("CollateralType"));
-					collateralAssignment.setCollateralRef(rs.getString("CollateralRef"));
+				collateralAssignment.setCollateralValue(rs.getBigDecimal("CollateralValue"));
+				collateralAssignment.setCollateralType(rs.getString("CollateralType"));
+				collateralAssignment.setCollateralRef(rs.getString("CollateralRef"));
 
-					return collateralAssignment;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return collateralAssignment;
+			}
+		});
 	}
 
 	@Override
@@ -432,23 +387,16 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<LoanReport>() {
-						@Override
-						public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
-							LoanReport loanReport = new LoanReport();
-							loanReport.setLoanDebtors_Interest(rs.getBigDecimal("LoanDebtors_Interest"));
-							loanReport.setLoanDebtors_Principal(rs.getBigDecimal("LoanDebtors_Principal"));
-							return loanReport;
-						}
-					});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+				new RowMapper<LoanReport>() {
+					@Override
+					public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
+						LoanReport loanReport = new LoanReport();
+						loanReport.setLoanDebtors_Interest(rs.getBigDecimal("LoanDebtors_Interest"));
+						loanReport.setLoanDebtors_Principal(rs.getBigDecimal("LoanDebtors_Principal"));
+						return loanReport;
+					}
+				});
 	}
 
 	@Override
@@ -462,29 +410,24 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		sql.append("  Where FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, id);
-				}
-			}, new RowMapper<FinAdvancePayments>() {
-				@Override
-				public FinAdvancePayments mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 
-					finAdvancePayments.setAmtToBeReleased(rs.getBigDecimal("AmtToBeReleased"));
-					finAdvancePayments.setStatus(rs.getString("Status"));
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, id);
+			}
+		}, new RowMapper<FinAdvancePayments>() {
+			@Override
+			public FinAdvancePayments mapRow(ResultSet rs, int rowNum) throws SQLException {
+				FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 
-					return finAdvancePayments;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				finAdvancePayments.setAmtToBeReleased(rs.getBigDecimal("AmtToBeReleased"));
+				finAdvancePayments.setStatus(rs.getString("Status"));
+
+				return finAdvancePayments;
+			}
+		});
 	}
 
 	@Override
@@ -492,7 +435,7 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		logger.debug(Literal.ENTERING);
 		VasMovementDetail vasMovementDetail = new VasMovementDetail();
 		vasMovementDetail.setFinReference(finReference);
-		List<VasMovementDetail> vasMovementDetailList = null;
+
 		StringBuilder selectSql = new StringBuilder("Select");
 		selectSql.append(" VasMovementId,VasMovementDetailId,FinReference,VasReference,");
 		selectSql.append(" MovementDate, MovementAmt,VasProvider,VasProduct,VasAmount");
@@ -504,14 +447,7 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vasMovementDetail);
 		RowMapper<VasMovementDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(VasMovementDetail.class);
 
-		try {
-			vasMovementDetailList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			vasMovementDetailList = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return vasMovementDetailList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -532,29 +468,22 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, reference);
-				}
-			}, new RowMapper<FinFeeDetail>() {
-				@Override
-				public FinFeeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinFeeDetail finFeeDetail = new FinFeeDetail();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, reference);
+			}
+		}, new RowMapper<FinFeeDetail>() {
+			@Override
+			public FinFeeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+				FinFeeDetail finFeeDetail = new FinFeeDetail();
 
-					finFeeDetail.setFeeScheduleMethod(rs.getString("FeeScheduleMethod"));
-					finFeeDetail.setRemainingFee(rs.getBigDecimal("RemainingFee"));
+				finFeeDetail.setFeeScheduleMethod(rs.getString("FeeScheduleMethod"));
+				finFeeDetail.setRemainingFee(rs.getBigDecimal("RemainingFee"));
 
-					return finFeeDetail;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return finFeeDetail;
+			}
+		});
 	}
-
 }

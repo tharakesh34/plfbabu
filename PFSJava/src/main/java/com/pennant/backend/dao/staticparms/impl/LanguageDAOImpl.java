@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LanguageDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-06-2011    														*
- *                                                                  						*
- * Modified Date    :  27-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LanguageDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-06-2011 * * Modified Date
+ * : 27-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -58,6 +40,7 @@ import com.pennant.backend.model.staticparms.Language;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Language model</b> class.<br>
@@ -73,10 +56,8 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 	/**
 	 * Fetch the Record Language Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Language
 	 */
 	@Override
@@ -101,23 +82,19 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 		RowMapper<Language> typeRowMapper = BeanPropertyRowMapper.newInstance(Language.class);
 
 		try {
-			language = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			language = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return language;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTLanguage or BMTLanguage_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Language Details by key LngCode
 	 * 
-	 * @param Language
-	 *            Details (language)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Language Details (language)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -152,10 +129,8 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 	 * 
 	 * save Language Details
 	 * 
-	 * @param Language
-	 *            Details (language)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Language Details (language)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -186,10 +161,8 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 	 * This method updates the Record BMTLanguage or BMTLanguage_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Language Details by key LngCode and Version
 	 * 
-	 * @param Language
-	 *            Details (language)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Language Details (language)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

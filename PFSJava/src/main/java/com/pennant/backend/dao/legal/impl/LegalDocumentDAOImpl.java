@@ -27,7 +27,6 @@ package com.pennant.backend.dao.legal.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -116,58 +115,51 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, legalId);
-				}
-			}, new RowMapper<LegalDocument>() {
-				@Override
-				public LegalDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
-					LegalDocument ld = new LegalDocument();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, legalId);
+			}
+		}, new RowMapper<LegalDocument>() {
+			@Override
+			public LegalDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LegalDocument ld = new LegalDocument();
 
-					ld.setLegalId(rs.getLong("LegalId"));
-					ld.setLegalDocumentId(rs.getLong("LegalDocumentId"));
-					ld.setDocumentDate(rs.getTimestamp("DocumentDate"));
-					ld.setDocumentDetail(rs.getString("DocumentDetail"));
-					ld.setDocumentNo(rs.getString("DocumentNo"));
-					ld.setSurveyNo(rs.getString("SurveyNo"));
-					ld.setDocumentType(rs.getString("DocumentType"));
-					ld.setDocumentCategory(rs.getString("DocumentCategory"));
-					ld.setScheduleType(rs.getString("ScheduleType"));
-					ld.setDocumentName(rs.getString("DocumentName"));
-					ld.setDocumentTypeVerify(rs.getString("DocumentTypeVerify"));
-					ld.setDocumentRemarks(rs.getString("DocumentRemarks"));
-					ld.setDocumentReference(JdbcUtil.getLong(rs.getObject("DocumentReference")));
-					ld.setDocumentTypeApprove(rs.getString("DocumentTypeApprove"));
-					ld.setDocumentAccepted(rs.getString("DocumentAccepted"));
-					ld.setUploadDocumentType(rs.getString("UploadDocumentType"));
-					ld.setDocumentHolderProperty(rs.getString("DocumentHolderProperty"));
-					ld.setDocumentPropertyAddress(rs.getString("DocumentPropertyAddress"));
-					ld.setDocumentBriefTracking(rs.getString("DocumentBriefTracking"));
-					ld.setDocumentMortgage(rs.getBoolean("DocumentMortgage"));
-					ld.setVersion(rs.getInt("Version"));
-					ld.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					ld.setLastMntBy(rs.getLong("LastMntBy"));
-					ld.setRecordStatus(rs.getString("RecordStatus"));
-					ld.setRoleCode(rs.getString("RoleCode"));
-					ld.setNextRoleCode(rs.getString("NextRoleCode"));
-					ld.setTaskId(rs.getString("TaskId"));
-					ld.setNextTaskId(rs.getString("NextTaskId"));
-					ld.setRecordType(rs.getString("RecordType"));
-					ld.setWorkflowId(rs.getLong("WorkflowId"));
+				ld.setLegalId(rs.getLong("LegalId"));
+				ld.setLegalDocumentId(rs.getLong("LegalDocumentId"));
+				ld.setDocumentDate(rs.getTimestamp("DocumentDate"));
+				ld.setDocumentDetail(rs.getString("DocumentDetail"));
+				ld.setDocumentNo(rs.getString("DocumentNo"));
+				ld.setSurveyNo(rs.getString("SurveyNo"));
+				ld.setDocumentType(rs.getString("DocumentType"));
+				ld.setDocumentCategory(rs.getString("DocumentCategory"));
+				ld.setScheduleType(rs.getString("ScheduleType"));
+				ld.setDocumentName(rs.getString("DocumentName"));
+				ld.setDocumentTypeVerify(rs.getString("DocumentTypeVerify"));
+				ld.setDocumentRemarks(rs.getString("DocumentRemarks"));
+				ld.setDocumentReference(JdbcUtil.getLong(rs.getObject("DocumentReference")));
+				ld.setDocumentTypeApprove(rs.getString("DocumentTypeApprove"));
+				ld.setDocumentAccepted(rs.getString("DocumentAccepted"));
+				ld.setUploadDocumentType(rs.getString("UploadDocumentType"));
+				ld.setDocumentHolderProperty(rs.getString("DocumentHolderProperty"));
+				ld.setDocumentPropertyAddress(rs.getString("DocumentPropertyAddress"));
+				ld.setDocumentBriefTracking(rs.getString("DocumentBriefTracking"));
+				ld.setDocumentMortgage(rs.getBoolean("DocumentMortgage"));
+				ld.setVersion(rs.getInt("Version"));
+				ld.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ld.setLastMntBy(rs.getLong("LastMntBy"));
+				ld.setRecordStatus(rs.getString("RecordStatus"));
+				ld.setRoleCode(rs.getString("RoleCode"));
+				ld.setNextRoleCode(rs.getString("NextRoleCode"));
+				ld.setTaskId(rs.getString("TaskId"));
+				ld.setNextTaskId(rs.getString("NextTaskId"));
+				ld.setRecordType(rs.getString("RecordType"));
+				ld.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return ld;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return ld;
+			}
+		});
 	}
 
 	@Override

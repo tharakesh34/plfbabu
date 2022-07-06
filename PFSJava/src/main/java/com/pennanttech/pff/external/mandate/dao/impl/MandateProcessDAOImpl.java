@@ -216,9 +216,8 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 					return id;
 				}
 			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new AppException();
+		} catch (DataAccessException e) {
+			throw new AppException(AppException.getDefaultMessage(), e);
 		}
 
 		logger.debug(Literal.ENTERING);
@@ -235,21 +234,16 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 
 		paramMap.addValue("EXTRACTION_DATE", SysParamUtil.getAppValueDate());
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, Integer>>() {
-				@Override
-				public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					while (rs.next()) {
-						bankCodeMap.put(rs.getString(1), rs.getInt(2));
-					}
-					return bankCodeMap;
+		return jdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, Integer>>() {
+			@Override
+			public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				while (rs.next()) {
+					bankCodeMap.put(rs.getString(1), rs.getInt(2));
 				}
+				return bankCodeMap;
+			}
 
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return bankCodeMap;
+		});
 	}
 
 	private String getSequence(String bankCode, Map<String, Integer> bankCodeSeq) {

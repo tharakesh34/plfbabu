@@ -20,6 +20,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements LimitGroupItemsDAO {
 	private static Logger logger = LogManager.getLogger(LimitGroupItemsDAOImpl.class);
@@ -61,10 +62,8 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 	/**
 	 * Fetch the Record Limit Group details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LimitGroupItems
 	 */
 	@Override
@@ -88,26 +87,16 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 		source.addValue("LimitGroupCode", id);
 
 		RowMapper<LimitGroupItems> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroupItems.class);
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-		return null;
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
 	 * This method Deletes the Record from the LimitGroupItems or LimitGroupItems_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Limit Group by key GroupCode
 	 * 
-	 * @param Limit
-	 *            Group (limitGroupItems)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Group (limitGroupItems)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -139,10 +128,8 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 	 *
 	 * save Limit Group
 	 * 
-	 * @param Limit
-	 *            Group (limitGroupItems)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Group (limitGroupItems)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -172,15 +159,12 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 	 * This method updates the Record LimitGroupItems or LimitGroupItems_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Limit Group by key GroupCode and Version
 	 * 
-	 * @param Limit
-	 *            Group (limitGroupItems)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Group (limitGroupItems)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public void update(LimitGroupItems limitGroupItems, String type) {
 		int recordCount = 0;
@@ -243,7 +227,6 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 	public String getItemCodes(LimitGroupItems lmtGrpItems, String limitGroupCode) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
 		StringBuilder selectSql;
 
 		if (lmtGrpItems.getItemCode() == null) {
@@ -258,19 +241,15 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 		selectSql.append(" FOR XML PATH(''), TYPE).value('.', 'varchar(max)'),1,1,'');");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("LimitGroupCode", limitGroupCode);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new String();
 		}
-		return new String();
 	}
 
 	@Override
@@ -299,10 +278,8 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public int validationCheck(String limitGroup, String type) {
-		int recordCount = 0;
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitGroupItems");
@@ -312,24 +289,11 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try {
-
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public int limitItemCheck(String limitItem, String limitCategory, String type) {
-		int recordCount = 0;
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitGroupItems");
@@ -340,17 +304,6 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
-
 }

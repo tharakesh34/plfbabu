@@ -1,51 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalPropertyTitleDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-06-2018    														*
- *                                                                  						*
- * Modified Date    :  18-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalPropertyTitleDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-06-2018 * *
+ * Modified Date : 18-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.legal.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -124,43 +105,34 @@ public class LegalPropertyTitleDAOImpl extends SequenceDao<LegalPropertyTitle> i
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, legalId);
-				}
-			}, new RowMapper<LegalPropertyTitle>() {
-				@Override
-				public LegalPropertyTitle mapRow(ResultSet rs, int rowNum) throws SQLException {
-					LegalPropertyTitle lpt = new LegalPropertyTitle();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, legalId);
+			}
+		}, new RowMapper<LegalPropertyTitle>() {
+			@Override
+			public LegalPropertyTitle mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LegalPropertyTitle lpt = new LegalPropertyTitle();
 
-					lpt.setLegalPropertyTitleId(rs.getLong("LegalPropertyTitleId"));
-					lpt.setLegalId(rs.getLong("LegalId"));
-					lpt.setTitle(rs.getString("Title"));
-					lpt.setVersion(rs.getInt("Version"));
-					lpt.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					lpt.setLastMntBy(rs.getLong("LastMntBy"));
-					lpt.setRecordStatus(rs.getString("RecordStatus"));
-					lpt.setRoleCode(rs.getString("RoleCode"));
-					lpt.setNextRoleCode(rs.getString("NextRoleCode"));
-					lpt.setTaskId(rs.getString("TaskId"));
-					lpt.setNextTaskId(rs.getString("NextTaskId"));
-					lpt.setRecordType(rs.getString("RecordType"));
-					lpt.setWorkflowId(rs.getLong("WorkflowId"));
+				lpt.setLegalPropertyTitleId(rs.getLong("LegalPropertyTitleId"));
+				lpt.setLegalId(rs.getLong("LegalId"));
+				lpt.setTitle(rs.getString("Title"));
+				lpt.setVersion(rs.getInt("Version"));
+				lpt.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				lpt.setLastMntBy(rs.getLong("LastMntBy"));
+				lpt.setRecordStatus(rs.getString("RecordStatus"));
+				lpt.setRoleCode(rs.getString("RoleCode"));
+				lpt.setNextRoleCode(rs.getString("NextRoleCode"));
+				lpt.setTaskId(rs.getString("TaskId"));
+				lpt.setNextTaskId(rs.getString("NextTaskId"));
+				lpt.setRecordType(rs.getString("RecordType"));
+				lpt.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return lpt;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			sql = null;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return lpt;
+			}
+		});
 	}
 
 	@Override

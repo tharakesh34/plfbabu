@@ -1,51 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalApplicantDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-06-2018    														*
- *                                                                  						*
- * Modified Date    :  16-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalApplicantDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-06-2018 * *
+ * Modified Date : 16-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.legal.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -133,53 +114,46 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, legalId);
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, legalId);
+			}
+		}, new RowMapper<LegalApplicantDetail>() {
+			@Override
+			public LegalApplicantDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LegalApplicantDetail ad = new LegalApplicantDetail();
+
+				ad.setLegalApplicantId(rs.getLong("LegalApplicantId"));
+				ad.setLegalId(rs.getLong("LegalId"));
+				ad.setTitle(rs.getString("Title"));
+				ad.setPropertyOwnersName(rs.getString("PropertyOwnersName"));
+				ad.setAge(rs.getInt("Age"));
+				ad.setRelationshipType(rs.getString("RelationshipType"));
+				ad.setIDType(rs.getString("IDType"));
+				ad.setIDNo(rs.getString("IDNo"));
+				ad.setRemarks(rs.getString("Remarks"));
+				ad.setCustomerId(rs.getLong("CustomerId"));
+				ad.setVersion(rs.getInt("Version"));
+				ad.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ad.setLastMntBy(rs.getLong("LastMntBy"));
+				ad.setRecordStatus(rs.getString("RecordStatus"));
+				ad.setRoleCode(rs.getString("RoleCode"));
+				ad.setNextRoleCode(rs.getString("NextRoleCode"));
+				ad.setTaskId(rs.getString("TaskId"));
+				ad.setNextTaskId(rs.getString("NextTaskId"));
+				ad.setRecordType(rs.getString("RecordType"));
+				ad.setWorkflowId(rs.getLong("WorkflowId"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					ad.setTitleName(rs.getString("TitleName"));
+					ad.setIDTypeName(rs.getString("IDTypeName"));
 				}
-			}, new RowMapper<LegalApplicantDetail>() {
-				@Override
-				public LegalApplicantDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					LegalApplicantDetail ad = new LegalApplicantDetail();
 
-					ad.setLegalApplicantId(rs.getLong("LegalApplicantId"));
-					ad.setLegalId(rs.getLong("LegalId"));
-					ad.setTitle(rs.getString("Title"));
-					ad.setPropertyOwnersName(rs.getString("PropertyOwnersName"));
-					ad.setAge(rs.getInt("Age"));
-					ad.setRelationshipType(rs.getString("RelationshipType"));
-					ad.setIDType(rs.getString("IDType"));
-					ad.setIDNo(rs.getString("IDNo"));
-					ad.setRemarks(rs.getString("Remarks"));
-					ad.setCustomerId(rs.getLong("CustomerId"));
-					ad.setVersion(rs.getInt("Version"));
-					ad.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					ad.setLastMntBy(rs.getLong("LastMntBy"));
-					ad.setRecordStatus(rs.getString("RecordStatus"));
-					ad.setRoleCode(rs.getString("RoleCode"));
-					ad.setNextRoleCode(rs.getString("NextRoleCode"));
-					ad.setTaskId(rs.getString("TaskId"));
-					ad.setNextTaskId(rs.getString("NextTaskId"));
-					ad.setRecordType(rs.getString("RecordType"));
-					ad.setWorkflowId(rs.getLong("WorkflowId"));
-
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						ad.setTitleName(rs.getString("TitleName"));
-						ad.setIDTypeName(rs.getString("IDTypeName"));
-					}
-
-					return ad;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return ad;
+			}
+		});
 	}
 
 	@Override

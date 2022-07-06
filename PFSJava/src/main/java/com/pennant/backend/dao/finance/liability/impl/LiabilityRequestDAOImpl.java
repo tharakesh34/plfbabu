@@ -43,6 +43,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>LiabilityRequest model</b> class.<br>
@@ -88,10 +89,9 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -106,10 +106,9 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -215,10 +214,9 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql, String.class, finType, finEvent);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
