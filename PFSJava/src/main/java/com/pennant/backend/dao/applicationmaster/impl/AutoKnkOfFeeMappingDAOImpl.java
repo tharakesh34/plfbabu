@@ -164,7 +164,7 @@ public class AutoKnkOfFeeMappingDAOImpl extends SequenceDao<AutoKnockOffFeeMappi
 		try {
 			this.jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			throw new DependencyFoundException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
