@@ -15,6 +15,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.dao.EodDetailDAO;
 import com.pennant.eod.model.EodDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDAO {
 	private static Logger logger = LogManager.getLogger(EodDetailDAOImpl.class);
@@ -95,7 +96,7 @@ public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDA
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
