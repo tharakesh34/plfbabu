@@ -371,10 +371,10 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 			return jdbcTemplate.queryForMap(sql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			return new HashMap<String, Object>();
-		} catch (Exception e) {
+			return new HashMap<>();
+		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
-			return new HashMap<String, Object>();
+			return new HashMap<>();
 		}
 	}
 
