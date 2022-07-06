@@ -1,6 +1,5 @@
 package com.pennanttech.pff.incomeexpensedetail.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -117,17 +115,7 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 
 		RowMapper<IncomeExpenseDetail> rowMapper = BeanPropertyRowMapper.newInstance(IncomeExpenseDetail.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			return new ArrayList<>();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -145,11 +133,7 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custId", custId);
 		source.addValue("financialYear", financialYear);
-		try {
-			return jdbcTemplate.queryForList(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return new ArrayList<Map<String, Object>>();
+
+		return jdbcTemplate.queryForList(sql.toString(), source);
 	}
 }
