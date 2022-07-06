@@ -167,14 +167,8 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custId);
 		RowMapper<CustomerExtLiability> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -187,17 +181,10 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(" where linkid = :linkid ");
 		logger.debug(Literal.SQL + sql.toString());
 
-		BigDecimal emiSum = BigDecimal.ZERO;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("linkid", linkid);
 
-		try {
-			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return emiSum;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
 	}
 
 	@Override
@@ -209,17 +196,10 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(" where linkid in  (select linkid from link_sampling_liabilities where samplingid = :id)");
 		logger.debug(Literal.SQL + sql.toString());
 
-		BigDecimal emiSum = BigDecimal.ZERO;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("id", samplingId);
 
-		try {
-			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return emiSum;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
 	}
 
 	@Override
@@ -239,17 +219,8 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("keyReference", keyReference);
-		BigDecimal totalIncome = BigDecimal.ZERO;
-		try {
-			totalIncome = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-			totalIncome = BigDecimal.ZERO;
-		}
 
-		logger.debug(Literal.LEAVING);
-		return totalIncome;
-
+		return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
 	}
 
 	@Override

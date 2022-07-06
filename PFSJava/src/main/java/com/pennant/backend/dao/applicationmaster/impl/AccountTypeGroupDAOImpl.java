@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -31,10 +32,8 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 	/**
 	 * Fetch the Record Account Type Group details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return AccountTypeGroup
 	 */
 	@Override
@@ -63,7 +62,7 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 		try {
 			accountTypeGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			accountTypeGroup = null;
 		}
 
@@ -75,10 +74,8 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 	 * This method Deletes the Record from the BMTAggrementDef or BMTAggrementDef_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Account Type Group by key AggCode
 	 * 
-	 * @param Account
-	 *            Type Group (accountTypeGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Type Group (accountTypeGroup)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -113,10 +110,8 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 	 *
 	 * save Account Type Group
 	 * 
-	 * @param Account
-	 *            Type Group (accountTypeGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Type Group (accountTypeGroup)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -157,10 +152,8 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 	 * This method updates the Record BMTAggrementDef or BMTAggrementDef_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Account Type Group by key AggCode and Version
 	 * 
-	 * @param Account
-	 *            Type Group (accountTypeGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Type Group (accountTypeGroup)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

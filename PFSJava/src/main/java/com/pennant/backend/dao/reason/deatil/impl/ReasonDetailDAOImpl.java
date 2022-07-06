@@ -25,6 +25,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements ReasonDetailDAO {
 	private static Logger logger = LogManager.getLogger(ReasonDetailDAOImpl.class);
@@ -112,14 +113,9 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 
-		try {
-			RowMapper<ReasonDetailsLog> mapper = BeanPropertyRowMapper.newInstance(ReasonDetailsLog.class);
-			return this.jdbcTemplate.query(sql.toString(), source, mapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+		RowMapper<ReasonDetailsLog> mapper = BeanPropertyRowMapper.newInstance(ReasonDetailsLog.class);
+
+		return this.jdbcTemplate.query(sql.toString(), source, mapper);
 	}
 
 	@Override
@@ -226,11 +222,8 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
-
 }

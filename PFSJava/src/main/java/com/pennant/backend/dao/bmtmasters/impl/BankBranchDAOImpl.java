@@ -41,6 +41,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -85,10 +86,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new BankBranchRM(type), id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -269,10 +269,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new BankBranchRM(type), ifsc);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -285,10 +284,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new BankBranchRM(type), bankCode, branchCode);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -319,10 +317,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 			}, micr, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -335,10 +332,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new BankBranchRM(type), ifsc, micr);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

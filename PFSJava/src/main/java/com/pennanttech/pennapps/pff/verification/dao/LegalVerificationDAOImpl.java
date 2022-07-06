@@ -2,7 +2,6 @@ package com.pennanttech.pennapps.pff.verification.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -24,6 +23,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -179,12 +179,9 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -216,18 +213,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
-		try {
-			int recordCount = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-			if (recordCount > 0) {
-				return true;
-			}
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return false;
+		return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
@@ -306,8 +292,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 				jdbcTemplate.update(sql.toString(), paramSource);
 			}
 		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			throw new DependencyFoundException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -325,11 +310,9 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -342,14 +325,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		paramSource.addValue("verificationId", verificationId);
 
 		RowMapper<LVDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 	}
 
 	@Override
@@ -367,14 +344,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		RowMapper<LVDocument> rowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -393,15 +363,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		RowMapper<LegalVerification> rowMapper = BeanPropertyRowMapper.newInstance(LegalVerification.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	public List<LVDocument> getLVDocuments(long verificationId, String type) {
@@ -426,14 +388,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		source.addValue("verificationId", verificationId);
 
 		RowMapper<LVDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	public void saveDocuments(LVDocument lvDocument, String tableType) {
@@ -574,15 +530,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		RowMapper<LVDocument> rowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -606,17 +554,8 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		paramMap.addValue("verificationType", VerificationType.LV.getKey());
 		paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
 
-		try {
-			logger.debug(Literal.SQL + sql.toString());
-			return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
+		logger.debug(Literal.SQL + sql.toString());
+		return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -633,13 +572,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		paramSource.addValue("verificationType", VerificationType.LV.getKey());
 		paramSource.addValue("referenceId", collateralRef);
 
-		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return 0;
+		return jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
 	}
 
 	@Override
@@ -659,14 +592,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		source.addValue("documentType", DocumentType.COLLATRL.getKey());
 		source.addValue("referenceId", collateralRef);
 
-		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return 0;
+		return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -684,23 +610,16 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] { keyReference }, (rs, rowNum) -> {
-				LVDocument lv = new LVDocument();
 
-				lv.setSeqNo((rs.getInt("seqNo")));
-				lv.setDocumentType(rs.getInt("documentType"));
-				lv.setDocumentSubId(rs.getString("documentSubId"));
-				lv.setVerificationId(rs.getLong("verificationId"));
+		return this.jdbcOperations.query(sql.toString(), new Object[] { keyReference }, (rs, rowNum) -> {
+			LVDocument lv = new LVDocument();
 
-				return lv;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			lv.setSeqNo((rs.getInt("seqNo")));
+			lv.setDocumentType(rs.getInt("documentType"));
+			lv.setDocumentSubId(rs.getString("documentSubId"));
+			lv.setVerificationId(rs.getLong("verificationId"));
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return lv;
+		});
 	}
-
 }

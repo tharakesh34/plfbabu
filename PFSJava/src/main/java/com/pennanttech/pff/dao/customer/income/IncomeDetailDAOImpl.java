@@ -183,14 +183,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		parameterSource.addValue("linkid", linkId);
 		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	@Override
@@ -205,14 +198,8 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("id", samplingId);
 		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	@Override
@@ -234,14 +221,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		parameterSource.addValue("keyReference", keyReference);
 		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	@Override
