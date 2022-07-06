@@ -20,6 +20,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class AssignmentRateDAOImpl extends SequenceDao<AssignmentRate> implements AssignmentRateDAO {
 	private static Logger logger = LogManager.getLogger(AssignmentRateDAOImpl.class);
@@ -27,7 +28,7 @@ public class AssignmentRateDAOImpl extends SequenceDao<AssignmentRate> implement
 	@Override
 	public AssignmentRate getAssignmentRateById(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		AssignmentRate assignmentRate = null;
+
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" select * from ASSIGNMENTRATES").append(type);
@@ -38,13 +39,11 @@ public class AssignmentRateDAOImpl extends SequenceDao<AssignmentRate> implement
 		paramSource.addValue("id", id);
 
 		try {
-			assignmentRate = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return assignmentRate;
 	}
 
 	@Override
