@@ -4,9 +4,11 @@ import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.batchProcessStatus.BatchProcessStatusDAO;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -47,11 +49,9 @@ public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements Ba
 
 		try {
 			jdbcTemplate.update(sql.toString(), parmSource);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-
 	}
 
 	@Override
@@ -66,13 +66,6 @@ public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements Ba
 		parmSource.addValue("Status", status);
 		parmSource.addValue("EndTime", endTime);
 
-		try {
-			jdbcTemplate.update(sql.toString(), parmSource);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			throw e;
-		}
-
+		jdbcTemplate.update(sql.toString(), parmSource);
 	}
-
 }

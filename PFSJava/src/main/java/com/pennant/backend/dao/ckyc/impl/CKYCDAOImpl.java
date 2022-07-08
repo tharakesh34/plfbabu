@@ -1360,7 +1360,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 				@Override
 				public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
 					map.put(rs.getString("key_type"), rs.getBigDecimal("key_code"));
-					// return map;
+
 					return map;
 				}
 			});

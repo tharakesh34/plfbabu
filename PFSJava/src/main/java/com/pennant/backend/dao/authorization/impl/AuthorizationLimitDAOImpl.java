@@ -42,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -84,14 +85,11 @@ public class AuthorizationLimitDAOImpl extends SequenceDao<AuthorizationLimit> i
 		RowMapper<AuthorizationLimit> rowMapper = BeanPropertyRowMapper.newInstance(AuthorizationLimit.class);
 
 		try {
-			authorizationLimit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			authorizationLimit = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return authorizationLimit;
 	}
 
 	@Override
@@ -124,14 +122,11 @@ public class AuthorizationLimitDAOImpl extends SequenceDao<AuthorizationLimit> i
 		RowMapper<AuthorizationLimit> rowMapper = BeanPropertyRowMapper.newInstance(AuthorizationLimit.class);
 
 		try {
-			authorizationLimit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			authorizationLimit = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return authorizationLimit;
 	}
 
 	@Override

@@ -1,49 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BeneficiaryDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-12-2016    														*
- *                                                                  						*
- * Modified Date    :  01-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BeneficiaryDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-12-2016 * * Modified
+ * Date : 01-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-12-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-12-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.beneficiary.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -76,10 +56,8 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 	/**
 	 * Fetch the Record Beneficiary details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Beneficiary
 	 */
 	@Override
@@ -115,10 +93,8 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 	/**
 	 * Fetch the Record Beneficiary details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Beneficiary
 	 */
 	@Override
@@ -141,10 +117,8 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 	/**
 	 * Fetch the Record Beneficiary details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Beneficiary
 	 */
 	@Override
@@ -171,10 +145,8 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 	 * This method Deletes the Record from the Beneficiary or Beneficiary_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Beneficiary by key BeneficiaryId
 	 * 
-	 * @param Beneficiary
-	 *            (beneficiary)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Beneficiary (beneficiary)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -208,10 +180,8 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 	 * 
 	 * save Beneficiary
 	 * 
-	 * @param Beneficiary
-	 *            (beneficiary)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Beneficiary (beneficiary)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -245,10 +215,8 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 	 * This method updates the Record Beneficiary or Beneficiary_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Beneficiary by key BeneficiaryId and Version
 	 * 
-	 * @param Beneficiary
-	 *            (beneficiary)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Beneficiary (beneficiary)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -310,16 +278,7 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(beneficiary);
 		RowMapper<Beneficiary> typeRowMapper = BeanPropertyRowMapper.newInstance(Beneficiary.class);
 
-		List<Beneficiary> beneficiaryList = new ArrayList<>();
-		try {
-			beneficiaryList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-
-		logger.debug("Leaving");
-		return beneficiaryList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override

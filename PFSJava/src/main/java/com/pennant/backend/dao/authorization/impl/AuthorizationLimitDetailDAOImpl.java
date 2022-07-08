@@ -1,48 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AuthorizationLimitDetailDAOImpl.java                                 * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-04-2018    														*
- *                                                                  						*
- * Modified Date    :  06-04-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AuthorizationLimitDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 06-04-2018 *
+ * * Modified Date : 06-04-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-04-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-04-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.authorization.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -63,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -106,14 +88,11 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 				.newInstance(AuthorizationLimitDetail.class);
 
 		try {
-			authorizationLimitDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			authorizationLimitDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return authorizationLimitDetail;
 	}
 
 	@Override
@@ -147,14 +126,11 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 				.newInstance(AuthorizationLimitDetail.class);
 
 		try {
-			authorizationLimitDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			authorizationLimitDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return authorizationLimitDetail;
 	}
 
 	@Override
@@ -290,7 +266,7 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 	@Override
 	public List<AuthorizationLimitDetail> getListByAuthLimitId(long authLimitId, String type) {
 		logger.debug(Literal.ENTERING);
-		List<AuthorizationLimitDetail> limitDetails = new ArrayList<AuthorizationLimitDetail>();
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, authLimitId, code, limitAmount, ");
@@ -314,15 +290,7 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 		RowMapper<AuthorizationLimitDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(AuthorizationLimitDetail.class);
 
-		try {
-			limitDetails = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			authorizationLimitDetail = null;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return limitDetails;
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override

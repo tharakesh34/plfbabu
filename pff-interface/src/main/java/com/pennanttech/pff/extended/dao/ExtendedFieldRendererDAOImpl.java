@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class ExtendedFieldRendererDAOImpl extends BasicDao<ExtendedFieldRender> implements ExtendedFieldRendererDAO {
 	private static Logger logger = LogManager.getLogger(ExtendedFieldRendererDAOImpl.class);
@@ -21,7 +22,6 @@ public class ExtendedFieldRendererDAOImpl extends BasicDao<ExtendedFieldRender> 
 	public Map<String, Object> getExtendedField(String reference, String tableName, String type) {
 		logger.debug("Entering");
 
-		Map<String, Object> renderMap = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 
@@ -33,14 +33,11 @@ public class ExtendedFieldRendererDAOImpl extends BasicDao<ExtendedFieldRender> 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
+			return this.jdbcTemplate.queryForMap(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exceprtion ", e);
-			renderMap = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return renderMap;
 	}
 
 	@Override
@@ -60,7 +57,7 @@ public class ExtendedFieldRendererDAOImpl extends BasicDao<ExtendedFieldRender> 
 		RowMapper<ExtendedFieldRender> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldRender.class);
 
 		try {
-			//renderMap = this.jdbcTemplate.query(selectSql, source, typeRowMapper);
+			// renderMap = this.jdbcTemplate.query(selectSql, source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exceprtion ", e);
 			renderMap = null;

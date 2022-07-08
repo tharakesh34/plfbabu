@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -95,14 +96,11 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
 		RowMapper<BaseRate> typeRowMapper = BeanPropertyRowMapper.newInstance(BaseRate.class);
 		try {
-			baseRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			baseRate = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return baseRate;
 	}
 
 	@Override
@@ -333,11 +331,9 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	/**
@@ -447,15 +443,6 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 		selectSql.append(" WHERE BRType = :BRType AND Currency = :Currency");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn("Warning", dae);
-			recordCount = 0;
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 }

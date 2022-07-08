@@ -42,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -82,14 +83,11 @@ public class AcademicDAOImpl extends SequenceDao<Academic> implements AcademicDA
 		RowMapper<Academic> typeRowMapper = BeanPropertyRowMapper.newInstance(Academic.class);
 
 		try {
-			academic = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			academic = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return academic;
 	}
 
 	@Override
