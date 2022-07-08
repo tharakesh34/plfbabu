@@ -1,48 +1,28 @@
 /**
  * 
- * Copyright 2011 - Pennant Technologies
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * Copyright 2011 - Pennant Technologies This file is part of Pennant Java Application Framework and related Products.
+ * All components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ClusterHierarcheyDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-11-2018    														*
- *                                                                  						*
- * Modified Date    :  21-11-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ClusterHierarcheyDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-11-2018 * *
+ * Modified Date : 21-11-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-11-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-11-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -64,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -81,7 +62,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 	public ClusterHierarchy getClusterHierarcheybyId(String entity, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL. 
+		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT");
 		sql.append(" entity,");
 
@@ -91,7 +72,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		sql.append(type);
 		sql.append(" Where entity = :entity");
 
-		// Execute the SQL, binding the arguments. 
+		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		ClusterHierarchy clusterHierarchey = new ClusterHierarchy();
@@ -101,15 +82,11 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		RowMapper<ClusterHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		try {
-			clusterHierarchey = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			clusterHierarchey = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-
-		return clusterHierarchey;
 	}
 
 	public ClusterHierarchy getClusterHierarchey(String entity, String type) {
@@ -130,16 +107,13 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
-
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
-	//This method will get all the records of given entity from database
+	// This method will get all the records of given entity from database
 	@Override
 	public List<ClusterHierarchy> getClusterHierarcheyList(String entity, String type) {
 		logger.debug(Literal.ENTERING);
@@ -162,14 +136,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(cHierarchey);
 		RowMapper<ClusterHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -218,10 +185,10 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		//SqlParameterSource paramSource = new BeanPropertySqlParameterSource(clusterHierarchey);
+		// SqlParameterSource paramSource = new BeanPropertySqlParameterSource(clusterHierarchey);
 		int[] recordCount = jdbcTemplate.batchUpdate(sql.toString(),
 				SqlParameterSourceUtils.createBatch(clusterHierarchey.getClusterTypes().toArray()));
-		//int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		// int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount.length == 0) {

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CheckListDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-12-2011    														*
- *                                                                  						*
- * Modified Date    :  12-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CheckListDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-12-2011 * * Modified
+ * Date : 12-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +39,7 @@ import com.pennant.backend.model.bmtmasters.CheckList;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CheckList model</b> class.<br>
@@ -72,10 +55,8 @@ public class CheckListDAOImpl extends SequenceDao<CheckList> implements CheckLis
 	/**
 	 * Fetch the Record Check List details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CheckList
 	 */
 	@Override
@@ -102,23 +83,19 @@ public class CheckListDAOImpl extends SequenceDao<CheckList> implements CheckLis
 		RowMapper<CheckList> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckList.class);
 
 		try {
-			checkList = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			checkList = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return checkList;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTCheckList or BMTCheckList_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Check List by key CheckListId
 	 * 
-	 * @param Check
-	 *            List (checkList)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Check List (checkList)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -150,10 +127,8 @@ public class CheckListDAOImpl extends SequenceDao<CheckList> implements CheckLis
 	 *
 	 * save Check List
 	 * 
-	 * @param Check
-	 *            List (checkList)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Check List (checkList)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -188,10 +163,8 @@ public class CheckListDAOImpl extends SequenceDao<CheckList> implements CheckLis
 	 * This method updates the Record BMTCheckList or BMTCheckList_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Check List by key CheckListId and Version
 	 * 
-	 * @param Check
-	 *            List (checkList)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Check List (checkList)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
