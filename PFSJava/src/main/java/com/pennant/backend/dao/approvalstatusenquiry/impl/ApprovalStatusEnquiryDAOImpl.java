@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail> implements ApprovalStatusEnquiryDAO {
 	private static final Logger logger = LogManager.getLogger(ApprovalStatusEnquiryDAOImpl.class);
@@ -60,15 +61,11 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		RowMapper<CustomerFinanceDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerFinanceDetail.class);
 
 		try {
-			customerFinanceDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerFinanceDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerFinanceDetail;
-
 	}
 
 	private String commaJoin(List<String> finReferences) {

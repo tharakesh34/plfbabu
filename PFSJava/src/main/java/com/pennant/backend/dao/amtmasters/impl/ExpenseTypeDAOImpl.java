@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ExpenseTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-09-2011    														*
- *                                                                  						*
- * Modified Date    :  29-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ExpenseTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-09-2011 * * Modified
+ * Date : 29-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.amtmasters.impl;
@@ -45,7 +27,6 @@ package com.pennant.backend.dao.amtmasters.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,6 +47,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -83,10 +65,8 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 	/**
 	 * Fetch the Record Expense Type Details details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ExpenseType
 	 */
 	@Override
@@ -108,23 +88,19 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 		RowMapper<ExpenseType> typeRowMapper = BeanPropertyRowMapper.newInstance(ExpenseType.class);
 
 		try {
-			expenseType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			expenseType = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return expenseType;
 	}
 
 	/**
 	 * This method Deletes the Record from the AMTExpenseType or AMTExpenseType_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Expense Type Details by key ExpenceTypeId
 	 * 
-	 * @param Expense
-	 *            Type Details (expenseType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Expense Type Details (expenseType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -157,15 +133,12 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 	 * 
 	 * save Expense Type Details
 	 * 
-	 * @param Expense
-	 *            Type Details (expenseType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Expense Type Details (expenseType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public long save(ExpenseType expenseType, String type) {
 		logger.debug("Entering");
@@ -196,10 +169,8 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 	 * This method updates the Record AMTExpenseType or AMTExpenseType_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Expense Type Details by key ExpenceTypeId and Version
 	 * 
-	 * @param Expense
-	 *            Type Details (expenseType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Expense Type Details (expenseType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -308,43 +279,36 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setBoolean(1, true);
-					ps.setBoolean(2, true);
-				}
-			}, new RowMapper<ExpenseType>() {
-				@Override
-				public ExpenseType mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ExpenseType expType = new ExpenseType();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setBoolean(1, true);
+				ps.setBoolean(2, true);
+			}
+		}, new RowMapper<ExpenseType>() {
+			@Override
+			public ExpenseType mapRow(ResultSet rs, int rowNum) throws SQLException {
+				ExpenseType expType = new ExpenseType();
 
-					expType.setExpenseTypeId(rs.getLong("ExpenseTypeId"));
-					expType.setExpenseTypeCode(rs.getString("ExpenseTypeCode"));
-					expType.setExpenseTypeDesc(rs.getString("ExpenseTypeDesc"));
-					expType.setAmortReq(rs.getBoolean("AmortReq"));
-					expType.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-					expType.setActive(rs.getBoolean("Active"));
-					expType.setVersion(rs.getInt("Version"));
-					expType.setLastMntBy(rs.getLong("LastMntBy"));
-					expType.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					expType.setRecordStatus(rs.getString("RecordStatus"));
-					expType.setRoleCode(rs.getString("RoleCode"));
-					expType.setNextRoleCode(rs.getString("NextRoleCode"));
-					expType.setTaskId(rs.getString("TaskId"));
-					expType.setNextTaskId(rs.getString("NextTaskId"));
-					expType.setRecordType(rs.getString("RecordType"));
-					expType.setWorkflowId(rs.getLong("WorkflowId"));
+				expType.setExpenseTypeId(rs.getLong("ExpenseTypeId"));
+				expType.setExpenseTypeCode(rs.getString("ExpenseTypeCode"));
+				expType.setExpenseTypeDesc(rs.getString("ExpenseTypeDesc"));
+				expType.setAmortReq(rs.getBoolean("AmortReq"));
+				expType.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				expType.setActive(rs.getBoolean("Active"));
+				expType.setVersion(rs.getInt("Version"));
+				expType.setLastMntBy(rs.getLong("LastMntBy"));
+				expType.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				expType.setRecordStatus(rs.getString("RecordStatus"));
+				expType.setRoleCode(rs.getString("RoleCode"));
+				expType.setNextRoleCode(rs.getString("NextRoleCode"));
+				expType.setTaskId(rs.getString("TaskId"));
+				expType.setNextTaskId(rs.getString("NextTaskId"));
+				expType.setRecordType(rs.getString("RecordType"));
+				expType.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return expType;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return expType;
+			}
+		});
 	}
 }
