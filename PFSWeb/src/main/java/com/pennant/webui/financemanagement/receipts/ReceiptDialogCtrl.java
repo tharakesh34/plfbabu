@@ -7300,15 +7300,19 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// Remaining Balance = Receipt Amount + To be Paid by Customer - Paid by
 		// Customer (Allocated)
-		BigDecimal remBalAfterAllocation = receiptData.getTotReceiptAmount().subtract(pd.getTotalPaid())
-				.subtract(adv.getTotalPaid().subtract(adv.getTdsPaid())).subtract(fee.getTotalPaid());
-		if (remBalAfterAllocation.compareTo(BigDecimal.ZERO) <= 0) {
-			remBalAfterAllocation = BigDecimal.ZERO;
+		BigDecimal duePaidOrg = pd.getTotalPaid().subtract(pd.getTdsPaid());
+		BigDecimal advisePaidOrg = adv.getTotalPaid().subtract(adv.getTdsPaid());
+		BigDecimal feePaidOrg = fee.getTotalPaid().subtract(fee.getTdsPaid());
+
+		BigDecimal remBalAfterAlloc = receiptData.getTotReceiptAmount().subtract(duePaidOrg)
+				.subtract(advisePaidOrg).subtract(feePaidOrg);
+		if (remBalAfterAlloc.compareTo(BigDecimal.ZERO) <= 0) {
+			remBalAfterAlloc = BigDecimal.ZERO;
 			this.excessAdjustTo.setDisabled(true);
 		} else {
 			this.excessAdjustTo.setDisabled(false);
 		}
-		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBalAfterAllocation, formatter));
+		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBalAfterAlloc, formatter));
 	}
 
 	/**
