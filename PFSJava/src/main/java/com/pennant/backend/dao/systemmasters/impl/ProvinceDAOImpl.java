@@ -322,53 +322,31 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	public int getBusinessAreaCount(String businessAreaValue, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From RMTCountryVsProvince");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BusinessArea = :BusinessArea");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BusinessArea", businessAreaValue);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
 	public int geStateCodeCount(String taxStateCode, String cpProvince, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(TaxStateCode) From RMTCountryVsProvince");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where TaxStateCode = :TaxStateCode And CPPROVINCE <> :CPPROVINCE");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TaxStateCode", taxStateCode);
 		source.addValue("CPPROVINCE", cpProvince);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -195,49 +194,31 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 	public int getMaxPendingOverDuePayment(String custCIF) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		int maxPendingOverDueDays = 0;
-
 		StringBuilder sql = new StringBuilder(" SELECT COALESCE(MAX(FinCurODDays),0) From FinODDetails od");
 		sql.append(" join customers c on od.custid = c.custid ");
 		sql.append(" Where c.custCIF =:CustCIF AND FinCurODAmt > 0 ");
 
 		logger.debug("selectSql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustCIF", custCIF);
 
-		try {
-			maxPendingOverDueDays = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return maxPendingOverDueDays;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	@Override
 	public int getRevisedTenure(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		int revisedTenure = 0;
-
 		StringBuilder sql = new StringBuilder("SELECT count(*) from FinScheduleDetails ");
 		sql.append("where FinReference=:FinReference and specifier not in ('G','E') and instnumber > 0  ");
 
 		logger.debug("selectSql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		try {
-			revisedTenure = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return revisedTenure;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	@Override

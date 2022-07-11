@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.sessionvalidation.SessionValidationDAO;
 import com.pennant.backend.model.sessionvalidation.SessionValidation;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class SessionValidationDAOImpl implements SessionValidationDAO {
 
@@ -60,15 +61,11 @@ public class SessionValidationDAOImpl implements SessionValidationDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			sessionValidation = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-			sessionValidation = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return sessionValidation;
 	}
 
 	@Override

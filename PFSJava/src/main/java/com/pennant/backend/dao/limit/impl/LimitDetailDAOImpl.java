@@ -338,7 +338,6 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public int validationCheck(String limitGroup, String type) {
-		int recordCount = 0;
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitDetails");
@@ -347,23 +346,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		source.addValue("GroupCode", limitGroup);
 
 		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
 	public int limitItemCheck(String limitItem, String limitcategory, String type) {
-		int recordCount = 0;
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitDetails");
@@ -373,23 +360,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		source.addValue("LimitCategory", limitcategory);
 
 		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
 	public int limitStructureCheck(String structureCode, String type) {
-		int recordCount = 0;
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitHeader");
@@ -398,18 +373,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		source.addValue("LimitStructureCode", structureCode);
 
 		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -501,16 +465,8 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitDetails);
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitDetails);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
 	}
 
 	/**
@@ -751,8 +707,6 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	public BigDecimal getOsPriBal(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		BigDecimal totalPriBal = BigDecimal.ZERO;
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select TotalPriBal");
 		sql.append(" From FinPFTDetails");
@@ -760,13 +714,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		logger.debug(Literal.SQL + sql.toString());
 		try {
-			totalPriBal = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-		logger.debug(Literal.LEAVING);
-		return totalPriBal;
 	}
 
 	@Override
@@ -781,14 +733,13 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append(" Where CustomerId = :CustomerId");
 
 		logger.debug("selectSql: " + sql.toString());
-		int recordCount = 0;
+
 		try {
 			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitHeader);
-			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), beanParams, Integer.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParams, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		logger.debug("Leaving");
-		return recordCount;
 	}
 }

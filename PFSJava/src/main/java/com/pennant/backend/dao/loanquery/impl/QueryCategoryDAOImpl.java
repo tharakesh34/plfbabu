@@ -240,12 +240,9 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
-
-		} catch (DataAccessException e) {
-			logger.warn(e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
-
 }

@@ -25,13 +25,11 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -107,18 +105,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptUploadDetail);
 		RowMapper<ReceiptUploadDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ReceiptUploadDetail.class);
 
-		List<ReceiptUploadDetail> detailsList = new ArrayList<>();
-
-		try {
-
-			detailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.error(e);
-			detailsList = new ArrayList<>();
-		}
-
-		logger.debug(Literal.LEAVING);
-		return detailsList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -139,17 +126,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		RowMapper<UploadAlloctionDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadAlloctionDetail.class);
 
-		List<UploadAlloctionDetail> uploadAlloctionDetailsList = new ArrayList<>();
-
-		try {
-			uploadAlloctionDetailsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.error(e);
-			uploadAlloctionDetailsList = new ArrayList<>();
-		}
-
-		logger.debug("Leaving");
-		return uploadAlloctionDetailsList;
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override

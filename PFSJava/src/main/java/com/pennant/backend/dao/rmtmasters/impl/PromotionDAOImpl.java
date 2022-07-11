@@ -27,8 +27,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -240,26 +238,15 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	public int getPromtionCodeCount(String promotionCode, String type) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From Promotions");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where PromotionCode = :PromotionCode");
 		logger.debug(Literal.SQL + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PromotionCode", promotionCode);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -272,7 +259,6 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	public int getFinanceTypeCountById(String finType) {
 		logger.debug(Literal.ENTERING);
 
-		int financeTypeCount = 0;
 		Promotion promotion = new Promotion();
 		promotion.setFinType(finType);
 
@@ -282,14 +268,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 
-		try {
-			financeTypeCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			financeTypeCount = 0;
-		}
-		logger.debug(Literal.LEAVING);
-		return financeTypeCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	/**
@@ -312,16 +291,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 		RowMapper<Promotion> typeRowMapper = BeanPropertyRowMapper.newInstance(Promotion.class);
-		List<Promotion> PromotionList = new ArrayList<>();
-		try {
-			PromotionList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-			return Collections.emptyList();
-		}
 
-		logger.debug(Literal.LEAVING);
-		return PromotionList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override

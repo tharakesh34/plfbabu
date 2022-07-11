@@ -22,6 +22,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements LimitGroupLinesDAO {
 	private static Logger logger = LogManager.getLogger(LimitGroupLinesDAOImpl.class);
@@ -338,25 +339,17 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 
 		RowMapper<LimitGroupLines> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 		logger.debug(Literal.LEAVING);
-		try {
-			record = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-			for (LimitGroupLines gCode : record) {
-				if (groupCode == null) {
-					groupCode = "'" + gCode.getLimitGroupCode() + "'";
-				} else {
-					groupCode = groupCode.concat(",'" + gCode.getLimitGroupCode() + "'");
-				}
+
+		record = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		for (LimitGroupLines gCode : record) {
+			if (groupCode == null) {
+				groupCode = "'" + gCode.getLimitGroupCode() + "'";
+			} else {
+				groupCode = groupCode.concat(",'" + gCode.getLimitGroupCode() + "'");
 			}
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			record = null;
-			selectSql = null;
-			logger.debug(Literal.LEAVING);
 		}
-		return groupCode;
 
+		return groupCode;
 	}
 
 	@Override
@@ -382,17 +375,7 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 
 		RowMapper<LimitGroupLines> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 		logger.debug(Literal.LEAVING);
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			selectSql = null;
-			logger.debug(Literal.LEAVING);
-		}
-		return new ArrayList<LimitGroupLines>();
-
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -446,14 +429,10 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
-
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			selectSql = null;
-			logger.debug(Literal.LEAVING);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override

@@ -343,7 +343,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error(e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -367,26 +367,15 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 	public int geBankCodeCount(String partnerBankCodeValue, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(PartnerBankCode) From PartnerBanks");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where PartnerBankCode = :PartnerBankCode");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PartnerBankCode", partnerBankCodeValue);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	public List<PartnerBranchModes> getPartnerBranchModesId(long id) {
@@ -421,7 +410,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error(e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 

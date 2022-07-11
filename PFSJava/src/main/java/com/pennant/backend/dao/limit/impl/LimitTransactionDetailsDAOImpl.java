@@ -257,8 +257,6 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	public List<LimitTransactionDetail> getPreviousReservedAmt(String finReference, String transtype, long limitId) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-
 		StringBuilder selectSql = new StringBuilder("Select TransactionType, SUM(LimitAmount) LimitAmount");
 		selectSql.append(" From LimitTransactionDetails");
 		selectSql.append(
@@ -266,7 +264,7 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		selectSql.append(" group by TransactionType");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReferenceCode", LimitConstants.FINANCE);
 		source.addValue("ReferenceNumber", finReference);
 		source.addValue("TransactionType", transtype);
@@ -274,16 +272,8 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 
 		RowMapper<LimitTransactionDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-		return null;
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**

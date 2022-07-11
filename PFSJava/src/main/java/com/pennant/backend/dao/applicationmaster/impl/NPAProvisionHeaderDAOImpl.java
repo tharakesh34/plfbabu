@@ -292,15 +292,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		source.addValue("FinType", finType);
 		source.addValue("NpaTemplateId", npaTemplateId);
 
-		try {
-			if (jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return false;
+		return jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override

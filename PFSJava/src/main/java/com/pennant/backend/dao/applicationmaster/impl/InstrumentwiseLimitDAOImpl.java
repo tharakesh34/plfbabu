@@ -81,14 +81,11 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 		RowMapper<InstrumentwiseLimit> rowMapper = BeanPropertyRowMapper.newInstance(InstrumentwiseLimit.class);
 
 		try {
-			instrumentwiseLimit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			instrumentwiseLimit = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return instrumentwiseLimit;
 	}
 
 	@Override

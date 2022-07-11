@@ -44,6 +44,7 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadLog;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -180,7 +181,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		try {
 			this.jdbcOperations.update(sql.toString(), new Object[] { receiptUploadHeader.getUploadHeaderId() });
 		} catch (DataAccessException e) {
-			logger.error(e);
+			throw new DependencyFoundException(e);
 		}
 	}
 

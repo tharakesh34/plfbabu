@@ -34,7 +34,6 @@
 
 package com.pennant.backend.dao.rulefactory.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -151,7 +150,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 	@Override
 	public List<LimitFilterQuery> getLimitRuleByModule(String queryModule, String querySubCode, String type) {
 		logger.debug("Entering");
-		List<LimitFilterQuery> dedupParmList = new ArrayList<LimitFilterQuery>();
+
 		LimitFilterQuery dedupParm = new LimitFilterQuery();
 		dedupParm.setQueryModule(queryModule);
 		dedupParm.setQuerySubCode(querySubCode);
@@ -170,13 +169,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
 		RowMapper<LimitFilterQuery> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFilterQuery.class);
 
-		try {
-			dedupParmList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		}
-		logger.debug("Leaving");
-		return dedupParmList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -316,7 +309,6 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		source.addValue("RBModule", module);
 		source.addValue("RBEvent", event);
 
-		List<BMTRBFldDetails> fieldList = new ArrayList<BMTRBFldDetails>();
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT RBModule , RBEvent , RBFldName , RBFldDesc,");
 		selectSql.append(" RBFldType ,RBFldLen , RBForCalFlds, RBForBldFlds, RBFldTableName , RBSTFlds ");
@@ -326,15 +318,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<BMTRBFldDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(BMTRBFldDetails.class);
 
-		try {
-			fieldList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-			fieldList = null;
-		}
-
-		logger.debug("Leaving");
-		return fieldList;
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -344,7 +328,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 	 */
 	public List<LimitFldCriterias> getOperatorsList() {
 		logger.debug("Entering");
-		List<LimitFldCriterias> fieldList = new ArrayList<LimitFldCriterias>();
+
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" SELECT QBFldType , QBSTFld , QBFldCriteriaNames , QBFldCriteriaValues ");
@@ -353,14 +337,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<LimitFldCriterias> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFldCriterias.class);
 
-		try {
-			fieldList = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-			fieldList = null;
-		}
-		logger.debug("Leaving");
-		return fieldList;
+		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
 	}
 
 	@Override

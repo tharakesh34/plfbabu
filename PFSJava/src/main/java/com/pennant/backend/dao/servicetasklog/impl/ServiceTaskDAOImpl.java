@@ -1,12 +1,10 @@
 package com.pennant.backend.dao.servicetasklog.impl;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -89,13 +87,9 @@ public class ServiceTaskDAOImpl extends SequenceDao<ServiceTaskDetail> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug(Literal.LEAVING);
-		try {
-			RowMapper<ServiceTaskDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(dae);
-			return Collections.emptyList();
-		}
+
+		RowMapper<ServiceTaskDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {

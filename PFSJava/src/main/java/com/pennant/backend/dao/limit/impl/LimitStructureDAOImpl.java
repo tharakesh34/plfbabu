@@ -244,16 +244,8 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitStructure);
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitStructure);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
 	}
 
 	@Override

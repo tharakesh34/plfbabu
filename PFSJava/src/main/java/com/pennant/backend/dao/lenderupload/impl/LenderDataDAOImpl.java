@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.lenderupload.LenderDataDAO;
 import com.pennant.backend.model.lenderdataupload.LenderDataUpload;
-import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class LenderDataDAOImpl extends BasicDao<LenderDataUpload> implements LenderDataDAO {
@@ -18,7 +17,7 @@ public class LenderDataDAOImpl extends BasicDao<LenderDataUpload> implements Len
 	@Override
 	public int update(LenderDataUpload dataUpload, String tableName, String type) {
 		logger.debug("Entering");
-		int count = 0;
+
 		StringBuilder updateSql = new StringBuilder("Update ");
 		updateSql.append(tableName);
 		updateSql.append(type);
@@ -30,14 +29,7 @@ public class LenderDataDAOImpl extends BasicDao<LenderDataUpload> implements Len
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dataUpload);
 
-		try {
-			count = this.jdbcTemplate.update(updateSql.toString(), paramSource);
-		} catch (ConcurrencyException e) {
-			logger.warn(e);
-			return count;
-		}
-		logger.debug("Leaving");
-		return count;
+		return this.jdbcTemplate.update(updateSql.toString(), paramSource);
 	}
 
 	@Override

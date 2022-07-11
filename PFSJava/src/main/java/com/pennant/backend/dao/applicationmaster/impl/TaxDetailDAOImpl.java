@@ -335,27 +335,16 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 	public int getGSTNumberCount(String entityCode, String taxCode, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select count(TaxCode) From TAXDETAIL");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ENTITYCODE <> :ENTITYCODE And TaxCode = :TaxCode");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ENTITYCODE", entityCode);
 		source.addValue("TaxCode", taxCode);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -424,26 +413,15 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 	public int getStateAndEntityCodeCount(String entityCode, String stateCode, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select count(*) From TAXDETAIL");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ENTITYCODE = :ENTITYCODE And StateCode = :StateCode");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ENTITYCODE", entityCode);
 		source.addValue("StateCode", stateCode);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 }

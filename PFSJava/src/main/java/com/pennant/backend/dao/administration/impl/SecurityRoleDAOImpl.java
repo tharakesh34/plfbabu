@@ -317,12 +317,7 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRole);
 		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.debug(e);
-		}
-		return null;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -341,12 +336,7 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.debug(e);
-		}
-		return null;
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 
 	@Override

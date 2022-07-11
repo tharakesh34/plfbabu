@@ -495,13 +495,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		source.addValue("Active", 1);
 
 		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			return 0;
-		}
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -524,13 +518,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		source.addValue("CustomerID", CustID);
 
 		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			return 0;
-		}
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -581,13 +569,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		sql.append(" Where HeaderId = :HeaderId and CustomerGroup = :CustomerGroup");
 
 		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			return 0;
-		}
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	@Override
