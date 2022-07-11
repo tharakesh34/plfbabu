@@ -679,7 +679,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			sql.append("select COALESCE(max(seqno),0) from ");
 			sql.append(tableName);
 			sql.append(StringUtils.trimToEmpty(tableType));
-			sql.append(" where reference = :reference order by seqno");
+			sql.append(" where reference = :reference");
 		}
 		logger.debug(Literal.SQL + sql.toString());
 
