@@ -402,13 +402,6 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		}
 
 		logger.trace(Literal.SQL + query);
-
-		try {
-			return this.jdbcTemplate.query(query.toUpperCase(), mapSqlParameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
-
-		return null;
+		return this.jdbcTemplate.query(query.toUpperCase(), mapSqlParameterSource, typeRowMapper);
 	}
 }
