@@ -26,7 +26,6 @@ package com.pennant.backend.dao.systemmasters.impl;
 
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -269,8 +268,6 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	public Map<String, Object> getSumOfPriPftEmiAmount(String finReference, Date finStartDate, Date finEndDate) {
 		logger.debug(Literal.ENTERING);
 
-		Map<String, Object> amounts = new HashMap<>();
-
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				" select sum(profitschd) as profitschd, sum(principalschd) as principalschd , sum(repayamount) as repayamount");
@@ -284,22 +281,12 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		source.addValue("FinstartDate", finStartDate);
 		source.addValue("FinEndDate", finEndDate);
 
-		try {
-			amounts = this.jdbcTemplate.queryForMap(sql.toString(), source);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return amounts;
+		return this.jdbcTemplate.queryForMap(sql.toString(), source);
 	}
 
 	@Override
 	public Map<String, Object> getTotalGrcRepayProfit(String finReference, Date finStartDate, Date finEndDate) {
 		logger.debug(Literal.ENTERING);
-
-		Map<String, Object> amounts = new HashMap<>();
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select sum(profitschd) as grcPft, sum(schdpftpaid) as grcPftPaid ");
@@ -313,14 +300,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		source.addValue("FinstartDate", finStartDate);
 		source.addValue("FinEndDate", finEndDate);
 
-		try {
-			amounts = this.jdbcTemplate.queryForMap(sql.toString(), source);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return amounts;
+		return this.jdbcTemplate.queryForMap(sql.toString(), source);
 	}
 
 	@Override

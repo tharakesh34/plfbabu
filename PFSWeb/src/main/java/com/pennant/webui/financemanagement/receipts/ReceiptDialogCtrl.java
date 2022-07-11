@@ -2149,6 +2149,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// Allocation Process start
 		if (AllocationType.AUTO.equals(allocateMthd)) {
+			receiptData.setActualOdPaid(BigDecimal.ZERO);
 			receiptData = getReceiptCalculator().recalAutoAllocation(receiptData, false);
 		}
 
@@ -7304,8 +7305,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal advisePaidOrg = adv.getTotalPaid().subtract(adv.getTdsPaid());
 		BigDecimal feePaidOrg = fee.getTotalPaid().subtract(fee.getTdsPaid());
 
-		BigDecimal remBalAfterAlloc = receiptData.getTotReceiptAmount().subtract(duePaidOrg)
-				.subtract(advisePaidOrg).subtract(feePaidOrg);
+		BigDecimal remBalAfterAlloc = receiptData.getTotReceiptAmount().subtract(duePaidOrg).subtract(advisePaidOrg)
+				.subtract(feePaidOrg);
 		if (remBalAfterAlloc.compareTo(BigDecimal.ZERO) <= 0) {
 			remBalAfterAlloc = BigDecimal.ZERO;
 			this.excessAdjustTo.setDisabled(true);

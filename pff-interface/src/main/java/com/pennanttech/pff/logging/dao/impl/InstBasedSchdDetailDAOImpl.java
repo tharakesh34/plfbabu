@@ -108,14 +108,6 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 		String sql = "Select Count(FinID) From Financemain Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return jdbcOperations.queryForObject(sql, Long.class, finID) > 0;
-		} catch (Exception e) {
-			//
-		}
-
-		return false;
+		return jdbcOperations.queryForObject(sql, Long.class, finID) > 0;
 	}
-
 }

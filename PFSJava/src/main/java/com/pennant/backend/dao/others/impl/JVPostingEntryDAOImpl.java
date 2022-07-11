@@ -51,6 +51,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
@@ -90,10 +91,9 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id, txnReference, acEntryRef);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -517,10 +517,9 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 			}, batchRef, txnReference, txnEntry, account, txnAmount);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -605,14 +604,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		String sql = "Select Coalesce(max(SeqNo), 0) DaySeqNo From SeqJVPostingEntry Where SeqDate = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, jve.getDaySeqDate());
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, jve.getDaySeqDate());
 	}
 
 	@Override
@@ -646,9 +638,8 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 				ps.setLong(index++, batchReference);
 				ps.setInt(index++, 0);
 			});
-
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
 

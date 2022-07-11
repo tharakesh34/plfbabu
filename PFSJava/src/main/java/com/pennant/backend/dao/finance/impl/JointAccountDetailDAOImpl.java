@@ -56,7 +56,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
  * DAO methods implementation for the <b>JointAccountDetail model</b> class.<br>
  * 
  */
-
 public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> implements JointAccountDetailDAO {
 	private static Logger logger = LogManager.getLogger(JointAccountDetailDAOImpl.class);
 
@@ -97,10 +96,9 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -232,10 +230,9 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, jointAccountId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -551,20 +548,14 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
-				FinanceExposure fe = new FinanceExposure();
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
 
-				fe.setOverdueAmt(rs.getBigDecimal("OverdueAmt"));
-				fe.setPastdueDays(rs.getString("PastdueDays"));
+			fe.setOverdueAmt(rs.getBigDecimal("OverdueAmt"));
+			fe.setPastdueDays(rs.getString("PastdueDays"));
 
-				return fe;
-			}, exposer.getFinID());
-		} catch (Exception e) {
-			//
-		}
-
-		return null;
+			return fe;
+		}, exposer.getFinID());
 	}
 
 	public JointAccountDetail getJointAccountDetailByRef(long finID, String custCIF, String type) {

@@ -142,13 +142,8 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		parameterSource.addValue("custid", custId);
 
 		RowMapper<CustomerIncome> rowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
-		try {
-			return this.jdbcTemplate.query(query.toString(), parameterSource, rowMapper);
-		} catch (Exception e) {
-			logger.warn("Records are not found in customer_income_details{} for customer id : {}", type, custId);
-		}
 
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(query.toString(), parameterSource, rowMapper);
 	}
 
 	public List<CustomerIncome> getCustomerIncomesByCustId(long custId, String type) {
@@ -163,12 +158,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		logger.debug(Literal.LEAVING);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		}
-
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	@Override
