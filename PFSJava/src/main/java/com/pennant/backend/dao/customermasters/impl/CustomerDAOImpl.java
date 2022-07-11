@@ -74,6 +74,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.ws.model.customer.SRMCustRequest;
@@ -445,13 +446,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customer;
 	}
 
 	/**
@@ -809,13 +808,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		RowMapper<WIFCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(WIFCustomer.class);
 
 		try {
-			wifCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			wifCustomer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return wifCustomer;
 	}
 
 	@Override
@@ -866,10 +863,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			custEmpDesg = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			custEmpDesg = "";
 		}
-		detail = null;
+
 		logger.debug("Leaving");
 		return custEmpDesg == null ? "" : custEmpDesg;
 	}
@@ -892,10 +889,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			custCurEmpAloctype = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			custCurEmpAloctype = "";
 		}
-		detail = null;
+
 		logger.debug("Leaving");
 		return custCurEmpAloctype == null ? "" : custCurEmpAloctype;
 	}
@@ -904,7 +901,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public BigDecimal getCustRepayOtherTotal(long custID) {
 		logger.debug("Entering");
 
-		BigDecimal custRepayOther = BigDecimal.ZERO;
 		CustomerIncome detail = new CustomerIncome();
 		detail.setCustId(custID);
 
@@ -916,14 +912,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 
 		try {
-			custRepayOther = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			custRepayOther = BigDecimal.ZERO;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-		detail = null;
-		logger.debug("Leaving");
-		return custRepayOther;
 	}
 
 	@Override
@@ -992,12 +985,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		RowMapper<FinanceExposure> rowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
-		List<FinanceExposure> financeExposures = new ArrayList<>();
-		try {
-			financeExposures = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
+		List<FinanceExposure> financeExposures = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 
 		String toCcy = SysParamUtil.getAppCurrency();
 		BigDecimal totalRepayAmt = BigDecimal.ZERO;
@@ -1026,7 +1014,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public FinanceExposure getCoAppRepayBankTotal(String custCIF) {
 		logger.debug("Entering");
 
-		FinanceExposure exposure = null;
 		Customer detail = new Customer();
 		detail.setCustCIF(custCIF);
 
@@ -1040,14 +1027,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		RowMapper<FinanceExposure> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		try {
-			exposure = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			exposure = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		detail = null;
-		logger.debug("Leaving");
-		return exposure;
 	}
 
 	@Override
@@ -1104,10 +1088,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			custWorstSts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			custWorstSts = "";
 		}
-		main = null;
+
 		logger.debug("Leaving");
 		return custWorstSts == null ? "" : custWorstSts;
 	}
@@ -1134,7 +1118,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			custWorstSts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			custWorstSts = "";
 		}
 		logger.debug("Leaving");
@@ -1148,7 +1132,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public boolean isJointCustExist(long custID) {
 		logger.debug("Entering");
 
-		boolean jointCustExist = false;
 		Customer detail = new Customer();
 		detail.setCustID(custID);
 
@@ -1160,15 +1143,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 
 		try {
-			jointCustExist = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			jointCustExist = false;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		detail = null;
-		logger.debug("Leaving");
-		return jointCustExist;
 	}
 
 	@Override
@@ -1278,13 +1257,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		RowMapper<WIFCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(WIFCustomer.class);
 
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customer;
 	}
 
 	/**
@@ -1298,7 +1275,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public String getCustomerByCRCPR(final String custCRCPR, String type) {
 		logger.debug("Entering");
 
-		String custCIF = null;
 		WIFCustomer customer = new WIFCustomer();
 		customer.setCustCRCPR(custCRCPR);
 
@@ -1311,13 +1287,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
 		try {
-			custCIF = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			custCIF = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return custCIF;
 	}
 
 	/**
@@ -1331,7 +1305,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public Date getCustBlackListedDate(final String custCRCPR, String type) {
 		logger.debug("Entering");
 
-		Date blackListedDate = null;
 		Abuser abuser = new Abuser();
 		abuser.setAbuserIDNumber(custCRCPR);
 
@@ -1344,13 +1317,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(abuser);
 
 		try {
-			blackListedDate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			blackListedDate = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return blackListedDate;
 	}
 
 	public void updateProspectCustomer(Customer customer) {
@@ -1419,7 +1390,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			customer = null;
 		}
 		logger.debug("Leaving");
@@ -1433,7 +1404,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public String getCustCRCPRById(long custId, String type) {
 		logger.debug("Entering");
 
-		String custCRCPR = "";
 		Customer customer = new Customer();
 		customer.setCustID(custId);
 
@@ -1446,13 +1416,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
 		try {
-			custCRCPR = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			custCRCPR = "";
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
 		}
-		logger.debug("Leaving");
-		return custCRCPR;
 	}
 
 	@Override
@@ -1488,13 +1456,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		RowMapper<AvailPastDue> typeRowMapper = BeanPropertyRowMapper.newInstance(AvailPastDue.class);
 
 		try {
-			pastDue = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			pastDue = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return pastDue;
 	}
 
 	@Override
@@ -1526,10 +1492,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				return c;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	/**
@@ -1581,7 +1546,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	@Override
 	public boolean financeExistForCustomer(final long id, String type) {
 		logger.debug("Entering");
-		int count = 0;
+
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CustID", id);
 
@@ -1590,21 +1555,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" Where CustID = :CustID");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-		logger.debug("Leaving");
-		return count > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
 	@Override
 	public long getCustCRCPRByCustId(String custCRCPR, String type) {
 		logger.debug("Entering");
 
-		Long custID = null;
 		WIFCustomer customer = new WIFCustomer();
 		customer.setCustCRCPR(custCRCPR);
 
@@ -1617,13 +1574,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
 		try {
-			custID = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			custID = Long.valueOf(0);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return Long.valueOf(0);
 		}
-		logger.debug("Leaving");
-		return custID;
 	}
 
 	@Override
@@ -1642,13 +1597,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		RowMapper<WIFCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(WIFCustomer.class);
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customer;
 	}
 
 	@Override
@@ -1737,7 +1690,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	private boolean isExistsProspectCIF(String tableName, String oldCustCIF) {
 		logger.debug("Entering");
 
-		List<String> objList = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustCIF", oldCustCIF);
 
@@ -1749,15 +1701,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("Leaving");
 
-		try {
-			objList = this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
-			if (objList != null && !objList.isEmpty()) {
-				return true;
-			}
-		} catch (EmptyResultDataAccessException ex) {
-			logger.warn("Exception: ", ex);
-			return false;
+		List<String> objList = this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		if (objList != null && !objList.isEmpty()) {
+			return true;
 		}
+
 		return false;
 	}
 
@@ -1796,7 +1744,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
@@ -1885,10 +1833,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-
 	}
 
 	@Override
@@ -1911,28 +1858,17 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-
 	}
 
 	@Override
 	public ArrayList<Customer> getCustomerByLimitRule(String queryCode, String sqlQuery) {
-		ArrayList<Customer> custList = new ArrayList<Customer>();
-
 		logger.debug("insertSql: " + queryCode);
 
-		logger.debug("Leaving");
-		try {
-			RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
-			custList = (ArrayList<Customer>) this.jdbcTemplate.query(queryCode, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			return null;
-		}
-
-		return custList;
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
+		return (ArrayList<Customer>) this.jdbcTemplate.query(queryCode, typeRowMapper);
 	}
 
 	/**
@@ -1960,16 +1896,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append("= :Value");
 
 		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -1994,16 +1921,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
-			recordCount = 0;
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	/**
@@ -2024,16 +1942,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
-			recordCount = 0;
-		}
-
-		logger.debug("Leaving");
-		return recordCount > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class) > 0;
 	}
 
 	@Override
@@ -2149,7 +2058,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			return this.jdbcOperations.queryForObject(sql, new Object[] { custId }, Date.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
@@ -2243,7 +2152,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public boolean customerExistingCustGrp(long custGrpID, String type) {
 		logger.debug("Entering");
 
-		int count = 0;
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CustGroupID", custGrpID);
 
@@ -2252,15 +2160,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" Where CustGroupID = :CustGroupID");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving");
-		return count > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
 	public int getCustCountByDealerId(long dealerId) {
@@ -2275,12 +2175,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			return 0;
-		}
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	/**
@@ -2291,7 +2186,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public boolean isCasteExist(long casteId, String type) {
 		logger.debug("Entering");
 
-		int count = 0;
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CasteId", casteId);
 
@@ -2300,16 +2194,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" Where CasteId = :CasteId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving");
-
-		return count > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
 	/**
@@ -2320,7 +2205,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public boolean isReligionExist(long religionId, String type) {
 		logger.debug("Entering");
 
-		int count = 0;
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("ReligionId", religionId);
 
@@ -2329,16 +2213,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" Where ReligionId = :ReligionId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving");
-
-		return count > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
 	@Override
@@ -2357,16 +2232,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
-			recordCount = 0;
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -2398,7 +2264,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type) {
 		logger.debug("Entering");
 
-		List<Customer> customers = null;
 		Customer customer = new Customer();
 		customer.setCustCRCPR(custCRCPR);
 		customer.setCustCtgCode(custCtgCode);
@@ -2465,14 +2330,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
-		try {
-			customers = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customer = null;
-		}
-		logger.debug("Leaving");
-		return customers;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -2487,13 +2345,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customer;
 	}
 
 	/**
@@ -2507,7 +2363,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public String getCustomerByCRCPR(final String custCRCPR, final String custCtgCode, String type) {
 		logger.debug("Entering");
 
-		String custCIF = null;
 		WIFCustomer customer = new WIFCustomer();
 		customer.setCustCRCPR(custCRCPR);
 		customer.setCustCtgCode(custCtgCode);
@@ -2522,13 +2377,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 
 		try {
-			custCIF = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			custCIF = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return custCIF;
 	}
 
 	@Override
@@ -2628,13 +2481,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return customer;
 	}
 
 	public int getCrifScoreValue(String tablename, String reference) {
@@ -2733,11 +2584,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, Boolean.class);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-		return false;
 	}
 
 	@Override
@@ -2764,9 +2614,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 					});
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e.getCause());
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	private class CustomerRowMapper implements RowMapper<Customer> {
@@ -2832,11 +2682,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 					return rs.getString("CustCIF");
 				}
 			});
-
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e.getCause());
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -2863,18 +2712,15 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				}
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
 	public boolean isCustTypeExists(String custType, String type) {
 		logger.debug(Literal.ENTERING);
 
-		int count = 0;
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CustTypeCode", custType);
 
@@ -2883,15 +2729,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" Where CustTypeCode = :CustTypeCode");
 
 		logger.trace(Literal.SQL + sql.toString());
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return count > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
 	@Override
@@ -2906,18 +2744,14 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exceprtion ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
 	public List<String> isDuplicateCRCPR(long custId, String custCRCPR, String custCtgCode) {
 		logger.debug(Literal.ENTERING);
-
-		List<String> cifs = null;
 
 		StringBuilder sql = new StringBuilder("select custCIF");
 		sql.append(" FROM  Customers");
@@ -2934,13 +2768,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			parameterSource.addValue("CustCtgCode", custCtgCode);
 		}
 
-		try {
-			cifs = this.jdbcTemplate.queryForList(sql.toString(), parameterSource, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return cifs;
+		return this.jdbcTemplate.queryForList(sql.toString(), parameterSource, String.class);
 	}
 
 	@Override
