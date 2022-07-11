@@ -2255,7 +2255,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
 			schdData.setFinanceScheduleDetails(schedules);
 
-			validateChequeDetails(fd, PennantConstants.method_save);
+			validateChequeDetails(fd, true);
 
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
@@ -2272,7 +2272,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return returnStatus;
 	}
 
-	private void validateChequeDetails(FinanceDetail financeDetail, String method) {
+	private void validateChequeDetails(FinanceDetail financeDetail, boolean validReq) {
 		boolean date = true;
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
@@ -2292,7 +2292,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");
 							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 							return;
-						} else if (PennantConstants.method_save.equals(method)
+						} else if (validReq
 								&& chequeDetailDAO.isChequeExists(chequeHeader.getHeaderID(), fsd.getSchDate())) {
 							String[] valueParm = new String[2];
 							valueParm[0] = "Cheque ";
@@ -2372,7 +2372,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			List<FinanceScheduleDetail> schedules = null;
 			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), tableType, false);
 			schdData.setFinanceScheduleDetails(schedules);
-			validateChequeDetails(financeDetail, PennantConstants.method_save);
+			validateChequeDetails(financeDetail, true);
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
@@ -2439,7 +2439,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
 			schdData.setFinanceScheduleDetails(schedules);
 
-			validateChequeDetails(financeDetail, PennantConstants.method_Update);
+			validateChequeDetails(financeDetail, false);
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
@@ -2492,7 +2492,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, tableType, false);
 			schdData.setFinanceScheduleDetails(schedules);
 
-			validateChequeDetails(financeDetail, PennantConstants.method_Update);
+			validateChequeDetails(financeDetail, true);
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
