@@ -35,6 +35,7 @@ import com.pennanttech.model.interfacemapping.InterfaceMappingDetails;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.dao.CreditInterfaceDAO;
 
@@ -65,15 +66,10 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		sql.append(" From ExtendedFieldDetail  WHERE FIELDNAME IN(:fieldNames)");
 		paramMap.addValue("fieldNames", fieldNames);
 		logger.debug("selectSql: " + sql.toString());
-		try {
-			RowMapper<ExtendedFieldDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
 
-		} catch (Exception e) {
-			logger.error("Exception", e);
-		}
-		return null;
+		RowMapper<ExtendedFieldDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
 	}
 
 	public List<CustomerDetails> getCoApplicants(List<Long> customerIds, String type) throws InterfaceException {
@@ -181,14 +177,8 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		paramMap.addValue("customerIds", customerIds);
 		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
-		try {
-			logger.debug("Leaving");
-			return this.jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			throw new InterfaceException("9999", "Unable to Retrive  the CoApplicant Details.");
-		}
-
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
 	}
 
 	/**
@@ -314,15 +304,11 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		selectSql.append(" where CustID = :CustID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-			RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			return Collections.emptyList();
-		}
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
+		RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName) {
@@ -348,15 +334,14 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	public Map<String, Object> getExtendedField(String reference, String tableName) {
 		logger.debug(Literal.ENTERING);
-		Map<String, Object> renderMap = null;
+
 		StringBuilder selectSql = new StringBuilder("Select * from ");
 		selectSql.append(tableName);
 		selectSql.append(" where  Reference = :Reference ");
@@ -364,14 +349,11 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		source.addValue("Reference", reference);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
+			return this.jdbcTemplate.queryForMap(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exceprtion ", e);
-			renderMap = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return renderMap;
 	}
 
 	@Override
@@ -470,13 +452,11 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		RowMapper<City> typeRowMapper = BeanPropertyRowMapper.newInstance(City.class);
 
 		try {
-			city = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			city = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return city;
 	}
 
 	@Override
@@ -573,14 +553,10 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		paramMap.addValue("moduleValue", moduleValue);
 		logger.debug("selectSql: " + str.toString());
 		logger.debug(Literal.LEAVING);
-		try {
-			RowMapper<InterfaceMappingDetails> typeRowMapper = BeanPropertyRowMapper
-					.newInstance(InterfaceMappingDetails.class);
-			return (List<InterfaceMappingDetails>) this.jdbcTemplate.query(str, paramMap, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
-		}
-		return null;
+
+		RowMapper<InterfaceMappingDetails> typeRowMapper = BeanPropertyRowMapper
+				.newInstance(InterfaceMappingDetails.class);
+		return (List<InterfaceMappingDetails>) this.jdbcTemplate.query(str, paramMap, typeRowMapper);
 	}
 
 	public String getStateCode(String custAddrProvince) {

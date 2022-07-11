@@ -1,51 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  IRRFeeTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-06-2017    														*
- *                                                                  						*
- * Modified Date    :  21-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : IRRFeeTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-06-2017 * * Modified
+ * Date : 21-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-06-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-06-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,6 +47,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -101,14 +83,11 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 		RowMapper<IRRFeeType> rowMapper = BeanPropertyRowMapper.newInstance(IRRFeeType.class);
 
 		try {
-			iRRFeeType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			iRRFeeType = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return iRRFeeType;
 	}
 
 	@Override
@@ -129,56 +108,47 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, iRRID);
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, iRRID);
+			}
+		}, new RowMapper<IRRFeeType>() {
+			@Override
+			public IRRFeeType mapRow(ResultSet rs, int rowNum) throws SQLException {
+				IRRFeeType ft = new IRRFeeType();
+
+				ft.setIRRID(rs.getLong("IRRID"));
+				ft.setFeeTypeID(rs.getLong("FeeTypeID"));
+				ft.setFeePercentage(rs.getBigDecimal("FeePercentage"));
+				ft.setVersion(rs.getInt("Version"));
+				ft.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ft.setLastMntBy(rs.getLong("LastMntBy"));
+				ft.setRecordStatus(rs.getString("RecordStatus"));
+				ft.setRoleCode(rs.getString("RoleCode"));
+				ft.setNextRoleCode(rs.getString("NextRoleCode"));
+				ft.setTaskId(rs.getString("TaskId"));
+				ft.setNextTaskId(rs.getString("NextTaskId"));
+				ft.setRecordType(rs.getString("RecordType"));
+				ft.setWorkflowId(rs.getLong("WorkflowId"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					ft.setFeeTypeCode(rs.getString("FeeTypeCode"));
+					ft.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
 				}
-			}, new RowMapper<IRRFeeType>() {
-				@Override
-				public IRRFeeType mapRow(ResultSet rs, int rowNum) throws SQLException {
-					IRRFeeType ft = new IRRFeeType();
 
-					ft.setIRRID(rs.getLong("IRRID"));
-					ft.setFeeTypeID(rs.getLong("FeeTypeID"));
-					ft.setFeePercentage(rs.getBigDecimal("FeePercentage"));
-					ft.setVersion(rs.getInt("Version"));
-					ft.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					ft.setLastMntBy(rs.getLong("LastMntBy"));
-					ft.setRecordStatus(rs.getString("RecordStatus"));
-					ft.setRoleCode(rs.getString("RoleCode"));
-					ft.setNextRoleCode(rs.getString("NextRoleCode"));
-					ft.setTaskId(rs.getString("TaskId"));
-					ft.setNextTaskId(rs.getString("NextTaskId"));
-					ft.setRecordType(rs.getString("RecordType"));
-					ft.setWorkflowId(rs.getLong("WorkflowId"));
-
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						ft.setFeeTypeCode(rs.getString("FeeTypeCode"));
-						ft.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-					}
-
-					return ft;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return ft;
+			}
+		});
 	}
 
 	/**
 	 * This method Deletes the Records from the CollateralThirdParty or CollateralThirdParty_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete CollateralThirdParty Details by key reference
 	 * 
-	 * @param CollateralThirdParty
-	 *            Details (collateralThirdParty)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CollateralThirdParty Details (collateralThirdParty)
+	 * @param type                 (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

@@ -47,6 +47,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
@@ -80,11 +81,9 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -106,13 +105,8 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		source.addValue("FinEndDate", finEndDate);
 
 		RowMapper<InterestCertificate> typeRowMapper = BeanPropertyRowMapper.newInstance(InterestCertificate.class);
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 	}
 
 	public String getCollateralRef(String finReference) {
@@ -128,13 +122,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		source.addValue("Reference", finReference);
 		source.addValue("Active", 1);
 
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 	}
 
 	@Override
@@ -151,10 +139,9 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -174,11 +161,9 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
-
 	}
 
 	@Override
@@ -203,15 +188,12 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("REFERENCE", reference);
 
-		try {
-			List<String> list = this.jdbcTemplate.queryForList(sql.toString(), source, String.class);
-			if (list != null && list.size() > 0) {
-				// Bugfix:considering single collateral property Value where it is returning multiple records
-				return list.get(0);
-			}
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+		List<String> list = this.jdbcTemplate.queryForList(sql.toString(), source, String.class);
+		if (list != null && list.size() > 0) {
+			// Bugfix:considering single collateral property Value where it is returning multiple records
+			return list.get(0);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
@@ -256,13 +238,8 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		source.addValue("FinEndDate", finEndDate);
 
 		RowMapper<InterestCertificate> typeRowMapper = BeanPropertyRowMapper.newInstance(InterestCertificate.class);
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
-		logger.debug("Leaving");
-		return null;
+
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 	}
 
 	public Map<String, Object> getSumOfPriPftEmiAmount(String finReference, Date finStartDate, Date finEndDate) {

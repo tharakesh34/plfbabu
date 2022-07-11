@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  InterestRateTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-05-2011    														*
- *                                                                  						*
- * Modified Date    :  06-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : InterestRateTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 06-05-2011 * *
+ * Modified Date : 06-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
@@ -57,6 +39,7 @@ import com.pennant.backend.model.applicationmaster.InterestRateType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>InterestRateType model</b> class.<br>
@@ -72,10 +55,8 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 	/**
 	 * Fetch the Record Interest Rate Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return InterestRateType
 	 */
 	@Override
@@ -97,23 +78,19 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 		RowMapper<InterestRateType> typeRowMapper = BeanPropertyRowMapper.newInstance(InterestRateType.class);
 
 		try {
-			interestRateType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			interestRateType = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return interestRateType;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTInterestRateTypes or BMTInterestRateTypes_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Interest Rate Types by key IntRateTypeCode
 	 * 
-	 * @param Interest
-	 *            Rate Types (interestRateType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Interest Rate Types (interestRateType)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -148,10 +125,8 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 	 * 
 	 * save Interest Rate Types
 	 * 
-	 * @param Interest
-	 *            Rate Types (interestRateType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Interest Rate Types (interestRateType)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -183,10 +158,8 @@ public class InterestRateTypeDAOImpl extends BasicDao<InterestRateType> implemen
 	 * This method updates the Record BMTInterestRateTypes or BMTInterestRateTypes_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update Interest Rate Types by key IntRateTypeCode and Version
 	 * 
-	 * @param Interest
-	 *            Rate Types (interestRateType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Interest Rate Types (interestRateType)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
