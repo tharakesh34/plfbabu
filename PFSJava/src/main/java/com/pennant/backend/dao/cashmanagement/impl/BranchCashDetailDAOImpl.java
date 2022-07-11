@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BranchCashDetailDAOImpl.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  28-02-2018    														*
- *                                                                  						*
- * Modified Date    :  28-02-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BranchCashDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 28-02-2018 * *
+ * Modified Date : 28-02-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 28-02-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 28-02-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.cashmanagement.impl;
 
 import java.math.BigDecimal;
@@ -66,6 +48,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -100,14 +83,11 @@ public class BranchCashDetailDAOImpl extends BasicDao<BranchCashDetail> implemen
 		RowMapper<BranchCashDetail> rowMapper = BeanPropertyRowMapper.newInstance(BranchCashDetail.class);
 
 		try {
-			branchCashDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			branchCashDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return branchCashDetail;
 	}
 
 	@Override
@@ -141,8 +121,7 @@ public class BranchCashDetailDAOImpl extends BasicDao<BranchCashDetail> implemen
 	 * value for the all fields Example If user send adhocInitiationAmount as 100000 then It add 100000 to
 	 * adhocInitiationAmount.
 	 * 
-	 * @param branch
-	 *            Code,transaction Amount and credit
+	 * @param branch Code,transaction Amount and credit
 	 */
 
 	@Override
@@ -202,8 +181,7 @@ public class BranchCashDetailDAOImpl extends BasicDao<BranchCashDetail> implemen
 	 * transactionAmount to Existing bank cash If user Set credit as false then, it subtract transactionAmount from
 	 * Existing bank cash
 	 * 
-	 * @param branch
-	 *            Code,transaction Amount and credit
+	 * @param branch Code,transaction Amount and credit
 	 */
 
 	@Override
@@ -235,7 +213,7 @@ public class BranchCashDetailDAOImpl extends BasicDao<BranchCashDetail> implemen
 			break;
 
 		case CashManagementConstants.Cancel_CashierPayment_AddReserv:
-			// Cancel Pay Cash to Customer 
+			// Cancel Pay Cash to Customer
 			// Add Reserve Amount
 			sql.append(" set branchCash = branchCash + :branchCash");
 			sql.append(" , ReservedAmount = ReservedAmount + :ReservedAmount ");

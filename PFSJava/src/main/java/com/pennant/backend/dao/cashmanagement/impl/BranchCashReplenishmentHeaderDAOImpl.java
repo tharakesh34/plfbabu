@@ -18,6 +18,7 @@ import com.pennant.backend.util.CashManagementConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class BranchCashReplenishmentHeaderDAOImpl extends SequenceDao<BranchCashReplenishmentHeader>
 		implements BranchCashReplenishmentHeaderDAO {
@@ -125,14 +126,11 @@ public class BranchCashReplenishmentHeaderDAOImpl extends SequenceDao<BranchCash
 				.newInstance(BranchCashReplenishmentHeader.class);
 
 		try {
-			header = jdbcTemplate.queryForObject(selectSql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(selectSql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			header = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return header;
 	}
 
 	@Override
@@ -152,7 +150,7 @@ public class BranchCashReplenishmentHeaderDAOImpl extends SequenceDao<BranchCash
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		BranchCashReplenishmentHeader header = new BranchCashReplenishmentHeader();
-		header.setUploadStatus(CashManagementConstants.FILE_STATUS_ERROR); //Status is Error
+		header.setUploadStatus(CashManagementConstants.FILE_STATUS_ERROR); // Status is Error
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(header);
 		RowMapper<BranchCashReplenishmentHeader> rowMapper = BeanPropertyRowMapper
