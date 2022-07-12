@@ -80,10 +80,8 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 	 * This method updates the Record CollateralThirdParty or CollateralThirdParty_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update CollateralThirdParty Details by key reference and CustomerId
 	 * 
-	 * @param CollateralThirdParty
-	 *            Details (collateralThirdParty)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CollateralThirdParty Details (collateralThirdParty)
+	 * @param type                 (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -117,10 +115,8 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 	 * then throws DataAccessException with error 41003. delete CollateralThirdParty Details by key reference and
 	 * CustomerId
 	 * 
-	 * @param CollateralThirdParty
-	 *            Details (collateralThirdParty)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CollateralThirdParty Details (collateralThirdParty)
+	 * @param type                 (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -190,10 +186,8 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 	 * This method Deletes the Records from the CollateralThirdParty or CollateralThirdParty_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete CollateralThirdParty Details by key reference
 	 * 
-	 * @param CollateralThirdParty
-	 *            Details (collateralThirdParty)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CollateralThirdParty Details (collateralThirdParty)
+	 * @param type                 (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -236,17 +230,7 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 		selectSql.append(" inner Join Financemain T3 on T3.Finreference = T1.Reference ");
 		selectSql.append(" where T1.CollateralRef='" + collateralRef + "' and T3.custid=' " + custId + "')T");
 
-		logger.debug("selectSql: " + selectSql.toString());
-
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.info(dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-
-		return recordCount > 0 ? true : false;
+		logger.debug(Literal.SQL + selectSql.toString());
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
 	}
 }

@@ -252,7 +252,6 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	public int getAssignedCollateralCount(String collateralRef, String type) {
 		logger.debug("Entering");
 
-		int assignedCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 
@@ -261,16 +260,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CollateralRef = :CollateralRef ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			assignedCount = 0;
-		}
-		logger.debug("Leaving");
-		return assignedCount;
+		logger.debug(Literal.SQL + selectSql.toString());
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -280,7 +271,6 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	public BigDecimal getAssignedPerc(String collateralRef, String reference, String type) {
 		logger.debug("Entering");
 
-		BigDecimal totAssignExptCur = BigDecimal.ZERO;
 		CollateralAssignment collateralAssignment = new CollateralAssignment();
 		collateralAssignment.setCollateralRef(collateralRef);
 		collateralAssignment.setReference(reference);
@@ -296,14 +286,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
 
-		try {
-			totAssignExptCur = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			totAssignExptCur = BigDecimal.ZERO;
-		}
-		logger.debug("Leaving");
-		return totAssignExptCur;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
 	}
 
 	/**

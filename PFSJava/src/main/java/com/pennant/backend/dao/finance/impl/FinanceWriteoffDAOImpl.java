@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements FinanceWriteoffDAO {
 	private static Logger logger = LogManager.getLogger(FinanceWriteoffDAOImpl.class);
@@ -65,10 +66,9 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 				return fwo;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -79,14 +79,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		sql.append(" Where FinID = ? and WriteoffDate = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, writeoffDate);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, writeoffDate);
 	}
 
 	@Override
@@ -228,10 +221,9 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 				return payment;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -334,28 +326,14 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		String sql = "Select sum(WriteoffPrincipal) + sum(WriteoffProfit) + sum(WriteoffSchFee) From FinWriteoffDetail Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 	public BigDecimal getTotalWriteoffPaymentAmount(long finID) {
 		String sql = "Select sum(WriteoffPayAmount) From FinWriteoffPayment Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 	@Override
@@ -367,10 +345,9 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		try {
 			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return SysParamUtil.getAppDate();
 		}
-
-		return SysParamUtil.getAppDate();
 	}
 
 	public long getfinWriteoffPaySeqNo(long finID, String type) {
@@ -380,14 +357,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return Long.MIN_VALUE;
+		return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID);
 	}
 
 	@Override
@@ -397,12 +367,6 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		sql.append(type);
 		sql.append(" Where FinID = ?");
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
 	}
 }

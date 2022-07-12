@@ -327,28 +327,15 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 	@Override
 	public boolean isIdExists(long id) {
 		logger.debug("Entering");
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
 
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select COUNT(*) from BuilderProjcet ");
 		sql.append(" Where BuilderId = :BuilderId ");
 		logger.debug("Sql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BuilderId", id);
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
-		}
-		return false;
-	}
 
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
+	}
 }

@@ -186,7 +186,7 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 
 		DealerGroup dealerGroup = new DealerGroup();
 		dealerGroup.setId(id);
-		//dealerGroup.setFieldCode("CHANNEL");
+		// dealerGroup.setFieldCode("CHANNEL");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dealerGroup);
 		RowMapper<DealerGroup> rowMapper = BeanPropertyRowMapper.newInstance(DealerGroup.class);
@@ -205,28 +205,15 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 	@Override
 	public boolean isIdExists(long id) {
 		logger.debug("Entering");
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
 
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select COUNT(*) from CD_DealerGroup ");
 		sql.append(" Where dealerGroupId = :dealerGroupId ");
 		logger.debug("Sql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("dealerGroupId", id);
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
-		}
-		return false;
-	}
 
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
+	}
 }

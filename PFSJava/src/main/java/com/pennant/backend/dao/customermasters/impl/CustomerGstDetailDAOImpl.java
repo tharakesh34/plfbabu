@@ -23,6 +23,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implements CustomerGstDetailDAO {
 	private static Logger logger = LogManager.getLogger(CustomerGstDetailDAOImpl.class);
@@ -66,12 +67,11 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 			return custGst;
 		});
 	}
-	
-	
+
 	private String commaJoin(List<Long> headerIdList) {
 		return headerIdList.stream().map(e -> "?").collect(Collectors.joining(","));
 	}
-	
+
 	@Override
 	public List<CustomerGSTDetails> getCustomerGSTDetailsByCustomer(long headerId, String type) {
 		List<Long> headerIdList = new ArrayList<>();
@@ -427,15 +427,12 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 		logger.debug("insertSql: " + selectSql.toString());
 
-		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-			recordCount = 0;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		logger.debug("Leaving");
-		return recordCount;
 	}
 
 	@Override

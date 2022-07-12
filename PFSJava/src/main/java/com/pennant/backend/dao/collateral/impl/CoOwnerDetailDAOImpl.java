@@ -18,6 +18,7 @@ import com.pennant.backend.model.collateral.CoOwnerDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoOwnerDetailDAO {
 	private static Logger logger = LogManager.getLogger(CoOwnerDetailDAOImpl.class);
@@ -30,10 +31,8 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Guarantor Details by key CollateralRef and CoOwnerId
 	 * 
-	 * @param CoOwnerDetail
-	 *            Details (coOwnerDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CoOwnerDetail Details (coOwnerDetail)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -56,10 +55,8 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	 * 
 	 * save CoOwnerDetail Details
 	 * 
-	 * @param CoOwnerDetail
-	 *            Details (coOwnerDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CoOwnerDetail Details (coOwnerDetail)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -96,10 +93,8 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete CoOwnerDetail Details by key CollateralRef and CoOwnerId
 	 * 
-	 * @param CoOwnerDetail
-	 *            Details (coOwnerDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CoOwnerDetail Details (coOwnerDetail)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -263,25 +258,20 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.info(dae);
-			recordCount = 0;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		logger.debug("Leaving");
-		return recordCount;
 	}
 
 	/**
 	 * This method Deletes the Record from the CoOwnerDetail or CoOwnerDetail_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete CoOwnerDetail Details by key CollateralRef
 	 * 
-	 * @param CoOwnerDetail
-	 *            Details (coOwnerDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CoOwnerDetail Details (coOwnerDetail)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

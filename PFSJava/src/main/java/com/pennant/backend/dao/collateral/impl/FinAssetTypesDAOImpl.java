@@ -19,6 +19,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements FinAssetTypeDAO {
 	private static Logger logger = LogManager.getLogger(FinAssetTypesDAOImpl.class);
@@ -150,7 +151,6 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 	public FinAssetTypes getFinAssetTypesbyID(FinAssetTypes finAssetTypes, String type) {
 		logger.debug("Entering");
 
-		FinAssetTypes finAssetType = null;
 		StringBuilder selectSql = new StringBuilder(" Select AssetTypeId, Reference, AssetType, SeqNo, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
@@ -163,13 +163,11 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 		RowMapper<FinAssetTypes> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAssetTypes.class);
 
 		try {
-			finAssetType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			finAssetType = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return finAssetType;
 	}
 
 	/**

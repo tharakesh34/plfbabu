@@ -25,6 +25,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> implements CustomerCardSalesInfoDAO {
 	private static Logger logger = LogManager.getLogger(CustomerCardSalesInfoDAOImpl.class);
@@ -47,7 +48,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 		sql.append(" FROM  CUSTCARDSALES");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where Id = :Id");
-		//sql.append(" Where MerchantId = :MerchantId");
+		// sql.append(" Where MerchantId = :MerchantId");
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCardSalesInfo);
@@ -198,14 +199,12 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-			recordCount = 0;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		return recordCount;
 	}
 
 	@Override

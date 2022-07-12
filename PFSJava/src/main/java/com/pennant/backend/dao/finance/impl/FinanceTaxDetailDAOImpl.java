@@ -40,6 +40,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -118,10 +119,9 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				return td;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -261,14 +261,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		sql.append(" Where TaxCustId <> ? and TaxNumber = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, taxCustId, taxNumber);
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, taxCustId, taxNumber);
 	}
 
 	@Override
@@ -299,13 +292,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		String sql = "Select count(TaxNumber) From FinTaxDetail_View Where FinID = ? and  CustCif = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finID, custCif) > 0;
-		} catch (DataAccessException e) {
-			//
-		}
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, custCif) > 0;
 	}
 
 	@Override
@@ -328,14 +315,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		String sql = "Select count(FinID) FROM fintaxdetail_temp Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return jdbcOperations.queryForObject(sql, Integer.class, finID);
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return 0;
+		return jdbcOperations.queryForObject(sql, Integer.class, finID);
 	}
 
 	@Override
@@ -389,10 +369,8 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				return td;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
-
 }
