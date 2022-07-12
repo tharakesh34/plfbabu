@@ -261,10 +261,9 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		RowMapper<BankDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(BankDetail.class);
 
 		try {
-			bankDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-			return bankDetail;
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return bankDetail;
 		}
 	}
@@ -287,7 +286,7 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
@@ -303,8 +302,6 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 	public boolean isBankCodeExits(String bankCode, String type, boolean active) {
 		logger.debug("Entering");
 
-		int bankCount = 0;
-
 		BankDetail bankDetail = new BankDetail();
 		bankDetail.setBankCode(bankCode);
 		bankDetail.setActive(active);
@@ -318,18 +315,7 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
 
-		try {
-			bankCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (DataAccessException dae) {
-			logger.debug(dae);
-			bankCount = 0;
-		}
-
-		if (bankCount > 0) {
-			return true;
-		}
-
-		return false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class) > 0;
 	}
 
 	@Override

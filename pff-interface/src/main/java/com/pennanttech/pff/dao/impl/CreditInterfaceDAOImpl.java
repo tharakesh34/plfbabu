@@ -1,7 +1,6 @@
 package com.pennanttech.pff.dao.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -411,15 +410,10 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		selectSql.append(
 				" where ServiceModule=:ServiceModule AND Reference=:Reference AND ServiceTaskName=:ServiceTaskName");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug(Literal.LEAVING);
-		try {
-			RowMapper<ServiceTaskDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(dae);
-			return Collections.emptyList();
-		}
+		logger.debug(Literal.SQL + selectSql.toString());
+		RowMapper<ServiceTaskDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -567,14 +561,13 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		MapSqlParameterSource mapParam = new MapSqlParameterSource();
 		mapParam.addValue("CPPROVINCE", custAddrProvince);
 		logger.debug(Literal.SQL + sql.toString());
+
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), mapParam, String.class);
-		} catch (Exception e) {
-			logger.warn(e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
-
 	}
 
 	public String getEnquiryPurpose(String finType) {
@@ -584,14 +577,13 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		MapSqlParameterSource mapParam = new MapSqlParameterSource();
 		mapParam.addValue("key_Type", finType);
 		logger.debug(Literal.SQL + sql.toString());
+
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), mapParam, String.class);
-		} catch (Exception e) {
-			logger.warn(e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
-
 	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {

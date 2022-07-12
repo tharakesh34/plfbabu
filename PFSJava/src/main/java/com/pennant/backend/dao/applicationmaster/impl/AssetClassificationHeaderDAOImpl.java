@@ -400,15 +400,8 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 
 		RowMapper<AssetClassificationDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationDetail.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return null;
-
+		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	public AssetClassificationDetail getAssetClassificationDetail(long id, String type) {
@@ -461,15 +454,7 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		source = new MapSqlParameterSource();
 		source.addValue("Code", code);
 
-		try {
-			if (jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return false;
+		return jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
@@ -486,15 +471,8 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		source = new MapSqlParameterSource();
 		source.addValue("StageOrder", stageOrder);
 		source.addValue("npaTemplateId", npaTemplateId);
-		try {
-			if (jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return false;
+
+		return jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override

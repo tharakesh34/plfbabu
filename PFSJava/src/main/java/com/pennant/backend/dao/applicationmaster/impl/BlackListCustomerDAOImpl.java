@@ -530,31 +530,26 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 	@Override
 	public void moveData(String finReference, String suffix) {
 		/* FIXME : change to FinID Pre-approved(_PA) tables need to remove */
-		try {
-			if (StringUtils.isBlank(suffix)) {
-				return;
-			}
 
-			MapSqlParameterSource map = new MapSqlParameterSource();
-			map.addValue("FinReference", finReference);
-
-			StringBuilder selectSql = new StringBuilder();
-			selectSql.append(" SELECT * FROM FinBlackListDetail");
-			selectSql.append(" WHERE FinReference = :FinReference ");
-
-			RowMapper<FinBlacklistCustomer> typeRowMapper = BeanPropertyRowMapper
-					.newInstance(FinBlacklistCustomer.class);
-			List<FinBlacklistCustomer> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
-
-			if (list != null && !list.isEmpty()) {
-				saveList(list, suffix);
-			}
-
-		} catch (DataAccessException e) {
-			logger.debug(e);
+		if (StringUtils.isBlank(suffix)) {
+			return;
 		}
-		logger.debug(" Leaving ");
 
+		MapSqlParameterSource map = new MapSqlParameterSource();
+		map.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT * FROM FinBlackListDetail");
+		selectSql.append(" WHERE FinReference = :FinReference ");
+
+		RowMapper<FinBlacklistCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
+		List<FinBlacklistCustomer> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
+
+		if (list != null && !list.isEmpty()) {
+			saveList(list, suffix);
+		}
+
+		logger.debug(" Leaving ");
 	}
 
 	@Override

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  GroupStatusCodeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : GroupStatusCodeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -58,6 +40,7 @@ import com.pennant.backend.model.systemmasters.GroupStatusCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>GroupStatusCode model</b> class.<br>
@@ -73,10 +56,8 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 	/**
 	 * Fetch the Record Group Status Codes details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return GroupStatusCode
 	 */
 	@Override
@@ -98,23 +79,19 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 		RowMapper<GroupStatusCode> typeRowMapper = BeanPropertyRowMapper.newInstance(GroupStatusCode.class);
 
 		try {
-			groupStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			groupStatusCode = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return groupStatusCode;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTGrpStatusCodes or BMTGrpStatusCodes_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Group Status Codes by key GrpStsCode
 	 * 
-	 * @param Group
-	 *            Status Codes (groupStatusCode)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Group Status Codes (groupStatusCode)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -149,10 +126,8 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 	 * 
 	 * save Group Status Codes
 	 * 
-	 * @param Group
-	 *            Status Codes (groupStatusCode)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Group Status Codes (groupStatusCode)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -185,10 +160,8 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 	 * This method updates the Record BMTGrpStatusCodes or BMTGrpStatusCodes_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Group Status Codes by key GrpStsCode and Version
 	 * 
-	 * @param Group
-	 *            Status Codes (groupStatusCode)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Group Status Codes (groupStatusCode)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

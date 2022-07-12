@@ -261,7 +261,6 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
 		logger.debug("Entering");
 
-		int assignedCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PartnerBankId", partnerBankId);
 
@@ -272,14 +271,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try {
-			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			assignedCount = 0;
-		}
-		logger.debug("Leaving");
-		return assignedCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
