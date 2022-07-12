@@ -35,7 +35,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -405,7 +404,6 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	@Override
 	public boolean isDuplicateReceipt(String finReference, String txnReference, BigDecimal receiptAmount) {
 		StringBuilder selectSql = new StringBuilder();
-		boolean isDuplicate = false;
 		selectSql.append(" Select count(*) ");
 		selectSql.append(" From FinReceiptHeader T1 Inner Join FinReceiptDetail T2 ON ");
 		selectSql.append(" T1.ReceiptID = T2.RECEIPTID where Reference = :Reference AND ");
@@ -418,17 +416,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try {
-			int count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-			if (count > 0) {
-				isDuplicate = true;
-				logger.debug("Duplcate Receipt Transaction");
-			}
-		} catch (DataAccessException e) {
-			logger.debug(e);
-		}
-
-		return isDuplicate;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
@@ -512,16 +500,12 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 
-		BigDecimal value = BigDecimal.ZERO;
-		try {
-			value = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
-		} catch (DataAccessException e) {
-			logger.debug(e);
-			value = BigDecimal.ZERO;
-		}
+		BigDecimal value = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+
 		if (value == null) {
 			return BigDecimal.ZERO;
 		}
+
 		return value;
 	}
 

@@ -27,8 +27,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +47,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinanceType model</b> class.<br>
@@ -960,7 +959,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	@Override
 	public int getFinanceTypeCountById(String finType) {
 		logger.debug(Literal.ENTERING);
-		int productCount = 0;
+
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
 
@@ -971,14 +970,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 
-		try {
-			productCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			productCount = 0;
-		}
-		logger.debug(Literal.LEAVING);
-		return productCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	/**
@@ -989,7 +981,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	@Override
 	public int getPromotionTypeCountById(String finType) {
 		logger.debug(Literal.ENTERING);
-		int promotionCount = 0;
+
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
 
@@ -1000,15 +992,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 
-		try {
-			promotionCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			promotionCount = 0;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return promotionCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	/**
@@ -1021,7 +1005,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	public int getProductCountById(String productCode) {
 		logger.debug(Literal.ENTERING);
 
-		int productCount = 0;
 		FinanceType financeType = new FinanceType();
 		financeType.setProduct(productCode);
 
@@ -1031,14 +1014,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 
-		try {
-			productCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			productCount = 0;
-		}
-		logger.debug(Literal.LEAVING);
-		return productCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -1052,7 +1028,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		} catch (EmptyResultDataAccessException dae) {
 			//
 		}
-		
+
 		return null;
 	}
 
@@ -1075,16 +1051,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
-		List<FinanceType> finacetypeList = new ArrayList<>();
-		try {
-			finacetypeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-			return Collections.emptyList();
-		}
 
-		logger.debug(Literal.LEAVING);
-		return finacetypeList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -1097,7 +1065,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	public String getFinanceTypeDesc(String productCode) {
 		logger.debug(Literal.ENTERING);
 
-		String finTypeDesc = "";
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(productCode);
 
@@ -1109,39 +1076,26 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 
 		try {
-			finTypeDesc = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			finTypeDesc = "";
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
 		}
-		logger.debug(Literal.LEAVING);
-		return finTypeDesc;
 	}
 
 	@Override
 	public int getFinTypeCount(String finType, String type) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From RMTFinanceTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType = :FinType");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -1268,10 +1222,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 	@Override
 	public String getAllowedRepayMethods(String finType, String type) {
-
 		logger.debug(Literal.ENTERING);
 
-		String finTypeDesc = "";
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
 
@@ -1279,18 +1231,15 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		selectSql.append(" From RMTFinanceTypes ");
 		selectSql.append(" Where FinType =:FinType");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 
 		try {
-			finTypeDesc = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			finTypeDesc = "";
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
 		}
-		logger.debug(Literal.LEAVING);
-		return finTypeDesc;
-
 	}
 
 	/**
