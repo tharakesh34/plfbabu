@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstruction> implements FinServiceInstrutionDAO {
 	private static Logger logger = LogManager.getLogger(FinServiceInstrutionDAOImpl.class);
@@ -128,13 +129,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finEvent, serviceReqNo) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finEvent, serviceReqNo) > 0;
 	}
 
 	@Override
@@ -210,10 +205,9 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, finID, schdate);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-
-		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -225,10 +219,9 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		try {
 			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, finID, schdate);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-
-		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -302,13 +295,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) == 0 ? false : true;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
 	}
 
 	private String getInsertQuery(String type) {

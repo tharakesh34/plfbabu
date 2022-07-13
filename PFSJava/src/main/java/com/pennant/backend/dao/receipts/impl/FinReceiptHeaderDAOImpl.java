@@ -38,7 +38,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -62,6 +61,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
@@ -319,10 +319,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, receiptID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -335,13 +334,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, receiptId, reference,
-					receiptPurpose, "A", "F");
-		} catch (EmptyResultDataAccessException e) {
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, receiptId, reference, receiptPurpose,
+				"A", "F");
 	}
 
 	@Override
@@ -355,10 +349,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, receiptID, userRole);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -414,13 +407,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		Object[] parameters = new Object[] { RepayConstants.RECEIPTMODE_CASH, RepayConstants.PAYSTATUS_CANCEL,
 				PennantConstants.RECORD_TYPE_NEW, depositBranch };
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, parameters);
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, parameters);
 	}
 
 	@Override
@@ -449,13 +436,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		parameters[i++] = depositBranch;
 		parameters[i++] = receiptId;
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
 	}
 
 	@Override
@@ -575,13 +556,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, extReference) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, extReference) > 0;
 	}
 
 	// FIXME Move to PresentmentDetailDAO
@@ -594,13 +569,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, 0, "A", finID, 0) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, 0, "A", finID, 0) > 0;
 	}
 
 	// FIXME Move to PresentmentDetailDAO
@@ -613,13 +582,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, 0, "A", "I", finID, 0) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, 0, "A", "I", finID, 0) > 0;
 	}
 
 	@Override
@@ -671,13 +634,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		Object[] parameters = new Object[] { reference, receiptMode, favourNumber, chequeNo, "A" };
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
 	}
 
 	@Override
@@ -702,10 +659,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql, String.class, receiptID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
 		}
-
-		return "";
 	}
 
 	@Override
@@ -869,13 +825,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		Object[] parameters = new Object[] { reference, paytypeCheque, favourNumber, bankCode, "B", "C" };
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
 	}
 
 	@Override
@@ -888,13 +838,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		Object[] parameters = new Object[] { reference, subReceiptMode, tranRef, "B", "C" };
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
 	}
 
 	@Override
@@ -912,11 +856,10 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, parameters);
-		} catch (DataAccessException e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -928,13 +871,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		Object[] parameters = new Object[] { reference, receiptPurpose, receiptId };
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
 	}
 
 	@Override
@@ -958,10 +895,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				return frh;
 			}, receiptID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -971,12 +907,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug(Literal.SQL + sql);
 
 		Object[] parameters = new Object[] { receiptPurpose, extReference, reference };
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, parameters);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return 0;
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, parameters);
 	}
 
 	@Override
@@ -987,12 +919,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, reference) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, reference) > 0;
 	}
 
 	public List<Long> isDedupReceiptExists(FinServiceInstruction fsi) {
@@ -1127,10 +1054,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				return frh;
 			}, receiptID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1142,10 +1068,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, collectionAgency);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override
