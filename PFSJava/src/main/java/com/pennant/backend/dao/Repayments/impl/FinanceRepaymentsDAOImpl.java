@@ -75,7 +75,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		Object[] objects = new Object[] { rpd.getFinID(), rpd.getFinSchdDate(), rpd.getFinRpyFor() };
 
-		long repaySeq = this.jdbcOperations.queryForObject(sql.toString(), Long.class, objects);
+		long repaySeq = this.jdbcOperations.queryForObject(sql, Long.class, objects);
 
 		return repaySeq + 1;
 	}
