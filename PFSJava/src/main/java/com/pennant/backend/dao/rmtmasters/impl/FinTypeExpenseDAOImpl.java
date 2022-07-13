@@ -28,7 +28,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -135,21 +134,14 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 
 		FinTypeExpenseRowMapper rowMapper = new FinTypeExpenseRowMapper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finType);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, finType);
+			}
+		}, rowMapper);
 	}
 
 	public List<FinTypeExpense> getLoanQueueExpenseListByFinType(String finType, String type) {
@@ -322,7 +314,7 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -367,7 +359,6 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 	public boolean expenseExistingFinTypeExpense(long expenseId, String type) {
 		logger.debug("Entering");
 
-		int count = 0;
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("ExpenseTypeID", expenseId);
 
@@ -376,14 +367,7 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 		selectSql.append(" Where ExpenseTypeID = :ExpenseTypeID");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-		logger.debug("Leaving");
-		return count > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 
 	public class FinTypeExpenseRowMapper implements RowMapper<FinTypeExpense> {

@@ -18,6 +18,7 @@ import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinTypeVASProductsDAOImpl extends SequenceDao<FinTypeVASProducts> implements FinTypeVASProductsDAO {
 	private static Logger logger = LogManager.getLogger(FinTypeVASProductsDAOImpl.class);
@@ -206,13 +207,11 @@ public class FinTypeVASProductsDAOImpl extends SequenceDao<FinTypeVASProducts> i
 		RowMapper<FinTypeVASProducts> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeVASProducts.class);
 
 		try {
-			finTypeVASProducts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finTypeVASProducts = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return finTypeVASProducts;
 	}
 
 	@Override

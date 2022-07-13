@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * Data access layer implementation for <code>ManualAdvise</code> with set of CRUD operations.
@@ -269,14 +270,10 @@ public class FinTaxUploadDetailDAOImpl extends SequenceDao<FinTaxUploadHeader> i
 		RowMapper<FinTaxUploadHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTaxUploadHeader.class);
 
 		try {
-			finTaxUploadHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finTaxUploadHeader = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return finTaxUploadHeader;
-
 	}
-
 }

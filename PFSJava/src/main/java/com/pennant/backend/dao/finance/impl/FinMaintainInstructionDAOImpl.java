@@ -42,6 +42,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -69,10 +70,9 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 				return getRowMapper(rs);
 			}, finMaintainId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -87,10 +87,9 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 				return getRowMapper(rs);
 			}, finID, event);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	private StringBuilder getSqlQuery(String type) {

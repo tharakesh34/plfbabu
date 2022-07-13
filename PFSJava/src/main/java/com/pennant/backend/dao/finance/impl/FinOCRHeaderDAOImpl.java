@@ -16,6 +16,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements FinOCRHeaderDAO {
 	private static Logger logger = LogManager.getLogger(FinOCRHeaderDAOImpl.class);
@@ -36,10 +37,9 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, parentRef);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -54,10 +54,9 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -72,10 +71,9 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, headerID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinFlagsHeaderDAO {
 	private static Logger logger = LogManager.getLogger(FinFlagsHeaderDAOImpl.class);
@@ -174,11 +175,9 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
-
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public void delete(FinanceFlag ff, String type) {

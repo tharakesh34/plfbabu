@@ -42,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -127,7 +128,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 			ps.setString(index++, frh.getNextTaskId());
 			ps.setString(index++, frh.getRecordType());
 			ps.setLong(index++, frh.getWorkflowId());
-			
+
 			ps.setLong(index++, frh.getHeaderId());
 		});
 
@@ -219,10 +220,9 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 				return frh;
 			}, headerId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -238,7 +238,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
 				FinFeeRefundDetails fr = new FinFeeRefundDetails();
 
 				fr.setId(rs.getLong("Id"));
@@ -261,10 +261,9 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 				return fr;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -382,7 +381,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 			ps.setString(index++, frd.getNextTaskId());
 			ps.setString(index++, frd.getRecordType());
 			ps.setLong(index++, frd.getWorkflowId());
-			
+
 			ps.setLong(index++, frd.getId());
 		});
 
@@ -422,23 +421,16 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		sql.append(" Where FeeId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
+		return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+			PrvsFinFeeRefund pffr = new PrvsFinFeeRefund();
 
-		try {
-			return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
-				PrvsFinFeeRefund pffr = new PrvsFinFeeRefund();
+			pffr.setTotRefundAmount(rs.getBigDecimal("TotRefundAmount"));
+			pffr.setTotRefundAmtGST(rs.getBigDecimal("TotRefundAmtGST"));
+			pffr.setTotRefundAmtOriginal(rs.getBigDecimal("TotRefundAmtOriginal"));
+			pffr.setTotRefundAmtTDS(rs.getBigDecimal("TotRefundAmtTDS"));
 
-				pffr.setTotRefundAmount(rs.getBigDecimal("TotRefundAmount"));
-				pffr.setTotRefundAmtGST(rs.getBigDecimal("TotRefundAmtGST"));
-				pffr.setTotRefundAmtOriginal(rs.getBigDecimal("TotRefundAmtOriginal"));
-				pffr.setTotRefundAmtTDS(rs.getBigDecimal("TotRefundAmtTDS"));
-
-				return pffr;
-			}, feeID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+			return pffr;
+		}, feeID);
 	}
 
 	@Override
@@ -450,22 +442,15 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		sql.append(" Where HeaderId <> ? and FeeId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
+		return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+			FinFeeRefundDetails feeRefund = new FinFeeRefundDetails();
 
-		try {
-			return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
-				FinFeeRefundDetails feeRefund = new FinFeeRefundDetails();
+			feeRefund.setRefundAmount(rs.getBigDecimal("RefundAmount"));
+			feeRefund.setRefundAmtGST(rs.getBigDecimal("refundAmtGST"));
+			feeRefund.setRefundAmtOriginal(rs.getBigDecimal("RefundAmtOriginal"));
+			feeRefund.setRefundAmtTDS(rs.getBigDecimal("RefundAmtTDS"));
 
-				feeRefund.setRefundAmount(rs.getBigDecimal("RefundAmount"));
-				feeRefund.setRefundAmtGST(rs.getBigDecimal("refundAmtGST"));
-				feeRefund.setRefundAmtOriginal(rs.getBigDecimal("RefundAmtOriginal"));
-				feeRefund.setRefundAmtTDS(rs.getBigDecimal("RefundAmtTDS"));
-
-				return feeRefund;
-			}, headerId, feeID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+			return feeRefund;
+		}, headerId, feeID);
 	}
 }

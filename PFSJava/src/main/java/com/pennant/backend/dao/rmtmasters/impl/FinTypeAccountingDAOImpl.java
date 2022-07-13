@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-06-2011    														*
- *                                                                  						*
- * Modified Date    :  30-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-06-2011 * * Modified
+ * Date : 30-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 30-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -62,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinanceType model</b> class.<br>
@@ -105,10 +88,8 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinTypeAccounting List
 	 */
 	@Override
@@ -158,10 +139,8 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinTypeAccounting
 	 */
 	@Override
@@ -184,13 +163,11 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 		RowMapper<FinTypeAccounting> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 
 		try {
-			finTypeAccounting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finTypeAccounting = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return finTypeAccounting;
 	}
 
 	/**
@@ -198,10 +175,8 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	 * 
 	 * save Finance Types
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -231,10 +206,8 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	 * This method updates the Record FinTypeAccounting or FinTypeAccounting_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -271,10 +244,8 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	 * This method Deletes the Record from the FinTypeAccounting or FinTypeAccounting_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -304,8 +275,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	/**
 	 * This method initialize the Record.
 	 * 
-	 * @param FinanceType
-	 *            (financeType)
+	 * @param FinanceType (financeType)
 	 * @return FinanceType
 	 */
 
@@ -325,7 +295,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -341,7 +311,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 		sql.append(" From FinTypeAccounting");
 		sql.append(" Where FinType = ? and Event = ? and ModuleId = ?");
 
-		logger.trace(Literal.SQL, sql);
+		logger.trace(Literal.SQL + sql);
 
 		Long accSetID = null;
 
@@ -397,36 +367,22 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 	public int getAccountingSetIdCount(long accountSetId, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From FinTypeAccounting");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AccountSetId = :AccountSetId");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AccountSetId", accountSetId);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinTypeAccounting
 	 */
 	@Override
@@ -448,13 +404,10 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 		RowMapper<FinTypeAccounting> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 
 		try {
-			finTypeAccounting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finTypeAccounting = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return finTypeAccounting;
 	}
-
 }

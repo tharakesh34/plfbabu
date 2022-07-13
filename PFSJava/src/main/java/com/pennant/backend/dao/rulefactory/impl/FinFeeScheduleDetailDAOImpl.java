@@ -1,59 +1,49 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  FinFeeCharges.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  10-06-2014    
- *                                                                  
- * Modified Date    :  10-06-2014    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : FinFeeCharges.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 10-06-2014
+ * 
+ * Modified Date : 10-06-2014
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-06-2014       PENNANT TECHONOLOGIES	                 0.1                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-06-2014 PENNANT TECHONOLOGIES 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.rulefactory.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -66,6 +56,7 @@ import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -135,7 +126,6 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 	public void deleteFeeScheduleBatchByFinRererence(String finReference, boolean isWIF, String tableType) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource parameter = null;
 		StringBuilder selectSql = new StringBuilder();
 
 		try {
@@ -152,16 +142,12 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 
 			logger.debug("selectSql: " + selectSql.toString());
 
-			parameter = new MapSqlParameterSource();
+			MapSqlParameterSource parameter = new MapSqlParameterSource();
 			parameter.addValue("FinReference", finReference);
 
 			this.jdbcTemplate.update(selectSql.toString(), parameter);
-		} catch (Exception e) {
-			// logger.error("Exception: ", e);
-		} finally {
-			selectSql = null;
-			parameter = null;
-			logger.debug("Leaving");
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -187,39 +173,32 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, feeID);
-				}
-			}, new RowMapper<FinFeeScheduleDetail>() {
-				@Override
-				public FinFeeScheduleDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinFeeScheduleDetail fsd = new FinFeeScheduleDetail();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, feeID);
+			}
+		}, new RowMapper<FinFeeScheduleDetail>() {
+			@Override
+			public FinFeeScheduleDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+				FinFeeScheduleDetail fsd = new FinFeeScheduleDetail();
 
-					fsd.setFeeID(rs.getLong("FeeID"));
-					fsd.setSchDate(rs.getTimestamp("SchDate"));
-					fsd.setSchAmount(rs.getBigDecimal("SchAmount"));
-					fsd.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					fsd.setOsAmount(rs.getBigDecimal("OsAmount"));
-					fsd.setWaiverAmount(rs.getBigDecimal("WaiverAmount"));
-					fsd.setWriteoffAmount(rs.getBigDecimal("WriteoffAmount"));
-					fsd.setCGST(rs.getBigDecimal("CGST"));
-					fsd.setSGST(rs.getBigDecimal("SGST"));
-					fsd.setUGST(rs.getBigDecimal("UGST"));
-					fsd.setIGST(rs.getBigDecimal("IGST"));
+				fsd.setFeeID(rs.getLong("FeeID"));
+				fsd.setSchDate(rs.getTimestamp("SchDate"));
+				fsd.setSchAmount(rs.getBigDecimal("SchAmount"));
+				fsd.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+				fsd.setOsAmount(rs.getBigDecimal("OsAmount"));
+				fsd.setWaiverAmount(rs.getBigDecimal("WaiverAmount"));
+				fsd.setWriteoffAmount(rs.getBigDecimal("WriteoffAmount"));
+				fsd.setCGST(rs.getBigDecimal("CGST"));
+				fsd.setSGST(rs.getBigDecimal("SGST"));
+				fsd.setUGST(rs.getBigDecimal("UGST"));
+				fsd.setIGST(rs.getBigDecimal("IGST"));
 
-					return fsd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return fsd;
+			}
+		});
 	}
 
 	/**
@@ -248,12 +227,7 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 		RowMapper<FinFeeScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
 
 		logger.debug(Literal.LEAVING);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
