@@ -597,7 +597,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		sql.append(" From FinJointAccountDetails_View F");
 		sql.append(" Inner Join Customers C on C.CustCIF =  F.CustCIF Where FinID = ? group by CustCtgCode");
 
-		return this.jdbcTemplate.query(sql.toString(), new ResultSetExtractor<Map<String, Integer>>() {
+		return this.jdbcOperations.query(sql.toString(), new ResultSetExtractor<Map<String, Integer>>() {
 			Map<String, Integer> map = new HashMap<String, Integer>();
 
 			@Override
@@ -608,7 +608,7 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 				return map;
 			}
 
-		});
+		}, finID);
 	}
 
 	private StringBuilder sqlSelectQuery(String type) {
