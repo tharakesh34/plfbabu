@@ -28,7 +28,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -107,21 +106,15 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 
 		logger.trace(Literal.SQL + sql.toString());
 		FinTypeRowMapper rowMapper = new FinTypeRowMapper(type);
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, id);
-					ps.setInt(index++, moduleId);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, id);
+				ps.setInt(index++, moduleId);
+			}
+		}, rowMapper);
 	}
 
 	/**
@@ -220,25 +213,18 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 
 		FinTypeRowMapper rowMapper = new FinTypeRowMapper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finType);
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, finType);
 
-					for (String finEvent : finEvents) {
-						ps.setString(index++, finEvent);
-					}
-					ps.setInt(index++, moduleId);
+				for (String finEvent : finEvents) {
+					ps.setString(index++, finEvent);
 				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				ps.setInt(index++, moduleId);
+			}
+		}, rowMapper);
 	}
 
 	@Override
@@ -460,7 +446,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -485,42 +471,35 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
 
-					for (String finType : finTypes) {
-						ps.setString(index++, finType);
-					}
-					ps.setString(index++, finEvent);
-					ps.setInt(index++, moduleId);
+				for (String finType : finTypes) {
+					ps.setString(index++, finType);
 				}
-			}, new RowMapper<FinTypeFees>() {
-				@Override
-				public FinTypeFees mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinTypeFees ftf = new FinTypeFees();
+				ps.setString(index++, finEvent);
+				ps.setInt(index++, moduleId);
+			}
+		}, new RowMapper<FinTypeFees>() {
+			@Override
+			public FinTypeFees mapRow(ResultSet rs, int rowNum) throws SQLException {
+				FinTypeFees ftf = new FinTypeFees();
 
-					ftf.setFinType(rs.getString("FinType"));
-					ftf.setOriginationFee(rs.getBoolean("OriginationFee"));
-					ftf.setFinEvent(rs.getString("FinEvent"));
-					ftf.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
-					ftf.setActive(rs.getBoolean("Active"));
-					ftf.setFeeTypeCode(rs.getString("FeeTypeCode"));
-					ftf.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-					ftf.setTaxComponent(rs.getString("TaxComponent"));
-					ftf.setAlwPreIncomization(rs.getBoolean("AlwPreIncomization"));
+				ftf.setFinType(rs.getString("FinType"));
+				ftf.setOriginationFee(rs.getBoolean("OriginationFee"));
+				ftf.setFinEvent(rs.getString("FinEvent"));
+				ftf.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
+				ftf.setActive(rs.getBoolean("Active"));
+				ftf.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				ftf.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				ftf.setTaxComponent(rs.getString("TaxComponent"));
+				ftf.setAlwPreIncomization(rs.getBoolean("AlwPreIncomization"));
 
-					return ftf;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return ftf;
+			}
+		});
 	}
 
 	@Override
@@ -551,8 +530,6 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	public List<FinTypeFees> getFinTypeFeesByRef(long reference, int moduleId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-
 		StringBuilder selectSql = new StringBuilder(
 				"SELECT FinType, OriginationFee, FinEvent, FeeTypeID, FeeOrder, ReferenceId,");
 		selectSql.append(
@@ -571,20 +548,13 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 
 		logger.debug(Literal.SQL + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReferenceId", reference);
 		source.addValue("ModuleId", moduleId);
 
 		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} finally {
-			source = null;
-			selectSql = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	private StringBuilder getSqlQuery(String type) {

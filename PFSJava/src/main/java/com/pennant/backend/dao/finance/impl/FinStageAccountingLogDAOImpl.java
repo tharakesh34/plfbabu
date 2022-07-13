@@ -38,11 +38,13 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.pennant.backend.dao.finance.FinStageAccountingLogDAO;
 import com.pennant.backend.model.finance.FinStageAccountingLog;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ReturnDataSet model</b> class.<br>
@@ -62,11 +64,10 @@ public class FinStageAccountingLogDAOImpl extends BasicDao<FinStageAccountingLog
 
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, finID, roleCode, finEvent, 0);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override

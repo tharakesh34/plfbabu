@@ -50,6 +50,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
@@ -223,13 +224,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, "B", "C");
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, "B", "C");
 	}
 
 	@Override
@@ -537,14 +532,8 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, receiptPurpose, finID,
-					receiptPurpose);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, receiptPurpose, finID,
+				receiptPurpose);
 	}
 
 	@Override
@@ -563,53 +552,47 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setLong(1, receiptID);
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setLong(1, receiptID);
+			}
+		}, new RowMapper<FinReceiptDetail>() {
+			@Override
+			public FinReceiptDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+				FinReceiptDetail frd = new FinReceiptDetail();
+				frd.setReceiptID(rs.getLong("ReceiptID"));
+				frd.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+				frd.setReceiptType(rs.getString("ReceiptType"));
+				frd.setPaymentTo(rs.getString("PaymentTo"));
+				frd.setPaymentType(rs.getString("PaymentType"));
+				frd.setPayAgainstID(rs.getLong("PayAgainstID"));
+				frd.setAmount(rs.getBigDecimal("Amount"));
+				frd.setFavourNumber(rs.getString("FavourNumber"));
+				frd.setValueDate(rs.getTimestamp("ValueDate"));
+				frd.setBankCode(rs.getString("BankCode"));
+				frd.setFavourName(rs.getString("FavourName"));
+				frd.setDepositDate(rs.getTimestamp("DepositDate"));
+				frd.setDepositNo(rs.getString("DepositNo"));
+				frd.setPaymentRef(rs.getString("PaymentRef"));
+				frd.setTransactionRef(rs.getString("TransactionRef"));
+				frd.setChequeAcNo(rs.getString("ChequeAcNo"));
+				frd.setFundingAc(rs.getLong("FundingAc"));
+				frd.setReceivedDate(rs.getTimestamp("ReceivedDate"));
+				frd.setStatus(rs.getString("Status"));
+				frd.setPayOrder(rs.getInt("PayOrder"));
+				frd.setLogKey(rs.getLong("LogKey"));
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					frd.setBankCodeDesc(rs.getString("BankCodeDesc"));
+					frd.setFundingAcCode(rs.getString("fundingAcCode"));
+					frd.setFundingAcDesc(rs.getString("FundingAcDesc"));
+					frd.setPartnerBankAc(rs.getString("PartnerBankAc"));
+					frd.setPartnerBankAcType(rs.getString("PartnerBankAcType"));
 				}
-			}, new RowMapper<FinReceiptDetail>() {
-				@Override
-				public FinReceiptDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinReceiptDetail frd = new FinReceiptDetail();
-					frd.setReceiptID(rs.getLong("ReceiptID"));
-					frd.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-					frd.setReceiptType(rs.getString("ReceiptType"));
-					frd.setPaymentTo(rs.getString("PaymentTo"));
-					frd.setPaymentType(rs.getString("PaymentType"));
-					frd.setPayAgainstID(rs.getLong("PayAgainstID"));
-					frd.setAmount(rs.getBigDecimal("Amount"));
-					frd.setFavourNumber(rs.getString("FavourNumber"));
-					frd.setValueDate(rs.getTimestamp("ValueDate"));
-					frd.setBankCode(rs.getString("BankCode"));
-					frd.setFavourName(rs.getString("FavourName"));
-					frd.setDepositDate(rs.getTimestamp("DepositDate"));
-					frd.setDepositNo(rs.getString("DepositNo"));
-					frd.setPaymentRef(rs.getString("PaymentRef"));
-					frd.setTransactionRef(rs.getString("TransactionRef"));
-					frd.setChequeAcNo(rs.getString("ChequeAcNo"));
-					frd.setFundingAc(rs.getLong("FundingAc"));
-					frd.setReceivedDate(rs.getTimestamp("ReceivedDate"));
-					frd.setStatus(rs.getString("Status"));
-					frd.setPayOrder(rs.getInt("PayOrder"));
-					frd.setLogKey(rs.getLong("LogKey"));
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						frd.setBankCodeDesc(rs.getString("BankCodeDesc"));
-						frd.setFundingAcCode(rs.getString("fundingAcCode"));
-						frd.setFundingAcDesc(rs.getString("FundingAcDesc"));
-						frd.setPartnerBankAc(rs.getString("PartnerBankAc"));
-						frd.setPartnerBankAcType(rs.getString("PartnerBankAcType"));
-					}
 
-					return frd;
-				}
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.info(Literal.LEAVING);
-		return new ArrayList<>();
+				return frd;
+			}
+		});
 	}
 
 	@Override
@@ -623,10 +606,9 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 				return rs.getString("Account_Type");
 			}, receiptSource);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

@@ -14,9 +14,11 @@ import org.springframework.jdbc.core.RowMapper;
 import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> implements FinanceDeviationsDAO {
 	private static Logger logger = LogManager.getLogger(FinanceDeviationsDAOImpl.class);
@@ -152,7 +154,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 				ps.setString(index++, fd.getDeviationCode());
 			});
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -177,7 +179,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			});
 
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -211,7 +213,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, fd.getDeviationId()));
 
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -272,10 +274,9 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, deviationId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	private StringBuilder getSelectQuery(String type) {
