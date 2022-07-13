@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,6 +53,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
@@ -74,13 +75,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		Object[] objects = new Object[] { rpd.getFinID(), rpd.getFinSchdDate(), rpd.getFinRpyFor() };
 
-		long repaySeq = 0;
-
-		try {
-			repaySeq = this.jdbcOperations.queryForObject(sql.toString(), Long.class, objects);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
+		long repaySeq = this.jdbcOperations.queryForObject(sql.toString(), Long.class, objects);
 
 		return repaySeq + 1;
 	}
@@ -144,8 +139,8 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 				}
 			});
 
-		} catch (DataAccessException e) {
-			logger.debug(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -232,10 +227,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -259,10 +253,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 			}, finID, linkedTranId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -332,7 +325,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append(", PayApportionment = ?, AdviseAmount = ?, FeeAmount = ?, ExcessAmount = ?");
 		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -372,7 +365,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), rph.getFinID());
 	}
@@ -540,14 +533,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		String sql = "Select sum(FinSchdPftPaid) From FinRepayDetails Where FinID = ? and FinPostDate < ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, finPostDate);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, finPostDate);
 	}
 
 	@Override
@@ -605,10 +591,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, receiptId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -795,13 +780,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		String sql = "Select Min(FinSchdDate) from FinRepayDetails Where ReceiptId = ? and FinTotSchdPaid > ?";
 
 		logger.debug(Literal.SQL + sql);
-		try {
-			return jdbcOperations.queryForObject(sql, Date.class, receiptid, 0);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return jdbcOperations.queryForObject(sql, Date.class, receiptid, 0);
 	}
 
 	private String getInsertQuery(String type) {
