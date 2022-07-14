@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DepositDetailsDAOImpl.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-07-2018    														*
- *                                                                  						*
- * Modified Date    :  10-07-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DepositDetailsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-07-2018 * *
+ * Modified Date : 10-07-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-07-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-07-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.receipts.impl;
@@ -64,6 +46,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -81,10 +64,8 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Academic
 	 */
 	@Override
@@ -111,14 +92,11 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		RowMapper<DepositDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositDetails.class);
 
 		try {
-			depositDetails = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			depositDetails = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return depositDetails;
 	}
 
 	@Override
@@ -146,14 +124,11 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		RowMapper<DepositDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositDetails.class);
 
 		try {
-			depositDetails = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			depositDetails = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return depositDetails;
 	}
 
 	@Override
@@ -244,7 +219,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		sql.append(
 				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where DepositId = :DepositId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -290,7 +265,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		StringBuilder sql = new StringBuilder("delete from DepositDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" where DepositId = :DepositId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -314,10 +289,8 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Academic
 	 */
 	@Override
@@ -345,23 +318,18 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		RowMapper<DepositMovements> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositMovements.class);
 
 		try {
-			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info("Information: ", e);
-			depositMovements = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return depositMovements;
 	}
 
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Academic
 	 */
 	@Override
@@ -389,14 +357,11 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		RowMapper<DepositMovements> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositMovements.class);
 
 		try {
-			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info("Information: ", e);
-			depositMovements = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return depositMovements;
 	}
 
 	@Override
@@ -450,7 +415,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		sql.append(
 				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where MovementId = :MovementId And DepositId = :DepositId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -492,7 +457,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		StringBuilder sql = new StringBuilder("delete from DepositMovements");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where MovementId = :MovementId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -523,7 +488,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		StringBuilder sql = new StringBuilder("delete from DepositMovements");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where DepositId = :DepositId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -566,14 +531,11 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		RowMapper<DepositMovements> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositMovements.class);
 
 		try {
-			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			depositMovements = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return depositMovements;
 	}
 
 	@Override

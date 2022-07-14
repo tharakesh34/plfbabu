@@ -72,20 +72,15 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 		sql.append(" set DocURI = ? ");
 		sql.append(" Where id = ?");
 
-		try {
-			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+		this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, uri);
-					ps.setLong(index++, id);
-				}
-			});
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, uri);
+				ps.setLong(index++, id);
+			}
+		});
 	}
 
 	@Override

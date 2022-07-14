@@ -1,52 +1,33 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DeviationDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-06-2015    														*
- *                                                                  						*
- * Modified Date    :  22-06-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DeviationDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-06-2015 * *
+ * Modified Date : 22-06-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-06-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-06-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.solutionfactory.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -68,6 +49,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>DeviationDetail model</b> class.<br>
@@ -118,10 +100,8 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 	/**
 	 * Fetch the Record Deviation Details details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DeviationDetail
 	 */
 	@Override
@@ -147,22 +127,18 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 		RowMapper<DeviationDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(DeviationDetail.class);
 
 		try {
-			deviationDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			deviationDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return deviationDetail;
 	}
 
 	/**
 	 * Fetch the Record Deviation Details details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DeviationDetail
 	 */
 	@Override
@@ -192,10 +168,8 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 	/**
 	 * Fetch the Record Deviation Details details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DeviationDetail
 	 */
 	@Override
@@ -218,53 +192,43 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 		sql.append(" order by DelegatorGrade");
 
 		logger.trace(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, module);
+				ps.setString(index++, finType);
+			}
+		}, new RowMapper<DeviationDetail>() {
+			@Override
+			public DeviationDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+				DeviationDetail dd = new DeviationDetail();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, module);
-					ps.setString(index++, finType);
-				}
-			}, new RowMapper<DeviationDetail>() {
-				@Override
-				public DeviationDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					DeviationDetail dd = new DeviationDetail();
+				dd.setDeviationID(rs.getLong("DeviationID"));
+				dd.setUserRole(rs.getString("UserRole"));
+				dd.setDeviatedValue(rs.getString("DeviatedValue"));
+				dd.setVersion(rs.getInt("Version"));
+				dd.setLastMntBy(rs.getLong("LastMntBy"));
+				dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				dd.setRecordStatus(rs.getString("RecordStatus"));
+				dd.setRoleCode(rs.getString("RoleCode"));
+				dd.setNextRoleCode(rs.getString("NextRoleCode"));
+				dd.setTaskId(rs.getString("TaskId"));
+				dd.setNextTaskId(rs.getString("NextTaskId"));
+				dd.setRecordType(rs.getString("RecordType"));
+				dd.setWorkflowId(rs.getLong("WorkflowId"));
 
-					dd.setDeviationID(rs.getLong("DeviationID"));
-					dd.setUserRole(rs.getString("UserRole"));
-					dd.setDeviatedValue(rs.getString("DeviatedValue"));
-					dd.setVersion(rs.getInt("Version"));
-					dd.setLastMntBy(rs.getLong("LastMntBy"));
-					dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					dd.setRecordStatus(rs.getString("RecordStatus"));
-					dd.setRoleCode(rs.getString("RoleCode"));
-					dd.setNextRoleCode(rs.getString("NextRoleCode"));
-					dd.setTaskId(rs.getString("TaskId"));
-					dd.setNextTaskId(rs.getString("NextTaskId"));
-					dd.setRecordType(rs.getString("RecordType"));
-					dd.setWorkflowId(rs.getLong("WorkflowId"));
-
-					return dd;
-				}
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return dd;
+			}
+		});
 	}
 
 	/**
 	 * This method Deletes the Record from the DeviationDetails or DeviationDetails_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Deviation Details by key DeviationID
 	 * 
-	 * @param Deviation
-	 *            Details (deviationDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Deviation Details (deviationDetail)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -297,10 +261,8 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 	 *
 	 * save Deviation Details
 	 * 
-	 * @param Deviation
-	 *            Details (deviationDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Deviation Details (deviationDetail)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -332,10 +294,8 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 	 * This method updates the Record DeviationDetails or DeviationDetails_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Deviation Details by key DeviationID and Version
 	 * 
-	 * @param Deviation
-	 *            Details (deviationDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Deviation Details (deviationDetail)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

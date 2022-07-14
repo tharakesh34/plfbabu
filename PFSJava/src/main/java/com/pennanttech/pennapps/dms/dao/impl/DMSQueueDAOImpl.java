@@ -8,12 +8,14 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.model.dms.DMSModule;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -37,7 +39,6 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		logger.debug(Literal.SQL + sql.toString());
 		try {
 			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
-
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					ps.setLong(1, dMSQueue.getDocManagerID());
@@ -59,13 +60,11 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 					ps.setString(17, dMSQueue.getDocUri());
 				}
 			});
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e.getCause());
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	public void insertDMSQueueLog(DMSQueue dMSQueue) {
@@ -81,7 +80,6 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		logger.debug(Literal.SQL + sql.toString());
 		try {
 			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
-
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					ps.setLong(1, dMSQueue.getId());
@@ -106,13 +104,11 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 
 				}
 			});
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
@@ -184,31 +180,24 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		sql.append(" where Id = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-		try {
-			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setObject(1, dMSQueue.getCustId());
-					ps.setString(2, dMSQueue.getCustCif());
-					ps.setString(3, dMSQueue.getFinReference());
-					ps.setString(4, dMSQueue.getDocUri());
-					ps.setInt(5, dMSQueue.getProcessingFlag());
-					ps.setInt(6, dMSQueue.getAttemptNum());
-					ps.setString(7, dMSQueue.getErrorCode());
-					ps.setString(8, dMSQueue.getErrorDesc());
-					ps.setString(9, dMSQueue.getAuxiloryFields1());
-					ps.setLong(10, dMSQueue.getId());
+		this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setObject(1, dMSQueue.getCustId());
+				ps.setString(2, dMSQueue.getCustCif());
+				ps.setString(3, dMSQueue.getFinReference());
+				ps.setString(4, dMSQueue.getDocUri());
+				ps.setInt(5, dMSQueue.getProcessingFlag());
+				ps.setInt(6, dMSQueue.getAttemptNum());
+				ps.setString(7, dMSQueue.getErrorCode());
+				ps.setString(8, dMSQueue.getErrorDesc());
+				ps.setString(9, dMSQueue.getAuxiloryFields1());
+				ps.setLong(10, dMSQueue.getId());
+			}
+		});
 
-				}
-			});
-
-		} catch (Exception e) {
-			logger.trace(Literal.EXCEPTION, e.getCause());
-
-		}
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
@@ -257,11 +246,9 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		StringBuilder sql = new StringBuilder("delete from DMS_QUEUE where Id = ?");
 		try {
 			return this.jdbcOperations.update(sql.toString(), queueId);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
-		logger.debug(Literal.LEAVING);
-		return 0;
 	}
 
 	@Override
@@ -273,24 +260,16 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		sql.append(" where docManagerID = ? and processflag=0");
 
 		logger.debug(Literal.SQL + sql.toString());
-		try {
-			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, dMSQueue.getAuxiloryFields1());
-					ps.setTimestamp(2, dMSQueue.getCreatedOn());
-					ps.setLong(3, dMSQueue.getDocManagerID());
+		this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, dMSQueue.getAuxiloryFields1());
+				ps.setTimestamp(2, dMSQueue.getCreatedOn());
+				ps.setLong(3, dMSQueue.getDocManagerID());
+			}
+		});
 
-				}
-			});
-
-		} catch (Exception e) {
-			logger.trace(Literal.EXCEPTION, e.getCause());
-
-		}
 		logger.debug(Literal.LEAVING);
-
 	}
-
 }

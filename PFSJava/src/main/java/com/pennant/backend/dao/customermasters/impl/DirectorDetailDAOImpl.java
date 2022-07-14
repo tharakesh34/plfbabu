@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DirectorDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-12-2011    														*
- *                                                                  						*
- * Modified Date    :  01-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DirectorDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-12-2011 * *
+ * Modified Date : 01-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.List;
@@ -63,6 +45,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>DirectorDetail model</b> class.<br>
@@ -112,10 +95,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	/**
 	 * Fetch the Record Director Detail details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DirectorDetail
 	 */
 	@Override
@@ -151,23 +132,18 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		RowMapper<DirectorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(DirectorDetail.class);
 
 		try {
-			directorDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			directorDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return directorDetail;
 	}
 
 	/**
 	 * Fetch the Record Director Detail List by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return List<DirectorDetail>
 	 */
 	@Override
@@ -264,10 +240,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	 * This method Deletes the Record from the CustomerDirectorDetail or CustomerDirectorDetail_Temp. if Record not
 	 * deleted then throws DataAccessException with error 41003. delete Director Detail by key DirectorId
 	 * 
-	 * @param Director
-	 *            Detail (directorDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Director Detail (directorDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -299,8 +273,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	 * CustomerID
 	 * 
 	 * @param int(customerId)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param type            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -328,10 +301,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	 *
 	 * save Director Detail
 	 * 
-	 * @param Director
-	 *            Detail (directorDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Director Detail (directorDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -377,10 +348,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	 * This method updates the Record CustomerDirectorDetail or CustomerDirectorDetail_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update Director Detail by key DirectorId and Version
 	 * 
-	 * @param Director
-	 *            Detail (directorDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Director Detail (directorDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -457,13 +426,10 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		RowMapper<DirectorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(DirectorDetail.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-
-		return null;
 	}
 
 	@Override
@@ -479,14 +445,12 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		sql.append(" WHERE CustId = :CustId AND DirectorId = :DirectorId");
 
 		logger.trace(Literal.SQL + sql.toString());
-		int returnRcds = 0;
+
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		logger.debug(Literal.LEAVING);
-		return returnRcds;
 	}
-
 }

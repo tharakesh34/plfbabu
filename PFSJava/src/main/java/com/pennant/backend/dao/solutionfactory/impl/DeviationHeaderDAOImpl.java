@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DeviationHeaderDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-06-2015    														*
- *                                                                  						*
- * Modified Date    :  22-06-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DeviationHeaderDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-06-2015 * *
+ * Modified Date : 22-06-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-06-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-06-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.solutionfactory.impl;
 
@@ -62,6 +44,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>DeviationHeader model</b> class.<br>
@@ -112,10 +95,8 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 	/**
 	 * Fetch the Record Deviation Header details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DeviationHeader
 	 */
 	@Override
@@ -140,22 +121,18 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 		RowMapper<DeviationHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(DeviationHeader.class);
 
 		try {
-			deviationHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			deviationHeader = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return deviationHeader;
 	}
 
 	/**
 	 * Fetch the Record Deviation Header details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DeviationHeader
 	 */
 	@Override
@@ -185,10 +162,8 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 	/**
 	 * Fetch the Record Deviation Header details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DeviationHeader
 	 */
 	@Override
@@ -220,10 +195,8 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 	 * This method Deletes the Record from the DeviationHeader or DeviationHeader_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Deviation Header by key DeviationID
 	 * 
-	 * @param Deviation
-	 *            Header (deviationHeader)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Deviation Header (deviationHeader)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -256,10 +229,8 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 	 *
 	 * save Deviation Header
 	 * 
-	 * @param Deviation
-	 *            Header (deviationHeader)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Deviation Header (deviationHeader)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -294,10 +265,8 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 	 * This method updates the Record DeviationHeader or DeviationHeader_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Deviation Header by key DeviationID and Version
 	 * 
-	 * @param Deviation
-	 *            Header (deviationHeader)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Deviation Header (deviationHeader)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

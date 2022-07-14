@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DashboardConfigurationDAOImpl.java                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-06-2011    														*
- *                                                                  						*
- * Modified Date    :  14-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DashboardConfigurationDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-06-2011 * *
+ * Modified Date : 14-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.dashboard.impl;
@@ -63,6 +45,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>DashboardConfiguration model</b> class.<br>
@@ -95,10 +78,8 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	/**
 	 * Fetch the Record Masters details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DashboardConfiguration
 	 */
 	@Override
@@ -123,24 +104,19 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 				.newInstance(DashboardConfiguration.class);
 
 		try {
-			dashboardConfiguration = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			dashboardConfiguration = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return dashboardConfiguration;
 	}
 
 	/**
 	 * This method Deletes the Record from the DashboardConfigurations or DashboardConfiguration_Temp. if Record not
 	 * deleted then throws DataAccessException with error 41004. delete Masters by key DashboardCode
 	 * 
-	 * @param Masters
-	 *            (dashboardConfiguration)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Masters (dashboardConfiguration)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -173,10 +149,8 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	 * 
 	 * save Masters
 	 * 
-	 * @param Masters
-	 *            (dashboardDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Masters (dashboardDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -212,10 +186,8 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	 * This method updates the Record DashboardConfigurations or DashboardConfigurations_Temp. if Record not updated
 	 * then throws DataAccessException with error 41003. update Masters by key DashboardCode and Version
 	 * 
-	 * @param Masters
-	 *            (dashboardDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Masters (dashboardDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -254,8 +226,7 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	/**
 	 * Save the positions of the DashBoard for the user
 	 * 
-	 * @param dashboardPosition
-	 *            (DashboardPosition)
+	 * @param dashboardPosition (DashboardPosition)
 	 */
 	@Override
 	public void SavePositions(DashboardPosition dashboardPosition) {
@@ -280,8 +251,7 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	 * Get the DashBoard Details from the database with the following conditions User should have the rights and get the
 	 * positions from the Dashboard positions
 	 * 
-	 * @param userId
-	 *            (long)
+	 * @param userId (long)
 	 */
 	@Override
 	public List<DashboardPosition> getDashboardPositionsByUser(long userId) {
@@ -290,7 +260,7 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 		sql.append(" from DashboardPositions");
 		sql.append(" Where UsrId = ?");
 
-		logger.trace(Literal.SQL, sql);
+		logger.trace(Literal.SQL + sql);
 
 		List<DashboardPosition> dpList = this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, userId);
@@ -322,8 +292,7 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	/**
 	 * Delete the Dash board positions for the user
 	 * 
-	 * @param userId
-	 *            (long)
+	 * @param userId (long)
 	 * 
 	 */
 	@Override
@@ -348,8 +317,7 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	 * Get the DashBoard Details from the database with the following conditions User should have the rights and get the
 	 * positions from the Dashboard positions
 	 * 
-	 * @param userId
-	 *            (long)
+	 * @param userId (long)
 	 */
 	@Override
 	public List<DashboardConfiguration> getDashboardConfigurations(long userId) {
@@ -392,8 +360,7 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 	/**
 	 * Get the chart Details From the Database
 	 * 
-	 * @param DashboardConfiguration
-	 *            (DashboardDetail)
+	 * @param DashboardConfiguration (DashboardDetail)
 	 */
 	@Override
 	public List<ChartSetElement> getLabelAndValues(DashboardConfiguration dashboardDetail) throws DataAccessException {

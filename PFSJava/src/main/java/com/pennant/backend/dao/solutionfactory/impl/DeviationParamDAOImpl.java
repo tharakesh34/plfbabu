@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DeviationParamDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-06-2015    														*
- *                                                                  						*
- * Modified Date    :  22-06-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DeviationParamDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-06-2015 * *
+ * Modified Date : 22-06-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-06-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-06-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.solutionfactory.impl;
 
@@ -58,6 +40,7 @@ import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>DeviationParam model</b> class.<br>
@@ -74,10 +57,8 @@ public class DeviationParamDAOImpl extends BasicDao<DeviationParam> implements D
 	/**
 	 * Fetch the Record Deviation Params details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DeviationParam
 	 */
 	@Override
@@ -102,23 +83,19 @@ public class DeviationParamDAOImpl extends BasicDao<DeviationParam> implements D
 		RowMapper<DeviationParam> typeRowMapper = BeanPropertyRowMapper.newInstance(DeviationParam.class);
 
 		try {
-			deviationParam = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			deviationParam = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return deviationParam;
 	}
 
 	/**
 	 * This method Deletes the Record from the DeviationParams or DeviationParams_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Deviation Params by key Code
 	 * 
-	 * @param Deviation
-	 *            Params (deviationParam)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Deviation Params (deviationParam)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -150,10 +127,8 @@ public class DeviationParamDAOImpl extends BasicDao<DeviationParam> implements D
 	 *
 	 * save Deviation Params
 	 * 
-	 * @param Deviation
-	 *            Params (deviationParam)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Deviation Params (deviationParam)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -184,10 +159,8 @@ public class DeviationParamDAOImpl extends BasicDao<DeviationParam> implements D
 	 * This method updates the Record DeviationParams or DeviationParams_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Deviation Params by key Code and Version
 	 * 
-	 * @param Deviation
-	 *            Params (deviationParam)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Deviation Params (deviationParam)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

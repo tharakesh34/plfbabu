@@ -295,7 +295,12 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		RestructureDetailRowMapper rowMapper = new RestructureDetailRowMapper();
 
-		return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	private StringBuilder sqlSelectQuery(String type) {

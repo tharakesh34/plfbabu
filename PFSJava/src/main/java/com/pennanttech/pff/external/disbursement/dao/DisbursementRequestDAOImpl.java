@@ -30,6 +30,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 
@@ -581,10 +582,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), String.class, detail.getDownload_Referid());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
 		}
-
-		return "";
 	}
 
 	public List<FinAdvancePayments> getAutoDisbInstructions(Date llDate) {
@@ -885,10 +885,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				return fa;
 			}, disbReqId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -992,10 +991,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				return dr;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

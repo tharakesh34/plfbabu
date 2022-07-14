@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -127,9 +128,10 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -458,15 +460,11 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		RowMapper<DocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentDetails.class);
 
 		try {
-			documentDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			documentDetails = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.ENTERING);
-
-		return documentDetails;
 	}
 
 	/**
@@ -524,10 +522,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 				return dd;
 			}, referenceId, category, module);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -537,21 +534,14 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		sql.append(tableType.getSuffix());
 		sql.append(" set DocURI = ? where docrefid = ?");
 
-		try {
-			return this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+		return this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, uri);
-					ps.setLong(2, id);
-				}
-			});
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return 0;
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, uri);
+				ps.setLong(2, id);
+			}
+		});
 	}
 
 	@Override
@@ -579,8 +569,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, docCategory);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return 0;
 		}
 	}
@@ -602,8 +592,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 			jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
-		} catch (Exception e) {
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 }

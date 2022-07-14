@@ -1,12 +1,10 @@
 package com.pennant.backend.dao.dashboard.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -107,26 +105,19 @@ public class DetailStatisticsHeaderDAOImpl extends BasicDao<DetailStatisticsHead
 
 	public List<DetailStatisticsHeader> getDetailStatisticsHeaderGroupByRole() {
 		logger.debug("Entering ");
-		List<DetailStatisticsHeader> list = new ArrayList<DetailStatisticsHeader>();
+
 		StringBuilder selectSql = new StringBuilder(" select RoleCode, sum(RecordCount) lovDescTotRecordCount ");
 		selectSql.append(" from DetailStatisticsHeader group by RoleCode order by RoleCode");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new DetailStatisticsHeader());
 		RowMapper<DetailStatisticsHeader> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(DetailStatisticsHeader.class);
-		try {
-			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			list = null;
-		}
-		logger.debug("Leaving ");
-		return list;
 
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	public List<DetailStatisticsHeader> getDetailStsHeaderGroupByModule(String roles) {
 		logger.debug("Entering ");
-		List<DetailStatisticsHeader> list = new ArrayList<DetailStatisticsHeader>();
+
 		StringBuilder selectSql = new StringBuilder("   select modulename,sum(recordcount) lovDescTotRecordCount ");
 		selectSql.append("  from DetailStatisticsHeader where rolecode in (");
 		selectSql.append(roles);
@@ -135,13 +126,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasicDao<DetailStatisticsHead
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new DetailStatisticsHeader());
 		RowMapper<DetailStatisticsHeader> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(DetailStatisticsHeader.class);
-		try {
-			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			list = null;
-		}
-		logger.debug("Leaving ");
-		return list;
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 }
