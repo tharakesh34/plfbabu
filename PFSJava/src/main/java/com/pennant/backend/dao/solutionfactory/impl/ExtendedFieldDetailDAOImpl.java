@@ -280,21 +280,15 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		ExtendedFieldRowMapper rowMapper = new ExtendedFieldRowMapper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
 
-					ps.setLong(index++, id);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return new ArrayList<>();
+				ps.setLong(index++, id);
+			}
+		}, rowMapper);
 	}
 
 	@Override
@@ -389,7 +383,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 				} else {
 					this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 				}
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				logger.debug("Exception: ", e);
 			}
 		}
@@ -708,7 +702,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		try {
 			map = this.jdbcTemplate.queryForMap(selectSql.toString(), map);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			if ("_Temp".equals(type)) {
 				selectSql = new StringBuilder("Select * from " + tableName);
 				selectSql.append(" where FinReference ='" + id + "'");
@@ -717,7 +711,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 				try {
 					map = this.jdbcTemplate.queryForMap(selectSql.toString(), map);
 				} catch (EmptyResultDataAccessException ex) {
-					logger.warn("Exception: ", ex);
+					logger.warn(Message.NO_RECORD_FOUND);
 					map = null;
 				}
 			}
@@ -746,7 +740,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		try {
 			map = this.jdbcTemplate.queryForMap(query.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			if ("_Temp".equals(type)) {
 				query = new StringBuilder("Select * from " + tableName);
 				query.append(" where " + primaryKeyColumn + " ='" + id + "'");
@@ -755,7 +749,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 				try {
 					map = this.jdbcTemplate.queryForMap(query.toString(), map);
 				} catch (EmptyResultDataAccessException ex) {
-					logger.warn("Exception: ", ex);
+					logger.warn(Message.NO_RECORD_FOUND);
 					map = null;
 				}
 			}
@@ -802,7 +796,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			this.jdbcTemplate.queryForObject(query.toString(), source, String.class);
 			return true;
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return false;
 		}
 	}
@@ -890,7 +884,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 				ps.setString(index++, efd.getFieldName());
 			});
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
 

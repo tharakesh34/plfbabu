@@ -27,7 +27,6 @@ package com.pennant.backend.dao.eod.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -72,11 +72,9 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { eodConfigId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -265,14 +263,7 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 
 		EODConfigRowMapper rowMapper = new EODConfigRowMapper();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), rowMapper);
 	}
 
 	@Override
@@ -316,24 +307,18 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		sql.append(" From EODConfig");
 
 		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			List<String> eodFrequency = this.jdbcOperations.query(sql.toString(), new RowMapper<String>() {
-				@Override
-				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getString("EODStartJobFrequency");
-				}
-			});
-			if (CollectionUtils.isEmpty(eodFrequency)) {
-				return null;
+		List<String> eodFrequency = this.jdbcOperations.query(sql.toString(), new RowMapper<String>() {
+			@Override
+			public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getString("EODStartJobFrequency");
 			}
-			return eodFrequency.get(0);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+		});
+
+		if (CollectionUtils.isEmpty(eodFrequency)) {
+			return null;
 		}
 
-		logger.debug(Literal.LEAVING);
-		return null;
+		return eodFrequency.get(0);
 	}
 
 	@Override
@@ -345,22 +330,14 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		sql.append(" From EODConfig");
 
 		logger.trace(Literal.SQL + sql.toString());
+		List<Boolean> eodRequired = this.jdbcOperations.query(sql.toString(), new RowMapper<Boolean>() {
+			@Override
+			public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getBoolean("AutoEodRequired");
+			}
+		});
 
-		try {
-			List<Boolean> eodRequired = this.jdbcOperations.query(sql.toString(), new RowMapper<Boolean>() {
-				@Override
-				public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getBoolean("AutoEodRequired");
-				}
-			});
-
-			return eodRequired.get(0);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return false;
+		return eodRequired.get(0);
 	}
 
 	@Override
@@ -372,22 +349,14 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		sql.append(" From EODConfig");
 
 		logger.trace(Literal.SQL + sql.toString());
+		List<Boolean> eodRequired = this.jdbcOperations.query(sql.toString(), new RowMapper<Boolean>() {
+			@Override
+			public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getBoolean("EnableAutoEod");
+			}
+		});
 
-		try {
-			List<Boolean> eodRequired = this.jdbcOperations.query(sql.toString(), new RowMapper<Boolean>() {
-				@Override
-				public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getBoolean("EnableAutoEod");
-				}
-			});
-
-			return eodRequired.get(0);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return false;
+		return eodRequired.get(0);
 	}
 
 	@Override
@@ -426,25 +395,18 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		sql.append(" From EODConfig");
 
 		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			List<String> eodFrequency = this.jdbcOperations.query(sql.toString(), new RowMapper<String>() {
-				@Override
-				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getString("ReminderFrequency");
-				}
-			});
-			if (CollectionUtils.isEmpty(eodFrequency)) {
-				return null;
+		List<String> eodFrequency = this.jdbcOperations.query(sql.toString(), new RowMapper<String>() {
+			@Override
+			public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getString("ReminderFrequency");
 			}
-			return eodFrequency.get(0);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+		});
+
+		if (CollectionUtils.isEmpty(eodFrequency)) {
+			return null;
 		}
 
-		logger.debug(Literal.LEAVING);
-		return null;
-
+		return eodFrequency.get(0);
 	}
 
 	@Override
@@ -456,25 +418,18 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		sql.append(" From EODConfig");
 
 		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			List<String> eodFrequency = this.jdbcOperations.query(sql.toString(), new RowMapper<String>() {
-				@Override
-				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getString("DelayFrequency");
-				}
-			});
-			if (CollectionUtils.isEmpty(eodFrequency)) {
-				return null;
+		List<String> eodFrequency = this.jdbcOperations.query(sql.toString(), new RowMapper<String>() {
+			@Override
+			public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getString("DelayFrequency");
 			}
-			return eodFrequency.get(0);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+		});
+
+		if (CollectionUtils.isEmpty(eodFrequency)) {
+			return null;
 		}
 
-		logger.debug(Literal.LEAVING);
-		return null;
-
+		return eodFrequency.get(0);
 	}
 
 	private StringBuilder getSqlQuery(String type) {

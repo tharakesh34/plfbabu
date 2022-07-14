@@ -337,8 +337,6 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 	@Override
 	public BigDecimal getUpfrontFee(long feeId, String tableType) {
-
-		BigDecimal upFrontFee = BigDecimal.ZERO;
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" select sum(paidamount) from finfeereceipts");
 		selectSql.append(tableType);
