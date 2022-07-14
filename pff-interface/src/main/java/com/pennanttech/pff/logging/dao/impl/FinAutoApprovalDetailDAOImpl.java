@@ -21,6 +21,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
 
@@ -134,11 +135,10 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 
 		try {
 			jdbcOperations.queryForObject(sql, String.class, finID);
-		} catch (Exception e) {
+			return true;
+		} catch (EmptyResultDataAccessException e) {
 			return false;
 		}
-
-		return true;
 	}
 
 	@Override
@@ -165,9 +165,8 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 		try {
 			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-		return false;
 	}
-
 }

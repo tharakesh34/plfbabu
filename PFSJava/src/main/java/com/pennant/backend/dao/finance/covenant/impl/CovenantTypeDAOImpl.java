@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -81,13 +82,11 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 		RowMapper<CovenantType> rowMapper = BeanPropertyRowMapper.newInstance(CovenantType.class);
 
 		try {
-			covenantType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return covenantType;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return covenantType;
 	}
 
 	@Override
@@ -241,15 +240,11 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 		RowMapper<CovenantType> typeRowMapper = BeanPropertyRowMapper.newInstance(CovenantType.class);
 
 		try {
-			covenant = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return covenant;
 	}
 
 	@Override

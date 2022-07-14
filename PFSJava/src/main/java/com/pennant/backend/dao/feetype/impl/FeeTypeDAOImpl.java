@@ -28,7 +28,6 @@ package com.pennant.backend.dao.feetype.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,6 +50,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -129,10 +129,9 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 			}, feeTypeId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -321,27 +320,15 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	public int getAccountingSetIdCount(long accountSetId, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From FeeTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AccountSetId = :AccountSetId");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AccountSetId", accountSetId);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -443,14 +430,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
 		RowMapper<FeeType> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeType.class);
 
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -462,17 +442,15 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, feeTypeCode);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
 	public boolean isFeeTypeAmortzReq(String feeTypeCode) {
 		logger.debug(Literal.ENTERING);
 
-		boolean isAmortzReq = false;
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT AmortzReq From FeeTypes");
 		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode ");
@@ -482,12 +460,11 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		source.addValue("FeeTypeCode", feeTypeCode);
 
 		try {
-			isAmortzReq = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Boolean.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Boolean.class);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return isAmortzReq;
 	}
 
 	@Override
@@ -502,44 +479,36 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(" Where AmortzReq = ? and Active = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setBoolean(1, true);
+				ps.setBoolean(2, true);
+			}
+		}, new RowMapper<FeeType>() {
+			@Override
+			public FeeType mapRow(ResultSet rs, int rowNum) throws SQLException {
+				FeeType fee = new FeeType();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setBoolean(1, true);
-					ps.setBoolean(2, true);
-				}
-			}, new RowMapper<FeeType>() {
-				@Override
-				public FeeType mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FeeType fee = new FeeType();
+				fee.setFeeTypeID(rs.getLong("FeeTypeID"));
+				fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				fee.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				fee.setActive(rs.getBoolean("Active"));
+				fee.setManualAdvice(rs.getBoolean("ManualAdvice"));
+				fee.setAdviseType(rs.getInt("AdviseType"));
+				fee.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
+				fee.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
+				fee.setAmortzReq(rs.getBoolean("AmortzReq"));
+				fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				fee.setTaxComponent(rs.getString("TaxComponent"));
+				fee.setRefundable(rs.getBoolean("Refundable"));
+				fee.setDueAccReq(rs.getBoolean("DueAccReq"));
+				fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
+				fee.setTdsReq(rs.getBoolean("TdsReq"));
 
-					fee.setFeeTypeID(rs.getLong("FeeTypeID"));
-					fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
-					fee.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-					fee.setActive(rs.getBoolean("Active"));
-					fee.setManualAdvice(rs.getBoolean("ManualAdvice"));
-					fee.setAdviseType(rs.getInt("AdviseType"));
-					fee.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
-					fee.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
-					fee.setAmortzReq(rs.getBoolean("AmortzReq"));
-					fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-					fee.setTaxComponent(rs.getString("TaxComponent"));
-					fee.setRefundable(rs.getBoolean("Refundable"));
-					fee.setDueAccReq(rs.getBoolean("DueAccReq"));
-					fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
-					fee.setTdsReq(rs.getBoolean("TdsReq"));
-
-					return fee;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return fee;
+			}
+		});
 	}
 
 	@Override
@@ -560,7 +529,6 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	@Override
 	public List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type) {
 		logger.debug(Literal.ENTERING);
-		List<FeeType> feeTypeList = new ArrayList<FeeType>();
 
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("feeTypeIds", feeTypeIds);
@@ -581,20 +549,13 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FeeType> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeType.class);
-		try {
-			feeTypeList = this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return feeTypeList;
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 
 	@Override
 	public List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String type) {
 		logger.debug(Literal.ENTERING);
-		List<FeeType> feeTypeList = new ArrayList<FeeType>();
 
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("feeTypeCodes", feeTypeCodes);
@@ -615,14 +576,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FeeType> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeType.class);
-		try {
-			feeTypeList = this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return feeTypeList;
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
-
 }

@@ -36,6 +36,7 @@ import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>UploadHeader model</b> class.<br>
@@ -120,10 +121,9 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 				return ed;
 			}, finReference, expenseTypeId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

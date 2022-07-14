@@ -51,6 +51,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
@@ -150,10 +151,9 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				return fea;
 			}, finID, amountType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -172,10 +172,9 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, "UPFRONT", finID,
 					RepayConstants.EXAMOUNTTYPE_EXCESS, receiptId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -346,10 +345,9 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		try {
 			return this.jdbcOperations.queryForObject(sql, rowMapper, receiptSeqID, payAgainstID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -582,9 +580,9 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, amountType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	private StringBuilder getExcessAmountSqlQuery() {
@@ -751,10 +749,9 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			}, object);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -768,27 +765,20 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		Object[] object = new Object[] { presentmentid, "I", "I" };
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-				FinExcessMovement fea = new FinExcessMovement();
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinExcessMovement fea = new FinExcessMovement();
 
-				fea.setExcessID(rs.getLong("ExcessID"));
-				fea.setReceiptID(JdbcUtil.getLong(rs.getObject("ReceiptID")));
-				fea.setMovementType(rs.getString("MovementType"));
-				fea.setTranType(rs.getString("TranType"));
-				fea.setAmount(rs.getBigDecimal("Amount"));
-				fea.setMovementFrom(rs.getString("MovementFrom"));
-				fea.setSchDate(rs.getTimestamp("SchDate"));
+			fea.setExcessID(rs.getLong("ExcessID"));
+			fea.setReceiptID(JdbcUtil.getLong(rs.getObject("ReceiptID")));
+			fea.setMovementType(rs.getString("MovementType"));
+			fea.setTranType(rs.getString("TranType"));
+			fea.setAmount(rs.getBigDecimal("Amount"));
+			fea.setMovementFrom(rs.getString("MovementFrom"));
+			fea.setSchDate(rs.getTimestamp("SchDate"));
 
-				return fea;
+			return fea;
 
-			}, object);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
-
+		}, object);
 	}
 
 	@Override
@@ -937,11 +927,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		String sql = "Select count(FinID) From FinExcessAmount Where FinID = ? and (BalanceAmt > 0 or ReservedAmt > 0)";
 
 		logger.debug(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
 	}
 }

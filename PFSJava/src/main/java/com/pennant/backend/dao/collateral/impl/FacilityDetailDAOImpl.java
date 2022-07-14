@@ -43,6 +43,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FacilityDetail model</b> class.<br>
@@ -93,10 +94,8 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 	/**
 	 * Fetch the Record Facility Detail details by key field
 	 * 
-	 * @param caf
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param caf  (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FacilityDetail
 	 */
 	@Override
@@ -129,23 +128,19 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 		RowMapper<FacilityDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FacilityDetail.class);
 
 		try {
-			facilityDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			facilityDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return facilityDetail;
 	}
 
 	/**
 	 * This method Deletes the Record from the FacilityDetails or FacilityDetails_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Facility Detail by key CAFReference
 	 * 
-	 * @param Facility
-	 *            Detail (facilityDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Facility Detail (facilityDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -177,10 +172,8 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 	 * 
 	 * save Facility Detail
 	 * 
-	 * @param Facility
-	 *            Detail (facilityDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Facility Detail (facilityDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -224,10 +217,8 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 	 * This method updates the Record FacilityDetails or FacilityDetails_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Facility Detail by key CAFReference and Version
 	 * 
-	 * @param Facility
-	 *            Detail (facilityDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Facility Detail (facilityDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -315,7 +306,7 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
