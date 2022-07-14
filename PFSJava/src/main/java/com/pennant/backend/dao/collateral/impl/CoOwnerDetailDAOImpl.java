@@ -203,10 +203,8 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 	@Override
 	public CoOwnerDetail getCoOwnerDetailByRef(String collateralReference, int coOwnerId, String type) {
 		logger.debug("Entering");
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
 
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select CoOwnerId, CollateralRef, BankCustomer, CustomerId, CoOwnerIDType,");
 		sql.append("CoOwnerIDNumber,CoOwnerCIFName, CoOwnerPercentage, MobileNo, EmailId,");
 		sql.append("CoOwnerProofName, Remarks, AddrHNbr, FlatNbr, AddrStreet, AddrLine1, ");
@@ -221,8 +219,7 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 		sql.append(" Where CollateralRef = :CollateralRef AND CoOwnerId = :CoOwnerId");
 		logger.debug("selectSql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
-
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralReference);
 		source.addValue("CoOwnerId", coOwnerId);
 
@@ -230,12 +227,9 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
-		} finally {
-			source = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return null;
 	}
 
 	/**
