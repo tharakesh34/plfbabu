@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * DAO methods implementation for the <b>documentDetails model</b> class.<br>
+ * DAO methods implementation for the <b>documentDetails model</b> class.
  */
 public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> implements DocumentDetailsDAO {
 	private static Logger logger = LogManager.getLogger(DocumentDetailsDAOImpl.class);
