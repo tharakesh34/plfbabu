@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPRelationDAOImpl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPRelationDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.customermasters.impl;
@@ -59,6 +41,8 @@ import com.pennant.backend.model.customermasters.CustomerPRelation;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerPRelation model</b> class.<br>
@@ -75,10 +59,8 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 	/**
 	 * Fetch the Record Customer P Relation details by key field
 	 * 
-	 * @param id
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (long)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerPRelation
 	 */
 	@Override
@@ -110,24 +92,19 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 		RowMapper<CustomerPRelation> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPRelation.class);
 
 		try {
-			customerPRelation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			customerPRelation = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return customerPRelation;
 	}
 
 	/**
 	 * This method Deletes the Record from the CustomersPRelations or CustomersPRelations_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Customer P Relation by key PRCustID
 	 * 
-	 * @param Customer
-	 *            P Relation (customerPRelation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer P Relation (customerPRelation)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -193,10 +170,8 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 	 * 
 	 * save Customer P Relation
 	 * 
-	 * @param Customer
-	 *            P Relation (customerPRelation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer P Relation (customerPRelation)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -239,10 +214,8 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 	 * This method updates the Record CustomersPRelations or CustomersPRelations_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Customer P Relation by key PRCustID and Version
 	 * 
-	 * @param Customer
-	 *            P Relation (customerPRelation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer P Relation (customerPRelation)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -291,21 +264,14 @@ public class CustomerPRelationDAOImpl extends BasicDao<CustomerPRelation> implem
 	 * @return
 	 */
 	public int getMaxSeqNo(long pRCustID) {
-		logger.debug("Entering");
-		int count = 0;
+		logger.debug(Literal.ENTERING);
 
-		try {
-			StringBuilder selectSql = new StringBuilder("select max(PRCustPRSNo)");
-			selectSql.append(" FROM CustomersPRelations_VIEW WHERE PRCustID =");
-			selectSql.append(pRCustID);
+		StringBuilder selectSql = new StringBuilder("select max(PRCustPRSNo)");
+		selectSql.append(" FROM CustomersPRelations_VIEW WHERE PRCustID =");
+		selectSql.append(pRCustID);
 
-			logger.debug("selectSql: " + selectSql.toString());
-			count = this.jdbcTemplate.getJdbcOperations().queryForObject(selectSql.toString(), Integer.class);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-		logger.debug("Leaving");
-		return count;
+		logger.debug(Literal.SQL + selectSql.toString());
+		return this.jdbcTemplate.getJdbcOperations().queryForObject(selectSql.toString(), Integer.class);
 	}
 
 	/**

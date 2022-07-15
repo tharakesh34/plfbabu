@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -165,22 +164,17 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 		logger.debug(Literal.ENTERING);
 
 		logger.trace(Literal.SQL + START_GRPID_RC);
-		try {
+		this.jdbcTemplate.getJdbcOperations().update(START_GRPID_RC, new PreparedStatementSetter() {
 
-			this.jdbcTemplate.getJdbcOperations().update(START_GRPID_RC, new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, EodConstants.PROGRESS_IN_PROCESS);
+				ps.setDate(2, JdbcUtil.getDate(DateUtility.getSysDate()));
+				ps.setLong(3, groupID);
+				ps.setInt(4, EodConstants.PROGRESS_WAIT);
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setInt(1, EodConstants.PROGRESS_IN_PROCESS);
-					ps.setDate(2, JdbcUtil.getDate(DateUtility.getSysDate()));
-					ps.setLong(3, groupID);
-					ps.setInt(4, EodConstants.PROGRESS_WAIT);
-
-				}
-			});
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-		}
+			}
+		});
 
 		logger.debug(Literal.LEAVING);
 		return 0;
@@ -194,7 +188,7 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 		sql.append(" from CustomerGroupQueuing");
 		sql.append(" Where Progress = ?");
 
-		logger.trace(Literal.SQL, sql);
+		logger.trace(Literal.SQL + sql);
 
 		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
 			ps.setInt(1, EodConstants.PROGRESS_WAIT);
@@ -226,17 +220,7 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 		sql.append(" where EodDate = :EodDate");
 
 		logger.trace(Literal.SQL + sql.toString());
-
-		int count = 0;
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (Exception dae) {
-			count = 0;
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return count;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	/**

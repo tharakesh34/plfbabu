@@ -247,19 +247,12 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		sql.append(" Where custid in (:custid) and foir = :foir");
 
 		logger.trace(Literal.SQL + sql.toString());
-		BigDecimal emiSum = BigDecimal.ZERO;
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custids);
 		source.addValue("foir", 1);
 
-		try {
-			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			return emiSum;
-		}
-		logger.debug(Literal.LEAVING);
-		return emiSum;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
 	}
 
 	@Override
@@ -297,16 +290,10 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		StringBuilder sql = new StringBuilder();
 		sql.append("select coalesce(max(linkid), 0) from link_cust_liabilities where custid=:custid");
 
-		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custId);
-		try {
-			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		return linkid;
+		return jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
 	}
 
 	@Override
@@ -398,43 +385,35 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		sql.append(" Where LiabilityId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index, custId);
+			}
+		}, new RowMapper<ExtLiabilityPaymentdetails>() {
+			@Override
+			public ExtLiabilityPaymentdetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+				ExtLiabilityPaymentdetails epd = new ExtLiabilityPaymentdetails();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index, custId);
-				}
-			}, new RowMapper<ExtLiabilityPaymentdetails>() {
-				@Override
-				public ExtLiabilityPaymentdetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ExtLiabilityPaymentdetails epd = new ExtLiabilityPaymentdetails();
-
-					epd.setId(rs.getLong("Id"));
-					epd.setLiabilityId(rs.getLong("LiabilityId"));
-					epd.setEmiType(rs.getString("EmiType"));
-					epd.setEmiClearance(rs.getString("EmiClearance"));
-					epd.setVersion(rs.getInt("Version"));
-					epd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					epd.setLastMntBy(rs.getLong("LastMntBy"));
-					epd.setRecordStatus(rs.getString("RecordStatus"));
-					epd.setRoleCode(rs.getString("RoleCode"));
-					epd.setNextRoleCode(rs.getString("NextRoleCode"));
-					epd.setTaskId(rs.getString("TaskId"));
-					epd.setNextTaskId(rs.getString("NextTaskId"));
-					epd.setRecordType(rs.getString("RecordType"));
-					epd.setWorkflowId(rs.getLong("WorkflowId"));
-					epd.setEmiClearedDay(rs.getInt("EmiClearedDay"));
-					return epd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				epd.setId(rs.getLong("Id"));
+				epd.setLiabilityId(rs.getLong("LiabilityId"));
+				epd.setEmiType(rs.getString("EmiType"));
+				epd.setEmiClearance(rs.getString("EmiClearance"));
+				epd.setVersion(rs.getInt("Version"));
+				epd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				epd.setLastMntBy(rs.getLong("LastMntBy"));
+				epd.setRecordStatus(rs.getString("RecordStatus"));
+				epd.setRoleCode(rs.getString("RoleCode"));
+				epd.setNextRoleCode(rs.getString("NextRoleCode"));
+				epd.setTaskId(rs.getString("TaskId"));
+				epd.setNextTaskId(rs.getString("NextTaskId"));
+				epd.setRecordType(rs.getString("RecordType"));
+				epd.setWorkflowId(rs.getLong("WorkflowId"));
+				epd.setEmiClearedDay(rs.getInt("EmiClearedDay"));
+				return epd;
+			}
+		});
 	}
 
 	@Override
@@ -500,19 +479,12 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		sql.append(" from FinPftdetails Where custid in (:custid) ");
 
 		logger.trace(Literal.SQL + sql.toString());
-		BigDecimal emiSum = BigDecimal.ZERO;
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custids);
 		source.addValue("foir", 1);
 
-		try {
-			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			return emiSum;
-		}
-		logger.debug(Literal.LEAVING);
-		return emiSum;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
 	}
 
 	@Override
@@ -531,18 +503,11 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		sql.append(" Where custid in (:custId)) ");
 
 		logger.trace(Literal.SQL + sql.toString());
-		BigDecimal sumCreditAmt = BigDecimal.ZERO;
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custId", custId);
 
-		try {
-			sumCreditAmt = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			return sumCreditAmt;
-		}
-		logger.debug(Literal.LEAVING);
-		return sumCreditAmt;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
 	}
 
 	@Override

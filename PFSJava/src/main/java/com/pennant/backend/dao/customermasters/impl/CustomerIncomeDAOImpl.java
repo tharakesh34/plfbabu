@@ -270,17 +270,10 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		StringBuilder sql = new StringBuilder();
 		sql.append("select coalesce(max(linkid), 0) from link_cust_incomes where custid=:custid");
 
-		long linkid = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custId);
-		try {
-			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		return linkid;
+		return jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
 	}
 
 	@Override

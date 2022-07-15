@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerGroupDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerGroupDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * * Modified
+ * Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.customermasters.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +39,7 @@ import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerGroup model</b> class.<br>
@@ -72,10 +55,8 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 	/**
 	 * Fetch the Record Customer Groups details by key field
 	 * 
-	 * @param id
-	 *            (integer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (integer)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerGroup
 	 */
 	@Override
@@ -100,13 +81,11 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 		RowMapper<CustomerGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGroup.class);
 
 		try {
-			customerGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerGroup = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerGroup;
 	}
 
 	@Override
@@ -131,23 +110,19 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 		RowMapper<CustomerGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGroup.class);
 
 		try {
-			customerGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			customerGroup = null;
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerGroup;
 	}
 
 	/**
 	 * This method Deletes the Record from the CustomerGroups or CustomerGroups_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Customer Groups by key CustGrpID
 	 * 
-	 * @param Customer
-	 *            Groups (customerGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Groups (customerGroup)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -182,10 +157,8 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 	 *
 	 * save Customer Groups
 	 * 
-	 * @param Customer
-	 *            Groups (customerGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Groups (customerGroup)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -221,10 +194,8 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 	 * This method updates the Record CustomerGroups or CustomerGroups_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Customer Groups by key CustGrpID and Version
 	 * 
-	 * @param Customer
-	 *            Groups (customerGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Groups (customerGroup)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
