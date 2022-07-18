@@ -16,6 +16,7 @@ import com.pennant.backend.model.collateral.FinCollateralMark;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CollateralMarkDAOImpl extends SequenceDao<FinCollateralMark> implements CollateralMarkDAO {
 	private static Logger logger = LogManager.getLogger(CollateralMarkDAOImpl.class);
@@ -74,10 +75,9 @@ public class CollateralMarkDAOImpl extends SequenceDao<FinCollateralMark> implem
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, depositId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -92,10 +92,9 @@ public class CollateralMarkDAOImpl extends SequenceDao<FinCollateralMark> implem
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, markStatus, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

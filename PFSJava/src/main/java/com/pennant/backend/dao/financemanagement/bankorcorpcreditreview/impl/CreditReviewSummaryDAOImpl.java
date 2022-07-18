@@ -3,7 +3,6 @@ package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.impl;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +29,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSummary> implements CreditReviewSummaryDAO {
 	private static Logger logger = LogManager.getLogger(CreditReviewSummaryDAOImpl.class);
@@ -73,10 +73,8 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 	/**
 	 * Fetch the Record CreditReviewSummary by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinCreditReviewSummary
 	 */
 	@Override
@@ -102,22 +100,18 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 				.newInstance(FinCreditReviewSummary.class);
 
 		try {
-			creditReviewSummary = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			creditReviewSummary = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return creditReviewSummary;
 	}
 
 	/**
 	 * Fetch the Record FinCreditReviewSummary details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinCreditReviewSummary
 	 */
 	@Override
@@ -153,10 +147,8 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 	 * deleted then throws DataAccessException with error 41003. delete FinCreditReviewSummary by key detailid and
 	 * summary id
 	 * 
-	 * @param FinCreditReviewSummary
-	 *            (creditReviewSummary)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinCreditReviewSummary (creditReviewSummary)
+	 * @param type                   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -211,10 +203,8 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 	 * 
 	 * save FinCreditReviewSummary Entry
 	 * 
-	 * @param FinCreditReviewSummary
-	 *            Entry (creditReviewSummary)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinCreditReviewSummary Entry (creditReviewSummary)
+	 * @param type                   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -248,10 +238,8 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 	 * This method updates the Record FinCreditReviewSummary or FinCreditReviewSummary. if Record not updated then
 	 * throws DataAccessException with error 41004. update FinCreditReviewSummary Entry by key DetailId and Version
 	 * 
-	 * @param FinCreditReviewSummary
-	 *            (creditReviewSummary)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinCreditReviewSummary (creditReviewSummary)
+	 * @param type                   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -286,7 +274,7 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		Map<String, Object> namedParameterMap = new HashMap<String, Object>();
 		namedParameterMap.put("CustomerId", customerId);
 		namedParameterMap.put("Audityear", year);
-		List<FinCreditReviewSummary> listOfCreditReviewSummary = null;
+
 		StringBuilder selectSql = new StringBuilder(
 				" select T1.SummaryId,T1.DetailId,T1.SubCategoryCode,T1.ItemValue,");
 		selectSql.append(
@@ -305,13 +293,7 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		RowMapper<FinCreditReviewSummary> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewSummary.class);
 		logger.debug("Leaving");
-		try {
-			listOfCreditReviewSummary = this.jdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			listOfCreditReviewSummary = null;
-		}
-		return listOfCreditReviewSummary;
+		return this.jdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);
 	}
 
 	/**
@@ -344,13 +326,11 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 				.newInstance(FinCreditReviewDetails.class);
 
 		try {
-			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			creditReviewDetails = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return creditReviewDetails;
 	}
 
 	@Override
@@ -369,20 +349,11 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 
 		Map<String, Object> namedParameterMap = new HashMap<String, Object>();
 		namedParameterMap.put("Customerid", id);
-		List<FinCreditReviewSummary> listOfCreditReviewSummary = null;
 
 		RowMapper<FinCreditReviewSummary> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewSummary.class);
 
-		try {
-			listOfCreditReviewSummary = this.jdbcTemplate.query(sql.toString(), namedParameterMap, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			listOfCreditReviewSummary = null;
-		}
-
-		logger.debug("Leaving");
-		return listOfCreditReviewSummary;
+		return this.jdbcTemplate.query(sql.toString(), namedParameterMap, typeRowMapper);
 	}
 
 	/**
@@ -397,7 +368,7 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		namedParameterMap.put("Customerid", id);
 		namedParameterMap.put("Audityear", year);
 		namedParameterMap.put("Category", category);
-		List<FinCreditReviewSummary> listOfCreditReviewSummary = null;
+
 		StringBuilder selectSql = new StringBuilder(
 				" select T1.SummaryId,T1.DetailId,T1.SubCategoryCode,T1.ItemValue, ");
 		selectSql.append(
@@ -423,13 +394,7 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		RowMapper<FinCreditReviewSummary> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewSummary.class);
 		logger.debug("Leaving");
-		try {
-			listOfCreditReviewSummary = this.jdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			listOfCreditReviewSummary = null;
-		}
-		return listOfCreditReviewSummary;
+		return this.jdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);
 	}
 
 	/**
@@ -446,7 +411,6 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		namedParameterMap.put("Category", category);
 		namedParameterMap.put("AuditPeriod", auditPeriod);
 
-		List<FinCreditReviewSummary> listOfCreditReviewSummary = null;
 		StringBuilder selectSql = new StringBuilder(
 				" select T1.SummaryId,T1.DetailId,T1.SubCategoryCode,T1.ItemValue, ");
 		selectSql.append(
@@ -488,13 +452,8 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		RowMapper<FinCreditReviewSummary> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewSummary.class);
 		logger.debug("Leaving");
-		try {
-			listOfCreditReviewSummary = this.jdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			listOfCreditReviewSummary = null;
-		}
-		return listOfCreditReviewSummary;
+
+		return this.jdbcTemplate.query(selectSql.toString(), namedParameterMap, typeRowMapper);
 	}
 
 	/**
@@ -509,35 +468,25 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		logger.debug("selectSql: " + selectSql.toString());
 		BeanPropertySqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
-		try {
-			currency = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper).get(0);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
+
+		currency = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper).get(0);
+
 		logger.debug("Leaving");
 		return currency.getCcySpotRate();
 	}
 
 	@Override
 	public List<String> getAuditYearsbyCustdId(long custId) {
-		List<String> auditYrList = new ArrayList<>();
 		MapSqlParameterSource parmSrc = new MapSqlParameterSource();
 		parmSrc.addValue("custId", custId);
 		StringBuffer selectSql = new StringBuffer(
 				"Select audityear from FinCreditReviewDetails_View where customerId =:custId");
-		try {
-			auditYrList = this.jdbcTemplate.query(selectSql.toString(), parmSrc, new RowMapper<String>() {
-				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getString(1);
-				}
-			});
 
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
-
-		return auditYrList;
-
+		return this.jdbcTemplate.query(selectSql.toString(), parmSrc, new RowMapper<String>() {
+			public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getString(1);
+			}
+		});
 	}
 
 	@Override
@@ -554,18 +503,15 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 		source.addValue("customerId", customerId);
 		source.addValue("auditYear", auditYear);
 
-		try {
-			this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {
+		this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {
 
-				@Override
-				public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
-					map.put(rs.getString("SubcategoryCode"), rs.getBigDecimal("ItemValue"));
-					return map;
-				}
-			});
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
+			@Override
+			public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+				map.put(rs.getString("SubcategoryCode"), rs.getBigDecimal("ItemValue"));
+				return map;
+			}
+		});
+
 		logger.debug(Literal.LEAVING);
 		return map;
 	}

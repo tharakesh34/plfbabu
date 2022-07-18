@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CollateralSetup model</b> class.<br>
@@ -165,16 +166,10 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		String sql = "UPDATE  SeqCollateralSetup  SET Seqno = ? Where Seqno = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.update(sql, ps -> {
-				ps.setLong(1, newReference);
-				ps.setLong(2, oldReference);
-			}) > 0;
-		} catch (Exception e) {
-			//
-		}
-		return false;
+		return this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, newReference);
+			ps.setLong(2, oldReference);
+		}) > 0;
 	}
 
 	@Override
@@ -205,10 +200,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -223,10 +217,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		try {
 			return this.jdbcOperations.queryForObject(selectSql.toString(), rowMapper, collateralRef, depositorId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -306,9 +299,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collateralRef);
 		} catch (EmptyResultDataAccessException dae) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		return 0;
 	}
 
 	@Override
@@ -320,14 +313,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(" Where CollateralRef = ? and Status is null and FinReference is null");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collatrlRef) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collatrlRef) > 0;
 	}
 
 	@Override
@@ -339,14 +325,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(" Where CollateralRef = ? and Status is null");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collateralRef);
-		} catch (Exception e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collateralRef);
 	}
 
 	@Override
@@ -489,12 +468,12 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(" CollateralRef, CollateralType, CollateralCcy, CollateralValue");
 		sql.append(", BankValuation, MultiLoanAssignment, ExpiryDate");
 		sql.append(" From CollateralSetup");
-		
+
 		return sql;
 	}
 
 	private class CollateralSetupRM implements RowMapper<CollateralSetup> {
-		
+
 		@Override
 		public CollateralSetup mapRow(ResultSet rs, int rowNum) throws SQLException {
 			CollateralSetup cs = new CollateralSetup();

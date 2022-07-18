@@ -738,10 +738,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, cifId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	private StringBuilder selectCustomerBasicInfo(String type) {
@@ -1367,10 +1366,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public boolean isAvailableCustomer(final long id, String type) {
@@ -2020,10 +2018,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				return c;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2500,11 +2497,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override

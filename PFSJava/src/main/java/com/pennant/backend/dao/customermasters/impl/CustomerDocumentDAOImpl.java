@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -70,10 +71,9 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id, docCategory);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -339,10 +339,9 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 				return dd;
 			}, custId, docType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -482,14 +481,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		String sql = "Select count(DocTypeCode) From BMTDocumentTypes Where DocTypeCode = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, docType);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, docType);
 	}
 
 	@Override
@@ -501,10 +493,9 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql, Integer.class, custId, docType);
 		} catch (EmptyResultDataAccessException dae) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return 0;
 	}
 
 	/* FIXME :: move to country DAO */
@@ -513,13 +504,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		String sql = "Select count(CountryCode) From BmtCountries Where CountryCode = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, countryCode);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, countryCode);
 	}
 
 	@Override
@@ -546,16 +531,10 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		sql.append(tableType.getSuffix());
 		sql.append(" Set DocURI = ? Where DocRefId = ?");
 
-		try {
-			return this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setString(1, docURI);
-				ps.setLong(2, docrefid);
-			});
-		} catch (Exception e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, docURI);
+			ps.setLong(2, docrefid);
+		});
 	}
 
 	@Override

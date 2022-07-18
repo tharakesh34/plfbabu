@@ -51,6 +51,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
@@ -78,10 +79,9 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id, module);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -425,15 +425,8 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		sql.append(" Where KeyReference = ? and CovenantTypeId = ? and Module = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, covenant.getKeyReference(),
-					covenant.getCovenantTypeId(), covenant.getModule()) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, covenant.getKeyReference(),
+				covenant.getCovenantTypeId(), covenant.getModule()) > 0;
 	}
 
 	@Override
@@ -527,8 +520,6 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, documentId));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
-		} catch (Exception e) {
-			//
 		}
 	}
 

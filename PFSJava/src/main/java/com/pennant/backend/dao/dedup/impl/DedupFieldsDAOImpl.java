@@ -239,7 +239,7 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 				+ queryModule + "'";
 		RowMapper<BuilderTable> typeRowMapper = BeanPropertyRowMapper.newInstance(BuilderTable.class);
 
-		logger.debug(Literal.SQL + selectListSql.toString());
+		logger.debug(Literal.SQL + selectListSql);
 		return this.jdbcTemplate.getJdbcOperations().query(selectListSql, typeRowMapper);
 	}
 }
