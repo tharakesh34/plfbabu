@@ -1,11 +1,9 @@
 package com.pennant.backend.dao.limits.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -29,7 +27,6 @@ public class ClosedFacilityDAOImpl extends BasicDao<ClosedFacilityDetail> implem
 	public List<ClosedFacilityDetail> fetchClosedFacilityDetails() {
 		logger.debug("Entering");
 
-		List<ClosedFacilityDetail> list = new ArrayList<ClosedFacilityDetail>();
 		ClosedFacilityDetail closedFacilityDetail = new ClosedFacilityDetail();
 
 		StringBuilder selectSql = new StringBuilder();
@@ -41,14 +38,7 @@ public class ClosedFacilityDAOImpl extends BasicDao<ClosedFacilityDetail> implem
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(closedFacilityDetail);
 
-		try {
-			list = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, ClosedFacilityDetail.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			list = null;
-		}
-		logger.debug("Leaving");
-		return list;
+		return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, ClosedFacilityDetail.class);
 	}
 
 	@Override
@@ -62,11 +52,6 @@ public class ClosedFacilityDAOImpl extends BasicDao<ClosedFacilityDetail> implem
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(proClFacilityList.toArray());
 
 		logger.debug("Leaving");
-		try {
-			this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			throw e;
-		}
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 	}
 }

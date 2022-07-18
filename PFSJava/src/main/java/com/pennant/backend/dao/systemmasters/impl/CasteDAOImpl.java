@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CasteDAOImpl.java                                                	* 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES          										*
- *                                                                  						*
- * Creation Date    	:  20-01-2018    													*
- *                                                                  						*
- * Modified Date    	:  20-01-2018    													*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CasteDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-01-2018 * * Modified Date :
+ * 20-01-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-01-2018       Pennant	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-01-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.systemmasters.impl;
@@ -60,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -76,10 +59,8 @@ public class CasteDAOImpl extends SequenceDao<Caste> implements CasteDAO {
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Academic
 	 */
 	@Override
@@ -102,14 +83,11 @@ public class CasteDAOImpl extends SequenceDao<Caste> implements CasteDAO {
 		RowMapper<Caste> typeRowMapper = BeanPropertyRowMapper.newInstance(Caste.class);
 
 		try {
-			caste = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			caste = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return caste;
 	}
 
 	@Override
@@ -257,17 +235,7 @@ public class CasteDAOImpl extends SequenceDao<Caste> implements CasteDAO {
 		selectSql.append(" WHERE ");
 		selectSql.append("casteCode = :casteCode");
 
-		logger.debug("Sql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-
-		return recordCount;
+		logger.debug(Literal.SQL + selectSql.toString());
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
-
 }

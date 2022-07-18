@@ -43,6 +43,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerAddres model</b> class.<br>
@@ -379,16 +380,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		selectSql.append("AddrTypeCode= :AddrTypeCode");
 
 		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -411,16 +403,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		selectSql.append("CustAddrType= :CustAddrType");
 
 		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -461,16 +444,13 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		selectSql.append(" Where pinCodeId = :pinCodeId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		int rcdCount = 0;
-		try {
-			rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			rcdCount = 0;
-		}
 
-		logger.debug("Leaving");
-		return rcdCount > 0 ? true : false;
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
 	}
 
 	/**

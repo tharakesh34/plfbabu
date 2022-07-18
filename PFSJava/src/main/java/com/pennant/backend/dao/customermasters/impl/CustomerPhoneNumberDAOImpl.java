@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPhoneNumberDAOImpl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPhoneNumberDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.List;
@@ -76,10 +58,8 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 	/**
 	 * Fetch the Record Customer PhoneNumbers details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerPhoneNumber
 	 */
 	@Override
@@ -121,10 +101,8 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 	 * This method Deletes the Record from the CustomerPhoneNumbers or CustomerPhoneNumbers_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Customer PhoneNumbers by key PhoneCustID
 	 * 
-	 * @param Customer
-	 *            PhoneNumbers (customerPhoneNumber)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer PhoneNumbers (customerPhoneNumber)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -159,10 +137,8 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 	 *
 	 * save Customer PhoneNumbers
 	 * 
-	 * @param Customer
-	 *            PhoneNumbers (customerPhoneNumber)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer PhoneNumbers (customerPhoneNumber)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -195,10 +171,8 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 	 * This method updates the Record CustomerPhoneNumbers or CustomerPhoneNumbers_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update Customer PhoneNumbers by key PhoneCustID and Version
 	 * 
-	 * @param Customer
-	 *            PhoneNumbers (customerPhoneNumber)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer PhoneNumbers (customerPhoneNumber)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -319,10 +293,8 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 	 * This method Deletes the Record from the CustomerPhoneNumbers or CustomerPhoneNumbers_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Customer PhoneNumbers by key PhoneCustID
 	 * 
-	 * @param Customer
-	 *            PhoneNumbers (customerPhoneNumber)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer PhoneNumbers (customerPhoneNumber)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -426,17 +398,8 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		selectSql.append(" WHERE ");
 		selectSql.append("PhoneTypeCode= :PhoneTypeCode");
 
-		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
-
-		return recordCount;
+		logger.debug(Literal.SQL + selectSql.toString());
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -460,13 +423,7 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		mapSqlParameterSource.addValue("PhoneNumber", phoneNumber);
 
 		RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
 
+		return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
+	}
 }

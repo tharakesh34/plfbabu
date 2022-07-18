@@ -13,6 +13,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements CashBackDetailDAO {
 
@@ -98,10 +99,9 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 				return cbd;
 			}, finID, type, 0);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

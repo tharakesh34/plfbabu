@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified
+ * Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -61,6 +43,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -78,10 +61,8 @@ public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements Custo
 	/**
 	 * Fetch the Record Customer Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerType
 	 */
 	@Override
@@ -103,23 +84,19 @@ public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements Custo
 		RowMapper<CustomerType> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerType.class);
 
 		try {
-			customerType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			customerType = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerType;
 	}
 
 	/**
 	 * This method Deletes the Record from the RMTCustTypes or RMTCustTypes_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Customer Types by key CustTypeCode
 	 * 
-	 * @param Customer
-	 *            Types (customerType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Types (customerType)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -154,10 +131,8 @@ public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements Custo
 	 * 
 	 * save Customer Types
 	 * 
-	 * @param Customer
-	 *            Types (customerType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Types (customerType)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -191,10 +166,8 @@ public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements Custo
 	 * This method updates the Record RMTCustTypes or RMTCustTypes_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Customer Types by key CustTypeCode and Version
 	 * 
-	 * @param Customer
-	 *            Types (customerType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Types (customerType)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -247,15 +220,7 @@ public class CustomerTypeDAOImpl extends BasicDao<CustomerType> implements Custo
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			recordCount = 0;
-		}
-		logger.debug(Literal.LEAVING);
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override

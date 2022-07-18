@@ -322,14 +322,11 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
 		RowMapper<CustomerGST> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGST.class);
 		try {
-			customerGST = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerGST = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerGST;
-
 	}
 
 	@Override
@@ -347,13 +344,11 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
 		RowMapper<CustomerGST> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGST.class);
 		try {
-			customerGST = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerGST = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerGST;
 	}
 
 	@Override
@@ -374,13 +369,11 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
 		RowMapper<CustomerGST> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGST.class);
 		try {
-			customerGST = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerGST = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerGST;
 	}
 
 	@Override

@@ -373,14 +373,7 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 
 		RowMapper<CustomerEMail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
+		return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 
 	@Override

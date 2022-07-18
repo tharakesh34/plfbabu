@@ -18,6 +18,7 @@ import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> implements CollateralThirdPartyDAO {
 	private static Logger logger = LogManager.getLogger(CollateralThirdPartyDAOImpl.class);
@@ -29,10 +30,8 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 	@Override
 	public CollateralThirdParty getCollThirdPartyDetails(String collateralRef, long customerId, String type) {
 		logger.debug("Entering");
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
 
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select CollateralRef, CustomerId, Version, LastMntBy, LastMntOn, ");
 		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, ");
 		sql.append(" WorkflowId From CollateralThirdParty");
@@ -40,7 +39,7 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 		sql.append(" Where CollateralRef = :CollateralRef AND CustomerId = :CustomerId");
 		logger.debug("selectSql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 		source.addValue("CustomerId", customerId);
 
@@ -48,12 +47,9 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception :", e);
-		} finally {
-			source = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return null;
 	}
 
 	@Override

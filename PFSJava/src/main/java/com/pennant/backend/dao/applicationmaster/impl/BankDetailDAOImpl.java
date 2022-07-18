@@ -115,10 +115,9 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 				return bd;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -327,9 +326,8 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		try {
 			return jdbcOperations.queryForObject(sql, String.class, bankCode, 1) != null;
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
 	}
 }
