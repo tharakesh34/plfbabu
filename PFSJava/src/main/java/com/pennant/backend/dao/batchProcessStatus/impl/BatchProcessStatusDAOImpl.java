@@ -5,12 +5,14 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.batchProcessStatus.BatchProcessStatusDAO;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements BatchProcessStatusDAO {
 
@@ -29,10 +31,10 @@ public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements Ba
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), parmSource, String.class);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
