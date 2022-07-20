@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  BatchMonitor.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : BatchMonitor.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.endofday.main;
@@ -109,8 +100,7 @@ public class BatchMonitor {
 	 * This Method will return all the StepExecutions of latest jobInstance and prepare the Time taken for
 	 * (completed/failed/running) Job
 	 * 
-	 * @param JobInstance
-	 *            (jobInstance)
+	 * @param JobInstance (jobInstance)
 	 * @return List<StepExecution>(stepExecutions)
 	 */
 	public static synchronized List<StepExecution> getStepExecution(JobInstance jobInstance) {
@@ -187,7 +177,6 @@ public class BatchMonitor {
 		Statement statement = null;
 		ResultSet resultSet = null;
 
-		//if (jobExecutionId == 0) {
 		try {
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			statement = connection.createStatement();
@@ -214,7 +203,6 @@ public class BatchMonitor {
 			}
 		}
 
-		//	}
 		return jobExecutionId;
 	}
 
@@ -233,19 +221,6 @@ public class BatchMonitor {
 				connection = DataSourceUtils.doGetConnection(dataSource);
 				statement = connection.createStatement();
 				StringBuilder query = new StringBuilder();
-
-				/*
-				 * if (App.DATABASE == Database.ORACLE) {
-				 * query.append("  SELECT CEIL(AVG((END_TIME-START_TIME)*24*60*60*1000))  avg FROM"); query.append(
-				 * "  (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID");
-				 * query.append("  FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED'))) T");
-				 * 
-				 * } else {
-				 * query.append(" SELECT AVG(DATE_PART ('millisecond', START_TIME::timestamp - END_TIME::timestamp))");
-				 * query.append(
-				 * "avg FROM (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID ");
-				 * query.append(" FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED')))  T"); }
-				 */
 
 				switch (App.DATABASE) {
 
