@@ -1736,6 +1736,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
 			if (!fm.isSanBsdSchdle()) {
+				schedules = scheduleData.getFinanceScheduleDetails();
 				int size = schedules.size();
 				for (int i = size - 1; i >= 0; i--) {
 					FinanceScheduleDetail curSchd = schedules.get(i);
