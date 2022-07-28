@@ -655,6 +655,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				}
 
 				finMain = (FinanceMain) calBox.getAttribute("finMain");
+				int format = CurrencyUtil.getFormat(finMain.getFinCcy());
 				String numberOnly = topup_label.replaceAll("[^0-9]", "");
 				int topUpCount = Integer.valueOf(numberOnly);
 				Checkbox checkbox = (Checkbox) listBoxPricingDetail.getItems().get(topUpCount)
@@ -667,6 +668,18 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 					BigDecimal amt = getBigDecimalValue(calBox);
 					finMain.setFinAssetValue(amt);
+
+					try {
+						if (finMain.getFinAssetValue() != null && finMain.getFinAmount() != null
+								&& finMain.getFinAssetValue().compareTo(finMain.getFinAmount()) < 0) {
+							throw new WrongValueException(calBox, Labels.getLabel("NUMBER_MINVALUE_EQ", new String[] {
+									PennantApplicationUtil.amountFormate(finMain.getFinAssetValue(), format),
+									String.valueOf(Labels.getLabel("label_FinanceMainDialog_FinAmount.value")) }));
+						}
+					} catch (WrongValueException e) {
+						parenttab.setSelected(true);
+						throw e;
+					}
 
 					Decimalbox rateBox = (Decimalbox) listitem.getFellowIfAny("ROI_" + topup_label);
 					Clients.clearWrongValue(rateBox);
