@@ -3367,6 +3367,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 				finRefList.add(finMain.getFinID());
 			}
+			if (finRefList.isEmpty()) {
+				MessageUtil.showError("No Linked Loans are Available for this Loan Reference");
+				return;
+			}
+
 			finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
 		}
 
