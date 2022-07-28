@@ -177,6 +177,8 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 					|| StringUtils.equals(newfindev.getApprovalStatus(), PennantConstants.List_Select))) {
 				continue;
 			}
+
+			newfindev.setFinID(finID);
 			// ### 01-05-2018 - End
 			FinanceDeviations oldFindev = getFinanceDeviationByID(oldList, newfindev);
 			if (oldFindev == null) {
@@ -224,6 +226,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				continue;
 			}
 
+			financeDeviations.setFinID(finID);
 			if (!(StringUtils.isEmpty(financeDeviations.getApprovalStatus())
 					|| StringUtils.equals(financeDeviations.getApprovalStatus(), PennantConstants.List_Select))) {
 				deviationDetailsDAO.save(financeDeviations, "");

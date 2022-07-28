@@ -26981,4 +26981,14 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#195402" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+			  UPDATE MASTER_DEF SET KEY_TYPE ='AADHAAR' WHERE  MASTER_TYPE='DOC_TYPE' AND KEY_CODE  = '01';
+              UPDATE MASTER_DEF SET KEY_TYPE ='PAN' WHERE MASTER_TYPE='DOC_TYPE' AND  KEY_CODE = '03';
+              UPDATE MASTER_DEF SET KEY_TYPE ='PASSPORT' WHERE MASTER_TYPE='DOC_TYPE' AND  KEY_CODE = '02';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

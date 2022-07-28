@@ -194,6 +194,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	int ccyEditField = 0;
 	String finCcy = "";
 	private String cif[] = null;
+	private String coapplicantCif[] = null;
 	Customer customer = null;
 	private int baseCcyDecFormat = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 	private LovFieldDetail lovFieldDetail = PennantAppUtil.getcoApplicants();
@@ -285,7 +286,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				this.cif = (String[]) arguments.get("filter");
 			}
 			if (arguments.containsKey("coAppFilter")) {
-				this.cif = (String[]) arguments.get("coAppFilter");
+				this.coapplicantCif = (String[]) arguments.get("coAppFilter");
 			}
 			if (arguments.containsKey("finJointAccountCtrl")) {
 				setFinanceMainDialogCtrl((com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl) arguments
@@ -578,6 +579,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		List<Filter> filterList = new ArrayList<>();
 		for (int i = 0; i < this.cif.length; i++) {
 			filterList.add(new Filter("CustCIF", this.cif[i], Filter.OP_NOT_EQUAL));
+		}
+
+		for (int i = 0; i < this.coapplicantCif.length; i++) {
+			filterList.add(new Filter("CustCIF", this.coapplicantCif[i], Filter.OP_NOT_EQUAL));
 		}
 
 		Map<String, Object> map = getDefaultArguments();
