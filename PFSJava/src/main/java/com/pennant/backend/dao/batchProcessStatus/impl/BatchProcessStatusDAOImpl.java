@@ -6,31 +6,25 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.batchProcessStatus.BatchProcessStatusDAO;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 
 public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements BatchProcessStatusDAO {
-
 	private static Logger logger = LogManager.getLogger(BatchProcessStatusDAOImpl.class);
 
 	@Override
 	public String getBatchStatus(String batchName) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource parmSource = new MapSqlParameterSource();
+		String sql = "Select Status from Batch_Process_Status Where Name = ?";
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select Status from Batch_Process_Status");
-		sql.append(" Where BatchName =:BatchName");
-
-		parmSource.addValue("BatchName", batchName);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parmSource, String.class);
+			return this.jdbcOperations.queryForObject(sql, String.class, batchName);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -39,18 +33,18 @@ public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements Ba
 
 	@Override
 	public void saveBatchStatus(String batchName, Date startTime, String status) {
-		MapSqlParameterSource parmSource = new MapSqlParameterSource();
+		String sql = "Insert Into Batch_Process_Status (Name, Status, StartTime) Values(?, ?, ?)";
 
-		StringBuilder sql = new StringBuilder("Insert Into Batch_Process_Status");
-		sql.append(" (BatchName, Status, StartTime)");
-		sql.append(" Values(:BatchName, :Status, :StartTime)");
-
-		parmSource.addValue("BatchName", batchName);
-		parmSource.addValue("Status", status);
-		parmSource.addValue("StartTime", startTime);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			jdbcTemplate.update(sql.toString(), parmSource);
+			jdbcOperations.update(sql, ps -> {
+				int index = 1;
+
+				ps.setString(index++, batchName);
+				ps.setString(index++, status);
+				ps.setDate(index++, JdbcUtil.getDate(startTime));
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -58,16 +52,15 @@ public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements Ba
 
 	@Override
 	public void updateBatchStatus(String batchName, Date endTime, String status) {
-		MapSqlParameterSource parmSource = new MapSqlParameterSource();
+		String sql = "Update Batch_Process_Status Set Status = ?, EndTime = ? Where Name = ?";
 
-		StringBuilder sql = new StringBuilder("Update  Batch_Process_Status");
-		sql.append("  set Status = :Status, EndTime = :EndTime ");
-		sql.append(" where BatchName = :BatchName ");
+		jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		parmSource.addValue("BatchName", batchName);
-		parmSource.addValue("Status", status);
-		parmSource.addValue("EndTime", endTime);
+			ps.setString(index++, status);
+			ps.setDate(index++, JdbcUtil.getDate(endTime));
+			ps.setString(index++, batchName);
+		});
 
-		jdbcTemplate.update(sql.toString(), parmSource);
 	}
 }
