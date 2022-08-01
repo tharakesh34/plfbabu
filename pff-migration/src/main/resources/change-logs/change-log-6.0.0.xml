@@ -26991,4 +26991,22 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="DE#3831.1" author="praveena.v">
+		<sql>
+			<![CDATA[
+				Update RMTCountryVsProvince SET TAXEXEMPTED = 0 WHERE TAXEXEMPTED IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#3831.2" author="praveena.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TAXEXEMPTED" tableName="RMTCountryVsProvince" defaultValue="0" />
+	</changeSet>
+	<changeSet id="DE#3831.2" author="praveena.v" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE RMTCountryVsProvince ADD CONSTRAINT DF_RMTCVSP_TAXE DEFAULT 0 FOR TAXEXEMPTED;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
