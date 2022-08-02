@@ -463,6 +463,8 @@ public class ScheduleCalculator {
 			BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule) {
 		logger.debug(Literal.ENTERING);
 
+		schdData.setModuleDefiner(method);
+
 		if (PROC_CHANGERATE.equals(method)
 				&& CalculationConstants.RPYCHG_CURPRD.equals(schdData.getFinanceMain().getRecalType())) {
 			getCurPerodDates(schdData);
@@ -500,6 +502,7 @@ public class ScheduleCalculator {
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal amount, String schdMethod) {
 		logger.debug(Literal.ENTERING);
 
+		finScheduleData.setModuleDefiner(method);
 		setExpectedEndBal(finScheduleData);
 
 		FinanceMain fm = finScheduleData.getFinanceMain();
@@ -536,6 +539,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
+		finScheduleData.setModuleDefiner(method);
 
 		if (StringUtils.equals(method, PROC_ADDDISBURSEMENT)) {
 			setFinScheduleData(procAddDisbursement(finScheduleData, amount, feeChargeAmt, utilizeGrcEndDisb));
@@ -4845,6 +4849,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		FinanceMain fm = finScheduleData.getFinanceMain();
+		String module = finScheduleData.getModuleDefiner();
 		fm.setPftCpzFromReset(BigDecimal.ZERO);
 
 		boolean isRepayComplete = false;
@@ -5016,7 +5021,10 @@ public class ScheduleCalculator {
 			}
 
 			Date recalToDate = fm.getRecalToDate();
-			if (finScheduleData.isEqualInst() && DateUtil.compare(recalToDate, derivedMDT) != 0
+
+			boolean flag = !PROC_CHANGEREPAY.equals(module) && !PROC_CHANGERATE.equals(module);
+			if (flag && CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
+					&& DateUtil.compare(recalToDate, derivedMDT) != 0
 					&& DateUtil.compare(curSchDate, recalToDate) == 0) {
 				procTDTRecord(finScheduleData, i, cpzPOSIntact);
 			}
@@ -5234,8 +5242,11 @@ public class ScheduleCalculator {
 					fm.setPftForSelectedPeriod(fm.getPftForSelectedPeriod().add(curSchd.getProfitCalc()));
 				}
 
-				if (CalculationConstants.SCHMTHD_EQUAL.equals(fm.getScheduleMethod())) {
-					adjustTDTSchedule(finScheduleData);
+				if (!PROC_CHANGEREPAY.equals(module)
+						&& CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())
+						&& DateUtil.compare(recalToDate, derivedMDT) != 0
+						&& DateUtil.compare(curSchDate, recalToDate) == 0) {
+					adjustTDTSchedule(curSchd, fm, prvSchd);
 				}
 			}
 		}
@@ -10207,48 +10218,13 @@ public class ScheduleCalculator {
 
 	}
 
-	private void adjustTDTSchedule(FinScheduleData schdData) {
+	private void adjustTDTSchedule(FinanceScheduleDetail curSchd, FinanceMain fm, FinanceScheduleDetail prvSchd) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = schdData.getFinanceMain();
-
-		Date finStartDate = fm.getFinStartDate();
-		Date maturityDate = fm.getMaturityDate();
-		Date recalToDate = fm.getRecalToDate();
-
-		if (DateUtil.compare(finStartDate, recalToDate) == 0) {
-			return;
-		}
-
-		if (DateUtil.compare(maturityDate, recalToDate) == 0) {
-			return;
-		}
-
-		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
-
-		for (int i = 0; i < schedules.size(); i++) {
-			FinanceScheduleDetail curSchd = schedules.get(i);
-
-			if (DateUtil.compare(curSchd.getSchDate(), recalToDate) > 0) {
-				break;
-			}
-
-			if (DateUtil.compare(curSchd.getSchDate(), recalToDate) != 0) {
-				continue;
-			}
-
-			FinanceScheduleDetail prvSchd = schedules.get(i - 1);
-
-			BigDecimal repayDiff = prvSchd.getRepayAmount().subtract(curSchd.getRepayAmount());
-
-			curSchd.setRepayAmount(curSchd.getRepayAmount().add(repayDiff));
-			prvSchd.setProfitBalance(repayDiff);
-
-			curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, fm.isCpzPosIntact(), fm, true));
-			curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
-			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
-			curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, fm.getRepayRateBasis(), fm.isCpzPosIntact()));
-		}
+		curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, fm.isCpzPosIntact(), fm, true));
+		curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
+		curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+		curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, fm.getRepayRateBasis(), fm.isCpzPosIntact()));
 
 		logger.debug(Literal.LEAVING);
 	}

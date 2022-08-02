@@ -187,6 +187,7 @@ public class FinScheduleData implements Serializable {
 
 	private RestructureDetail restructureDetail;
 	private boolean equalInst;
+	private String moduleDefiner = "";
 
 	public FinScheduleData() {
 		super();
@@ -282,6 +283,7 @@ public class FinScheduleData implements Serializable {
 		entity.setOldFinReference(this.oldFinReference);
 		entity.setRestructureDetail(this.restructureDetail == null ? null : this.restructureDetail.copyEntity());
 		entity.setEqualInst(this.equalInst);
+		entity.setModuleDefiner(this.moduleDefiner);
 		return entity;
 	}
 
@@ -838,6 +840,14 @@ public class FinScheduleData implements Serializable {
 
 	public void setEqualInst(boolean equalInst) {
 		this.equalInst = equalInst;
+	}
+
+	public String getModuleDefiner() {
+		return moduleDefiner;
+	}
+
+	public void setModuleDefiner(String moduleDefiner) {
+		this.moduleDefiner = moduleDefiner;
 	}
 
 }
