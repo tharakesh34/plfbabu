@@ -6342,9 +6342,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void doSetLOVValidation() {
 		logger.debug(Literal.ENTERING);
 
-		if (isBackwardCase(financeDetail.getFinScheduleData().getFinanceMain())) {
-			return;
-		}
+		// if (isBackwardCase(financeDetail.getFinScheduleData().getFinanceMain())) {
+		// return;
+		// }
 
 		// FinanceMain Details Tab ---> 1. Basic Details
 
