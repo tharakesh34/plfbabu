@@ -27009,4 +27009,11 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="DE#3831.3 " author="praveena" dbms="oracle">
+		<sql>
+			<![CDATA[
+               update DATA_ENGINE_COLUMN set ruleforvalue ='if((ACTUALRATE == '''')){Result = 0;  return;}else {Result = ACTUALRATE;  return;}' where name='ACTUALRATE' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'RATE_CHANGE_UPLOAD'));
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
