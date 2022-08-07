@@ -1199,7 +1199,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		whereClause.append(" Union All");
 		whereClause.append(" Select CollateralRef From CollateralAssignment_Temp)) ");
 		whereClause.append(" OR MultiLoanAssignment = 1))  ");
-		whereClause.append(" AND (expirydate isNull");
+		whereClause.append(" AND (expirydate is Null");
 		whereClause.append(" OR expirydate >= '" + JdbcUtil.getDate(SysParamUtil.getAppDate()) + "')");
 
 		return whereClause;
