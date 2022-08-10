@@ -954,8 +954,6 @@ public class ScheduleCalculator {
 						if (DateUtility.compare(schdDate, fm.getEventFromDate()) > 0) {
 							if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())
 									|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
-								curSchd.setCpzOnSchDate(
-										FrequencyUtil.isFrqDate(fm.getRepayCpzFrq(), curSchd.getSchDate()));
 								curSchd.setBpiOrHoliday("");
 							}
 						} else {
