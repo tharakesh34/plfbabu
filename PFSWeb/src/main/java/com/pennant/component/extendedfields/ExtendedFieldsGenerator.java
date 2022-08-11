@@ -881,8 +881,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						values.put(detail.getFieldName(), accSelectionBox.getValue());
 					} catch (WrongValueException we) {
 						wveMap.put(detail, we);
-					} catch (InterruptedException e) {
-						logger.error(e);
 					}
 				} else if (component instanceof FrequencyBox) {
 					try {

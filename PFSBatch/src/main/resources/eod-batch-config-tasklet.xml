@@ -110,16 +110,6 @@
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<!-- Provisions Postings TBD -->
-	<bean id="provisionPostingsTasklet" class="com.pennant.backend.endofday.tasklet.ProvisionPostings">
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="provisionDAO" ref="provisionDAO" />
-		<property name="provisionMovementDAO" ref="provisionMovementDAO" />
-		<property name="dataSource" ref="dataSource" />
-	</bean>
 
 	<!-- Overdue Details Daily Download -->
 	<bean id="oDDetailDownloadTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
