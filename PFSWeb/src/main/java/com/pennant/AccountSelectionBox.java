@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ModuleSearchBox.java		                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-05-2013    														*
- *                                                                  						*
- * Modified Date    :  23-05-2013    														*
- *                                                                  						*
- * Description 		:  Module Search box                                            		*
- *                                                                                          *
+ * * FileName : ModuleSearchBox.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-05-2013 * * Modified Date
+ * : 23-05-2013 * * Description : Module Search box * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Satish/Chaitanya	      0.1       		                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Satish/Chaitanya 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant;
@@ -74,7 +56,7 @@ public class AccountSelectionBox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
 	private static final Logger logger = LogManager.getLogger(AccountSelectionBox.class);
 
-	// Constants for the Manager Cheques 
+	// Constants for the Manager Cheques
 	public static final String MGRCHQ_CR_FIN_EVENT = "MGRCHQCR";
 	public static final String MGRCHQ_DR_FIN_EVENT = "MGRCHQDR";
 	public static final String NOTAPPLICABLE = "NA";
@@ -86,17 +68,17 @@ public class AccountSelectionBox extends Hbox {
 	private Hbox hbox;
 
 	/*** Mandatory Properties **/
-	private String custCIF = ""; //mandatory
-	private String branchCode = ""; //mandatory
+	private String custCIF = ""; // mandatory
+	private String branchCode = ""; // mandatory
 	private int formatter = 0;
 	private static final int tb_Width = 150;
 	private static final int db_Width = 150;
 
-	private boolean alwManualInput = false; //mandatory
-	private String accReceivables = null; //mandatory
-	private String accTypes = null; //mandatory
-	private String currency = null; //mandatory
-	private boolean mandatory = false; //mandatory
+	private boolean alwManualInput = false; // mandatory
+	private String accReceivables = null; // mandatory
+	private String accTypes = null; // mandatory
+	private String currency = null; // mandatory
+	private boolean mandatory = false; // mandatory
 
 	private List<IAccounts> accountDetails = new ArrayList<IAccounts>();
 	private IAccounts selectedAccount = null;
@@ -110,25 +92,25 @@ public class AccountSelectionBox extends Hbox {
 		super();
 		logger.trace(Literal.ENTERING);
 
-		// Create default object. 
+		// Create default object.
 
 		this.space = new Space();
 		this.space.setWidth("2px");
 		this.appendChild(space);
 
-		//Hbox
+		// Hbox
 		this.hbox = new Hbox();
 		this.hbox.setSpacing("2px");
 		this.hbox.setSclass("cssHbox");
 
-		//Textbox
+		// Textbox
 		this.textbox = new Uppercasebox();
 		this.textbox.setStyle("border:0px;margin:0px;");
 		this.textbox.setWidth(tb_Width + "px");
 		this.textbox.setMaxlength(LengthConstants.LEN_ACCOUNT);
 
 		// If input allowed set text box editable
-		//this.textbox.addForward("onChange", this, "onChangeTextbox");
+		// this.textbox.addForward("onChange", this, "onChangeTextbox");
 		if (alwManualInput) {
 			this.textbox.setReadonly(false);
 		} else {
@@ -136,7 +118,7 @@ public class AccountSelectionBox extends Hbox {
 		}
 		this.hbox.appendChild(this.textbox);
 
-		//Button
+		// Button
 		this.button = new Button();
 		this.button.setSclass("cssBtnSearch");
 		this.button.setImage("/images/icons/LOVSearch.png");
@@ -269,7 +251,7 @@ public class AccountSelectionBox extends Hbox {
 		}
 
 		IAccounts iAccount = new IAccounts();
-		//Removed the Account Currency to allow multiple currencies 
+		// Removed the Account Currency to allow multiple currencies
 		iAccount.setAcCcy(currency);
 		iAccount.setAcType(accTypes);
 		iAccount.setAcCustCIF(this.custCIF);
@@ -293,13 +275,9 @@ public class AccountSelectionBox extends Hbox {
 	}
 
 	/**
-	 * Validate the value of the text entered in the textbox
-	 * 
-	 * @param showError
-	 * @throws InterruptedException
-	 * @throws WrongValueException
+	 * Validate the value of the text entered in the text box.
 	 */
-	public void validateValue() throws InterruptedException {
+	public void validateValue() {
 		//
 	}
 
@@ -334,7 +312,7 @@ public class AccountSelectionBox extends Hbox {
 	 * @throws WrongValueException
 	 */
 	public String getValidatedValue() throws WrongValueException, InterruptedException {
-		this.textbox.getValue();//to call the constraint if any
+		this.textbox.getValue();// to call the constraint if any
 		if (alwManualInput && (StringUtils.isNotBlank(this.textbox.getValue()))) {
 			validateValue();
 		}
@@ -357,7 +335,7 @@ public class AccountSelectionBox extends Hbox {
 		}
 
 		if (isReadOnly) {
-			//this.space.setSclass("");
+			// this.space.setSclass("");
 			this.button.setSclass(null);
 		} else {
 			this.button.setSclass("cssBtnSearch");
