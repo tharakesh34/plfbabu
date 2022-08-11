@@ -5471,7 +5471,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinBranch, FinAmount, fm.FinCcy, FinPurpose, FinStartDate");
 		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
-		sql.append(", FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.RecordStatus, fm.RecordType, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
 		sql.append(" From FinanceMain").append(tableType).append(" fm");
 		sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");

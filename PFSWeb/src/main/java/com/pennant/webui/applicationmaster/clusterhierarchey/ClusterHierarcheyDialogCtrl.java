@@ -238,7 +238,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 
 		listBoxClusterType.appendChild(item);
 
-		if (clusterHierarchy.getNextRoleCode().equals("CLUSTER_HIERARCHY_APPROVER")
+		if ("CLUSTER_HIERARCHY_APPROVER".equals(clusterHierarchy.getNextRoleCode())
 				&& ("Submitted".equals(clusterHierarchy.getRecordStatus()))) {
 			textBox.setReadonly(true);
 			seqOrder.setReadonly(true);

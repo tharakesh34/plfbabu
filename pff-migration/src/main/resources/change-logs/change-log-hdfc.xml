@@ -338,5 +338,44 @@
             ]]>
         </sql>
     </changeSet>
+    
+    <changeSet id="DE#3831.3 " author="praveena" dbms="oracle">
+		<sql>
+			<![CDATA[
+               update DATA_ENGINE_COLUMN set ruleforvalue ='if((ACTUALRATE == '''')){Result = 0;  return;}else {Result = ACTUALRATE;  return;}' where name='ACTUALRATE' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'RATE_CHANGE_UPLOAD'));
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#3831.4" author="praveena.v">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set FIELDDBNAME='P.PostDate' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 1;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#3831.5" author="praveena.v">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set FIELDDBNAME='P.FinBranch' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 3;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#3831.6" author="praveena.v">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set FIELDDBNAME='P.FinIsActive' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 4;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#3831.7" author="praveena.v">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set FIELDDBNAME=''P.fintype' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 5;
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
