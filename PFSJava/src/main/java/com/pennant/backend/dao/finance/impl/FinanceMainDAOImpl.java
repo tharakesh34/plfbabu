@@ -5482,6 +5482,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Where FinID = ?");
 		}
 		return sql.toString();
+
 	}
 
 	private String getBasicFieldsQuery(TableType tableType, boolean isFinReference) {
