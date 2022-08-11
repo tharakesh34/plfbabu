@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  RuleListCtrl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : RuleListCtrl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 03-06-2011
+ * 
+ * Modified Date : 03-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rulefactory.rule;
@@ -138,27 +129,19 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 
 	@Override
 	protected void doPrintResults() {
-		try {
-
-			if (limitLine != null && !StringUtils.isEmpty(limitLine.getValue())) {
-				new PTListReportUtils(
-						StringUtils.trimToEmpty(this.ruleModule.getValue())
-								+ StringUtils.trimToEmpty(limitLine.getValue()),
-						super.searchObject, this.pagingRuleList.getTotalSize() + 1);
-			} else {
-				new PTListReportUtils(this.ruleModuleName, super.searchObject, this.pagingRuleList.getTotalSize() + 1);
-			}
-
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+		if (limitLine != null && !StringUtils.isEmpty(limitLine.getValue())) {
+			new PTListReportUtils(
+					StringUtils.trimToEmpty(this.ruleModule.getValue()) + StringUtils.trimToEmpty(limitLine.getValue()),
+					super.searchObject, this.pagingRuleList.getTotalSize() + 1);
+		} else {
+			new PTListReportUtils(this.ruleModuleName, super.searchObject, this.pagingRuleList.getTotalSize() + 1);
 		}
 	}
 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_RuleList(Event event) {
 
@@ -241,8 +224,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_RuleList_RuleSearchDialog(Event event) {
 		search();
@@ -251,8 +233,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -262,8 +243,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_RuleList_NewRule(Event event) {
 		logger.debug("Entering");
@@ -286,11 +266,11 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			aRule.setRuleEvent("");
 		} else if (!StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_FEES)) {
 			aRule.setRuleEvent(ruleModuleValue);
-		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_GSTRULE)) { //GST Rules
-			//aRule.setRuleEvent("IGST");				//Open any one of this rule Event
-			//aRule.setRuleEvent("CGST");
-			//aRule.setRuleEvent("SGST");
-			//aRule.setRuleEvent("UGST");
+		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_GSTRULE)) { // GST Rules
+			// aRule.setRuleEvent("IGST"); //Open any one of this rule Event
+			// aRule.setRuleEvent("CGST");
+			// aRule.setRuleEvent("SGST");
+			// aRule.setRuleEvent("UGST");
 		}
 
 		// Display the dialog page.
@@ -303,8 +283,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onRuleItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -348,8 +327,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param rule
-	 *            The entity that need to be passed to the dialog.
+	 * @param rule The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Rule rule) {
 		logger.debug("Entering");
@@ -358,7 +336,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		arg.put("rule", rule);
 		arg.put("ruleListCtrl", this);
 		arg.put("ruleModuleName", this.ruleModuleName);
-		//arg.put("ruleModule", this.ruleModule.getValue());
+		// arg.put("ruleModule", this.ruleModule.getValue());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleDialog.zul", null, arg);
@@ -372,8 +350,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -382,8 +359,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

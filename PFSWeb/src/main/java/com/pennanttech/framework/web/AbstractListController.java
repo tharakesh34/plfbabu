@@ -271,17 +271,9 @@ public class AbstractListController<T> extends AbstractController<T> {
 		logger.debug("Entering");
 
 		if (this.paging != null) {
-			try {
-				new PTListReportUtils(moduleCode, searchObject, this.paging.getTotalSize() - 1);
-			} catch (InterruptedException e) {
-				logger.error("Exception:", e);
-			}
+			new PTListReportUtils(moduleCode, searchObject, this.paging.getTotalSize() - 1);
 		} else {
-			try {
-				new PTListReportUtils(moduleCode, searchObject, listbox.getItemCount());
-			} catch (InterruptedException e) {
-				logger.error("Exception:", e);
-			}
+			new PTListReportUtils(moduleCode, searchObject, listbox.getItemCount());
 		}
 
 		logger.debug("Leaving");

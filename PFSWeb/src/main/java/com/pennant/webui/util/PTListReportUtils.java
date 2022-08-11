@@ -75,7 +75,7 @@ public class PTListReportUtils implements Serializable {
 		super();
 	}
 
-	public PTListReportUtils(String code, JdbcSearchObject<?> searchObj, int size) throws InterruptedException {
+	public PTListReportUtils(String code, JdbcSearchObject<?> searchObj, int size) {
 		super();
 
 		logger.debug(Literal.ENTERING);

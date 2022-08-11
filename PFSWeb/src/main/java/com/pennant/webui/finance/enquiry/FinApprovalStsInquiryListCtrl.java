@@ -150,17 +150,9 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	@Override
 	protected void doPrintResults() {
 		if (facility) {
-			try {
-				new PTListReportUtils("FacilityApprovalStatus", searchObject, this.paging.getTotalSize() + 1);
-			} catch (InterruptedException e) {
-				logger.error("Exception:", e);
-			}
+			new PTListReportUtils("FacilityApprovalStatus", searchObject, this.paging.getTotalSize() + 1);
 		} else {
-			try {
-				new PTListReportUtils("FinanceApprovalStatus", searchObject, this.paging.getTotalSize() + 1);
-			} catch (InterruptedException e) {
-				logger.error("Exception:", e);
-			}
+			new PTListReportUtils("FinanceApprovalStatus", searchObject, this.paging.getTotalSize() + 1);
 		}
 	}
 

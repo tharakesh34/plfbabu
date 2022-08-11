@@ -135,18 +135,10 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	protected void doPrintResults() {
 		super.doPrintResults();
 		if (enqiryModule) {
-			try {
-				new PTListReportUtils("ENQFAC", super.searchObject, this.pagingFacilityList.getTotalSize() + 1);
-			} catch (InterruptedException e) {
-				logger.error("Exception:", e);
-			}
+			new PTListReportUtils("ENQFAC", super.searchObject, this.pagingFacilityList.getTotalSize() + 1);
 		} else {
-			try {
-				new PTListReportUtils(this.cafType.getValue(), super.searchObject,
-						this.pagingFacilityList.getTotalSize() + 1);
-			} catch (InterruptedException e) {
-				logger.error("Exception:", e);
-			}
+			new PTListReportUtils(this.cafType.getValue(), super.searchObject,
+					this.pagingFacilityList.getTotalSize() + 1);
 		}
 	}
 

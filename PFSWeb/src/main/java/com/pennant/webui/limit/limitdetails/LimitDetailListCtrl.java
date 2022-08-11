@@ -454,17 +454,12 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 	@Override
 	protected void doPrintResults() {
-		try {
-			if (StringUtils.equals(LimitConstants.LIMIT_UTILIZATION, limitType.getValue())) {
-				this.searchObj.addTabelName("LimitHeader_AView");
-				new PTListReportUtils("LimitUtilization", searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
-			} else {
-				this.searchObj.addTabelName("LimitHeader_View");
-				new PTListReportUtils(moduleCode, searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
-			}
-
-		} catch (InterruptedException e) {
-			logger.error("Exception:", e);
+		if (StringUtils.equals(LimitConstants.LIMIT_UTILIZATION, limitType.getValue())) {
+			this.searchObj.addTabelName("LimitHeader_AView");
+			new PTListReportUtils("LimitUtilization", searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
+		} else {
+			this.searchObj.addTabelName("LimitHeader_View");
+			new PTListReportUtils(moduleCode, searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
 		}
 	}
 
