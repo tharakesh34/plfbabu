@@ -1468,12 +1468,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method to fill finance data.
 	 * 
 	 * @param isChgReceipt
-	 * @throws InterruptedException
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private boolean setSummaryData(boolean isChgReceipt)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private boolean setSummaryData(boolean isChgReceipt) throws IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 		receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(receiptData.getReceiptHeader().getReceiptPurpose());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -2184,7 +2182,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptData.getReceiptHeader().setAllocationsSummary(allocationList);
 		try {
 			setSummaryData(true);
-		} catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 		setBalances();

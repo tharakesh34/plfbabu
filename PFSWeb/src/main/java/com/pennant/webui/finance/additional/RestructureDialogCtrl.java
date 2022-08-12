@@ -450,11 +450,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Rate Change Allowed
 		if (ImplementationConstants.RESTRUCTURE_RATE_CHG_ALW) {
 			this.rateReviewRow.setVisible(true);
-			try {
-				setEffectiveRate();
-			} catch (InterruptedException e) {
-				logger.error(e);
-			}
+			setEffectiveRate();
 		}
 
 		// Restructure initiation
@@ -1255,7 +1251,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	private void setEffectiveRate() throws InterruptedException {
+	private void setEffectiveRate() {
 		if (StringUtils.isBlank(this.baseRate.getBaseValue())) {
 			this.baseRate.setEffRateText(PennantApplicationUtil.formatRate(
 					(this.baseRate.getMarginValue() == null ? BigDecimal.ZERO : this.baseRate.getMarginValue())
