@@ -160,8 +160,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			//
 		}
 
+		// FIXME Need to handle in Niyogin Upgrade
 		if (configName.equals("PRESENTMENT_RESPONSE")) {
-			dataEngine.setValidateRecord(new DefaultPresentmentRespValidation());
+			// dataEngine.setValidateRecord(new DefaultPresentmentRespValidation());
 		}
 
 		long headerId = presentmentDetailDAO.logHeader(fileName, null, "IMPORT", 0);
@@ -381,6 +382,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				if (RepayConstants.PEXC_SUCCESS.equals(sts) || RepayConstants.PEXC_BOUNCE.equals(sts)) {
 					successCount++;
 				} else if (RepayConstants.PEXC_FAILURE.equals(sts)) {
+					failedCount++;
+				} else {
 					failedCount++;
 				}
 			}

@@ -424,6 +424,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.bankBranch.setDescColumn("BranchDesc");
 		this.bankBranch.setDisplayStyle(2);
 		this.bankBranch.setValidateColumns(new String[] { "IFSC" });
+		this.bankBranch.setFilterColumns(new String[] { "IFSC", "MICR" });
 
 		this.custID.setModuleName("Customer");
 		this.custID.setMandatoryStyle(true);
@@ -1260,16 +1261,23 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				doSetValidation();
 				doWriteComponentsToBean();
 				// Accounting Details Validations
-				if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
-						&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
-					boolean validate = false;
-					validate = validateAccounting(validate);
-					if (validate && !isAccountingExecuted) {
-						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
-						return;
+				if (ImplementationConstants.RECEIPTS_SHOW_ACCOUNTING_TAB) {
+					if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
+							&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
+						boolean validate = false;
+						validate = validateAccounting(validate);
+						if (validate && !isAccountingExecuted) {
+							MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+							return;
+						}
 					}
 				}
 				FinReceiptHeader rch = getReceiptHeader();
+
+				if (rch.getExtReference() == null) {
+					rch.setExtReference(rch.getReference());
+				}
+
 				if (rch.getReceiptDetails().isEmpty()) {
 					FinReceiptDetail rcd = new FinReceiptDetail();
 					rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);

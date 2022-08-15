@@ -79,6 +79,7 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 	protected boolean isOverdraft = false;
 	private boolean isCompReadonly = false;
 	private String finDivision = null;
+	protected boolean consumerDurable = false;
 
 	private Object mainController;
 
@@ -143,6 +144,9 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 			}
 			if (arguments.containsKey("isOverdraft")) {
 				this.isOverdraft = (Boolean) arguments.get("isOverdraft");
+			}
+			if (arguments.containsKey("consumerDurable")) {
+				this.consumerDurable = (Boolean) arguments.get("consumerDurable");
 			}
 			if (arguments.containsKey("finDivision")) {
 				this.finDivision = (String) arguments.get("finDivision");
@@ -290,6 +294,7 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 		map.put("fintypepartnerbankListCtrl", this);
 		map.put("role", roleCode);
 		map.put("amountFormatter", CurrencyUtil.getFormat(this.finCcy));
+		map.put("consumerDurable", consumerDurable);
 
 		if (StringUtils.isNotEmpty(finDivision)) {
 			map.put("finDivision", finDivision);

@@ -32,8 +32,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -43,7 +45,9 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.beneficiary.BeneficiaryService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.external.BeneficiaryAccountValidationService;
 
 /**
  * Service implementation for methods that depends on <b>Beneficiary</b>.<br>
@@ -54,6 +58,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BeneficiaryDAO beneficiaryDAO;
+	private BeneficiaryAccountValidationService beneficiaryAccountValidationService;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -81,6 +86,12 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 */
 	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
 		this.beneficiaryDAO = beneficiaryDAO;
+	}
+
+	@Autowired(required = false)
+	public void setBeneficiaryAccountValidationService(
+			BeneficiaryAccountValidationService beneficiaryAccountValidationService) {
+		this.beneficiaryAccountValidationService = beneficiaryAccountValidationService;
 	}
 
 	/**
@@ -421,6 +432,12 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41010", errParm2, valueParm2));
 			}
+		}
+
+		/* System parameter should be handled in core level */
+		if (SysParamUtil.isAllowed(SMTParameterConstants.BENEFICIARY_ACCOUNT_VALIDATION_REQ)
+				&& beneficiaryAccountValidationService != null) {
+			auditDetail.addErrorDetails(beneficiaryAccountValidationService.validateAccount(auditDetail));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

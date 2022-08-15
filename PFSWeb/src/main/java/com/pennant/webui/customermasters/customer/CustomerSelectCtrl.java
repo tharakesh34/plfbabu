@@ -25,6 +25,7 @@
 package com.pennant.webui.customermasters.customer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,7 +47,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -212,15 +212,16 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		paging(searchObj);
 
 		// get the filters from the searchObject
-		for (final Filter filter : searchObj.getFilters()) {
+		final List<Filter> ft = searchObj.getFilters();
+		for (final Filter filter : ft) {
 			// restore founded properties
 			String value = filter.getValue().toString();
 			if ("CustCIF".equals(filter.getProperty())) {
 				SearchOperators.resetOperator(this.sortOperator_custCIF, filter);
 				this.custCIF.setValue(restoreString(value, this.sortOperator_custCIF));
 			} else if ("CustDOB".equals(filter.getProperty())) {
-				SearchOperators.resetOperator(this.sortOperator_custDob, filter);
-				this.custDob.setValue(DateUtility.parse(value, PennantConstants.DBDateFormat));
+				SearchOperators.restoreNumericOperator(this.sortOperator_custDob, filter);
+				this.custDob.setValue((Date) filter.getValue());
 			} else if ("CustShrtName".equals(filter.getProperty())) {
 				SearchOperators.resetOperator(this.sortOperator_custName, filter);
 				this.custName.setValue(restoreString(value, this.sortOperator_custName));
@@ -270,7 +271,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	 * @return
 	 */
 	private String restoreString(String filterValue, Listbox listbox) {
-		if (listbox.getSelectedIndex() == 3) {
+		if (listbox.getSelectedIndex() == 2) {
 			return StringUtils.replaceChars(filterValue, "%", "");
 		}
 		return filterValue;

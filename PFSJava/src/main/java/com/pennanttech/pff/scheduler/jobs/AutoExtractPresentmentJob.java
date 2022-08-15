@@ -12,7 +12,6 @@ import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.financemanagement.impl.PresentmentJobService;
 import com.pennant.backend.util.MandateConstants;
@@ -20,6 +19,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution

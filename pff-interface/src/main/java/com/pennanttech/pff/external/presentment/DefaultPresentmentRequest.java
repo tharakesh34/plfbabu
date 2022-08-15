@@ -68,12 +68,12 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 					new PresentmentRowMapper());
 
 			// Begin Transaction
-			namedJdbcTemplate.update("DELETE FROM PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
 			int successCount = 0;
 			int processedCount = 0;
 			try {
 				for (Presentment presement : presements) {
 					processedCount++;
+					presement.setHeaderId(presentmentId);
 					save(presement, "PRESENTMENT_REQ_DETAILS_TEMP");
 					successCount++;
 				}
@@ -85,9 +85,9 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				// Roolback
 			} finally {
 				if (isBatchFail) {
-					clearTables();
+					clearTables(presentmentId);
 				} else {
-					copyDataFromTempToMainTables(presentmentId, successCount);
+					copyDataFromTempToMainTables(presentmentId, successCount, isPDC);
 					if (isError) {
 						updatePresentmentHeader(presentmentId, 3, presentmentId, processedCount);
 					} else {
@@ -369,8 +369,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
 		sql.append(
 				" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
-		sql.append(" ChequeSerialNo, ChequeDate, UtilityCode");
-		sql.append(", SETILMENT_DATE, CUST_CIF, PDC_BY_NAME )");
+		sql.append(" ChequeSerialNo, ChequeDate, UtilityCode ");
+		sql.append(", SETILMENT_DATE, CUST_CIF, PDC_BY_NAME, HEADERID)");
 		sql.append(" values( :TxnReference,");
 
 		if (presentment.getEntityCode() == 0) {
@@ -385,7 +385,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(
 				" :OrginSystem, :DataGenDate , :UserID, :BatchId, :JobId , :PickupBatchId, :CycleDate, :partnerBankName, :IFSC,");
 		sql.append(" :ChequeSerialNo, :ChequeDate, :UtilityCode");
-		sql.append(", :setilmentDate, :customerId, :destAccHolder ) ");
+		sql.append(", :setilmentDate, :customerId, :destAccHolder, :HeaderId)");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentment);
 		try {
@@ -396,21 +396,31 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		}
 	}
 
-	private void clearTables() {
+	private void clearTables(long presentmentId) {
 		logger.debug(Literal.ENTERING);
 
-		namedJdbcTemplate.update("DELETE FROM PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("HEADERID", presentmentId);
+
+		namedJdbcTemplate.update("DELETE FROM PRESENTMENT_REQ_DETAILS_TEMP  WHERE HEADERID = :HEADERID", paramMap);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void copyDataFromTempToMainTables(long presentmentId, int successCount) {
+	private void copyDataFromTempToMainTables(long presentmentId, int successCount, boolean isPDC) {
 		logger.debug(Literal.ENTERING);
 
 		saveHeader(presentmentId, successCount);
 
-		namedJdbcTemplate.update("INSERT INTO PRESENTMENT_REQ_DETAILS SELECT * FROM PRESENTMENT_REQ_DETAILS_TEMP",
-				new MapSqlParameterSource());
+		String sql = "INSERT INTO PRESENTMENT_REQ_DETAILS SELECT * FROM PRESENTMENT_REQ_DETAILS_TEMP  WHERE HEADERID = :HEADERID";
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("HEADERID", presentmentId);
+		namedJdbcTemplate.update(sql, paramMap);
+
+		if (!isPDC) {
+			clearTables(presentmentId);
+		}
 
 		updateHeader(presentmentId, successCount);
 

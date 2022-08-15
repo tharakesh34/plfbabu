@@ -121,6 +121,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -129,6 +130,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.provision.dao.ProvisionDAO;
 
 public class PennantAppUtil {
 	private static final SearchProcessor SEARCH_PROCESSOR = getSearchProcessor();
@@ -792,6 +794,17 @@ public class PennantAppUtil {
 	public static List<RBFieldDetail> getExtendedFieldForRules(List<RBFieldDetail> rbFieldDetailsList) {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
+		String moduleCode = null;
+		if (rbFieldDetailsList == null) {
+			rbFieldDetailsList = new ArrayList<>();
+		} else if (!rbFieldDetailsList.isEmpty()) {
+			moduleCode = rbFieldDetailsList.get(0).getRbEvent();
+		}
+
+		if ("PROVSN".equals(moduleCode)) {
+			return rbFieldDetailsList;
+		}
+
 		JdbcSearchObject<ExtendedFieldDetail> searchObject = new JdbcSearchObject<ExtendedFieldDetail>(
 				ExtendedFieldDetail.class);
 		Filter[] filters = new Filter[1];
@@ -804,9 +817,6 @@ public class PennantAppUtil {
 		searchObject.addTabelName("ExtendedFieldDetail_AView");
 		List<ExtendedFieldDetail> extendedFieldDetails = pagedListService.getBySearchObject(searchObject);
 
-		if (rbFieldDetailsList == null) {
-			rbFieldDetailsList = new ArrayList<RBFieldDetail>();
-		}
 		for (ExtendedFieldDetail fieldDetail : extendedFieldDetails) {
 			RBFieldDetail rbFieldDetail = new RBFieldDetail();
 
@@ -1971,7 +1981,11 @@ public class PennantAppUtil {
 			excludeEvents.add(AccountingEvent.INDAS);
 		}
 
-		if (!ImplementationConstants.ALLOW_NPA_PROVISION) {
+		if (!ImplementationConstants.ALLOW_NPA) {
+			excludeEvents.add(AccountingEvent.NPACHNG);
+		}
+
+		if (!ImplementationConstants.ALLOW_PROVISION) {
 			excludeEvents.add(AccountingEvent.PROVSN);
 			excludeEvents.add(AccountingEvent.PRVSN_MN);
 			excludeEvents.add(AccountingEvent.PROVCHG);
@@ -2347,7 +2361,7 @@ public class PennantAppUtil {
 		return childFinanceTypes;
 	}
 
-	public static ArrayList<ValueLabel> getRestructureType() {
+	public static ArrayList<ValueLabel> getRestructureType(boolean alwStep) {
 		ArrayList<ValueLabel> restructureTypeList = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
@@ -2356,6 +2370,10 @@ public class PennantAppUtil {
 		searchObject.addField("RstTypeDesc");
 		searchObject.addField("Id");
 		searchObject.addTabelName("Restructure_Types");
+
+		if (alwStep) {
+			searchObject.addFilter(new Filter("AlwStep", true, Filter.OP_EQUAL));
+		}
 
 		List<RestructureType> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
@@ -2378,6 +2396,7 @@ public class PennantAppUtil {
 		searchObject.addField("MaxPriHoliday");
 		searchObject.addField("MaxEmiTerm");
 		searchObject.addField("MaxTotTerm");
+		searchObject.addField("AlwStep");
 		searchObject.addTabelName("Restructure_Types");
 
 		List<RestructureType> appList = pagedListService.getBySearchObject(searchObject);
@@ -2465,6 +2484,25 @@ public class PennantAppUtil {
 		pbde.forEach(l1 -> configList.add(String.valueOf(l1.getConfigName())));
 
 		return configList;
+	}
+
+	public static List<ValueLabel> getNpaProvisionDates() {
+		ProvisionDAO provisionDao = (ProvisionDAO) SpringBeanUtil.getBean("provisionDao");
+
+		List<Date> provisionDates = provisionDao.getProvisionDates();
+
+		List<ValueLabel> monthList = PennantStaticListUtil.getMonthList();
+
+		List<ValueLabel> labelList = new ArrayList<>();
+		for (Date provisionDate : provisionDates) {
+			int month = DateUtil.getMonth(provisionDate);
+			int year = DateUtil.getYear(provisionDate);
+
+			ValueLabel valueLabel = monthList.get(month - 1);
+			labelList.add(new ValueLabel(provisionDate, (valueLabel.getLabel() + " - " + year)));
+		}
+
+		return labelList;
 	}
 
 }

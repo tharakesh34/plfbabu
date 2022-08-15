@@ -101,6 +101,7 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
@@ -145,10 +146,12 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
+import com.pennant.webui.finance.financemain.isradetails.ISRADetailDialogCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.financemanagement.payments.ManualPaymentDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -309,6 +312,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox maturityDate; // autoWired
 	protected Datebox maturityDate_two; // autoWired
 	protected Combobox finRepayMethod; // autoWired
+	protected Checkbox isra;
+	protected Row row_Isra;
 
 	protected Hbox hbox_finRepayPftOnFrq;
 	protected Hbox hbox_ScheduleMethod;
@@ -512,6 +517,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private transient FinCollateralHeaderDialogCtrl finCollateralHeaderDialogCtrl;
 	private transient CollateralHeaderDialogCtrl collateralHeaderDialogCtrl;
 	private transient ManualPaymentDialogCtrl manualPaymentDialogCtrl = null;
+	private transient ISRADetailDialogCtrl israDetailDialogCtrl;
+	private transient TanDetailListCtrl tanDetailListCtrl;
 
 	// Extended fields
 	protected ExtendedFieldCtrl extendedFieldCtrl = null;
@@ -690,7 +697,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.dsaCode.setValidateColumns(new String[] { "DealerName" });
 		this.dsaCode.getTextbox().setMaxlength(100);
 
-		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
+		this.applicationNo.setMaxlength(LengthConstants.LEN_APP_NO);
 		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
 				LengthConstants.LEN_REFERRALID);
 		this.dmaCode.setProperties("DMA", "DealerName", "Code", false, LengthConstants.LEN_MASTER_CODE);
@@ -1612,6 +1619,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		getJointAccountDetailDialogCtrl().doSetLabels(getFinBasicDetails());
 	}
 
+	public void onSelectIsraDetailTab(ForwardEvent event) {
+		appendIsraDetailsTab(false);
+	}
+
 	/**
 	 * fill finance basic details to List
 	 * 
@@ -1647,6 +1658,33 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		arrayList.add(10, false);
 		arrayList.add(11, moduleDefiner);
 		return arrayList;
+	}
+
+	public void appendTanDetailTab() {
+		logger.debug("Entering");
+
+		Tab tab = new Tab("TAN Details");
+		tab.setId("tanDetailTab");
+		tabsIndexCenter.appendChild(tab);
+
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId("tanDetailTabPanel");
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight(this.borderLayoutHeight - 100 + "px");
+
+		TanAssignment tanAssignment = new TanAssignment();
+		tanAssignment.setFinReference(this.finReference.getValue());
+		tanAssignment.setCustID(this.custID.getValue());
+		tanAssignment.setNewRecord(true);
+		tanAssignment.setWorkflowId(getWorkFlowId());
+
+		final Map<String, Object> map = getDefaultArguments();
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("tanAssignment", tanAssignment);
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/TanDetailList.zul", tabpanel, map);
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -1785,6 +1823,51 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void appendIsraDetailsTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+
+		if (tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_ISRADETAILS)) == null) {
+			createTab(AssetConstants.UNIQUE_ID_ISRADETAILS, onLoadProcess);
+		}
+
+		if (onLoadProcess) {
+			Tabpanel tabPanel = getTabpanel(AssetConstants.UNIQUE_ID_ISRADETAILS);
+			if (tabPanel != null) {
+				tabPanel.getChildren().clear();
+			}
+
+			final Map<String, Object> map = getDefaultArguments();
+			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ISRADETAILS));
+			map.put("moduleDefiner", moduleDefiner);
+			map.put("roleCode", getRole());
+			Executions.createComponents("/WEB-INF/pages/ISRADetails/ISRADetailDialog.zul", tabPanel, map);
+		}
+
+		Tab israTab = getTab(AssetConstants.UNIQUE_ID_ISRADETAILS);
+		if (israTab != null && getFinanceDetail().getFinScheduleData().getFinanceMain().isIsra()) {
+			israTab.setVisible(true);
+		} else {
+			israTab.setVisible(false);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onCheck$isra(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Tab tab = getTab(AssetConstants.UNIQUE_ID_ISRADETAILS);
+		if (tab != null) {
+			tab.setVisible(this.isra.isChecked());
+			if (israDetailDialogCtrl != null && tab.isVisible()) {
+				israDetailDialogCtrl.setFundsInDsraVal(financeDetail);
+				israDetailDialogCtrl.setLoanStartDate(this.finStartDate.getValue());
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	public void onSelectCollateralTab(ForwardEvent event)
 			throws IllegalAccessException, InvocationTargetException, InterruptedException {
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
@@ -1907,6 +1990,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.odTDSApplicable.setChecked(false);
 			this.odTDSApplicable.setDisabled(true);
 		}
+
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finCcy.setValue(aFinanceMain.getFinCcy(), CurrencyUtil.getCcyDesc(aFinanceMain.getFinCcy()));
 		if (StringUtils.isNotBlank(aFinanceMain.getFinBranch())) {
@@ -1954,6 +2038,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		fillComboBox(this.stepType, aFinanceMain.getStepType(), PennantStaticListUtil.getStepType(), "");
 
 		this.applicationNo.setValue(aFinanceMain.getApplicationNo());
+		this.applicationNo.setTooltiptext(aFinanceMain.getApplicationNo());
 
 		if (aFinanceMain.getReferralId() != null) {
 			this.referralId.setValue(aFinanceMain.getReferralId());
@@ -2172,7 +2257,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			NOInst = financeProfitDetail.getNOInst();
 		}
 		if (NOInst > 0) {
-			this.numberOfTerms_two.setValue(NOInst);
+			this.numberOfTerms_two.setValue(NOInst - aFinanceMain.getGraceTerms());
 		} else {
 			this.numberOfTerms_two.setValue(aFinanceMain.getNumberOfTerms());
 		}
@@ -3766,8 +3851,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				String schdMethod = this.cbScheduleMethod.getSelectedItem().getValue().toString();
 
 				if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)
-						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ)
-						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)) {
+						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)
+						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PRI_PFTC)
+						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
 					errorList.add(new ErrorDetail("StepFinance", "30552",
 							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") }, new String[] {}));
 				}
@@ -6575,6 +6661,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			finCollateralHeaderDialogCtrl.closeDialog();
 		}
 
+		// ISRA Details Window
+		if (israDetailDialogCtrl != null) {
+			israDetailDialogCtrl.closeDialog();
+		}
+
 		super.closeDialog();
 	}
 
@@ -7360,4 +7451,19 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
+	public ISRADetailDialogCtrl getIsraDetailDialogCtrl() {
+		return israDetailDialogCtrl;
+	}
+
+	public void setIsraDetailDialogCtrl(ISRADetailDialogCtrl israDetailDialogCtrl) {
+		this.israDetailDialogCtrl = israDetailDialogCtrl;
+	}
+
+	public TanDetailListCtrl getTanDetailListCtrl() {
+		return tanDetailListCtrl;
+	}
+
+	public void setTanDetailListCtrl(TanDetailListCtrl tanDetailListCtrl) {
+		this.tanDetailListCtrl = tanDetailListCtrl;
+	}
 }

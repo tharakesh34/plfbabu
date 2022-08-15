@@ -58,12 +58,23 @@
 										<space spacing="2px" sclass="mandatory" />
 										<textbox id="name" width="100px" maxlength="100" />
 									</hbox>
+									<label value="${c:l('label_ManufacturerList_OemId.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<longbox id="oemId" width="155px" maxlength="20" />
+									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_ManufacturerList_Description.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<textbox id="description" width="300px" maxlength="100" />
+									</hbox>
+									<label id="label_ManufacturerList_PanNumber"
+										value="${c:l('label_ManufacturerList_PanNumber.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory"/>
+										<textbox id="manufacPAN" width="155px" maxlength="20" />
 									</hbox>
 								</row>
 								<row>
@@ -72,6 +83,75 @@
 										<space spacing="2px" />
 										<textbox id="txtchannel" width="170px" readonly="true" />
 										<button id="btnchannels" image="/images/icons/LOVSearch.png" />
+									</hbox>
+									<label id="label_ManufacturerList_GSTINNumber"
+										value="${c:l('label_ManufacturerList_GSTINNumber.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="manf_taxNumber" />
+										<uppercasebox id="gstInNumber" width="155px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ManufacturerList_AddressLine1.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="addressLine1" width="300px" maxlength="200" />
+									</hbox>
+									<label id="label_ManufacturerList_ContactName"
+										value="${c:l('label_ManufacturerList_ContactName.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="manfacContactName" maxlength="100" width="250px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ManufacturerList_AddressLine2.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="addressLine2" width="300px" maxlength="100" />
+									</hbox>
+									<label id="label_ManufacturerList_MobileNo"
+										value="${c:l('label_ManufacturerList_MobileNo.value')}" />
+									<hbox>
+										<space spacing="2px" id="space_mobileNo" />
+										<textbox id="manfMobileNo" width="155px" maxlength="10" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ManufacturerList_AddressLine3.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="addressLine3" width="300px" maxlength="100" />
+									</hbox>
+									<label id="label_ManufacturerList_EmailID"
+										value="${c:l('label_ManufacturerList_EmailID.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="manfEmailId" maxlength="100" width="250px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ManufacturerList_Country.value')}" />
+									<hbox>
+										<extendedcombobox id="country" width="300px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ManufacturerList_City.value')}" />
+									<hbox>
+										<extendedcombobox id="city" width="300px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ManufacturerList_State.value')}" />
+									<hbox>
+										<extendedcombobox id="state" width="300px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ManufacturerList_Pincode.value')}" />
+									<hbox>
+										<extendedcombobox id="pinCode" width="300px" />
 									</hbox>
 								</row>
 								<row>

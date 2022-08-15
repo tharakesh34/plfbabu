@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.TaskOwnersDAO;
@@ -30,7 +31,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
@@ -53,11 +54,11 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	private FinanceMainDAO financeMainDAO;
 	private TaskOwnersDAO taskOwnersDAO;
 	private FinanceTypeDAO financeTypeDAO;
-	private CustomerDetailsService customerDetailsService;
 	private EligibilityDetailService eligibilityDetailService;
 	private CheckListDetailService checkListDetailService;
 	private FinanceScoreHeaderDAO financeScoreHeaderDAO;
 	private DeviationHelper deviationHelper;
+	private CustomerDataService customerDataService;
 
 	public FinanceDeviationsServiceImpl() {
 		super();
@@ -104,7 +105,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		boolean newRecord = fm.isNewRecord();
 
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finType, "_AView");
-		CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(custID, true, "_View");
+		CustomerDetails customerDetails = customerDataService.getCustomerDetailsbyID(custID, true, "_View");
 
 		fd.setCustomerDetails(customerDetails);
 		schdData.setFinanceMain(fm);
@@ -538,10 +539,6 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public void setEligibilityDetailService(EligibilityDetailService eligibilityDetailService) {
 		this.eligibilityDetailService = eligibilityDetailService;
 	}
@@ -556,6 +553,11 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 	public void setDeviationHelper(DeviationHelper deviationHelper) {
 		this.deviationHelper = deviationHelper;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

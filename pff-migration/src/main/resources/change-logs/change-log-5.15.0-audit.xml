@@ -150,4 +150,16 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#432.3" author="vijaya.a">
+		<modifyDataType tableName="AdtFinTypePartnerBanks" columnName="PaymentMode" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="ST#432.5" author="vijaya.a">
+		<modifyDataType tableName="AdtFinReceiptDetail" columnName="PaymentType" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="DE#326" author="gopalaSwamy.m" >
+		<modifyDataType tableName="ADTCOVENANT_DOCUMENTS" columnName="covenanttype" newDataType="VARCHAR(50)" />
+	</changeSet>
+	
 </databaseChangeLog>

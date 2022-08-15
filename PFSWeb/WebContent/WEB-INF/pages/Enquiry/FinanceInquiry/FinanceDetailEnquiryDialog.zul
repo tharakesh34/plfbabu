@@ -294,6 +294,16 @@
 													<space id="space_ManualSchedule" spacing="2px" />
 													<checkbox id="manualSchedule" />
 												</hbox>
+												<label
+													id="label_FinanceMainDialog_ScheduleType"
+													value="${c:l('label_FinanceMainDialog_ScheduleType.value')}"
+													 />
+												<hbox>
+												<space
+													id="space_manualSchdType" spacing="2px" />
+												<combobox
+														id="manualSchdType" />
+												</hbox>
 											</row>
 											<row>
 												<label id="label_FinanceMainDialog_Flag" value="${c:l('label_FinanceMainDialog_Flag.value')}" />
@@ -506,7 +516,7 @@
 												<label id="label_FinanceMainDialog_AlwGrcRepay" value="${c:l('label_FinanceMainDialog_AlwGrcRepay.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<checkbox id="allowGrcRepay" checked="false" />
+													<checkbox id="allowGrcRepay" checked="false" disabled="true" />
 												</hbox>
 												<label id="label_FinanceMainDialog_GrcSchdMthd" value="${c:l('label_FinanceMainDialog_GrcSchdMthd.value')}" />
 												<hbox>
@@ -661,7 +671,7 @@
 													<textbox id="repaySchdMethod" width="250px" readonly="true" />
 												</hbox>
 											</row>
-											<row visible="true">
+											<row id="row_repayDate" visible="true">
 												<label id="label_FinanceMainDialog_RepayFrq" value="${c:l('label_FinanceMainDialog_RepayFrq.value')}" />
 												<frequencybox id="repayFrq" />
 												<label id="label_FinanceMainDialog_NextRepayDate" value="${c:l('label_FinanceMainDialog_NextRepayDate.value')}" />
@@ -678,7 +688,7 @@
 													<datebox id="lastFullyPaidRepayDate" width="100px" visible="false" />
 												</hbox>
 											</row>
-											<row visible="true">
+											<row id= "row_repayPftDate" visible="true">
 												<label id="label_FinanceMainDialog_RepayPftFrq" value="${c:l('label_FinanceMainDialog_RepayPftFrq.value')}" />
 												<frequencybox id="repayPftFrq" />
 												<label id="label_FinanceMainDialog_NextRepayPftDate" value="${c:l('label_FinanceMainDialog_NextRepayPftDate.value')}" />
@@ -1169,6 +1179,28 @@
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="odTDSApplicable" checked="false" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label id="label_FinanceMainDialog_ExtnsnGraceDays"
+													value="${c:l('label_FinanceMainDialog_ExtnsnODGraceDays.value')}" />
+												<hbox>
+													<space spacing="2px" id="space_extnsnODGraceDays" />
+													<intbox id="extnsnODGraceDays" width="45px" maxlength="3" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label id="label_FinanceMainDialog_CollecChrgcode"
+													value="${c:l('label_FinanceMainDialog_CollecChrgcode.value')}" />
+												<hbox>
+													<space id="space_collecChrgCode" spacing="2px" />
+													<extendedcombobox id="collecChrgCode" readonly="true" />
+												</hbox>
+												<label id="label_FinanceMainDialog_CollectionAmt"
+													value="${c:l('label_FinanceMainDialog_CollectionAmt.value')}" />
+												<hbox>
+													<space id="space_collectionAmt" spacing="2px" />
+													<decimalbox id="collectionAmt" width="120px" readonly="true" />
 												</hbox>
 											</row>
 										</rows>

@@ -1025,4 +1025,48 @@ public class PennantApplicationUtil {
 		}
 		return fieldCodeList;
 	}
+
+	public static String getstatus(String roleCode, String nextRoleCode, String certificateNumber, String moduleCode,
+			String recordStatus) {
+
+		recordStatus = StringUtils.trimToEmpty(recordStatus);
+
+		if (StringUtils.isBlank(nextRoleCode) || roleCode.equals(nextRoleCode)
+				|| recordStatus.equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)) {
+			return getReturnStatus(certificateNumber, moduleCode, recordStatus);
+		}
+
+		JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<>(SecurityRole.class);
+
+		if (nextRoleCode.contains(",")) {
+			String roleCodes[] = nextRoleCode.split(",");
+			searchObject.addFilterIn("RoleCd", Arrays.asList(roleCodes));
+		} else {
+			searchObject.addFilterEqual("RoleCd", nextRoleCode);
+		}
+
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		List<SecurityRole> rolesList = pagedListService.getBySearchObject(searchObject);
+
+		StringBuilder roleCodeDesc = new StringBuilder();
+		for (SecurityRole securityRole : rolesList) {
+			if (!roleCodeDesc.toString().isEmpty()) {
+				roleCodeDesc.append(" and ");
+			}
+
+			roleCodeDesc.append(securityRole.getRoleDesc());
+		}
+
+		return getReturnStatus(certificateNumber, moduleCode, roleCodeDesc.toString());
+	}
+
+	private static String getReturnStatus(String reference, String code, String desc) {
+		StringBuilder status = new StringBuilder();
+
+		status.append(code).append(" ").append(reference).append(" ");
+		status.append(desc).append(" successfully.");
+
+		return status.toString();
+	}
 }

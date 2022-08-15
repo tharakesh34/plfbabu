@@ -56,6 +56,8 @@
 											<listheader
 												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinCurODPft.label')}"
 												hflex="min" />
+											<listheader id="finCurODTxnChrg"
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinCurODTxnChrg.label')}" hflex="min" visible="false" />	
 											<listheader
 												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinMaxODAmt.label')}"
 												hflex="min" />
@@ -65,6 +67,8 @@
 											<listheader
 												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinMaxODPft.label')}"
 												hflex="min" />
+											<listheader id="finMaxODTxnChrg"
+												label="${c:l('listheader_FinODDetailsEnquiryDialog_FinMaxODTxnChrg.label')}" hflex="min" visible="false" />
 											<listheader
 												label="${c:l('listheader_FinODDetailsEnquiryDialog_TotPenaltyAmt.label')}"
 												hflex="min" />

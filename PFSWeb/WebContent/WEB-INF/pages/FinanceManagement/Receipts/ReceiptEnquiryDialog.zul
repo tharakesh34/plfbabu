@@ -109,6 +109,11 @@
 												value="${c:l('label_ReceiptEnquiryDialog_extReference.value')}" />
 											<textbox id="extReference"
 												width="180px" readonly="true" />
+												<label
+												id="label_ReceiptEnq_externalRef"
+												value="${c:l('label_ReceiptEnquiryDialog_extReference.value')}" />
+												<textbox id="extReference"
+												width="180px" readonly="true" />
 										</row>
 									</rows>
 								</grid>

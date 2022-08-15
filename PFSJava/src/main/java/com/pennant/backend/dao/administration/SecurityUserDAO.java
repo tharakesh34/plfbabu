@@ -71,4 +71,6 @@ public interface SecurityUserDAO {
 	SecurityUser getSecurityUserAccessToAllBranches(long id);
 
 	void lockUserAccounts();
+
+	void markAsDelete(SecurityUser securityUser, String Type);
 }

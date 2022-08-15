@@ -50,6 +50,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -71,7 +72,6 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.RestructureCharge;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.systemmasters.ApplicantDetail;
 import com.pennant.backend.model.systemmasters.OtherFinanceDetail;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
@@ -82,6 +82,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 /**
  * DAO methods implementation for the <b>ReportConfiguration model</b> class.<br>
@@ -110,7 +111,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(", FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
 		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId, CalTerms");
 		sql.append(", AdvType, GrcAdvType, DownPayment, Promotioncode, PromotionSeqId");
-		sql.append(", FinAssetValue, RepayRateBasis, GraceTerms, ClosedDate, FinIsActive");
+		sql.append(", FinAssetValue, RepayRateBasis, GraceTerms, ClosedDate, FinIsActive, Restructure");
 		sql.append(" FROM FinanceMain Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -171,34 +172,30 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	 */
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePayments(String finReference) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LlDate, AmtToBeReleased, PaymentType, LlReferenceNo, TransactionRef, ValueDate, Lastmnton");
+		sql.append(" From FinAdvancePayments");
+		sql.append(" Where (Status not in (?,?) or Status is null) And FinReference = ?");
 
-		FinAdvancePayments finAdvPayment = new FinAdvancePayments();
-		finAdvPayment.setFinReference(finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		List<FinAdvancePayments> FinAdvancePaymentslist;
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, "CANCELED");
+			ps.setString(2, "REJECTED");
+			ps.setString(3, finReference);
+		}, (rs, rowNum) -> {
+			FinAdvancePayments fap = new FinAdvancePayments();
 
-		StringBuilder selectSql = new StringBuilder();
+			fap.setLLDate(JdbcUtil.getDate(rs.getDate("LlDate")));
+			fap.setAmtToBeReleased(rs.getBigDecimal("AmtToBeReleased"));
+			fap.setPaymentType(rs.getString("PaymentType"));
+			fap.setLLReferenceNo(rs.getString("LlReferenceNo"));
+			fap.setTransactionRef(rs.getString("TransactionRef"));
+			fap.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+			fap.setLastMntOn(rs.getTimestamp("Lastmnton"));
 
-		selectSql.append(
-				" Select LlDate,AmtToBeReleased,PaymentType,LlReferenceNo,TransactionRef,ValueDate FROM FinAdvancePayments");
-		selectSql.append(" Where (Status not in ('CANCELED','REJECTED') or Status is null)");
-		selectSql.append(" And FinReference = :FinReference");
-
-		logger.trace(Literal.SQL + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvPayment);
-		RowMapper<FinAdvancePayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
-
-		try {
-			FinAdvancePaymentslist = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			FinAdvancePaymentslist = new ArrayList<FinAdvancePayments>();
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return FinAdvancePaymentslist;
+			return fap;
+		});
 	}
 
 	/**
@@ -276,11 +273,12 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	 * get the Manual Advise List
 	 */
 	@Override
-	public List<ManualAdvise> getManualAdvise(String finReference) {
+	public List<ManualAdvise> getManualAdvise(String finReference, Date valueDate) {
 		logger.debug(Literal.ENTERING);
 
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setFinReference(finReference);
+		manualAdvise.setValueDate(valueDate);
 		List<ManualAdvise> manualAdviseList = new ArrayList<ManualAdvise>();
 
 		StringBuilder selectSql = new StringBuilder();
@@ -295,6 +293,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Left Join Bouncereasons T3 ON T1.bounceid = T3.BounceId");
 		selectSql.append(" Where FinReference = :FinReference");
+		selectSql.append(" and ValueDate <= :ValueDate and Status is null");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 
@@ -370,42 +369,38 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		return manualAdviseMovementsList;
 	}
 
-	/**
-	 * get the FinFeeDetails List
-	 */
 	@Override
 	public List<FinFeeDetail> getFinFeedetails(String finReference) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ffd.FinID, ffd.FinReference, ffd.RemainingFee, ffd.PaidAmount, ffd.Postdate, ffd.FeeTypeID");
+		sql.append(", ffd.VasReference, ffd.Finevent, ffd.Originationfee, ffd.FeeSchedulemethod");
+		sql.append(", ft.FeeTypeCode, ft.FeeTypedesc, ffd.WaivedAmount, ft.TaxComponent");
+		sql.append(" From FinFeeDetail ffd");
+		sql.append(" Left Join FeeTypes ft ON ft.FeeTypeId = ffd.FeeTypeId");
+		sql.append(" WHERE ffd.FinReference = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		List<FinFeeDetail> finFeeDetailsList = null;
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinFeeDetail fee = new FinFeeDetail();
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" Select T1.FinReference, T1.RemainingFee, T1.PaidAmount, T1.Postdate, T1.FeeTypeID, T1.VasReference, T1.Finevent");
-		sql.append(
-				", T1.Originationfee, T1.FeeSchedulemethod, T2.FeeTypeCode, T2.FeeTypedesc, T1.WaivedAmount, T2.TaxComponent ");
-		sql.append(" From  FinFeeDetail T1");
-		sql.append(" Left Join FeeTypes T2 ON T2.FeeTypeId = T1.FeeTypeId");
-		sql.append(" WHERE T1.FinReference = :FinReference");
+			fee.setFinID(rs.getLong("FinID"));
+			fee.setFinReference(rs.getString("FinReference"));
+			fee.setRemainingFee(rs.getBigDecimal("RemainingFee"));
+			fee.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			fee.setPostDate(JdbcUtil.getDate(rs.getDate("Postdate")));
+			fee.setFeeTypeID(rs.getLong("FeeTypeID"));
+			fee.setVasReference(rs.getString("VasReference"));
+			fee.setFinEvent(rs.getString("Finevent"));
+			fee.setOriginationFee(rs.getBoolean("Originationfee"));
+			fee.setFeeScheduleMethod(rs.getString("FeeSchedulemethod"));
+			fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			fee.setFeeTypeDesc(rs.getString("FeeTypedesc"));
+			fee.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			fee.setTaxComponent(rs.getString("TaxComponent"));
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		RowMapper<FinFeeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeDetail.class);
-
-		try {
-			finFeeDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			finFeeDetailsList = new ArrayList<FinFeeDetail>();
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
-
-		return finFeeDetailsList;
+			return fee;
+		}, finReference);
 	}
 
 	/**
@@ -421,7 +416,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		List<ReceiptAllocationDetail> finReceiptAllocationDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select  ReceiptID, AllocationType, PaidAmount, TDSPaid From ReceiptAllocationDetail");
+		sql.append(" Select  ReceiptID, AllocationType, PaidAmount, TDSPaid, WaivedAmount");
+		sql.append(" From ReceiptAllocationDetail");
 		sql.append(" Where ReceiptId in (Select ReceiptId from FinReceiptHeader where Reference = :FinReference)");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -519,7 +515,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT FM.FINREFERENCE");
 		sql.append(", CASE WHEN RF.PRODUCTCATEGORY = 'ODFCLITY' THEN FM.FINASSETVALUE");
-		sql.append(" WHEN RF.PRODUCTCATEGORY = 'CD' THEN FP.FINAMOUNT ELSE FP.TOTALPRISCHD END LOANAMOUNT");
+		sql.append(" ELSE FP.TOTALPRISCHD END LOANAMOUNT");
+		sql.append(", FM.FINASSETVALUE");
 		sql.append(", FM.REPAYBASERATE PLRRATE, FM.REPAYMARGIN VARIANCE");
 		sql.append(
 				", CASE WHEN rf.PRODUCTCATEGORY = 'CD' THEN fm.REPAYPROFITRATE ELSE FM.EFFECTIVERATEOFRETURN END IRR");
@@ -529,9 +526,12 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(", FP.PRVRPYSCHPFT PREVINSTAMTPFT");
 		sql.append(
 				", CASE WHEN FM.RVWRATEAPPLFOR IS NULL OR FM.RVWRATEAPPLFOR = '#' THEN 'FIXED' ELSE 'FLOATING' END INTRATETYPE");
+		sql.append(", CASE WHEN FM.REPAYRATEBASIS ='R' THEN 'REDUCING' WHEN FM.REPAYRATEBASIS ='F' THEN 'FLAT'");
+		sql.append(" WHEN FM.REPAYRATEBASIS ='C' THEN 'FLAT CONVERTING TO REDUCE' ELSE '' END RATETYPE");
 		sql.append(", FP.LATESTDISBDATE LASTDISBURSALDATE, FP.FIRSTREPAYDATE FIRSTDUEDATE");
-		sql.append(", FM.MATURITYDATE ENDINSTALLMENTDATE, FM.DOWNPAYMENT ADVINSTAMT, FM.SVAMOUNT");
-		sql.append(", FM.FINISACTIVE, FM.CLOSINGSTATUS, FM.CLOSEDDATE");
+		sql.append(
+				", CASE WHEN  FM.CLOSINGSTATUS ='E' THEN FM.CLOSEDDATE ELSE FM.MATURITYDATE END ENDINSTALLMENTDATE, FM.DOWNPAYMENT ADVINSTAMT");
+		sql.append(", FM.SVAMOUNT, FM.FINISACTIVE, FM.CLOSINGSTATUS, FM.CLOSEDDATE");
 		sql.append(", FP.FUTUREINST FUTUREINSTNO, FP.TOTALPRISCHD FUTUREPRI1");
 		sql.append(", FP.TDSCHDPRI FUTUREPRI2, FP.TOTALPFTSCHD FUTURERPYPFT1");
 		sql.append(", FP.TDSCHDPFT FUTURERPYPFT2, FP.TOTCHARGESPAID CHARGE_COLL_CUST");
@@ -540,6 +540,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(", '' REPO_DATE, '' SALE_DATE ");
 		sql.append(", '' RELEASE_DATE, FP.LATESTRPYDATE ");
 		sql.append(", C.CCYMINORCCYUNITS, C.CCYEDITFIELD, COALESCE(FP.TOTALPFTCPZ, 0) TOTALPFTCPZ");
+		sql.append(", FM.APPLICATIONNO, FM.VANCODE, FP.CURODDAYS DPDCOUNT");
 		sql.append(" FROM FINANCEMAIN FM ");
 		sql.append(" INNER JOIN FINPFTDETAILS FP ON FP.FINREFERENCE = FM.FINREFERENCE");
 		sql.append(" INNER JOIN RMTFINANCETYPES RF ON RF.FINTYPE = FM.FINTYPE");
@@ -1015,41 +1016,41 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 	@Override
 	public List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, FinType, 'Primary Customer' ApplicantType, CustCif CustCIF");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Where fm.CustId = ? and Finreference != ?");
+		sql.append(" Union All ");
+		sql.append(" Select fm.finreference, fm.fintype, 'Co-Applicant' ApplicantType, ja.CustCif CustCIF");
+		sql.append(" From FinJointAccountDetails ja");
+		sql.append(" Inner Join FinanceMain fm on fm.finreference = ja.finreference");
+		sql.append(" Where fm.CustID = ?");
+		sql.append(" Union All ");
+		sql.append(" Select fm.Finreference, fm.Fintype, 'Borrower' ApplicantType, Guarantorcif CustCIF");
+		sql.append(" From FinGuarantorsDetails gr");
+		sql.append(" Inner Join FinanceMain fm on fm.finreference = gr.finreference");
+		sql.append(" Where fm.CustID = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("CustID", custID);
+		logger.debug(Literal.SQL + sql.toString());
 
-		List<OtherFinanceDetail> otherFinanceDetails = null;
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select finReference, FinType, 'Primary Customer' ApplicantType from FinanceMain ");
-		sql.append(" Where CustId = :CustID And Finreference != :FinReference Union All ");
+			ps.setLong(index++, custID);
+			ps.setString(index++, finReference);
+			ps.setLong(index++, custID);
+			ps.setLong(index++, custID);
+		}, (rs, rowNum) -> {
+			OtherFinanceDetail ofd = new OtherFinanceDetail();
 
-		sql.append(" Select FM.finreference, FM.fintype, 'Co-Applicant' ApplicantType from");
-		sql.append(" FinJointAccountDetails JA Inner Join FinanceMain FM  ON FM.finreference = JA.finreference");
-		sql.append(" where FM.CustID = :CustID Union All ");
+			ofd.setFinReference(rs.getString("FinReference"));
+			ofd.setFinType(rs.getString("FinType"));
+			ofd.setApplicantType(rs.getString("ApplicantType"));
+			ofd.setCustCIF(rs.getString("CustCIF"));
 
-		sql.append(" Select FM.Finreference, FM.Fintype, 'Borrower' ApplicantType");
-		sql.append(" from FinGuarantorsDetails GR Inner Join FinanceMain FM ON FM.finreference = GR.finreference ");
-		sql.append(" where FM.CustID = :CustID");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		RowMapper<OtherFinanceDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(OtherFinanceDetail.class);
-
-		try {
-			otherFinanceDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (DataAccessException e) {
-			otherFinanceDetails = new ArrayList<OtherFinanceDetail>();
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
-
-		return otherFinanceDetails;
+			return ofd;
+		});
 	}
 
 	@Override
@@ -1127,7 +1128,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				" Select  ReceiptID, AllocationType, PaidAmount, TypeDesc,AllocationTo  From ReceiptAllocationDetail_View");
+				" Select  ReceiptID, AllocationType, PaidAmount, TypeDesc,AllocationTo, WaivedAmount  From ReceiptAllocationDetail_View");
 		sql.append(" Where ReceiptId in (Select ReceiptId from FinReceiptHeader where Reference = :FinReference)");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -1148,6 +1149,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 								rad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
 								rad.setTypeDesc(rs.getString("TypeDesc"));
 								rad.setAllocationTo(rs.getLong("AllocationTo"));
+								rad.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
 								if (radMap.containsKey(rad.getReceiptID())) {
 									radList = radMap.get(rad.getReceiptID());
 								} else {
@@ -1403,5 +1405,36 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 			return rc;
 		});
+	}
+
+	@Override
+	public AdviseDueTaxDetail getAdviseDueTaxDetails(long adviseId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AdviseId, TaxType, Amount, CGST, SGST, UGST, IGST, CESS, TotalGST");
+		sql.append(" From AdviseDueTaxdetail");
+		sql.append(" Where AdviseId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				AdviseDueTaxDetail due = new AdviseDueTaxDetail();
+
+				due.setAdviseID(rs.getLong("AdviseId"));
+				due.setTaxType(rs.getString("TaxType"));
+				due.setAmount(rs.getBigDecimal("Amount"));
+				due.setCGST(rs.getBigDecimal("CGST"));
+				due.setSGST(rs.getBigDecimal("SGST"));
+				due.setUGST(rs.getBigDecimal("UGST"));
+				due.setIGST(rs.getBigDecimal("IGST"));
+				due.setCESS(rs.getBigDecimal("CESS"));
+				due.setTotalGST(rs.getBigDecimal("TotalGST"));
+
+				return due;
+			}, adviseId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 }

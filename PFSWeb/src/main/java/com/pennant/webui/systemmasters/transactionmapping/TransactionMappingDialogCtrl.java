@@ -15,7 +15,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -33,7 +32,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
+import com.pennanttech.pff.cd.model.TransactionMapping;
 
 public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping> {
 	private static final long serialVersionUID = 1L;
@@ -49,7 +48,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	protected ExtendedCombobox dealerCode;
 	protected ExtendedCombobox mid;
 	protected Textbox dealerName;
-	protected Intbox tid;
+	protected Textbox tid;
 	protected Checkbox active;
 	protected Textbox mobileNumber1;
 	protected Textbox mobileNumber2;
@@ -143,7 +142,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		this.mid.setMandatoryStyle(true);
 		this.mid.setValidateColumns(new String[] { "StoreId" });
 
-		this.tid.setMaxlength(6);
+		this.tid.setMaxlength(20);
 
 		this.mobileNumber1.setMaxlength(20);
 		this.mobileNumber2.setMaxlength(20);
@@ -294,11 +293,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 			dealerCode.setDescription(mapping.getStoreName());
 		}
 
-		if (mapping.getTid() == Long.MIN_VALUE) {
-			this.tid.setText("");
-		} else {
-			this.tid.setText(String.valueOf(mapping.getTid()));
-		}
+		this.tid.setText(mapping.getTid());
 
 		if (mapping.getMid() == null) {
 			this.mid.setValue("");
@@ -361,7 +356,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		}
 
 		try {
-			aTransactionMapping.setTid(Long.valueOf(this.tid.getValue()));
+			aTransactionMapping.setTid(this.tid.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -472,7 +467,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 
 		if (!this.tid.isReadonly()) {
 			this.tid.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionMapping_TID.value"),
-					PennantRegularExpressions.REGEX_NUMERIC, true));
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 		if (!this.mobileNumber1.isReadonly()) {

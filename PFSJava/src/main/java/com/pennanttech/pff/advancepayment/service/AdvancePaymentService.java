@@ -804,6 +804,10 @@ public class AdvancePaymentService extends ServiceHelper {
 		AdvancePaymentDetail oldAdvPay = advancePaymentDetailDAO.getAdvancePaymentDetailBalByRef(fm.getFinID());
 		AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(finScheduleData, oldAdvPay, "");
 
+		if (curAdvpay == null) {
+			return;
+		}
+
 		BigDecimal amount = BigDecimal.ZERO;
 		amount = curAdvpay.getAdvInt();
 		boolean advIntTDSInczUpf = SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF);

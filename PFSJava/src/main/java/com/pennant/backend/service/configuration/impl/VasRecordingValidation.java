@@ -111,11 +111,6 @@ public class VasRecordingValidation {
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
-				if (tempVASRecording != null && oldVasRecording != null
-						&& !oldVasRecording.getLastMntOn().equals(tempVASRecording.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
-				}
 			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

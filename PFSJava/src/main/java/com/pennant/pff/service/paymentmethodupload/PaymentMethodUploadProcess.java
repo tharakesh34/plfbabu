@@ -333,21 +333,22 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 			if (MandateConstants.TYPE_PDC.equals(changePayment.getFinRepayMethod())) {
 				if (!chequeHeaderDAO.isChequeDetilsExists(changePayment.getFinID())) {
-					ChequeHeader chequeHeader = new ChequeHeader();
-					chequeHeader.setRoleCode("");
-					chequeHeader.setNextRoleCode("");
-					chequeHeader.setTaskId("");
-					chequeHeader.setNextTaskId("");
-					chequeHeader.setVersion(1);
-					chequeHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					chequeHeader.setRecordType("");
-					chequeHeader.setWorkflowId(0);
-					chequeHeader.setFinID(changePayment.getFinID());
-					chequeHeader.setFinReference(changePayment.getFinReference());
-					chequeHeader.setNoOfCheques(0);
-					chequeHeader.setTotalAmount(BigDecimal.ZERO);
-					chequeHeader.setActive(true);
-					chequeHeaderDAO.save(chequeHeader, TableType.MAIN_TAB);
+					ChequeHeader ch = new ChequeHeader();
+					ch.setRoleCode("");
+					ch.setNextRoleCode("");
+					ch.setTaskId("");
+					ch.setNextTaskId("");
+					ch.setVersion(1);
+					ch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					ch.setRecordType("");
+					ch.setWorkflowId(0);
+					ch.setFinID(changePayment.getFinID());
+					ch.setFinReference(changePayment.getFinReference());
+					ch.setNoOfCheques(0);
+					ch.setTotalAmount(BigDecimal.ZERO);
+					ch.setActive(true);
+
+					chequeHeaderDAO.save(ch, TableType.MAIN_TAB);
 				}
 			}
 

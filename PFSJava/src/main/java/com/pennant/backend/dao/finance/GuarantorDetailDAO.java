@@ -27,6 +27,7 @@ package com.pennant.backend.dao.finance;
 
 import java.util.List;
 
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.GuarantorDetail;
 
@@ -55,4 +56,6 @@ public interface GuarantorDetailDAO {
 	List<FinanceExposure> getGuarantorExposureList(GuarantorDetail guarantorDetail);
 
 	GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail);
+
+	List<FinanceEnquiry> getGuarantorsFin(String custCIF, String type);
 }

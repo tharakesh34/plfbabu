@@ -35,7 +35,6 @@ import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
-import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -62,8 +61,9 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
 public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
-	private static final Logger logger = LogManager.getLogger(ManualProvisioningDialogCtrl.class);
+
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LogManager.getLogger(ManualProvisioningDialogCtrl.class);
 
 	protected Window window_ManualProvisioningDialog;
 
@@ -97,11 +97,12 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	protected Checkbox manualProvision;
 
 	protected String enquiry;
-	private List<ValueLabel> assetRegStageList = new ArrayList<ValueLabel>();
-	private List<ValueLabel> assetIntStageList = new ArrayList<ValueLabel>();
+	private List<ValueLabel> assetRegStageList;
+	private List<ValueLabel> assetIntStageList;
 	private Provision provision;
 	private transient ManualProvisioningListCtrl manualProvisioningListCtrl;
 	private transient ProvisionService provisionService;
+	private boolean isInsuranceComponent = false;
 	private boolean provisionInternal = false;
 	private int format = 2;
 	private transient boolean validationOn;
@@ -136,8 +137,9 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
+	 * @throws Exception
 	 */
-	public void onCreate$window_ManualProvisioningDialog(Event event) {
+	public void onCreate$window_ManualProvisioningDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -208,10 +210,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.newRegProvisionAmount.setProperties(false, format);
 		this.newInternalProvisionAmount.setProperties(false, format);
 
-		String provisionBooks = SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_BOOKS);
-		if (ProvisionConstants.PROVISION_BOOKS_REG.equals(provisionBooks)) {
+		if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_REG,
+				SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_BOOKS))) {
 			provisionInternal = false;
-		} else if (ProvisionConstants.PROVISION_BOOKS_INT.equals(provisionBooks)) {
+		} else if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_INT,
+				SysParamUtil.getValueAsString(SMTParameterConstants.PROVISION_BOOKS))) {
 			provisionInternal = true;
 		}
 
@@ -222,6 +225,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			for (VASRecording vasRecording : vASRecordingsList) {
 				insuranceAmount = insuranceAmount.add(vasRecording.getFee());
 			}
+			isInsuranceComponent = true;
 		}
 
 		isSecured = this.collateralAssignmentDAO.isSecuredLoan(provision.getFinReference(), TableType.MAIN_TAB);
@@ -248,18 +252,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		dataMap.put("OverdueInterest", finProfitDetail.getODProfit());
 		dataMap.put("UndisbursedAmount", financeMain.getFinAssetValue().subtract(financeMain.getFinCurrAssetValue()));
 
-		if (this.provision.getNpaIntHeader() == null) {
-			this.newInternalStage.setReadonly(true);
-		} else {
-			this.assetIntStageList = getNPAStageList(provision, provision.getNpaIntHeader());
-		}
-
-		if (this.provision.getNpaRegHeader() == null) {
-			this.newRegStage.setReadonly(true);
-		} else {
-			this.assetRegStageList = getNPAStageList(provision, provision.getNpaRegHeader());
-		}
-
+		this.assetRegStageList = getRegNPAStageList(provision);
+		this.assetIntStageList = getIntNPAStageList(provision);
 		setStatusDetails();
 
 		if (isWorkFlowEnabled()) {
@@ -267,7 +261,13 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
+		if (this.provision.getNpaIntHeader() == null) {
+			this.newInternalStage.setReadonly(true);
+		}
 
+		if (this.provision.getNpaRegHeader() == null) {
+			this.newRegStage.setReadonly(true);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -358,14 +358,14 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	public void doWriteBeanToComponents(Provision provision) {
 		logger.debug(Literal.ENTERING);
 
-		FinScheduleData fsd = provision.getFinanceDetail().getFinScheduleData();
-		FinanceMain aFinanceMain = fsd.getFinanceMain();
-		FinanceProfitDetail fpd = fsd.getFinPftDeatil();
+		FinanceMain aFinanceMain = provision.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceProfitDetail finProfitDetail = provision.getFinanceDetail().getFinScheduleData().getFinPftDeatil();
 		format = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
 
-		BigDecimal colVal = provision.getCollateralValue();
-		if (colVal != null && colVal.compareTo(BigDecimal.ZERO) > 0) {
-			setSecured(true);
+		if (provision.getCollateralValue() != null) {
+			if (provision.getCollateralValue().compareTo(BigDecimal.ZERO) > 0) {
+				setSecured(true);
+			}
 		}
 		// Loan Summary
 		this.finReference.setValue(provision.getFinReference());
@@ -374,10 +374,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), format));
 		this.finStartDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getFinStartDate()));
 		this.maturityDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getMaturityDate()));
-		this.pricipalOutstanding.setValue(PennantApplicationUtil.formateAmount(fpd.getTotalPriBal(), format));
-		BigDecimal totAmt = fpd.getODProfit().add(fpd.getODPrincipal().add(fpd.getPenaltyDue()));
-		this.totalOverdue.setValue(PennantApplicationUtil.formateAmount(totAmt, format));
-		this.dPD.setValue(fpd.getCurODDays());
+		this.pricipalOutstanding
+				.setValue(PennantApplicationUtil.formateAmount(finProfitDetail.getTotalPriBal(), format));
+		this.totalOverdue.setValue(PennantApplicationUtil.formateAmount(finProfitDetail.getODProfit()
+				.add(finProfitDetail.getODPrincipal().add(finProfitDetail.getPenaltyDue())), format));
+		this.dPD.setValue(finProfitDetail.getCurODDays());
 
 		// Current NPA Provision Summary
 		BigDecimal regProvAmount = BigDecimal.ZERO;
@@ -385,12 +386,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		BigDecimal regInsProvAmount = BigDecimal.ZERO;
 		BigDecimal intInsProvAmount = BigDecimal.ZERO;
 
+		// Current NPA Provision Summary
 		if (provision.getOldProvision() != null) {
 			List<ProvisionAmount> provisionAmounts = provision.getOldProvision().getProvisionAmounts();
 			for (ProvisionAmount provisionAmount : provisionAmounts) {
-
 				switch (provisionAmount.getProvisionType()) {
-
 				case ProvisionConstants.PROVISION_BOOKS_INT:
 					this.internalStage.setValue(provisionAmount.getAssetCode());
 					this.internalProvisionPercentage.setValue(provisionAmount.getProvisionPer());
@@ -424,6 +424,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		// New Provision
 		List<ProvisionAmount> provisionAmounts = provision.getProvisionAmounts();
+		// fillComboBox(this.newRegStage, null, this.assetRegStageList, "");
+		// fillComboBox(this.newInternalStage, null, this.assetIntStageList, "");
 		regProvAmount = BigDecimal.ZERO;
 		intProvAmount = BigDecimal.ZERO;
 		regInsProvAmount = BigDecimal.ZERO;
@@ -571,16 +573,20 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Setting Asset Stage Order
+	 * 
+	 * @param value
+	 * @return
+	 */
 	private int getAssetStageOrder(String assetCode) {
-		List<NPAProvisionDetail> pdList = getProvisionDetails();
+		List<NPAProvisionDetail> provisionDetails = getProvisionDetails();
 
-		if (CollectionUtils.isEmpty(pdList)) {
-			return 0;
-		}
-
-		for (NPAProvisionDetail pd : pdList) {
-			if (StringUtils.equals(assetCode, pd.getAssetCode())) {
-				return pd.getAssetStageOrder();
+		if (CollectionUtils.isNotEmpty(provisionDetails)) {
+			for (NPAProvisionDetail npaProvisionDetail : provisionDetails) {
+				if (StringUtils.equals(assetCode, npaProvisionDetail.getAssetCode())) {
+					return npaProvisionDetail.getAssetStageOrder();
+				}
 			}
 		}
 		return 0;
@@ -631,11 +637,10 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		setValidationOn(true);
 		if (provisionInternal) {
 			this.newInternalStage.setConstraint(new PTListValidator<ValueLabel>(
-					Labels.getLabel("label_ManualProvisioningDialog_NewInternalStage.value"), this.assetIntStageList,
-					true));
+					Labels.getLabel("label_ManualProvisioningDialog_NewInternalStage.value"), assetIntStageList, true));
 		} else {
 			this.newRegStage.setConstraint(new PTListValidator<ValueLabel>(
-					Labels.getLabel("label_ManualProvisioningDialog_NewRegStage.value"), this.assetRegStageList, true));
+					Labels.getLabel("label_ManualProvisioningDialog_NewRegStage.value"), assetRegStageList, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -824,8 +829,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected boolean doProcess(Provision aProvision, String tranType)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	protected boolean doProcess(Provision aProvision, String tranType) throws Exception {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -903,6 +907,19 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		return processCompleted;
 	}
 
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param auditHeader (AuditHeader)
+	 * 
+	 * @param method      (String)
+	 * 
+	 * @return boolean
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InterfaceException
+	 * 
+	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
@@ -968,23 +985,46 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		return processCompleted;
 	}
 
-	private List<ValueLabel> getNPAStageList(Provision provision, NPAProvisionHeader header) {
-		List<NPAProvisionDetail> details = header.getProvisionDetailsList();
+	/**
+	 * NPA Stage List
+	 * 
+	 * @param provision2
+	 * @return
+	 */
+	private List<ValueLabel> getIntNPAStageList(Provision provision) {
+
+		List<NPAProvisionDetail> details = provision.getNpaIntHeader().getProvisionDetailsList();
 
 		setProvisionDetails(details);
+		List<ValueLabel> stageList = new ArrayList<ValueLabel>(details.size());
 
-		if (CollectionUtils.isEmpty(details)) {
-			return new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(details)) {
+			for (NPAProvisionDetail provisionDetail : details) {
+				stageList.add(
+						new ValueLabel(provisionDetail.getAssetCode(), String.valueOf(provisionDetail.getAssetCode())));
+			}
 		}
 
-		List<ValueLabel> stageList = new ArrayList<>(details.size());
+		return stageList;
+	}
 
-		for (NPAProvisionDetail provisionDetail : details) {
-			NPAProvisionDetail pd = provisionDetail;
-			String assetCode = pd.getAssetCode();
-			stageList.add(new ValueLabel(assetCode, String.valueOf(assetCode)));
+	private List<ValueLabel> getRegNPAStageList(Provision provision) {
+
+		if (provision.getNpaRegHeader() == null) {
+			return null;
 		}
 
+		List<NPAProvisionDetail> details = provision.getNpaRegHeader().getProvisionDetailsList();
+
+		setProvisionDetails(details);
+		List<ValueLabel> stageList = new ArrayList<ValueLabel>(details.size());
+
+		if (CollectionUtils.isNotEmpty(details)) {
+			for (NPAProvisionDetail provisionDetail : details) {
+				stageList.add(
+						new ValueLabel(provisionDetail.getAssetCode(), String.valueOf(provisionDetail.getAssetCode())));
+			}
+		}
 		return stageList;
 	}
 
@@ -1007,7 +1047,10 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 				RuleResult ruleResult = executeProvisionRule(provRule);
 				BigDecimal provisionAmount = new BigDecimal(ruleResult.getProvAmount().toString());
 				BigDecimal provpercentage = new BigDecimal(ruleResult.getProvPercentage().toString());
-				BigDecimal vasProvAmount = new BigDecimal(ruleResult.getVasProvAmount().toString());
+				BigDecimal vasProvAmount = BigDecimal.ZERO;
+				if (isInsuranceComponent) {
+					vasProvAmount = new BigDecimal(ruleResult.getVasProvAmount().toString());
+				}
 
 				this.newRegProvisionPercentage.setValue(provpercentage);
 				this.newRegProvisionAmount.setAttribute("provAmount", provisionAmount);
@@ -1039,7 +1082,10 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 				RuleResult ruleResult = executeProvisionRule(provRule);
 				BigDecimal provisionAmount = new BigDecimal(ruleResult.getProvAmount().toString());
 				BigDecimal provpercentage = new BigDecimal(ruleResult.getProvPercentage().toString());
-				BigDecimal vasProvAmount = new BigDecimal(ruleResult.getVasProvAmount().toString());
+				BigDecimal vasProvAmount = BigDecimal.ZERO;
+				if (isInsuranceComponent) {
+					vasProvAmount = new BigDecimal(ruleResult.getVasProvAmount().toString());
+				}
 				this.newInternalProvisionPercentage.setValue(provpercentage);
 
 				this.newInternalProvisionAmount.setAttribute("provAmount", provisionAmount);

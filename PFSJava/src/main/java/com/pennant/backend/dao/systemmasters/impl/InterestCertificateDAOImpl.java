@@ -69,6 +69,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		sql.append("EFFECTIVERATE, ENTITYCODE, ENTITYDESC, ENTITYPANNUMBER, ENTITYADDRHNBR,");
 		sql.append("ENTITYFLATNBR, ENTITYADDRSTREET, ENTITYSTATE, ENTITYCITY, FINCCY, FinAmount, fintype,");
 		sql.append("custflatnbr, EntityZip, FINCURRASSETVALUE, CUSTSALUTATION ");
+		sql.append(", TOTOUSTANDINGAMT, TOTALPFTBAL, TOTALPRIBAL");
 		sql.append("from INTERESTCERTIFICATE_VIEW ");
 		sql.append("Where FinReference =:FinReference");
 

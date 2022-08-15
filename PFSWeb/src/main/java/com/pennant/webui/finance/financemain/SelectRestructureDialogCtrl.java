@@ -185,10 +185,9 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 
-		Filter[] filters = new Filter[3];
+		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		filters[1] = new Filter("RepayFrq", "D0000", Filter.OP_NOT_EQUAL);
-		filters[2] = new Filter("StepFinance", 1, Filter.OP_NOT_EQUAL);
 		this.finReference.setFilters(filters);
 
 		logger.debug(Literal.LEAVING);

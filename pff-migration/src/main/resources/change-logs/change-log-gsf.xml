@@ -1283,45 +1283,2879 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="DE#950" author="vijaya.a">
+	<changeSet id="53" author="vijaya.a">
 		<sql>
 			<![CDATA[
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writtenoffPri';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writtenoffPri', 'written off principle', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writtenoffPft';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writtenoffPft', 'written off profit', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_curODPri';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_curODPri', 'Current OD Priniciple', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_curODPft';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_curODPft', 'Current OD Profit', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_unPaidSchdPri';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_unPaidSchdPri', 'Unpaid schedule principle', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_unPaidSchdPft';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_unPaidSchdPft', 'Unpaid schedule profit', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_penaltyAmount';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_penaltyAmount', 'Penality amount', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writtenoffSchFee';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writtenoffSchFee', 'written off schedule fee', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writeoffPrincipal';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writeoffPrincipal', 'written off principle', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writeoffProfit';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writeoffProfit', 'write off profit', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
-				
-				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writeoffSchFee';
-				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writeoffSchFee', 'write off schedule fee', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				update data_engine_column set RuleForValue = 'if((DISBURSEMENT_TYPE == ''N'')){Result = ''NE'';  return;} else if((DISBURSEMENT_TYPE == ''R'')) {Result = ''RT'';  return;} else if((DISBURSEMENT_TYPE == ''IMPS'')) {Result = ''PA'';  return;} else if((DISBURSEMENT_TYPE == ''C'')) {Result = ''CC'';  return;} else if((DISBURSEMENT_TYPE == ''I'')) {Result = ''FT'';  return;}' where name = 'DISBURSEMENT_TYPE' And Tableid in (select id from data_engine_table where configId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
 			]]>
 		</sql>
 	</changeSet>
 
+	<changeSet id="55" author="vijaya.a">
+		<modifyDataType tableName="OGL_Transaction" columnName="amount" newDataType="numeric(18,2)" />
+	</changeSet>
+	
+	<changeSet id="55_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'ogl_transaction');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#39_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#39" author="vijaya.a">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<![CDATA[
+			SELECT FA.PAYMENTID,
+				FA.FINREFERENCE,
+				'D' CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN FA.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN
+				FA.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				WHEN FA.PAYMENTTYPE = 'IFT'
+				THEN 'I'
+				ELSE FA.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				FA.AMTTOBERELEASED,
+				FA.DISBDATE,
+				FA.LLDATE,
+				FA.PAYABLELOC,
+				FA.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				PBD.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				PBD.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				FA.BENEFICIARYACCNO,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				OR FA.PAYMENTTYPE = 'DD'
+				THEN
+				FA.LIABILITYHOLDNAME
+				ELSE FA.BENEFICIARYNAME
+				END BENEFICIARYNAME,
+				(FA.PHONECOUNTRYCODE || FA.PHONEAREACODE) || FA.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				BRCA.CustAddrHNbr ||','|| BRCA.CustAddrStreet ||','|| BRC.PCCITYNAME ||','|| BRS.CPPROVINCENAME  BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				FA.STATUS,
+				FA.DESCRIPTION REMARKS,
+				FA.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID
+				PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				FA.INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				SMD.ENTITYCODE,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT
+				FROM FINADVANCEPAYMENTS FA
+				JOIN
+				(SELECT FINANCEMAIN_TEMP.CUSTID,
+				FINANCEMAIN_TEMP.FINREFERENCE,
+				FINANCEMAIN_TEMP.FINTYPE,
+				FINANCEMAIN_TEMP.FINISACTIVE
+				FROM FINANCEMAIN_TEMP
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE
+				FROM FINANCEMAIN T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM
+				ON FM.FINREFERENCE = FA.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID	
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE	= FA.DISBCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE	ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID	AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE =	BB.BANKCODE
+				LEFT JOIN ( SELECT PB_1.PARTNERBANKID,	
+				PBD_1.BANKNAME,
+				PBB.BRANCHDESC,
+				PBBRC.PCCITYNAME,
+				PBBRS.CPPROVINCENAME FROM PARTNERBANKS PB_1
+				JOIN BANKBRANCHES PBB ON PBB.BRANCHCODE = PB_1.BANKBRANCHCODE
+				JOIN BMTBANKDETAIL PBD_1 ON PBD_1.BANKCODE = PBB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE
+				) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND
+				BR.ACCNUMBER = FA.BENEFICIARYACCNO AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID
+				AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES	BRCA ON	BRCA.CUSTID = BR.CUSTID
+				AND BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE FA.STATUS = 'APPROVED' AND NOT (FA.PAYMENTID IN ( 
+				SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+				AND NOT	(FA.PAYMENTID IN ( SELECT FINADVANCEPAYMENTS_TEMP.PAYMENTID FROM FINADVANCEPAYMENTS_TEMP))
+				UNION ALL
+				SELECT
+				PI.PAYMENTINSTRUCTIONID PAYMENTID,
+				PH.FINREFERENCE,
+				PH.PAYMENTTYPE CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN PI.PAYMENTTYPE =
+				'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				WHEN PI.PAYMENTTYPE = 'IFT'
+				THEN 'I'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT  AMTTOBERELEASED,
+				PI.POSTDATE
+				DISBDATE,
+				PI.POSTDATE LLDATE,
+				PI.PAYABLELOC,
+				PI.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL
+				CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				PI.ACCOUNTNO BENEFICIARYACCNO,
+				CASE
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				OR PI.PAYMENTTYPE = 'DD'
+				THEN
+				PI.FAVOURNAME
+				ELSE PI.ACCTHOLDERNAME
+				END BENEFICIARYNAME,
+				PI.PHONECOUNTRYCODE || PI.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				'' BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE
+				PARTNERBANK_CODE,
+				PI.POSTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				SMD.ENTITYCODE,
+				PB.ACCOUNTNO
+				PARTNERBANK_ACCOUNTNO
+				FROM PAYMENTINSTRUCTIONS PI
+				JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				JOIN (SELECT
+				FINANCEMAIN.CUSTID,
+				FINANCEMAIN.FINREFERENCE,
+				FINANCEMAIN.FINTYPE,
+				FINANCEMAIN.FINISACTIVE
+				FROM FINANCEMAIN
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE
+				FROM FINANCEMAIN_TEMP T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM ON FM.FINREFERENCE = PH.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID
+				AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY	BBRC ON BBRC.PCCITY = BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID
+				AND BR.ACCNUMBER = PI.ACCOUNTNO	AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON	BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID	AND	BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE PI.STATUS = 'APPROVED'
+				AND NOT
+				(PI.PAYMENTINSTRUCTIONID IN
+				( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM
+				DISBURSEMENT_REQUESTS
+				))
+				UNION ALL
+				SELECT PI.ID PAYMENTID,
+				VR.PRIMARYLINKREF FINREFERENCE,
+				'I' CHANNEL,
+				PI.PROVIDERID,
+				CASE
+				WHEN
+				PI.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN
+				PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				WHEN PI.PAYMENTTYPE = 'IFT'
+				THEN 'I'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT  AMTTOBERELEASED,
+				PI.PAYMENTDATE DISBDATE,
+				PI.PAYMENTDATE LLDATE,
+				'' PAYABLELOC,
+				'' PRINTINGLOC,
+				C.CustCIF CUSTCIF,
+				'' CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				'' CUSTOMER_EMAIL,
+				'' CUSTOMER_STATE,
+				'' CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				VPA.ACCOUNTNUMBER BENEFICIARYACCNO,
+				AVD.DEALERNAME BENEFICIARYNAME,
+				AVD.DEALERTELEPHONE
+				BENEFICIARY_MOBILE,
+				AVD.EMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				AVD.DEALERADDRESS1 BENFICIARY_ADDRESS1,
+				AVD.DEALERADDRESS2 BENFICIARY_ADDRESS2,
+				AVD.DEALERADDRESS3 BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				'' FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				PI.PAYMENTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				1 FINISACTIVE,
+				PI.ENTITYCODE,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT
+				FROM INSURANCEPAYMENTINSTRUCTIONS PI
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON	PB.PARTNERBANKID = PI.PARTNERBANKID
+				JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID
+				JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID
+				JOIN VASRECORDING VR ON VR.PAYMENTINSID = PI.ID
+				LEFT JOIN FinanceMain FM on FM.finreference = VR.PrimaryLinkRef
+				LEFT JOIN Customers C on FM.CustID = C.CustID
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY	= BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	AVD.DEALERCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				WHERE PI.STATUS = 'APPROVED' AND PI.PAYMENTAMOUNT > 0
+				AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="DE#39_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#43" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete From BMTAmountCodes Where AllowedEvent = 'INSTDATE' And AmountCode = 'ae_bpi';
+				Insert into BMTAmountCodes values('INSTDATE', 0, 'ae_bpi', 'bpi', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#46" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				delete from RBFIELDDETAILS where RBMODULE = 'SUBHEAD' and RBEVENT = 'SUBHEAD' and RBFLDNAME = 'ae_vasProdCategory';
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD', 'SUBHEAD', 'ae_vasProdCategory', 'VAS Product Category', 'nvarchar', 8, '0', '1', 'VASProductCategory', 'static,dbvalue', 'VASProductCategory');		
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#46.2.1" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#46.2.2" author="saisandeep.b">
+		<createView viewName="FINFEEDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FEEID,
+					T1.FINREFERENCE,
+					T1.ORIGINATIONFEE,
+					T1.FINEVENT,
+					T1.FEETYPEID,
+					T1.FEESEQ,
+					T1.FEEORDER,
+					T1.CALCULATEDAMOUNT,
+					T1.ACTUALAMOUNT,
+					T1.WAIVEDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.FEESCHEDULEMETHOD,
+					T1.TERMS,
+					T1.REMAININGFEE,
+					T1.PAYMENTREF,
+					T1.CALCULATIONTYPE,
+					T1.RULECODE,
+					T1.FIXEDAMOUNT,
+					T1.PERCENTAGE,
+					T1.CALCULATEON,
+					T1.ALWDEVIATION,
+					T1.MAXWAIVERPERC,
+					T1.ALWMODIFYFEE,
+					T1.ALWMODIFYFEESCHDMTHD,
+					T1.VASREFERENCE,
+					T1.STATUS,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.PAIDAMOUNTORIGINAL,
+					T1.PAIDAMOUNTGST,
+					T1.NETAMOUNTORIGINAL,
+					T1.NETAMOUNTGST,
+					T1.NETAMOUNT,
+					T1.REMAININGFEEORIGINAL,
+					T1.REMAININGFEEGST,
+					T1.ACTUALAMOUNTORIGINAL,
+					T1.ACTUALAMOUNTGST,
+					T1.FEEAMZ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.TRANSACTIONID,
+					T1.WORKFLOWID,
+					T2.FEETYPECODE,
+					T2.FEETYPEDESC,
+					T1.REFUNDABLE,
+					T1.INSTRUCTIONUID,
+					T1.ACTPERCENTAGE,
+					T1.WAIVEDGST,
+					T1.REFERENCEID,
+					T1.TAXHEADERID,
+					T1.PAIDTDS,
+					T1.REMTDS,
+					T1.NETTDS,
+					T3.PRODUCTCODE VASPRODUCTCODE
+				FROM FINFEEDETAIL_TEMP T1
+				LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				LEFT JOIN VASRecording_Temp T3 ON T1.VasReference = T3.VasReference
+				UNION ALL
+				SELECT T1.FEEID,
+				  T1.FINREFERENCE,
+				  T1.ORIGINATIONFEE,
+				  T1.FINEVENT,
+				  T1.FEETYPEID,
+				  T1.FEESEQ,
+				  T1.FEEORDER,
+				  T1.CALCULATEDAMOUNT,
+				  T1.ACTUALAMOUNT,
+				  T1.WAIVEDAMOUNT,
+				  T1.PAIDAMOUNT,
+				  T1.FEESCHEDULEMETHOD,
+				  T1.TERMS,
+				  T1.REMAININGFEE,
+				  T1.PAYMENTREF,
+				  T1.CALCULATIONTYPE,
+				  T1.RULECODE,
+				  T1.FIXEDAMOUNT,
+				  T1.PERCENTAGE,
+				  T1.CALCULATEON,
+				  T1.ALWDEVIATION,
+				  T1.MAXWAIVERPERC,
+				  T1.ALWMODIFYFEE,
+				  T1.ALWMODIFYFEESCHDMTHD,
+				  T1.VASREFERENCE,
+				  T1.STATUS,
+				  T1.TAXAPPLICABLE,
+				  T1.TAXCOMPONENT,
+				  T1.PAIDAMOUNTORIGINAL,
+				  T1.PAIDAMOUNTGST,
+				  T1.NETAMOUNTORIGINAL,
+				  T1.NETAMOUNTGST,
+				  T1.NETAMOUNT,
+				  T1.REMAININGFEEORIGINAL,
+				  T1.REMAININGFEEGST,
+				  T1.ACTUALAMOUNTORIGINAL,
+				  T1.ACTUALAMOUNTGST,
+				  T1.FEEAMZ,
+				  T1.VERSION,
+				  T1.LASTMNTBY,
+				  T1.LASTMNTON,
+				  T1.RECORDSTATUS,
+				  T1.ROLECODE,
+				  T1.NEXTROLECODE,
+				  T1.TASKID,
+				  T1.NEXTTASKID,
+				  T1.RECORDTYPE,
+				  T1.TRANSACTIONID,
+				  T1.WORKFLOWID,
+				  T2.FEETYPECODE,
+				  T2.FEETYPEDESC,
+				  T1.REFUNDABLE,
+				  T1.INSTRUCTIONUID,
+				  T1.ACTPERCENTAGE,
+				  T1.WAIVEDGST,
+				  T1.REFERENCEID,
+				  T1.TAXHEADERID,
+				  T1.PAIDTDS,
+				  T1.REMTDS,
+				  T1.NETTDS,
+				  T3.PRODUCTCODE VASPRODUCTCODE
+				FROM FINFEEDETAIL T1
+				LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID 
+				LEFT JOIN VASRecording T3 ON T1.VasReference = T3.VasReference
+				WHERE NOT (EXISTS  ( SELECT 1 FROM FINFEEDETAIL_TEMP WHERE FINFEEDETAIL_TEMP.FEEID = T1.FEEID))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#46.2.3" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#46.3.1" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeedetail_tview');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#46.3.2" author="saisandeep.b">
+		<createView viewName="FINFEEDETAIL_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FEEID,
+					T1.FINREFERENCE,
+					T1.ORIGINATIONFEE,
+					T1.FINEVENT,
+					T1.FEETYPEID,
+					T1.FEESEQ,
+					T1.FEEORDER,
+					T1.CALCULATEDAMOUNT,
+					T1.ACTUALAMOUNT,
+					T1.WAIVEDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.FEESCHEDULEMETHOD,
+					T1.TERMS,
+					T1.REMAININGFEE,
+					T1.PAYMENTREF,
+					T1.CALCULATIONTYPE,
+					T1.RULECODE,
+					T1.FIXEDAMOUNT,
+					T1.PERCENTAGE,
+					T1.CALCULATEON,
+					T1.ALWDEVIATION,
+					T1.MAXWAIVERPERC,
+					T1.ALWMODIFYFEE,
+					T1.ALWMODIFYFEESCHDMTHD,
+					T1.VASREFERENCE,
+					T1.STATUS,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.PAIDAMOUNTORIGINAL,
+					T1.PAIDAMOUNTGST,
+					T1.NETAMOUNTORIGINAL,
+					T1.NETAMOUNTGST,
+					T1.NETAMOUNT,
+					T1.REMAININGFEEORIGINAL,
+					T1.REMAININGFEEGST,
+					T1.ACTUALAMOUNTORIGINAL,
+					T1.ACTUALAMOUNTGST,
+					T1.FEEAMZ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.TRANSACTIONID,
+					T1.WORKFLOWID,
+					T2.FEETYPECODE,
+					T2.FEETYPEDESC,
+					T1.REFUNDABLE,
+					T1.INSTRUCTIONUID,
+					T1.ACTPERCENTAGE,
+					T1.WAIVEDGST,
+					T1.REFERENCEID,
+					T1.TAXHEADERID,
+					T1.PAIDTDS,
+					T1.REMTDS,
+					T1.NETTDS,
+					T3.PRODUCTCODE VASPRODUCTCODE
+					FROM FINFEEDETAIL_TEMP T1
+					LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+					LEFT JOIN VASRecording_Temp T3 ON T1.VasReference = T3.VasReference
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#46.3.3" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeedetail_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#46.4.1" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeedetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#46.4.2" author="saisandeep.b">
+		<createView viewName="FINFEEDETAIL_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FEEID,
+						T1.FINREFERENCE,
+						T1.ORIGINATIONFEE,
+						T1.FINEVENT,
+						T1.FEETYPEID,
+						T1.FEESEQ,
+						T1.FEEORDER,
+						T1.CALCULATEDAMOUNT,
+						T1.ACTUALAMOUNT,
+						T1.WAIVEDAMOUNT,
+						T1.PAIDAMOUNT,
+						T1.FEESCHEDULEMETHOD,
+						T1.TERMS,
+						T1.REMAININGFEE,
+						T1.PAYMENTREF,
+						T1.CALCULATIONTYPE,
+						T1.RULECODE,
+						T1.FIXEDAMOUNT,
+						T1.PERCENTAGE,
+						T1.CALCULATEON,
+						T1.ALWDEVIATION,
+						T1.MAXWAIVERPERC,
+						T1.ALWMODIFYFEE,
+						T1.ALWMODIFYFEESCHDMTHD,
+						T1.VASREFERENCE,
+						T1.TAXAPPLICABLE,
+						T1.TAXCOMPONENT,
+						T1.PAIDAMOUNTORIGINAL,
+						T1.PAIDAMOUNTGST,
+						T1.NETAMOUNTORIGINAL,
+						T1.NETAMOUNTGST,
+						T1.NETAMOUNT,
+						T1.REMAININGFEEORIGINAL,
+						T1.REMAININGFEEGST,
+						T1.ACTUALAMOUNTORIGINAL,
+						T1.ACTUALAMOUNTGST,
+						T1.FEEAMZ,
+						T1.VERSION,
+						T1.LASTMNTBY,
+						T1.LASTMNTON,
+						T1.RECORDSTATUS,
+						T1.ROLECODE,
+						T1.NEXTROLECODE,
+						T1.TASKID,
+						T1.NEXTTASKID,
+						T1.RECORDTYPE,
+						T1.TRANSACTIONID,
+						T1.WORKFLOWID,
+						T2.FEETYPECODE,
+						T2.FEETYPEDESC,
+						T1.STATUS,
+						T1.REFUNDABLE,
+						T1.INSTRUCTIONUID,
+						T1.ACTPERCENTAGE,
+						T1.WAIVEDGST,
+						T1.REFERENCEID,
+						T1.TAXHEADERID,
+						T1.PAIDTDS,
+						T1.REMTDS,
+						T1.NETTDS,
+						T3.PRODUCTCODE VASPRODUCTCODE
+						FROM FINFEEDETAIL T1
+						LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+						LEFT JOIN VASRecording T3 ON T1.VasReference = T3.VasReference
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#46.4.3" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeedetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#60" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				Insert INTO BMTAMOUNTCODES VALUES ('PAYMTINS', 0, 'pi_advInst', 'Advance Inst Amount', '1', 1, 1005, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#141" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_COLUMN SET FORMAT='DATE:ddMMyyyy' WHERE NAME='VoucherDate' AND tableid=(SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME='OGL_Transaction');
+				UPDATE DATA_ENGINE_COLUMN SET FORMAT='DATE:ddMMyyyy' WHERE NAME='ValueDate' AND tableid=(SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME='OGL_Transaction');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#207" author="vijaya.a">
+		<sql>
+            <![CDATA[
+            	DELETE FROM CATEGORYWISEEVENTS where AeEventCode='INSPAY' and CategoryCode ='C';
+				DELETE FROM CATEGORYWISEEVENTS where AeEventCode='INSPAY' and CategoryCode ='F';
+				DELETE FROM CATEGORYWISEEVENTS where AeEventCode='INSPAY' and CategoryCode ='O';
+				DELETE FROM CATEGORYWISEEVENTS where AeEventCode='INSPAY' and CategoryCode ='S';
+				INSERT INTO CATEGORYWISEEVENTS VALUES ('INSPAY','C',1,0,(SELECT max(seqorder)+1 FROM CATEGORYWISEEVENTS Where CATEGORYCODE= 'C'));
+				INSERT INTO CATEGORYWISEEVENTS VALUES ('INSPAY','F',1,0,(SELECT max(seqorder)+1 FROM CATEGORYWISEEVENTS Where CATEGORYCODE= 'F'));
+				INSERT INTO CATEGORYWISEEVENTS VALUES ('INSPAY','O',1,0,(SELECT max(seqorder)+1 FROM CATEGORYWISEEVENTS Where CATEGORYCODE= 'O'));
+				INSERT INTO CATEGORYWISEEVENTS VALUES ('INSPAY','S',1,0,(SELECT max(seqorder)+1 FROM CATEGORYWISEEVENTS Where CATEGORYCODE= 'S'));
+	  		 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#236.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBVENTIONPROCESS_UPLOAD_MAKER', 'Group for Subvention process upload maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBVENTIONPROCESS_UPLOAD_APPROVER', 'Group for Subvention process upload approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_Subvention_knockoff_Upload','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBVENTIONPROCESS_UPLOAD_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_Subvention_knockoff_Upload'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBVENTIONPROCESS_UPLOAD_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_Subvention_knockoff_Upload'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#236.2" author="saisandeep.b">
+		<createTable tableName="SUBVENTION_KNOCKOFF_DETAILS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_subvention_request" />
+			</column>
+			<column name="BATCHID" type="bigint" />
+			<column name="FINREFERENCE" type="varchar(20)" />
+			<column name="FINTYPE" type="varchar(8)" />
+			<column name="AMOUNT" type="numeric(18,0)" />
+			<column name="CUSTOMERNAME" type="varchar(100)" />
+			<column name="REFERENCECODE" type="varchar(20)" />
+			<column name="POSTDATE" type="DATETIME" />
+			<column name="VALUEDATE" type="DATETIME" />
+			<column name="TRANSREF" type="varchar(20)" />
+			<column name="PARTNERBANKID" type="bigint" />
+			<column name="PARTNERACCNO" type="varchar(50)" />
+			<column name="LINKEDTRANID" type="bigint" />
+			<column name="STATUS" type="char(1)" />
+			<column name="REMARKS" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#236.3" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+                DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='SUBVENTION_REQUEST_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='SUBVENTION_REQUEST_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='SUBVENTION_REQUEST_UPLOAD';
+             
+ 				DELETE FROM DATA_ENGINE_COLUMN where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'SUBVENTION_REQUEST_UPLOAD'));
+ 				DELETE FROM DATA_ENGINE_TABLE where CONFIGID IN (select ID from DATA_ENGINE_CONFIG where Name = 'SUBVENTION_REQUEST_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_CONFIG where Name = 'SUBVENTION_REQUEST_UPLOAD';
+ 
+  				INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'SUBVENTION_REQUEST_UPLOAD', 'subvention_request.', 12,'subvention', '', '', '' , 0, 1, '', 'FINREFERENCE,FINTYPE,AMOUNT,CUSTOMERNAME,REFERENCECODE,POSTDATE,VALUEDATE,TRANSREF,PARTNERBANKID,PARTNERACCNO', '', 'C', '/opt/Growth_Source/PFF/GSF/subvention', 'Subventionreq', '.xlsx', 0, '2021-03-04 00:00:00.00', '${SEQ_FILE},_${yyyyMMddHHmmss}', '', 0, '', 1, 1); 
+
+  				INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD'), 'SUBVENTION_KNOCKOFF_DETAILS', 1, '', null, null, null, null, null, null, null, 3, 0, 0);
+	
+	
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'BATCHID', 0, 'N', null, null, '${BATCHID}', null, 0, null,null, null, null, 'M');
+ 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'FINREFERENCE', 0, 'N', null, null, null, null, 0, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'FINTYPE', 0, 'N', null, null, null, null, 1, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'AMOUNT', 0, 'N', null, null, null, null, 2, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'CUSTOMERNAME', 0, 'N', null, null, null, null, 3, null,null, null, null, 'O');
+ 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'REFERENCECODE', 0, 'N', null, null, null, null, 4, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'POSTDATE', 0, 'N', null, null, null, null, 5, null,null, null, 'dd-MMM-yyyy', 'M');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'VALUEDATE', 0, 'N', null, null, null, null, 6, null,null, null, 'dd-MMM-yyyy', 'M');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'TRANSREF', 0, 'N', null, null, null, null, 7, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'PARTNERBANKID', 0, 'N', null, null, null, null, 8, null,null, null, 'NUMBER:', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SUBVENTION_KNOCKOFF_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SUBVENTION_REQUEST_UPLOAD')), 'PARTNERACCNO', 0, 'N', null, null, null, null, 9, null,null, null, null, 'O');
+ 				 
+  
+ 				UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+ 				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+ 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+ 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#236.4" author="saisandeep.b">
+		<createIndex indexName="IDX_SR_FinRef" tableName="SUBVENTION_KNOCKOFF_DETAILS">
+			<column name="FinReference" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="TK#236.5" author="saisandeep.b">
+		<createIndex indexName="IDX_SR_BatchId" tableName="SUBVENTION_KNOCKOFF_DETAILS">
+			<column name="BatchId" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="TK#236.6" author="saisandeep.b">
+		<createIndex indexName="IDX_SR_DealerCode" tableName="SUBVENTION_KNOCKOFF_DETAILS">
+			<column name="ReferenceCode" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="TK#236.7" author="saisandeep.b">
+		<addForeignKeyConstraint constraintName="FK_SUBVENTION_REQUESTS_FinRef"
+			baseTableName="SUBVENTION_KNOCKOFF_DETAILS" baseColumnNames="FinReference" referencedColumnNames="FinReference"
+			referencedTableName="FinanceMain" />
+	</changeSet>
+
+	<changeSet id="TK#236.8" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+					Delete 	from BMTAEEVENTS where aeeventcode='OEMSBV';
+					INSERT INTO BMTAEEVENTS(aeeventcode, aeeventcodedesc, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, active) VALUES ('OEMSBV', 'OEM Suvention accounting', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+
+					Delete 	from BMTAMOUNTCODES where ALLOWEDEVENT='OEMSBV';
+					Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+					values ('OEMSBV',0,'ae_oemSbvAmount','OEM Suvention amount ',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+					
+					Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+					values ('OEMSBV',0,'ae_oemProcAmount','OEM Processing Fee Paid amount ',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#236.9" author="saisandeep.b">
+		<sql>
+ 			<![CDATA[
+ 				Delete from CATEGORYWISEEVENTS Where AEEVENTCODE= 'OEMSBV' and CATEGORYCODE= 'F';
+				INSERT INTO CATEGORYWISEEVENTS VALUES('OEMSBV','F',1,0,(Select max(seqorder)+1 from CATEGORYWISEEVENTS Where CATEGORYCODE= 'F'));
+ 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#246.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_SubventionUploadStsRpt','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBVENTIONPROCESS_UPLOAD_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_SubventionUploadStsRpt'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBVENTIONPROCESS_UPLOAD_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_SubventionUploadStsRpt'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#246.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				delete from plf.REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_InterestAccrualReport');
+				delete from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_InterestAccrualReport';
+
+				Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Interest Accrual Report','Interest Accrual Report',1,'InterestAccrualReport','dataSource',1,'menu_Item_InterestAccrualReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_InterestAccrualReport'),1,'Loan Reference','LOVSEARCH','Loan Reference','FP.FINREFERENCE',null,'FinanceMain','getFinReference','getFinReference',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#246.3" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'INTERESTACCRUAL_MAKER', 'Group for InterestAccrual Maker', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'INTERESTACCRUAL_APPROVER', 'Group for InterestAccrual approver', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_InterestAccrualReport','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'INTERESTACCRUAL_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_InterestAccrualReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'INTERESTACCRUAL_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_InterestAccrualReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#236.10" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				delete from smtparameters where sysparmcode = 'FEE_LOS_PROCESSING';
+				INSERT INTO SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec,SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('FEE_LOS_PROCESSING', 'Processing Fee Code', 'String', '1', 'PFI', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#236.11" author="saisandeep.b">
+		<createTable tableName="SUBVENTION_KNOCKOFF_HEADER">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_subvention_Header" />
+			</column>
+			<column name="BatchRef" type="varchar(100)"/>
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="TotalRecords" type="int" />
+			<column name="SucessRecords" type="int" />
+			<column name="FailureRecords" type="int" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#236.12" author="saisandeep.b">
+		<createTable tableName="SUBVENTION_KNOCKOFF_LOG">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_subvention_Log" />
+			</column>
+			<column name="DetailId" type="bigint" />
+			<column name="ErrorCode" type="varchar(10)" />
+			<column name="ErrorDescription" type="varchar(200)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#236.13" author="saisandeep.b">
+		<createIndex indexName="IDX_SR_Batchref" tableName="SUBVENTION_KNOCKOFF_HEADER">
+			<column name="BatchRef" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="TK#236.14" author="saisandeep.b">
+		<addUniqueConstraint columnNames="BatchRef,EntityCode" constraintName="uk_SUBVENTION_KNOCKOFF_Ref"
+			tableName="SUBVENTION_KNOCKOFF_HEADER" />
+	</changeSet>
+
+	<changeSet id="TK#236.15" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+			delete from plf.REPORTFILTERFIELDS where reportid in (select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionUploadStsRpt');
+			delete from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionUploadStsRpt';
+
+			Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from plf.REPORTCONFIGURATION),'Excel:Subvention Upload Status Report','Subvention Upload Status Report',1,'SubventionUploadStatusReport','dataSource',1,'menu_Item_SubventionUploadStsRpt',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+			Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionUploadStsRpt'),1,'File Name','LOVSEARCH','File Name','t.batchref',null,'SubventionFileStatus','getBatchRef','getId',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#236.16" author="saisandeep.b">
+		<addColumn tableName="SUBVENTION_KNOCKOFF_DETAILS">
+			<column name="CgstAmt" type="numeric(18,0)" defaultValue="0" />
+			<column name="SgstAmt" type="numeric(18,0)" defaultValue="0" />
+			<column name="UgstAmt" type="numeric(18,0)" defaultValue="0" />
+			<column name="IgstAmt" type="numeric(18,0)" defaultValue="0" />
+			<column name="CessAmt" type="numeric(18,0)" defaultValue="0" />
+			<column name="ProcFeeAmt" type="numeric(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="TK#276.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerName');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_Email');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerFax');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerAddress1');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerAddress2');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerAddress3');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerCountry');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerCity');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerProvince');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_PoBox');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_ZipCode');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_Active');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_Code');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_PanNumber');
+				Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_MANF_TaxNumber');
+				
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerName';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_Email';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerFax';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerAddress1';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerAddress2';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerAddress3';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerCountry';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerCity';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_dealerProvince';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_PoBox';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_ZipCode';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_Active';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_Code';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_PanNumber';
+				Delete From SecRights Where RightName = 'VehicleDealerDialog_MANF_TaxNumber';
+				
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_dealerName','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_Email','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_dealerFax','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_dealerAddress1','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_dealerAddress2','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_dealerAddress3','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_dealerCountry','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_dealerCity','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_dealerProvince','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_PoBox','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_ZipCode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_Active','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_Code','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_PanNumber','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_MANF_TaxNumber','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_dealerName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_Email'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_dealerFax'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_dealerAddress1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_dealerAddress2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_dealerAddress3'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_dealerCountry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_dealerCity'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_dealerProvince'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_PoBox'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_ZipCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_Code'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_PanNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_MANF_TaxNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="TK#236.17" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				DELETE from plf.reportfilterfields where reportID = (select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport');
+
+                Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),1,'Invoice For','STATICLIST','Invoice For','t.invoicefor','getTaxInvoiceFor','','','','0',0,0,0,1,'1','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),2,'CustCIF','LOVSEARCH','Customer ID','T.customerid','','Customer','getCustCIF','getCustShrtName','0',0,0,0,2,'1','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),8,'Date','DATERANGE','Date','T.invoicedate','','---Select----','','','0',0,0,0,6,'0','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),3,'Manufacturer','LOVSEARCH','Manufacturer ID','T.customerid','','ManufacturerDetails','getDealerId','getDealerName','0',0,0,0,2,'1','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),4,'Dealer','LOVSEARCH','Dealer ID','T.customerid','','SubventionDealer','getDealerId','getDealerName','0',0,0,0,2,'1','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),5,'FinReference','LOVSEARCH','Loan Reference','T.loanaccountno','','GSTFinanceMain','getFinReference','getFinReference','0',0,0,0,3,'0','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),7,'Invoice Number','LOVSEARCH','Invoice Number','T.invoiceno','','GSTInvoiceReport','getInvoiceNo','getInvoiceNo','0',0,0,0,5,'0','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),9,'Invoice Type','STATICLIST','Invoice Type','T.invoicetype','getInvoiceTypes','','','','0',0,0,0,7,'0','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#236.18" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				delete from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionMISReport';
+
+				Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from plf.REPORTCONFIGURATION),'Excel:Subvention MIS Report','Subvention MIS Report',1,'SubventionMISReport','dataSource',1,'menu_Item_SubventionMISReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_SubventionMISReport'),1,'Date','DATERANGE','Date','svd.valuedate','','---Select----','','','0',0,0,0,1,1,'','','','',250,'0','=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#236.19" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+			delete from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionAmortReport';
+
+			Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from plf.REPORTCONFIGURATION),'Excel:Subvention Amortization Report','Subvention Amortization Report',1,'SubventionAmortizationReport','dataSource',1,'menu_Item_SubventionAmortReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+
+			Insert into plf.reportfilterfields  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionAmortReport'),1,'Start Date','DATE','Start Date','FM.finstartdate','','---Select----','','','0',0,0,0,1,1,'','','','',250,'0','>=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+
+			Insert into plf.reportfilterfields  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionAmortReport'),2,'Maturity Date','DATE','Maturity Date','FM.maturitydate','','---Select----','','','0',0,0,0,2,1,'','','','',250,'0','<=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+
+			Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionAmortReport'),3,'Loan Reference','LOVSEARCH','Loan Reference','FM.FINREFERENCE',null,'FinanceMain','getFinReference','getFinReference',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+
+			Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionAmortReport'),4,'Manufacturer / Dealer Code','LOVSEARCH','Manufacturer / Dealer Code','fm.manufacturerdealerid',null,'SubventionManufacturerDetails','getManufacturerDealerId','getManufacturerDealerId',1,0,0,0,4,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#236.20" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBVENTIONMIS_MAKER', 'Group for SUBVENTIONMIS Maker', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBVENTIONMIS_APPROVER', 'Group for SUBVENTIONMIS approver', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_SubventionMISReport','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBVENTIONMIS_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_SubventionMISReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBVENTIONMIS_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_SubventionMISReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#236.21" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBVENTION_AMORT_REPORT_MAKER', 'Group for SUBVENTION_AMORT_REPORT Maker', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBVENTION_AMORT_REPORT_APPROVER', 'Group for SUBVENTION_AMORT_REPORT approver', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_SubventionAmortReport','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBVENTION_AMORT_REPORT_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_SubventionAmortReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SUBVENTION_AMORT_REPORT_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_SubventionAmortReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="TK#236.23" author="saisandeep.b">
+		<addColumn tableName="Gst_Invoice_Txn">
+			<column name="InvoiceFor" type="char(1)" defaultValue="C" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#245_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'collateralsmaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#245.1" author="saisandeep.b" dbms="postgresql">
+		<createView viewName="COLLATERALSMAINTENANCE_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					   T1.FINBRANCH,
+					   T1.FINTYPE,
+					   T1.FINCCY,
+					   T1.SCHEDULEMETHOD,
+					   T1.PROFITDAYSBASIS,
+					   T1.FINSTARTDATE,
+					   T1.NUMBEROFTERMS,
+					   T1.CUSTID,
+					   T1.FINAMOUNT,
+					   T1.MATURITYDATE,
+					   T1.FINREPAYMENTAMOUNT,
+					   T1.FINISACTIVE,
+					   T1.BLACKLISTED,
+					   T1.FEECHARGEAMT,
+					   T1.INSURANCEAMT,
+					   T1.GRACETERMS,
+					   T1.ALLOWGRCPERIOD,
+					   T1.GRCPERIODENDDATE,
+					   T1.ALWMULTIDISB,
+					   T1.DEFFERMENTS,
+					   T1.ALLOWGRCPFTRVW,
+					   T1.ALLOWREPAYRVW,
+					   T1.LASTREPAYDATE,
+					   T1.LASTREPAYPFTDATE,
+					   T1.ALLOWEDDEFRPYCHANGE,
+					   T1.AVAILEDDEFRPYCHANGE,
+					   T1.MIGRATEDFINANCE,
+					   T1.CLOSINGSTATUS,
+					   T1.REPAYRATEBASIS,
+					   T1.MANUALSCHEDULE,
+					   T1.FINCURRASSETVALUE,
+					   T1.TAKEOVERFINANCE,
+					   T1.NEXTROLLOVERDATE,
+					   T1.AVAILEDUNPLANEMI,
+					   T1.AVAILEDREAGEH,
+					   T1.MAXUNPLANNEDEMI,
+					   T1.MAXREAGEHOLIDAYS,
+					   T1.DOWNPAYMENT,
+					   T1.PLANEMIHALW,
+					   T1.CALTERMS,
+					   T1.RATECHGANYDAY,
+					   T1.FINASSETVALUE,
+					   T2.CUSTCIF LOVDESCCUSTCIF,
+					   T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					   T3.FINDIVISION LOVDESCFINDIVISION,
+					   T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					   T4.PRODUCTCATEGORY,
+					   COALESCE(T9.NOINST,0) NOINST,
+					   COALESCE(T5.ROLEDESC, FN_GET_ROLEDESC(T10.NEXTROLECODE))  LOVDESCREQUESTSTAGE,
+					   T10.FINMAINTAINID,
+					   T10.EVENT  RCDMAINTAINSTS,
+					   T10.NEXTROLECODE,
+					   T10.RECORDSTATUS,
+					   T10.RECORDTYPE,
+					   T1.VERSION
+					   FROM FINMAINTAININSTRUCTIONS_TEMP T10
+					   JOIN FINANCEMAIN T1 ON T1.FINREFERENCE = T10.FINREFERENCE
+					   JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+					   JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+					   LEFT JOIN SECROLES T5 ON T10.NEXTROLECODE = T5.ROLECD
+					   JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+					   LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+					   WHERE T10.EVENT = 'Collaterals'
+					   UNION ALL
+					   SELECT T1.FINREFERENCE,
+					   T1.FINBRANCH,
+					   T1.FINTYPE,
+					   T1.FINCCY,
+					   T1.SCHEDULEMETHOD,
+					   T1.PROFITDAYSBASIS,
+					   T1.FINSTARTDATE,
+					   T1.NUMBEROFTERMS,
+					   T1.CUSTID,
+					   T1.FINAMOUNT,
+					   T1.MATURITYDATE,
+					   T1.FINREPAYMENTAMOUNT,
+					   T1.FINISACTIVE,
+					   T1.BLACKLISTED,
+					   T1.FEECHARGEAMT,
+					   T1.INSURANCEAMT,
+					   T1.GRACETERMS,
+					   T1.ALLOWGRCPERIOD,
+					   T1.GRCPERIODENDDATE,
+					   T1.ALWMULTIDISB,
+					   T1.DEFFERMENTS,
+					   T1.ALLOWGRCPFTRVW,
+					   T1.ALLOWREPAYRVW,
+					   T1.LASTREPAYDATE,
+					   T1.LASTREPAYPFTDATE,
+					   T1.ALLOWEDDEFRPYCHANGE,
+					   T1.AVAILEDDEFRPYCHANGE,
+					   T1.MIGRATEDFINANCE,
+					   T1.CLOSINGSTATUS,
+					   T1.REPAYRATEBASIS,
+					   T1.MANUALSCHEDULE,
+					   T1.FINCURRASSETVALUE,
+					   T1.TAKEOVERFINANCE,
+					   T1.NEXTROLLOVERDATE,
+					   T1.AVAILEDUNPLANEMI,
+					   T1.AVAILEDREAGEH,
+					   T1.MAXUNPLANNEDEMI,
+					   T1.MAXREAGEHOLIDAYS,
+					   T1.DOWNPAYMENT,
+					   T1.PLANEMIHALW,
+					   T1.CALTERMS,
+					   T1.RATECHGANYDAY,
+					   T1.FINASSETVALUE,
+					   T2.CUSTCIF LOVDESCCUSTCIF,
+					   T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					   T3.FINDIVISION LOVDESCFINDIVISION,
+					   T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					   T4.PRODUCTCATEGORY,
+					   COALESCE(T9.NOINST,0) NOINST,
+					   NULL LOVDESCREQUESTSTAGE,
+					   NULL FINMAINTAINID,
+					   NULL RCDMAINTAINSTS,
+					   NULL NEXTROLECODE,
+					   NULL RECORDSTATUS,
+					   NULL RECORDTYPE,
+					   T1.VERSION
+	    			   FROM FINANCEMAIN T1
+        			   JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+       				    JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+        			   LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+        			   JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+        			   LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+					   WHERE NOT (EXISTS ( SELECT 1  EXPR1
+        			   FROM FINMAINTAININSTRUCTIONS_TEMP
+        			   WHERE FINMAINTAININSTRUCTIONS_TEMP.FINREFERENCE = T1.FINREFERENCE))
+       			    ]]>
+        </createView>
+	</changeSet>
+	
+	<changeSet id="ST#245_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'collateralsmaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#245.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CollateralDelink_MAKER', 'Group for CollateralDelink Maker', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CollateralDelink_APPROVER', 'Group for CollateralDelink approver', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_CollateralDelink','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CollateralDelink_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_CollateralDelink'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CollateralDelink_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_CollateralDelink'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#236.24" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				delete from plf.reportfilterfields where reportid in (select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionMISReport');
+				delete from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionMISReport';
+
+				Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Subvention MIS Report','Subvention MIS Report',1,'SubventionMISReport','dataSource',1,'menu_Item_SubventionMISReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+				Insert into plf.reportfilterfields  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionMISReport'),1,'Start Date','DATE','Start Date','FM.finstartdate','','---Select----','','','0',0,0,0,1,1,'','','','',250,'0','>=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+				Insert into plf.reportfilterfields  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionMISReport'),2,'Maturity Date','DATE','Maturity Date','FM.maturitydate','','---Select----','','','0',0,0,0,2,1,'','','','',250,'0','<=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+				Insert into plf.reportfilterfields  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionMISReport'),3,'Receipt Date','DATERANGE','Receipt Date','svd.valuedate','','---Select----','','','0',0,0,0,3,0,'','','','',250,'0','=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionMISReport'),4,'Loan Reference','LOVSEARCH','Loan Reference','svd.FINREFERENCE',null,'FinanceMain','getFinReference','getFinReference',1,0,0,0,4,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_SubventionMISReport'),5,'Manufacturer / Dealer Code','LOVSEARCH','Manufacturer / Dealer Code','fm.manufacturerdealerid',null,'SubventionManufacturerDetails','getManufacturerDealerId','getManufacturerDealerId',1,0,0,0,5,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#236.25" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				DELETE from plf.reportfilterfields where reportID = (select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport');
+
+                Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),1,'Invoice For','STATICLIST','Invoice For','t.invoicefor','getTaxInvoiceFor','','','','0',0,0,0,1,'1','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),2,'CustCIF','LOVSEARCH','Customer ID','T.customerid','','Customer','getCustCIF','getCustShrtName','0',0,0,0,2,'1','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),7,'Date','DATERANGE','Date','T.invoicedate','','---Select----','','','0',0,0,0,6,'0','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),3,'Manufacturer','LOVSEARCH','Manufacturer ID','T.customerid','','ManufacturerDetails','getDealerId','getDealerName','0',0,0,0,2,'1','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),4,'Dealer','LOVSEARCH','Dealer ID','T.customerid','','SubventionDealer','getDealerId','getDealerName','0',0,0,0,2,'1','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),5,'FinReference','LOVSEARCH','Loan Reference','T.loanaccountno','','GSTFinanceMain','getFinReference','getFinReference','0',0,0,0,3,'0','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),6,'Invoice Number','LOVSEARCH','Invoice Number','T.invoiceno','','GSTInvoiceReport','getInvoiceNo','getInvoiceNo','0',0,0,0,5,'0','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+
+				Insert into plf.reportfilterfields  values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_GST_InvoiceReport'),8,'Invoice Type','STATICLIST','Invoice Type','T.invoicetype','getInvoiceTypes','','','','0',0,0,0,7,'0','','','','',250,'0','=',1,1000,'Approved','','','','','',0,to_timestamp('2020-12-16 18:27:22.383959','null'),'');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#441.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'UTRNUMBER', 0, 'N', null, null, null, null, 12, null,null, null, null, 'O');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#441.2" author="saisandeep.b">
+		<addColumn tableName="presentment_fileimport">
+			<column name="UTRNUMBER" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="TK#441.3" author="saisandeep.b">
+		<addColumn tableName="presentmentdetails">
+			<column name="UTRNUMBER" type="varchar(50)"/>
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="TK#441.4" author="saisandeep.b">
+		<addColumn tableName="OGL_Transaction">
+			<column name="UTRNUMBER" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#441.5" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'OGL_Transaction' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'OGL_TRANSACTION')), 'UTRNUMBER', 0, 'N', null, null, null, null, 0, null,null, null, null, 'O');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#441.6" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+					update data_engine_config set header = 'VoucherNumber, VoucherDate, ValueDate, GLCode, GLDescription, Narration, DebitCreditMarker, Amount, LoanReferenceNo, AccountingPeriod, TransactionCurrency, VoucherTypes, Branch, Product, State, UtrNumber' where name ='OGL_TRANSACTION';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#566.1" author="saisandeep.b">
+		<sql>
+		<![CDATA[
+			delete from plf.reportfilterfields where reportid in (select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantReport');
+			delete from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantReport';
+
+			Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Covenant Report','Covenant Report',1,'CovenantReport','dataSource',1,'menu_Item_CovenantReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+			Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantReport'),1,'Loan Reference','LOVSEARCH','Loan Reference','LOANNUMBER',null,'CovenantReport','getKeyReference','getKeyReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#566.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CovenantsLOD_Reports', 'Group for Covenants LOD Reports', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_CovenantReport','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CovenantsLOD_Reports'), (Select RightID from SecRights where RightName = 'menu_Item_CovenantReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_CustomerTemplates_CovenantStatusReport','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CovenantsLOD_Reports'), (Select RightID from SecRights where RightName = 'menuItem_CustomerTemplates_CovenantStatusReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#566.3_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'covenantsreport_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#566.3" author="saisandeep.b">
+		<createView viewName="covenantsreport_view" replaceIfExists="true">
+		<![CDATA[
+			SELECT DISTINCT KEYREFERENCE,MODULE FROM(
+			SELECT T1.ID,
+			    T1.KEYREFERENCE,
+			    T1.MODULE,
+			    T1.COVENANTTYPEID,
+			    T2.CODE COVENANTTYPECODE,
+			    T2.DESCRIPTION COVENANTTYPEDESCRIPTION,
+			    T2.COVENANTTYPE,
+			    T2.CATEGORY,
+			    T1.LOS,
+			    T1.MANDATORYROLE,
+			    T1.OTC,
+			    T1.PDD,
+			    T1.RECEIVABLEDATE,
+			    T1.ALLOWWAIVER,
+			    T1.MAXALLOWEDDAYS,
+			    T1.DOCUMENTRECEIVED,
+			    T1.DOCUMENTRECEIVEDDATE,
+			    T1.ALLOWPOSTPONEMENT,
+			    T1.ALLOWEDPAYMENTMODES,
+			    T1.EXTENDEDDATE,
+			    T1.FREQUENCY,
+			    T1.NEXTFREQUENCYDATE,
+			    T1.GRACEDAYS,
+			    T1.GRACEDUEDATE,
+			    T1.ALERTSREQUIRED,
+			    T1.ALERTTYPE,
+			    T1.ALERTTOROLES,
+			    T1.ALERTDAYS,
+			    T1.INTERNALUSE,
+			    T1.REMARKS,
+			    T1.ADDITIONALFIELD1,
+			    T1.ADDITIONALFIELD2,
+			    T1.ADDITIONALFIELD3,
+			    T1.ADDITIONALFIELD4,
+			    T1.VERSION,
+			    T1.LASTMNTBY,
+			    T1.LASTMNTON,
+			    T1.RECORDSTATUS,
+			    T1.ROLECODE,
+			    T1.NEXTROLECODE,
+			    T1.TASKID,
+			    T1.NEXTTASKID,
+			    T1.RECORDTYPE,
+			    T1.WORKFLOWID
+			FROM PLF.COVENANTS_TEMP T1
+			JOIN PLF.COVENANT_TYPES T2 ON T2.ID = T1.COVENANTTYPEID
+			UNION ALL
+			SELECT T1.ID,
+				T1.KEYREFERENCE,
+				T1.MODULE,
+				T1.COVENANTTYPEID,
+				T2.CODE COVENANTTYPECODE,
+				T2.DESCRIPTION COVENANTTYPEDESCRIPTION,
+				T2.COVENANTTYPE,
+				T2.CATEGORY,
+				T1.LOS,
+				T1.MANDATORYROLE,
+				T1.OTC,
+				T1.PDD,
+				T1.RECEIVABLEDATE,
+				T1.ALLOWWAIVER,
+				T1.MAXALLOWEDDAYS,
+				T1.DOCUMENTRECEIVED,
+				T1.DOCUMENTRECEIVEDDATE,
+				T1.ALLOWPOSTPONEMENT,
+				T1.ALLOWEDPAYMENTMODES,
+				T1.EXTENDEDDATE,
+				T1.FREQUENCY,
+				T1.NEXTFREQUENCYDATE,
+				T1.GRACEDAYS,
+				T1.GRACEDUEDATE,
+				T1.ALERTSREQUIRED,
+				T1.ALERTTYPE,
+				T1.ALERTTOROLES,
+				T1.ALERTDAYS,
+				T1.INTERNALUSE,
+				T1.REMARKS,
+				T1.ADDITIONALFIELD1,
+				T1.ADDITIONALFIELD2,
+				T1.ADDITIONALFIELD3,
+				T1.ADDITIONALFIELD4,
+				T1.VERSION,
+				T1.LASTMNTBY,
+				T1.LASTMNTON,
+				T1.RECORDSTATUS,
+				T1.ROLECODE,
+				T1.NEXTROLECODE,
+				T1.TASKID,
+				T1.NEXTTASKID,
+				T1.RECORDTYPE,
+				T1.WORKFLOWID
+			FROM COVENANTS T1
+				JOIN COVENANT_TYPES T2 ON T2.ID = T1.COVENANTTYPEID
+			WHERE NOT (EXISTS ( SELECT 1
+					FROM COVENANTS_TEMP
+					WHERE COVENANTS_TEMP.ID = T1.ID)))COVENENTS
+		]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="TK#566.3_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'covenantsreport_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="ST#273.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+	
+				delete from plf.reportfilterfields where reportid in (select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LoanbyMaturityDtls');
+				delete from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LoanbyMaturityDtls';
+
+				Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from plf.REPORTCONFIGURATION),'Excel:Loan By Maturity Details','Loan By Maturity Details',1,'LoanbyMaturity','dataSource',1,'menu_Item_LoanbyMaturityDtls',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,0);
+
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LoanbyMaturityDtls'),1,'BranchCode','LOVSEARCH','Branch','T1.FinBranch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LoanbyMaturityDtls'),3,'FinType','LOVSEARCH','Loan Type','T1.FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);	
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LoanbyMaturityDtls'),5,'Start Date','DATERANGE','Start Date','T1.FinStartDate',null,'---Select----',null,null,0,0,0,0,5,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LoanbyMaturityDtls'),6,'Maturity Date','DATERANGE','Maturity Date','T1.MaturityDate',null,'---Select----',null,null,0,0,0,0,6,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LoanbyMaturityDtls'),8,'Finance Status','STATICLIST','Loan Status','T1.FinIsActive','getFinanceStatusList',null,null,null,0,0,0,0,8,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LoanbyMaturityDtls'),9,'DivisionCode','LOVSEARCH','Division Code','T2.FinDivision',null,'DivisionDetail','getDivisionCode','getDivisionCodeDesc',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#273.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_LoanbyMaturityDtls','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightID from SecRights where RightName = 'menu_Item_LoanbyMaturityDtls'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#565.3" author="saiVarun.r" dbms="postgresql">
+        <sql>
+		<![CDATA[
+              ALTER TABLE covenant_documents
+              ADD COLUMN originaldocument smallint NOT NULL DEFAULT 0;
+         ]]>
+	    </sql>
+	</changeSet>
+
+	<changeSet id="TK#565.4" author="saiVarun.r" dbms="postgresql">
+       <sql>
+		<![CDATA[
+              ALTER TABLE covenant_documents_temp
+              ADD COLUMN originaldocument smallint NOT NULL DEFAULT 0;
+         ]]>
+	   </sql>
+	</changeSet>
+	
+	<changeSet id="TK#565.1_pre" author="saiVarun.R" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'covenant_documents_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#565.1" author="saiVarun.R">
+		<createView viewName="covenant_documents_view" replaceIfExists="true">
+		<![CDATA[
+  				SELECT cd.id,
+					cd.covenantid,
+					cd.covenanttype,
+					cd.receivabledate,
+					cd.documentreceiveddate,
+					cd.frequencydate,
+					cd.documentid,
+					dd.docrefid,
+					dd.doccategory,
+					dd.doctype,
+					dd.docname,
+					cd.version,
+					cd.lastmntby,
+					cd.lastmnton,
+					cd.recordstatus,
+					cd.rolecode,
+					cd.nextrolecode,
+					cd.taskid,
+					cd.nexttaskid,
+					cd.recordtype,
+					cd.originalDocument,
+					cd.workflowid
+				FROM plf.covenant_documents_temp cd
+				LEFT JOIN plf.documentdetails_temp dd ON dd.docid = cd.documentid
+				UNION ALL
+				SELECT cd.id,
+					cd.covenantid,
+					cd.covenanttype,
+					cd.receivabledate,
+					cd.documentreceiveddate,
+					cd.frequencydate,
+					cd.documentid,
+					dd.docrefid,
+					dd.doccategory,
+					dd.doctype,
+					dd.docname,
+					cd.version,
+					cd.lastmntby,
+					cd.lastmnton,
+					cd.recordstatus,
+					cd.rolecode,
+					cd.nextrolecode,
+					cd.taskid,
+					cd.nexttaskid,
+					cd.recordtype,
+					cd.originalDocument,
+					cd.workflowid
+				FROM plf.covenant_documents cd
+					LEFT JOIN plf.documentdetails dd ON dd.docid = cd.documentid
+				WHERE NOT (EXISTS ( SELECT 1
+						FROM plf.covenant_documents_temp
+						WHERE covenant_documents_temp.id = cd.id));
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="TK#565.1_post" author="saiVarun.R" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'covenant_documents_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#565.2_pre" author="saiVarun.R" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'covenant_documents_aview');
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="TK#565.2" author="saiVarun.R">
+		<createView viewName="covenant_documents_aview" replaceIfExists="true">
+		<![CDATA[
+			SELECT cd.id,
+				cd.covenantid,
+				cd.covenanttype,
+				cd.receivabledate,
+				cd.documentreceiveddate,
+				cd.frequencydate,
+				cd.documentid,
+				dd.doccategory,
+				dd.doctype,
+				dd.docname,
+				cd.version,
+				cd.lastmntby,
+				cd.lastmnton,
+				cd.recordstatus,
+				cd.rolecode,
+				cd.nextrolecode,
+				cd.taskid,
+				cd.nexttaskid,
+				cd.recordtype,
+				cd.originalDocument,
+				cd.workflowid
+			FROM plf.covenant_documents cd
+			LEFT JOIN plf.documentdetails dd ON dd.docid = cd.documentid;
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="TK#565.2_post" author="saiVarun.R" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'covenant_documents_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#274.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				delete from plf.reportfilterfields where reportid in (select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LMSReceiptReport');
+				delete from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LMSReceiptReport';
+				
+				Insert into plf.REPORTCONFIGURATION  values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:LMS Receipt Report','LMS Receipt Report',1,'LMSReceiptReport','dataSource',1,'menu_Item_LMSReceiptReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LMSReceiptReport'),1,'CustCIF','LOVSEARCH','Customer Number','c.custcif',null,'Customer','getCustCIF','"getCustShrtName"',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LMSReceiptReport'),2,'Receipt Mode Status','STATICLIST','Receipt Mode Status','t1.ReceiptModeStatus','getReceiptModeStatus',null,null,null,0,0,0,0,2,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LMSReceiptReport'),3,'FinReference','LOVSEARCH','Loan Reference','T1.Reference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LMSReceiptReport'),4,'Receipt Mode','TXT','Receipt Mode','T2.PaymentType',null,null,null,null,0,20,0,0,4,0,null,null,null,null,150,0,'%',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LMSReceiptReport'),5,'Receipt Purpose','TXT','Receipt Purpose','T1.RECEIPTPURPOSE','null',null,null,null,0,20,0,0,5,0,null,null,null,null,250,0,'%',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into plf.REPORTFILTERFIELDS  values ((select reportid from plf.REPORTCONFIGURATION where menuitemcode='menu_Item_LMSReceiptReport'),6,'Transaction Date','DATE','Transaction Date','T2.ReceivedDate',null,'---Select----',null,null,0,0,0,0,6,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			 ]]>
+	   </sql>
+	</changeSet>
+	
+	<changeSet id="ST#274.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_LMSReceiptReport','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightID from SecRights where RightName = 'menu_Item_LMSReceiptReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#274.3" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				
+				delete from secGroupRights where rightid = (Select RightID from SecRights where RightName = 'menu_Item_ReceiptDetails');
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[		
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_LinkedFinancesDialog_btnSave','LinkedFinancesDialog',0,1000,current_timestamp,'Approved','','','','','',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_LinkedFinancesDialog_btnRemove','LinkedFinancesDialog',0,1000,current_timestamp,'Approved','','','','','',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_LinkedFinancesDialog_btnLink','LinkedFinancesDialog',0,1000,current_timestamp,'Approved','','','','','',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'LinkedFinancesDialog_finReference','LinkedFinancesDialog',0,1000,current_timestamp,'Approved','','','','','',0); 
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_LinkingDelinking','MENU',0,1000,current_timestamp,'Approved','','','','','',0); 
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'LinkedFinancesDialog_checkBox','LinkedFinancesDialog',0,1000,current_timestamp,'Approved','','','','','',0); 
+					
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'LINKEDFINANCES_MAKER', 'Linked finances maker', 0, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'LINKEDFINANCES_APPROVER', 'Linked finances approver', 0, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LINKEDFINANCES_MAKER'), (Select RightID from SecRights where RightName = 'button_LinkedFinancesDialog_btnSave'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LINKEDFINANCES_MAKER'), (Select RightID from SecRights where RightName = 'button_LinkedFinancesDialog_btnRemove'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LINKEDFINANCES_MAKER'), (Select RightID from SecRights where RightName = 'button_LinkedFinancesDialog_btnLink'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LINKEDFINANCES_MAKER'), (Select RightID from SecRights where RightName = 'LinkedFinancesDialog_finReference'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LINKEDFINANCES_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_LinkingDelinking'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LINKEDFINANCES_MAKER'), (Select RightID from SecRights where RightName = 'LinkedFinancesDialog_checkBox'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LINKEDFINANCES_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_LinkingDelinking'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LINKEDFINANCES_APPROVER'), (Select RightID from SecRights where RightName = 'button_LinkedFinancesDialog_btnSave'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+			
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+			]]>	
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.2" author="saisandeep.b">
+		<createTable tableName="LinkedFinances">
+		   <column name="LinkedFinancesSeq" type="bigint" autoIncrement="true" />
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="LinkedReference" type="varchar(20)">
+			<constraints nullable="false"/>
+	        </column>
+			<column name="Status" type="Varchar(8)"/>
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0">
+			<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#286.3" author="saisandeep.b">
+		<createTable tableName="LinkedFinances_Temp">
+		  <column name="LinkedFinancesSeq" type="bigint" autoIncrement="true" />
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="LinkedReference" type="varchar(20)">
+			<constraints nullable="false"/>
+	        </column>
+			<column name="Status" type="Varchar(8)"/>
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0">
+			<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#286.4_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.4" author="saisandeep.b">
+		<createView viewName="LinkedFinances_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT	T1.LinkedFinancesSeq, 
+					T1.FinReference,  
+					T1.LinkedReference, 
+					F.FinType LinkedFinType, 
+					T1.Version, 
+					T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode,
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId, 
+					C.CustShrtName, 
+					T1.Status
+				FROM LinkedFinances_Temp T1 
+				INNER JOIN FinanceMain F ON T1.LinkedReference = F.FinReference 
+				INNER JOIN Customers C ON F.CustID = C.CustID
+				UNION ALL
+				SELECT	T1.LinkedFinancesSeq, 
+					T1.FinReference,  
+					T1.LinkedReference, 
+					F.FinType LinkedFinType, 
+					T1.Version, T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode,
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId,  
+					C.CustShrtName, 
+					T1.Status
+				FROM LinkedFinances T1 
+				INNER JOIN FinanceMain F ON T1.LinkedReference = F.FinReference 
+				INNER JOIN Customers C ON F.CustID = C.CustID
+				WHERE NOT EXISTS (SELECT 1 FROM LinkedFinances_Temp WHERE  FinReference = T1.FinReference)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#286.4_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'linkedfinances_view');
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="ST#286.5_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_tview');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#286.5" author="saisandeep.b">
+		<createView viewName="LinkedFinances_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT	T1.LinkedFinancesSeq, 
+					T1.FinReference,  
+					T1.LinkedReference, 
+					F.FinType LinkedFinType, 
+					T1.Version, 
+					T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode,
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId, 
+					C.CustShrtName, 
+					T1.Status,
+					f.QUICKDISB
+				FROM LinkedFinances_Temp T1 
+				INNER JOIN FinanceMain_Temp F ON T1.LinkedReference = F.FinReference And F.QUICKDISB=1 
+				Inner join Customers C ON F.CustID = C.CustID
+				UNION all 
+				SELECT T1.LinkedFinancesSeq, 
+					T1.FinReference,  
+					T1.LinkedReference, 
+					F.FinType LinkedFinType, 
+					T1.Version, 
+					T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode,
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId, 
+					C.CustShrtName, 
+					T1.Status,
+					f.QUICKDISB
+				FROM LinkedFinances_Temp T1 
+				INNER JOIN FinanceMain F ON T1.LinkedReference = F.FinReference 
+				Inner join Customers C ON F.CustID = C.CustID
+			]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#286.5_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'linkedfinances_tview');
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="ST#286.6_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.6" author="saisandeep.b">
+		<createView viewName="LinkedFinances_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT	T1.LinkedFinancesSeq, 
+					T1.FinReference,  
+					T1.LinkedReference, 
+					F.FinType LinkedFinType, 
+					T1.Version, 
+					T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode,
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId, 
+					C.CustShrtName, 
+					T1.Status
+				FROM LinkedFinances T1 
+				INNER JOIN FinanceMain_Temp F ON T1.LinkedReference = F.FinReference And F.QUICKDISB=1 
+				Inner join Customers C ON F.CustID = C.CustID
+				UNION all 
+				SELECT T1.LinkedFinancesSeq, 
+					T1.FinReference,  
+					T1.LinkedReference, 
+					F.FinType LinkedFinType, 
+					T1.Version, 
+					T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode,
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId, 
+					C.CustShrtName, 
+					T1.Status
+				FROM LinkedFinances T1 
+				INNER JOIN FinanceMain F ON T1.LinkedReference = F.FinReference 
+				Inner join Customers C ON F.CustID = C.CustID
+			]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#286.6_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'linkedfinances_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.7_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_lfview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.7" author="saisandeep.b">
+		<createView viewName="FINANCEMAIN_LFVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT 	F.FinReference, 
+					F.CustID, 
+					C.CustCIF LovDescCustCIF, 
+					C.CustShrtName LovDescCustShrtName,
+					F.FinType, 
+					F.FinIsActive, 
+					SD.EntityCode,
+					F.RcdMaintainsts,
+					F.Recordstatus,
+					F.QUICKDISB
+				FROM FINANCEMAIN_TEMP F 
+				Inner join Customers C ON F.CustID = C.CustID And F.QUICKDISB=1 and F.Recordstatus='Submitted'
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = F.FINTYPE
+				INNER JOIN SMTDivisiondetail SD On FT.FINDIVISION = SD.DivisionCode
+				UNION ALL
+				SELECT 	F.FinReference, 
+					F.CustID, 
+					C.CustCIF LovDescCustCIF, 
+					C.CustShrtName LovDescCustShrtName, 
+					F.FinType, 
+					F.FinIsActive, 
+					SD.EntityCode, 
+					F.RcdMaintainsts,
+					F.Recordstatus,
+					F.QUICKDISB
+				FROM FinanceMain F Inner join Customers C ON F.CustID = C.CustID
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = F.FINTYPE
+				INNER JOIN SMTDivisiondetail SD On FT.FINDIVISION = SD.DivisionCode
+				WHERE (NOT EXISTS (SELECT 1 EXPR1 FROM FINANCEMAIN_TEMP WHERE (FINREFERENCE = F.FINREFERENCE)))
+			]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#286.7_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_lfview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.8_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemaintenance_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.8" author="saisandeep.b">
+		<createView viewName="FINANCEMAINTENANCE_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finreference,
+					t1.finbranch,
+					t1.fintype,
+					t1.finccy,
+					t1.schedulemethod,
+					t1.profitdaysbasis,
+					t1.finstartdate,
+					t1.numberofterms,
+					t1.custid,
+					t1.finamount,
+					t1.maturitydate,
+					t1.finrepaymentamount,
+					t1.finisactive,
+					t1.blacklisted,
+					t1.feechargeamt,
+					t1.insuranceamt,
+					t1.graceterms,
+					t1.allowgrcperiod,
+					t1.grcperiodenddate,
+					t1.alwmultidisb,
+					t1.defferments,
+					t1.nextrolecode,
+					t1.recordstatus,
+					t1.recordtype,
+					t1.allowgrcpftrvw,
+					t1.allowrepayrvw,
+					t1.lastrepaydate,
+					t1.lastrepaypftdate,
+					t1.alloweddefrpychange,
+					t1.availeddefrpychange,
+					t1.migratedfinance,
+					t1.rcdmaintainsts,
+					t1.closingstatus,
+					t1.repayratebasis,
+					t1.manualschedule,
+					t1.takeoverfinance,
+					t1.nextrolloverdate,
+					t1.downpayment,
+					t1.planemihalw,
+					t1.fincurrassetvalue,
+					t1.finassetvalue,
+					t2.custcif lovdesccustcif,
+					t3.fincategory lovdescproductcodename,
+					t3.finisalwdifferment lovdescfinalwdeferment,
+					t4.productcategory,
+					t1.samplingrequired,
+					t1.advanceemi,
+					t1.advemiterms,
+					t1.bpipftdaysbasis bpiratebasis,
+					t1.sanbsdschdle,
+					t1.promotionseqid,
+					t1.svamount,
+					t1.cbamount,
+					t5.entitycode
+				FROM plf.financemain t1
+				JOIN plf.customers t2 ON t1.custid = t2.custid
+				JOIN plf.rmtfinancetypes t3 ON t1.fintype = t3.fintype
+				JOIN plf.bmtproduct t4 ON t3.fincategory = t4.productcode
+				LEFT OUTER JOIN SMTDIVISIONDETAIL T5 ON T3.FinDivision=T5.DIVISIONCODE
+			]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#286.8_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemaintenance_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.9_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinmaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.9" author="saisandeep.b">
+		<createView viewName="LINKEDFINMAINTENANCE_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.INSURANCEAMT,
+					T1.GRACETERMS,
+					T1.ALLOWGRCPERIOD,
+					T1.GRCPERIODENDDATE,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.ALLOWGRCPFTRVW,
+					T1.ALLOWREPAYRVW,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.MIGRATEDFINANCE,
+					T1.CLOSINGSTATUS,
+					T1.REPAYRATEBASIS,
+					T1.MANUALSCHEDULE,
+					T1.FINCURRASSETVALUE,
+					T1.TAKEOVERFINANCE,
+					T1.NEXTROLLOVERDATE,
+					T1.AVAILEDUNPLANEMI,
+					T1.AVAILEDREAGEH,
+					T1.MAXUNPLANNEDEMI,
+					T1.MAXREAGEHOLIDAYS,
+					T1.DOWNPAYMENT,
+					T1.PLANEMIHALW,
+					T1.CALTERMS,
+					T1.RATECHGANYDAY,
+					T1.FINASSETVALUE,
+					T2.CUSTCIF LOVDESCCUSTCIF,
+					T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.FINDIVISION LOVDESCFINDIVISION,
+					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T4.PRODUCTCATEGORY,
+					COALESCE(T9.NOINST,0) NOINST,
+					COALESCE(T5.ROLEDESC, FN_GET_ROLEDESC(T10.NEXTROLECODE))  LOVDESCREQUESTSTAGE,
+					T10.FINMAINTAINID,
+					T10.EVENT  RCDMAINTAINSTS,
+					T10.NEXTROLECODE,
+					T10.RECORDSTATUS,
+					T10.RECORDTYPE,
+					T1.VERSION,
+					T11.ENTITYCODE
+				FROM FINMAINTAININSTRUCTIONS_TEMP T10
+				JOIN FINANCEMAIN T1 ON T1.FINREFERENCE = T10.FINREFERENCE
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+				LEFT JOIN SECROLES T5 ON T10.NEXTROLECODE = T5.ROLECD
+				JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+				LEFT JOIN SMTDIVISIONDETAIL T11 ON T3.FinDivision=T11.DIVISIONCODE
+				WHERE T10.EVENT = 'LinkDelink'
+				UNION ALL
+				SELECT T1.FINREFERENCE,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.INSURANCEAMT,
+					T1.GRACETERMS,
+					T1.ALLOWGRCPERIOD,
+					T1.GRCPERIODENDDATE,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.ALLOWGRCPFTRVW,
+					T1.ALLOWREPAYRVW,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.MIGRATEDFINANCE,
+					T1.CLOSINGSTATUS,
+					T1.REPAYRATEBASIS,
+					T1.MANUALSCHEDULE,
+					T1.FINCURRASSETVALUE,
+					T1.TAKEOVERFINANCE,
+					T1.NEXTROLLOVERDATE,
+					T1.AVAILEDUNPLANEMI,
+					T1.AVAILEDREAGEH,
+					T1.MAXUNPLANNEDEMI,
+					T1.MAXREAGEHOLIDAYS,
+					T1.DOWNPAYMENT,
+					T1.PLANEMIHALW,
+					T1.CALTERMS,
+					T1.RATECHGANYDAY,
+					T1.FINASSETVALUE,
+					T2.CUSTCIF LOVDESCCUSTCIF,
+					T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.FINDIVISION LOVDESCFINDIVISION,
+					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T4.PRODUCTCATEGORY,
+					COALESCE(T9.NOINST,0) NOINST,
+					NULL LOVDESCREQUESTSTAGE,
+					NULL FINMAINTAINID,
+					NULL RCDMAINTAINSTS,
+					NULL NEXTROLECODE,
+					NULL RECORDSTATUS,
+					NULL RECORDTYPE,
+					T1.VERSION,
+					T11.ENTITYCODE
+					FROM FINANCEMAIN T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+				LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+				JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+				LEFT JOIN SMTDIVISIONDETAIL T11 ON T3.FinDivision=T11.DIVISIONCODE
+				WHERE NOT (EXISTS ( SELECT 1  EXPR1
+				FROM FINMAINTAININSTRUCTIONS_TEMP
+				WHERE FINMAINTAININSTRUCTIONS_TEMP.FINREFERENCE = T1.FINREFERENCE))
+       		]]>
+        </createView>
+	</changeSet>
+	
+	<changeSet id="ST#286.9_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'linkedfinmaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.10" author="saisandeep.b">
+		<sql>
+			<![CDATA[	
+				DELETE from ErrorDetails WHERE code='90500';			
+				Insert into ERRORDETAILS VALUES ('90500','EN','E','{0}  is Linked with {1}  . Please Delink to Proceed ','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);			
+		    ]]>
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="ST#286.11" author="saisandeep.b">
+		<sql>
+			<![CDATA[		
+				
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_LinkedFinancesDialog_btnRemove'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_LinkedFinancesDialog_btnLink'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'LinkedFinancesDialog_finReference'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'LinkedFinancesDialog_checkBox'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_LinkedFinancesDialog_btnSave'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_APPROVER'), (Select RightID from SecRights where RightName = 'button_LinkedFinancesDialog_btnSave'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+			
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+			]]>	
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#289.1" author="saisandeep.b">
+		<createTable tableName="Partnerbanks_Data_Engine">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="PartnerBankId" type="bigint" />
+			<column name="PaymentType" type="varchar(10)" />
+			<column name="Config_Name" type="varchar(50)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0">
+			<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#289.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(1,(select partnerbankid from partnerbanks where partnerbankcode = '100'),'IMPS','DISB_EXPORT_DEFAULT',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(2,(select partnerbankid from partnerbanks where partnerbankcode = '100'),'N','DISB_EXPORT_DEFAULT',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(3,(select partnerbankid from partnerbanks where partnerbankcode = '100'),'R','DISB_EXPORT_DEFAULT',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(4,(select partnerbankid from partnerbanks where partnerbankcode = '100'),'D','DISB_EXPORT_CHEQUE_DD',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(5,(select partnerbankid from partnerbanks where partnerbankcode = '100'),'C','DISB_EXPORT_CHEQUE_DD', 1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(6,(select partnerbankid from partnerbanks where partnerbankcode = '100'),'I','DISB_EXPORT_DEFAULT', 1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(7,(select partnerbankid from partnerbanks where partnerbankcode = 'ATPART'),'IMPS','DISB_EXPORT_DEFAULT',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(8,(select partnerbankid from partnerbanks where partnerbankcode = 'ATPART'),'N','DISB_EXPORT_DEFAULT',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(9,(select partnerbankid from partnerbanks where partnerbankcode = 'ATPART'),'R','DISB_EXPORT_DEFAULT',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(10,(select partnerbankid from partnerbanks where partnerbankcode = 'ATPART'),'D'	,'DISB_EXPORT_CHEQUE_DD',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(11,(select partnerbankid from partnerbanks where partnerbankcode = 'ATPART'),'C','DISB_EXPORT_CHEQUE_DD',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				Insert into Partnerbanks_Data_Engine (Id,PartnerBankId,PaymentType,Config_Name,Version,Lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid) values	(12,(select partnerbankid from partnerbanks where partnerbankcode = 'ATPART'),'I','DISB_EXPORT_DEFAULT',1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#289.3" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				Delete from DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_EXPORT_CHEQUE_DD'));
+				Delete from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'DISB_EXPORT_CHEQUE_DD');
+				Delete from DATA_ENGINE_CONFIG where name = 'DISB_EXPORT_CHEQUE_DD';
+				
+				Insert into DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_EXPORT_CHEQUE_DD','Disbursements[CHEQUE/DD] Download.',2,null,null,null,'^',0,0, null, null, null,'A','/opt/Growth_Source/PFF/GSF/disbursement','GSFTL_Axis_','.csv',0,current_timestamp,'${SEQ_FILE},_${yyyyMMddHHmmss}',null,'0','SHARE_TO_SFTP',1,1);
+				
+				Insert into DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE),(Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD'),'DISBURSEMENT_REQUESTS',0,'ID','HEADER_ID IN (:HEADER_ID), DISBURSEMENT_TYPE = :DISBURSEMENT_TYPE','UPDATE DISBURSEMENT_REQUESTS SET  BATCH_ID = :FILEID, STATUS = ''AC'' WHERE HEADER_ID IN (:HEADER_ID)QUERY:UPDATE FINADVANCEPAYMENTS SET STATUS = ''AC''      WHERE PAYMENTID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS      WHERE HEADER_ID IN (:HEADER_ID) AND STATUS = ''AC'')QUERY:UPDATE PAYMENTINSTRUCTIONS SET STATUS = ''AC''      WHERE PAYMENTINSTRUCTIONID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS      WHERE HEADER_ID IN (:HEADER_ID) AND STATUS = ''AC'')QUERY:UPDATE INSURANCEPAYMENTINSTRUCTIONS SET STATUS = ''AC''      WHERE ID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE HEADER_ID IN (:HEADER_ID) AND STATUS = ''AC'')',null,null,null,null,null,0,0,0);
+
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'TXN_TYPE',1,'N',null,'P',  null,null,'0',null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'DISBURSEMENT_TYPE',0,'N',null,null,  null,null,'0',null,'if((DISBURSEMENT_TYPE == ''D'')){Result = ''DD'';  return;} else if((DISBURSEMENT_TYPE == ''C'')) {Result = ''CC'';  return;}',null,null,'M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'CORP_CODE', 1,'N',null,'GSFTL',  null,null,'0',null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')),	'ID',     0,'N',null,null,  null,null,'0',null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')),	'PARTNERBANK_ACCOUNT',0,'N',null,null,  null,null,'0',null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'DISBURSEMENT_DATE',         0,'N',null,null,  null,null,'0',null,null,null,'DATE:yyyy-MM-dd','M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'TRANSACTION_CURRENCY',	  1,'N',null,'INR',  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'DISBURSEMENT_AMOUNT',	  0,'N',null,null,  null,null,'0',null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIARY_NAME',	  0,'N',null,null,  null,null,'0',null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'CUSTCIF',	  0,'N',null,null,  null,null,'0',null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIARY_ACCOUNT',	  0,'N',null,null,  null,null,'0',null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIARY_ACC_TYPE',  1,'N',null,'',  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIARY_ADDRESS1',  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIARY_ADDRESS2',  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIARY_ADDRESS3',  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIRY_CITY',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIRY_STATE',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIARY_ADDRESS5',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'IFSC_CODE',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIARY_BANK',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'MICR_CODE',           0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'CHEQUE_NUMBER',       0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'PAYMENT_DATE',         0,'N',null,null,	null,null,'0',null,null,null,'DATE:yyyy-MM-dd','O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'DRAWEE_LOCATION',      0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'PRINT_LOCATION',      0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIRY_EMAIL',         0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIRY_EMAIL1',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'BENFICIARY_MOBILE',       0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'CORP_BATCH_NUM',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'COMAPANY_CODE',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'PRODUCT_CODE',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'FINREFERENCE',       0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'EXTRA2',       1,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'EXTRA3',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'EXTRA4',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'EXTRA5',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'PAYMENT_DETAIL6',       0,'N',null,null,	null,null,'0',null,'if((PAYMENT_DETAIL6 == ''CS'')){Result = ''CUST'';  return;} else if((PAYMENT_DETAIL6 == ''VD'')) {Result = ''VEND'';  return;}',null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'CORP_EMAIL_ADDRESS',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'TRANSMISSIONDATE',       1,'N',null,null,	'${SysDate}',null,'0',null,null,null,'DATE:yyyy-MM-dd','O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'USERID',       1,'N',null,null,	'${USER_NAME}',null,'0',null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_CHEQUE_DD')), 'USERDEPARTMENT',       1,'N',null,null,	'${USER_DEPT_CODE}',null,'0',null,null,null,null,'O');
+				
+				UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+			]]>
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="ST#289.4_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#289.4" author="saisandeep.b">
+		<createView viewName="Int_Disbursement_Request_View" replaceIfExists="true">
+			<![CDATA[
+				SELECT fa.paymentid,
+					fa.finreference,
+					'D' channel,
+					0  providerid,
+						CASE
+							WHEN fa.paymenttype= 'NEFT' THEN 'N'
+							WHEN fa.paymenttype= 'RTGS' THEN 'R'
+							WHEN fa.paymenttype= 'DD' THEN 'D'
+							WHEN fa.paymenttype= 'CHEQUE' THEN 'C'
+							WHEN fa.paymenttype= 'IFT' THEN 'I'
+							ELSE fa.paymenttype
+						END disbursement_type,
+					fa.amttobereleased,
+					fa.disbdate,
+					fa.lldate,
+					fa.payableloc,
+					fa.printingloc,
+					cu.custcif,
+					cu.custshrtname,
+					''  customer_mobile,
+					ce.custemail customer_email,
+					cs.cpprovincename customer_state,
+					cc.pccityname customer_city,
+					'' customer_address1,
+					'' customer_address2,
+					'' customer_address3,
+					'' customer_address4,
+					'' customer_address5,
+					bd.bankname,
+					bb.branchcode,
+					bb.branchdesc,
+					pbd.cpprovincename benficiary_branch_state,
+					pbd.pccityname benficiary_branch_city,
+					bb.micr micr_code,
+					bb.ifsc ifsc_code,
+					fa.beneficiaryaccno,
+						CASE
+							WHEN fa.paymenttype= 'CHEQUE' OR fa.paymenttype= 'DD' THEN fa.liabilityholdname
+							ELSE fa.beneficiaryname
+						END  beneficiaryname,
+					(fa.phonecountrycode ${call.concatenate} fa.phoneareacode) ${call.concatenate} fa.phonenumber  beneficiary_mobile,
+					bce.custemail  benficiry_email,
+					brs.cpprovincename  benficiary_state,
+					brc.pccityname  benficiary_city,
+					brca.custaddrhnbr ${call.concatenate}','${call.concatenate} brca.custaddrstreet ${call.concatenate}','${call.concatenate} brc.pccityname ${call.concatenate}','${call.concatenate} brs.cpprovincename  benficiary_address1,
+					''  benficiary_address2,
+					''  benficiary_address3,
+					''  benficiary_address4,
+					brca.custaddrzip  benficiary_address5,
+					''  payment_detail1,
+					''  payment_detail2,
+					''  payment_detail3,
+					''  payment_detail4,
+					''  payment_detail5,
+					fa.paymentdetail  payment_detail6,
+					''  payment_detail7,
+					fa.status,
+					fa.description  remarks,
+					fa.paymenttype,
+					fm.fintype,
+					pb.partnerbankid  partnerbank_id,
+					pb.partnerbankcode  partnerbank_code,
+					fa.inputdate,
+					pb.alwfiledownload,
+					pb.filename,
+					fm.finisactive,
+					smd.entitycode,
+					pb.accountno  partnerbank_account
+				FROM finadvancepayments fa
+					JOIN ( SELECT financemain_temp.custid,
+							financemain_temp.finreference,
+							financemain_temp.fintype,
+							financemain_temp.finisactive
+						FROM financemain_temp
+						UNION ALL
+						SELECT t2.custid,
+							t2.finreference,
+							t2.fintype,
+							t2.finisactive
+						FROM financemain t2
+						WHERE NOT (EXISTS ( SELECT 1
+								FROM financemain_temp t3
+								WHERE t3.finreference= t2.finreference))) fm ON fm.finreference= fa.finreference
+					JOIN customers cu ON cu.custid = fm.custid
+					JOIN rmtcurrencies ccy ON ccy.ccycode = fa.disbccy
+					JOIN partnerbanks pb ON pb.partnerbankid = fa.partnerbankid
+					LEFT JOIN customeremails ce ON ce.custid = cu.custid AND ce.custemailpriority = 5
+					LEFT JOIN customeraddresses ca ON ca.custid = ce.custid AND ca.custaddrpriority = 5
+					LEFT JOIN rmtprovincevscity cc ON cc.pccity= ca.custaddrcity
+					LEFT JOIN rmtcountryvsprovince cs ON cs.cpprovince= cc.pcprovince
+					LEFT JOIN bankbranches bb ON bb.bankbranchid = fa.bankbranchid
+					LEFT JOIN bmtbankdetail bd ON bd.bankcode= bb.bankcode
+					LEFT JOIN ( SELECT pb_1.partnerbankid,
+							pbd_1.bankname,
+							pbb.branchdesc,
+							pbbrc.pccityname,
+							pbbrs.cpprovincename
+						FROM partnerbanks pb_1
+							JOIN bankbranches pbb ON pbb.branchcode= pb_1.bankbranchcode
+							JOIN bmtbankdetail pbd_1 ON pbd_1.bankcode= pbb.bankcode
+							LEFT JOIN rmtprovincevscity pbbrc ON pbbrc.pccity= pbb.city
+							LEFT JOIN rmtcountryvsprovince pbbrs ON pbbrs.cpprovince= pbbrc.pcprovince) pbd ON pbd.partnerbankid = pb.partnerbankid
+					LEFT JOIN beneficiary br ON br.bankbranchid = fa.bankbranchid AND br.accnumber= fa.beneficiaryaccno AND br.custid = fm.custid
+					LEFT JOIN customers bc ON bc.custid = br.custid
+					LEFT JOIN customeremails bce ON bce.custid = cu.custid AND bce.custemailpriority = 5
+					LEFT JOIN customeraddresses brca ON brca.custid = br.custid AND brca.custaddrpriority = 5
+					LEFT JOIN rmtprovincevscity brc ON brc.pccity= brca.custaddrcity
+					LEFT JOIN rmtcountryvsprovince brs ON brs.cpprovince= brc.pcprovince
+					LEFT JOIN rmtfinancetypes rft ON fm.fintype= rft.fintype
+					LEFT JOIN smtdivisiondetail smd ON rft.findivision= smd.divisioncode
+				WHERE fa.status= 'APPROVED' AND NOT (fa.paymentid IN ( SELECT disbursement_requests.disbursement_id
+						FROM disbursement_requests)) AND NOT (fa.paymentid IN ( SELECT finadvancepayments_temp.paymentid
+						FROM finadvancepayments_temp))
+				UNION ALL
+				SELECT pi.paymentinstructionid  paymentid,
+					ph.finreference,
+					ph.paymenttype  channel,
+					0  providerid,
+						CASE
+							WHEN pi.paymenttype= 'NEFT' THEN 'N'
+							WHEN pi.paymenttype= 'RTGS' THEN 'R'
+							WHEN pi.paymenttype= 'DD' THEN 'D'
+							WHEN pi.paymenttype= 'CHEQUE' THEN 'C'
+							WHEN pi.paymenttype= 'IFT' THEN 'I'
+							ELSE pi.paymenttype
+						END  disbursement_type,
+					pi.paymentamount  amttobereleased,
+					pi.postdate  disbdate,
+					pi.postdate  lldate,
+					pi.payableloc,
+					pi.printingloc,
+					cu.custcif,
+					cu.custshrtname,
+					''  customer_mobile,
+					ce.custemail  customer_email,
+					cs.cpprovincename  customer_state,
+					cc.pccityname  customer_city,
+					''  customer_address1,
+					''  customer_address2,
+					''  customer_address3,
+					''  customer_address4,
+					''  customer_address5,
+					bd.bankname,
+					bb.branchcode,
+					bb.branchdesc,
+					bbrs.cpprovincename  benficiary_branch_state,
+					bbrc.pccityname  benficiary_branch_city,
+					bb.micr  micr_code,
+					bb.ifsc  ifsc_code,
+					pi.accountno  beneficiaryaccno,
+						CASE
+							WHEN pi.paymenttype= 'CHEQUE' OR pi.paymenttype= 'DD' THEN pi.favourname
+							ELSE pi.acctholdername
+						END  beneficiaryname,
+					pi.phonecountrycode ${call.concatenate} pi.phonenumber  beneficiary_mobile,
+					bce.custemail  benficiry_email,
+					brs.cpprovincename  benficiary_state,
+					brc.pccityname  benficiary_city,
+					''  benficiary_address1,
+					''  benficiary_address2,
+					''  benficiary_address3,
+					''  benficiary_address4,
+					brca.custaddrzip  benficiary_address5,
+					''  payment_detail1,
+					''  payment_detail2,
+					''  payment_detail3,
+					''  payment_detail4,
+					''  payment_detail5,
+					''  payment_detail6,
+					''  payment_detail7,
+					pi.status,
+					pi.remarks,
+					pi.paymenttype,
+					fm.fintype,
+					pb.partnerbankid  partnerbank_id,
+					pb.partnerbankcode  partnerbank_code,
+					pi.postdate  inputdate,
+					pb.alwfiledownload,
+					pb.filename,
+					fm.finisactive,
+					smd.entitycode,
+					pb.accountno  partnerbank_account
+				FROM paymentinstructions pi
+					JOIN paymentheader ph ON ph.paymentid = pi.paymentid
+					JOIN ( SELECT financemain.custid,
+							financemain.finreference,
+							financemain.fintype,
+							financemain.finisactive
+						FROM financemain
+						UNION ALL
+						SELECT t2.custid,
+							t2.finreference,
+							t2.fintype,
+							t2.finisactive
+						FROM financemain_temp t2
+						WHERE NOT (EXISTS ( SELECT 1
+								FROM financemain_temp t3
+								WHERE t3.finreference= t2.finreference))) fm ON fm.finreference= ph.finreference
+					JOIN customers cu ON cu.custid = fm.custid
+					JOIN rmtcurrencies ccy ON ccy.ccycode = pi.paymentccy
+					JOIN partnerbanks pb ON pb.partnerbankid = pi.partnerbankid
+					LEFT JOIN customeremails ce ON ce.custid = cu.custid AND ce.custemailpriority = 5
+					LEFT JOIN customeraddresses ca ON ca.custid = ce.custid AND ca.custaddrpriority = 5
+					LEFT JOIN rmtprovincevscity cc ON cc.pccity= ca.custaddrcity
+					LEFT JOIN rmtcountryvsprovince cs ON cs.cpprovince= cc.pcprovince
+					LEFT JOIN customerphonenumbers cm ON cm.phonecustid = cu.custid AND cm.phonetypecode= 'MOBILE1' AND cm.phonetypepriority = 5
+					LEFT JOIN bankbranches bb ON bb.bankbranchid = pi.bankbranchid
+					LEFT JOIN bmtbankdetail bd ON bd.bankcode= bb.bankcode
+					LEFT JOIN rmtprovincevscity bbrc ON bbrc.pccity= bb.city
+					LEFT JOIN rmtcountryvsprovince bbrs ON bbrs.cpprovince= bbrc.pcprovince
+					LEFT JOIN beneficiary br ON br.bankbranchid = pi.bankbranchid AND br.accnumber= pi.accountno AND br.custid = fm.custid
+					LEFT JOIN customers bc ON bc.custid = br.custid
+					LEFT JOIN customeremails bce ON bce.custid = cu.custid AND bce.custemailpriority = 5
+					LEFT JOIN customeraddresses brca ON brca.custid = br.custid AND brca.custaddrpriority = 5
+					LEFT JOIN rmtprovincevscity brc ON brc.pccity= brca.custaddrcity
+					LEFT JOIN rmtcountryvsprovince brs ON brs.cpprovince= brc.pcprovince
+					LEFT JOIN rmtfinancetypes rft ON fm.fintype= rft.fintype
+					LEFT JOIN smtdivisiondetail smd ON rft.findivision= smd.divisioncode
+				WHERE pi.status= 'APPROVED' AND NOT (pi.paymentinstructionid IN ( SELECT disbursement_requests.disbursement_id
+						FROM disbursement_requests))
+				UNION ALL
+				SELECT pi.id  paymentid,
+					vr.primarylinkref  finreference,
+					'I' channel,
+					pi.providerid,
+						CASE
+							WHEN pi.paymenttype= 'NEFT' THEN 'N'
+							WHEN pi.paymenttype= 'RTGS' THEN 'R'
+							WHEN pi.paymenttype= 'DD' THEN 'D'
+							WHEN pi.paymenttype= 'CHEQUE' THEN 'C'
+							WHEN pi.paymenttype= 'IFT' THEN 'I'
+							ELSE pi.paymenttype
+						END  disbursement_type,
+					pi.paymentamount  amttobereleased,
+					pi.paymentdate  disbdate,
+					pi.paymentdate  lldate,
+					''  payableloc,
+					''  printingloc,
+					c.custcif,
+					'' custshrtname,
+					''  customer_mobile,
+					''  customer_email,
+					''  customer_state,
+					''  customer_city,
+					''  customer_address1,
+					''  customer_address2,
+					''  customer_address3,
+					''  customer_address4,
+					''  customer_address5,
+					bd.bankname,
+					bb.branchcode,
+					bb.branchdesc,
+					bbrs.cpprovincename  benficiary_branch_state,
+					bbrc.pccityname  benficiary_branch_city,
+					bb.micr  micr_code,
+					bb.ifsc  ifsc_code,
+					vpa.accountnumber  beneficiaryaccno,
+					avd.dealername  beneficiaryname,
+					avd.dealertelephone  beneficiary_mobile,
+					avd.email  benficiry_email,
+					brs.cpprovincename  benficiary_state,
+					brc.pccityname  benficiary_city,
+					avd.dealeraddress1  benficiary_address1,
+					avd.dealeraddress2  benficiary_address2,
+					avd.dealeraddress3  benficiary_address3,
+					''  benficiary_address4,
+					avd.zipcode  benficiary_address5,
+					''  payment_detail1,
+					''  payment_detail2,
+					''  payment_detail3,
+					''  payment_detail4,
+					''  payment_detail5,
+					''  payment_detail6,
+					''  payment_detail7,
+					pi.status,
+					pi.remarks,
+					pi.paymenttype,
+					'' fintype,
+					pb.partnerbankid  partnerbank_id,
+					pb.partnerbankcode  partnerbank_code,
+					pi.paymentdate  inputdate,
+					pb.alwfiledownload,
+					pb.filename,
+					1  finisactive,
+					pi.entitycode,
+					pb.accountno  partnerbank_account
+				FROM insurancepaymentinstructions pi
+					JOIN rmtcurrencies ccy ON ccy.ccycode = pi.paymentccy
+					JOIN partnerbanks pb ON pb.partnerbankid = pi.partnerbankid
+					JOIN vasprovideraccdetail vpa ON vpa.providerid = pi.providerid
+					JOIN amtvehicledealer avd ON avd.dealerid = vpa.providerid
+					JOIN vasrecording vr ON vr.paymentinsid = pi.id
+					LEFT JOIN financemain fm ON fm.finreference= vr.primarylinkref
+					LEFT JOIN customers c ON fm.custid = c.custid
+					LEFT JOIN bankbranches bb ON bb.bankbranchid = vpa.bankbranchid
+					LEFT JOIN bmtbankdetail bd ON bd.bankcode= bb.bankcode
+					LEFT JOIN rmtprovincevscity bbrc ON bbrc.pccity= bb.city
+					LEFT JOIN rmtcountryvsprovince bbrs ON bbrs.cpprovince= bbrc.pcprovince
+					LEFT JOIN rmtprovincevscity brc ON brc.pccity= avd.dealercity
+					LEFT JOIN rmtcountryvsprovince brs ON brs.cpprovince= brc.pcprovince
+				WHERE pi.status= 'APPROVED' AND pi.paymentamount > 0 AND NOT (pi.id IN ( SELECT disbursement_requests.disbursement_id
+						FROM disbursement_requests));
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#289.4_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#289.5" author="saisandeep.b">
+		<sql>
+			<![CDATA[	
+				update plf.data_engine_config set fileextension = '.txt' where name ='DISB_EXPORT_CHEQUE_DD'
+			]]>
+		</sql>	
+	</changeSet>
+	
 	<!-- ST#1952 receipt upload performance improvement changes start -->
 
 	<changeSet id="ST#1952.1" author="gopalaswamy.m">
@@ -1606,6 +4440,745 @@
 		<addColumn tableName="REJECTFINANCEMAIN">
 			<column name="MIGRDATE" type="datetime" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#326_pre" author="gopalaSwamy.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'covenant_documents_temp');
+					select deps_save_and_drop_dependencies ('plf', 'covenant_documents');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#326" author="gopalaSwamy.m" >
+		<modifyDataType tableName="COVENANT_DOCUMENTS_TEMP" columnName="covenanttype" newDataType="VARCHAR(50)" />
+		<modifyDataType tableName="COVENANT_DOCUMENTS" columnName="covenanttype" newDataType="VARCHAR(50)" />
+	</changeSet>
+
+	<changeSet id="DE#326_post" author="gopalaSwamy.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'covenant_documents_temp');
+					select deps_restore_dependencies ('plf', 'covenant_documents');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#177737" author="kavya.n">
+		<sql>
+			<![CDATA[
+			
+			UPDATE DATA_ENGINE_COLUMN SET STARTINDEX = 4 WHERE NAME='TRANSACTIONREF' AND 
+			TABLEID = (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_AXIS_IMPORT'));
+            
+            UPDATE DATA_ENGINE_COLUMN SET STARTINDEX = 11 WHERE NAME='TRANSACTIONUTRNO' AND 
+            TABLEID = (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_AXIS_IMPORT'));
+			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#337.1" author="gopalaswamy.m">
+		<addColumn tableName="PRESENTMENT_REQ_DETAILS">
+			<column name="HEADERID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="DE#337.2" author="gopalaswamy.m">
+		<addColumn tableName="PRESENTMENT_REQ_DETAILS_TEMP">
+			<column name="HEADERID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#358_pre" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#358" author="sampath.d">
+		<createView viewName="Int_Disbursement_Request_View" replaceIfExists="true">
+			<![CDATA[
+				SELECT fa.paymentid,
+					fa.finreference,
+					'D' channel,
+					0  providerid,
+						CASE
+							WHEN fa.paymenttype= 'NEFT' THEN 'N'
+							WHEN fa.paymenttype= 'RTGS' THEN 'R'
+							WHEN fa.paymenttype= 'DD' THEN 'D'
+							WHEN fa.paymenttype= 'CHEQUE' THEN 'C'
+							WHEN fa.paymenttype= 'IFT' THEN 'I'
+							ELSE fa.paymenttype
+						END disbursement_type,
+					fa.amttobereleased,
+					fa.disbdate,
+					fa.lldate,
+					fa.payableloc,
+					fa.printingloc,
+					cu.custcif,
+					cu.custshrtname,
+					''  customer_mobile,
+					ce.custemail customer_email,
+					cs.cpprovincename customer_state,
+					cc.pccityname customer_city,
+					'' customer_address1,
+					'' customer_address2,
+					'' customer_address3,
+					'' customer_address4,
+					'' customer_address5,
+					bd.bankname,
+					bb.branchcode,
+					bb.branchdesc,
+					pbd.cpprovincename benficiary_branch_state,
+					pbd.pccityname benficiary_branch_city,
+					bb.micr micr_code,
+					bb.ifsc ifsc_code,
+					fa.beneficiaryaccno,
+						CASE
+							WHEN fa.paymenttype= 'CHEQUE' OR fa.paymenttype= 'DD' THEN fa.liabilityholdname
+							ELSE fa.beneficiaryname
+						END  beneficiaryname,
+					(fa.phonecountrycode ${call.concatenate} fa.phoneareacode) ${call.concatenate} fa.phonenumber  beneficiary_mobile,
+					bce.custemail  benficiry_email,
+					brs.cpprovincename  benficiary_state,
+					brc.pccityname  benficiary_city,
+					brca.custaddrhnbr ${call.concatenate}','${call.concatenate} brca.custaddrstreet ${call.concatenate}','${call.concatenate} brc.pccityname ${call.concatenate}','${call.concatenate} brs.cpprovincename  benficiary_address1,
+					''  benficiary_address2,
+					''  benficiary_address3,
+					''  benficiary_address4,
+					brca.custaddrzip  benficiary_address5,
+					''  payment_detail1,
+					''  payment_detail2,
+					''  payment_detail3,
+					''  payment_detail4,
+					''  payment_detail5,
+					fa.paymentdetail  payment_detail6,
+					''  payment_detail7,
+					fa.status,
+					fa.description  remarks,
+					fa.paymenttype,
+					fm.fintype,
+					pb.partnerbankid  partnerbank_id,
+					pb.partnerbankcode  partnerbank_code,
+					fa.inputdate,
+					pb.alwfiledownload,
+					pb.filename,
+					fm.finisactive,
+					smd.entitycode,
+					pb.accountno  partnerbank_account
+				FROM finadvancepayments fa
+					JOIN ( SELECT financemain_temp.custid,
+							financemain_temp.finreference,
+							financemain_temp.fintype,
+							financemain_temp.finisactive
+						FROM financemain_temp
+						UNION ALL
+						SELECT t2.custid,
+							t2.finreference,
+							t2.fintype,
+							t2.finisactive
+						FROM financemain t2
+						WHERE NOT (EXISTS ( SELECT 1
+								FROM financemain_temp t3
+								WHERE t3.finreference= t2.finreference))) fm ON fm.finreference= fa.finreference
+					JOIN customers cu ON cu.custid = fm.custid
+					JOIN rmtcurrencies ccy ON ccy.ccycode = fa.disbccy
+					JOIN partnerbanks pb ON pb.partnerbankid = fa.partnerbankid
+					LEFT JOIN customeremails ce ON ce.custid = cu.custid AND ce.custemailpriority = 5
+					LEFT JOIN customeraddresses ca ON ca.custid = ce.custid AND ca.custaddrpriority = 5
+					LEFT JOIN rmtprovincevscity cc ON cc.pccity= ca.custaddrcity
+					LEFT JOIN rmtcountryvsprovince cs ON cs.cpprovince= cc.pcprovince
+					LEFT JOIN bankbranches bb ON bb.bankbranchid = fa.bankbranchid
+					LEFT JOIN bmtbankdetail bd ON bd.bankcode= bb.bankcode
+					LEFT JOIN ( SELECT pb_1.partnerbankid,
+							pbd_1.bankname,
+							pbb.branchdesc,
+							pbbrc.pccityname,
+							pbbrs.cpprovincename
+						FROM partnerbanks pb_1
+							JOIN bankbranches pbb ON pbb.branchcode= pb_1.bankbranchcode
+							JOIN bmtbankdetail pbd_1 ON pbd_1.bankcode= pbb.bankcode
+							LEFT JOIN rmtprovincevscity pbbrc ON pbbrc.pccity= pbb.city
+							LEFT JOIN rmtcountryvsprovince pbbrs ON pbbrs.cpprovince= pbbrc.pcprovince) pbd ON pbd.partnerbankid = pb.partnerbankid
+					LEFT JOIN beneficiary br ON br.bankbranchid = fa.bankbranchid AND br.accnumber= fa.beneficiaryaccno AND br.custid = fm.custid
+					LEFT JOIN customers bc ON bc.custid = br.custid
+					LEFT JOIN customeremails bce ON bce.custid = cu.custid AND bce.custemailpriority = 5
+					LEFT JOIN customeraddresses brca ON brca.custid = br.custid AND brca.custaddrpriority = 5
+					LEFT JOIN rmtprovincevscity brc ON brc.pccity= brca.custaddrcity
+					LEFT JOIN rmtcountryvsprovince brs ON brs.cpprovince= brc.pcprovince
+					LEFT JOIN rmtfinancetypes rft ON fm.fintype= rft.fintype
+					LEFT JOIN smtdivisiondetail smd ON rft.findivision= smd.divisioncode
+					WHERE fa.status= 'APPROVED' AND fa.paymentid NOT  in  ( SELECT DR.disbursement_id
+                    FROM plf.disbursement_requests DR
+                    inner join plf.finadvancepayments FD  on
+                    FD.finreference = DR.finreference
+                    and dr.disbursement_id = FD.paymentid) AND NOT (fa.paymentid IN ( SELECT finadvancepayments_temp.paymentid
+					FROM finadvancepayments_temp))
+					UNION ALL
+					SELECT pi.paymentinstructionid  paymentid,
+					ph.finreference,
+					ph.paymenttype  channel,
+					0  providerid,
+						CASE
+							WHEN pi.paymenttype= 'NEFT' THEN 'N'
+							WHEN pi.paymenttype= 'RTGS' THEN 'R'
+							WHEN pi.paymenttype= 'DD' THEN 'D'
+							WHEN pi.paymenttype= 'CHEQUE' THEN 'C'
+							WHEN pi.paymenttype= 'IFT' THEN 'I'
+							ELSE pi.paymenttype
+						END  disbursement_type,
+					pi.paymentamount  amttobereleased,
+					pi.postdate  disbdate,
+					pi.postdate  lldate,
+					pi.payableloc,
+					pi.printingloc,
+					cu.custcif,
+					cu.custshrtname,
+					''  customer_mobile,
+					ce.custemail  customer_email,
+					cs.cpprovincename  customer_state,
+					cc.pccityname  customer_city,
+					''  customer_address1,
+					''  customer_address2,
+					''  customer_address3,
+					''  customer_address4,
+					''  customer_address5,
+					bd.bankname,
+					bb.branchcode,
+					bb.branchdesc,
+					bbrs.cpprovincename  benficiary_branch_state,
+					bbrc.pccityname  benficiary_branch_city,
+					bb.micr  micr_code,
+					bb.ifsc  ifsc_code,
+					pi.accountno  beneficiaryaccno,
+						CASE
+							WHEN pi.paymenttype= 'CHEQUE' OR pi.paymenttype= 'DD' THEN pi.favourname
+							ELSE pi.acctholdername
+						END  beneficiaryname,
+					pi.phonecountrycode ${call.concatenate} pi.phonenumber  beneficiary_mobile,
+					bce.custemail  benficiry_email,
+					brs.cpprovincename  benficiary_state,
+					brc.pccityname  benficiary_city,
+					''  benficiary_address1,
+					''  benficiary_address2,
+					''  benficiary_address3,
+					''  benficiary_address4,
+					brca.custaddrzip  benficiary_address5,
+					''  payment_detail1,
+					''  payment_detail2,
+					''  payment_detail3,
+					''  payment_detail4,
+					''  payment_detail5,
+					''  payment_detail6,
+					''  payment_detail7,
+					pi.status,
+					pi.remarks,
+					pi.paymenttype,
+					fm.fintype,
+					pb.partnerbankid  partnerbank_id,
+					pb.partnerbankcode  partnerbank_code,
+					pi.postdate  inputdate,
+					pb.alwfiledownload,
+					pb.filename,
+					fm.finisactive,
+					smd.entitycode,
+					pb.accountno  partnerbank_account
+				FROM paymentinstructions pi
+					JOIN paymentheader ph ON ph.paymentid = pi.paymentid
+					JOIN ( SELECT financemain.custid,
+							financemain.finreference,
+							financemain.fintype,
+							financemain.finisactive
+						FROM financemain
+						UNION ALL
+						SELECT t2.custid,
+							t2.finreference,
+							t2.fintype,
+							t2.finisactive
+						FROM financemain_temp t2
+						WHERE NOT (EXISTS ( SELECT 1
+								FROM financemain_temp t3
+								WHERE t3.finreference= t2.finreference))) fm ON fm.finreference= ph.finreference
+					JOIN customers cu ON cu.custid = fm.custid
+					JOIN rmtcurrencies ccy ON ccy.ccycode = pi.paymentccy
+					JOIN partnerbanks pb ON pb.partnerbankid = pi.partnerbankid
+					LEFT JOIN customeremails ce ON ce.custid = cu.custid AND ce.custemailpriority = 5
+					LEFT JOIN customeraddresses ca ON ca.custid = ce.custid AND ca.custaddrpriority = 5
+					LEFT JOIN rmtprovincevscity cc ON cc.pccity= ca.custaddrcity
+					LEFT JOIN rmtcountryvsprovince cs ON cs.cpprovince= cc.pcprovince
+					LEFT JOIN customerphonenumbers cm ON cm.phonecustid = cu.custid AND cm.phonetypecode= 'MOBILE1' AND cm.phonetypepriority = 5
+					LEFT JOIN bankbranches bb ON bb.bankbranchid = pi.bankbranchid
+					LEFT JOIN bmtbankdetail bd ON bd.bankcode= bb.bankcode
+					LEFT JOIN rmtprovincevscity bbrc ON bbrc.pccity= bb.city
+					LEFT JOIN rmtcountryvsprovince bbrs ON bbrs.cpprovince= bbrc.pcprovince
+					LEFT JOIN beneficiary br ON br.bankbranchid = pi.bankbranchid AND br.accnumber= pi.accountno AND br.custid = fm.custid
+					LEFT JOIN customers bc ON bc.custid = br.custid
+					LEFT JOIN customeremails bce ON bce.custid = cu.custid AND bce.custemailpriority = 5
+					LEFT JOIN customeraddresses brca ON brca.custid = br.custid AND brca.custaddrpriority = 5
+					LEFT JOIN rmtprovincevscity brc ON brc.pccity= brca.custaddrcity
+					LEFT JOIN rmtcountryvsprovince brs ON brs.cpprovince= brc.pcprovince
+					LEFT JOIN rmtfinancetypes rft ON fm.fintype= rft.fintype
+					LEFT JOIN smtdivisiondetail smd ON rft.findivision= smd.divisioncode
+				WHERE pi.status= 'APPROVED' AND NOT (pi.paymentinstructionid IN ( SELECT disbursement_requests.disbursement_id
+						FROM disbursement_requests))
+				UNION ALL
+				SELECT pi.id  paymentid,
+					vr.primarylinkref  finreference,
+					'I' channel,
+					pi.providerid,
+						CASE
+							WHEN pi.paymenttype= 'NEFT' THEN 'N'
+							WHEN pi.paymenttype= 'RTGS' THEN 'R'
+							WHEN pi.paymenttype= 'DD' THEN 'D'
+							WHEN pi.paymenttype= 'CHEQUE' THEN 'C'
+							WHEN pi.paymenttype= 'IFT' THEN 'I'
+							ELSE pi.paymenttype
+						END  disbursement_type,
+					pi.paymentamount  amttobereleased,
+					pi.paymentdate  disbdate,
+					pi.paymentdate  lldate,
+					''  payableloc,
+					''  printingloc,
+					c.custcif,
+					'' custshrtname,
+					''  customer_mobile,
+					''  customer_email,
+					''  customer_state,
+					''  customer_city,
+					''  customer_address1,
+					''  customer_address2,
+					''  customer_address3,
+					''  customer_address4,
+					''  customer_address5,
+					bd.bankname,
+					bb.branchcode,
+					bb.branchdesc,
+					bbrs.cpprovincename  benficiary_branch_state,
+					bbrc.pccityname  benficiary_branch_city,
+					bb.micr  micr_code,
+					bb.ifsc  ifsc_code,
+					vpa.accountnumber  beneficiaryaccno,
+					avd.dealername  beneficiaryname,
+					avd.dealertelephone  beneficiary_mobile,
+					avd.email  benficiry_email,
+					brs.cpprovincename  benficiary_state,
+					brc.pccityname  benficiary_city,
+					avd.dealeraddress1  benficiary_address1,
+					avd.dealeraddress2  benficiary_address2,
+					avd.dealeraddress3  benficiary_address3,
+					''  benficiary_address4,
+					avd.zipcode  benficiary_address5,
+					''  payment_detail1,
+					''  payment_detail2,
+					''  payment_detail3,
+					''  payment_detail4,
+					''  payment_detail5,
+					''  payment_detail6,
+					''  payment_detail7,
+					pi.status,
+					pi.remarks,
+					pi.paymenttype,
+					'' fintype,
+					pb.partnerbankid  partnerbank_id,
+					pb.partnerbankcode  partnerbank_code,
+					pi.paymentdate  inputdate,
+					pb.alwfiledownload,
+					pb.filename,
+					1  finisactive,
+					pi.entitycode,
+					pb.accountno  partnerbank_account
+				FROM insurancepaymentinstructions pi
+					JOIN rmtcurrencies ccy ON ccy.ccycode = pi.paymentccy
+					JOIN partnerbanks pb ON pb.partnerbankid = pi.partnerbankid
+					JOIN vasprovideraccdetail vpa ON vpa.providerid = pi.providerid
+					JOIN amtvehicledealer avd ON avd.dealerid = vpa.providerid
+					JOIN vasrecording vr ON vr.paymentinsid = pi.id
+					LEFT JOIN financemain fm ON fm.finreference= vr.primarylinkref
+					LEFT JOIN customers c ON fm.custid = c.custid
+					LEFT JOIN bankbranches bb ON bb.bankbranchid = vpa.bankbranchid
+					LEFT JOIN bmtbankdetail bd ON bd.bankcode= bb.bankcode
+					LEFT JOIN rmtprovincevscity bbrc ON bbrc.pccity= bb.city
+					LEFT JOIN rmtcountryvsprovince bbrs ON bbrs.cpprovince= bbrc.pcprovince
+					LEFT JOIN rmtprovincevscity brc ON brc.pccity= avd.dealercity
+					LEFT JOIN rmtcountryvsprovince brs ON brs.cpprovince= brc.pcprovince
+				WHERE pi.status= 'APPROVED' AND pi.paymentamount > 0 AND NOT (pi.id IN ( SELECT disbursement_requests.disbursement_id
+						FROM disbursement_requests));
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="DE#358_post" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#373" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				DELETE from ErrorDetails WHERE code='90505';			
+				Insert into ERRORDETAILS VALUES ('90505', 'EN', 'E', '{0}', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#390" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				DELETE from ErrorDetails WHERE code='90506';			
+				Insert into ERRORDETAILS VALUES ('90506', 'EN', 'E', '{0} Number is Mandotory ', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#404" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from DedupFields where QueryModule='RETAILCustomer' and fieldName ='UCIC';
+				INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('UCIC', 'UCIC Number', 'nvarchar', 'RETAILCustomer', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				Delete from DedupFields where QueryModule='CORPCustomer' and fieldName ='UCIC';
+				INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('UCIC', 'UCIC Number', 'nvarchar', 'CORPCustomer', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				Delete from DedupFields where QueryModule='SMECustomer' and fieldName ='UCIC';
+				INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('UCIC', 'UCIC Number', 'nvarchar', 'SMECustomer', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#425" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				DELETE from ErrorDetails WHERE code='90507';			
+				Insert into ERRORDETAILS VALUES ('90507', 'EN', 'E', 'CustDOTitle and PanNumber should be same', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+ 	
+	<changeSet id="ST#350.67" author="Gopal.p">
+		<comment>Staging table for auto knock-off processing</comment>
+		<createTable tableName="AUTO_KNOCKOFF_EXCESS_STAGE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmountType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BalanceAmount" type="decimal(18,0)" />
+			<column name="ExecutionDay" type="char(2)" />
+			<column name="ThresholdValue" type="varchar(1000)" />
+			<column name="UtilizedAmount" type="decimal(18,0)" />
+			<column name="ValueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProcessingFlag" type="smallint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.68" author="Gopal.p">
+		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS_STAGE" columnNames="ID" constraintName="PK_AUTO_KNFES_ID" />
+	</changeSet>
+
+	<changeSet id="ST#350.69" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS_STAGE" indexName="IDX_AUTOKNOCKOFF_ES_VDATE_PF">
+			<column name="ValueDate" type="datetime" />
+			<column name="ProcessingFlag" type="smallint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#350.70" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AUTO_KNOCKOFF_EXCESS_STAGE ADD CONSTRAINT DF_AUTO_KNOCKOFF_ES_PF DEFAULT 0 FOR ProcessingFlag;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#350.71" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessingFlag" tableName="AUTO_KNOCKOFF_EXCESS_STAGE" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#350.72" author="Gopal.p">
+		<comment>Staging table for auto knock-off excess processing</comment>
+		<createTable tableName="AUTO_KNOCKOFF_EXCESS_DTL_STAGE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinTypeDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExecutionDays" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeCode" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypedesc" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="UtilizedAmnt" type="decimal(18,2)" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="Reason" type="varchar(1000)" />
+			<column name="FinCcy" type="varchar(10)" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.73" author="Gopal.p">
+		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS_DTL_STAGE" columnNames="ID" constraintName="PK_AUTO_KNFEDS_ID" />
+	</changeSet>
+	
+	<changeSet id="ST#350.74" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KNFES_EID" referencedTableName="AUTO_KNOCKOFF_EXCESS_STAGE"
+			referencedColumnNames="ID" baseTableName="AUTO_KNOCKOFF_EXCESS_DTL_STAGE" baseColumnNames="ExcessID" />
+	</changeSet>
+
+	<changeSet id="ST#350.75" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS_DTL_STAGE" indexName="IDX_AUTOKNOCKOFF_EX_DTL_ST_EID">
+			<column name="ExcessID" type="bigint" />
+		</createIndex>
+	</changeSet>
+    
+    <changeSet id="ST#350.76" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS_STAGE" indexName="IDX_AKOES_FR_VD">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="ValueDate" type="datetime" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#350.77" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS" indexName="IDX_AKO_E_FR_VD">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="ValueDate" type="datetime" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#350.77.1" author="Gopal.p">
+		<addColumn tableName="AUTO_KNOCKOFF_EXCESS_STAGE">
+			<column name="KnockOffID" type ="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#350.78" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO AUTO_KNOCKOFF_EXCESS_STAGE (FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG, KNOCKOFFID) SELECT FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG, ID FROM AUTO_KNOCKOFF_EXCESS;
+				INSERT INTO AUTO_KNOCKOFF_EXCESS_DTL_STAGE (EXCESSID, KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS) SELECT T2.ID, T1.KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS FROM AUTO_KNOCKOFF_EXCESS_DETAILS T1 INNER JOIN AUTO_KNOCKOFF_EXCESS_STAGE T2 ON T2.KNOCKOFFID = T1.EXCESSID;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#350.78.2" author="Gopal.p">
+		<dropColumn tableName="AUTO_KNOCKOFF_EXCESS_STAGE" columnName="KnockOffID"/>
+	</changeSet>
+	
+	<changeSet id="ST#350.79.1" author="Gopal.p">
+		<dropTable tableName="AUTO_KNOCKOFF_EXCESS_DETAILS"/>
+	</changeSet>
+	
+	<changeSet id="ST#350.79.2" author="Gopal.p">
+		<dropTable tableName="AUTO_KNOCKOFF_EXCESS"/>
+	</changeSet>
+	
+	<changeSet id="ST#350.80" author="Gopal.p">
+		<comment>Tranaction table for auto knock-off processing</comment>
+		<createTable tableName="AUTO_KNOCKOFF_EXCESS">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmountType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BalanceAmount" type="decimal(18,0)" />
+			<column name="ExecutionDay" type="char(2)" />
+			<column name="ThresholdValue" type="varchar(1000)" />
+			<column name="UtilizedAmount" type="decimal(18,0)" />
+			<column name="ValueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProcessingFlag" type="smallint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.80.1" author="Gopal.p">
+		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS" columnNames="ID" constraintName="PK_AUTO_KNFE_ID" />
+	</changeSet>
+
+	<changeSet id="ST#350.80.2" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS" indexName="IDX_AUTOKNOCKOFF_E_VDATE_PF">
+			<column name="ValueDate" type="datetime" />
+			<column name="ProcessingFlag" type="smallint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#350.80.3" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AUTO_KNOCKOFF_EXCESS ADD CONSTRAINT DF_AUTO_KNOCKOFF_EXCESS_PF DEFAULT 0 FOR ProcessingFlag;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#350.80.3" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessingFlag" tableName="AUTO_KNOCKOFF_EXCESS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#350.81" author="Gopal.p">
+		<comment>Tranaction table for auto knock-off processing</comment>
+		<createTable tableName="AUTO_KNOCKOFF_EXCESS_DETAILS">
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinTypeDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExecutionDays" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeCode" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypedesc" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="UtilizedAmnt" type="decimal(18,2)" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="Reason" type="varchar(1000)" />
+			<column name="FinCcy" type="varchar(10)" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.81.1" author="Gopal.p">
+		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS_DETAILS" columnNames="ID" constraintName="PK_AUTO_KNFED_ID" />
+	</changeSet>
+
+	<changeSet id="ST#350.81.2" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KNFED_EID" referencedTableName="AUTO_KNOCKOFF_EXCESS"
+			referencedColumnNames="ID" baseTableName="AUTO_KNOCKOFF_EXCESS_DETAILS" baseColumnNames="ExcessID" />
+	</changeSet>
+
+	<changeSet id="ST#350.81.3" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS_DETAILS" indexName="IDX_AUTOKNOCKOFF_ED_EID">
+			<column name="ExcessID" type="bigint" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#350.82" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO AUTO_KNOCKOFF_EXCESS (ID, FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG) SELECT ID, FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG FROM AUTO_KNOCKOFF_EXCESS_STAGE;
+				INSERT INTO AUTO_KNOCKOFF_EXCESS_DETAILS (ID, EXCESSID, KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS) SELECT ID, EXCESSID, KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS FROM AUTO_KNOCKOFF_EXCESS_DTL_STAGE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#438" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update ERRORDETAILS set message = 'Please enter {0} Number.' where code = '90506';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1_1" author="gopal.p">
+		<createIndex tableName="disbursement_requests" indexName="idx_disb_req_finref_id">
+			<column name="FinReference" type = "varchar(20)"/>
+			<column name="Disbursement_Id" type ="numeric(19,0)"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="1_2" author="gopal.p">
+		<createIndex tableName="covenants" indexName="idx_covenants_ix_keyref_otc">
+			<column name="keyreference" type = "varchar(20)"/>
+			<column name="otc" type ="smallint"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="1_3" author="gopal.p">
+		<createIndex tableName="partnerbanks" indexName="idx_partnerbanks_entity_code">
+			<column name="Entity" type = "varchar(8)"/>
+			<column name="PartnerBankCode" type ="varchar(8)"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="1_4" author="gopal.p">
+		<createIndex tableName="disbursement_requests" indexName="idx_disb_req_id">
+			<column name="Disbursement_Id" type ="numeric(19,0)"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="1_5" author="gopal.p">
+		<createIndex tableName="covenant_documents" indexName="idx_covenant_documents_id_type">
+			<column name="CovenantId" type ="bigint"/>
+			<column name="CovenantType" type ="varchar(50)"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="1_6" author="gopal.p">
+		<createIndex tableName="fincovenanttype" indexName="idx_fincovenanttype_finref">
+			<column name="FinReference" type = "varchar(20)"/>
+		</createIndex>
 	</changeSet>
 	
 </databaseChangeLog>

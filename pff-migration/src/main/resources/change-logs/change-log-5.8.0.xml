@@ -1977,7 +1977,7 @@
 				select * from(select EntityCode, StateCode, MonthYear, TransactionType, cast(max(SeqNo) as number(19)) SeqNo from (
 				select SUBSTR(InvoiceNo, 1, 2) EntityCode, SUBSTR(InvoiceNo, 3, 2) StateCode
 				, SUBSTR(InvoiceNo, 5, 2) || SUBSTR(InvoiceNo, 7, 2) MonthYear, SUBSTR(InvoiceNo, 9, 1) TransactionType, SUBSTR(InvoiceNo, 10, length(rtrim(InvoiceNo))-8) SeqNo 
-				from GST_INVOICE_TXN )T group by EntityCode, StateCode, MonthYear, TransactionType
+				from GST_INVOICE_TXN WHERE InvoiceNo is not null)T group by EntityCode, StateCode, MonthYear, TransactionType
 				order by EntityCode, StateCode, TransactionType);
 			]]>
 		</sql>
@@ -2368,18 +2368,12 @@
 	<changeSet id="100.11" author="murthy.y" dbms="mssql">
 		<sql splitStatements="false">
 			<![CDATA[
-				DECLARE @Seq VARCHAR(10)
-				SELECT @Seq = CAST(MAX(ISNULL(tax_header_id, 0)) AS VARCHAR(MAX)) + 1000 FROM tax_details_stg1
-
-				DECLARE @SQL VARCHAR(4000) ;
-				SET @SQL = '
-				ALTER SEQUENCE Seqtax_header
-				RESTART WITH ' + @Seq +  '
-				INCREMENT BY 1
-				MINVALUE -9223372036854775808
-				MAXVALUE 9223372036854775807;'
-				
-				EXEC(@SQL)
+				declare @MAXNO varchar(max);
+				DECLARE @SQL varchar(max)
+				SET @MAXNO = (SELECT COALESCE(max(T.tax_header_id),0)+1
+							from (select max(tax_header_id) tax_header_id from tax_details_stg1)  t) + 1;
+				Set @SQL = ' alter sequence Seqtax_header restart with ' + cast(@MAXNO as varchar(max)) 
+				EXEC (@SQL)
 			]]>
 		</sql>
 	</changeSet>
@@ -2509,10 +2503,14 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="100.16" author="murthy.y" dbms="oracle">
+	<changeSet id="100.16.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				update FinFeeDetail m set (m.taxheaderid) = (select T1.tax_header_id from tax_details_stg1 t1 where T1.feeid = m.feeid);
+					MERGE INTO FinFeeDetail T1
+					USING ( select distinct T1.tax_header_id, m.taxheaderid,T1.feeid fee_id, m.feeid from  
+					FinFeeDetail m
+					inner join tax_details_stg1 T1 on T1.feeid = m.feeid ) T2 ON (T1.feeid = T2.feeid )
+					WHEN MATCHED THEN UPDATE SET T1.taxheaderid = T2.tax_header_id;
 			]]>
 		</sql>
 	</changeSet>
@@ -2529,12 +2527,22 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="100.17" author="murthy.y" dbms="oracle">
+	<changeSet id="100.17.1" author="murthy.y" dbms="oracle">
 		<sql>
-			<![CDATA[
-				update manualadvisemovements m  set (m.taxheaderid) = (select T1.tax_header_id from tax_details_stg1 t1 where T1.MOVEmentid = m.MOVEmentid);
-    
-				update finrepayscheduledetail m set (m.taxheaderid) = (select T1.tax_header_id from tax_details_stg1 t1  where T1.RPYSCHD_repayid = m.repayid and  T1.RPYSCHD_REPAYSCHID = m.REPAYSCHID);
+			<![CDATA[	
+				MERGE INTO manualadvisemovements T1
+				USING (select distinct tax_header_id,MOVEmentid from tax_details_stg1 ) T2
+				ON (T1.MOVEmentid = T2.MOVEmentid )
+				WHEN MATCHED THEN UPDATE SET T1.taxheaderid = T2.tax_header_id;
+
+				MERGE INTO finrepayscheduledetail T1
+				USING (
+				select distinct t2.tax_header_id,t1.taxheaderid,t1.REPAYSCHID,t2.RPYSCHD_REPAYSCHID,
+				t1.repayid,t2.RPYSCHD_repayid
+				from finrepayscheduledetail t1
+				inner join tax_details_stg1 t2 on t1.repayid=t2.RPYSCHD_repayid and t1.REPAYSCHID=t2.RPYSCHD_REPAYSCHID ) T2
+				ON ( T2.RPYSCHD_REPAYSCHID = T1.REPAYSCHID and  t1.repayid=t2.RPYSCHD_repayid )
+				WHEN MATCHED THEN UPDATE SET T1.taxheaderid = T2.tax_header_id;
 			]]>
 		</sql>
 	</changeSet>

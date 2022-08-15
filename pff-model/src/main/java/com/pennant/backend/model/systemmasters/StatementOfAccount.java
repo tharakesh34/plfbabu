@@ -110,6 +110,7 @@ public class StatementOfAccount {
 	private String totalPriPaidInWords;
 	private String totalPriBalInwords;
 	private String totalPftPaidInWords;
+	private BigDecimal instChrgForCust = BigDecimal.ZERO;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////// Customer Details
@@ -197,6 +198,9 @@ public class StatementOfAccount {
 	private String advIntAmt;
 	private String cashCollAmt;
 	private String dsraAmt;
+	private String vanCode;
+	private String applicationNo;
+	private int dpdCount;
 
 	// downpayment
 	private BigDecimal downPayment = BigDecimal.ZERO;
@@ -255,6 +259,9 @@ public class StatementOfAccount {
 	// Net receivable
 	private BigDecimal netReceivable = BigDecimal.ZERO;
 	private String netRcvbleInWords;
+
+	private BigDecimal finAssetValue;
+	private String rateType;
 
 	/**
 	 * Default Constructor
@@ -1432,6 +1439,54 @@ public class StatementOfAccount {
 
 	public void setDownPayment(BigDecimal downPayment) {
 		this.downPayment = downPayment;
+	}
+
+	public String getVanCode() {
+		return vanCode;
+	}
+
+	public void setVanCode(String vanCode) {
+		this.vanCode = vanCode;
+	}
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+
+	public int getDpdCount() {
+		return dpdCount;
+	}
+
+	public void setDpdCount(int dpdCount) {
+		this.dpdCount = dpdCount;
+	}
+
+	public BigDecimal getFinAssetValue() {
+		return finAssetValue;
+	}
+
+	public void setFinAssetValue(BigDecimal finAssetValue) {
+		this.finAssetValue = finAssetValue;
+	}
+
+	public String getRateType() {
+		return rateType;
+	}
+
+	public void setRateType(String rateType) {
+		this.rateType = rateType;
+	}
+
+	public BigDecimal getInstChrgForCust() {
+		return instChrgForCust;
+	}
+
+	public void setInstChrgForCust(BigDecimal instChrgForCust) {
+		this.instChrgForCust = instChrgForCust;
 	}
 
 }

@@ -98,6 +98,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	private static final String FINCHANGECUSTOMER = "FinChangeCustomer";
 	private FinanceWriteoffDAO financeWriteoffDAO;
 	private FinanceDetailService financeDetailService;
+	private String module = null;
 
 	/**
 	 * default constructor.<br>
@@ -145,6 +146,9 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 				if (this.manualAdvise == null) {
 					throw new Exception(Labels.getLabel("error.unhandled"));
 				}
+			}
+			if (arguments.containsKey("module")) {
+				this.module = (String) arguments.get("module");
 			}
 			doSetFieldProperties();
 		} catch (Exception e) {
@@ -275,6 +279,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			arg.put("manualAdvise", manualAdvise);
 			arg.put("manualAdviseListCtrl", manualAdviseListCtrl);
 			arg.put("financeMain", financeMain);
+			arg.put("module", this.module);
 			try {
 				Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul",
 						null, arg);

@@ -59,6 +59,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptCancellation/ReceiptCancellationList.zul
@@ -88,7 +89,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Button btnNew;
 	protected Button btnSearch;
 
-	protected Textbox receiptReference;
+	protected Textbox externalReference;
 	protected Textbox customer;
 	protected Combobox purpose;
 	protected Combobox receiptMode;
@@ -96,7 +97,6 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Textbox finType;
 	protected Textbox finBranch;
 	protected Uppercasebox transactionRef;
-	protected Uppercasebox externalReference;
 
 	protected Listbox sortOperator_ReceiptCancellationReference;
 	protected Listbox sortOperator_ReceiptCancellationCustomer;
@@ -171,7 +171,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 		registerField("receiptID");
 		registerField("finCcy");
-		registerField("reference", listheader_ReceiptCancellationReference, SortOrder.ASC, receiptReference,
+		registerField("ExtReference", listheader_ReceiptCancellationReference, SortOrder.ASC, externalReference,
 				sortOperator_ReceiptCancellationReference, Operators.STRING);
 		registerField("custCIF", listheader_ReceiptCancellationCusomer, SortOrder.NONE, customer,
 				sortOperator_ReceiptCancellationCustomer, Operators.STRING);
@@ -217,9 +217,9 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 			whereClause = whereClause.append(" FinIsActive = 1 ");
 			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 				whereClause = whereClause.append(" AND ReceiptMode IN( '");
-				whereClause = whereClause.append(RepayConstants.RECEIPTMODE_CHEQUE);
+				whereClause = whereClause.append(ReceiptMode.CHEQUE);
 				whereClause = whereClause.append("','");
-				whereClause = whereClause.append(RepayConstants.RECEIPTMODE_DD);
+				whereClause = whereClause.append(ReceiptMode.DD);
 				whereClause = whereClause.append("') ");
 			}
 

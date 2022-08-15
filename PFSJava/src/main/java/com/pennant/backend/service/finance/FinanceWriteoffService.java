@@ -21,7 +21,7 @@ public interface FinanceWriteoffService {
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(long finID);
 
-	List<ManualAdvise> getManualAdviseByRef(long finID, int manualAdvisePayable, String string);
+	List<ManualAdvise> getPayableAdvises(long finID, String string);
 
 	int getMaxFinanceWriteoffSeq(long finID, Date writeoffDate, String string);
 

@@ -3,13 +3,17 @@ package com.pennant.backend.batch.listeners;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,8 +24,6 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.pennant.app.util.DateUtility;
@@ -34,6 +36,7 @@ import com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceIm
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -41,6 +44,11 @@ import com.pennanttech.pennapps.core.script.ScriptEngine;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.lic.License;
+import com.pennanttech.pennapps.notification.email.OutGoingMailServer;
+import com.pennanttech.pennapps.notification.email.configuration.AttachmentType;
+import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
+import com.pennanttech.pennapps.notification.email.configuration.OutgoingMailProperties;
+import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pff.batch.backend.dao.BatchProcessStatusDAO;
 import com.pennanttech.pff.batch.model.BatchProcessStatus;
 import com.pennanttech.pff.eod.EODUtil;
@@ -99,20 +107,7 @@ public class EodJobListener implements JobExecutionListener {
 			return;
 		}
 
-		String[] ccMailAddress = eodConfig.getCCEmailAddress().split(",");
-		String[] toMailAddress = eodConfig.getToEmailAddress().split(",");
-
-		JavaMailSenderImpl mailSender = generateMailSender(eodConfig);
-
 		try {
-			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-			helper.setFrom(eodConfig.getFromEmailAddress());
-			helper.setSentDate(DateUtil.getSysDate());
-			helper.setTo(toMailAddress);
-			helper.setCc(ccMailAddress);
-
 			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
 				if ("datesUpdate".equals(stepExecution.getStepName())) {
 					if (BatchStatus.COMPLETED.name().equals(stepExecution.getExitStatus().getExitCode())) {
@@ -143,13 +138,16 @@ public class EodJobListener implements JobExecutionListener {
 				subject = "PLF EOD Failed for the value date " + srtValueDate;
 				eodStatus = BatchStatus.FAILED.name();
 
-				setAttachement(jobExecution, helper);
-
 				eodConfig.setEnableAutoEod(false);
 				eODConfigDAO.updateEnableEOD(eodConfig);
 			}
 
-			helper.setSubject(subject);
+			OutGoingMailServer instance = getOutGoingMailServer(eodConfig);
+
+			String[] toMailAddress = eodConfig.getToEmailAddress().split(",");
+			String[] ccMailAddress = eodConfig.getCCEmailAddress().split(",");
+
+			MimeBodyPart body = new MimeBodyPart();
 
 			EODStatus eod = setEODStatus(subject, eodStatus, jobExecution);
 			Configuration config = setConfiguration();
@@ -157,14 +155,67 @@ public class EodJobListener implements JobExecutionListener {
 			String result = FreeMarkerTemplateUtils
 					.processTemplateIntoString(config.getTemplate("eod_notification.html"), eod);
 
-			helper.setText("", result);
-			mailSender.send(message);
+			body.setText(result, StandardCharsets.UTF_8.name(), EmailBodyType.HTML.getValue());
+
+			instance.send(toMailAddress, ccMailAddress, subject, body, getAttachments(jobExecution));
 		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		ThreadContext.clearAll();
 		logger.debug(Literal.LEAVING);
+	}
+
+	private OutGoingMailServer getOutGoingMailServer(EODConfig eodConfig) {
+		OutgoingMailProperties properties = new OutgoingMailProperties();
+
+		properties.setUser(eodConfig.getSMTPUserName());
+
+		if (eodConfig.isSMTPAutenticationRequired()) {
+			String password = EncryptionUtil.decrypt("ENC(" + eodConfig.getSMTPPwd() + ")");
+			properties.setPassword(password);
+		}
+
+		properties.setHost(eodConfig.getSMTPHost());
+		properties.setPort(eodConfig.getSMTPPort());
+		properties.setEncryptionType(eodConfig.getEncryptionType());
+		properties.setFrom(eodConfig.getFromEmailAddress());
+		properties.setPersonal(eodConfig.getFromName());
+		properties.setReturnMail(eodConfig.getFromEmailAddress());
+		properties.setAuth(eodConfig.isSMTPAutenticationRequired());
+
+		return OutGoingMailServer.getInstance(properties);
+	}
+
+	private List<MimeBodyPart> getAttachments(JobExecution jobExecution) throws MessagingException {
+		List<MimeBodyPart> attachements = new ArrayList<>();
+		if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
+			return attachements;
+		}
+
+		StepExecution currentStepExecution = null;
+
+		for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
+			currentStepExecution = stepExecution;
+		}
+
+		if (currentStepExecution == null) {
+			return attachements;
+		}
+
+		byte[] content = currentStepExecution.getExitStatus().getExitDescription().getBytes();
+		MimeBodyPart bodyPart = new MimeBodyPart();
+		MessageAttachment attachement = new MessageAttachment(currentStepExecution.getStepName() + ".log",
+				AttachmentType.TEXT);
+		attachement.setAttachment(content);
+
+		AttachmentType attachmentType = AttachmentType.getAttachmentType(AttachmentType.TEXT.getKey());
+		DataSource dataSource = new ByteArrayDataSource(attachement.getAttachment(), attachmentType.getMimeType());
+		bodyPart.setFileName(currentStepExecution.getStepName() + ".log");
+		bodyPart.setDataHandler(new DataHandler(dataSource));
+		attachements.add(bodyPart);
+
+		return attachements;
 	}
 
 	private void updateExecutionStatus(JobExecution jobExecution, Date eodDate) {
@@ -181,20 +232,6 @@ public class EodJobListener implements JobExecutionListener {
 		}
 
 		bpsDAO.updateBatchStatus(batchProcessStatus);
-	}
-
-	private void setAttachement(JobExecution jobExecution, MimeMessageHelper helper) throws MessagingException {
-		StepExecution currentStepExecution = null;
-
-		for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
-			currentStepExecution = stepExecution;
-		}
-
-		if (currentStepExecution != null) {
-			byte[] content = currentStepExecution.getExitStatus().getExitDescription().getBytes();
-			ByteArrayDataSource is = new ByteArrayDataSource(content, "txt/plain");
-			helper.addAttachment(currentStepExecution.getStepName() + ".log", is);
-		}
 	}
 
 	private Configuration setConfiguration() {
@@ -237,17 +274,16 @@ public class EodJobListener implements JobExecutionListener {
 			eod.setStartTime(DateUtil.format(startTime, DateFormat.LONG_TIME));
 			eod.setEndTime(DateUtil.format(endTime, DateFormat.LONG_TIME));
 			eod.setCompletedTime(DateUtility.timeBetween(endTime, startTime));
-			long totalLoans = 0;
 
 			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
 				if (stepExecution.getStepName().startsWith("microEOD")) {
 					DataEngineStatus status = (DataEngineStatus) stepExecution.getExecutionContext()
 							.get(stepExecution.getStepName());
-					totalLoans = totalLoans + status.getTotalRecords();
+					eod.setTotalLoans(String.valueOf(status.getKeyAttributes().get(EodConstants.DATA_TOTALCUSTOMER)));
+					break;
 				}
 			}
 
-			eod.setTotalLoans(String.valueOf(totalLoans));
 			eod.setClient(License.getClientInfo().get("Client").replace("Client: ", ""));
 			eod.setVersion(EodJobListener.class.getPackage().getImplementationVersion());
 			eod.setEnvironment(License.getClientInfo().get("Environment").replace("Environment: ", ""));
@@ -264,23 +300,6 @@ public class EodJobListener implements JobExecutionListener {
 		}
 
 		return eod;
-	}
-
-	private JavaMailSenderImpl generateMailSender(EODConfig eodConfig) {
-		logger.debug(Literal.ENTERING);
-
-		JavaMailSenderImpl eodMailNotification = new JavaMailSenderImpl();
-		eodMailNotification.setHost(eodConfig.getSMTPHost());
-		eodMailNotification.setPort(Integer.valueOf(eodConfig.getSMTPPort()));
-		eodMailNotification.setUsername(eodConfig.getSMTPUserName());
-
-		if (eodConfig.isSMTPAutenticationRequired()) {
-			String password = EncryptionUtil.decrypt("ENC(" + eodConfig.getSMTPPwd() + ")");
-			eodMailNotification.setPassword(password);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return eodMailNotification;
 	}
 
 	@Override

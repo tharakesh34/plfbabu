@@ -46,4 +46,8 @@ public interface MandateRestService {
 	@POST
 	@Path("/mandateService/updateMandateStatus")
 	public WSReturnStatus updateMandateStatus(Mandate mandate) throws ServiceException;
+
+	@POST
+	@Path("/mandateService/updateApprovedMandate")
+	public WSReturnStatus updateApprovedMandate(Mandate mandate) throws ServiceException;
 }

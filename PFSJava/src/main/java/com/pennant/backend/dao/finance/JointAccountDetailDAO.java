@@ -28,6 +28,7 @@ package com.pennant.backend.dao.finance;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 
@@ -70,4 +71,8 @@ public interface JointAccountDetailDAO {
 	List<FinanceExposure> getSecondaryExposureList(List<String> listCIF);
 
 	Map<String, Integer> getCustCtgCount(long finID);
+
+	List<FinanceEnquiry> getCoApplicantsFin(String custCif);
+
+	List<Long> getCustIdsByFinID(long finID);
 }

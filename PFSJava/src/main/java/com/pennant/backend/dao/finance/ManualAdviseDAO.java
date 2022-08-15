@@ -40,8 +40,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	ManualAdvise getManualAdviseById(long adviseID, String type);
 
-	List<ManualAdvise> getManualAdviseByRef(long finID, int adviseType, String type);
-
 	void saveMovement(ManualAdviseMovements movement, String type);
 
 	void updateAdvPayment(ManualAdvise advise, TableType tableType);
@@ -85,18 +83,13 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	FinanceMain getFinanceDetails(long finID);
 
-	BigDecimal getBalanceAmt(long finID);
+	BigDecimal getBalanceAmt(long finID, Date valueDate);
 
 	String getTaxComponent(long adviseID, String type);
 
 	List<ManualAdvise> getManualAdvise(long finID);
 
-	List<ManualAdvise> getManualAdvisesByFinRef(long finID, String type);
-
 	List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(long finID, String type);
-
-	// ### Ticket id :124998
-	List<ManualAdvise> getManualAdviseByRef(long finID, String feeTypeCode, String type);
 
 	// Refund Uploads
 	List<ManualAdvise> getManualAdviseByRefAndFeeCode(long finID, int adviseType, String feeTypeCode);
@@ -104,8 +97,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	List<ManualAdvise> getManualAdviseByRefAndFeeId(int adviseType, long feeTypeId);
 
 	void updatePaidAmountOnly(long adviseID, BigDecimal amount);
-
-	List<ManualAdvise> getManualAdviseByRef(long finID, int adviseType, String type, Date valuDate);
 
 	Date getManualAdviseDate(long finID, Date valueDate, String string, int manualAdviseReceivable);
 
@@ -134,4 +125,34 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	Date getMaxValueDateOfRcv(long finID);
 
 	List<ManualAdvise> getManualAdviseForLMSEvent(long finID);
+
+	List<ManualAdvise> getUnpaidBounces(long finID, String type);
+
+	void cancelFutureDatedAdvises(List<FinanceMain> fmList);
+
+	int getFutureDatedAdvises(long finID);
+
+	List<ManualAdviseMovements> getAdviseMovements(long finID, Date dueDate, String type);
+
+	long getFeeTypeId(long adviseID);
+
+	List<ManualAdvise> getAdvisesByMaturityDate(long finID, Date valueDate);
+
+	List<ManualAdvise> getAdvisesByValueDate(long finID, Date valueDate);
+
+	void updateLinkedTranId(ManualAdvise advise);
+
+	int cancelFutureDatedAdvises();
+
+	List<ManualAdvise> getAdvisesByDueDate(long finID, Date dueDate, String type);
+
+	List<ManualAdvise> getPaybleAdvises(long finID, String type);
+
+	List<ManualAdvise> getReceivableAdvises(long finID, String type);
+
+	List<ManualAdvise> getPaybleAdvises(long finID, Date valueDate, String type);
+
+	List<ManualAdvise> getReceivableAdvises(long finID, Date valueDate, String type);
+
+	List<ManualAdvise> getAdvises(long finID, String type);
 }

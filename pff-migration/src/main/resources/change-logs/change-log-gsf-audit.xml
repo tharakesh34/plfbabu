@@ -57,10 +57,10 @@
 			<constraints nullable="false"/>
 			</column>
 			<column name="Status" type="Varchar(8)"/>
-			<column name="Version" type="number(10,0)" defaultValue="0" >
+			<column name="Version" type="int" >
 			<constraints nullable="false"/>
 			</column>
-			<column name="Lastmntby" type="number(19,0)" defaultValue="0" />
+			<column name="Lastmntby" type="bigint" />
 			<column name="Lastmnton" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
 			<column name="ROLECODE" type="varchar(100)" />
@@ -68,7 +68,7 @@
 			<column name="TASKID" type="varchar(50)"/>
 			<column name="NEXTTASKID" type="varchar(200)"/>
 			<column name="RECORDTYPE" type="varchar(50)"/>
-			<column name="WORKFLOWID" type="number(19,0)" defaultValue="0" />
+			<column name="WORKFLOWID" type="bigint" defaultValue="0" />
 		</createTable>
 	</changeSet> 
 	 
@@ -76,6 +76,10 @@
 		<addColumn tableName="ADTFINANCEMAIN">
 			<column name="MIGRDATE" type="datetime" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="DE#326" author="gopalaSwamy.m" >
+		<modifyDataType tableName="ADTCOVENANT_DOCUMENTS" columnName="covenanttype" newDataType="VARCHAR(50)" />
 	</changeSet>
 	
 </databaseChangeLog>

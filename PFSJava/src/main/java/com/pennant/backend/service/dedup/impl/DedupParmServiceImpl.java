@@ -1156,50 +1156,9 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	private static CustomerDedup doSetCustomerDedup(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 
-		String mobileNumber = "";
-		String emailid = "";
-		String aadharId = "";
-		String aadhar = masterDefDAO.getMasterCode("DOC_TYPE", "AADHAAR");
-		String passPort = masterDefDAO.getMasterCode("DOC_TYPE", "PASSPORT");
+		CustomerDedup customerDedup = new CustomerDedup();
 
 		Customer customer = customerDetails.getCustomer();
-		if (customerDetails.getCustomerPhoneNumList() != null) {
-			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
-				if (String.valueOf(custPhone.getPhoneTypePriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-					mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
-							custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
-					break;
-				}
-			}
-		}
-		if (customerDetails.getCustomerEMailList() != null) {
-			for (CustomerEMail email : customerDetails.getCustomerEMailList()) {
-				if (String.valueOf(email.getCustEMailPriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-					emailid = email.getCustEMail();
-					break;
-				}
-			}
-		}
-		// Aadhar
-		if (customerDetails.getCustomerDocumentsList() != null) {
-			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
-				if (document.getCustDocCategory().equals(aadhar)) {
-					aadharId = document.getCustDocTitle();
-					break;
-				}
-			}
-		}
-		// Passport
-		if (customerDetails.getCustomerDocumentsList() != null) {
-			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
-				if (document.getCustDocCategory().equals(passPort)) {
-					passPort = document.getCustDocTitle();
-					break;
-				}
-			}
-		}
-
-		CustomerDedup customerDedup = new CustomerDedup();
 		customerDedup.setFinReference(customer.getCustCIF());
 		customerDedup.setCustId(customer.getCustID());
 		customerDedup.setCustCIF(customer.getCustCIF());
@@ -1208,19 +1167,71 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		customerDedup.setCustShrtName(customer.getCustShrtName());
 		customerDedup.setCustDOB(customer.getCustDOB());
 		customerDedup.setCustCRCPR(customer.getCustCRCPR());
-		customerDedup.setAadharNumber(aadharId);
+
 		customerDedup.setCustCtgCode(customer.getCustCtgCode());
 		customerDedup.setCustDftBranch(customer.getCustDftBranch());
 		customerDedup.setCustSector(customer.getCustSector());
 		customerDedup.setCustSubSector(customer.getCustSubSector());
 		customerDedup.setCustNationality(customer.getCustNationality());
-		customerDedup.setCustPassportNo(passPort);
+
 		customerDedup.setCustTradeLicenceNum(customer.getCustTradeLicenceNum());
 		customerDedup.setCustVisaNum(customer.getCustVisaNum());
-		customerDedup.setMobileNumber(mobileNumber);
+
 		customerDedup.setCustPOB(customer.getCustPOB());
 		customerDedup.setCustResdCountry(customer.getCustResdCountry());
-		customerDedup.setCustEMail(emailid);
+
+		customerDedup.setMotherName(customer.getCustFNameLclLng());
+		customerDedup.setFatherName(customer.getCustMotherMaiden());
+
+		if (CollectionUtils.isNotEmpty(customerDetails.getCustomerPhoneNumList())) {
+			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
+				if (PennantConstants.KYC_PRIORITY_VERY_HIGH.equals(String.valueOf(custPhone.getPhoneTypePriority()))) {
+					String mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+							custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+
+					customerDedup.setMobileNumber(mobileNumber);
+					break;
+				}
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(customerDetails.getCustomerEMailList())) {
+			for (CustomerEMail email : customerDetails.getCustomerEMailList()) {
+				if (PennantConstants.KYC_PRIORITY_VERY_HIGH.equals(String.valueOf(email.getCustEMailPriority()))) {
+					customerDedup.setCustEMail(email.getCustEMail());
+					break;
+				}
+			}
+		}
+		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
+
+		Map<String, String> masterDef = masterDefDAO.getMasterDef("DOC_TYPE");
+
+		if (CollectionUtils.isNotEmpty(customerDocumentsList)) {
+			for (CustomerDocument document : customerDocumentsList) {
+				if (document.getCustDocCategory().equals(masterDef.get("AADHAAR"))) {
+					customerDedup.setAadharNumber(document.getCustDocTitle());
+				}
+				if (document.getCustDocCategory().equals(masterDef.get("PASSPORT"))) {
+					customerDedup.setCustPassportNo(document.getCustDocTitle());
+				}
+				if (document.getCustDocCategory().equals(masterDef.get("PAN"))) {
+					customerDedup.setPanNumber(document.getCustDocTitle());
+				}
+				if (document.getCustDocCategory().equals(masterDef.get("LPG_NUMBER"))) {
+					customerDedup.setLpgNumber(document.getCustDocTitle());
+				}
+				if (document.getCustDocCategory().equals(masterDef.get("VOTER_ID"))) {
+					customerDedup.setVoterID(document.getCustDocTitle());
+				}
+				if (document.getCustDocCategory().equals(masterDef.get("RATION_CARD"))) {
+					customerDedup.setRationCard(document.getCustDocTitle());
+				}
+				if (document.getCustDocCategory().equals(masterDef.get("DRIVING_LICENCE"))) {
+					customerDedup.setDrivingLicenceNo(document.getCustDocTitle());
+				}
+			}
+		}
 
 		logger.debug(Literal.LEAVING);
 		return customerDedup;
@@ -1275,4 +1286,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		DedupParmServiceImpl.masterDefDAO = masterDefDAO;
 	}
 
+	@Override
+	public StringBuilder getSelectQuery(CustomerDedup dedup, boolean blackList) {
+		return customerDedupDAO.getSelectQuery(dedup, blackList);
+	}
 }

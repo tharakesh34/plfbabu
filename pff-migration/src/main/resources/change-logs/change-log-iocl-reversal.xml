@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.1" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO RMTFINANCETYPES_TEMP FT 
+				USING (SELECT FINTYPE, TXNCHRGREQ, TXNCHRGCODE, EXTNSNODGRACEDAYS, COLLECCHRGCODEID FROM RMTFINANCETYPES_TEMP
+				) T1 ON (T1.FINTYPE = FT.FINTYPE)
+				WHEN MATCHED THEN UPDATE SET 
+					OVERDRAFTTXNCHRGREQ = T1.TXNCHRGREQ
+					, OVERDRAFTTXNCHRGFEETYPE = T1.TXNCHRGCODE
+					, OVERDRAFTEXTGRACEDAYS = T1.EXTNSNODGRACEDAYS
+					, OVERDRAFTCOLCHRGFEETYPE = T1.COLLECCHRGCODEID
+					, OVERDRAFTCOLAMT = T1.COLLECCHRGCODEID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.2" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO RMTFINANCETYPES FT 
+				USING (SELECT FINTYPE, TXNCHRGREQ, TXNCHRGCODE, EXTNSNODGRACEDAYS, COLLECCHRGCODEID FROM RMTFINANCETYPES
+				) T1 ON (T1.FINTYPE = FT.FINTYPE)
+				WHEN MATCHED THEN UPDATE SET 
+					FT.OVERDRAFTTXNCHRGREQ = T1.TXNCHRGREQ
+					, FT.OVERDRAFTTXNCHRGFEETYPE = T1.TXNCHRGCODE
+					, FT.OVERDRAFTEXTGRACEDAYS = T1.EXTNSNODGRACEDAYS
+					, FT.OVERDRAFTCOLCHRGFEETYPE = T1.COLLECCHRGCODEID
+					, FT.OVERDRAFTCOLAMT = T1.COLLECCHRGCODEID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.3" author="Gopal.p">
+		<dropColumn tableName="RMTFINANCETYPES_TEMP" columnName="TXNCHRGREQ" />
+		<dropColumn tableName="RMTFINANCETYPES_TEMP" columnName="TxnChrgCode" />
+		<dropColumn tableName="RMTFINANCETYPES_TEMP" columnName="ExtnsnODGraceDays" />
+		<dropColumn tableName="RMTFINANCETYPES_TEMP" columnName="CollecChrgCodeId" />
+		<dropColumn tableName="RMTFINANCETYPES_TEMP" columnName="CollectionAmt" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.4" author="Gopal.p">
+		<dropColumn tableName="RMTFINANCETYPES" columnName="TXNCHRGREQ" />
+		<dropColumn tableName="RMTFINANCETYPES" columnName="TxnChrgCode" />
+		<dropColumn tableName="RMTFINANCETYPES" columnName="ExtnsnODGraceDays" />
+		<dropColumn tableName="RMTFINANCETYPES" columnName="CollecChrgCodeId" />
+		<dropColumn tableName="RMTFINANCETYPES" columnName="CollectionAmt" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.5" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO FINANCEMAIN_TEMP FM
+				USING (SELECT FINREFERENCE, TXNCHRGREQ, ODCALCULATEDCHARGE, ODCHARGEAMTORPERC, ODCHARGECALON FROM FINANCEMAIN_TEMP
+				) T1 ON (T1.FINREFERENCE = FM.FINREFERENCE)
+				WHEN MATCHED THEN UPDATE SET 
+					FM.OVERDRAFTTXNCHRGREQ = T1.TXNCHRGREQ, 
+					FM.OVERDRAFTCALCCHRG = T1.ODCALCULATEDCHARGE, 
+					FM.OVERDRAFTCHRGAMTORPERC = T1.ODCHARGEAMTORPERC, 
+					FM.OVERDRAFTCHRCALON = T1.ODCHARGECALON;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.6" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO FINANCEMAIN FM
+				USING (SELECT FINREFERENCE, TXNCHRGREQ, ODCALCULATEDCHARGE, ODCHARGEAMTORPERC, ODCHARGECALON FROM FINANCEMAIN
+				) T1 ON (T1.FINREFERENCE = FM.FINREFERENCE)
+				WHEN MATCHED THEN UPDATE SET 
+					FM.OVERDRAFTTXNCHRGREQ = T1.TXNCHRGREQ, 
+					FM.OVERDRAFTCALCCHRG = T1.ODCALCULATEDCHARGE, 
+					FM.OVERDRAFTCHRGAMTORPERC = T1.ODCHARGEAMTORPERC, 
+					FM.OVERDRAFTCHRCALON = T1.ODCHARGECALON;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.7" author="Gopal.p">
+		<dropColumn tableName="FINANCEMAIN_TEMP" columnName="TxnChrgReq" />
+		<dropColumn tableName="FINANCEMAIN_TEMP" columnName="ODCALCULATEDCHARGE" />
+		<dropColumn tableName="FINANCEMAIN_TEMP" columnName="ODCHARGEAMTORPERC" />
+		<dropColumn tableName="FINANCEMAIN_TEMP" columnName="ODCHARGECALON" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.8" author="Gopal.p">
+		<dropColumn tableName="FINANCEMAIN" columnName="TxnChrgReq" />
+		<dropColumn tableName="FINANCEMAIN" columnName="ODCALCULATEDCHARGE" />
+		<dropColumn tableName="FINANCEMAIN" columnName="ODCHARGEAMTORPERC" />
+		<dropColumn tableName="FINANCEMAIN" columnName="ODCHARGECALON" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.9" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO MANUALADVISE MA 
+				USING (SELECT ADVISEID, PRESENTMENTDETAILID FROM MANUALADVISE) T1 ON (T1.ADVISEID = MA.ADVISEID)
+				WHEN MATCHED THEN UPDATE SET 
+				MA.PRESENTMENTID = T1.PRESENTMENTDETAILID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.10" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO MANUALADVISE_TEMP MA 
+				USING (SELECT ADVISEID, PRESENTMENTDETAILID FROM MANUALADVISE_TEMP) T1 ON (T1.ADVISEID = MA.ADVISEID)
+				WHEN MATCHED THEN UPDATE SET 
+				MA.PRESENTMENTID = T1.PRESENTMENTDETAILID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.11" author="Gopal.p">
+		<dropColumn tableName="MANUALADVISE" columnName="PresentmentDetailId" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.12" author="Gopal.p">
+		<dropColumn tableName="MANUALADVISE_TEMP" columnName="PresentmentDetailId" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.13" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO FINODDETAILS OD 
+				USING (SELECT FINREFERENCE, FINODSCHDDATE, FINODFOR, PRESENTMENTDETAILID, FINCURODTXNCHRG, FINMAXODTXNCHRG FROM FINODDETAILS 
+				) T1 ON (T1.FINREFERENCE = OD.FINREFERENCE AND T1.FINODSCHDDATE = OD.FINODSCHDDATE AND T1.FINODFOR = OD.FINODFOR)
+				WHEN MATCHED THEN UPDATE SET 
+				  OD.PRESENTMENTID = T1.PRESENTMENTDETAILID
+				, OD.CUROVERDRAFTTXNCHRG = T1.FINCURODTXNCHRG
+				, OD.MAXOVERDRAFTTXNCHRG = T1.FINMAXODTXNCHRG;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.15" author="Gopal.p">
+		<dropColumn tableName="FINODDETAILS" columnName="PresentmentDetailId" />
+		<dropColumn tableName="FINODDETAILS" columnName="FinCurODTxnChrg" />
+		<dropColumn tableName="FINODDETAILS" columnName="FinMaxODTxnChrg" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.17" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO FINODPENALTYRATES PR 
+				USING (SELECT FINREFERENCE, FINEFFECTDATE, EXTNSNODGRACEDAYS, COLLECCHRGCODEID, COLLECTIONAMT FROM FINODPENALTYRATES 
+				) T1 ON (T1.FINREFERENCE = PR.FINREFERENCE AND T1.FINEFFECTDATE = PR.FINEFFECTDATE)
+				WHEN MATCHED THEN UPDATE SET 
+				  PR.OVERDRAFTEXTGRACEDAYS = T1.EXTNSNODGRACEDAYS
+				, PR.OVERDRAFTCOLCHRGFEETYPE = T1.COLLECCHRGCODEID
+				, PR.OVERDRAFTCOLAMT = T1.COLLECTIONAMT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.18" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO FINODPENALTYRATES_TEMP PR 
+				USING (SELECT FINREFERENCE, FINEFFECTDATE, EXTNSNODGRACEDAYS, COLLECCHRGCODEID, COLLECTIONAMT FROM FINODPENALTYRATES_TEMP 
+				) T1 ON (T1.FINREFERENCE = PR.FINREFERENCE AND T1.FINEFFECTDATE = PR.FINEFFECTDATE)
+				WHEN MATCHED THEN UPDATE SET 
+				  PR.OVERDRAFTEXTGRACEDAYS = T1.EXTNSNODGRACEDAYS
+				, PR.OVERDRAFTCOLCHRGFEETYPE = T1.COLLECCHRGCODEID
+				, PR.OVERDRAFTCOLAMT = T1.COLLECTIONAMT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.19" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO FINODPENALTYRATES_LOG PR 
+				USING (SELECT FINREFERENCE, FINEFFECTDATE, EXTNSNODGRACEDAYS, COLLECCHRGCODEID, COLLECTIONAMT FROM FINODPENALTYRATES_LOG 
+				) T1 ON (T1.FINREFERENCE = PR.FINREFERENCE AND T1.FINEFFECTDATE = PR.FINEFFECTDATE)
+				WHEN MATCHED THEN UPDATE SET 
+				  PR.OVERDRAFTEXTGRACEDAYS = T1.EXTNSNODGRACEDAYS
+				, PR.OVERDRAFTCOLCHRGFEETYPE = T1.COLLECCHRGCODEID
+				, PR.OVERDRAFTCOLAMT = T1.COLLECTIONAMT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.20" author="Gopal.p">
+		<dropColumn tableName="FINODPENALTYRATES" columnName="ExtnsnODGraceDays" />
+		<dropColumn tableName="FINODPENALTYRATES" columnName="CollecChrgCodeId" />
+		<dropColumn tableName="FINODPENALTYRATES" columnName="CollectionAmt" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.21" author="Gopal.p">
+		<dropColumn tableName="FINODPENALTYRATES_TEMP" columnName="ExtnsnODGraceDays" />
+		<dropColumn tableName="FINODPENALTYRATES_TEMP" columnName="CollecChrgCodeId" />
+		<dropColumn tableName="FINODPENALTYRATES_TEMP" columnName="CollectionAmt" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.22" author="Gopal.p">
+		<dropColumn tableName="FINODPENALTYRATES_LOG" columnName="ExtnsnODGraceDays" />
+		<dropColumn tableName="FINODPENALTYRATES_LOG" columnName="CollecChrgCodeId" />
+		<dropColumn tableName="FINODPENALTYRATES_LOG" columnName="CollectionAmt" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.23" author="Gopal.p">
+		<createTable tableName="PRESENTMENT_CHARGES_BKP">
+			<column name="Id" type="bigint" autoIncrement="true"/>
+			<column name="PresenmentID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ActualFeeAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CGSTAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SGSTAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="UGSTAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IGSTAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CESSAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Type" type="char(1)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.24" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO OVERDRAFT_SETTLEMENT_REQ (REQUESTBATCHID, ODSETTLEMENTREF, TERMINALID, MERCHANTNAME, CUSTOMERID, TXNID, TXNDATE, TXNTYPE, REFERENCE, CURRENCY, AMOUNT) SELECT REQUESTBATCHID, ODSETTLEMENTREF, TERMINALID, MERCHANTNAME, CUSTOMERID, TXNID, TXNDATE, TXNTYPE, REFERENCE, CURRENCY, AMOUNT FROM OD_SETTLEMENT_REQUEST;
+				
+				INSERT INTO OVERDRAFT_LOAN_LIMITS (ID, FINID, FINREFERENCE, BLOCKLIMIT, BLOCKTYPE, VERSION, CREATEDBY, CREATEDON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTUALLIMIT, MONTHLYLIMIT, ACTUALLIMITBAL, MONTHLYLIMITBAL) SELECT ID, NULL, FINREFERENCE, BLOCKLIMIT, BLOCKTYPE, VERSION, LASTMNTBY, LASTMNTON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, 0, 0, 0, 0 FROM ODLIMITHISTORYHEADER;
+				INSERT INTO OVERDRAFT_LOAN_LIMITS_TEMP (ID, FINID, FINREFERENCE, BLOCKLIMIT, BLOCKTYPE, VERSION, CREATEDBY, CREATEDON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTUALLIMIT, MONTHLYLIMIT, ACTUALLIMITBAL, MONTHLYLIMITBAL) SELECT ID, NULL, FINREFERENCE, BLOCKLIMIT, BLOCKTYPE, VERSION, LASTMNTBY, LASTMNTON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, 0, 0, 0, 0 FROM ODLIMITHISTORYHEADER_TEMP;
+				
+				UPDATE ODLIMITHISTORYDETAIL SET DATEOFTRANS = CURRENT_TIMESTAMP WHERE DATEOFTRANS IS NULL;
+				
+				INSERT INTO OVERDRAFT_LOAN_TRANSACTIONS (LIMITID, ACTUALLIMIT, MONTHLYLIMIT, ACTUALLIMITBAL, MONTHLYLIMITBAL, TXNTYPE, TXNAMOUNT, TXNCHARGE, TXNDATE, VALUEDATE, NARRATION) SELECT HEADERID, ACTUALLIMIT, MONTHLYLIMIT, ACTUALLMTBAL, MONTHLYLMTBAL, TRANSACTIONTYPE, TRANSACTIONAMT, 0, DATEOFTRANS, DATEOFTRANS, NARRATION FROM ODLIMITHISTORYDETAIL;
+				
+				INSERT INTO OVERDRAFT_LOAN_LIMIT_LOG (LIMITID, FINID, FINREFERENCE, ACTUALLIMIT, MONTHLYLIMIT, ACTUALLIMITBAL, MONTHLYLIMITBAL, BLOCKLIMIT, BLOCKTYPE, VERSION, CREATEDBY, CREATEDON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) SELECT ID, FINID, FINREFERENCE, ACTUALLIMIT, MONTHLYLIMIT, ACTUALLIMITBAL, MONTHLYLIMITBAL, BLOCKLIMIT, BLOCKTYPE, VERSION, CREATEDBY, CREATEDON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID FROM (SELECT ID, FINID, FINREFERENCE, ACTUALLIMIT, MONTHLYLIMIT, ACTUALLIMITBAL, MONTHLYLIMITBAL, BLOCKLIMIT, BLOCKTYPE, VERSION, CREATEDBY, CREATEDON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID FROM OVERDRAFT_LOAN_LIMITS UNION ALL SELECT ID, FINID, FINREFERENCE, ACTUALLIMIT, MONTHLYLIMIT, ACTUALLIMITBAL, MONTHLYLIMITBAL, BLOCKLIMIT, BLOCKTYPE, VERSION, CREATEDBY, CREATEDON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID FROM OVERDRAFT_LOAN_LIMITS_TEMP) T;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3220_100.24.1" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO OVERDRAFT_LOAN_LIMITS OLL 
+				USING (SELECT OD.ID, OD.HEADERID, OD.ACTUALLIMIT, OD.MONTHLYLIMIT, OD.ACTUALLMTBAL, OD.MONTHLYLMTBAL FROM ODLIMITHISTORYDETAIL OD
+        			INNER JOIN (SELECT MAX(ID) ID, HEADERID FROM  ODLIMITHISTORYDETAIL GROUP BY HEADERID) ODT ON ODT.ID = OD.ID 
+      				) T1 ON (T1.HEADERID = OLL.ID)
+				WHEN MATCHED THEN UPDATE SET 
+				   OLL.ACTUALLIMIT = T1.ACTUALLIMIT
+				 , OLL.MONTHLYLIMIT = T1.MONTHLYLIMIT
+				 , OLL.ACTUALLIMITBAL = T1.ACTUALLMTBAL
+				 , OLL.MONTHLYLIMITBAL = T1.MONTHLYLMTBAL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3220_100.24.2" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO OVERDRAFT_LOAN_LIMITS_TEMP OLL 
+				USING (SELECT OD.ID, OD.HEADERID, OD.ACTUALLIMIT, OD.MONTHLYLIMIT, OD.ACTUALLMTBAL, OD.MONTHLYLMTBAL FROM ODLIMITHISTORYDETAIL_TEMP OD
+        			INNER JOIN (SELECT MAX(ID) ID, HEADERID FROM ODLIMITHISTORYDETAIL_TEMP GROUP BY HEADERID) ODT ON ODT.ID = OD.ID 
+      				) T1 ON (T1.HEADERID = OLL.ID)
+				WHEN MATCHED THEN UPDATE SET 
+				   OLL.ACTUALLIMIT = T1.ACTUALLIMIT
+				 , OLL.MONTHLYLIMIT = T1.MONTHLYLIMIT
+				 , OLL.ACTUALLIMITBAL = T1.ACTUALLMTBAL
+				 , OLL.MONTHLYLIMITBAL = T1.MONTHLYLMTBAL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3220_100.24.3" author="Gopal.p" dbms="oracle">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.ID),0)+1 into v_maxval from
+			(select ID
+			from OVERDRAFT_LOAN_LIMITS union all select ID from OVERDRAFT_LOAN_LIMITS_TEMP) T;
+			EXECUTE IMMEDIATE 'alter sequence SEQ_OVERDRAFT_LOAN_LIMITS
+			restart
+			start with ' || v_maxval;
+			end;
+		]]>
+		</sql>
+	</changeSet>
+	
+
+	<changeSet id="ST#3220_100.25" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				 INSERT INTO PRESENTMENT_CHARGES_BKP (PRESENMENTID, SEQNO, FEETYPE, ACTUALFEEAMOUNT, CGSTAMOUNT, SGSTAMOUNT, UGSTAMOUNT, IGSTAMOUNT, CESSAMOUNT, FEEAMOUNT, ADVISEID, TYPE) SELECT DETAILID, SEQNO, FEETYPE, ACTUALFEEAMOUNT, CGSTAMOUNT, SGSTAMOUNT, UGSTAMOUNT, IGSTAMOUNT, 0, FEEAMOUNT, ADVISEID, TYPE FROM (SELECT DETAILID, SEQNO, FEETYPE, ACTUALFEEAMOUNT, CGSTAMOUNT, SGSTAMOUNT, UGSTAMOUNT, IGSTAMOUNT, 0, FEEAMOUNT, ADVISEID, 'M' TYPE FROM PRESENTMENTCHARGES UNION ALL SELECT DETAILID, SEQNO, FEETYPE, ACTUALFEEAMOUNT, CGSTAMOUNT, SGSTAMOUNT, UGSTAMOUNT, IGSTAMOUNT, 0, FEEAMOUNT, ADVISEID, 'T' TYPE FROM PRESENTMENTCHARGES_TEMP) T;
+				
+				 INSERT INTO PRESENTMENT_CHARGES_TEMP (ID, PRESENMENTID, SEQNO, FEETYPE, ACTUALFEEAMOUNT, CGSTAMOUNT, SGSTAMOUNT, UGSTAMOUNT, IGSTAMOUNT, CESSAMOUNT, FEEAMOUNT, ADVISEID) SELECT ID, PRESENMENTID, SEQNO, FEETYPE, ACTUALFEEAMOUNT, CGSTAMOUNT, SGSTAMOUNT, UGSTAMOUNT, IGSTAMOUNT, CESSAMOUNT, FEEAMOUNT, ADVISEID FROM PRESENTMENT_CHARGES_BKP WHERE TYPE = 'T';
+
+				 INSERT INTO PRESENTMENT_CHARGES (ID, PRESENMENTID, SEQNO, FEETYPE, ACTUALFEEAMOUNT, CGSTAMOUNT, SGSTAMOUNT, UGSTAMOUNT, IGSTAMOUNT, CESSAMOUNT, FEEAMOUNT, ADVISEID) SELECT ID, PRESENMENTID, SEQNO, FEETYPE, ACTUALFEEAMOUNT, CGSTAMOUNT, SGSTAMOUNT, UGSTAMOUNT, IGSTAMOUNT, CESSAMOUNT, FEEAMOUNT, ADVISEID FROM PRESENTMENT_CHARGES_BKP WHERE TYPE = 'M';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3220_100.25.1" author="Gopal.p" dbms="oracle">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.ID),0)+1 into v_maxval from
+			(select ID
+			from PRESENTMENT_CHARGES union all select ID from PRESENTMENT_CHARGES_TEMP) T;
+			EXECUTE IMMEDIATE 'alter sequence SEQ_PRESENTMENT_CHARGES
+			restart
+			start with ' || v_maxval;
+			end;
+		]]>
+		</sql>
+	</changeSet>
+	
+
+	<changeSet id="ST#3220_100.26" author="Gopal.p">
+		<dropView viewName="LIMITBLOCK_VIEW" />
+		<dropView viewName="ODLIMITHISTORYHEADER_AVIEW" />
+		<dropView viewName="ODLIMITHISTORYHEADER_VIEW" />
+		<dropView viewName="ODLIMITHISTORYDETAIL_AVIEW" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.27" author="Gopal.p">
+		<dropTable tableName="LIMITBLOCK" />
+		<dropTable tableName="LIMITBLOCK_TEMP" />
+		<dropTable tableName="OD_SETTLEMENT_REQUEST" />
+		<dropTable tableName="ODLIMITHISTORYHEADER_TEMP" />
+		<dropTable tableName="ODLIMITHISTORYHEADER" />
+		<dropTable tableName="ODLIMITHISTORYDETAIL_TEMP" />
+		<dropTable tableName="ODLIMITHISTORYDETAIL" />
+		<dropTable tableName="PRESENTMENTCHARGES" />
+		<dropTable tableName="PRESENTMENTCHARGES_TEMP" />
+		<dropTable tableName="PRESENTMENT_CHARGES_BKP" />
+	</changeSet>
+	
+	<changeSet id="ST#3220.12" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'MONTHLY_LIMIT';
+			]]>
+		</sql>
+	</changeSet>
+</databaseChangeLog>

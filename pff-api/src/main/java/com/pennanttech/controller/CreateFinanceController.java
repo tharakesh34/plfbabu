@@ -2116,13 +2116,17 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		Mandate mandate = financeDetail.getMandate();
 		if (mandate != null) {
-			BankBranch bankBranch = new BankBranch();
-			if (StringUtils.isNotBlank(mandate.getIFSC())) {
-				bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
-			} else if (StringUtils.isNotBlank(mandate.getBankCode())
-					&& StringUtils.isNotBlank(mandate.getBranchCode())) {
-				bankBranch = bankBranchService.getBankBrachByCode(mandate.getBankCode(), mandate.getBranchCode());
+			String ifsc = mandate.getIFSC();
+			String micr = mandate.getMICR();
+			String bankCode = mandate.getBankCode();
+			String branchCode = mandate.getBranchCode();
+
+			BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+			if (bankBranch.getError() != null) {
+				financeDetail.getFinScheduleData().getErrorDetails().add(bankBranch.getError());
 			}
+
 			if (!moveLoanStage) {
 				financeDetail.getMandate().setNewRecord(true);
 			}
@@ -2336,14 +2340,29 @@ public class CreateFinanceController extends SummaryDetailService {
 					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
 
 				BankBranch bankBranch = new BankBranch();
-				if (StringUtils.isNotBlank(advPayment.getiFSC())) {
-					bankBranch = bankBranchService.getBankBrachByIFSC(advPayment.getiFSC());
-				} else if (StringUtils.isNotBlank(advPayment.getBranchBankCode())
+				String ifsc = advPayment.getiFSC();
+				String micr = advPayment.getMicr();
+				if (StringUtils.isNotBlank(advPayment.getBranchBankCode())
 						&& StringUtils.isNotBlank(advPayment.getBranchCode())) {
 					bankBranch = bankBranchService.getBankBrachByCode(advPayment.getBranchBankCode(),
 							advPayment.getBranchCode());
+				} else if (ifsc != null && !ifsc.isEmpty() && micr != null && !micr.isEmpty()) {
+					bankBranch = bankBranchService.getBankBranchByIFSCMICR(ifsc, micr);
+					if (bankBranch == null) {
+						String[] valueParm = new String[2];
+						valueParm[0] = ifsc;
+						valueParm[1] = micr;
+						schdData.getErrorDetails().add(ErrorUtil.getErrorDetail(new ErrorDetail("90703", valueParm)));
+					}
+				} else if (StringUtils.isNotBlank(ifsc)) {
+					if (bankBranchService.getBankBranchCountByIFSC(ifsc, "") > 1) {
+						String[] valueParm = new String[1];
+						valueParm[0] = ifsc;
+						schdData.getErrorDetails().add(ErrorUtil.getErrorDetail(new ErrorDetail("90702", valueParm)));
+					} else {
+						bankBranch = bankBranchService.getBankBranchByIFSC(ifsc);
+					}
 				}
-
 				if (bankBranch != null) {
 					advPayment.setiFSC(bankBranch.getIFSC());
 					advPayment.setBranchBankCode(bankBranch.getBankCode());
@@ -3112,9 +3131,16 @@ public class CreateFinanceController extends SummaryDetailService {
 		List<FinFeeDetail> finFeeDetail = schdData.getFinFeeDetailList();
 		fd.setFinFeeDetails(getUpdatedFees(finFeeDetail));
 
+		for (FinAdvancePayments fap : fd.getAdvancePaymentsList()) {
+			if (fap.getPaymentSeq() == 1) {
+				fap.setNetDisbAmt(fm.getFinAmount().subtract(fm.getDeductFeeDisb().add(fm.getBpiAmount())));
+			} else {
+				fap.setNetDisbAmt(null);
+			}
+		}
+
 		// Bounce and manual advice fees if applicable
-		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
-				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
+		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getReceivableAdvises(finID, "_View");
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode("BOUNCE");
 		TaxAmountSplit taxSplit;
@@ -3365,131 +3391,128 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	private List<ErrorDetail> validatePaidFinFeeDetail(FinScheduleData detail, List<FinReceiptHeader> receiptHeaderList,
-			Map<String, FinFeeDetail> paidFeeDetailMap) {
+			List<FinFeeDetail> fees) {
 		List<ErrorDetail> errorDetails = detail.getErrorDetails();
 
 		for (FinFeeDetail feeDetail : detail.getFinFeeDetailList()) {
-			if (paidFeeDetailMap.containsKey(feeDetail.getFeeTypeCode())) {
+			BigDecimal paidAmount = BigDecimal.ZERO;
+
+			for (FinFeeDetail paidFee : fees) {
+				if (paidFee.getFeeTypeCode().equals(feeDetail.getFeeTypeCode())) {
+					paidAmount = paidAmount.add(paidFee.getPaidAmount());
+				}
+
 				feeDetail.setTransactionId(detail.getExternalReference());
-				FinFeeDetail paidFee = paidFeeDetailMap.get(feeDetail.getFeeTypeCode());
-				if (feeDetail.getPaidAmount().compareTo(paidFee.getPaidAmount()) != 0) {
+
+				List<FinFeeReceipt> finFeeReceiptList = finFeeReceiptDAO.getFinFeeReceiptByFeeId(paidFee.getFeeID(),
+						"_View");
+
+				if (feeDetail.isAlwPreIncomization() && finFeeReceiptList.size() == 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = feeDetail.getFeeTypeCode() + " Paid Amount must match with already paid amount ";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 					return errorDetails;
 				}
-				List<FinFeeReceipt> finFeeReceiptList = finFeeReceiptDAO.getFinFeeReceiptByFeeId(paidFee.getFeeID(),
-						"_View");
 
-				if (feeDetail.isAlwPreIncomization()) {
-					if (finFeeReceiptList == null || finFeeReceiptList.size() == 0) {
-						String[] valueParm = new String[1];
-						valueParm[0] = feeDetail.getFeeTypeCode() + " Paid Amount must match with already paid amount ";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
-						return errorDetails;
-					}
-
-				}
 				for (FinFeeReceipt finFeeReceipt : finFeeReceiptList) {
 					finFeeReceipt.setRecordType("");
-					for (FinReceiptHeader receiptHeader : receiptHeaderList) {
-						if (receiptHeader.getReceiptID() == finFeeReceipt.getReceiptID()) {
-							receiptHeader.setReceiptAmount(
-									receiptHeader.getReceiptAmount().subtract(finFeeReceipt.getPaidAmount()));
+					for (FinReceiptHeader rh : receiptHeaderList) {
+						if (rh.getReceiptID() == finFeeReceipt.getReceiptID()) {
+							rh.setReceiptAmount(rh.getReceiptAmount().subtract(finFeeReceipt.getPaidAmount()));
 						}
 					}
 				}
+
 				detail.getFinFeeReceipts().addAll(finFeeReceiptList);
+			}
+
+			if (feeDetail.getPaidAmount().compareTo(paidAmount) != 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = feeDetail.getFeeTypeCode() + " Paid Amount must match with already paid amount ";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+				return errorDetails;
 			}
 		}
 
 		return errorDetails;
-
-	}
-
-	private Map<String, FinFeeDetail> getFeeDetailMap(List<FinFeeDetail> finFeeDetails) {
-		Map<String, FinFeeDetail> feeDetailMap = new HashMap<>();
-		for (FinFeeDetail feeDetail : finFeeDetails) {
-			feeDetailMap.put(feeDetail.getFeeTypeCode(), feeDetail);
-		}
-		return feeDetailMap;
 	}
 
 	private List<ErrorDetail> adjustFeesAuto(FinScheduleData schdData) {
-		List<ErrorDetail> errorDetails = schdData.getErrorDetails();
-		String externalReference = schdData.getExternalReference();
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		List<FinReceiptHeader> rchList = finReceiptHeaderDAO.getUpFrontReceiptHeaderByExtRef(externalReference, "");
-		List<FinFeeDetail> finFeeDetailsPaid = finFeeDetailDAO.getFinFeeDetailsByTran(externalReference, false,
-				"_View");
+		String extReference = schdData.getExternalReference();
 
-		Map<String, FinFeeDetail> paidFeeDetailMap = getFeeDetailMap(finFeeDetailsPaid);
+		List<FinReceiptHeader> rchList = finReceiptHeaderDAO.getUpFrontReceiptHeaderByExtRef(extReference, "");
+		List<FinFeeDetail> fees = finFeeDetailDAO.getTotalPaidFees(extReference, "_View");
+
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
-		if (finFeeDetailsPaid != null && finFeeDetailsPaid.size() > 0) {
-			errorDetails = validatePaidFinFeeDetail(schdData, rchList, paidFeeDetailMap);
-
+		if (fees.size() > 0) {
+			errors = validatePaidFinFeeDetail(schdData, rchList, fees);
 		}
 
-		if (schdData.getFinFeeDetailList() != null && schdData.getFinFeeDetailList().size() > 0
-				&& errorDetails.isEmpty()) {
-			for (FinFeeDetail feeDtl : schdData.getFinFeeDetailList()) {// iterating
-																		// existing
-																		// finfee
-																		// details
-																		// list
-																		// from
-																		// finscheduledata
-				if (!paidFeeDetailMap.containsKey(feeDtl.getFeeTypeCode())) {
-					if (feeDtl.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
-						BigDecimal feePaidAmount = feeDtl.getPaidAmount();
-						FinFeeReceipt feeReceipt = new FinFeeReceipt();
+		if (CollectionUtils.isNotEmpty(errors) || CollectionUtils.isEmpty(schdData.getFinFeeDetailList())) {
+			return errors;
+		}
 
-						for (FinReceiptHeader header : rchList) {
-							if (header.getReceiptAmount().compareTo(BigDecimal.ZERO) > 0) {
-								if (feePaidAmount.compareTo(header.getReceiptAmount()) <= 0) {
-									header.setReceiptAmount(header.getReceiptAmount().subtract(feePaidAmount));
-									feeReceipt.setFeeTypeCode(feeDtl.getFeeTypeCode());
-									feeReceipt.setFeeTypeId(feeDtl.getFeeTypeID());
-									feeReceipt.setRecordType(PennantConstants.RCD_ADD);
-									feeReceipt.setNewRecord(true);
-									feeReceipt.setFeeTypeDesc(feeDtl.getFeeTypeDesc());
-									feeReceipt.setLastMntBy(getLastMntBy(false, userDetails));
-									feeReceipt.setReceiptID(header.getReceiptID());
-									feeReceipt.setPaidAmount(feePaidAmount);
-									feePaidAmount = BigDecimal.ZERO;
+		for (FinFeeDetail feeDtl : schdData.getFinFeeDetailList()) {
+			boolean flag = false;
+			for (FinFeeDetail fee : fees) {
+				if (fee.getFeeTypeCode().equals(feeDtl.getFeeTypeCode())) {
+					flag = true;
+					break;
+				}
+			}
 
-									break;
-								} else {
-									feePaidAmount = feePaidAmount.subtract(header.getReceiptAmount());
-									feeReceipt.setFeeTypeCode(feeDtl.getFeeTypeCode());
-									feeReceipt.setFeeTypeId(feeDtl.getFeeTypeID());
-									feeReceipt.setRecordType(PennantConstants.RCD_ADD);
-									feeReceipt.setNewRecord(true);
-									feeReceipt.setFeeTypeDesc(feeDtl.getFeeTypeDesc());
-									feeReceipt.setLastMntBy(getLastMntBy(false, userDetails));
-									feeReceipt.setReceiptID(header.getReceiptID());
-									feeReceipt.setPaidAmount(header.getReceiptAmount());
-									header.setReceiptAmount(BigDecimal.ZERO);
-								}
-							}
+			if (flag || feeDtl.getPaidAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
 
-						}
-						if (feePaidAmount.compareTo(BigDecimal.ZERO) > 0) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "Insufficient funds to adjust fees";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
-							return errorDetails;
-						}
-						schdData.getFinFeeReceipts().add(feeReceipt);
+			BigDecimal paidAmount = feeDtl.getPaidAmount();
+			FinFeeReceipt feeReceipt = new FinFeeReceipt();
 
-					}
+			for (FinReceiptHeader header : rchList) {
+				if (header.getReceiptAmount().compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
 				}
 
+				if (paidAmount.compareTo(header.getReceiptAmount()) <= 0) {
+					header.setReceiptAmount(header.getReceiptAmount().subtract(paidAmount));
+					feeReceipt.setFeeTypeCode(feeDtl.getFeeTypeCode());
+					feeReceipt.setFeeTypeId(feeDtl.getFeeTypeID());
+					feeReceipt.setRecordType(PennantConstants.RCD_ADD);
+					feeReceipt.setNewRecord(true);
+					feeReceipt.setFeeTypeDesc(feeDtl.getFeeTypeDesc());
+					feeReceipt.setLastMntBy(getLastMntBy(false, userDetails));
+					feeReceipt.setReceiptID(header.getReceiptID());
+					feeReceipt.setPaidAmount(paidAmount);
+					paidAmount = BigDecimal.ZERO;
+					break;
+				} else {
+					paidAmount = paidAmount.subtract(header.getReceiptAmount());
+					feeReceipt.setFeeTypeCode(feeDtl.getFeeTypeCode());
+					feeReceipt.setFeeTypeId(feeDtl.getFeeTypeID());
+					feeReceipt.setRecordType(PennantConstants.RCD_ADD);
+					feeReceipt.setNewRecord(true);
+					feeReceipt.setFeeTypeDesc(feeDtl.getFeeTypeDesc());
+					feeReceipt.setLastMntBy(getLastMntBy(false, userDetails));
+					feeReceipt.setReceiptID(header.getReceiptID());
+					feeReceipt.setPaidAmount(header.getReceiptAmount());
+					header.setReceiptAmount(BigDecimal.ZERO);
+				}
 			}
+
+			if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Insufficient funds to adjust fees";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+				return errors;
+			}
+
+			schdData.getFinFeeReceipts().add(feeReceipt);
 		}
 
-		return errorDetails;
+		return errors;
 	}
 
 	private String validateTemplate(FinanceReferenceDetail frefdata) {
@@ -4644,5 +4667,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setCovenantTypeDAO(CovenantTypeDAO covenantTypeDAO) {
 		this.covenantTypeDAO = covenantTypeDAO;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
 	}
 }

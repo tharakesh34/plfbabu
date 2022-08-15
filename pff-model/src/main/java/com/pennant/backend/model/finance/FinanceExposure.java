@@ -36,6 +36,7 @@ public class FinanceExposure implements Serializable {
 	private String worstStatus;
 	private BigDecimal totalRepayAmt;
 	private String toCcy;
+	private Long custID;
 
 	public FinanceExposure() {
 
@@ -45,6 +46,7 @@ public class FinanceExposure implements Serializable {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("totalRepayAmt");
 		excludeFields.add("toCcy");
+		excludeFields.add("custID");
 		return excludeFields;
 	}
 
@@ -240,4 +242,11 @@ public class FinanceExposure implements Serializable {
 		this.toCcy = toCcy;
 	}
 
+	public Long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(Long custID) {
+		this.custID = custID;
+	}
 }

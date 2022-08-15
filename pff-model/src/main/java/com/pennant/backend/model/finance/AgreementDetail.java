@@ -1917,6 +1917,8 @@ public class AgreementDetail {
 	public void setActualProcessFeeValueInWords(String actualProcessFeeValueInWords) {
 		this.actualProcessFeeValueInWords = actualProcessFeeValueInWords;
 	}
+	private String priorityNumber;
+	private String priorityEmail;
 
 	public String getMachineName() {
 		return machineName;
@@ -5664,10 +5666,13 @@ public class AgreementDetail {
 	private List<CustomerBankInfo> customerBankInfos;
 
 	public class CustomerBankInfo {
-		private String bankCode;
+		private String bankCode = " ";
 		private String bankName;
 		private String accountNumber;
 		private String accountType;
+		private String ifsc = "";
+		private String accountHolderName = "";
+		private String accountTypeDesc = "";
 
 		public String getBankCode() {
 			return bankCode;
@@ -5701,6 +5706,29 @@ public class AgreementDetail {
 			this.accountType = accountType;
 		}
 
+		public String getIfsc() {
+			return ifsc;
+		}
+
+		public void setIfsc(String ifsc) {
+			this.ifsc = ifsc;
+		}
+
+		public String getAccountHolderName() {
+			return accountHolderName;
+		}
+
+		public void setAccountHolderName(String accountHolderName) {
+			this.accountHolderName = accountHolderName;
+		}
+
+		public String getAccountTypeDesc() {
+			return accountTypeDesc;
+		}
+
+		public void setAccountTypeDesc(String accountTypeDesc) {
+			this.accountTypeDesc = accountTypeDesc;
+		}
 	}
 
 	// ----- New Details Added ---------//
@@ -6836,6 +6864,7 @@ public class AgreementDetail {
 		private String documentPropertyAddress = "";
 		private String documentBriefTracking = "";
 		private String documentMortgage = "";
+		private String seqNum;
 
 		public String getDocumentDate() {
 			return documentDate;
@@ -6971,6 +7000,14 @@ public class AgreementDetail {
 
 		public void setDocumentHolderPropertyName(String documentHolderPropertyName) {
 			this.documentHolderPropertyName = documentHolderPropertyName;
+		}
+
+		public String getSeqNum() {
+			return seqNum;
+		}
+
+		public void setSeqNum(String seqNum) {
+			this.seqNum = seqNum;
 		}
 
 	}
@@ -10598,6 +10635,22 @@ public class AgreementDetail {
 	 */
 	public void setFinAssetValueInWords(String setFinAssetValueInWords) {
 		this.finAssetValueInWords = setFinAssetValueInWords;
+	}
+
+	public String getPriorityNumber() {
+		return priorityNumber;
+	}
+
+	public void setPriorityNumber(String priorityNumber) {
+		this.priorityNumber = priorityNumber;
+	}
+
+	public String getPriorityEmail() {
+		return priorityEmail;
+	}
+
+	public void setPriorityEmail(String priorityEmail) {
+		this.priorityEmail = priorityEmail;
 	}
 
 	public class CreditReviewEligibilityBalanceSheet {

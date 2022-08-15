@@ -71,7 +71,6 @@ import com.pennant.backend.model.finance.FinanceWriteoffHeader;
 import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.finance.finoption.FinOption;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.limit.LimitHeader;
@@ -105,6 +104,7 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.DataMapUtil;
 import com.pennanttech.pff.core.util.DataMapUtil.FieldPrefix;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.sms.PresentmentBounceService;
 
 import freemarker.cache.StringTemplateLoader;
@@ -813,6 +813,7 @@ public class NotificationService extends GenericService<Notification> {
 		data.setUserName(fm.getUserDetails().getUserName());
 		data.setUserBranch(fm.getUserDetails().getBranchName());
 		data.setUserDepartment(fm.getUserDetails().getDepartmentName());
+		data.setRepaymentDate(StringUtils.substring(fm.getRepayFrq(), -2));
 
 		Branch branch = branchDAO.getBranchById(fm.getFinBranch(), "_AView");
 		if (branch == null) {

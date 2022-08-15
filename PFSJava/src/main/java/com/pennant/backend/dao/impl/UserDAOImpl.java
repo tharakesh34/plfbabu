@@ -255,6 +255,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		sql.append(", BV.CODE BUSINESSVERTICALCODE");
 		sql.append(", BV.DESCRIPTION BUSINESSVERTICALDESC");
 		sql.append(", SU.LDAPDomainName");
+		sql.append(", SU.Deleted");
 		sql.append(" FROM SECUSERS SU");
 		sql.append(" LEFT JOIN RMTBRANCHES B ON B.BRANCHCODE = SU.USRBRANCHCODE");
 		sql.append(" LEFT JOIN BUSINESS_VERTICAL BV ON  BV.ID = SU.BUSINESSVERTICAL");
@@ -415,6 +416,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 			securityUser.setBusinessVerticalCode(rs.getString("BUSINESSVERTICALCODE"));
 			securityUser.setBusinessVerticalDesc(rs.getString("BUSINESSVERTICALDESC"));
 			securityUser.setldapDomainName(rs.getString("LDAPDomainName"));
+			securityUser.setDeleted(rs.getBoolean("Deleted"));
 
 			return securityUser;
 		}

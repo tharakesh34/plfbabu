@@ -68,36 +68,51 @@
 							</columns>
 							<rows>
 								<row id="row_1">
-									<label id="label_ReceiptList_ReceiptId" value="${c:l('label_ReceiptList_ReceiptId.value')}" />
+									<label id="label_ReceiptList_ReceiptId"
+										value="${c:l('label_ReceiptList_ReceiptId.value')}" />
 									<listbox id="sortOperator_receiptId" width="43px" mold="select" rows="1" />
-									<longbox id="receiptId" width="163px" maxlength="19" />
-
-									<label id="label_ReceiptList_ReceiptDate" value="${c:l('label_ReceiptList_ReceiptDate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<longbox id="receiptId" width="163px" maxlength="19" />
+									</hbox>
+									<label id="label_ReceiptList_ReceiptDate"
+										value="${c:l('label_ReceiptList_ReceiptDate.value')}" />
 									<listbox id="sortOperator_receiptDate" width="43px" mold="select" rows="1" />
-									<datebox id="receiptDate" width="183px" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="receiptDate" width="183px" />
+									</hbox>
 								</row>
 								<row id="row_2" visible="true">
-									<label id="label_ReceiptList_FinType" value="${c:l('label_ReceiptList_FinType.value')}" />
+									<label id="label_ReceiptList_FinType"
+										value="${c:l('label_ReceiptList_FinType.value')}" />
 									<listbox id="sortOperator_finType" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="finType" />
 
-									<label id="label_ReceiptList_ReceiptAmount" value="${c:l('label_ReceiptList_ReceiptAmount.value')}" />
+									<label id="label_ReceiptList_ReceiptAmount"
+										value="${c:l('label_ReceiptList_ReceiptAmount.value')}" />
 									<listbox id="sortOperator_receiptAmount" width="43px" mold="select" rows="1" />
-									<decimalbox id="receiptAmount" width="163px" maxlength="19" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="receiptAmount" width="163px" maxlength="19" />
+									</hbox>
 								</row>
 
 								<row id="row_3" visible="true">
-									<label id="label_ReceiptList_Customer" value="${c:l('label_ReceiptList_Customer.value')}" />
+									<label id="label_ReceiptList_Customer"
+										value="${c:l('label_ReceiptList_Customer.value')}" />
 									<listbox id="sortOperator_customer" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="customer" />
 
-									<label id="label_ReceiptList_FinReference" value="${c:l('label_ReceiptList_FinReference.value')}" />
+									<label id="label_ReceiptList_FinReference"
+										value="${c:l('label_ReceiptList_FinReference.value')}" />
 									<listbox id="sortOperator_loanReference" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="finReference" />
 								</row>
 
 								<row id="row_4" visible="true">
-									<label id="label_receiptPurpose" value="${c:l('label_ReceiptList_ReceiptPurpose.value')}" visible="true" />
+									<label id="label_receiptPurpose"
+										value="${c:l('label_ReceiptList_ReceiptPurpose.value')}" visible="true" />
 									<listbox id="sortOperator_receiptPurpose" width="43px" mold="select" visible="true" />
 									<hbox id="hbox_receiptPurpose" visible="true">
 										<space spacing="2px" />
@@ -114,15 +129,18 @@
 								</row>
 
 								<row id="row_5" visible="true">
-									<label id="label_ReceiptList_transactionRef" value="${c:l('label_ReceiptList_transactionRef.value')}" />
+									<label id="label_ReceiptList_transactionRef"
+										value="${c:l('label_ReceiptList_transactionRef.value')}" />
 									<listbox id="sortOperator_transactionRef" width="43px" mold="select" rows="1" />
 									<textbox id="transactionRef" width="163px" maxlength="19" />
-									<label id="label_ReceiptList_PartnerBank" value="${c:l('label_ReceiptList_PartnerBank.value')}" />
+									<label id="label_ReceiptList_PartnerBank"
+										value="${c:l('label_ReceiptList_PartnerBank.value')}" />
 									<listbox id="sortOperator_partnerBank" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="partnerBank" />
 								</row>
 								<row id="row_6" visible="false">
-								<label id="label_ReceiptList_ReceivedDate" value="${c:l('label_ReceiptList_ReceivedDate.value')}" />
+									<label id="label_ReceiptList_ReceivedDate"
+										value="${c:l('label_ReceiptList_ReceivedDate.value')}" />
 									<listbox id="sortOperator_receivedDate" width="43px" mold="select" rows="1" />
 									<datebox id="receivedDate" width="183px" />
 								</row>

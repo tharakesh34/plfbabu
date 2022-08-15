@@ -15,4 +15,6 @@ public interface CustomerDedupDAO {
 	List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup customerDedup, String sqlQuery);
 
 	void moveData(String finReference, String type);
+
+	StringBuilder getSelectQuery(CustomerDedup dedup, boolean blackList);
 }

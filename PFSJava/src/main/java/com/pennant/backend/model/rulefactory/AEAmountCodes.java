@@ -233,6 +233,12 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal oemSbvAmount = BigDecimal.ZERO;
 	private BigDecimal advInst = BigDecimal.ZERO;
 	private BigDecimal prvMthAcr = BigDecimal.ZERO;
+	private BigDecimal ae_cbret = BigDecimal.ZERO;
+	private BigDecimal cbret_igst = BigDecimal.ZERO;
+	private BigDecimal cbret_sgst = BigDecimal.ZERO;
+	private BigDecimal cbret_ugst = BigDecimal.ZERO;
+	private BigDecimal cbret_cgst = BigDecimal.ZERO;
+	private BigDecimal cbret_cess = BigDecimal.ZERO;
 
 	private BigDecimal vasInstAmt = BigDecimal.ZERO;
 	private BigDecimal manualTds = BigDecimal.ZERO;
@@ -246,6 +252,13 @@ public class AEAmountCodes implements Serializable {
 
 	// Missing Codes
 	private BigDecimal lppPaid = BigDecimal.ZERO;
+
+	private BigDecimal totPriSchd = BigDecimal.ZERO;
+	private BigDecimal tdSchdPri = BigDecimal.ZERO;
+	private BigDecimal provsnAmt = BigDecimal.ZERO;
+	private boolean npa;
+	private String npaClass;
+	private String npaSubClass;
 
 	public AEAmountCodes() {
 		super();
@@ -442,6 +455,18 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_odPri", this.odPri);
 		map.put("ae_odPft", this.odPft);
 		map.put("ae_lppPaid", this.lppPaid);
+		map.put("ae_ae_cbret", this.ae_cbret);
+		map.put("ae_cbret_igst", this.cbret_igst);
+		map.put("ae_cbret_ugst", this.cbret_ugst);
+		map.put("ae_cbret_sgst", this.cbret_sgst);
+		map.put("ae_cbret_cgst", this.cbret_cgst);
+		map.put("ae_cbret_cess", this.cbret_cess);
+		map.put("ae_totPriSchd", this.totPriSchd);
+		map.put("ae_tdSchdPri", this.tdSchdPri);
+		map.put("ae_provsnAmt", this.provsnAmt);
+		map.put("ae_npa", this.npa);
+		map.put("ae_npaClass", this.npaClass);
+		map.put("ae_npaSubClass", this.npaSubClass);
 
 		return map;
 	}
@@ -1924,6 +1949,102 @@ public class AEAmountCodes implements Serializable {
 
 	public void setLppPaid(BigDecimal lppPaid) {
 		this.lppPaid = lppPaid;
+	}
+
+	public BigDecimal getAe_cbret() {
+		return ae_cbret;
+	}
+
+	public void setAe_cbret(BigDecimal ae_cbret) {
+		this.ae_cbret = ae_cbret;
+	}
+
+	public BigDecimal getCbret_igst() {
+		return cbret_igst;
+	}
+
+	public void setCbret_igst(BigDecimal cbret_igst) {
+		this.cbret_igst = cbret_igst;
+	}
+
+	public BigDecimal getCbret_sgst() {
+		return cbret_sgst;
+	}
+
+	public void setCbret_sgst(BigDecimal cbret_sgst) {
+		this.cbret_sgst = cbret_sgst;
+	}
+
+	public BigDecimal getCbret_ugst() {
+		return cbret_ugst;
+	}
+
+	public void setCbret_ugst(BigDecimal cbret_ugst) {
+		this.cbret_ugst = cbret_ugst;
+	}
+
+	public BigDecimal getCbret_cgst() {
+		return cbret_cgst;
+	}
+
+	public void setCbret_cgst(BigDecimal cbret_cgst) {
+		this.cbret_cgst = cbret_cgst;
+	}
+
+	public BigDecimal getCbret_cess() {
+		return cbret_cess;
+	}
+
+	public void setCbret_cess(BigDecimal cbret_cess) {
+		this.cbret_cess = cbret_cess;
+	}
+
+	public BigDecimal getTotPriSchd() {
+		return totPriSchd;
+	}
+
+	public void setTotPriSchd(BigDecimal totPriSchd) {
+		this.totPriSchd = totPriSchd;
+	}
+
+	public BigDecimal getTdSchdPri() {
+		return tdSchdPri;
+	}
+
+	public void setTdSchdPri(BigDecimal tdSchdPri) {
+		this.tdSchdPri = tdSchdPri;
+	}
+
+	public BigDecimal getProvsnAmt() {
+		return provsnAmt;
+	}
+
+	public void setProvsnAmt(BigDecimal provsnAmt) {
+		this.provsnAmt = provsnAmt;
+	}
+
+	public boolean isNpa() {
+		return npa;
+	}
+
+	public void setNpa(boolean npa) {
+		this.npa = npa;
+	}
+
+	public String getNpaClass() {
+		return npaClass;
+	}
+
+	public void setNpaClass(String npaClass) {
+		this.npaClass = npaClass;
+	}
+
+	public String getNpaSubClass() {
+		return npaSubClass;
+	}
+
+	public void setNpaSubClass(String npaSubClass) {
+		this.npaSubClass = npaSubClass;
 	}
 
 }

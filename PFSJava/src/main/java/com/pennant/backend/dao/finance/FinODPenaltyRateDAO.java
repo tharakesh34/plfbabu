@@ -17,4 +17,6 @@ public interface FinODPenaltyRateDAO {
 	FinODPenaltyRate getDMFinODPenaltyRateByRef(long finID, String type);
 
 	FinODPenaltyRate getFinODPenaltyRateForLMSEvent(long finID);
+
+	int getExtnODGrcDays(long finID);
 }

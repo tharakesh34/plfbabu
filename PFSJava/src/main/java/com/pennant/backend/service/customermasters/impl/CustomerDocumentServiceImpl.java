@@ -36,6 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -57,6 +58,8 @@ import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.documents.service.DocumentService;
 
 /**
  * Service implementation for methods that depends on <b>CustomerDocument</b>.<br>
@@ -73,6 +76,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 	private DocumentTypeService documentTypeService;
 	private DocumentManagerDAO documentManagerDAO;
 	private MasterDefService masterDefService;
+	private DocumentService documentService2;
 
 	public CustomerDocumentServiceImpl() {
 		super();
@@ -257,6 +261,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					saveDocument(DMSModule.CUSTOMER, null, customerDocument);
 				}
 				getCustomerDocumentDAO().update(customerDocument, "");
+				documentService2.resetDocumentStatus(customerDocument.getID());
 			}
 		}
 		if (!StringUtils.equals(customerDocument.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
@@ -363,6 +368,18 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90401", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
+			}
+
+			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customer.getCustCtgCode())
+					&& PennantConstants.FORM60.equals(customerDocument.getCustDocCategory())) {
+				Date addMonths = DateUtil.addMonths(customerDocument.getCustDocIssuedOn(), 72);
+				if (!ImplementationConstants.RETAIL_CUST_PAN_MANDATORY
+						&& (DateUtil.compare(addMonths, customerDocument.getCustDocExpDate()) < 0)) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Difference Between Issued On & Expiry Date Sholud be Less Than 6 Years";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90505", "", valueParm)));
+					return auditDetail;
+				}
 			}
 
 			if (docType.isDocIsMandatory()) {
@@ -635,6 +652,11 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 	}
 
 	@Override
+	public boolean getCustomerDocExists(long custId, String docType) {
+		return customerDocumentDAO.getCustomerDocExists(custId, docType);
+	}
+
+	@Override
 	public String getDocTypeByMasterDefByCode(String masterType, String keyCode) {
 		return masterDefService.getMasterKeyTypeByCode(masterType, keyCode);
 	}
@@ -653,6 +675,10 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 
 	public void setMasterDefService(MasterDefService masterDefService) {
 		this.masterDefService = masterDefService;
+	}
+
+	public void setDocumentService2(DocumentService documentService2) {
+		this.documentService2 = documentService2;
 	}
 
 }

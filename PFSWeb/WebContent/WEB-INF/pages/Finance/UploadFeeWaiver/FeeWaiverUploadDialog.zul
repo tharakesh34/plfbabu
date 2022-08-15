@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FeeWaiverUploadDialog" apply="${feeWaiverUploadDialogCtrl}" border="normal" width="100%" height="100%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutFeeWaiverUpload">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnBrowse,btnDownload" sclass="z-toolbarbutton" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnBrowse,btnDownload" sclass="z-toolbarbutton" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnBrowse,btnDownload" sclass="z-toolbarbutton" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnBrowse,btnDownload" sclass="z-toolbarbutton" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnBrowse,btnDownload" sclass="z-toolbarbutton" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_UploadFeeWaiverDialog.title')}" sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnBrowse,btnDownload" sclass="z-toolbarbutton" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnBrowse,btnDownload" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+				<div>
+					<grid sclass="GridLayoutNoBorder" style="border:0px solid #F38C60;">
+						<rows>
+							<row>
+								<radiogroup id="radioButtons">
+									<radio id="downLoad" label="${c:l('label_DownloadFeeWaiverDialog_Download.value')}" />
+									<radio id="upload" style="padding-left:100px;" label="${c:l('label_UploadFeeWaiverDialog_Uplaod.value')}"
+										selected="true" />
+								</radiogroup>
+							</row>
+						</rows>
+					</grid>
+					<groupbox id="gb_DownloadDetails" style="border:0px solid #F38C60;">
+						<caption label="${c:l('label_DownloadFeeWaiverDialog_DownloadDetails')}" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="200px" />
+								<column width="450px" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_DownloadFeeWaiverDialog_FileName" value="${c:l('label_DownloadFeeWaiverDialog_FileName.value')}" />
+									<extendedcombobox id="fileName" />
+								</row>
+								<row id="row_DateOfUpload">
+									<label id="label_DownloadFeeWaiverDialog_DateOfUpload" value="${c:l('label_DownloadFeeWaiverDialog_DateOfUpload.value')}" />
+									<hbox>
+										<space spacing="2px" id="space_DateOfUpload" />
+										<datebox id="dateOfUpload" width="120px" />
+									</hbox>
+								</row>
+								<row>
+									<button id="btnDownload" label="${c:l('label_DownloadFeeWaiverDialog_btnDownload.value')}" tooltiptext="${c:l('btnDownload.tooltiptext')}" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_UploadDetails" style="border:0px solid #F38C60;">
+						<caption label="${c:l('label_UploadFeeWaiverDialog_UploadDetails')}" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="200px" />
+								<column width="650px" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_UploadFeeWaiverDialog_FileName" value="${c:l('label_UploadFeeWaiverDialog_FileName.value')}" />
+									<hbox>
+										<space spacing="2px" id="space_txtFileName" sclass="mandatory" />
+										<textbox id="txtFileName" width="200px" readonly="true" />
+										<button id="btnBrowse" label="${c:l('btnBrowse.label')}" upload="true"
+											autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnBrowse,btnDownload"
+											tooltiptext="${c:l('btnBrowse.tooltiptext')}" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
+			</center>
+			<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%" closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus" value="${c:l('label_RecordStatus')}" sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

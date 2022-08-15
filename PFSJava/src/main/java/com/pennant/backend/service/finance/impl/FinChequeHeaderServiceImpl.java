@@ -104,8 +104,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		return auditHeader;
 	}
 
-	private List<AuditDetail> processingChequeDetailList(List<AuditDetail> auditDetails, TableType type,
-			long headerID) {
+	public List<AuditDetail> processingChequeDetailList(List<AuditDetail> auditDetails, TableType type, long headerID) {
 		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
@@ -218,7 +217,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		return auditHeader;
 	}
 
-	private List<AuditDetail> setChequeDetailAuditData(ChequeHeader chequeHeader, String auditTranType, String method) {
+	public List<AuditDetail> setChequeDetailAuditData(ChequeHeader chequeHeader, String auditTranType, String method) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -396,10 +395,10 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			return;
 		}
 
-		DocumentDetails dd = new DocumentDetails();
-		dd.setFinReference(chequeHeader.getFinReference());
-
 		for (ChequeDetail detail : chequeDetails) {
+			DocumentDetails dd = new DocumentDetails();
+			dd.setFinReference(chequeHeader.getFinReference());
+
 			if (!detail.isNewRecord()) {
 				if (detail.getDocImage() != null) {
 					dd.setUserDetails(detail.getUserDetails());
@@ -417,6 +416,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				}
 			} else {
 				if (detail.getDocImage() != null) {
+					dd.setDocImage(detail.getDocImage());
 					saveDocument(DMSModule.FINANCE, DMSModule.CHEQUE, dd);
 					detail.setDocumentRef(dd.getDocRefId());
 

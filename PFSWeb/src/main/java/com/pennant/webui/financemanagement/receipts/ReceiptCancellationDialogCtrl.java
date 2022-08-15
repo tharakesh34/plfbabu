@@ -171,6 +171,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected CurrencyBox bounceCharge;
 	protected Textbox bounceRemarks;
 	protected ExtendedCombobox cancelReason;
+	protected Textbox extReference;
 
 	protected Groupbox gb_ReceiptDetails;
 	protected Caption caption_receiptDetail;
@@ -844,7 +845,9 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				 */
 
 				String ref = null;
-				if (this.groupbox_Customer.isVisible()) {
+				if (FinServiceEvent.FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
+					ref = aReceiptHeader.getExtReference();
+				} else if (this.groupbox_Customer.isVisible()) {
 					ref = this.custID.getValue();
 				} else if (this.groupbox_Other.isVisible()) {
 					ref = this.reference.getValue();
@@ -1188,6 +1191,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		} else if (this.groupbox_Customer.isVisible()) {
 			this.custID.setAttribute("custID", header.getReference());
 			this.custID.setValue(header.getCustomerCIF(), header.getCustomerName());
+			this.extReference.setValue(StringUtils.trimToEmpty(header.getExtReference()));
 		} else if (this.groupbox_Other.isVisible()) {
 			this.reference.setValue(header.getReference());
 		}
@@ -1354,13 +1358,19 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		FinReceiptHeader header = getReceiptHeader();
 		// Repayments Schedule Basic Details
 		this.posting_finType.setValue(header.getFinType() + "-" + header.getFinTypeDesc());
-		this.posting_finReference.setValue(header.getReference());
+		this.posting_finReference.setValue(header.getExtReference());
 		this.posting_finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.posting_finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
 		this.posting_CustCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
 
 		this.posting_receiptId.setValue(String.valueOf(header.getReceiptID()));
 		this.posting_promotionCode.setValue(header.getPromotionCode());
+
+		if (RepayConstants.RECEIPTTO_CUSTOMER.equals(receiptHeader.getRecAgainst())
+				&& StringUtils.isNotBlank(receiptHeader.getExtReference())) {
+			this.posting_finBranch.setValue(header.getPostBranch() + "-" + header.getPostBranchDesc());
+			this.posting_CustCIF.setValue(header.getCustomerCIF() + "-" + header.getCustomerName());
+		}
 
 		boolean isBounceProcess = false;
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {

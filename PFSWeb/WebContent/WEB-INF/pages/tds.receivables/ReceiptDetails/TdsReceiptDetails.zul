@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<script type="text/javascript" src="/deviceUtils/printerutil.js" />
+
+	<style>
+		div.z-column-cnt { padding: 3px; } div.z-column-cnt, div.z-row-cnt { color: #000000;
+		font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 11px; font-weight: bold; }
+	</style>
+	<window>
+		<window id="window_TDSReceiptDetailDialog" border="normal" width="80%" height="350px" sizable="false"
+			apply="${tdsReceiptDetailsDialogCtrl}">
+			<div>
+				<hbox width="100%" widths="1%,40%,20%">
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+			<groupbox id="gb_Receivalble" closable="false">
+				<caption label="${c:l('label_ReceiptDialog_ReceivableDetails')}" />
+				<listbox id="listBoxTDSReceiptDetail" fixedLayout="true" sizedByContent="true" span="true"
+					emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false" rows="10">
+					<listhead sizable="false" style="padding:0px;position:relative;">
+						<listheader label="${c:l('listheader_ReceiptDialog_Receivables.label')}" sort="false"
+							hflex="min" />
+						<listheader label="${c:l('listheader_ReceiptDialog_TDS.label')}"
+								id="listheader_ReceiptDialog_TDS" align="right" sort="false" hflex="min" visible="true" />	
+						<listheader label="${c:l('listheader_ReceiptDialog_CurrentReceivable.label')}" align="right"
+							sort="false" hflex="min" />
+						<listheader label="${c:l('listheader_ReceiptDialog_PaidTDS.label')}"
+								id="listheader_ReceiptDialog_PaidTDS" align="right" sort="false" hflex="min" visible="true" />
+						<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}" align="right"
+							sort="false" hflex="min" />
+					</listhead>
+				</listbox>
+			</groupbox>
+
+		</window>
+	</window>
+</zk>

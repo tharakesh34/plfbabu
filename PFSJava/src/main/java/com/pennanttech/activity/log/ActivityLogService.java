@@ -43,4 +43,6 @@ public interface ActivityLogService {
 
 	List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo, long instructionUID)
 			throws SQLException;
+
+	List<Activity> getManualAdviseActivitiyLog(String moduleCode, String reference, long adviseID);
 }

@@ -133,6 +133,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
+import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 
 /**
  * 
@@ -221,6 +222,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient FeeWaiverHeaderService feeWaiverHeaderService;
 	private transient LinkedFinancesService linkedFinancesService;
 	private transient FinOCRHeaderService finOCRHeaderService;
+	private transient OverdrafLoanService overdrafLoanService;
 
 	private FinanceMain financeMain;
 	private boolean isDashboard = false;
@@ -1030,16 +1032,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 		}
 		if (!(moduleDefiner.equals(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN))) {
-			if (!!ImplementationConstants.ALLOW_ALL_SERV_RCDS) {
-				if (App.DATABASE == Database.ORACLE) {
-					whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) ");
-				} else {
-					// for postgredb sometimes record type is null or empty('')
-					whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
-							+ moduleDefiner + "' ) ");
-				}
-			}
-		}
+			/*
+			 * if (!!ImplementationConstants.ALLOW_ALL_SERV_RCDS) { if (App.DATABASE == Database.ORACLE) {
+			 * whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) "); } else
+			 * { // for postgredb sometimes record type is null or empty('')
+			 * whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '" +
+			 * moduleDefiner + "' ) "); } }
+			 */}
 
 		int backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_RATECHG_BACK_DATE");
 		Date backValueDate = DateUtility.addDays(appDate, backValueDays);
@@ -1136,7 +1135,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" where DisbDate >= '" + appDate + "') ");
 			whereClause.append(" AND ProductCategory = '" + FinanceConstants.PRODUCT_ODFACILITY + "' )");
 		} else if (moduleDefiner.equals(FinServiceEvent.OVERDRAFTSCHD)) {
-			whereClause.append(" AND FinStartDate < '" + appDate + "' AND MaturityDate > '" + appDate + "'");
+			whereClause.append(" AND MaturityDate > '" + appDate + "'");
 			whereClause.append(" AND ProductCategory = '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 		} else if ((moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
 				|| moduleDefiner.equals(FinServiceEvent.LINKDELINK))) {
@@ -1173,12 +1172,16 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinServiceEvent.CHANGETDS)) {
 			whereClause.append(" AND  MaturityDate > '" + appDate + "' AND  FinStartDate <= '" + appDate + "'");
 		} else if (moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)) {
-			whereClause.append(" AND FinAssetvalue > FinCurrAssetValue ");
+			whereClause.append(
+					"AND FinAssetvalue > (CASE WHEN stepfinance = 1 and CalcOfSteps = 'AMT' THEN FinCurrAssetValue + TotalCpz else FinCurrAssetValue END) ");
 		} else if (FinServiceEvent.RESTRUCTURE.equals(moduleDefiner)) {
 			whereClause.append(" AND RcdMaintainSts = 'Restructure' AND FinIsActive = 1 ");
 		} else if (moduleDefiner.equals(FinServiceEvent.COLLATERAL)) {
 			whereClause.append("AND FinReference IN (SELECT Reference From CollateralAssignment)");
 			whereClause.append(" AND ClosingStatus in ('W','E','C','M')");
+		} else if (moduleDefiner.equals(FinServiceEvent.PRINH)) {
+			whereClause
+					.append(" AND StepFinance = 0 and Schedulemethod = '" + CalculationConstants.SCHMTHD_EQUAL + "' ");
 		}
 
 		// Written Off Finance Reference Details Condition
@@ -1201,6 +1204,17 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Filtering closed loans based on system parameter
 		if (StringUtils.equals("N", SysParamUtil.getValueAsString("ALLOW_CLOSED_LOANS_IN_RECEIPTS"))) {
 			whereClause.append(" AND FINISACTIVE = '1' ");
+		}
+
+		// Below servicing options will not be applicable to open amortization schedule
+		if (String
+				.join("|", FinServiceEvent.ADDTERM, FinServiceEvent.RMVTERM, FinServiceEvent.CHGFRQ,
+						FinServiceEvent.CHGGRCEND, FinServiceEvent.CHGRPY, FinServiceEvent.OVERDRAFTSCHD,
+						FinServiceEvent.PLANNEDEMI, FinServiceEvent.POSTPONEMENT, FinServiceEvent.REAGING,
+						FinServiceEvent.RESCHD, FinServiceEvent.UNPLANEMIH, FinServiceEvent.CHGSCHDMETHOD)
+				.contains(moduleDefiner)) {
+
+			whereClause.append(" And ManualSchedule != 1 ");
 		}
 
 		searchObject.addWhereClause(whereClause.toString());
@@ -1260,10 +1274,19 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			if (StringUtils.isNotEmpty(moduleDefiner) && moduleDefiner.equals(FinServiceEvent.ADDDISB)) {
 				boolean holdDisbursement = financeDetailService.isholdDisbursementProcess(aFinanceMain.getFinID());
+				boolean limitBlock = overdrafLoanService.isLimitBlock(aFinanceMain.getFinID());
 
 				if (holdDisbursement) {
 					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("HD99019", null)));
 					logger.debug("Leaving");
+					return;
+				}
+
+				// If OD loan is in blocked state, not allowed to do add disbursement
+				if (limitBlock && FinanceConstants.PRODUCT_ODFACILITY.equals(aFinanceMain.getProductCategory())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "This OD Loan was Blocked.Not allowed to do Add Disbursement.";
+					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 					return;
 				}
 
@@ -1886,9 +1909,15 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (StringUtils.isEmpty(userRole)) {
 			userRole = workFlowDetails.getFirstTaskOwner();
 		}
+		// check if payable amount present
+		List<ManualAdvise> manualAdvise = financeWriteoffService.getPayableAdvises(finID, "");
+		if (CollectionUtils.isNotEmpty(manualAdvise)) {
+			MessageUtil.showError(Labels.getLabel("EXCESS/MANUALADVISE_EXITS"));
+			return;
+		}
 
-		final FinReceiptData receiptData = getReceiptService().getFinReceiptDataById(finRef, eventCodeRef,
-				moduleDefiner, userRole);
+		final FinReceiptData receiptData = getReceiptService().getFinReceiptDataById(finRef, SysParamUtil.getAppDate(),
+				eventCodeRef, moduleDefiner, userRole);
 
 		// Role Code State Checking
 		String nextroleCode = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode();
@@ -2003,8 +2032,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 
 			// check if payable amount present
-			List<ManualAdvise> manualAdvise = financeWriteoffService.getManualAdviseByRef(finID,
-					FinanceConstants.MANUAL_ADVISE_PAYABLE, "");
+			List<ManualAdvise> manualAdvise = financeWriteoffService.getPayableAdvises(finID, "");
 			if (CollectionUtils.isNotEmpty(manualAdvise)) {
 				MessageUtil.showError(Labels.getLabel("MANUALADVISE_EXITS"));
 				return;
@@ -2159,7 +2187,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				continue;
 			}
 
-			if (curSchd.getSchDate().compareTo(appDate) <= 0) {
+			if (curSchd.getSchDate().compareTo(appDate) <= 0 && curSchd.isRepayOnSchDate()) {
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null),
 						getUserWorkspace().getUserLanguage());
@@ -2394,8 +2422,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			} else if (moduleDefiner.equalsIgnoreCase(FinServiceEvent.LOANDOWNSIZING)) {
 				fileLocaation.append("LoanDownSizingDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_ODFACILITY)) {
-				fileLocaation.append("ODFacilityFinanceMainDialog.zul");
+				fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/Overdraft/");
+				fileLocaation.append("OverdraftFinanceMainDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_CD)) {
+				fileLocaation = new StringBuilder("/WEB-INF/pages/Finance/Cd/");
 				fileLocaation.append("CDFinanceMainDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_DISCOUNT)) {
 				fileLocaation.append("DiscountFinanceMainDialog.zul");
@@ -3582,6 +3612,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					eventCodeRef = "";
 					moduleDefiner = FinServiceEvent.EXTENDEDFIELDS_MAINTAIN;
 					workflowCode = FinServiceEvent.EXTENDEDFIELDS_MAINTAIN;
+				} else if ("tab_PrincipleHoliday".equals(tab.getId())) {
+					eventCodeRef = AccountingEvent.SCDCHG;
+					moduleDefiner = FinServiceEvent.PRINH;
+					workflowCode = FinServiceEvent.PRINH;
 				}
 				return;
 			}
@@ -4173,5 +4207,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setExtendedFieldMaintenanceService(ExtendedFieldMaintenanceService extendedFieldMaintenanceService) {
 		this.extendedFieldMaintenanceService = extendedFieldMaintenanceService;
+	}
+
+	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
+		this.overdrafLoanService = overdrafLoanService;
 	}
 }

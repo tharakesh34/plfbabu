@@ -66,7 +66,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
-		sql.append(", NextTaskId, RecordType, WorkflowId, PinCodeId");
+		sql.append(", NextTaskId, RecordType, WorkflowId, PinCodeId, AvailCustTaxNum");
 		sql.append(" from FinTaxDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
@@ -115,6 +115,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				td.setRecordType(rs.getString("RecordType"));
 				td.setWorkflowId(rs.getLong("WorkflowId"));
 				td.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
+				td.setAvailCustTaxNum(rs.getBoolean("AvailCustTaxNum"));
 
 				return td;
 			}, finID);
@@ -129,13 +130,13 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		StringBuilder sql = new StringBuilder("Insert into FinTaxDetail");
 		sql.append(tableType.getSuffix());
 		sql.append("(FinID, FinReference, ApplicableFor, TaxCustId, TaxExempted, TaxNumber, AddrLine1, AddrLine2");
-		sql.append(", AddrLine3, AddrLine4, Country, Province, City, PinCodeId, PinCode");
+		sql.append(", AddrLine3, AddrLine4, Country, Province, City, PinCodeId, PinCode, AvailCustTaxNum");
 		sql.append(", SezCertificateNo, SezValueDate, AddressDetail");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values");
 		sql.append(" (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -158,6 +159,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				ps.setString(index++, td.getCity());
 				ps.setObject(index++, td.getPinCodeId());
 				ps.setString(index++, td.getPinCode());
+				ps.setBoolean(index++, td.isAvailCustTaxNum());
 				ps.setString(index++, td.getSezCertificateNo());
 				ps.setDate(index++, JdbcUtil.getDate(td.getSezValueDate()));
 				ps.setString(index++, td.getAddressDetail());
@@ -190,7 +192,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		sql.append(", Country = ?, Province = ?, City = ?, PinCodeId = ?, PinCode = ?, SezCertificateNo = ?");
 		sql.append(", SezValueDate = ?, AddressDetail = ?, LastMntOn = ?, RecordStatus = ?");
 		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
-		sql.append(", RecordType = ?, WorkflowId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?, AvailCustTaxNum = ?");
 		sql.append(" Where FinID = ?");
 		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
@@ -222,7 +224,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 			ps.setString(index++, td.getNextTaskId());
 			ps.setString(index++, td.getRecordType());
 			ps.setLong(index++, td.getWorkflowId());
-
+			ps.setBoolean(index++, td.isAvailCustTaxNum());
 			ps.setLong(index++, td.getFinID());
 
 			if (tableType == TableType.TEMP_TAB) {

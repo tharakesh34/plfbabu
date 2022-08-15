@@ -40,4 +40,6 @@ public interface FinServiceInstrutionDAO {
 
 	boolean isFinServiceInstExists(long finID, String table);
 
+	FinServiceInstruction getFinServiceInstDetailsBySerReqNo(long finID, String serviceReqNo);
+
 }

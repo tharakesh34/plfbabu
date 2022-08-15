@@ -57,6 +57,7 @@ public class PathUtil {
 	public static final String FINANCE_INTERESTCERTIFICATE = "Agreements/InterestCertificate";
 	public static final String FINANCE_LOANCLOSURE = "Agreements/LoanClosureLetter";
 	public static final String COVENANT_STATUS_REPORT = "Agreements/LOD";
+	public static final String BalanceConfirmation = "Agreements/BalanceConfirmation";
 
 	// Report Detail paths
 	public static final String REPORTS_CHECKS = "Reports/Checks";
@@ -69,6 +70,7 @@ public class PathUtil {
 
 	// Images
 	public static final String REPORTS_IMAGE_CLIENT = "/Reports/images/OrgLogo.png";
+	public static final String REPORTS_IMAGE_CLIENT_WATERMARK = "/Reports/images/Watermark.png";
 	public static final String REPORTS_IMAGE_CLIENT_PATH = "/Reports/images";
 	public static final String REPORTS_IMAGE_CLIENT_IMAGE = "/OrgLogo";
 	public static final String REPORTS_IMAGE_PNG_FORMAT = ".png";
@@ -91,7 +93,7 @@ public class PathUtil {
 	public static final String CUSTOMER_CHECKLIST_FOR_DEALTHCRITICAL_FORM = "/Customer360/Checklist for Death - Critical Illness.xls";
 	public static final String TEMPLATES = "Templates";
 	public static final String FILE_UPLOADS_PATH = "FileUploads";
-
+	public static final String MANUAL_SCHEDULES = "ManualSchedules";
 	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; // For Credit Review Details
 	public static final String EXT_LIABILITY = "ExtLiability";
 	public static final String LOAN_REPORT = "LoanReport";

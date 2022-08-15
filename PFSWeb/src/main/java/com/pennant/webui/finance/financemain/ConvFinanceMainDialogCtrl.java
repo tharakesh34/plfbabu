@@ -317,12 +317,6 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void onCheck$manualSchedule(Event event) {
-		logger.debug("Entering " + event.toString());
-		super.onCheckmanualSchedule();
-		logger.debug("Leaving " + event.toString());
-	}
-
 	public LegalDetailLoanListCtrl getLegalDetailLoanListCtrl() {
 		return legalDetailLoanListCtrl;
 	}

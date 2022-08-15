@@ -27,12 +27,15 @@ package com.pennant.webui.finance.additional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -43,6 +46,10 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -55,11 +62,16 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.manual.schedule.ManualScheduleDetail;
+import com.pennant.backend.model.finance.manual.schedule.ManualScheduleHeader;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
+import com.pennant.webui.finance.financemain.ManualScheduleDialogCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -84,6 +96,10 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Uppercasebox serviceReqNo;
 	protected Textbox remarks;
 
+	protected Tab recalculateDetailsTab;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+
 	// not auto wired vars
 	private FinScheduleData finScheduleData; // overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
@@ -94,6 +110,8 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	private transient RecalculateService recalService;
 	private boolean appDateValidationReq = false;
+	private ManualScheduleDialogCtrl manualScheduleDialogCtrl;
+	private String roleCode = "";
 
 	/**
 	 * default constructor.<br>
@@ -155,6 +173,10 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 
+			if (arguments.containsKey("roleCode")) {
+				roleCode = (String) arguments.get("roleCode");
+			}
+
 			boolean applySanctionCheck = SanctionBasedSchedule.isApplySanctionBasedSchedule(getFinScheduleData());
 			getFinScheduleData().getFinanceMain().setApplySanctionCheck(applySanctionCheck);
 
@@ -177,6 +199,17 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.adjTerms.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
+
+		FinanceMain fm = getFinScheduleData().getFinanceMain();
+
+		// Manual Schedule
+		if (fm.isManualSchedule()) {
+			appendManualSchdeuleTab(true);
+			this.recalculateDetailsTab.setVisible(false);
+			this.window_RecalculateDialog.setWidth("80%");
+			this.window_RecalculateDialog.setHeight("60%");
+		}
+
 		logger.debug("Leaving");
 
 	}
@@ -236,6 +269,14 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				this.row_recalType.setVisible(false);
 				this.cbReCalType.setDisabled(true);
 				this.window_RecalculateDialog.setTitle(Labels.getLabel("window_AddTermRecalculateDialog.title"));
+			} else if (aFinSchData.getFinanceMain().isManualSchedule()) {
+
+				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_TILLMDT,
+						PennantStaticListUtil.getSchCalCodes(), excldValues);
+
+				if (aFinSchData.getFinanceMain().getEventFromDate() == null) {
+					aFinSchData.getFinanceMain().setEventFromDate(DateUtility.getAppDate());
+				}
 			} else {
 
 				if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
@@ -248,10 +289,10 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 			if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
-				fillSchFromDates(this.cbEventFromDate, aFinSchData.getFinanceScheduleDetails(), true);
+				fillSchFromDates(this.cbEventFromDate, aFinSchData, true);
 				this.cbEventFromDate.setDisabled(true);
 			} else {
-				fillSchFromDates(this.cbEventFromDate, aFinSchData.getFinanceScheduleDetails(), false);
+				fillSchFromDates(this.cbEventFromDate, aFinSchData, false);
 			}
 
 			fillSchDates(this.cbTillDate, aFinSchData, aFinSchData.getFinanceMain().getFinStartDate());
@@ -268,9 +309,11 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	/** To fill schedule dates */
-	public void fillSchFromDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails,
-			boolean isDefaultToMDT) {
+	public void fillSchFromDates(Combobox dateCombobox, FinScheduleData aFinSchData, boolean isDefaultToMDT) {
 		logger.debug("Entering");
+
+		FinanceMain fm = aFinSchData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = aFinSchData.getFinanceScheduleDetails();
 
 		dateCombobox.getItems().clear();
 		Comboitem comboitem = new Comboitem();
@@ -280,7 +323,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.setSelectedItem(comboitem);
 
 		if (isDefaultToMDT) {
-			FinanceScheduleDetail curSchd = financeScheduleDetails.get(financeScheduleDetails.size() - 1);
+			FinanceScheduleDetail curSchd = schedules.get(schedules.size() - 1);
 			comboitem = new Comboitem();
 			comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 			comboitem.setValue(curSchd.getSchDate());
@@ -291,11 +334,21 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		boolean isMaturityDone = false;
 
-		if (financeScheduleDetails != null) {
+		if (schedules != null) {
 			Date curBussDate = SysParamUtil.getAppDate();
-			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-
-				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+			for (FinanceScheduleDetail curSchd : schedules) {
+				// Manual Schedule Recalculate
+				if (fm.isManualSchedule()) {
+					if (fm.getEventFromDate() != null) {
+						curBussDate = fm.getEventFromDate();
+					}
+					comboitem = new Comboitem();
+					comboitem.setLabel(DateUtility.formatToLongDate(curBussDate) + " " + curSchd.getSpecifier());
+					comboitem.setValue(curBussDate);
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					break;
+				}
 
 				// Not Allowed for Repayment
 				if (!curSchd.isRepayOnSchDate()) {
@@ -439,7 +492,11 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		finServiceInstruction.setFinID(finMain.getFinID());
 		finServiceInstruction.setFinReference(finMain.getFinReference());
-		finServiceInstruction.setFinEvent(FinServiceEvent.RECALCULATE);
+		if (StringUtils.isNotBlank(moduleDefiner)) {
+			finServiceInstruction.setFinEvent(moduleDefiner);
+		} else {
+			finServiceInstruction.setFinEvent(FinServiceEvent.RECALCULATE);
+		}
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -448,6 +505,64 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			throw new WrongValuesException(wvea);
 		}
+
+		// Manual Schedule Changes
+		if (finMain.isManualSchedule()) {
+
+			ManualScheduleHeader scheduleHeader = getFinScheduleData().getManualScheduleHeader();
+			List<ManualScheduleDetail> details = null;
+			if (scheduleHeader != null) {
+				details = scheduleHeader.getManualSchedules();
+			}
+
+			int noOfInstall = 0;
+			if (manualScheduleDialogCtrl != null) {
+				noOfInstall = manualScheduleDialogCtrl.getNoOfInstallments();
+			}
+
+			if (CollectionUtils.isEmpty(details) || !scheduleHeader.isValidSchdUpload()) {
+				MessageUtil.showError(Labels.getLabel("MANUAL_SCHD_REQ"));
+				Tab tab = getTab(AssetConstants.UNIQUE_ID_MANUALSCHEDULE);
+				if (tab != null) {
+					tab.setSelected(true);
+				}
+				return;
+			}
+			// Validate the no of installment should match with upload repayment schedule.
+			if (StringUtils.equals(moduleDefiner, FinServiceEvent.RECALCULATE)
+					&& noOfInstall != details.size()) {
+				MessageUtil.showError(Labels.getLabel("NOOFINSTL_ROWS"));
+				Tab tab = getTab(AssetConstants.UNIQUE_ID_MANUALSCHEDULE);
+				if (tab != null) {
+					tab.setSelected(true);
+				}
+				return;
+			}
+			if (scheduleHeader.getTotPrincipleAmt().compareTo(scheduleHeader.getCurPOSAmt()) != 0) {
+				MessageUtil.showError(Labels.getLabel("MANUAL_FINAMT_RECAL"));
+				Tab tab = getTab(AssetConstants.UNIQUE_ID_MANUALSCHEDULE);
+				if (tab != null) {
+					tab.setSelected(true);
+				}
+				return;
+			}
+			if (!(scheduleHeader.getNumberOfTerms() == details.size())) {
+				MessageUtil.showError(Labels.getLabel("NOOFINSTL_RECALCULATE"));
+				Tab tab = getTab(AssetConstants.UNIQUE_ID_MANUALSCHEDULE);
+				if (tab != null) {
+					tab.setSelected(true);
+				}
+				return;
+			}
+
+			if (getFinScheduleData().getFinanceMain().isApplySanctionCheck()) {
+				fillSchFromDates(this.cbEventFromDate, getFinScheduleData(), true);
+				this.cbEventFromDate.setDisabled(true);
+			} else {
+				fillSchFromDates(this.cbEventFromDate, getFinScheduleData(), false);
+			}
+		}
+
 		// Calculate Remaining Total Profit From Recalculation Event Date
 		BigDecimal adjustedPft = finMain.getTotalProfit();
 		// Total Outstanding Principal & profit calculation for Equal Installment amount in Profit Intact process
@@ -741,6 +856,52 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * append Manual Schedule Tab
+	 */
+	private void appendManualSchdeuleTab(boolean onLoad) {
+		logger.debug(Literal.ENTERING);
+
+		Tab tab = new Tab(Labels.getLabel("label_RecalculateDialog_UploadScheduleDetails"));
+		tab.setId(getTabID(AssetConstants.UNIQUE_ID_MANUALSCHEDULE));
+		tab.setVisible(true);
+		tab.setSelected(true);
+		tabsIndexCenter.appendChild(tab);
+
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(AssetConstants.UNIQUE_ID_MANUALSCHEDULE));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+
+		final HashMap<String, Object> map = new HashMap<>();
+
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("finScheduleData", getFinScheduleData());
+		map.put("parentCtrl", this);
+		map.put("roleCode", roleCode);
+
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ManualScheduleDialog.zul",
+				getTabpanel(getTabpanelID(AssetConstants.UNIQUE_ID_MANUALSCHEDULE)), map);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(id);
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
+	}
+
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -779,6 +940,10 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void setRecalService(RecalculateService recalService) {
 		this.recalService = recalService;
+	}
+
+	public void setManualScheduleDialogCtrl(ManualScheduleDialogCtrl manualScheduleDialogCtrl) {
+		this.manualScheduleDialogCtrl = manualScheduleDialogCtrl;
 	}
 
 }

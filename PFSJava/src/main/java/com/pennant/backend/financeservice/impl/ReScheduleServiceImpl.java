@@ -124,6 +124,8 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 		Date startRepayCalDate = null;
 		Date recalToDate = null;
+		String frqCode = frequency.substring(0, 1);
+		boolean isMonthlyFrq = StringUtils.equals(frqCode, FrequencyCodeTypes.FRQ_MONTHLY) ? true : false;
 
 		// Setting Event From Date Value
 		if (calFromGrcPeriod) {
@@ -134,8 +136,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				financeMain.setEventFromDate(fromDate);
 			} else {
 				Date eventFromDate = FrequencyUtil.getNextDate(finServiceInstruction.getRepayFrq(), 1,
-						finServiceInstruction.getFromDate(), "A", false, 0).getNextFrequencyDate();
+						finServiceInstruction.getFromDate(), "A", false, isMonthlyFrq ? 30 : 0).getNextFrequencyDate();
 				eventFromDate = DateUtility.getDBDate(DateUtility.format(eventFromDate, PennantConstants.DBDateFormat));
+				fromDate = eventFromDate;
 				financeMain.setEventFromDate(eventFromDate);
 			}
 
@@ -147,7 +150,6 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 						.getNextDate(frequency, 1, finServiceInstruction.getGrcPeriodEndDate(), "A", false, 0)
 						.getNextFrequencyDate();
 
-				String frqCode = frequency.substring(0, 1);
 				if (!StringUtils.equals(frqCode, FrequencyCodeTypes.FRQ_DAILY)
 						&& DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
 					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
@@ -191,17 +193,21 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				startRepayCalDate = DateUtility.getDBDate(
 						DateUtility.format(finServiceInstruction.getNextRepayDate(), PennantConstants.DBDateFormat));
 			} else {
-				startRepayCalDate = FrequencyUtil
-						.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
-						.getNextFrequencyDate();
-
-				String frqCode = frequency.substring(0, 1);
-				if (!StringUtils.equals(frqCode, FrequencyCodeTypes.FRQ_DAILY)
-						&& DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
-					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
+				if (isMonthlyFrq) {
+					startRepayCalDate = FrequencyUtil
+							.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 30)
 							.getNextFrequencyDate();
-				}
+				} else {
+					startRepayCalDate = FrequencyUtil
+							.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
+							.getNextFrequencyDate();
 
+					if (!StringUtils.equals(frqCode, FrequencyCodeTypes.FRQ_DAILY)
+							&& DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
+						startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
+								.getNextFrequencyDate();
+					}
+				}
 				startRepayCalDate = DateUtility
 						.getDBDate(DateUtility.format(startRepayCalDate, PennantConstants.DBDateFormat));
 			}
@@ -374,6 +380,10 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				if (StringUtils.isEmpty(curSchd.getPftDaysBasis())) {
 					curSchd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
 				}
+				curSchd.setActRate(financeMain.getGrcPftRate());
+				curSchd.setBaseRate(financeMain.getGraceBaseRate());
+				curSchd.setSplRate(financeMain.getGraceSpecialRate());
+				curSchd.setMrgRate(financeMain.getGrcMargin());
 			} else {
 				curSchd.setSchdMethod(financeMain.getScheduleMethod());
 				// Profit Days Basis Setting
@@ -401,7 +411,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				}
 			} else {
 				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
-					if (i != 0 && curSchd.getSchDate().compareTo(fromDate) > 0) {
+					if (i != 0 && curSchd.getSchDate().compareTo(fromDate) >= 0) {
 						curSchd.setCalculatedRate(
 								scheduleData.getFinanceScheduleDetails().get(i - 1).getCalculatedRate());
 					}
@@ -418,6 +428,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		 */
 
 		Date recalLockTill = finServiceInstruction.getFromDate();
+		boolean alwRecalLock = SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK);
 
 		// Rate Modification for All Modified Schedules
 		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -426,8 +437,30 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			if (i != 0) {
 				prvSchd = scheduleData.getFinanceScheduleDetails().get(i - 1);
 			}
-			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) >= 0) {
-				if (curSchd.getSchDate().compareTo(rateAppliedFromDate) >= 0) {
+			if (curSchd.getSchDate().compareTo(rateAppliedFromDate) >= 0) {
+
+				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
+					if (StringUtils.isEmpty(finServiceInstruction.getGraceBaseRate())) {
+						curSchd.setCalculatedRate(finServiceInstruction.getGrcPftRate() == null ? BigDecimal.ZERO
+								: finServiceInstruction.getGrcPftRate());
+					} else {
+						BigDecimal recalculateRate = RateUtil.rates(finServiceInstruction.getGraceBaseRate(),
+								financeMain.getFinCcy(), null, finServiceInstruction.getGrcMargin(),
+								curSchd.getSchDate(), financeMain.getGrcMinRate(), financeMain.getGrcMaxRate())
+								.getNetRefRateLoan();
+
+						curSchd.setCalculatedRate(recalculateRate);
+					}
+					curSchd.setBaseRate(StringUtils.trimToNull(finServiceInstruction.getGraceBaseRate()));
+					curSchd.setSplRate(StringUtils.trimToNull(finServiceInstruction.getGraceSpecialRate()));
+					curSchd.setMrgRate(
+							StringUtils.trimToNull(finServiceInstruction.getGraceBaseRate()) == null ? BigDecimal.ZERO
+									: finServiceInstruction.getGrcMargin() == null ? BigDecimal.ZERO
+											: finServiceInstruction.getGrcMargin());
+					curSchd.setActRate(finServiceInstruction.getGrcPftRate() == null ? BigDecimal.ZERO
+							: finServiceInstruction.getGrcPftRate());
+
+				} else {
 					if (StringUtils.isEmpty(finServiceInstruction.getBaseRate())) {
 						curSchd.setCalculatedRate(finServiceInstruction.getActualRate() == null ? BigDecimal.ZERO
 								: finServiceInstruction.getActualRate());
@@ -442,13 +475,15 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					curSchd.setSplRate(StringUtils.trimToNull(finServiceInstruction.getSplRate()));
 					curSchd.setMrgRate(
 							StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null ? BigDecimal.ZERO
-									: finServiceInstruction.getMargin());
-					curSchd.setActRate(finServiceInstruction.getActualRate());
+									: finServiceInstruction.getMargin() == null ? BigDecimal.ZERO
+											: finServiceInstruction.getMargin());
+					curSchd.setActRate(finServiceInstruction.getActualRate() == null ? BigDecimal.ZERO
+							: finServiceInstruction.getActualRate());
 				}
 			}
 
 			// Schedule Recalculation Locking Period Applicability
-			if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
+			if (alwRecalLock) {
 				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
 						&& (i != scheduleData.getFinanceScheduleDetails().size() - 1) && i != 0) {
 					curSchd.setRecalLock(true);
@@ -492,12 +527,14 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 		// Plan EMI Holidays Resetting after Rescheduling
 		if (scheduleData.getFinanceMain().isPlanEMIHAlw()) {
-			scheduleData.getFinanceMain().setEventFromDate(startRepayCalDate);
-			scheduleData.getFinanceMain().setEventToDate(scheduleData.getFinanceMain().getMaturityDate());
-			scheduleData.getFinanceMain().setRecalFromDate(startRepayCalDate);
-			scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getMaturityDate());
-			scheduleData.getFinanceMain().setRecalSchdMethod(scheduleData.getFinanceMain().getScheduleMethod());
-
+			if (!(financeMain.isStepFinance()
+					&& PennantConstants.STEPPING_CALC_AMT.equals(financeMain.getCalcOfSteps()))) {
+				scheduleData.getFinanceMain().setEventFromDate(startRepayCalDate);
+				scheduleData.getFinanceMain().setEventToDate(scheduleData.getFinanceMain().getMaturityDate());
+				scheduleData.getFinanceMain().setRecalFromDate(startRepayCalDate);
+				scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getMaturityDate());
+				scheduleData.getFinanceMain().setRecalSchdMethod(scheduleData.getFinanceMain().getScheduleMethod());
+			}
 			scheduleData.getFinanceMain().setEqualRepay(true);
 			scheduleData.getFinanceMain().setCalculateRepay(true);
 
@@ -572,6 +609,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		serviceInstruction.setFromDate(finMain.getEventFromDate());
 		serviceInstruction.setRepayFrq(finMain.getRepayFrq());
 		serviceInstruction.setRepayRvwFrq(finMain.getRepayRvwFrq());
+		serviceInstruction.setRepayPftFrq(finMain.getRepayPftFrq());
 
 		Date startCalFrom = finMain.getFinStartDate();
 		FinanceScheduleDetail prvSchd = null;

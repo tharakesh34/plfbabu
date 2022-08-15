@@ -53,8 +53,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtractService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -70,6 +68,8 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 /**
  * Data access layer implementation for <code>PresentmentHeader</code> with set of CRUD operations.
@@ -230,15 +230,13 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	private String extactPresentmentQuery(PresentmentHeader ph) {
-		StringBuilder sql = new StringBuilder();
-		sql = new StringBuilder();
-		sql.append(
-				" SELECT T2.FinID, T1.FINREFERENCE, T1.SCHDATE, T1.SCHSEQ, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE,");
-		sql.append(
-				" FEESCHD, SCHDFEEPAID, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T4.EMANDATESOURCE, T4.STATUS,");
-		sql.append(" T4.EXPIRYDATE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
-		sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY, T2.BPITREATMENT");
-		sql.append(", T2.GRCADVTYPE, T2.ADVTYPE, T2.GRCPERIODENDDATE,T2.ADVSTAGE ,T4.PARTNERBANKID, T1.TDSPAID");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" T2.FinID, T1.FINREFERENCE, T1.SCHDATE, T1.SCHSEQ, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID");
+		sql.append(", SCHDPFTPAID, DEFSCHDDATE, FEESCHD, SCHDFEEPAID, T2.MANDATEID");
+		sql.append(", T1.DEFSCHDDATE, T4.MANDATETYPE, T4.EMANDATESOURCE, T4.STATUS, T4.EXPIRYDATE");
+		sql.append(", T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE");
+		sql.append(", T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY, T2.BPITREATMENT, T2.GRCADVTYPE, T2.ADVTYPE");
+		sql.append(", T2.GRCPERIODENDDATE, T2.ADVSTAGE, T4.PARTNERBANKID, T1.TDSPAID, T8.DUEDATE, T2.PRODUCTCATEGORY");
 		sql.append(" FROM FINSCHEDULEDETAILS T1");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FinID = T2.FinID");
 		sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
@@ -246,10 +244,15 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(" INNER JOIN RMTBRANCHES T5 ON T5.BRANCHCODE = T2.FINBRANCH");
 		sql.append(" INNER JOIN BANKBRANCHES T6 ON T4.BANKBRANCHID = T6.BANKBRANCHID");
 		sql.append(" INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION");
-		sql.append(
-				" WHERE (T2.FINISACTIVE = ?) AND ((T1.PROFITSCHD + T1.PRINCIPALSCHD + T1.FEESCHD - T1.SCHDPFTPAID - T1.SCHDPRIPAID - T1.SCHDFEEPAID) > ?)");
-		sql.append(" AND ((SCHDATE >= ? AND SCHDATE <= ?)");
-		sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
+		sql.append(" LEFT JOIN (SELECT FinID, FEETYPEID, SUM(PAIDAMOUNT) PAIDAMOUNT");
+		sql.append(", SUM(ADVISEAMOUNT) ADVISEAMOUNT, DUEDATE");
+		sql.append(" FROM MANUALADVISE GROUP BY FinID, FEETYPEID, DUEDATE)");
+		sql.append(" T8 ON T3.OVERDRAFTTXNCHRGFEETYPE = T8.FEETYPEID");
+		sql.append(" AND T8.FinID = T2.FinID AND T8.DUEDATE = T1.SCHDATE");
+		sql.append(" WHERE (T2.FINISACTIVE = ?) AND ((T1.PROFITSCHD + T1.PRINCIPALSCHD ");
+		sql.append("+ T1.FEESCHD +  COALESCE((T8.ADVISEAMOUNT), 0) - T1.SCHDPFTPAID ");
+		sql.append(" - T1.SCHDPRIPAID - T1.SCHDFEEPAID -  COALESCE((T8.PAIDAMOUNT), 0)) > ?)");
+		sql.append(" AND ((SCHDATE >= ? AND SCHDATE <= ? OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?))) ");
 
 		if (StringUtils.trimToNull(ph.getMandateType()) != null) {
 			if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, ph.getMandateType())
@@ -307,9 +310,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		} else if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {
 			sql.append(" ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode");
 		} else if (isGroupByPartnerBank(ph)) {
-			sql.append(" ORDER BY  T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
+			sql.append(" ORDER BY T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
 		} else {
-			sql.append(" ORDER BY  T1.DEFSCHDDATE, T7.EntityCode");
+			sql.append(" ORDER BY T1.DEFSCHDDATE, T7.EntityCode");
 		}
 		return sql.toString();
 	}
@@ -321,6 +324,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public void extactPresentments(PresentmentHeader ph, PresentmentDetailExtractService service) {
+
+		ph.setAppDate(SysParamUtil.getAppDate());
+
 		String sql = extactPresentmentQuery(ph);
 
 		jdbcOperations.query(sql.toString(), ps -> {
@@ -369,13 +375,12 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	private String extactRePresentmentQuery(PresentmentHeader ph) {
-		StringBuilder sql = new StringBuilder();
-		sql = new StringBuilder();
-		sql.append(
-				" SELECT T2.FinID, T1.FINREFERENCE, T1.SCHDATE, T1.SCHSEQ, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE,");
-		sql.append(" FEESCHD, SCHDFEEPAID, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T4.STATUS, T4.PARTNERBANKID,");
-		sql.append(" T4.EXPIRYDATE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
-		sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY, T2.BPITREATMENT, T1.TDSPAID");
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" T2.FinID, T1.FINREFERENCE, T1.SCHDATE, T1.SCHSEQ, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID");
+		sql.append(", SCHDPFTPAID, DEFSCHDDATE, FEESCHD, SCHDFEEPAID, T2.MANDATEID, T1.DEFSCHDDATE");
+		sql.append(", T4.MANDATETYPE, T4.STATUS, T4.PARTNERBANKID, T4.EXPIRYDATE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE");
+		sql.append(", T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE, T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY");
+		sql.append(", T2.BPITREATMENT, T1.TDSPAID, T8.DUEDATE, T2.PRODUCTCATEGORY");
 		sql.append(" FROM FINSCHEDULEDETAILS T1");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FinID = T2.FinID");
 		sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
@@ -383,9 +388,15 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(" INNER JOIN RMTBRANCHES T5 ON T5.BRANCHCODE = T2.FINBRANCH");
 		sql.append(" INNER JOIN BANKBRANCHES T6 ON T4.BANKBRANCHID = T6.BANKBRANCHID");
 		sql.append(" INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION");
+		sql.append(" LEFT JOIN (SELECT FinID, FEETYPEID, SUM(PAIDAMOUNT) PAIDAMOUNT");
+		sql.append(", SUM(ADVISEAMOUNT) ADVISEAMOUNT,DUEDATE");
+		sql.append(" FROM MANUALADVISE GROUP BY FinID, FEETYPEID, DUEDATE) T8");
+		sql.append(" ON T3.OVERDRAFTTXNCHRGFEETYPE = T8.FEETYPEID");
+		sql.append(" AND T8.FinID = T2.FinID AND T8.DUEDATE = T1.SCHDATE");
+		sql.append(" WHERE (T2.FINISACTIVE = ?) AND ((T1.PROFITSCHD + T1.PRINCIPALSCHD");
+		sql.append(" + T1.FEESCHD + COALESCE((T8.ADVISEAMOUNT), 0) - T1.SCHDPFTPAID ");
 		sql.append(
-				" WHERE (T2.FINISACTIVE = ?) AND ((T1.PROFITSCHD + T1.PRINCIPALSCHD + T1.FEESCHD - T1.SCHDPFTPAID - T1.SCHDPRIPAID - T1.SCHDFEEPAID) > ?)");
-		sql.append(" AND ((SCHDATE >= ? AND SCHDATE <= ?)");
+				" - T1.SCHDPRIPAID - T1.SCHDFEEPAID - COALESCE((T8.PAIDAMOUNT), 0)) > ?) AND ((SCHDATE >= ? AND SCHDATE <= ?)");
 		sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
 
 		if (StringUtils.trimToNull(ph.getMandateType()) != null) {
@@ -448,6 +459,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public void extactRePresentments(PresentmentHeader ph, PresentmentDetailExtractService service) {
+
+		ph.setAppDate(SysParamUtil.getAppDate());
+
 		String sql = extactRePresentmentQuery(ph);
 
 		jdbcOperations.query(sql.toString(), ps -> {
@@ -499,8 +513,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				" DEFSCHDDATE, FEESCHD, SCHDFEEPAID, T2.MANDATEID, T1.DEFSCHDDATE, T2.FINREPAYMETHOD MANDATETYPE, T8.CHEQUESTATUS STATUS,");
 		sql.append(
 				" T8.CHEQUEDATE, T8.CHEQUEDETAILSID, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
-		sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY, T2.BPITREATMENT, T1.TDSPAID");
-		sql.append(", T2.GRCADVTYPE, T2.ADVTYPE, T2.GRCPERIODENDDATE,T2.ADVSTAGE");
+		sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY, T2.BPITREATMENT");
+		sql.append(", T2.GRCADVTYPE, T2.ADVTYPE, T2.GRCPERIODENDDATE,T2.ADVSTAGE, T1.TDSPAID, T2.PRODUCTCATEGORY");
 		sql.append(" FROM FINSCHEDULEDETAILS T1");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FinID = T2.FinID");
 		sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
@@ -617,7 +631,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				" DEFSCHDDATE, FEESCHD, SCHDFEEPAID, T2.MANDATEID, T1.DEFSCHDDATE, T2.FINREPAYMETHOD MANDATETYPE, T8.CHEQUESTATUS STATUS,");
 		sql.append(
 				" T8.CHEQUEDATE, T8.CHEQUEDETAILSID, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
-		sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY, T2.BPITREATMENT, T1.TDSPAID");
+		sql.append(
+				" T1.INSTNUMBER EMINO, T2.FINBRANCH, T1.BPIORHOLIDAY, T2.BPITREATMENT, T1.TDSPAID, T2.PRODUCTCATEGORY");
 		sql.append(" FROM FINSCHEDULEDETAILS T1");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FinID = T2.FinID");
 		sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
@@ -1092,7 +1107,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, pb.AccountNo, pb.AcType, pb.PartnerBankId");
 		sql.append(" From PresentmentDetails pd ");
 		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
-		sql.append(" Inner join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
+		sql.append(" Left join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
 		sql.append(" Inner join Financemain fm on pd.FinID = fm.FinID");
 		sql.append(" Where fm.CustId = ? and pd.SchDate = ? and pd.Status = ?");
 
@@ -1127,14 +1142,17 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	@Override
-	public void updateReceptId(long id, long receiptID) {
+	public void updateReceptId(PresentmentDetail pd) {
 		String sql = "Update PresentmentDetails set ReceiptId = ? Where ID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		this.jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, receiptID);
-			ps.setLong(2, id);
+			int index = 1;
+
+			ps.setLong(index++, pd.getReceiptID());
+
+			ps.setLong(index++, pd.getId());
 		});
 	}
 
@@ -1667,7 +1685,12 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql, Integer.class, headerId);
+		try {
+			return jdbcOperations.queryForObject(sql, Integer.class, headerId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
 	}
 
 	@Override
@@ -1676,7 +1699,12 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql, Integer.class, headerId);
+		try {
+			return jdbcOperations.queryForObject(sql, Integer.class, headerId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
 	}
 
 	@Override
@@ -2102,4 +2130,38 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			return null;
 		}
 	}
+
+	@Override
+	public int getApprovedPresentmentCount(String finReference) {
+		String sql = "Select Count(FinReference) From PresentmentDetails Where FinReference = ? and Status = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, finReference, RepayConstants.PEXC_APPROV);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return 0;
+	}
+
+	@Override
+	public void updateReceptIdAndAmounts(PresentmentDetail pd) {
+		String sql = "Update PresentmentDetails set ReceiptId = ?, PresentmentAmt = ?, Lppamount = ?, BounceAmount = ? Where ID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setLong(index++, pd.getReceiptID());
+			ps.setBigDecimal(index++, pd.getPresentmentAmt());
+			ps.setBigDecimal(index++, pd.getLppAmount());
+			ps.setBigDecimal(index++, pd.getBounceAmount());
+
+			ps.setLong(index++, pd.getId());
+		});
+	}
+
 }

@@ -9,6 +9,14 @@
 
 		<borderlayout id="borderlayoutRateChange">
 			<center border="none" autoscroll="false">
+			<tabbox id="tabBoxIndexCenter" width="99%"
+					height="100%">
+					<tabs id="tabsIndexCenter">
+						<tab id="recalculateDetailsTab"
+							label="${c:l('label_RecalculateDialog_RecalculateDetails')}" />
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel>
 				<groupbox id="gb_RecalculateDetails" height="250px" style="border:1px solid #F38C60;">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
@@ -72,9 +80,12 @@
 						</rows>
 					</grid>
 				</groupbox>
+				</tabpanel>
+					</tabpanels>
+				</tabbox>
 			</center>
 			<south border="none" margins="1,0,0,0" size="30px" splittable="false">
-				<div id="divSouth" align="left" width="100%">
+				<div id="divSouth" align="left" width="99%">
 					<grid>
 						<rows>
 							<row valign="middle">

@@ -6506,7 +6506,7 @@
 		</sql>
 	</changeSet> 
 	
-	<changeSet id="PSD#167702.1" author="ravi.m">
+	<changeSet id="PSD#167702.2" author="ravi.m">
 		<sql>
 			<![CDATA[
 			  	DELETE FROM LimitFldCriterias WHERE QBFLDTYPE = 'bigint' and QBSTFLD  = 'calvalue' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='= , != , > , >= , < , <=';
@@ -6620,8 +6620,24 @@
 		</sql>
 	</changeSet> 
 	
+	<changeSet id="DE#200_pre" author="Vijaya.a" dbms="oracle">
+		<sql>
+			<![CDATA[
+				drop index IX_OLUMB_TOUSRID;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="DE#200" author="Vijaya.a">
 		<modifyDataType tableName="OFFLINEUSRMESSAGESBACKUP" columnName="TOUSRID" newDataType="VARCHAR(100)" />
+	</changeSet>
+
+	<changeSet id="DE#200.1_post" author="Vijaya.a" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_OLUMB_TOUSRID ON OFFLINEUSRMESSAGESBACKUP (NLSSORT("TOUSRID",'nls_sort=''BINARY_CI''')) ;
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="DE#200_post" author="Vijaya.a">

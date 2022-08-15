@@ -37,25 +37,6 @@
 			maxValue="999999999999999999" />
 	</changeSet>
 
-	<changeSet author="murthy.y" id="DE#485.1">
-		<createTable tableName="App_SessionValidation">
-			<column name="EntityCode" type="varchar(8)">
-				<constraints nullable="false" />
-			</column>
-			<column name="AgentID" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="UserToken" type="varchar(10)" />
-			<column name="UserTokenExpiry" type="datetime" />
-			<column name="RegistrationId" type="varchar(300)" />
-			<column name="Flag" type="char(1)" defaultValue="0" />
-		</createTable>
-	</changeSet>
-
-	<changeSet author="murthy.y" id="DE#485.2">
-		<addPrimaryKey columnNames="EntityCode, AgentID" tableName="App_SessionValidation" />
-	</changeSet>
-
 	<changeSet id="DE#414" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -382,16 +363,6 @@
 				update Dedupfields set FieldName = 'CustCompName' where FieldDesc = 'Company Name' and QueryModule = 'SMEBlacklist';
 			]]>
 		</sql>
-	</changeSet>
-	
-	<changeSet id="DE#1201" author="saiteja.r">
-		<addUniqueConstraint columnNames="custcrcpr, custctgcode" constraintName="uk_cust_ctgcode_crcpr"
-			tableName="CUSTOMERS" />
-	</changeSet>
-
-	<changeSet id="DE#1201.1" author="saiteja.r">
-		<addUniqueConstraint columnNames="custcrcpr, custctgcode" constraintName="uk_cust_ctgcode_crcpr_temp"
-			tableName="CUSTOMERS_TEMP" />
 	</changeSet>
 	
 	<changeSet id="105" author="keerthi.P">

@@ -34,11 +34,13 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -55,8 +57,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.customermasters.CustomerDocumentService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.PennantConstants;
@@ -75,11 +76,11 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private CustomerDetailsService customerDetailsService;
 	private DocumentTypeDAO documentTypeDAO;
 	private FinanceWorkFlowService financeWorkFlowService;
 	private DocumentDetailsDAO documentDetailsDAO;
-	private CustomerDocumentService customerDocumentService;
+	private CustomerDocumentDAO customerDocumentDAO;
+	private CustomerDataService customerDataService;
 
 	public FinCovenantTypeServiceImpl() {
 		super();
@@ -435,7 +436,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		// Finance Customer Details
 
 		if (custID != 0 && custID != Long.MIN_VALUE) {
-			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
+			fd.setCustomerDetails(customerDataService.getCustomerDetailsbyID(custID, true, "_View"));
 		}
 
 		List<FinCovenantType> covenantTypes = finCovenantTypeDAO.getFinCovenantDocTypeByFinRef(finReference, "_View",
@@ -499,8 +500,8 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
 				return errorDetails;
 			} else {
-				CustomerDocument custdocuments = customerDocumentService.getApprovedCustomerDocumentById(fm.getCustID(),
-						covenantType);
+				CustomerDocument custdocuments = customerDocumentDAO.getCustomerDocumentById(fm.getCustID(),
+						covenantType, "_AView");
 
 				if (custdocuments != null) {
 					if (StringUtils.equals(covenantType, custdocuments.getCustDocCategory())) {
@@ -658,10 +659,6 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
 		this.documentTypeDAO = documentTypeDAO;
 	}
@@ -674,8 +671,9 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
-	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
-		this.customerDocumentService = customerDocumentService;
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

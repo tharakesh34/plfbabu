@@ -51,12 +51,15 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.finance.manual.schedule.ManualScheduleHeader;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
+import com.pennanttech.pff.overdraft.model.VariableOverdraftSchdHeader;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
 		"feeDues", "foreClosureFees", "stepPolicyDetails", "financeScheduleDetails", "finODPenaltyRate",
@@ -76,7 +79,7 @@ public class FinScheduleData implements Serializable {
 
 	@XmlElement(name = "financeDetail")
 	private FinanceMain financeMain = null;
-	private Map<Date, FinanceScheduleDetail> scheduleMap;
+	private Map<Date, FinanceScheduleDetail> scheduleMap = new HashMap<>();
 
 	@XmlElement(name = "step")
 	private List<FinanceStepPolicyDetail> stepPolicyDetails = new ArrayList<>(1);
@@ -187,6 +190,10 @@ public class FinScheduleData implements Serializable {
 
 	private RestructureDetail restructureDetail;
 	private boolean equalInst;
+
+	private String method;
+	private ManualScheduleHeader manualScheduleHeader;
+	private VariableOverdraftSchdHeader variableOverdraftSchdHeader;
 	private String moduleDefiner = "";
 
 	public FinScheduleData() {
@@ -283,7 +290,11 @@ public class FinScheduleData implements Serializable {
 		entity.setOldFinReference(this.oldFinReference);
 		entity.setRestructureDetail(this.restructureDetail == null ? null : this.restructureDetail.copyEntity());
 		entity.setEqualInst(this.equalInst);
+		entity.setMethod(this.method);
+		entity.setManualScheduleHeader(this.manualScheduleHeader);
+		entity.setVariableOverdraftSchdHeader(this.variableOverdraftSchdHeader);
 		entity.setModuleDefiner(this.moduleDefiner);
+
 		return entity;
 	}
 
@@ -842,6 +853,30 @@ public class FinScheduleData implements Serializable {
 		this.equalInst = equalInst;
 	}
 
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	public ManualScheduleHeader getManualScheduleHeader() {
+		return manualScheduleHeader;
+	}
+
+	public void setManualScheduleHeader(ManualScheduleHeader manualScheduleHeader) {
+		this.manualScheduleHeader = manualScheduleHeader;
+	}
+
+	public VariableOverdraftSchdHeader getVariableOverdraftSchdHeader() {
+		return variableOverdraftSchdHeader;
+	}
+
+	public void setVariableOverdraftSchdHeader(VariableOverdraftSchdHeader variableOverdraftSchdHeader) {
+		this.variableOverdraftSchdHeader = variableOverdraftSchdHeader;
+	}
+
 	public String getModuleDefiner() {
 		return moduleDefiner;
 	}
@@ -849,5 +884,4 @@ public class FinScheduleData implements Serializable {
 	public void setModuleDefiner(String moduleDefiner) {
 		this.moduleDefiner = moduleDefiner;
 	}
-
 }

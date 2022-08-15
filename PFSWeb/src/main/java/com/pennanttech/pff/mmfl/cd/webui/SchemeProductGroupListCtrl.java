@@ -22,8 +22,8 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
-import com.pennanttech.pff.mmfl.cd.service.SchemeProductGroupService;
+import com.pennanttech.pff.cd.model.SchemeProductGroup;
+import com.pennanttech.pff.cd.service.SchemeProductGroupService;
 
 public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGroup> {
 	private static final long serialVersionUID = 1L;

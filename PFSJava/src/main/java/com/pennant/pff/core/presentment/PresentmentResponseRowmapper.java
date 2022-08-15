@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 
 public class PresentmentResponseRowmapper implements RowMapper<PresentmentDetail> {

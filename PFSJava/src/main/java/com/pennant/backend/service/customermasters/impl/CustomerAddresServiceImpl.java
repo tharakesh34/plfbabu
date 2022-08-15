@@ -471,7 +471,8 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 					return;
 				}
 			} else {
-				if (address.getCustAddrPriority() == ca.getCustAddrPriority()) {
+				if (ca.getCustAddrPriority() == address.getCustAddrPriority()
+						&& Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == ca.getCustAddrPriority()) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Priority";
 					valueParm[1] = String.valueOf(ca.getCustAddrPriority());

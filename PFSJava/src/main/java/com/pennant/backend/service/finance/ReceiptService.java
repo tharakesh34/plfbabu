@@ -28,7 +28,8 @@ import com.pennanttech.pff.receipt.ReceiptPurpose;
 
 public interface ReceiptService {
 
-	FinReceiptData getFinReceiptDataById(String finReference, String eventCode, String procEditEvent, String userRole);
+	FinReceiptData getFinReceiptDataById(String finReference, Date valueDate, String eventCode, String procEditEvent,
+			String userRole);
 
 	FinReceiptData getFinReceiptDataByReceiptId(long receiptId, String eventCode, String procEditEvent,
 			String userRole);
@@ -126,4 +127,8 @@ public interface ReceiptService {
 	ErrorDetail checkInprocessReceipts(long finID, ReceiptPurpose receiptPurpose);
 
 	void setFinanceData(FinReceiptData rd);
+
+	BigDecimal getReceiptAmountPerMonthByFinreference(Date receiptDate, List<String> finreference);
+
+	FinReceiptHeader getInititatedReceipts(String reference);
 }

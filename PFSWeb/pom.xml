@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>6.0.0_R4.17</version>
+		<version>6.0.0_R4.14</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -276,14 +276,14 @@
 		</dependency>
 
 		<dependency>
-				<groupId>com.pennanttech.framework.components</groupId>
-				<artifactId>data-engine</artifactId>
+			<groupId>com.pennanttech.framework.components</groupId>
+			<artifactId>data-engine</artifactId>
 		</dependency>
 		<!-- NumberinWords -->
 		<dependency>
-              <groupId>com.pennanttech</groupId>
-              <artifactId>number-words</artifactId>
-              <version>1.0.0</version>
+			<groupId>com.pennanttech</groupId>
+			<artifactId>number-words</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>

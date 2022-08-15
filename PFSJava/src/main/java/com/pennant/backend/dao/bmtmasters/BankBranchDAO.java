@@ -58,4 +58,10 @@ public interface BankBranchDAO {
 
 	int getAccNoLengthByIFSC(String ifscCode, String type);
 
+	BankBranch getBankBranchByIFSC(String ifsc, String string);
+
+	int getBankBranchCountByIFSC(String iFSC, String type);
+
+	BankBranch getBankBranchByIFSCMICR(String iFSC, String micr);
+
 }

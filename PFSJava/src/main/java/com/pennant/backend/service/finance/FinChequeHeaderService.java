@@ -1,5 +1,6 @@
 package com.pennant.backend.service.finance;
 
+import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.ChequeHeader;
@@ -20,4 +21,8 @@ public interface FinChequeHeaderService {
 	ChequeHeader getChequeHeaderByRef(long finID);
 
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage);
+
+	List<AuditDetail> processingChequeDetailList(List<AuditDetail> auditDetails, TableType type, long headerID);
+
+	List<AuditDetail> setChequeDetailAuditData(ChequeHeader chequeHeader, String auditTranType, String method);
 }

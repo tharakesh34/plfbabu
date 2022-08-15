@@ -34,6 +34,12 @@
 
 							<extendedcombobox id="finType" />
 						</row>
+						<row spans="1,3">
+							<label id="label_NpaTemplateType"
+								value="${c:l('label_SelectNPAProvisionHeaderDialog_NPAType.value')}" />
+
+							<extendedcombobox id="npaTemplateType" />
+						</row>
 						<row visible="true" spans="2,1">
 							<space />
 							<button id="btnProceed" style="float:right;"

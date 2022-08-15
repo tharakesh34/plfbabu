@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -448,23 +449,23 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		source.addValue("Status", "C");
 		source.addValue("ReceiptPurpose", "FeePayment");
 
-		StringBuilder selectSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 
-		selectSql.append(" select SUM(Amount) Amount from ( select coalesce(sum(T2.AMOUNT), 0) Amount ");
-		selectSql.append(" From FinReceiptHeader_Temp T1 ");
-		selectSql.append(" Inner Join FinReceiptDetail_Temp T2 on T1.ReceiptID = T2.RECEIPTID");
-		selectSql.append(" where T1.Reference = :FinReference");
-		selectSql.append(" UNION ALL ");
-		selectSql.append(" select coalesce(sum(T2.AMOUNT), 0) Amount ");
-		selectSql.append(" From FinReceiptHeader T1 ");
-		selectSql.append(" Inner Join FinReceiptDetail T2 on T1.ReceiptID = T2.RECEIPTID");
-		selectSql.append(
-				" where ReceiptPurpose = :ReceiptPurpose And T2.Status <> :Status And T1.Reference = :FinReference and NOT (EXISTS ( SELECT 1 FROM FinReceiptHeader_Temp WHERE FinReceiptHeader_Temp.Reference = T1.Reference))) T");
+		sql.append(" select SUM(Amount) Amount from ( select coalesce(sum(T2.AMOUNT), 0) Amount ");
+		sql.append(" From FinReceiptHeader_Temp T1 ");
+		sql.append(" Inner Join FinReceiptDetail_Temp T2 on T1.ReceiptID = T2.RECEIPTID");
+		sql.append(" where T1.ExtReference = :FinReference");
+		sql.append(" UNION ALL ");
+		sql.append(" select coalesce(sum(T2.AMOUNT), 0) Amount ");
+		sql.append(" From FinReceiptHeader T1 ");
+		sql.append(" Inner Join FinReceiptDetail T2 on T1.ReceiptID = T2.RECEIPTID");
+		sql.append(
+				" where ReceiptPurpose = :ReceiptPurpose And T2.Status <> :Status And T1.ExtReference = :FinReference and NOT (EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_Temp WHERE FINRECEIPTHEADER_Temp.ExtReference = T1.ExtReference))) T");
 
-		logger.trace(Literal.SQL + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			totalAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+			totalAmount = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
 			totalAmount = BigDecimal.ZERO;
 		}
@@ -673,5 +674,74 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		return jdbcOperations.queryForObject(sql, Long.class, finID, FinServiceEvent.SCHDRPY, receiptMode,
 				partnerBankId, transactionRef, RepayConstants.PAYSTATUS_APPROVED);
+	}
+
+	@Override
+	public BigDecimal getReceiptAmountPerMonthByFinreference(Date receiptDate, List<String> finreference) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("RECEIVEDDATE", receiptDate);
+		source.addValue("PAYMENTTYPE", "CHEQUE");
+		source.addValue("Reference", finreference);
+
+		StringBuilder sql = new StringBuilder("Select SUM(ReceiptAmount) from FinReceiptDetail_View");
+		sql.append(" Where Status not in (?, ?) and ReceivedDate = ? and");
+		sql.append(" PaymentType = ? and Reference in (");
+		sql.append(finreference.stream().map(e -> "?").collect(Collectors.joining(",")));
+		sql.append(")");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] obj = new Object[finreference.size() + 3];
+		obj[0] = "C";
+		obj[1] = "B";
+		obj[2] = JdbcUtil.getDate(receiptDate);
+		obj[3] = "CHEQUE";
+		for (int i = 4; i < finreference.size(); i++) {
+			obj[i] = finreference.get(i);
+		}
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, obj);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
+
+	@Override
+	public List<FinReceiptDetail> getFinReceiptDetailByExternalReference(String extReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" T1.Reference, T2.PaymentType, T1.ReceiptPurpose");
+		sql.append(", T2.TransactionRef, T2.Amount, T2.ReceivedDate");
+		sql.append(" From FINRECEIPTHEADER T1");
+		sql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+		sql.append(" Where extReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinReceiptDetail trd = new FinReceiptDetail();
+
+			trd.setReference(rs.getString("Reference"));
+			trd.setPaymentType(rs.getString("PaymentType"));
+			trd.setReceiptPurpose(rs.getString("ReceiptPurpose"));
+			trd.setTransactionRef(rs.getString("TransactionRef"));
+			trd.setAmount(rs.getBigDecimal("Amount"));
+			trd.setReceivedDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
+
+			return trd;
+		}, extReference);
+	}
+
+	@Override
+	public void updatePartnerBankByReceiptId(long receiptID, Long partnerBankId) {
+		String sql = "Update FinReceiptDetail Set FundingAc = ? Where ReceiptID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, partnerBankId);
+			ps.setLong(2, receiptID);
+		});
 	}
 }

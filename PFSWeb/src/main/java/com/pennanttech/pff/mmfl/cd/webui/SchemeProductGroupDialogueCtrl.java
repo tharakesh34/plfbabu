@@ -32,8 +32,8 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
-import com.pennanttech.pff.mmfl.cd.service.SchemeProductGroupService;
+import com.pennanttech.pff.cd.model.SchemeProductGroup;
+import com.pennanttech.pff.cd.service.SchemeProductGroupService;
 
 public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGroup> {
 	private static final long serialVersionUID = 1L;
@@ -253,7 +253,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 
 		this.schemeId.setText(schemeProductGroup.getPromotionId());
 		this.productGroupCode.setValue(schemeProductGroup.getProductGroupCode());
-		this.posVendor.setValue(schemeProductGroup.isPosVendor() ? "1" : "0");
+		this.posVendor.setValue(schemeProductGroup.isPOSVendor() ? "1" : "0");
 		this.active.setChecked(schemeProductGroup.isActive());
 		if (schemeProductGroup.isNewRecord()
 				|| (schemeProductGroup.getRecordType() != null ? schemeProductGroup.getRecordType() : "")
@@ -289,7 +289,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 		}
 
 		try {
-			schemeProductGroup.setPosVendor(this.posVendor.getValue().equals("1"));
+			schemeProductGroup.setPOSVendor(this.posVendor.getValue().equals("1"));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

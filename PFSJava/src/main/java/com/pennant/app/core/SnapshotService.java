@@ -61,13 +61,13 @@ public class SnapshotService {
 			+ " FINCURODPRI, FINCURODPFT, FINMAXODAMT, FINMAXODPRI, FINMAXODPFT, GRACEDAYS, INCGRACEDAYS, FINCURODDAYS, TOTPENALTYAMT,"
 			+ " TOTWAIVED, TOTPENALTYPAID, TOTPENALTYBAL, FINLMDFDATE, LPIAMT, LPIPAID, LPIBAL, LPIWAIVED, ODINCGRCDAYS, ODCHARGETYPE,"
 			+ " ODGRACEDAYS, ODCHARGECALON , ODCHARGEAMTORPERC, ODALLOWWAIVER, ODMAXWAIVERPERC, APPLYODPENALTY, ODMINCAPAMOUNT, ODRULECODE,"
-			+ " LpCpz, LpCpzAmount, LpCurCpzBal, LockODRecalCal)"
+			+ " LpCpz, LpCpzAmount, LpCurCpzBal, LockODRecalCal, PresentmentId, CurOverdraftTxnChrg, MaxOverdraftTxnChrg)"
 
 			+ " SELECT :AppDate, FINREFERENCE, FINODSCHDDATE, FINODFOR, FINBRANCH, FINTYPE, CUSTID, FINODTILLDATE, FINCURODAMT, "
 			+ " FINCURODPRI, FINCURODPFT, FINMAXODAMT, FINMAXODPRI, FINMAXODPFT, GRACEDAYS, INCGRACEDAYS, FINCURODDAYS, TOTPENALTYAMT,"
 			+ " TOTWAIVED, TOTPENALTYPAID, TOTPENALTYBAL, FINLMDFDATE, LPIAMT, LPIPAID, LPIBAL, LPIWAIVED, ODINCGRCDAYS, ODCHARGETYPE,"
 			+ " ODGRACEDAYS, ODCHARGECALON , ODCHARGEAMTORPERC, ODALLOWWAIVER, ODMAXWAIVERPERC, APPLYODPENALTY, ODMINCAPAMOUNT, ODRULECODE,"
-			+ " LpCpz, LpCpzAmount, LpCurCpzBal, LockODRecalCal FROM FINODDETAILS";
+			+ " LpCpz, LpCpzAmount, LpCurCpzBal, LockODRecalCal, PresentmentId, CurOverdraftTxnChrg, MaxOverdraftTxnChrg FROM FINODDETAILS";
 
 	private static final String snapshotQuery_FinExcessAmount = "INSERT INTO FINEXCESSAMOUNT_SNAPSHOT ("
 			+ " APPDATE, EXCESSID, FINREFERENCE, CUSTID, AMOUNTTYPE, AMOUNT, UTILISEDAMT, RESERVEDAMT, BALANCEAMT)"
@@ -97,13 +97,13 @@ public class SnapshotService {
 			+ ", Remarks, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId"
 			+ ", RecordType, WorkFlowId, BounceID, ReceiptID, ValueDate, PostDate, reservedamt, balanceamt"
 			+ ", PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedIGST, WaivedUGST"
-			+ ", WaivedCESS, PaidCESS, FinSource, DueCreation, LinkedTranID, TdsPaid, HoldDue)"
+			+ ", WaivedCESS, PaidCESS, FinSource, DueCreation, LinkedTranID, TdsPaid, HoldDue, PresentmentId, Status, Reason)"
 
 			+ " SELECT :AppDate,AdviseID, AdviseType, MA.FinReference, FM.CustID, FeeTypeID, Sequence, AdviseAmount, PaidAmount, WaivedAmount"
 			+ ", Remarks, MA.Version, MA.LastMntBy, MA.LastMntOn, MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId"
 			+ ", MA.RecordType, MA.WorkFlowId, BounceID, ReceiptID, ValueDate, PostDate, reservedamt, balanceamt"
 			+ ", PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedIGST, WaivedUGST"
-			+ ", WaivedCESS, PaidCESS, FinSource, DueCreation, LinkedTranID, TdsPaid, HoldDue From ManualAdvise MA"
+			+ ", WaivedCESS, PaidCESS, FinSource, DueCreation, LinkedTranID, TdsPaid, HoldDue, PresentmentId, Status, Reason From ManualAdvise MA"
 			+ " Inner Join FinanceMain FM ON FM.FinReference = MA.FinReference";
 
 	public int doSnapshotPreparation(Date date) throws Exception {

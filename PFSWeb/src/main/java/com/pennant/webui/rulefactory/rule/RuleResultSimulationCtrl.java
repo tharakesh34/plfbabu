@@ -317,17 +317,23 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 
 			case OBJECT:
 				RuleResult ruleResult = (RuleResult) object;
-				if (ruleResult.getValue() != null) {
-					String result = "Result Value : " + ruleResult.getValue();
+				String result = "No Result";
+				if (ruleResult != null) {
+					if (ruleResult.getValue() == null) {
+						result = "Provision Percentage: " + ruleResult.getProvPercentage() + ", Provision Amount: "
+								+ ruleResult.getProvAmount() + ", Vas Provision Percentage: "
+								+ ruleResult.getVasProvPercentage() + ", Vas Provision Amount: "
+								+ ruleResult.getVasProvAmount();
+					} else {
+						result = "Result Value : " + ruleResult.getValue();
+					}
+
 					if (ruleResult.getDeviation() != null) {
 						result += "\t Deviation : " + ruleResult.getDeviation();
 					}
 					resultValue = result;
-				} else {
-					resultValue = "No Result";
 				}
 				break;
-
 			case STRING:
 			case CALCSTRING:
 				resultValue = object.toString().trim();

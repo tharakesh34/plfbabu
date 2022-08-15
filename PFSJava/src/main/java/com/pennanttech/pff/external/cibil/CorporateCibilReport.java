@@ -8,7 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +27,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
@@ -102,11 +105,28 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 		initlize();
 
+		if (memberDetails == null) {
+			logger.info("Member Details are not configured for the Corporate customers");
+			return;
+		}
+
 		File cibilFile = createFile();
+
+		if ("XLSX".equals(memberDetails.getFileFormate())) {
+			cibilFile = createXlsFile();
+		} else {
+			cibilFile = createFile();
+		}
+
+		String delimiter = StringUtils.trimToNull(memberDetails.getDelimiter());
+
+		if (delimiter == null) {
+			delimiter = "|";
+		}
 
 		final CSVWriter writer = new CSVWriter(new BufferedWriter(new FileWriter(cibilFile)));
 		writer.setFieldNamesInFirstRow(false);
-		writer.setFieldSeparator('|');
+		writer.setFieldSeparator(delimiter.charAt(0));
 		writer.open();
 		try {
 
@@ -130,9 +150,6 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 			totalRecords = cibilService.getotalRecords(PennantConstants.PFF_CUSTCTG_CORP);
 			EXTRACT_STATUS.setTotalRecords(totalRecords);
-
-			// updating the Cibil_File_Info
-			cibilService.updateFileStatus(fileInfo);
 
 			if (totalRecords > 0) {
 				new HeaderSegment(writer).write();
@@ -230,6 +247,31 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private File createXlsFile() throws Exception {
+		logger.debug("Creating the file");
+
+		File reportName = null;
+		String reportLocation = memberDetails.getFilePath();
+		String memberId = memberDetails.getMemberId();
+		File directory = new File(reportLocation);
+
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+
+		StringBuilder builder = new StringBuilder(reportLocation);
+		builder.append(File.separator);
+		builder.append(memberId);
+		builder.append("-");
+		builder.append(DateUtil.getSysDate("ddMMYYYY"));
+		builder.append("-");
+		builder.append(DateUtil.getSysDate("Hms"));
+		builder.append(".xlsx");
+		reportName = new File(builder.toString());
+		reportName.createNewFile();
+		return reportName;
+	}
+
 	private File createFile() throws Exception {
 		logger.debug("Creating the file");
 		File reportName = null;
@@ -276,10 +318,11 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			addField(record, "");
 
 			/* Date of Creation & Certification of Input File */
-			addField(record, DateUtility.getAppDate(DATE_FORMAT));
+			addField(record, SysParamUtil.getAppDate(DATE_FORMAT));
 
 			/* Reporting / Cycle Date */
-			addField(record, DateUtility.getAppDate(DATE_FORMAT));
+			Date prvMonthEnd = DateUtil.addMonths(DateUtil.getMonthEnd(SysParamUtil.getAppDate()), -1);
+			addField(record, DateUtil.format(prvMonthEnd, DATE_FORMAT));
 
 			/* Information Type */
 			addField(record, "01");
@@ -809,26 +852,11 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 				/* Current Balance / Limit Utilized /Mark to Marketr */
 				int odDays = Integer.parseInt(getOdDays(loan.getCurODDays()));
-				BigDecimal currentBalance = BigDecimal.ZERO;
 				String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
 
-				if (odDays > 0) {
-					BigDecimal futureSchedulePrincipal = getAmount(loan.getFutureSchedulePrin());
-					currentBalance = futureSchedulePrincipal;
-				} else {
-					currentBalance = getAmount(loan.getFutureSchedulePrin());
-				}
+				Map<String, BigDecimal> amountMap = getCurrentBalAndOverDueAmt(loan);
 
-				if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
-					currentBalance = BigDecimal.ZERO;
-				}
-
-				// and overdue amount should be 0
-				if (StringUtils.equals("C", closingstatus)) {
-					currentBalance = BigDecimal.ZERO;
-				}
-
-				addField(record, currentBalance(loan));
+				addField(record, amountMap.get("currentBalance"));
 
 				/* Notional Amount of Out-standing Restructured Contract */
 				addField(record, "");
@@ -882,8 +910,8 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				}
 
 				/* Amount Overdue / Limit Overdue */
-				if (amountOverdue(loan).compareTo(BigDecimal.ZERO) > 0) {
-					addField(record, amountOverdue(loan));
+				if (amountMap.get("amountOverdue").compareTo(BigDecimal.ZERO) > 0) {
+					addField(record, amountMap.get("amountOverdue"));
 				} else {
 					addField(record, "0");
 				}
@@ -960,6 +988,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 				/* Installment Amount */
 				addField(record, getAmount(loan.getInstalmentPaid()));
+				addField(record, PennantApplicationUtil.formateAmount(getAmount(loan.getInstalmentPaid()), 2));
 
 				/* Last Repaid Amount */
 				BigDecimal lastRepaidAmount = cibilService.getLastRepaidAmount(loan.getFinReference());
@@ -1655,8 +1684,11 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		addField(record, value.toString());
 	}
 
-	private BigDecimal currentBalance(FinanceEnquiry customerFinance) {
+	private Map<String, BigDecimal> getCurrentBalAndOverDueAmt(FinanceEnquiry customerFinance) {
+		Map<String, BigDecimal> map = new HashMap<>();
 		BigDecimal currentBalance = BigDecimal.ZERO;
+		BigDecimal amountOverdue = BigDecimal.ZERO;
+
 		String closingstatus = StringUtils.trimToEmpty(customerFinance.getClosingStatus());
 		FinanceSummary finSummary = new FinanceSummary();
 		FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(customerFinance.getFinID());
@@ -1667,20 +1699,27 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			finSummary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
 		}
 		FinanceSummary summary = cibilService.getFinanceProfitDetails(customerFinance.getFinID());
-		int formatter = CurrencyUtil.getFormat(summary.getFinCcy());
+		int formatter = ImplementationConstants.BASE_CCY_EDT_FIELD;
 
 		BigDecimal principalOutstanding = summary.getOutStandPrincipal().subtract(summary.getTotalCpz());
-		currentBalance = PennantApplicationUtil.formateAmount(
-				principalOutstanding.add(summary.getTotalOverDue()).add(finSummary.getFinODTotPenaltyBal()), formatter);
+		BigDecimal overDueAmount = summary.getTotalOverDue().add(finSummary.getFinODTotPenaltyBal());
 
-		if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
+		currentBalance = PennantApplicationUtil.formateAmount(principalOutstanding.add(overDueAmount), formatter);
+
+		if (currentBalance.compareTo(BigDecimal.ZERO) < 0 || StringUtils.equals("C", closingstatus)) {
 			currentBalance = BigDecimal.ZERO;
 		}
-		// and overdue amount should be 0
-		if (StringUtils.equals("C", closingstatus)) {
-			currentBalance = BigDecimal.ZERO;
+
+		map.put("currentBalance", currentBalance);
+
+		amountOverdue = PennantApplicationUtil.formateAmount(overDueAmount, formatter);
+
+		if (amountOverdue.compareTo(BigDecimal.ZERO) < 0 || StringUtils.equals("C", closingstatus)) {
+			amountOverdue = BigDecimal.ZERO;
 		}
-		return currentBalance;
+		map.put("amountOverdue", amountOverdue);
+
+		return map;
 	}
 
 	public FinODDetailsDAO getFinODDetailsDAO() {

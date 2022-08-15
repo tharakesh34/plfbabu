@@ -590,10 +590,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		listDeletion(finID, "");
 		listSave(schdData, "", 0);
 
-		// Save Fee Charges List
-		// =======================================
-		saveFeeChargeList(schdData, fd.getModuleDefiner(), false, "");
-
 		List<DocumentDetails> docuemnts = fd.getDocumentDetailsList();
 		if (docuemnts != null && docuemnts.size() > 0) {
 			List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
@@ -751,7 +747,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		FinScheduleData schdData = fd.getFinScheduleData();
 
 		FinanceMain fm = schdData.getFinanceMain();
-		String promotionCode = fm.getPromotionCode();
 
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 
@@ -770,14 +765,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		}
 
 		aeEvent = AEAmounts.procAEAmounts(fm, schedules, pd, eventCode, curBDay, curBDay);
-
-		if (StringUtils.isNotBlank(promotionCode)) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(promotionCode, eventCode,
-					FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
-		}
+		aeEvent.getAcSetIDList().add(
+				AccountingConfigCache.getAccountSetID(fm.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(fm, schedules, newProfitDetail, curBDay);
@@ -1052,8 +1041,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdviseByRef(long finID, int adviseType, String type) {
-		return this.manualAdviseDAO.getManualAdviseByRef(finID, adviseType, type);
+	public List<ManualAdvise> getPayableAdvises(long finID, String type) {
+		return this.manualAdviseDAO.getPaybleAdvises(finID, type);
 	}
 
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {

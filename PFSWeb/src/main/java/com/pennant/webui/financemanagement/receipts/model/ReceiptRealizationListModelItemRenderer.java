@@ -61,7 +61,7 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 
 		lc = new Listcell(String.valueOf(header.getReceiptID()));
 		lc.setParent(item);
-		lc = new Listcell(header.getReference());
+		lc = new Listcell(header.getExtReference() == null ? header.getReference() : header.getExtReference());
 		lc.setParent(item);
 		lc = new Listcell(header.getPromotionCode());
 		lc.setParent(item);

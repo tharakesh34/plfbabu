@@ -64,13 +64,6 @@ public class TestAutoKnockOffDAO {
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void testDeleteKnockOffExcessLog() {
-		autoKnockOffDAO.deleteKnockOffExcessLog(dt1);
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
 	public void testLogKnockOffDetails() {
 		autoKnockOffDAO.logKnockOffDetails(dt2, "01");
 	}

@@ -15,4 +15,5 @@ public interface SOAExtensionService {
 	void setRcvAndBounceWaivers(List<FeeWaiverDetail> feeWaiverDetailList,
 			List<SOATransactionReport> soaTransactionReports);
 
+	public String getReceivableComponent(long feetypeID);
 }

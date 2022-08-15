@@ -16,19 +16,23 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennanttech.pff.overdraft.model.OverdraftDTO;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class FinEODEvent implements Serializable {
 	private static final long serialVersionUID = 1183720618731771888L;
 
 	private FinanceMain financeMain = new FinanceMain();
+	private OverdraftDTO overDraftFM = new OverdraftDTO();
 	private FinanceType finType = new FinanceType();
 	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<>(1);
 	private List<RepayInstruction> RepayInstructions = new ArrayList<>(1);
@@ -44,6 +48,8 @@ public class FinEODEvent implements Serializable {
 	private List<ReturnDataSet> returnDataSet = new ArrayList<>(1);
 	private List<Provision> provisions = new ArrayList<>(1);
 	private List<FinExcessAmount> finExcessAmounts = new ArrayList<>(1);
+	private List<ManualAdvise> cancelManualAdvises = new ArrayList<>();
+	private List<ManualAdvise> postingManualAdvises = new ArrayList<>();
 	private Date eventFromDate;
 	private Date eventToDate;
 	private Date recalFromDate;
@@ -85,10 +91,13 @@ public class FinEODEvent implements Serializable {
 	private List<FinanceScheduleDetail> orgFinSchdDetails = new ArrayList<>(1);
 	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
 	private SubventionDetail subventionDetail = new SubventionDetail();
+	private List<FinanceStepPolicyDetail> stepPolicyDetails = new ArrayList<>(1);
+	private boolean npaStage;
 
 	public FinEODEvent copyEntity() {
 		FinEODEvent entity = new FinEODEvent();
 		entity.setFinanceMain(this.financeMain == null ? null : this.financeMain.copyEntity());
+		// entity.setOverDraftFM(this.overDraftFM == null ? null : this.overDraftFM.copyEntity());
 		entity.setFinType(this.finType == null ? null : this.finType.copyEntity());
 		this.financeScheduleDetails.stream()
 				.forEach(e -> entity.getFinanceScheduleDetails().add(e == null ? null : e.copyEntity()));
@@ -109,6 +118,8 @@ public class FinEODEvent implements Serializable {
 		this.provisions.stream().forEach(e -> entity.getProvisions().add(e == null ? null : e.copyEntity()));
 		this.finExcessAmounts.stream()
 				.forEach(e -> entity.getFinExcessAmounts().add(e == null ? null : e.copyEntity()));
+		this.cancelManualAdvises.stream().forEach(e -> entity.getCancelManualAdvises().add(e.copyEntity()));
+		this.postingManualAdvises.stream().forEach(e -> entity.getPostingManualAdvises().add(e.copyEntity()));
 		entity.setEventFromDate(this.eventFromDate);
 		entity.setEventToDate(this.eventToDate);
 		entity.setRecalFromDate(this.recalFromDate);
@@ -146,6 +157,7 @@ public class FinEODEvent implements Serializable {
 		this.finServiceInstructions.stream()
 				.forEach(e -> entity.getFinServiceInstructions().add(e == null ? null : e.copyEntity()));
 		entity.setSubventionDetail(this.subventionDetail == null ? null : this.subventionDetail.copyEntity());
+		this.stepPolicyDetails.stream().forEach(e -> entity.getStepPolicyDetails().add(e.copyEntity()));
 		return entity;
 	}
 
@@ -155,6 +167,14 @@ public class FinEODEvent implements Serializable {
 
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
+	}
+
+	public OverdraftDTO getOverDraftFM() {
+		return overDraftFM;
+	}
+
+	public void setOverDraftFM(OverdraftDTO overDraftFM) {
+		this.overDraftFM = overDraftFM;
 	}
 
 	public FinanceType getFinType() {
@@ -473,6 +493,22 @@ public class FinEODEvent implements Serializable {
 		this.finExcessAmounts = finExcessAmounts;
 	}
 
+	public List<ManualAdvise> getCancelManualAdvises() {
+		return cancelManualAdvises;
+	}
+
+	public void setCancelManualAdvises(List<ManualAdvise> cancelManualAdvises) {
+		this.cancelManualAdvises = cancelManualAdvises;
+	}
+
+	public List<ManualAdvise> getPostingManualAdvises() {
+		return postingManualAdvises;
+	}
+
+	public void setPostingManualAdvises(List<ManualAdvise> postingManualAdvises) {
+		this.postingManualAdvises = postingManualAdvises;
+	}
+
 	public List<ProjectedAccrual> getProjectedAccrualList() {
 		return projectedAccrualList;
 	}
@@ -570,4 +606,21 @@ public class FinEODEvent implements Serializable {
 	public void setSubventionDetail(SubventionDetail subventionDetail) {
 		this.subventionDetail = subventionDetail;
 	}
+
+	public List<FinanceStepPolicyDetail> getStepPolicyDetails() {
+		return stepPolicyDetails;
+	}
+
+	public void setStepPolicyDetails(List<FinanceStepPolicyDetail> stepPolicyDetails) {
+		this.stepPolicyDetails = stepPolicyDetails;
+	}
+
+	public boolean isNpaStage() {
+		return npaStage;
+	}
+
+	public void setNpaStage(boolean npaStage) {
+		this.npaStage = npaStage;
+	}
+
 }

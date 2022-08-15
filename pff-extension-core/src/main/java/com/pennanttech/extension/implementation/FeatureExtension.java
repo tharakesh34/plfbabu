@@ -3,6 +3,10 @@ package com.pennanttech.extension.implementation;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.pennanttech.pff.npa.NpaScope;
+import com.pennanttech.pff.provision.ProvisionBook;
+import com.pennanttech.pff.provision.ProvisionReversalStage;
+
 public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> customConstants = new HashMap<>();
 
@@ -43,6 +47,7 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
 
 		customConstants.put("ALLOW_PMAY", true);
+		customConstants.put("ALLOW_AUTO_GRACE_EXT", true);
 
 		customConstants.put("ALLOW_OCR", true);
 
@@ -65,6 +70,12 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_LOAN_DOWNSIZING", true);
 
 		customConstants.put("ALLOW_RESTRUCTURING", true);
+
+		customConstants.put("ALLOW_LOAN_SPLIT", true);
+
+		customConstants.put("SCHD_INST_CAL_ON_DISB_RELIZATION", true);
+
+		customConstants.put("ALLOW_SUBVENTION", true);
 
 		customConstants.put("PRESENT_RECEIPTS_ON_RESP", false);
 
@@ -95,7 +106,34 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("DISB_REQ_RES_FILE_GEN_MODE", true);
 
-		customConstants.put("ALLOW_ESCROW_MODE", false);
+		customConstants.put("ALLOW_ESCROW_MODE", true);
+
+		customConstants.put("ALLOW_NPA", false);
+
+		customConstants.put("ALLOW_PROVISION", false);
+
+		customConstants.put("PROVISION_REVERSAL_REQ", true);
+
+		customConstants.put("PROVISION_REVERSAL_STAGE", ProvisionReversalStage.SOM);
+
+		customConstants.put("NPA_SCOPE", NpaScope.CO_APPLICANT);
+
+		customConstants.put("PROVISION_BOOKS", ProvisionBook.REGULATORY);
+
+		customConstants.put("ALLOW_MANUAL_SCHEDULE", true);
+
+		///////// For Enhancements from Axis and Clix///////////////
+
+		customConstants.put("RETAIL_CUST_PAN_MANDATORY", false);
+
+		customConstants.put("ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS", true);
+
+		customConstants.put("ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS", true);
+
+		customConstants.put("ALLOW_ISRA_DETAILS", true);
+
+		customConstants.put("RECEIPT_ALLOW_FULL_WAIVER", true);
+
 	}
 
 	@Override

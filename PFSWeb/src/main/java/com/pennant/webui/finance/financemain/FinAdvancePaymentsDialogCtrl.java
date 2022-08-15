@@ -828,7 +828,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.liabilityHoldName.setMaxlength(200);
 		this.beneficiaryName.setMaxlength(100);
 		this.description.setMaxlength(500);
-		this.llReferenceNo.setMaxlength(6);
+		this.llReferenceNo.setMaxlength(50);
 		this.remarks.setMaxlength(500);
 		this.transactionRef.setReadonly(true);
 
@@ -897,6 +897,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bankBranchID.setDescColumn("");
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "IFSC" });
+		this.bankBranchID.setFilterColumns(new String[] { "IFSC", "MICR" });
 
 		this.partnerBankID.setButtonDisabled(true);
 		this.partnerBankID.setReadonly(true);

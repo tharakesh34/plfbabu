@@ -60,6 +60,17 @@
 									<datebox id="grcPeriodEndDate" width="120px" />
 								</hbox>
 							</row>
+							<row id="row_GrcRate">
+								<label id="label_ReScheduleDialog_GrcBaseRate" value="${c:l('label_ReScheduleDialog_GrcBaseRate.value')}" />
+								<hbox>
+									<ratebox id="grcRate" />
+								</hbox>
+								<label id="label_ReScheduleDialog_GrcPftRate" value="${c:l('label_ReScheduleDialog_GrcPftRate.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<decimalbox id="grcPftRate" width="180px" />
+								</hbox>
+							</row>
 							<row>
 								<label id="label_ReScheduleDialog_RepayFrq" value="${c:l('label_ReScheduleDialog_RepayFrq.value')}" />
 								<hbox>

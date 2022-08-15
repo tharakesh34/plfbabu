@@ -2,6 +2,8 @@ package com.pennant.app.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -11,8 +13,13 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.app.constants.ImplementationConstants;
 
 public class TDSCalculator {
+
+	public static String RPY_SCHD_DTLS = "RPY_SCHD_DTLS";
+	public static String SCHD_DTLS = "SCHD_DTLS";
+	public static String FM_DTLS = "FM_DTLS";
 
 	private static String TDS_ROUNDING_MODE;
 	private static int TDS_ROUNDING_TARGET;
@@ -80,4 +87,32 @@ public class TDSCalculator {
 		}
 	}
 
+	public static BigDecimal getPercentage(Date date) {
+		if (date != null && ImplementationConstants.ALLOW_TDS_PERC_BASED_ON_YEAR) {
+
+			if (getPreviousDate().compareTo(date) >= 0) {
+				return new BigDecimal(7.5);
+			} else {
+				return new BigDecimal(10);
+			}
+		} else {
+			if (TDS_PERCENTAGE.compareTo(BigDecimal.ZERO) == 0) {
+				TDS_PERCENTAGE = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			}
+		}
+
+		return TDS_PERCENTAGE;
+	}
+
+	private static Date getPreviousDate() {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 2021);
+		cal.set(Calendar.MONTH, 2);
+		cal.set(Calendar.DAY_OF_MONTH, 31);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
 }

@@ -22,6 +22,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.MandateConstants;
 import com.pennanttech.pennapps.core.AppException;
@@ -138,6 +139,14 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 							frequency = "DIAL";
 						} else if (temp.contains("M")) {
 							frequency = "MNTH";
+
+							if (ImplementationConstants.MANDATE_FRQ_DES_REQ) {
+								if (StringUtils.equals(temp, "M0001")) {
+									frequency = "As & When Presented";
+								} else if (StringUtils.equals(temp, "M0002")) {
+									frequency = "Monthly";
+								}
+							}
 						} else if (temp.contains("W")) {
 							frequency = "Week";
 						} else if (temp.contains("Q")) {

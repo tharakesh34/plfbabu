@@ -12,13 +12,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.model.finance.OverdraftMovements;
-import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
+import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
 
 public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDetail>
 		implements OverdraftScheduleDetailDAO {

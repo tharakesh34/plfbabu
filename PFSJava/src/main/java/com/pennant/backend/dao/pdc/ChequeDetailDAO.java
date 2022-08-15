@@ -28,8 +28,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.ChequeDetail;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public interface ChequeDetailDAO {
 

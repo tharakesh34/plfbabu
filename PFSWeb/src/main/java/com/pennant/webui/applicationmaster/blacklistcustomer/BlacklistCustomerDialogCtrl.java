@@ -730,7 +730,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			wve.add(we);
 		}
 		try {
-			this.employer.getValidatedValue();
 			Object object = this.employer.getAttribute("EmpId");
 			if (object != null) {
 				finBlacklistCust.setEmployer((Long.parseLong(object.toString())));

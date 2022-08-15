@@ -128,9 +128,8 @@ public class AEAmounts implements Serializable {
 		amountCodes.setAmzS(pfd.getPftAmzSusp());
 		amountCodes.setdAmz(amountCodes.getAmz().subtract(pfd.getAmzTillLBD()));
 		amountCodes.setdGapAmz(pfd.getGapIntAmz().subtract(pfd.getGapIntAmzLbd()));
-		amountCodes.setPrvMthAcr(pfd.getPrvMthAcr());
 		amountCodes.setPrvMntAmz(pfd.getPrvMthAmz());
-
+		amountCodes.setPrvMthAcr(getPrvMthAcr(schedules, valueDate, pfd.getPrvMthAcr()));
 		// LPI Amortization calculation
 		if (pfd.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
 			amountCodes.setdLPIAmz(pfd.getLpiAmount().subtract(pfd.getLpiTillLBD()));
@@ -226,6 +225,31 @@ public class AEAmounts implements Serializable {
 		logger.debug("Leaving");
 		return aeEvent;
 
+	}
+
+	private static BigDecimal getPrvMthAcr(List<FinanceScheduleDetail> schedules, Date valueDate,
+			BigDecimal prvMthAcr) {
+		int lastPaySchd = schedules.size() - 2;
+
+		if (lastPaySchd < 0) {
+			return prvMthAcr;
+		}
+
+		Date schDate = schedules.get(lastPaySchd).getSchDate();
+		int schMonth = DateUtil.getMonth(schDate);
+		int schYear = DateUtil.getYear(schDate);
+
+		if (schMonth == DateUtil.getMonth(valueDate) && (schYear == DateUtil.getYear(valueDate))) {
+			return BigDecimal.ZERO;
+		}
+
+		FinanceScheduleDetail lastSchd = schedules.get(lastPaySchd + 1);
+
+		if (lastSchd.isSchPftPaid() && lastSchd.getSchDate().compareTo(valueDate) == 0) {
+			return BigDecimal.ZERO;
+		}
+
+		return prvMthAcr;
 	}
 
 	private static int getNoDays(Date date1, Date date2) {

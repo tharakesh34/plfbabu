@@ -3,6 +3,7 @@ package com.pennant.backend.financeservice;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -47,4 +48,6 @@ public interface RestructureService {
 	List<ErrorDetail> doValidations(RestructureDetail rd);
 
 	boolean checkLoanDues(List<RestructureCharge> charges);
+
+	Map<String, Object> getNoOfInstAndAmt(FinScheduleData schdData, Date rstDate);
 }

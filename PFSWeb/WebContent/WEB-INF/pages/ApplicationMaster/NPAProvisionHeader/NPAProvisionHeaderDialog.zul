@@ -82,7 +82,7 @@
 								</row>
 								<row>
 									<label id="label_NPAType"
-											value="${c:l('label_SelectNPAProvisionHeaderDialog_NPAType.value')}" />
+										value="${c:l('label_SelectNPAProvisionHeaderDialog_NPAType.value')}" />
 
 									<extendedcombobox id="npaTemplateType" />
 									<label></label>
@@ -105,7 +105,7 @@
 					</groupbox>
 					
 					<separator height="25px" />
-				<!-- 	
+					<!-- 
 					<listbox emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 						width="100%" height="30px" multiple="false" sizedByContent="false" span="true">
 						<listhead sizable="true">
@@ -116,26 +116,48 @@
 							<listheader label="${c:l('listheader_InternalProv.label')}" width="35px" align="middle" />
 							<listheader label="${c:l('listheader_RegProv.label')}" width="35px" align="middle" />
 						</listhead>
-					</listbox>
-						-->
-					<listbox id="listBoxProvisionDeatils" emptyMessage="${c:l('listbox.emptyMessage')}"
+					</listbox>  -->
+					
+					<<listbox id="listBoxProvisionDeatils" emptyMessage="${c:l('listbox.emptyMessage')}"
 						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
 						span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_AssetClassificationCode"
-								label="${c:l('listheader_AssetClassificationCode.label')}" hflex="min" />
+								label="${c:l('listheader_AssetClassificationCode.label')}"   hflex="min" />
 							<listheader id="listheader_NPAActive" label="${c:l('listheader_NPAActive.label')}"
-								hflex="min" />
-							<listheader id="listheader_DPDdays" label="${c:l('listheader_DPDdays.label')}"
+								  hflex="min" />
+							<listheader id="listheader_DPDdays" label="${c:l('listheader_DPDdays.label')}"  
 								hflex="min" />
 							<listheader id="listheader_NPAPaymentAprtmnt"
-								label="${c:l('listheader_NPAPaymentAprtmnt.label')}" hflex="min" />
-							<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}"
-								hflex="min" />
-							<listheader id="listheader_ProvisionRule"
-								label="${c:l('listheader_ProvisionRule.label')}" hflex="min" />
+								label="${c:l('listheader_NPAPaymentAprtmnt.label')}"   hflex="min" />
+							<listheader id="listheader_IntSecPerc" label="${c:l('listheader_IntSecPerc.label')}"
+								 hflex="min" />
+							<listheader id="listheader_IntUnSecPerc" label="${c:l('listheader_IntUnSecPerc.label')}"
+								 hflex="min" />
+							<listheader id="listheader_RegSecPerc" label="${c:l('listheader_RegSecPerc.label')}"
+								  hflex="min" />
+							<listheader id="listheader_RegUnSecPerc" label="${c:l('listheader_RegUnSecPerc.label')}"
+								  hflex="min" />
 						</listhead>
-					</listbox>
+					</listbox> 
+					<listbox id="listBoxProvisionDeatils" emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
+							span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_AssetClassificationCode"
+									label="${c:l('listheader_AssetClassificationCode.label')}" hflex="min" />
+								<listheader id="listheader_NPAActive" label="${c:l('listheader_NPAActive.label')}"
+									hflex="min" />
+								<listheader id="listheader_DPDdays" label="${c:l('listheader_DPDdays.label')}"
+									hflex="min" />
+								<listheader id="listheader_NPAPaymentAprtmnt"
+									label="${c:l('listheader_NPAPaymentAprtmnt.label')}" hflex="min" />
+								<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}"
+									hflex="min" />
+								<listheader id="listheader_ProvisionRule"
+									label="${c:l('listheader_ProvisionRule.label')}" hflex="min" />
+							</listhead>
+						</listbox>
 				</div>
 			</center>
 			<south sclass="south-dialog">

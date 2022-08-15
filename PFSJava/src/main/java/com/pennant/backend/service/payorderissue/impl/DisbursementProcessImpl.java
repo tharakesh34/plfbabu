@@ -28,6 +28,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.InstBasedSchdDetails;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
@@ -70,7 +71,8 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		boolean statusFlag = true;
 		if (paidStatus.equals(status)) {
 			fap.setStatus(DisbursementConstants.STATUS_PAID);
-			if (ImplementationConstants.HOLD_DISB_INST_POST) {
+			if (ImplementationConstants.HOLD_DISB_INST_POST
+					|| FinanceConstants.PRODUCT_CD.equals(fm.getFinCategory())) {
 				postDisbInsTransactions(fap, fm);
 			}
 		} else if (realizedStatus.equals(status)) {

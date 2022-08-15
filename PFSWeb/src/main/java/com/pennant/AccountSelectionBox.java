@@ -275,7 +275,11 @@ public class AccountSelectionBox extends Hbox {
 	}
 
 	/**
-	 * Validate the value of the text entered in the text box.
+	 * Validate the value of the text entered in the textbox
+	 * 
+	 * @param showError
+	 * @throws InterruptedException
+	 * @throws WrongValueException
 	 */
 	public void validateValue() {
 		//

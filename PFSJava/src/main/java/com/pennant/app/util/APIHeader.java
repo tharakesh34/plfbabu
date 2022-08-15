@@ -20,6 +20,7 @@ public class APIHeader {
 	private String returnDesc;
 	private Date responseTime;
 	private String channel;
+	private long seqId;
 
 	// Public Constants
 	public static final String API_HEADER_KEY = "HEADERKEY";
@@ -165,6 +166,14 @@ public class APIHeader {
 				+ language + ", securityInfo=" + securityInfo + ", messageId=" + messageId + ", requestTime="
 				+ requestTime + ", additionalInfo=" + additionalInfo + ", returnCode=" + returnCode + ", returnDesc="
 				+ returnDesc + ", responseTime=" + responseTime + ", channel=" + channel + "]";
+	}
+
+	public long getSeqId() {
+		return seqId;
+	}
+
+	public void setSeqId(long seqId) {
+		this.seqId = seqId;
 	}
 
 }

@@ -95,4 +95,5 @@ public interface FinODDetailsDAO {
 
 	List<FinODDetails> getFinODDetailsByFinRef(long finID);
 
+	void updatePaidPenalties(List<FinODDetails> overdues);
 }

@@ -344,7 +344,6 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 						new ErrorDetail(PennantConstants.KEY_FIELD, "99008", errParams, valueParm), usrLanguage));
 				return auditDetail;
 			}
-
 			// --------Length validations-----------------------------------
 
 			if (StringUtils.isEmpty(aggrementNo)) {
@@ -557,6 +556,15 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				errParams[0] = aggrementNo;
 				auditDetail.setErrorDetail(ErrorUtil
 						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "GSTUPL001", errParams, null)));
+			}
+
+			if (StringUtils.isBlank(taxuploadDetail.getAddrLine1())) {
+				String[] errParams = new String[1];
+				errParams[0] = PennantJavaUtil.getLabel("listheader_AddrLine1.label");
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "30561", errParams, null), usrLanguage));
+			} else {
+				taxuploadDetail.getAddrLine1();
 			}
 		}
 

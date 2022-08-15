@@ -240,6 +240,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 				return;
 			}
 
+			customerDetailsService.setFinForCoApplicantAndGuarantor(customerDetails);
 			// Check whether the user has authority to change/view the record.
 			String wherCondition = " where custId = ?";
 			long custID = customerDetails.getCustomer().getCustID();

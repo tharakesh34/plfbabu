@@ -115,10 +115,21 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 				this.label_RefId.setVisible(true);
 
 				DocumentDetails docDetail = (DocumentDetails) arguments.get("documentRef");
-				if (docDetail != null && docDetail.getDocUri() != null) {
-					label_RefId.setVisible(true);
-					document.setVisible(false);
-					label_RefId.setValue(docDetail.getDocUri());
+				DocumentDetails docDetails = (DocumentDetails) arguments.get("docType");
+
+				if (docDetail != null && docDetail.getDocImage() != null) {
+					final InputStream data = new ByteArrayInputStream(docDetail.getDocImage());
+					if (PennantConstants.DOC_TYPE_PDF.equals(docDetails.getDoctype())) {
+						amedia = new AMedia(docDetail.getDocName(), "pdf", "application/pdf", data);
+					} else if (PennantConstants.DOC_TYPE_WORD.equals(docDetails.getDoctype())) {
+						amedia = new AMedia(docDetail.getDocName(), "msword", "application/msword", data);
+					} else if (PennantConstants.DOC_TYPE_MSG.equals(docDetails.getDoctype())) {
+						amedia = new AMedia(docDetail.getDocName(), "msg", "application/octet-stream", data);
+					} else if (PennantConstants.DOC_TYPE_IMAGE.equals(docDetails.getDoctype())) {
+						amedia = new AMedia(docDetail.getDocName(), "jpeg", "image/jpeg", data);
+					}
+
+					document.setContent(amedia);
 				}
 			}
 			if (arguments.containsKey("mandate")) {

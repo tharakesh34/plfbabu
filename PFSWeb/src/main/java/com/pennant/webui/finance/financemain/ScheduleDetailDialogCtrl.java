@@ -99,6 +99,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
+import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.financemanagement.receipts.LoanClosureEnquiryDialogCtrl;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.systemmasters.holdEmi.model.ApprovalScreenEventHistory;
@@ -209,7 +210,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Button btnHoldEMI; // autoWired
 	protected Button btnPrintSchedule; // autoWired
 	protected Button btnSchdChng; // autoWired
+	protected Button btnPriHld; // autoWired
 
+	protected Listheader listheader_ScheduleDetailDialog_InstNo;
 	protected Listheader listheader_ScheduleDetailDialog_Date;
 	protected Listheader listheader_ScheduleDetailDialog_ScheduleEvent;
 	protected Listheader listheader_ScheduleDetailDialog_CalProfit;
@@ -430,6 +433,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
 		}
 
+		listheader_ScheduleDetailDialog_InstNo.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_InstNo"));
 		listheader_ScheduleDetailDialog_Date.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Date"));
 		listheader_ScheduleDetailDialog_ScheduleEvent
 				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"));
@@ -584,6 +588,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnChangeProfit.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeProfit"));
 		this.btnChangeFrq.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeFrq"));
 		this.btnReschedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
+		this.btnPriHld.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnPriHld"));
 		this.btnReAgeHolidays.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
 		this.btnHoldEMI.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
 		this.btnSchdChng.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng"));
@@ -609,6 +614,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnReAgeHolidays.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
 		this.btnHoldEMI.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
 		this.btnSchdChng.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng"));
+		this.btnPriHld.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnPriHld"));
+
 		this.btnRestructure
 				.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRestructureDetail"));
 
@@ -714,6 +721,27 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				this.btnChangeProfit.setVisible(false);
 				this.btnSubSchedule.setVisible(false);
+			}
+
+			if (getFinScheduleData().getFinanceMain().isManualSchedule() && StringUtils.isBlank(moduleDefiner)) {
+				this.btnRecalEMIH.setVisible(false);
+				this.btnAddReviewRate.setVisible(false);
+				this.btnChangeRepay.setVisible(false);
+				this.btnAddDisbursement.setVisible(false);
+				this.btnAddDatedSchedule.setVisible(false);
+				this.btnCancelDisbursement.setVisible(false);
+				this.btnPostponement.setVisible(false);
+				this.btnUnPlanEMIH.setVisible(false);
+				this.btnAddTerms.setVisible(false);
+				this.btnRmvTerms.setVisible(false);
+				this.btnReCalcualte.setVisible(false);
+				this.btnSubSchedule.setVisible(false);
+				this.btnChangeProfit.setVisible(false);
+				this.btnChangeFrq.setVisible(false);
+				this.btnReschedule.setVisible(false);
+				this.btnReAgeHolidays.setVisible(false);
+				this.btnHoldEMI.setVisible(false);
+				this.btnSchdChng.setVisible(false);
 			}
 
 		} catch (Exception e) {
@@ -1006,7 +1034,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				if (!isOverdraft && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
 						&& !financeMain.isSanBsdSchdle() && !(financeMain.isInstBasedSchd() && nxtSchdate != null
 								&& nxtSchdate.getClosingBalance().compareTo(BigDecimal.ZERO) != 0)) {
-					lastRecord = true;
+					if (!(financeMain.isManualSchedule())) {// || financeMain.getNoOfAdvanceEMI() > 0)) {
+						lastRecord = true;
+					} else if (curSchd.getSchDate().compareTo(financeMain.getMaturityDate()) == 0) {
+						lastRecord = true;
+					}
 				}
 
 				if (i == sdSize - 1 || lastRecord) {
@@ -1068,6 +1100,60 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		if (StringUtils.isNotBlank(moduleDefiner)) {
 			hideButtons();
+		}
+
+		if (getFinScheduleData().getFinanceMain().isManualSchedule() && StringUtils.isBlank(moduleDefiner)) {
+			this.btnRecalEMIH.setVisible(false);
+			this.btnAddReviewRate.setVisible(false);
+			this.btnChangeRepay.setVisible(false);
+			this.btnAddDisbursement.setVisible(false);
+			this.btnAddDatedSchedule.setVisible(false);
+			this.btnCancelDisbursement.setVisible(false);
+			this.btnPostponement.setVisible(false);
+			this.btnUnPlanEMIH.setVisible(false);
+			this.btnAddTerms.setVisible(false);
+			this.btnRmvTerms.setVisible(false);
+			this.btnReCalcualte.setVisible(false);
+			this.btnSubSchedule.setVisible(false);
+			this.btnChangeProfit.setVisible(false);
+			this.btnChangeFrq.setVisible(false);
+			this.btnReschedule.setVisible(false);
+			this.btnReAgeHolidays.setVisible(false);
+			this.btnHoldEMI.setVisible(false);
+			this.btnSchdChng.setVisible(false);
+		} else {
+			if (StringUtils.isBlank(moduleDefiner)) {
+				doCheckRights();
+			}
+			// Setting Planned EMI Holiday methods
+			if (this.finScheduleData.getFinanceMain().isPlanEMIHAlw()
+					|| this.finScheduleData.getFinanceMain().isPlanEMIHAlwInGrace()) {
+				if (StringUtils.equals(this.finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+						FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+					visiblePlanEMIHolidays(true, false);
+					setPlanEMIHMonths(this.finScheduleData.getPlanEMIHmonths());
+				} else if (StringUtils.equals(this.finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+						FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+					visiblePlanEMIHolidays(false, true);
+					setPlanEMIHDateList(this.finScheduleData.getPlanEMIHDates());
+				}
+			}
+
+			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+				this.btnChangeProfit.setVisible(false);
+				this.btnSubSchedule.setVisible(false);
+			}
+		}
+
+		if (financeMainDialogCtrl != null && financeMain.isStepFinance() && financeMain.isStepRecalOnProrata()) {
+			try {
+				if (financeMainDialogCtrl.getClass().getMethod("getStepDetailDialogCtrl") != null) {
+					((StepDetailDialogCtrl) financeMainDialogCtrl.getClass().getMethod("getStepDetailDialogCtrl")
+							.invoke(financeMainDialogCtrl)).doFillStepDetais(aFinSchData.getStepPolicyDetails());
+				}
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
 		}
 
 		this.financeSchdDetailsTab.setSelected(true);
@@ -1446,9 +1532,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnReCalcualte.setDisabled(!isAvailable);
 			/* PSD Ticket 130142 (LMS: Add term history is not correctly reflected on approval screen) */
 			FinanceMain fm = finScheduleData.getFinanceMain();
-			Long finID = fm.getFinID();
 			String finReference = fm.getFinReference();
-			FinanceProfitDetail pfd = financeDetailService.getFinProfitDetailsById(finID);
+			FinanceProfitDetail pfd = financeDetailService.getFinProfitDetailsById(fm.getFinID());
 			if (pfd != null) {
 				if (fm.isAlwGrcAdj()) {
 					fm.setNOInst(pfd.getNOInst() - fm.getGraceTerms());
@@ -1541,6 +1626,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnReAgeHolidays.setDisabled(true);
 		this.btnHoldEMI.setDisabled(true);
 		this.btnSchdChng.setDisabled(true);
+		this.btnRestructure.setDisabled(true);
+		this.btnRecalEMIH.setDisabled(true);
 		this.btnRestructure.setDisabled(true);
 		this.btnRecalEMIH.setDisabled(true);
 	}
@@ -1796,9 +1883,37 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("appDateValidationReq", isAppDateValidationReq());
+		map.put("financeMainBaseCtrl", financeMainDialogCtrl);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ReScheduleDialog.zul",
+					window_ScheduleDetailDialog, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the button Re Scheduling button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnPriHld(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		final Map<String, Object> map = new HashMap<String, Object>();
+		map.put("finScheduleData", getFinScheduleData());
+		map.put("financeMainDialogCtrl", this);
+		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
+		map.put("appDateValidationReq", isAppDateValidationReq());
+		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("moduleDefiner", moduleDefiner);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/Additional/PrincipleHolidayDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -1822,6 +1937,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("isWIF", isWIF);
 		map.put("moduleDefiner", moduleDefiner);
+		map.put("roleCode", roleCode);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddDisbursementDialog.zul",
@@ -2016,6 +2132,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("moduleDefiner", moduleDefiner);
 		map.put("appDateValidationReq", isAppDateValidationReq());
+		map.put("roleCode", roleCode);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/RecalculateDialog.zul",
@@ -2169,6 +2286,16 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			} else {
 				this.btnSchdChng.setVisible(false);
 			}
+		} else if (moduleDefiner.equals(FinServiceEvent.PRINH)) {
+			if (getUserWorkspace().isAllowed("button_" + dialogName + "_btnPriHld")) {
+				Events.postEvent("onClick$btnPriHld", this.window_ScheduleDetailDialog, null);
+			} else {
+				this.btnSchdChng.setVisible(false);
+			}
+		} else if (moduleDefiner.equals(FinServiceEvent.RESTRUCTURE)) {
+			if (getUserWorkspace().isAllowed("button_" + dialogName + "_btnRestructureDetail")) {
+				Events.postEvent("onClick$btnRestructure", this.window_ScheduleDetailDialog, null);
+			}
 		}
 
 		logger.debug("Leaving");
@@ -2226,11 +2353,24 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				Date curBussDate = SysParamUtil.getAppDate();
 				for (FinanceScheduleDetail curSchd : schList) {
 					if (curSchd.getSchDate().compareTo(curBussDate) <= 0) {
-						getFinScheduleData().getFinanceMain().setEventFromDate(curSchd.getSchDate());
+						if (CollectionUtils.isNotEmpty(getPlanEMIHMonths())) {
+							getFinScheduleData().getFinanceMain().setEventFromDate(curSchd.getSchDate());
+						}
 						continue;
 					}
 					getFinScheduleData().getFinanceMain().setRecalFromDate(curSchd.getSchDate());
-					break;
+
+					if (CollectionUtils.isEmpty(getPlanEMIHMonths())) {
+						if ((curSchd.isFrqDate() && (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()))
+								|| curSchd.getPresentmentId() > 0) {
+							getFinScheduleData().getFinanceMain().setEventFromDate(curSchd.getSchDate());
+							break;
+						}
+					}
+
+					if (CollectionUtils.isNotEmpty(getPlanEMIHMonths())) {
+						break;
+					}
 				}
 			}
 
@@ -2241,6 +2381,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			} else {
 				getFinScheduleData().setPlanEMIHmonths(new ArrayList<Integer>());
 				getFinScheduleData().setPlanEMIHDates(getPlanEMIHDateList());
+				getFinScheduleData().getFinanceMain().setModuleDefiner(moduleDefiner);
 				setFinScheduleData(ScheduleCalculator.getAdhocEMIHoliday(getFinScheduleData()));
 			}
 			doFillScheduleList(getFinScheduleData());

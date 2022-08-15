@@ -65,6 +65,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -460,10 +461,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.eodAutoDisable.setDisabled(false);
 
 		} else {
+			this.eodStartJobFrequency.setValue(cronToDate(null));
 			this.eodStartJobFrequency.setDisabled(true);
+			this.enableAutoEOD.setChecked(false);
 			this.enableAutoEOD.setDisabled(true);
+			this.eodAutoDisable.setChecked(false);
 			this.eodAutoDisable.setDisabled(true);
-			CheckGbNotifVisibility();
+			checkGbNotifVisibility();
 		}
 
 		if (aEODConfig.isSendEmailRequired()) {
@@ -478,26 +482,41 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			if (aEODConfig.isSMTPAutenticationRequired()) {
 				this.sMTPPassword.setDisabled(false);
 			} else {
+				this.sMTPPassword.setValue("");
 				this.sMTPPassword.setDisabled(true);
 
 			}
 			this.encryptionType.setDisabled(false);
 
 		} else {
-			this.sMTPUserName.setDisabled(true);
-			this.fromName.setDisabled(true);
-			this.fromEmailAddress.setDisabled(true);
-			this.toEmailAddress.setDisabled(true);
-			this.cCEmailAddress.setDisabled(true);
-			this.sMTPHost.setDisabled(true);
-			this.sMTPPort.setDisabled(true);
-			this.sMTPAuthenticationRequired.setDisabled(true);
-			this.sMTPPassword.setDisabled(true);
-			this.encryptionType.setDisabled(true);
+			setDefaultValues();
 		}
 
-		CheckGbNotifVisibility();
+		checkGbNotifVisibility();
 
+	}
+
+	private void setDefaultValues() {
+		this.sMTPUserName.setValue("");
+		this.sMTPUserName.setDisabled(true);
+		this.fromName.setValue("");
+		this.fromName.setDisabled(true);
+		this.fromEmailAddress.setValue("");
+		this.fromEmailAddress.setDisabled(true);
+		this.toEmailAddress.setValue("");
+		this.toEmailAddress.setDisabled(true);
+		this.cCEmailAddress.setValue("");
+		this.cCEmailAddress.setDisabled(true);
+		this.sMTPHost.setValue("");
+		this.sMTPHost.setDisabled(true);
+		this.sMTPPort.setValue("");
+		this.sMTPPort.setDisabled(true);
+		this.sMTPAuthenticationRequired.setChecked(false);
+		this.sMTPAuthenticationRequired.setDisabled(true);
+		this.sMTPPassword.setValue("");
+		this.sMTPPassword.setDisabled(true);
+		this.encryptionType.setValue("");
+		this.encryptionType.setDisabled(true);
 	}
 
 	/**
@@ -1307,61 +1326,80 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.enableAutoEOD.setDisabled(false);
 			this.eodAutoDisable.setDisabled(false);
 		} else {
+			this.eodStartJobFrequency.setValue(cronToDate(null));
+			this.label_cronexp.setValue("");
 			this.eodStartJobFrequency.setDisabled(true);
+			this.enableAutoEOD.setChecked(false);
 			this.enableAutoEOD.setDisabled(true);
+			this.eodAutoDisable.setChecked(false);
 			this.eodAutoDisable.setDisabled(true);
 		}
-		CheckGbNotifVisibility();
+		checkGbNotifVisibility();
 	}
 
 	public void onCheck$sendEmailRequired(Event event) {
 		if (this.sendEmailRequired.isChecked()) {
 			this.sMTPUserName.setDisabled(false);
+			this.sMTPUserName.setValue(App.getProperty("notification.email.out.user"));
 			this.fromName.setDisabled(false);
+			this.fromName.setValue(App.getProperty("notification.email.out.personal"));
 			this.fromEmailAddress.setDisabled(false);
+			this.fromEmailAddress.setValue(App.getProperty("notification.email.out.from"));
 			this.toEmailAddress.setDisabled(false);
+			this.toEmailAddress.setValue("");
 			this.cCEmailAddress.setDisabled(false);
+			this.cCEmailAddress.setValue("");
 			this.sMTPHost.setDisabled(false);
+			this.sMTPHost.setValue(App.getProperty("notification.email.out.host"));
 			this.sMTPPort.setDisabled(false);
+			this.sMTPPort.setValue(App.getProperty("notification.email.out.port"));
 			this.sMTPAuthenticationRequired.setDisabled(false);
+			this.sMTPAuthenticationRequired.setChecked(false);
 			this.encryptionType.setDisabled(false);
-			if (this.sMTPAuthenticationRequired.isChecked()) {
+			this.encryptionType.setValue(App.getProperty("notification.email.out.encryptionType"));
+			if (this.sMTPAuthenticationRequired.isChecked() || App.getBooleanProperty("notification.email.out.auth")) {
+				this.sMTPAuthenticationRequired.setChecked(true);
 				this.sMTPPassword.setDisabled(false);
+				this.sMTPPassword.setValue(App.getProperty("notification.email.out.password"));
 			} else {
+				this.sMTPPassword.setValue("");
 				this.sMTPPassword.setDisabled(true);
 			}
+
 		} else {
-			this.sMTPUserName.setDisabled(true);
-			this.fromName.setDisabled(true);
-			this.fromEmailAddress.setDisabled(true);
-			this.toEmailAddress.setDisabled(true);
-			this.cCEmailAddress.setDisabled(true);
-			this.sMTPHost.setDisabled(true);
-			this.sMTPPort.setDisabled(true);
-			this.sMTPAuthenticationRequired.setDisabled(true);
-			this.sMTPPassword.setDisabled(true);
-			this.encryptionType.setDisabled(true);
+			setDefaultValues();
 		}
-		CheckGbNotifVisibility();
+
+		checkGbNotifVisibility();
 	}
 
 	public void onCheck$sMTPAuthenticationRequired(Event event) {
 		if (this.sMTPAuthenticationRequired.isChecked()) {
 			this.sMTPPassword.setDisabled(false);
+			this.sMTPPassword.setValue(App.getProperty("notification.email.out.password"));
 		} else {
+			this.sMTPPassword.setValue("");
 			this.sMTPPassword.setDisabled(true);
 		}
 	}
 
 	public void onCheck$eMailNotificationsRequired(Event event) {
-		CheckGbNotifVisibility();
+		checkGbNotifVisibility();
 	}
 
 	public void onCheck$publishNotificationsRequired(Event event) {
-		CheckGbNotifVisibility();
+		checkGbNotifVisibility();
 	}
 
-	public void CheckGbNotifVisibility() {
+	public void checkGbNotifVisibility() {
+		if (!this.autoEodRequired.isChecked()) {
+			this.sendEmailRequired.setChecked(false);
+			this.sendEmailRequired.setDisabled(true);
+			setDefaultValues();
+		} else {
+			this.sendEmailRequired.setDisabled(false);
+		}
+
 		if (this.autoEodRequired.isChecked() && this.sendEmailRequired.isChecked()) {
 			this.eMailNotificationsRequired.setDisabled(false);
 			this.publishNotificationsRequired.setDisabled(false);
@@ -1369,7 +1407,9 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				this.reminderFrequencyHour.setDisabled(false);
 				this.reminderFrequencyMin.setDisabled(false);
 			} else {
+				this.reminderFrequencyHour.setValue("");
 				this.reminderFrequencyHour.setDisabled(true);
+				this.reminderFrequencyMin.setValue("");
 				this.reminderFrequencyMin.setDisabled(true);
 			}
 			this.delayRequired.setDisabled(false);
@@ -1377,16 +1417,24 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				this.delayFrequencyHour.setDisabled(false);
 				this.delayFrequencyMin.setDisabled(false);
 			} else {
+				this.delayFrequencyHour.setValue("");
 				this.delayFrequencyHour.setDisabled(true);
+				this.delayFrequencyMin.setValue("");
 				this.delayFrequencyMin.setDisabled(true);
 			}
 		} else {
+			this.eMailNotificationsRequired.setChecked(false);
 			this.eMailNotificationsRequired.setDisabled(true);
+			this.publishNotificationsRequired.setChecked(false);
 			this.publishNotificationsRequired.setDisabled(true);
+			this.reminderFrequencyHour.setValue("");
 			this.reminderFrequencyHour.setDisabled(true);
+			this.reminderFrequencyMin.setValue("");
 			this.reminderFrequencyMin.setDisabled(true);
 			this.delayRequired.setDisabled(true);
+			this.delayFrequencyHour.setValue("");
 			this.delayFrequencyHour.setDisabled(true);
+			this.delayFrequencyMin.setValue("");
 			this.delayFrequencyMin.setDisabled(true);
 		}
 
@@ -1402,7 +1450,9 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.delayFrequencyHour.setDisabled(false);
 			this.delayFrequencyMin.setDisabled(false);
 		} else {
+			this.delayFrequencyHour.setValue("");
 			this.delayFrequencyHour.setDisabled(true);
+			this.delayFrequencyMin.setValue("");
 			this.delayFrequencyMin.setDisabled(true);
 		}
 	}

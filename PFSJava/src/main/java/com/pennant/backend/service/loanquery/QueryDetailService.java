@@ -26,7 +26,6 @@ package com.pennant.backend.service.loanquery;
 
 import java.util.List;
 
-import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
@@ -48,8 +47,6 @@ public interface QueryDetailService {
 	AuditHeader getQueryMgmtList(AuditHeader auditHeader, ServiceTask task, String role);
 
 	List<QueryDetail> getQueryDetailsforAgreements(String reference);
-
-	AuditDetail validate(AuditDetail auditDetail);
 
 	List<QueryDetail> getUnClosedQurysForGivenRole(String reference, String currentRole);
 

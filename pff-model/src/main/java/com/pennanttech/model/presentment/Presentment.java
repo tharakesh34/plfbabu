@@ -124,6 +124,7 @@ public class Presentment {
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
+	private long headerId;
 
 	public Presentment() {
 		super();
@@ -626,4 +627,11 @@ public class Presentment {
 		this.utrNumber = utrNumber;
 	}
 
+	public long getHeaderId() {
+		return headerId;
+	}
+
+	public void setHeaderId(long headerId) {
+		this.headerId = headerId;
+	}
 }

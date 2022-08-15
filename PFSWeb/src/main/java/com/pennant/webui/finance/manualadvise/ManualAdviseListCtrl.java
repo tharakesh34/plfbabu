@@ -43,10 +43,13 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.ManualAdviseService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.manualadvise.model.ManualAdviseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -86,10 +89,12 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	protected Listbox sortOperator_AdviseType;
 	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_FeeTypeID;
+	protected Listheader listheader_AdviseStatus;
 
 	private transient ManualAdviseService manualAdviseService;
 	private List<Property> listAdviseType = PennantStaticListUtil.getManualAdvisePropertyTypes();
 	private FinanceMain financeMain = null;
+	private String module = null;
 
 	/**
 	 * default constructor.<br>
@@ -100,18 +105,49 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "ManualAdvise";
-		super.pageRightName = "ManualAdviseList";
-		super.tableName = "ManualAdvise";
-		super.queueTableName = "ManualAdvise_TView";
-		super.enquiryTableName = "MANUALADVISE_LVIEW";
+		if (arguments.containsKey("module")) {
+			this.module = (String) arguments.get("module");
+		}
+
+		if (PennantConstants.MANUALADVISE_CREATE_MODULE.equals(this.module)
+				|| PennantConstants.MANUALADVISE_ENQUIRY_MODULE.equals(this.module)) {
+			super.moduleCode = "ManualAdvise";
+			super.pageRightName = "ManualAdviseList";
+			super.tableName = "ManualAdvise";
+			super.queueTableName = "ManualAdvise_TView";
+			super.enquiryTableName = "MANUALADVISE_LVIEW";
+		} else if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)) {
+			super.moduleCode = "ManualAdvise";
+			super.pageRightName = "ManualAdviseList";
+			super.tableName = "ManualAdvise";
+			super.queueTableName = "ManualAdvise_CView";
+		} else if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)) {
+			super.moduleCode = "ManualAdvise";
+			super.pageRightName = "ManualAdviseList";
+			super.tableName = "ManualAdvise";
+			super.queueTableName = "ManualAdvise_CView";
+		}
 	}
 
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
+		String whereClause = "";
 		if (!enqiryModule) {
 			this.searchObject.addFilter(new Filter("BounceID", 0, Filter.OP_EQUAL));
+			if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)) {
+				whereClause = "(Status is NULL) OR (RecordStatus not in ('" + PennantConstants.RCD_STATUS_APPROVED
+						+ "'))";
+
+				this.searchObject.addWhereClause(whereClause);
+				this.searchObject.addFilter(new Filter("ValueDate", SysParamUtil.getAppDate(), Filter.OP_GREATER_THAN));
+			}
+			if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)) {
+				whereClause = "(Status is NULL) OR (Status in ('" + PennantConstants.MANUALADVISE_MAINTAIN + "'))";
+
+				this.searchObject.addWhereClause(whereClause);
+				this.searchObject.addFilter(new Filter("ValueDate", SysParamUtil.getAppDate(), Filter.OP_GREATER_THAN));
+			}
 		} else {
 			this.searchObject.addFilter(new Filter("FeeTypeId", 0, Filter.OP_NOT_EQUAL));
 			this.help.setVisible(false);
@@ -143,12 +179,33 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		registerField("feeTypeDesc", listheader_FeeTypeID, SortOrder.NONE, feeTypeID, sortOperator_FeeTypeID,
 				Operators.STRING);
 
+		if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+			listheader_AdviseStatus.setVisible(true);
+			registerField("status", listheader_AdviseStatus);
+		}
 		// comboBox list
 		fillList(adviseType, listAdviseType, null);
 		// Render the page and display the data.
 		doRenderPage();
 
+		doCheckRights();
+
 		search();
+	}
+
+	private void doCheckRights() {
+		logger.debug(Literal.ENTERING);
+
+		this.button_ManualAdviseList_NewManualAdvise
+				.setVisible(getUserWorkspace().isAllowed("button_ManualAdviseList_NewManualAdvise"));
+
+		if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)
+				|| PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)
+				|| (PennantConstants.MANUALADVISE_ENQUIRY_MODULE.equals(this.module))) {
+			this.button_ManualAdviseList_NewManualAdvise.setVisible(false);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -237,6 +294,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("manualAdvise", manualadvise);
 		arg.put("manualAdviseListCtrl", this);
+		arg.put("module", this.module);
 
 		try {
 

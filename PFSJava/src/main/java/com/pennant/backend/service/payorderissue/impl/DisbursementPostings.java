@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -35,6 +36,7 @@ public class DisbursementPostings {
 	private AccountEngineExecution engineExecution;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	protected AEAmountCodes amountCodes;
 
 	public DisbursementPostings() {
@@ -161,6 +163,10 @@ public class DisbursementPostings {
 					continue;
 				}
 
+				if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, finAdvancePayments.getRecordType())) {
+					continue;
+				}
+
 				if (finApprovedPay != null) {
 					if (StringUtils.isBlank(finAdvancePayments.getPartnerBankAc())) {
 						finAdvancePayments.setPartnerBankAc(finApprovedPay.getPartnerBankAc());
@@ -263,6 +269,23 @@ public class DisbursementPostings {
 		return null;
 	}
 
+	public void disbInstPostings(FinAdvancePayments finAdvancePay, FinanceMain fm) {
+		List<FinAdvancePayments> list = new ArrayList<>();
+
+		finAdvancePay.setStatus(DisbursementConstants.STATUS_AWAITCON);
+
+		list.add(finAdvancePay);
+
+		Map<Integer, Long> map = prepareDisbPostingApproval(list, fm, fm.getFinBranch());
+
+		for (FinAdvancePayments advPayment : list) {
+			if (map.containsKey(advPayment.getPaymentSeq())) {
+				advPayment.setLinkedTranId(map.get(advPayment.getPaymentSeq()));
+				finAdvancePaymentsDAO.updateLinkedTranId(advPayment);
+			}
+		}
+	}
+
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
 	}
@@ -275,4 +298,7 @@ public class DisbursementPostings {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
 }

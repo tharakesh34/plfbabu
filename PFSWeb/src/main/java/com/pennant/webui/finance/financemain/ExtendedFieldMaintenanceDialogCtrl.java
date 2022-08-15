@@ -253,6 +253,7 @@ public class ExtendedFieldMaintenanceDialogCtrl extends GFCBaseCtrl<ExtendedFiel
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain financeMain
+	 * @throws InterruptedException
 	 */
 	public void doWriteBeanToComponents(ExtendedFieldMaintenance extendedFieldMaintenance) {
 		logger.debug(Literal.ENTERING);
@@ -774,6 +775,7 @@ public class ExtendedFieldMaintenanceDialogCtrl extends GFCBaseCtrl<ExtendedFiel
 		logger.debug(Literal.ENTERING);
 
 		doWriteBeanToComponents(this.extendedFieldMaintenance.getBefImage());
+
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);

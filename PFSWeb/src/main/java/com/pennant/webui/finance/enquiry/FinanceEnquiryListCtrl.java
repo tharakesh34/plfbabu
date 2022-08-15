@@ -1028,7 +1028,15 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		}
 		if (!rejectedList) {
 			if (this.myRecords.isSelected()) {
-				searchObj.addWhereClause(getUsrFinAuthenticationQry(false));
+				String whereClause = searchObj.getWhereClause();
+				String usrFinAuthenticationQry = getUsrFinAuthenticationQry(false);
+				if (StringUtils.isNotEmpty(searchObj.getWhereClause())) {
+					whereClause = whereClause.concat("and");
+					whereClause = whereClause.concat(usrFinAuthenticationQry);
+					searchObj.addWhereClause(whereClause);
+				} else {
+					searchObj.addWhereClause(usrFinAuthenticationQry);
+				}
 			}
 			if (getUserWorkspace().isAllowed("isUserSpeicfic_Enquiry") && !approvedList) {
 				this.searchObj.removeFiltersOnProperty("FinReference");

@@ -64,4 +64,5 @@ public interface VehicleDealerDAO {
 
 	int getApprovedVehicleDealerCountById(long manufacturerDealerId, String delarType);
 
+	boolean isValidDealer(long id);
 }

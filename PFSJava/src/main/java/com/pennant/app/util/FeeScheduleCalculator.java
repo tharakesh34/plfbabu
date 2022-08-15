@@ -133,7 +133,8 @@ public class FeeScheduleCalculator {
 			if (!finFeeDetail.isOriginationFee()
 					|| CalculationConstants.REMFEE_PART_OF_DISBURSE.equals(feeScheduleMethod)
 					|| CalculationConstants.REMFEE_PART_OF_SALE_PRICE.equals(feeScheduleMethod)
-					|| CalculationConstants.FEE_SUBVENTION.equals(feeScheduleMethod)) {
+					|| CalculationConstants.FEE_SUBVENTION.equals(feeScheduleMethod)
+					|| CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(feeScheduleMethod)) {
 
 				if (finFeeDetail.getFinFeeScheduleDetailList() != null) {
 					finFeeDetail.getFinFeeScheduleDetailList().clear();

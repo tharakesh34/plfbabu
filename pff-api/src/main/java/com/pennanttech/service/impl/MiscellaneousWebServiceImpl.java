@@ -13,17 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.ext.dms.DMSGetLeadsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
+import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.bre.BREResponse;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.covenant.Covenant;
-import com.pennant.backend.model.finance.covenant.CovenantType;
+import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
@@ -67,6 +70,8 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 	private CovenantTypeDAO covenantTypeDAO;
 	private ScoringDetailService scoringDetailService;
 	private DMSGetLeadsDAO dmsGetLeadsDAO;
+	private CovenantsDAO covenantsDAO;
+	private DocumentDetailsDAO documentDetailsDAO;
 
 	public MiscellaneousWebServiceImpl() {
 		super();
@@ -199,7 +204,6 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 
 		CovenantResponse response = new CovenantResponse();
 
-		List<Covenant> covenantList = null;
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";
@@ -215,34 +219,34 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 			return response;
 		}
 
-		if (ImplementationConstants.COVENANT_MODULE_NEW) {
-			covenantList = covenantsService.getCovenants(finReference, "Loan", TableType.VIEW);
-			List<CovenantType> covenantTypeList = new ArrayList<>();
-			for (Covenant covenant : covenantList) {
-				if (!covenant.isDocumentReceived()) {
-
-					CovenantType covType = new CovenantType();
-					covType = covenantTypeDAO.getCovenantType(covenant.getCovenantTypeId(), "");
-					if (covType != null) {
-						covenantTypeList.add(covType);
-					}
-
-				}
-			}
-			response.setCovenantDocuments(covenantTypeList);
-		} else {
-			/*
-			 * List<FinCovenantType> finCovenantTypeById = finCovenantTypeService.getFinCovenantTypeById(finReference,
-			 * "_View", false);
-			 */
-		}
-
-		if (CollectionUtils.isEmpty(response.geCovenantTypes())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finReference;
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+		if (!ImplementationConstants.COVENANT_MODULE_NEW) {
 			return response;
 		}
+
+		List<Covenant> covenants = covenantsService.getCovenants(finReference, "Loan", TableType.VIEW);
+
+		if (CollectionUtils.isEmpty(covenants)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Covenant Details";
+			valueParm[1] = "with Finreference: " + finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+			return response;
+		}
+
+		for (Covenant covenant : covenants) {
+			List<CovenantDocument> documents = covenantsDAO.getCovenantDocuments(covenant.getId(), TableType.VIEW);
+
+			for (CovenantDocument document : documents) {
+				DocumentDetails dd = documentDetailsDAO.getDocumentDetails(document.getDocumentId(), "_View");
+				document.setDoctype(dd.getDocCategory());
+				document.setDocumentReceivedDate(dd.getDocReceivedDate());
+				covenant.setCovenantDocuments(documents);
+			}
+		}
+
+		response.setCovenants(covenants);
+		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
 		return response;
 	}
 
@@ -577,4 +581,13 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 		this.dmsGetLeadsDAO = dmsGetLeadsDAO;
 	}
 
+	@Autowired
+	public void setCovenantsDAO(CovenantsDAO covenantsDAO) {
+		this.covenantsDAO = covenantsDAO;
+	}
+
+	@Autowired
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
 }

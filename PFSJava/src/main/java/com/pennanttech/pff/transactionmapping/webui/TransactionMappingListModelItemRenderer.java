@@ -9,7 +9,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
+import com.pennanttech.pff.cd.model.TransactionMapping;
 
 public class TransactionMappingListModelItemRenderer implements ListitemRenderer<TransactionMapping>, Serializable {
 	private static final long serialVersionUID = 1L;

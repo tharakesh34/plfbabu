@@ -45,6 +45,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -668,6 +669,15 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.queryForObject(sql, new Object[] { delarType, dealerId }, Integer.class);
+	}
+
+	@Override
+	public boolean isValidDealer(long dealerId) {
+		String sql = "Select Coalesce(Count(DealerId), 0) From AMTVehicleDealer Where DealerId = ? and DealerType = ? and Active = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, Integer.class, dealerId, VASConsatnts.VASAGAINST_PARTNER, 1) > 0;
 	}
 
 }

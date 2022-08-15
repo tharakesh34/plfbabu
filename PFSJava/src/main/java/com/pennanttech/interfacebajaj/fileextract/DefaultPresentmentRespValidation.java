@@ -45,7 +45,7 @@ public class DefaultPresentmentRespValidation implements ValidateRecord {
 			int statusLength = status.toString().length();
 			int minLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
 			int maxLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
-			if (statusLength != minLength && statusLength != maxLength) {
+			if (statusLength == 0 || (statusLength >= minLength && statusLength > maxLength)) {
 				throw new Exception("Status length should be minimum" + minLength + "and maximum" + maxLength);
 			}
 		}

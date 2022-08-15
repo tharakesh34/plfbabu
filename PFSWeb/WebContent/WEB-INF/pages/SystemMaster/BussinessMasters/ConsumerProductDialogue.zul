@@ -63,7 +63,7 @@
 									<label value="${c:l('label_ProductList_ModelDescription.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="modelDescription" width="300px" maxlength="20" />
+										<textbox id="modelDescription" width="300px" maxlength="50" />
 									</hbox>
 								</row>
 								<row>
@@ -78,7 +78,7 @@
 									<label value="${c:l('label_ProductList_AssetDescription.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="assetDescription" width="300px" maxlength="20" />
+										<textbox id="assetDescription" width="300px" maxlength="50" />
 									</hbox>
 								</row>
 								<row>

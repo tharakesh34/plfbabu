@@ -76,4 +76,6 @@ public interface FinAdvancePaymentsDAO {
 	void updateLLDate(FinAdvancePayments finAdvancePayments, String type);
 
 	FinAdvancePayments getFinAdvancePaymentsById(long paymentId);
+
+	int getStatusCountByFinRefrence(long finID);
 }

@@ -300,7 +300,8 @@ public class CollateralController extends ExtendedTestClass {
 		// generate collateral reference in case of empty
 		String collateralRef = collateralSetup.getCollateralRef();
 		if (StringUtils.isBlank(collateralRef)) {
-			collateralSetup.setCollateralRef(ReferenceUtil.generateCollateralRef());
+			collateralRef = ReferenceUtil.generateCollateralRef();
+			collateralSetup.setCollateralRef(collateralRef);
 			collateralRef = collateralSetup.getCollateralRef();
 		}
 
@@ -343,7 +344,7 @@ public class CollateralController extends ExtendedTestClass {
 				}
 
 				if (StringUtils.equals(procType, PROCESS_TYPE_SAVE)) {
-					thirdPartyColl.setCollateralRef(collateralRef);
+					thirdPartyColl.setCollateralRef(collateralSetup.getCollateralRef());
 					thirdPartyColl.setNewRecord(true);
 					thirdPartyColl.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else if (StringUtils.equals(procType, PROCESS_TYPE_UPDATE)) {
@@ -474,7 +475,7 @@ public class CollateralController extends ExtendedTestClass {
 			int seqNo = 0;
 			for (ExtendedField extendedField : extendedFields) {
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
-				exdFieldRender.setReference(collateralRef);
+				exdFieldRender.setReference(collateralSetup.getCollateralRef());
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				exdFieldRender.setLastMntBy(userDetails.getUserId());

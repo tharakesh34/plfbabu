@@ -73,4 +73,5 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 
 	List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String type);
 
+	long getManualAdviseFeeTypeById(long id);
 }

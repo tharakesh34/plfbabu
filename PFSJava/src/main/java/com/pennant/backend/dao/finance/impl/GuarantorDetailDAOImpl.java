@@ -39,6 +39,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -516,4 +517,49 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			return gd;
 		}
 	}
+
+	@Override
+	public List<FinanceEnquiry> getGuarantorsFin(String custCif, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, fm.FinReference, fm.FinType, fm.FinStatus, fm.FinStartDate, fm.FinCcy, fm.FinAmount");
+		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue ");
+		sql.append(", fm.FinRepaymentAmount, fm.NumberOfTerms, ft.FintypeDesc as LovDescFinTypeName");
+		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount");
+		sql.append(" from FinanceMain fm");
+		sql.append(" inner join RMTfinanceTypes ft on ft.Fintype = fm.FinType");
+		sql.append(" left join (select FinID, (NSchdPri+NSchdPft) MaxInstAmount");
+		sql.append(" from FinPftdetails) t6 on t6.FinID = fm.FinID");
+		sql.append(" inner join FinGuarantorsDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" fgd on fgd.FinID = fm.FinID");
+		sql.append(" Where fgd.Guarantorcif = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, custCif);
+		}, (rs, rowNum) -> {
+			FinanceEnquiry fm = new FinanceEnquiry();
+
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setFinStatus(rs.getString("FinStatus"));
+			fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+			fm.setFinCcy(rs.getString("FinCcy"));
+			fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+			fm.setDownPayment(rs.getBigDecimal("DownPayment"));
+			fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
+			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+			fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
+			fm.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));
+			fm.setCustomerType("Guarantor");
+
+			return fm;
+		});
+	}
+
 }

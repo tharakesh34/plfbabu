@@ -6949,12 +6949,36 @@
             tableName="FINFEEDETAIL_TEMP"/>
 	</changeSet> 
 	
+	<changeSet id="DE#1438.1_pre" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				alter table FinFeeDetail add ActPercentage1 decimal(5,2);
+				update FinFeeDetail set ActPercentage1=ActPercentage;
+				Update FinFeeDetail set ActPercentage = null;
+				alter table FinFeeDetail_Temp add ActPercentage1 decimal(5,2);
+				update FinFeeDetail_Temp set ActPercentage1=ActPercentage;
+				Update FinFeeDetail_Temp set ActPercentage = null;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="DE#1438.1" author="Gopal.p">
 		<modifyDataType tableName="FinFeeDetail" columnName="ActPercentage" newDataType="decimal(5,2)" />
 	</changeSet>
 	
 	<changeSet id="DE#1438.2" author="Gopal.p">
 		<modifyDataType tableName="FinFeeDetail_Temp" columnName="ActPercentage" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="DE#1438.1_post" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update FinFeeDetail set ActPercentage=ActPercentage1;
+				alter table FinFeeDetail drop column ActPercentage1;
+				update FinFeeDetail_Temp set ActPercentage=ActPercentage1;
+				alter table FinFeeDetail_Temp drop column ActPercentage1;
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="DE#1438.1.1" author="Gopal.p" dbms="mssql">

@@ -104,6 +104,7 @@ import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -1151,7 +1152,12 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (fm.getNextUserId() != null) {
 					publishNotification(Notify.USER, fm.getFinReference(), fm);
 				} else {
-					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
+					if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
+						publishNotification(Notify.ROLE, fm.getFinReference(), fm);
+					} else {
+						publishNotification(Notify.ROLE, fm.getFinReference(), fm, finDivision,
+								aFinanceMain.getFinBranch());
+					}
 				}
 
 				if (extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {

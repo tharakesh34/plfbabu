@@ -17,9 +17,9 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 @ContextConfiguration(locations = "classpath:dao-test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)

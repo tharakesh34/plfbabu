@@ -50,6 +50,8 @@ public class FinanceConstants {
 	public static final String PRODUCT_DISCOUNT = "DISCOUNT";
 	public static final String PRODUCT_GOLD = "GOLD";
 	public static final String PRODUCT_CD = "CD";
+	public static final String PRODUCT_PL = "PL";
+
 	public static final String PRODUCT_HYBRID_FLEXI = "HFLEXI";
 
 	// Finance Division Details
@@ -93,6 +95,7 @@ public class FinanceConstants {
 	public static final String ODCALON_STOT = "STOT";
 	public static final String ODCALON_PIPD_FRQ = "PIPDF";
 	public static final String ODCALON_PIPD_EOM = "PIPDM";
+	public static final String ODCALON_PIPD = "PIPD";
 
 	// Schedule Apportionment Types
 	public static final String PAY_APPORTIONMENT_SPRI = "SPRI";
@@ -121,6 +124,7 @@ public class FinanceConstants {
 	// Repayments Method Types
 	public static final String REPAYMTH_AUTO = "CASA";
 	public static final String REPAYMTH_MANUAL = "MANUAL";
+	public static final String REPAYMTH_NACH = "NACH";
 	public static final String REPAYMTH_PDC = "PDC";
 	public static final String REPAYMTH_UDC = "UDC";
 
@@ -195,10 +199,6 @@ public class FinanceConstants {
 	 */
 	// Method code for Schedule Change exists or not on Maintenance
 	public static final String method_scheduleChange = "scheduleChange";
-
-	// Overdraft Dropping Method
-	public static final String DROPINGMETHOD_CONSTANT = "C";
-	public static final String DROPINGMETHOD_VARIABLE = "V";
 
 	// SepType Method
 	public static final String STEPTYPE_PRIBAL = "PRI";
@@ -402,6 +402,10 @@ public class FinanceConstants {
 	public static final String VRPL_VRBL = "PLBL";
 
 	public static final String FLAG_RESTRUCTURE = "R";
+	public static final String FLAG_RESTRUCTURE_PRIH = "N";
+
+	public static final String FIXED_AMOUNT = "FA";
+	public static final String PERCENTAGE = "P";
 
 	public static final String FEE_IE = "FEE_IE";
 	public static final String FEE_IE_CGST = "FEE_IE_CGST";
@@ -412,4 +416,9 @@ public class FinanceConstants {
 
 	public static final String FEE_WR = "FEE_WR";
 
+	public static final String OD_BILLING_DUE_PRINCIPLE = "ODBDP";
+	public static final String OD_BILLING_DUE_INTEREST = "ODBDI";
+	public static final String OD_BILLING_DUE_PRINCIPLE_AND_INTEREST = "ODBDPAI";
+
+	public static final String OD_TRANCHE_AMOUNT = "Tranche Amount";
 }

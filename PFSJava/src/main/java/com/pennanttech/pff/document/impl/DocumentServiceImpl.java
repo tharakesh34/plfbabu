@@ -1,11 +1,13 @@
 package com.pennanttech.pff.document.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -28,6 +30,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
+import com.pennanttech.pff.documents.dao.DocumentDao;
+import com.pennanttech.pff.documents.model.DocumentStatusDetail;
 
 public class DocumentServiceImpl extends GenericService<DocumentDetails> implements DocumentService {
 	private static Logger logger = LogManager.getLogger(DocumentServiceImpl.class);
@@ -35,7 +39,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 	private DocumentDetailsDAO documentDetailsDAO;
 	private AuditHeaderDAO auditHeaderDAO;
 	private DocumentManagerDAO documentManagerDAO;
-
+	private DocumentDao documentDao;
 	// services
 	private DocumentTypeService documentTypeService;
 
@@ -87,6 +91,10 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 
 			// update
 			documentDetailsDAO.update(documentDetail, tableType);
+
+			if (PennantConstants.RECORD_TYPE_UPD.equals(documentDetail.getRecordType())) {
+				resetDocumentStatus(documentDetail.getDocId());
+			}
 		}
 
 		auditHeader.getAuditDetail().setModelData(documentDetail);
@@ -473,6 +481,31 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 
 	}
 
+	private int resetDocumentStatus(long docId) {
+		DocumentStatusDetail ds = documentDao.getDocumentStatusByDocId(docId, "");
+
+		if (ds == null || ds.getProcessed() == 0 || !ds.getStatus().equals("R")) {
+			return 0;
+		}
+
+		DocumentStatusDetail befImage = new DocumentStatusDetail();
+
+		BeanUtils.copyProperties(ds, befImage);
+		ds.setBefImage(befImage);
+
+		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, ds.getBefImage(), ds);
+		AuditHeader ah = new AuditHeader(String.valueOf(ds.getId()), null, null, null, auditDetail, null,
+				new HashMap<>());
+
+		ds.setStatus("");
+		ds.setRemarks("");
+		ds.setProcessed(0);
+		int count = documentDao.update(ds, TableType.MAIN_TAB);
+
+		auditHeaderDAO.addAudit(ah);
+		return count;
+	}
+
 	@Override
 	public DocumentType getApprovedDocumentTypeById(String docType) {
 		return documentTypeService.getApprovedDocumentTypeById(docType);
@@ -493,4 +526,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 	public void setDocumentTypeService(DocumentTypeService documentTypeService) {
 		this.documentTypeService = documentTypeService;
 	}
+
+	public void setDocumentDao(DocumentDao documentDao) {
+		this.documentDao = documentDao;
+	}
+
 }

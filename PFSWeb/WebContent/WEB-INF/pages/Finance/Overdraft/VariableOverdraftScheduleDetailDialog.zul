@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_VariableOverdraftScheduleDetailDialog" apply="${variableOverdraftScheduleDetailDialogCtrl}" width="55%"
+			height="400px" style="align:start;" sizable="false" closable="true">
+
+			<borderlayout id="borderLayout_ScheduleDetail">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<toolbar align="start" sclass="toolbar-start">
+								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnDelete,btnSave,btnClose" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center">
+								<label id="label_title"
+									value="${c:l('label_VariableOverdraftScheduleDetailDialog_ScheduleDetails')}" sclass="label-heading" />
+							</toolbar>
+
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose" label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none">
+					<groupbox>
+						<grid sclass="GridLayoutNoBorder" sizedByContent="true" style="border:0px; padding:0px;">
+							<columns>
+								<column width="250px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_VariableOverdraftScheduleDetailDialog_Date.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="date" width="190px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_VariableOverdraftScheduleDetailDialog_DropLineAmount.value')}" />
+									<currencyBox id="droplineAmount" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</center>
+				<south border="none" />
+			</borderlayout>
+		</window>
+	</window>
+</zk>

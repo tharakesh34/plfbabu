@@ -408,36 +408,6 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 		return provisionHeader;
 	}
 
-	@Override
-	public NPAProvisionHeader getNewNPAProvisionHeaderByTemplate(NPAProvisionHeader provisionHeader,
-			TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		List<AssetClassificationHeader> headerList = this.assetClassificationHeaderDAO
-				.getAssetClassificationHeaderByTemplate(provisionHeader.getNpaTemplateId(),
-						TableType.AVIEW.getSuffix());
-
-		if (CollectionUtils.isEmpty(headerList)) {
-			return provisionHeader;
-		}
-
-		List<NPAProvisionDetail> provisionDeatilsList = new ArrayList<NPAProvisionDetail>();
-
-		headerList.forEach(header -> {
-
-			NPAProvisionDetail provisionDetail = new NPAProvisionDetail();
-			provisionDetail.setAssetClassificationId(header.getId());
-			provisionDetail.setAssetCode(header.getCode());
-			provisionDetail.setAssetStageOrder(header.getStageOrder());
-			provisionDeatilsList.add(provisionDetail);
-		});
-
-		provisionHeader.setProvisionDetailsList(provisionDeatilsList);
-
-		logger.debug(Literal.LEAVING);
-		return provisionHeader;
-	}
-
 	/**
 	 * Getting provision header details
 	 */
@@ -456,8 +426,35 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 			return provisionHeader;
 		}
 
-		provisionHeader.setProvisionDetailsList(provisionDetailsList);
+		List<AssetClassificationDetail> detailsList = this.assetClassificationHeaderDAO
+				.getAssetClassificationDetails(provisionHeader.getFinType(), TableType.AVIEW);
+
+		if (CollectionUtils.isNotEmpty(detailsList) && CollectionUtils.isNotEmpty(provisionDetailsList)) {
+			for (AssetClassificationDetail detail : detailsList) {
+				boolean rcdExists = false;
+				for (NPAProvisionDetail npaProvisionDetail : provisionDetailsList) {
+					if (npaProvisionDetail.getAssetClassificationId() == detail.getHeaderId()) {
+						rcdExists = true;
+						break;
+					}
+				}
+				if (!rcdExists) {
+					AssetClassificationHeader classificationHeader = this.assetClassificationHeaderDAO
+							.getAssetClassificationHeader(detail.getHeaderId(), TableType.AVIEW.getSuffix());
+					if (classificationHeader != null) {
+						NPAProvisionDetail provisionDetail = new NPAProvisionDetail();
+						provisionDetail.setAssetClassificationId(classificationHeader.getId());
+						provisionDetail.setAssetCode(classificationHeader.getCode());
+						provisionDetail.setAssetStageOrder(classificationHeader.getStageOrder());
+						provisionDetail.setNewPrvDetail(true);
+						provisionDetailsList.add(provisionDetail);
+					}
+				}
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
+		provisionHeader.setProvisionDetailsList(provisionDetailsList);
 		return provisionHeader;
 	}
 
@@ -701,7 +698,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 			auditDetails.addAll(auditDetailMap.get("provisionDetails"));
 		}
 
-		header.setAuditDetailMap(auditDetailMap);
+		header.setAuditDetailMap((HashMap<String, List<AuditDetail>>) auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(header);
 		auditHeader.setAuditDetails(auditDetails);
 
@@ -810,10 +807,6 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 		return nPAProvisionDetailDAO.getNPAProvisionDetailList(id, view);
 	}
 
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
-	}
-
 	@Override
 	public List<Rule> getRuleByModuleAndEvent(String module, String event, String type) {
 		return ruleDAO.getRuleByModuleAndEvent(module, event, type);
@@ -821,32 +814,62 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 
 	@Override
 	public List<NPAProvisionHeader> getNPAProvisionsListByFintype(String finType, TableType tableType) {
+		List<NPAProvisionHeader> provisions = nPAProvisionHeaderDAO.getNPAProvisionsListByFintype(finType, tableType);
 
-		List<NPAProvisionHeader> npaProvisionHeaderList = nPAProvisionHeaderDAO.getNPAProvisionsListByFintype(finType,
-				tableType);
+		for (NPAProvisionHeader ph : provisions) {
+			long id = ph.getId();
+			List<NPAProvisionDetail> details = this.nPAProvisionDetailDAO.getNPAProvisionDetailList(id, tableType);
 
-		for (NPAProvisionHeader provisionHeader : npaProvisionHeaderList) {
-			List<NPAProvisionDetail> provisionDetailsList = this.nPAProvisionDetailDAO
-					.getNPAProvisionDetailList(provisionHeader.getId(), tableType);
-			if (CollectionUtils.isNotEmpty(provisionDetailsList)) {
-				for (NPAProvisionDetail detail : provisionDetailsList) {
+			for (NPAProvisionDetail detail : details) {
+				long cId = detail.getAssetClassificationId();
+				AssetClassificationHeader ch = this.assetClassificationHeaderDAO.getAssetClassificationHeader(cId,
+						"_AView");
 
-					AssetClassificationHeader classificationHeader = this.assetClassificationHeaderDAO
-							.getAssetClassificationHeader(detail.getAssetClassificationId(),
-									TableType.AVIEW.getSuffix());
-					if (classificationHeader != null) {
-						detail.setAssetClassificationId(classificationHeader.getId());
-						detail.setAssetCode(classificationHeader.getCode());
-						detail.setAssetStageOrder(classificationHeader.getStageOrder());
-					}
+				if (ch != null) {
+					detail.setAssetClassificationId(ch.getId());
+					detail.setAssetCode(ch.getCode());
+					detail.setAssetStageOrder(ch.getStageOrder());
 				}
 			}
 
-			logger.debug(Literal.LEAVING);
-			provisionHeader.setProvisionDetailsList(provisionDetailsList);
-
+			ph.setProvisionDetailsList(details);
 		}
-		return npaProvisionHeaderList;
+
+		return provisions;
+	}
+
+	@Override
+	public NPAProvisionHeader getNewNPAProvisionHeaderByTemplate(NPAProvisionHeader provisionHeader,
+			TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		List<AssetClassificationHeader> headerList = this.assetClassificationHeaderDAO
+				.getAssetClassificationHeaderByTemplate(provisionHeader.getNpaTemplateId(),
+						TableType.AVIEW.getSuffix());
+
+		if (CollectionUtils.isEmpty(headerList)) {
+			return provisionHeader;
+		}
+
+		List<NPAProvisionDetail> provisionDeatilsList = new ArrayList<>();
+
+		headerList.forEach(header -> {
+
+			NPAProvisionDetail provisionDetail = new NPAProvisionDetail();
+			provisionDetail.setAssetClassificationId(header.getId());
+			provisionDetail.setAssetCode(header.getCode());
+			provisionDetail.setAssetStageOrder(header.getStageOrder());
+			provisionDeatilsList.add(provisionDetail);
+		});
+
+		provisionHeader.setProvisionDetailsList(provisionDeatilsList);
+
+		logger.debug(Literal.LEAVING);
+		return provisionHeader;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
 	}
 
 }

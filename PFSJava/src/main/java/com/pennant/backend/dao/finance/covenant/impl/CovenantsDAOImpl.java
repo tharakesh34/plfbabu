@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -97,8 +98,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			int index = 1;
 
 			ps.setString(index++, finreference);
-			ps.setString(index++, module);
-
+			ps.setString(index, module);
 		}, rowMapper);
 	}
 
@@ -476,13 +476,15 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 	@Override
 	public List<Covenant> getCovenants(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" c.Frequency, NextFrequencyDate, CovenantTypeCode, CovenantTypeDescription");
-		sql.append(", ct.DocType, DocTypeName, c.Id");
-		sql.append(" From Covenants_Aview c");
-		sql.append(" Inner Join Covenant_Types_Aview ct on ct.Id = c.CovenantTypeId");
-		sql.append(" Left Join Covenant_Documents cd on cd.CovenantId = c.Id");
-		sql.append(" Where KeyReference = ? and c.NextFrequencyDate is not null and Pdd = ?");
-		sql.append(" and cd.Frequencydate is null");
+		sql.append(" c.Frequency, NextFrequencyDate, CovenantTypeCode, CovenantTypeDescription, ct.DocType");
+		sql.append(", DocTypeName, c.id, c.ReceivableDate, c.AllowPostponement ");
+		sql.append(", c.ExtendedDate, c.GraceDays, c.GraceDueDate ");
+		sql.append(" from covenants_aview c");
+		sql.append(" inner join COVENANT_TYPES_AVIEW ct on ct.id = c.covenantTypeId");
+		sql.append(" left join COVENANT_DOCUMENTS cd on cd.CovenantId = c.id");
+		sql.append(" where KeyReference = ? and c.NextFrequencyDate is not null and pdd = ?");
+		sql.append(" and cd.frequencydate is null");
+		sql.append(" order by NextFrequencyDate");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -500,6 +502,11 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			c.setDocType(rs.getString("DocType"));
 			c.setDocTypeName(rs.getString("DocTypeName"));
 			c.setId(rs.getLong("Id"));
+			c.setReceivableDate(rs.getTimestamp("ReceivableDate"));
+			c.setAllowPostPonement(rs.getBoolean("AllowPostponement"));
+			c.setExtendedDate(rs.getTimestamp("ExtendedDate"));
+			c.setGraceDays(rs.getInt("GraceDays"));
+			c.setGraceDueDate(rs.getTimestamp("GraceDueDate"));
 
 			return c;
 		});
@@ -607,4 +614,175 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		}
 
 	}
+
+	@Override
+	public List<Covenant> getCovenants(List<String> list, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, LOS, MandatoryRole, OTC, PDD, Frequency, ReceivableDate from Covenants");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
+
+		if (CollectionUtils.isNotEmpty(list)) {
+			sql.append(" Where Id in (");
+			sql.append(list.stream().map(e -> "?").collect(Collectors.joining(",")));
+			sql.append(")");
+		}
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			for (String cov : list) {
+				ps.setString(index++, cov);
+			}
+		}, (rs, rowNum) -> {
+			Covenant cov = new Covenant();
+
+			cov.setId(rs.getLong("Id"));
+			cov.setLos(rs.getBoolean("LOS"));
+			cov.setMandatoryRole(rs.getString("MandatoryRole"));
+			cov.setOtc(rs.getBoolean("OTC"));
+			cov.setPdd(rs.getBoolean("PDD"));
+			cov.setFrequency(rs.getString("Frequency"));
+			cov.setReceivableDate(rs.getDate("ReceivableDate"));
+
+			return cov;
+		});
+	}
+
+	@Override
+	public List<CovenantDocument> getCovenantDocuments(List<Long> covList, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, CovenantId, CovenantType, ReceivableDate, FrequencyDate");
+		sql.append(", DocumentReceivedDate, DocumentId, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId");
+		sql.append(" From Covenant_Documents");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
+
+		if (CollectionUtils.isNotEmpty(covList)) {
+			sql.append(" Where CovenantId in (");
+			sql.append(covList.stream().map(e -> "?").collect(Collectors.joining(",")));
+			sql.append(")");
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			for (Long covDoc : covList) {
+				ps.setLong(index++, covDoc);
+			}
+		}, (rs, rowNum) -> {
+			CovenantDocument cd = new CovenantDocument();
+
+			cd.setId(rs.getLong("Id"));
+			cd.setCovenantId(rs.getLong("CovenantId"));
+			cd.setCovenantType(rs.getString("CovenantType"));
+			cd.setReceivableDate(rs.getDate("ReceivableDate"));
+			cd.setFrequencyDate(rs.getDate("FrequencyDate"));
+			cd.setDocumentReceivedDate(rs.getDate("DocumentReceivedDate"));
+			cd.setDocumentId(rs.getLong("DocumentId"));
+			cd.setVersion(rs.getInt("Version"));
+			cd.setLastMntBy(rs.getLong("LastMntBy"));
+			cd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cd.setRecordStatus(rs.getString("RecordStatus"));
+			cd.setRoleCode(rs.getString("RoleCode"));
+			cd.setNextRoleCode(rs.getString("NextRoleCode"));
+			cd.setTaskId(rs.getString("TaskId"));
+			cd.setNextTaskId(rs.getString("NextTaskId"));
+			cd.setRecordType(rs.getString("RecordType"));
+			cd.setWorkflowId(rs.getLong("WorkFlowId"));
+
+			return cd;
+		});
+	}
+
+	@Override
+	public void updateCovenantDocuments(List<CovenantDocument> cdList, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update Covenant_Documents");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
+		sql.append(" set CovenantType = ?, ReceivableDate = ?, FrequencyDate = ?");
+		sql.append(", DocumentReceivedDate = ?, DocumentId = ?");
+		sql.append(" Where CovenantId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				CovenantDocument cd = cdList.get(i);
+				int index = 1;
+
+				ps.setString(index++, cd.getCovenantType());
+				ps.setDate(index++, JdbcUtil.getDate(cd.getReceivableDate()));
+				ps.setDate(index++, JdbcUtil.getDate(cd.getFrequencyDate()));
+				ps.setDate(index++, JdbcUtil.getDate(cd.getDocumentReceivedDate()));
+				ps.setLong(index++, cd.getDocumentId());
+
+				ps.setLong(index++, cd.getCovenantId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return cdList.size();
+			}
+		});
+	}
+
+	@Override
+	public List<Covenant> getCovenantsId(List<Long> list, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, LOS, MandatoryRole, OTC, PDD, Frequency, ReceivableDate");
+		sql.append(" From Covenants");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
+
+		if (CollectionUtils.isNotEmpty(list)) {
+			sql.append(" Where Id in (");
+			sql.append(list.stream().map(e -> "?").collect(Collectors.joining(",")));
+			sql.append(")");
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			for (Long cov : list) {
+				ps.setLong(index++, cov);
+			}
+		}, (rs, rowNum) -> {
+			Covenant cov = new Covenant();
+
+			cov.setId(rs.getLong("Id"));
+			cov.setLos(rs.getBoolean("LOS"));
+			cov.setMandatoryRole(rs.getString("MandatoryRole"));
+			cov.setOtc(rs.getBoolean("OTC"));
+			cov.setPdd(rs.getBoolean("PDD"));
+			cov.setFrequency(rs.getString("Frequency"));
+			cov.setReceivableDate(rs.getDate("ReceivableDate"));
+
+			return cov;
+		});
+	}
+
+	@Override
+	public boolean getCovenantsWithOtc(String finRef) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" coalesce(count(ca.Covenanttypeid), 0) From Covenants_aView ca");
+		sql.append(" Inner Join Covenant_Types ct on ct.Id = ca.Covenanttypeid");
+		sql.append(" Where KeyReference = ? and Otc = ?");
+		sql.append(" and ca.Id not in (select CovenantId from Covenant_Documents Where");
+		sql.append(" CovenantId = ca.Id and ct.docType = CovenantType) ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finRef, 1) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
+	}
+
 }

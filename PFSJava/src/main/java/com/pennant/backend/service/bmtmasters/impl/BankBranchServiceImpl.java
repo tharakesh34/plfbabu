@@ -44,6 +44,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -374,10 +375,41 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 			}
+		} else {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			String ifsc = bankBranch.getIFSC();
+			valueParm[0] = ifsc;
+			errParm[0] = PennantJavaUtil.getLabel("label_IFSC") + " : " + valueParm[0];
+
+			String recordStatus = StringUtils.trimToEmpty(bankBranch.getRecordStatus());
+			if (!PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
+					&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordStatus)
+					&& !PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus)) {
+				if (!bankBranch.isAllowMultipleIFSC()) {
+					int count = bankBranchDAO.getBankBranchByIFSC(ifsc, bankBranch.getId(), "_View");
+					if (count != 0) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, valueParm), usrLanguage));
+					}
+				}
+
+				if (bankBranch.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(bankBranch.getRecordType())) {
+					BankBranch bb = bankBranchDAO.getBankBranchByIFSCMICR(ifsc, bankBranch.getMICR());
+					if (bb != null) {
+						StringBuilder error = new StringBuilder();
+						error.append(PennantJavaUtil.getLabel("label_IFSC")).append(" : ");
+						error.append(ifsc).append(" and  ");
+						error.append(PennantJavaUtil.getLabel("label_MICR")).append(" : ");
+						error.append(bankBranch.getMICR());
+						errParm[0] = error.toString();
+
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, valueParm), usrLanguage));
+					}
+				}
+			}
 		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
@@ -408,6 +440,158 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	@Override
 	public BankBranch getBankBrachByMicr(String micr) {
 		return getBankBranchDAO().getBankBrachByMicr(micr, "");
+	}
+
+	/**
+	 * fetch Bank Branch details by IFSC code.
+	 * 
+	 * @param ifsc
+	 * @return BankBranch
+	 */
+	@Override
+	public BankBranch getBankBranchByIFSC(String ifsc) {
+		return bankBranchDAO.getBankBranchByIFSC(ifsc, "");
+	}
+
+	/**
+	 * fetch Bank Branch Count by IFSC code.
+	 * 
+	 * @param ifsc
+	 * @return BankBranchCount
+	 */
+	@Override
+	public int getBankBranchCountByIFSC(final String iFSC, String type) {
+		return bankBranchDAO.getBankBranchCountByIFSC(iFSC, type);
+	}
+
+	@Override
+	public BankBranch getBankBranchByIFSCMICR(String iFSC, String micr) {
+		return bankBranchDAO.getBankBranchByIFSCMICR(iFSC, micr);
+	}
+
+	public BankBranch getBankBranch(String iFSC, String micr, String bankCode, String branchCode) {
+		logger.debug(Literal.ENTERING);
+
+		String[] valueParm = new String[2];
+
+		BankBranch bankBranch = new BankBranch();
+
+		if (StringUtils.isBlank(iFSC) && (StringUtils.isBlank(bankCode) || StringUtils.isBlank(branchCode))) {
+			valueParm[0] = "IFSC";
+			valueParm[1] = "Bank/Branch code";
+
+			bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90215", valueParm)));
+			return bankBranch;
+		}
+
+		if (StringUtils.isNotBlank(bankCode) && StringUtils.isNotBlank(branchCode)) {
+			bankBranch = getBankBrachByCode(bankCode, branchCode);
+			if (bankBranch == null) {
+				valueParm[0] = bankCode;
+				valueParm[1] = branchCode;
+
+				bankBranch = new BankBranch();
+				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90302", valueParm)));
+				return bankBranch;
+			} else {
+				if (StringUtils.isNotBlank(micr)) {
+					if (!micr.equals(bankBranch.getMICR())) {
+						valueParm[0] = "MICR";
+						valueParm[1] = micr;
+
+						bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+						return bankBranch;
+					}
+				}
+			}
+		} else if (StringUtils.isNotEmpty(iFSC) && StringUtils.isNotEmpty(micr)) {
+			bankBranch = getBankBranchByIFSCMICR(iFSC, micr);
+			if (bankBranch == null) {
+				valueParm[0] = iFSC;
+				valueParm[1] = micr;
+
+				bankBranch = new BankBranch();
+				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90703", valueParm)));
+				return bankBranch;
+			} else {
+				if (StringUtils.isNotBlank(micr)) {
+					if (!micr.equals(bankBranch.getMICR())) {
+						valueParm[0] = "MICR";
+						valueParm[1] = micr;
+
+						bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+						return bankBranch;
+					}
+				}
+			}
+		} else if (StringUtils.isNotBlank(iFSC)) {
+			if (getBankBranchCountByIFSC(iFSC, "") > 1) {
+				String[] parm = new String[1];
+				parm[0] = iFSC;
+
+				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90702", valueParm)));
+				return bankBranch;
+			}
+
+			bankBranch = getBankBranchByIFSC(iFSC);
+
+			if (bankBranch == null) {
+				valueParm = new String[2];
+				valueParm[0] = "IFSC";
+				valueParm[1] = iFSC;
+				bankBranch = new BankBranch();
+				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90301", valueParm)));
+				return bankBranch;
+			} else {
+				if (StringUtils.isNotBlank(micr)) {
+					if (!micr.equals(bankBranch.getMICR())) {
+						valueParm[0] = "MICR";
+						valueParm[1] = micr;
+
+						bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+						return bankBranch;
+					}
+				}
+			}
+		}
+
+		if (StringUtils.isNotBlank(bankCode)) {
+			String branchBankCode = StringUtils.trimToEmpty(bankBranch.getBankCode());
+			if (!branchBankCode.equals(bankCode)) {
+				valueParm = new String[1];
+				valueParm[0] = iFSC;
+
+				bankBranch.setError(ErrorUtil.getErrorDetail(new ErrorDetail("99020", valueParm)));
+				return bankBranch;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+
+		return bankBranch;
+	}
+
+	public boolean validateBranchCode(BankBranch bankBranch, String mandateType) {
+		switch (mandateType) {
+		case MandateConstants.TYPE_ECS:
+			if (!bankBranch.isEcs()) {
+				return false;
+			}
+			break;
+		case MandateConstants.TYPE_DDM:
+			if (!bankBranch.isDda()) {
+				return false;
+			}
+			break;
+		case MandateConstants.TYPE_NACH:
+			if (!bankBranch.isNach()) {
+				return false;
+			}
+			break;
+		default:
+			break;
+		}
+
+		return true;
 	}
 
 	public MandateDAO getMandateDAO() {

@@ -13,7 +13,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.LedgerDownloadService;
 
-public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
+public class LedgerDownloadProcessCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 223801324705386693L;
 	private static final Logger logger = LogManager.getLogger(LedgerDownloadProcessCtrl.class);
 

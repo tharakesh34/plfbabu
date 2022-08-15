@@ -95,6 +95,13 @@
 									<space spacing="2px" />
 									<checkbox id="active" checked="false" />
 								</hbox>
+								</row>
+								<row>
+								<label id="label_BankDetailDialog_AllowMultipleIFSC" value="${c:l('label_BankDetailDialog_AllowMultipleIFSC.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="allowMultipleIFSC" checked="false" />
+								</hbox>
 							</row>
 						</rows>
 					</grid>

@@ -52,4 +52,8 @@ public interface LimitRestService {
 	@Path("/limitService/unBlockLimit")
 	public WSReturnStatus unBlockLimit(@WebParam(name = "limitSetup") LimitHeader limitHeader) throws ServiceException;
 
+	@POST
+	@Path("/limitService/getInstitutionLimitSetup")
+	public LimitHeader getInstitutionLimitSetup(@WebParam(name = "limitSetup") LimitHeader limitHeader)
+			throws ServiceException;
 }

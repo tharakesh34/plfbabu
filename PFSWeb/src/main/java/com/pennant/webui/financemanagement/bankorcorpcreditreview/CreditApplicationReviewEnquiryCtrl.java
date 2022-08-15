@@ -1084,18 +1084,35 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 		if (MapUtils.isNotEmpty(this.dataMap)) {
 			btMap.put("DSCR_PBDIT",
-					PennantApplicationUtil.amountFormate(new BigDecimal(this.dataMap.get("Y2_DEPRITIATION")), 4));
-			btMap.put("DSCR_PBDIT", format(this.dataMap.get("Y2_DEPRITIATION")));
-			btMap.put("TOTAL_REVENUE", this.dataMap.get("Y2_TOT_REV"));
+					dataMap.containsKey("Y2_DEPRITIATION")
+							? PennantApplicationUtil.amountFormate(new BigDecimal(this.dataMap.get("Y2_DEPRITIATION")),
+									4)
+							: "0");
+			btMap.put("DSCR_PBDIT", dataMap.containsKey("Y2_DEPRITIATION") ? format(this.dataMap.get("Y2_DEPRITIATION"))
+					: BigDecimal.ZERO);
+			btMap.put("TOTAL_REVENUE",
+					dataMap.containsKey("Y2_TOT_REV") ? this.dataMap.get("Y2_TOT_REV") : BigDecimal.ZERO);
 
-			btMap.put("DSCR_GF", format(this.dataMap.get("Y2_DSCR_GF")));
-			btMap.put("CRNTRATIO", format(this.dataMap.get("Y2_CRNT_RATIO")));
-			btMap.put("DSCR_PBDIT", format(this.dataMap.get("Y2_DSCR_PBDIT")).replace(",", ""));
+			btMap.put("DSCR_GF",
+					dataMap.containsKey("Y2_DSCR_GF") ? format(this.dataMap.get("Y2_DSCR_GF")) : BigDecimal.ZERO);
+			btMap.put("CRNTRATIO",
+					dataMap.containsKey("Y2_CRNT_RATIO") ? format(this.dataMap.get("Y2_CRNT_RATIO")) : BigDecimal.ZERO);
+			btMap.put("DSCR_PBDIT",
+					dataMap.containsKey("Y2_DSCR_PBDIT") ? format(this.dataMap.get("Y2_DSCR_PBDIT")).replace(",", "")
+							: BigDecimal.ZERO);
 
-			btMap.put("DEBTEQUITY", format(this.dataMap.get("Y2_DEBT_EQUITY")));
-			btMap.put("ANNUAL_TURNOVER", unFormat(new BigDecimal(this.dataMap.get("Y2_SALES_OTHER_INCOME"))));
-			btMap.put("EMI_ALL_LOANS", format(dataMap.get("Y2_EMI_12_ALL_LOANS")));
-			btMap.put("MARGINI", unFormat(new BigDecimal(this.dataMap.get("Y2_SM_MARGIN"))));
+			btMap.put("DEBTEQUITY", dataMap.containsKey("Y2_DEBT_EQUITY") ? format(this.dataMap.get("Y2_DEBT_EQUITY"))
+					: BigDecimal.ZERO);
+			btMap.put("ANNUAL_TURNOVER",
+					dataMap.containsKey("Y2_SALES_OTHER_INCOME")
+							? unFormat(new BigDecimal(this.dataMap.get("Y2_SALES_OTHER_INCOME")))
+							: BigDecimal.ZERO);
+			btMap.put("EMI_ALL_LOANS",
+					dataMap.containsKey("Y2_EMI_12_ALL_LOANS") ? format(dataMap.get("Y2_EMI_12_ALL_LOANS"))
+							: BigDecimal.ZERO);
+			btMap.put("MARGINI",
+					dataMap.containsKey("Y2_SM_MARGIN") ? unFormat(new BigDecimal(this.dataMap.get("Y2_SM_MARGIN")))
+							: BigDecimal.ZERO);
 		}
 		custIds.remove(this.custID.getValue());
 		map.put("btMap", btMap);

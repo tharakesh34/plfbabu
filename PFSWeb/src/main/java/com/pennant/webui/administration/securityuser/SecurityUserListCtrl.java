@@ -122,6 +122,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 		if ("PSWDRST".equals(this.moduleType)) {
 			this.searchObject.addFilterEqual("authType", AuthenticationType.DAO.name());
 		}
+		this.searchObject.addFilterEqual("deleted", false);
 	}
 
 	@Override

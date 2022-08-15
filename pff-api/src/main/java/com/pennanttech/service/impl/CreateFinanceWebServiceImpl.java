@@ -18,11 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.impl.FinanceDeviationsDAOImpl;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -43,6 +45,8 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceStatusEnquiry;
+import com.pennant.backend.model.finance.FinanceWriteoff;
+import com.pennant.backend.model.finance.ForeClosureLetter;
 import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.OverDraftMaintenance;
 import com.pennant.backend.model.finance.UserActions;
@@ -72,6 +76,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.foreclosure.service.ForeClosureService;
 import com.pennanttech.pffws.CreateFinanceRestService;
 import com.pennanttech.pffws.CreateFinanceSoapService;
 import com.pennanttech.util.APIConstants;
@@ -88,6 +93,7 @@ import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
+import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
@@ -113,6 +119,8 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	private DedupFieldsDAO dedupFieldsDAO;
 	private DedupParmDAO dedupParmDAO;
 	private FinanceDedupeDAO financeDedupeDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private ForeClosureService foreClosureService;
 
 	/**
 	 * validate and create finance by receiving request object from interface
@@ -222,39 +230,27 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 	public FinanceDetail createOverDraftLoanValidation(FinanceDetail fd) {
 		FinScheduleData schdData = fd.getFinScheduleData();
-		FinanceType finType = schdData.getFinanceType();
+		FinanceType financeType = schdData.getFinanceType();
 
+		FinanceDetail response = new FinanceDetail();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		Long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
-		boolean stp = fd.isStp();
-
-		if (finID == null || finID == Long.MIN_VALUE || finID == 0) {
-			finID = financeMainDAO.getFinID(finReference);
-		}
-
-		if (!finType.isFinIsGenRef()) {
-			fd = createFinanceController.getFinanceDetails(finID);
-			WSReturnStatus wsrStatus = fd.getReturnStatus();
-
-			if (!wsrStatus.getReturnCode().equals("API006")) {
-				fd = new FinanceDetail();
-				doEmptyResponseObject(fd);
-				fd.setStp(stp);
+		if (!financeType.isFinIsGenRef()) {
+			if (financeMainDAO.getCountByFinReference(fm.getFinID(), true) > 0) {
+				doEmptyResponseObject(response);
+				response.setStp(fd.isStp());
 				String[] valueParm = new String[1];
 				valueParm[0] = "Finance Reference ";
 				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("PR002", valueParm);
-				status.setReturnText(valueParm[0] + finReference + " " + status.getReturnText());
-				fd.setReturnStatus(status);
-				return fd;
+				status.setReturnText(valueParm[0] + fm.getFinReference() + " " + status.getReturnText());
+				response.setReturnStatus(status);
+				return response;
 			}
 		}
 
 		if (fm.getFinAssetValue().compareTo(new BigDecimal("0")) == 0) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setStp(stp);
+			doEmptyResponseObject(response);
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[1];
 			valueParm[0] = "Finance Asset Value ";
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90501", valueParm);
@@ -264,9 +260,8 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		}
 
 		if (fm.getFinAssetValue().compareTo(new BigDecimal("0")) == -1) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setStp(stp);
+			doEmptyResponseObject(response);
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[1];
 			valueParm[0] = "Finance Asset Value ";
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90259", valueParm);
@@ -274,10 +269,10 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			fd.setReturnStatus(status);
 			return fd;
 		}
+
 		if ((new BigDecimal("999999999999999999").compareTo(fm.getFinAssetValue()) == -1)) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setStp(stp);
+			doEmptyResponseObject(response);
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[2];
 			valueParm[0] = "Finance Asset Value is less than 18 digits or ";
 			valueParm[1] = " 18";
@@ -290,9 +285,8 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		// schedule method PFT only allowed in Over Draft
 
 		if (StringUtils.isBlank(fm.getScheduleMethod())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setStp(stp);
+			doEmptyResponseObject(response);
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[1];
 			valueParm[0] = "Schedule Method ";
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90501", valueParm);
@@ -302,9 +296,8 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		}
 
 		if (!fm.getScheduleMethod().equals(CalculationConstants.SCHMTHD_POS_INT)) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setStp(stp);
+			doEmptyResponseObject(response);
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[2];
 			valueParm[0] = "Schedule Method ";
 			valueParm[1] = CalculationConstants.SCHMTHD_POS_INT;
@@ -319,9 +312,8 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		List<FinAdvancePayments> advancePaymentsList = fd.getAdvancePaymentsList();
 
 		if (!CollectionUtils.isEmpty(advancePaymentsList)) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setStp(stp);
+			doEmptyResponseObject(response);
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[2];
 			valueParm[0] = "Disbursement ";
 			valueParm[1] = " Overdraft Loan";
@@ -332,10 +324,9 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		}
 
 		if (fm.getFirstDroplineDate() != null) {
-			fd = new FinanceDetail();
 			if (fm.getFirstDroplineDate().compareTo(fm.getFinStartDate()) <= 0) {
-				doEmptyResponseObject(fd);
-				fd.setStp(stp);
+				doEmptyResponseObject(response);
+				response.setStp(fd.isStp());
 				String[] valueParm = new String[2];
 				valueParm[0] = "First Drop line Date";
 				valueParm[1] = "Finance Start Date";
@@ -344,12 +335,11 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 				fd.setReturnStatus(status);
 				return fd;
 			}
-
 		}
+
 		if (fm.getFinAmount().compareTo(new BigDecimal("0")) != 0) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setStp(stp);
+			doEmptyResponseObject(response);
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[2];
 			valueParm[0] = "Finance Amount ";
 			valueParm[1] = "Zero";
@@ -359,6 +349,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			fd.setReturnStatus(status);
 			return fd;
 		}
+
 		fm.setRecalType("");
 		if (StringUtils.isBlank(fm.getRepayBaseRate())) {
 			fm.setRepayBaseRate(null);
@@ -1815,6 +1806,23 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 						|| FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fse.getClosingStatus())) {
 					fse.setOutStandPrincipal(BigDecimal.ZERO);
 				}
+
+				FinStatementRequest statement = new FinStatementRequest();
+
+				statement.setFinID(finID);
+				statement.setFinReference(detail.getFinReference());
+				statement.setDays(1);
+				statement.setFromDate(SysParamUtil.getAppDate());
+
+				ForeClosureLetter fcl = foreClosureService.getForeClosureAmt(statement);
+				fse.setForeclosureAmt(fcl.getForeCloseAmount());
+				fse.setExcessAmt(fcl.getExcessAmount());
+				fse.setWriteOffAmt(getWriteOffAmount(fse, financeScheduleDetailDAO.getWriteoffTotals(finID)));
+
+				if (statement.getFromDate().compareTo(fse.getMaturityDate()) > 0) {
+					fse.setForeclosureAmt(BigDecimal.ZERO);
+				}
+
 				responseList.add(fse);
 			}
 		}
@@ -1824,6 +1832,17 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		logger.debug(Literal.LEAVING);
 
 		return lsd;
+	}
+
+	private BigDecimal getWriteOffAmount(FinanceStatusEnquiry fse, FinanceWriteoff writeOff) {
+		BigDecimal writeOffAmount = BigDecimal.ZERO;
+
+		writeOffAmount = writeOffAmount.add(writeOff.getUnPaidSchdPri());
+		writeOffAmount = writeOffAmount.add(writeOff.getUnPaidSchdPft());
+		writeOffAmount = writeOffAmount.add(writeOff.getUnpaidSchFee());
+		writeOffAmount = writeOffAmount.add(fse.getPenaltyDue());
+
+		return writeOffAmount;
 	}
 
 	@Autowired
@@ -1919,4 +1938,13 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		this.financeDedupeDAO = financeDedupeDAO;
 	}
 
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setForeClosureService(ForeClosureService foreClosureService) {
+		this.foreClosureService = foreClosureService;
+	}
 }

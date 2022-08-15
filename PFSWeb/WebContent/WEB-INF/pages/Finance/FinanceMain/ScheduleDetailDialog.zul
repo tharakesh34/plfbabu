@@ -297,11 +297,6 @@
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
 													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnReAgeHolidays,btnHoldEMI,btnSchdChng,,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
-												<button id="btnPrintSchedule" label="${c:l('label_Print')}"
-													tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}" disabled="true" visible="false"
-													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnReAgeHolidays,btnHoldEMI,btnSchdChng,,btnAddDatedSchedule,btnRestructure"
-													sclass="z-toolbarbutton" />
 												<button id="btnSchdChng" label="${c:l('btnSchdChng.label')}"
 													tooltiptext="${c:l('btnSchdChng.tooltiptext')}" disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
@@ -312,6 +307,16 @@
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
 													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnReAgeHolidays,btnHoldEMI,btnSchdChng,,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
+												<button id="btnPriHld" label="${c:l('btnPriHld.label')}" tooltiptext="${c:l('btnPriHld.tooltiptext')}"
+													disabled="true" visible="false"
+													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnChngGestation,btnChngTDS,btnPlannedEMIH,btnChangePayment,btnChngStrtPrdHday,btnRestructure,btnPriHld"
+													sclass="z-toolbarbutton" />	
+												<button id="btnPrintSchedule" label="${c:l('label_Print')}" tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
+													disabled="true" visible="false"
+													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
+													sclass="z-toolbarbutton" />
 											</toolbar>
 										</hbox>
 									</div>
@@ -319,7 +324,7 @@
 									<listbox id="listBoxSchedule" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
 										sizedByContent="true" span="true" width="100%" height="100%" multiple="false">
 										<listhead sizable="false" style="padding:0px;position:relative;">
-											<listheader hflex="min" />
+											<listheader id="listheader_ScheduleDetailDialog_InstNo" style="text-align:center;" hflex="min" />
 											<listheader id="listheader_ScheduleDetailDialog_Date" hflex="min" value="" />
 											<listheader id="listheader_ScheduleDetailDialog_ScheduleEvent" hflex="min" />
 											<listheader id="listheader_ScheduleDetailDialog_CalProfit" hflex="min" align="right" />

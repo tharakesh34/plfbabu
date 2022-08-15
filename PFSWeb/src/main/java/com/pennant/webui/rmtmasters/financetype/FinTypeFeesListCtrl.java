@@ -408,7 +408,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 		if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode) || AdvanceRuleCode.ADVEMI.name().equals(feeTypeCode)
 				|| AdvanceRuleCode.CASHCLT.name().equals(feeTypeCode) || AdvanceRuleCode.DSF.name().equals(feeTypeCode)
-				|| subventionFeeCode.equals(feeTypeCode))) {
+				|| subventionFeeCode.equals(feeTypeCode) || StringUtils.equals(subventionFeeCode, feeTypeCode))) {
 			map.put("enqiryModule", enqiryModule);
 		}
 		// call the ZUL-file with the parameters packed in a map

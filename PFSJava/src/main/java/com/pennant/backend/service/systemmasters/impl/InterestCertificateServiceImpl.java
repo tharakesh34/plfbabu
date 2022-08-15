@@ -229,6 +229,12 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			intCert.setGrcPft(PennantApplicationUtil.amountFormate(grcPft, format));
 			intCert.setGrcPftPaid(PennantApplicationUtil.amountFormate(grcPftPaid, format));
 		}
+		intCert.setTotOustandingamt(
+				PennantApplicationUtil.amountFormate(new BigDecimal(intCert.getTotOustandingamt()), format));
+		intCert.setTotalPftBal(PennantApplicationUtil.amountFormate(new BigDecimal(intCert.getTotalPftBal()), format));
+		intCert.setTotalPriBal(PennantApplicationUtil.amountFormate(new BigDecimal(intCert.getTotalPriBal()), format));
+		intCert.setFinCurrassetValue(
+				PennantApplicationUtil.amountFormate(new BigDecimal(intCert.getFinCurrassetValue()), format));
 
 		// The bellow is the setting for the interest amount and principle amounts based on financial year related to
 		// Interest certificate agreement.

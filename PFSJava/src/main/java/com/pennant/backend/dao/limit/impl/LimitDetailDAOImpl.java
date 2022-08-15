@@ -681,25 +681,23 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append("select fm.FinReference, TotalPriBal");
 		sql.append(" from FinPFTDetails pft");
 		sql.append(" inner join Financemain_view fm on fm.FinReference = pft.FinReference");
-		sql.append(" and coalesce(fm.ClosingStatus, '') <> ?");
+		sql.append(" and fm.ClosingStatus is null");
 		sql.append(" inner join customers c on c.custId = fm.custId");
 		sql.append(" where c.custId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.query(sql.toString(), new Object[] { "C", id },
-				new ResultSetExtractor<Map<String, BigDecimal>>() {
-					@Override
-					public Map<String, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		this.jdbcOperations.query(sql.toString(), new ResultSetExtractor<Map<String, BigDecimal>>() {
+			@Override
+			public Map<String, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-						while (rs.next()) {
-							hashMap.put(rs.getString("FinReference"), rs.getBigDecimal("TotalPriBal"));
-						}
-						return hashMap;
-					}
-				});
+				while (rs.next()) {
+					hashMap.put(rs.getString("FinReference"), rs.getBigDecimal("TotalPriBal"));
+				}
+				return hashMap;
+			}
+		}, id);
 
-		logger.debug(Literal.LEAVING);
 		return hashMap;
 	}
 
@@ -740,6 +738,23 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return 0;
+		}
+	}
+
+	@Override
+	public BigDecimal getSanctionedAmtByCustId(long customerId, String type) {
+		StringBuilder sql = new StringBuilder("Select LimitSanctioned From LimitDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where limitline like ? and LimitHeaderId in (Select HeaderId from LimitHeader");
+		sql.append(" Where CustomerId = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, "%OD%", customerId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
 	}
 }

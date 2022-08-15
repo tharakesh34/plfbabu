@@ -30,4 +30,6 @@ public interface ActivityLogDAO {
 
 	List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo, long instructionUID)
 			throws SQLException;
+
+	List<Activity> getManualAdviseActivitiyLog(String tableName, String reference, long adviseID);
 }

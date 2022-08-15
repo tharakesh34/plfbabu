@@ -38,7 +38,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.finance.FinanceEligibilityDetailDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
@@ -61,7 +60,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> implements EligibilityDetailService {
 	private static final Logger logger = LogManager.getLogger(FinanceDetailServiceImpl.class);
 
-	private FinanceMainDAO financeMainDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceEligibilityDetailDAO financeEligibilityDetailDAO;
 
@@ -324,10 +322,6 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "30563", errParm, valueParm), usrLanguage));
 		}
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
 	}
 
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {

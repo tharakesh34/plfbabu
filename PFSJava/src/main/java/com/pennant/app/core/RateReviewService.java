@@ -44,6 +44,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceRateReview;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -299,6 +300,12 @@ public class RateReviewService extends ServiceHelper {
 
 		List<RepayInstruction> repayInstructions = repayInstructionDAO.getRepayInstrEOD(finID);
 		List<FinanceDisbursement> fd = financeDisbursementDAO.getFinanceDisbursementDetails(finID, "", false);
+
+		if (fm.isStepFinance()) {
+			List<FinanceStepPolicyDetail> stp = financeStepDetailDAO.getFinStepDetailListByFinRef(finID, "", false);
+			schdData.setStepPolicyDetails(stp, true);
+			finEodEvent.setStepPolicyDetails(stp);
+		}
 
 		schdData.setRepayInstructions(repayInstructions);
 		finEodEvent.setRepayInstructions(repayInstructions);

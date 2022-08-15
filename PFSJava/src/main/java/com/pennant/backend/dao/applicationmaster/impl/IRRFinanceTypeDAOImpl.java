@@ -162,7 +162,7 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from IRRFinanceTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" where iRRID = :iRRID ");
+		sql.append(" where iRRID = :iRRID and FinType = :finType");
 		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.

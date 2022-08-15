@@ -39,6 +39,12 @@
 
 		<step id="prepareCustomerQueue">
 			<tasklet ref="prepareCustomerQueueTaskLet" />
+			<next on="*" to="autoKnockOffProcess" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="autoKnockOffProcess">
+			<tasklet ref="loadAutoKnockOffProcessTasklet" />
 			<next on="*" to="masterStep" />
 			<fail on="FAILED" />
 		</step>
@@ -47,12 +53,75 @@
 			<partition step="microEOD" partitioner="partitioningMaster">
 				<handler task-executor="taskExecutor" />
 			</partition>
+			<next on="*" to="autoKnockOffDataBackUp" />
+			<fail on="FAILED" />
+		</step>
+		<step id="autoKnockOffDataBackUp">
+			<tasklet ref="autoKnockOffDataBackUpTasklet" />
+			<next on="*" to="notifyLoanClosureDetailsToEFS" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="notifyLoanClosureDetailsToEFS">
+			<tasklet ref="notifyLoanClosureDetailsToEFSTaskLet" />
 			<next on="*" to="processInActiveFinances" />
 			<fail on="FAILED" />
 		</step>
 
 		<step id="processInActiveFinances">
 			<tasklet ref="processInActiveFinancesTaskLet" />
+			<next on="*" to="beforeAssetClassification" />
+			<fail on="FAILED" />
+		</step>
+		<step id="beforeAssetClassification">
+			<tasklet ref="beforeAssetClassificationTasklet" />
+			<next on="*" to="assetClassificationQueue" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="assetClassificationQueue">
+			<tasklet ref="assetClassificationQueueTasklet" />
+			<next on="*" to="assetClassificationMaster" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="assetClassificationMaster">
+			<partition step="assetClassification" partitioner="assetClassificationPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="effAssetClassificationQueue" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="effAssetClassificationQueue">
+			<tasklet ref="effAssetClassificationQueueTasklet" />
+			<next on="*" to="effAssetClassificationMaster" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="effAssetClassificationMaster">
+			<partition step="effAssetClassification" partitioner="effAssetClassificationPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="provisionCalcQueue" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="provisionCalcQueue">
+			<tasklet ref="provisionCalcQueueTasklet" />
+			<next on="*" to="provisionCalcMaster" />
+			<fail on="FAILED" />
+		</step>
+		<step id="provisionCalcMaster">
+			<partition step="provisionCalc" partitioner="provisionCalcPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="processINDASForInActiveFinances" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="processINDASForInActiveFinances">
+			<tasklet ref="processINDASForInActiveFinancesTasklet" />
 			<next on="*" to="prepareCustomerGroupQueue" />
 			<fail on="FAILED" />
 		</step>
@@ -75,6 +144,11 @@
 		</step>
 		<step id="limitsUpdate">
 			<tasklet ref="limitsUpdateTaskLet" />
+			<next on="*" to="manualAdvisesCancellation" />
+			<fail on="FAILED" />
+		</step>
+		<step id="manualAdvisesCancellation">
+			<tasklet ref="manualAdvisesCancellationTaskLet" />
 			<next on="*" to="datesUpdate" />
 			<fail on="FAILED" />
 		</step>
@@ -96,6 +170,18 @@
 		</step>
 		<step id="gstDownload">
 			<tasklet ref="gSTDownloadTaskLet" />
+			<next on="*" to="ledgerDownloadQueue" />
+			<fail on="FAILED" />
+		</step>
+		<step id="ledgerDownloadQueue">
+			<tasklet ref="ledgerDownloadQueueTasklet" />
+			<next on="*" to="ledgerDownloadProces" />
+			<fail on="FAILED" />
+		</step>
+		<step id="ledgerDownloadProces">
+			<partition step="ledgerDownloadProcess" partitioner="ledgerDownloadPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
 			<next on="*" to="ledgerDownLoad" />
 			<fail on="FAILED" />
 		</step>
@@ -127,21 +213,8 @@
 		</step>
 		<step id="collateralRevaluation">
 			<tasklet>
-				<chunk reader="collateralRevaluationItemReader" processor="collateralRevaluationProcessor" writer="collateralRevaluationItemWriter"
-					commit-interval="10" />
-			</tasklet>
-			<next on="*" to="autoKnockOffProcess" />
-			<fail on="FAILED" />
-		</step>
-		<step id="autoKnockOffProcess">
-			<tasklet ref="loadAutoKnockOffProcessTasklet" />
-			<next on="*" to="autoKnockOffProcessRender" />
-			<fail on="FAILED" />
-		</step>
-		<step id="autoKnockOffProcessRender">
-			<tasklet>
-				<chunk reader="autoKnockOffProcessItemReader" processor="autoKnockOffProcessor" writer="autoKnockOffProcessItemWriter"
-					commit-interval="10" />
+				<chunk reader="collateralRevaluationItemReader" processor="collateralRevaluationProcessor"
+					writer="collateralRevaluationItemWriter" commit-interval="10" />
 			</tasklet>
 			<next on="*" to="customerDataPreperation" />
 			<fail on="FAILED" />
@@ -180,10 +253,44 @@
 		</tasklet>
 	</step>
 
+	<step id="assetClassification" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="assetClassificationTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
+	<step id="effAssetClassification" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="effAssetClassificationTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
+	<step id="provisionCalc" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="provisionClacTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
 	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
 		<constructor-arg value="PLF_EOD_THREAD_" />
 		<property name="ConcurrencyLimit" value="100" />
 	</bean>
 
 	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster" />
+
+	<bean id="assetClassificationPartition" class="com.pennanttech.pff.npa.eod.tasklet.AssetClassificationPartition" />
+	<bean id="effAssetClassificationPartition"
+		class="com.pennanttech.pff.npa.eod.tasklet.EffAssetClassificationPartition" />
+	<bean id="provisionCalcPartition" class="com.pennanttech.pff.provision.eod.tasklet.ProvisionCalcPartition" />
+	
+		
+	<step id="ledgerDownloadProcess" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="ledgerDownloadProcessTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+	
+	<bean id ="ledgerDownloadPartition" class ="com.pennant.backend.ledger.eod.tasklet.LedgerDownloadPartition"/>
+	
+
 </beans>

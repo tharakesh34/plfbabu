@@ -31,6 +31,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -45,6 +47,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.service.applicationmaster.PinCodeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -53,6 +56,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PinCodePostValidationHook;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -78,6 +82,9 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 
 	private transient PinCodeListCtrl pinCodeListCtrl; // overhanded per param
 	private transient PinCodeService pinCodeService;
+	@Autowired(required = false)
+	@Qualifier("pinCodePostValidationHook")
+	private PinCodePostValidationHook<String, Integer> pinCodePostValidationHook;
 
 	/**
 	 * default constructor.<br>
@@ -154,7 +161,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 
 		this.pinCodes.setMaxlength(10);
 		this.groupId.setMaxlength(8);
-		this.city.setModuleName("City");
+		this.city.setModuleName("CityVthCountry");
 		this.city.setValueColumn("PCCity");
 		this.city.setDescColumn("PCCityName");
 		this.city.setMandatoryStyle(true);
@@ -323,15 +330,18 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		// Pin Code
-		try {
-			aPinCode.setPinCode(this.pinCodes.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 		// City
 		try {
 			aPinCode.setCity(this.city.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doSetCustomValidation(aPinCode);
+
+		// Pin Code
+		try {
+			aPinCode.setPinCode(this.pinCodes.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -372,6 +382,27 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetCustomValidation(PinCode aPinCode) {
+		if (pinCodePostValidationHook == null) {
+			return;
+		}
+
+		Object city = this.city.getObject();
+
+		if (city == null)
+			return;
+
+		String country = ((City) city).getPCCountry();
+
+		Integer minLen = pinCodePostValidationHook.getMinimumLength(country);
+		if (minLen != null) {
+			this.pinCodes.clearErrorMessage();
+			this.pinCodes.setConstraint(new PTStringValidator(Labels.getLabel("label_PinCodeDialog_PinCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true, minLen, 10));
+		}
+
 	}
 
 	/**
@@ -419,11 +450,13 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
+		this.pinCodes.clearErrorMessage();
 
 		if (!this.pinCodes.isReadonly()) {
 			this.pinCodes.setConstraint(new PTStringValidator(Labels.getLabel("label_PinCodeDialog_PinCode.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true, 6, 10));
 		}
+
 		if (!this.city.isReadonly()) {
 			this.city.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PinCodeDialog_City.value"), null, true));

@@ -81,12 +81,12 @@
 
 		<field name="branchCode">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>branchCode should have maximum 8 characters</message>
+				<message>branchCode should have maximum 20 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-				<element name="max">8</element>
+				<element name="max">20</element>
 			</constraint>
 		</field>
 

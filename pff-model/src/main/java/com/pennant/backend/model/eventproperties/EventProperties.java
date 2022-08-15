@@ -62,6 +62,7 @@ public class EventProperties implements Serializable {
 	private int eodThreadCount;
 	private String phase;
 	private boolean covenantModule;
+	private int overDraftMonthlyLimit;
 
 	private boolean parameterLoaded;
 	private boolean cacheLoaded;
@@ -569,6 +570,14 @@ public class EventProperties implements Serializable {
 
 	public void setCovenantModule(boolean covenantModule) {
 		this.covenantModule = covenantModule;
+	}
+
+	public int getOverDraftMonthlyLimit() {
+		return overDraftMonthlyLimit;
+	}
+
+	public void setOverDraftMonthlyLimit(int overDraftMonthlyLimit) {
+		this.overDraftMonthlyLimit = overDraftMonthlyLimit;
 	}
 
 	public boolean isParameterLoaded() {

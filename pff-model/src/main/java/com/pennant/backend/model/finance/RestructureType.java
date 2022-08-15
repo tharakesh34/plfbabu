@@ -9,6 +9,7 @@ public class RestructureType {
 	private int maxPriHoliday = 0;
 	private int maxEmiTerm = 0;
 	private int maxTotTerm = 0;
+	private boolean alwStep = false;
 
 	public long getId() {
 		return id;
@@ -64,5 +65,13 @@ public class RestructureType {
 
 	public void setMaxTotTerm(int maxTotTerm) {
 		this.maxTotTerm = maxTotTerm;
+	}
+
+	public boolean isAlwStep() {
+		return alwStep;
+	}
+
+	public void setAlwStep(boolean alwStep) {
+		this.alwStep = alwStep;
 	}
 }

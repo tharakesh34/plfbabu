@@ -102,6 +102,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -531,7 +532,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		lovSearchFieldRow.appendChild(hbox);
 		dymanicFieldsRows.appendChild(lovSearchFieldRow);
 
-		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_ProcFees_InvoiceReport")) {
 			lovSearchFieldRow.setId("row_GSTInv_" + aReportFieldsDetails.getFieldID());
 			if (aReportFieldsDetails.getFieldID() == 3 || aReportFieldsDetails.getFieldID() == 4) {
 				lovSearchFieldRow.setVisible(false);
@@ -745,38 +747,59 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				}
 				comboBox.setSelectedIndex(0);
 			} else {
-				List<ValueLabel> staticValuesList = new ArrayList<ValueLabel>();
-				JdbcSearchObject<Object> dynsearchObject = new JdbcSearchObject<Object>(
-						(Class<Object>) ModuleUtil.getModuleClass(aReportFieldsDetails.getModuleName()));
-				// Add where condition for LOV Search Filter
-				if (aReportFieldsDetails.getWhereCondition() != null
-						&& !("").equals(aReportFieldsDetails.getWhereCondition().trim())) {
-					dynsearchObject.addWhereClause(aReportFieldsDetails.getWhereCondition());
+				if (aReportFieldsDetails.getModuleName().equals("LoanProvisions")) {
+					List<ValueLabel> staticValuesList = PennantAppUtil.getNpaProvisionDates();
+					listSelectionMaps.put(comboBox.getId(), staticValuesList);
+
+					for (int i = 0; i < staticValuesList.size(); i++) {
+						if (!staticValuesList.get(i).getObject().equals(Labels.getLabel("value_Select"))
+								&& (staticValuesList.get(i).getObject() != null)) {
+							comboitem = new Comboitem();
+							comboitem.setLabel(staticValuesList.get(i).getLabel());
+							comboitem.setValue(staticValuesList.get(i).getObject());
+							comboBox.appendChild(comboitem);
+							comboBox.addForward("onSelect", window_ReportPromptFilterCtrl, "onComboFieldSelected",
+									comboBox);
+						}
+					}
+					comboBox.setSelectedIndex(0);
+				} else {
+					List<ValueLabel> staticValuesList = new ArrayList<ValueLabel>();
+					JdbcSearchObject<Object> dynsearchObject = new JdbcSearchObject<Object>(
+							(Class<Object>) ModuleUtil.getModuleClass(aReportFieldsDetails.getModuleName()));
+					// Add where condition for LOV Search Filter
+					if (aReportFieldsDetails.getWhereCondition() != null
+							&& !("").equals(aReportFieldsDetails.getWhereCondition().trim())) {
+						dynsearchObject.addWhereClause(aReportFieldsDetails.getWhereCondition());
+					}
+					List<Object> dynamicListResult = getPagedListWrapper().getPagedListService()
+							.getBySearchObject(dynsearchObject);
+					ValueLabel valueLabel = null;
+					for (int i = 0; i < dynamicListResult.size(); i++) {
+						valueLabel = new ValueLabel();
+						comboitem = new Comboitem();
+
+						Object object = dynamicListResult.get(i).getClass()
+								.getMethod(aReportFieldsDetails.getLovHiddenFieldMethod())
+								.invoke(dynamicListResult.get(i));
+
+						comboitem.setValue(object.toString());
+						valueLabel.setValue(object.toString());
+
+						object = (String) dynamicListResult.get(i).getClass()
+								.getMethod(aReportFieldsDetails.getLovTextFieldMethod())
+								.invoke(dynamicListResult.get(i));
+
+						comboitem.setLabel(object.toString());
+						valueLabel.setLabel(object.toString());
+						staticValuesList.add(valueLabel);
+						comboBox.appendChild(comboitem);
+
+					}
+					comboBox.setSelectedIndex(0);
+					listSelectionMaps.put(comboBox.getId(), staticValuesList);
 				}
-				List<Object> dynamicListResult = getPagedListWrapper().getPagedListService()
-						.getBySearchObject(dynsearchObject);
-				ValueLabel valueLabel = null;
-				for (int i = 0; i < dynamicListResult.size(); i++) {
-					valueLabel = new ValueLabel();
-					comboitem = new Comboitem();
 
-					Object object = dynamicListResult.get(i).getClass()
-							.getMethod(aReportFieldsDetails.getLovHiddenFieldMethod()).invoke(dynamicListResult.get(i));
-
-					comboitem.setValue(object.toString());
-					valueLabel.setValue(object.toString());
-
-					object = dynamicListResult.get(i).getClass().getMethod(aReportFieldsDetails.getLovTextFieldMethod())
-							.invoke(dynamicListResult.get(i));
-
-					comboitem.setLabel(object.toString());
-					valueLabel.setLabel(object.toString());
-					staticValuesList.add(valueLabel);
-					comboBox.appendChild(comboitem);
-
-				}
-				comboBox.setSelectedIndex(0);
-				listSelectionMaps.put(comboBox.getId(), staticValuesList);
 			}
 
 		} catch (Exception e) {
@@ -789,7 +812,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		staticListRow.appendChild(hbox);
 		dymanicFieldsRows.appendChild(staticListRow);
 
-		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_ProcFees_InvoiceReport")) {
 			comboBox.setSelectedIndex(1);
 		}
 		logger.debug("Leaving");
@@ -891,7 +915,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		}
 
 		long reqRowId = 0;
-		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_ProcFees_InvoiceReport")) {
 			Combobox invoiceFor = (Combobox) dymanicFieldsRows.getFellow("1");
 			String invForVal = StringUtils.trimToEmpty(invoiceFor.getSelectedItem().getValue().toString());
 
@@ -1255,6 +1280,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									&& ((Datebox) toDateBox).getValue().before(((Datebox) fromDateBox).getValue())) {
 								throw new WrongValueException(fromDateBox,
 										Labels.getLabel("label_Error_FromDateMustBfrTo.vlaue"));
+							} else if (StringUtils.equals("menu_Item_TDSRegister_Report", reportMenuCode)) {// FIXME
+								int diffDays = 31;
+								if (DateUtility.getDaysBetween(((Datebox) fromDateBox).getValue(),
+										((Datebox) toDateBox).getValue()) > diffDays && filedId.equals("11")) {
+									throw new WrongValueException(toDateBox,
+											Labels.getLabel("label_Difference_between_days") + " " + diffDays);
+								}
 							} else if (toDateBox instanceof Datebox
 									&& ((Datebox) toDateBox).getValue().after(appDate)) {
 								/*
@@ -1291,9 +1323,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 							if (!excludeDates) {
 								whereCondition = getWhereConditionFromDateTimeAndRangeTypes(whereCondition,
 										aReportFilterFields, fromDateBox, ">=");
+
 								Datebox toDatebox = new Datebox();
 
-								if (aReportFilterFields.getFieldDBName().contains("AuditDateTime")) {
+								if (whereCondition.toString().contains("AuditDateTime")) {
 									Datebox datebox = (Datebox) toDateBox;
 									Date toDate = datebox.getValue();
 
@@ -1309,10 +1342,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								} else {
 									toDatebox = (Datebox) toDateBox;
 								}
-
 								whereCondition = getWhereConditionFromDateTimeAndRangeTypes(whereCondition,
 										aReportFilterFields, toDatebox, "<=");
-
 							}
 						}
 					}
@@ -1511,7 +1542,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
 
-					if (aReportFieldsDetails.getFieldDBName().contains("AuditDateTime")) {
+					if (whereCondition.toString().contains("AuditDateTime")) {
 						if (App.DATABASE == Database.SQL_SERVER) {
 							exactDate = "CONVERT(DATETIME, FLOOR(CONVERT(FLOAT," + aReportFieldsDetails.getFieldDBName()
 									+ "))) " + filter + "'"
@@ -1803,6 +1834,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			} else {
 				argsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
 			}
+			argsMap.put("waterMark", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT_WATERMARK));
 		}
 
 		argsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
@@ -2444,7 +2476,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			doShowReport("where".equals(whereCond.trim()) ? "" : whereCond, null, null, null, argMap.toString());
 
-		} else if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_ProcFees_InvoiceReport")) {
 			String custCif = null;
 			String finReference = null;
 			String fromDate = null;
@@ -2550,8 +2583,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
 					false);
-			String finref = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
-			processLinkedLoans(finref);
+			if (!filters.isEmpty()) {
+				String finref = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+				processLinkedLoans(finref);
+			}
 
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null, null);
@@ -2737,7 +2772,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(0);
 		valueLabelMap.put(aReportFieldsDetails.getFieldDBName(), value);
 
-		if ("menu_Item_GST_InvoiceReport".equals(reportMenuCode)) {
+		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_ProcFees_InvoiceReport")) {
+
 			if (aReportFieldsDetails.getFieldID() != Long.valueOf(component.getId())) {
 				return;
 			}
@@ -2934,6 +2971,17 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			Filter[] subFilter = new Filter[1];
 			subFilter[0] = Filter.greaterThan("manufacturerdealerid", 0);
 			filters = subFilter;
+		} else if ("menu_Item_FATDSReport".equals(reportMenuCode)) {
+			if ("AccountMapping".equals(aReportFieldsDetails.getModuleName())) {
+				Filter[] subFilter = new Filter[1];
+				subFilter[0] = Filter.like("AccountType", "%TDS%");
+				filters = subFilter;
+			}
+			if ("AccountType".equals(aReportFieldsDetails.getModuleName())) {
+				Filter[] subFilter = new Filter[1];
+				subFilter[0] = Filter.like("AcType", "%TDS%");
+				filters = subFilter;
+			}
 		}
 		logger.debug("Leaving");
 		return filters;

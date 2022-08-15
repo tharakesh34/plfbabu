@@ -50,6 +50,7 @@ public class AmortizationConstants {
 	// Amortization Types
 	public static final String AMZ_INCOMETYPE_FEE = "I";
 	public static final String AMZ_INCOMETYPE_EXPENSE = "E";
+	public static final String AMZ_INCOMETYPE_SUBVENTIONAMOUNT = "S";
 	public static final String AMZ_INCOMETYPE_MANUALADVISE = "M";
 
 	public static final boolean AMZ_REQ_MANUALADVISES = false;

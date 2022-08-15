@@ -20,7 +20,6 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
@@ -30,6 +29,7 @@ import com.pennant.batchupload.fileprocessor.BatchUploadProcessorConstatnt;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class ReceiptResponseProcess {
 	private static final Logger logger = LogManager.getLogger(ReceiptResponseProcess.class);

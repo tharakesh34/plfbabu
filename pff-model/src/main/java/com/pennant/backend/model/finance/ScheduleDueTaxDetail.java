@@ -14,6 +14,7 @@ public class ScheduleDueTaxDetail implements Serializable {
 	private String taxCalcOn;
 	private BigDecimal amount = BigDecimal.ZERO;
 	private Long invoiceID;
+	private boolean reversal;
 
 	public ScheduleDueTaxDetail() {
 		super();
@@ -73,6 +74,14 @@ public class ScheduleDueTaxDetail implements Serializable {
 
 	public void setInvoiceID(Long invoiceID) {
 		this.invoiceID = invoiceID;
+	}
+
+	public boolean isReversal() {
+		return reversal;
+	}
+
+	public void setReversal(boolean reversal) {
+		this.reversal = reversal;
 	}
 
 }

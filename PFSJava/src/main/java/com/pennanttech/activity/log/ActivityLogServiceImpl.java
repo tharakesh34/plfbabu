@@ -45,6 +45,13 @@ public class ActivityLogServiceImpl implements ActivityLogService {
 	}
 
 	@Override
+	public List<Activity> getManualAdviseActivitiyLog(String moduleCode, String reference, long adviseID) {
+		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
+		return activityLogDAO.getManualAdviseActivitiyLog(ModuleUtil.getTableName(moduleCode), reference, adviseID);
+	}
+
+	@Override
 	public List<Notes> getNotesList(Object reference, List<String> moduleNames) {
 		return notesDAO.getNotesListAsc(String.valueOf(reference), moduleNames);
 	}

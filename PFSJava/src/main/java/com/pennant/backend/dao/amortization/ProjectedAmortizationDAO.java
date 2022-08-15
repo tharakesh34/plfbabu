@@ -118,4 +118,6 @@ public interface ProjectedAmortizationDAO {
 	void copyPrvProjAMZ();
 
 	void createIndexProjIncomeAMZ();
+
+	int prepareSVFeeDetails(Date monthEndDate, Date appDate);
 }

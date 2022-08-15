@@ -46,6 +46,7 @@ import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennant.ws.exception.ServiceExceptionDetails;
+import com.pennanttech.extension.api.APIServices;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -125,7 +126,13 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 					break;
 				// if service name is there in HTTP header, set it in APIHeader.
 				case APIHeader.API_SERVICENAME:
-					header.setServiceName(headerMAP.get(key).toString().replace("[", "").replace("]", ""));
+					String serviceName = headerMAP.get(key).toString().replace("[", "").replace("]", "");
+
+					if (!APIServices.isAllowed(serviceName)) {
+						getErrorDetails(APIConstants.RES_SERVICE_NOT_FOUND, new String[] { serviceName });
+					}
+
+					header.setServiceName(serviceName);
 					break;
 				// if service version is there in HTTP header, set it in
 				// APIHeader.
@@ -171,6 +178,8 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 					break;
 				}
 			}
+
+			header.setSeqId(apiLogDetail.getSeqId());
 			header.setAdditionalInfo(additionalInfo);
 			message.getExchange().put(APIHeader.API_HEADER_KEY, header);
 

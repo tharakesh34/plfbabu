@@ -53,4 +53,14 @@ public interface BankBranchService {
 	BankBranch getBankBrachByMicr(String micr);
 
 	int getAccNoLengthByIFSC(String ifscCode);
+
+	BankBranch getBankBranchByIFSC(String ifsc);
+
+	int getBankBranchCountByIFSC(String iFSC, String type);
+
+	BankBranch getBankBranchByIFSCMICR(String iFSC, String micr);
+
+	BankBranch getBankBranch(String iFSC, String micr, String bankCode, String branchCode);
+
+	boolean validateBranchCode(BankBranch bankBranch, String mandateType);
 }

@@ -12,6 +12,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.util.CollateralConstants;
@@ -50,6 +51,10 @@ public class CollateralAssignmentValidation {
 		CollateralAssignment tempAssignment = null;
 		if (collateralAssignment.isWorkflow()) {
 			tempAssignment = getCollateralAssignmentDAO().getCollateralAssignmentbyID(collateralAssignment, "_Temp");
+		}
+
+		if (new AuditHeader().getProcessStatus() == PennantConstants.porcessOVERIDE) {
+			collateralAssignment.setBefImage(null);
 		}
 
 		CollateralAssignment befAssignment = getCollateralAssignmentDAO()

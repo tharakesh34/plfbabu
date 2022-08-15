@@ -95,6 +95,7 @@ public class LimitDetails extends AbstractWorkflowEntity implements Serializable
 	private String limitLineDesc;
 	private String groupName;
 	private boolean limitRevolving = true;
+	@XmlElement
 	private boolean revolving = false;
 
 	// For customer limits service

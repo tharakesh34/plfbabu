@@ -55,7 +55,7 @@ import com.pennant.backend.model.systemmasters.Perfois;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -106,11 +106,11 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private JointAccountDetailService jointAccountDetailService;
 	private FinanceMainDAO financeMainDAO;
-	private CustomerDetailsService customerDetailsService;
 	private FinanceDataValidation financeDataValidation;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private EmployerDetailService employerDetailService;
+	private CustomerDataService customerDataService;
 
 	public MiscellaneousServiceController() {
 		super();
@@ -1002,7 +1002,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		int totalLoanFinType = financeMainDAO.getODLoanCount(fm.getFinType(), fm.getCustID());
 
 		if (customerDetails == null) {
-			customerDetails = customerDetailsService.getCustomerDetailsById(fm.getCustID(), true, "_View");
+			customerDetails = customerDataService.getCustomerDetailsbyID(fm.getCustID(), true, "_View");
 			fd.setCustomerDetails(customerDetails);
 		}
 
@@ -1493,10 +1493,6 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
 	}
@@ -1507,6 +1503,10 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 
 	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+	}
+
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

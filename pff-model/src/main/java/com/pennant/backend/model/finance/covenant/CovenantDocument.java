@@ -4,12 +4,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class CovenantDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
@@ -19,6 +22,7 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	private Date receivableDate;
 	@XmlElement
 	private Date frequencyDate;
+	@XmlElement
 	private Date documentReceivedDate;
 	@XmlElement(name = "isOriginalDocument")
 	private boolean originalDocument;

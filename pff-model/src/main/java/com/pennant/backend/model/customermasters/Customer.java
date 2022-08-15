@@ -350,6 +350,11 @@ public class Customer extends AbstractWorkflowEntity {
 	private BigDecimal industryMargin;
 	private String subIndustry;
 	private String residentialStatus;
+	private String custAddrCity;
+	private String custAddrCountry;
+	private String lovDescCustAddrCountry;
+	private String lovDescCustAddrCity;
+	private String lovDescCustAddrProvince;
 
 	public Customer() {
 		super();
@@ -419,6 +424,11 @@ public class Customer extends AbstractWorkflowEntity {
 		excludeFields.add("primaryIdName");
 		excludeFields.add("industryMargin");
 		excludeFields.add("subIndustry");
+		excludeFields.add("custAddrCountry");
+		excludeFields.add("custAddrCity");
+		excludeFields.add("lovDescCustAddrCountry");
+		excludeFields.add("lovDescCustAddrCity");
+		excludeFields.add("lovDescCustAddrProvince");
 
 		return excludeFields;
 	}
@@ -2189,6 +2199,46 @@ public class Customer extends AbstractWorkflowEntity {
 
 	public void setVip(boolean vip) {
 		this.vip = vip;
+	}
+
+	public String getCustAddrCity() {
+		return custAddrCity;
+	}
+
+	public void setCustAddrCity(String custAddrCity) {
+		this.custAddrCity = custAddrCity;
+	}
+
+	public String getCustAddrCountry() {
+		return custAddrCountry;
+	}
+
+	public void setCustAddrCountry(String custAddrCountry) {
+		this.custAddrCountry = custAddrCountry;
+	}
+
+	public String getLovDescCustAddrCountry() {
+		return lovDescCustAddrCountry;
+	}
+
+	public void setLovDescCustAddrCountry(String lovDescCustAddrCountry) {
+		this.lovDescCustAddrCountry = lovDescCustAddrCountry;
+	}
+
+	public String getLovDescCustAddrCity() {
+		return lovDescCustAddrCity;
+	}
+
+	public void setLovDescCustAddrCity(String lovDescCustAddrCity) {
+		this.lovDescCustAddrCity = lovDescCustAddrCity;
+	}
+
+	public String getLovDescCustAddrProvince() {
+		return lovDescCustAddrProvince;
+	}
+
+	public void setLovDescCustAddrProvince(String lovDescCustAddrProvince) {
+		this.lovDescCustAddrProvince = lovDescCustAddrProvince;
 	}
 
 }

@@ -100,12 +100,20 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 			// Get the arguments.
 			moduleCode = (String) arguments.get("moduleCode");
 			keyValue = arguments.get("keyValue");
-			Map<?, ?> map = (Map<?, ?>) arguments.get("map");
+			@SuppressWarnings("unchecked")
+			Map<String, Object> map = ((Map<String, Object>) arguments.get("map"));
 
 			doWriteBeanToComponents(moduleCode, map);
 
 			// get activities
-			List<Activity> activities = activityLogService.getActivities(moduleCode, keyValue);
+			List<Activity> activities = null;
+			if (moduleCode.equals("ManualAdvise")) {
+				String keyVal = (String) keyValue;
+				long adviseID = (long) map.get("adviseID");
+				activities = activityLogService.getManualAdviseActivitiyLog(moduleCode, keyVal, adviseID);
+			} else {
+				activities = activityLogService.getActivities(moduleCode, keyValue);
+			}
 
 			// Prepare Module Names
 			List<String> moduleNames = new ArrayList<>();
@@ -329,7 +337,11 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 			item = new Listitem();
 
 			WorkflowEngine we = new WorkflowEngine(workFlow.getWorkFlowXml());
-			cell = new Listcell((we.getUserTask(activity.getTaskId()).getName()));
+			if (activity.getTaskId() == null) {
+				cell = new Listcell("");
+			} else {
+				cell = new Listcell((we.getUserTask(activity.getTaskId()).getName()));
+			}
 			cell.setParent(item);
 
 			cell = new Listcell(activity.getRecordStatus());

@@ -61,4 +61,6 @@ public interface CustomerDocumentService {
 	AuditDetail validateCustomerDocuments(CustomerDocument customerDocument, Customer customer);
 
 	String getDocTypeByMasterDefByCode(String masterType, String keyCode);
+
+	boolean getCustomerDocExists(long custId, String docType);
 }

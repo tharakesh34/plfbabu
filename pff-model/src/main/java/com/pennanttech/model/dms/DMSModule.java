@@ -2,7 +2,7 @@ package com.pennanttech.model.dms;
 
 public enum DMSModule {
 	CUSTOMER, FINANCE, COLLATERAL, QUERY_MGMT, COVENANT, VERIFICATION, LEGAL, VAS, CHEQUE, MANDATE, COMMITMENT,
-	SAMPLING, FI, TV, PD, RCU, OCR, RECEIPT, DISBINST, LV, DMS;
+	SAMPLING, FI, TV, PD, RCU, OCR, RECEIPT, DISBINST, LV, DMS, TAN;
 
 	public static DMSModule getModule(String module) {
 		for (DMSModule dmsModule : DMSModule.values()) {

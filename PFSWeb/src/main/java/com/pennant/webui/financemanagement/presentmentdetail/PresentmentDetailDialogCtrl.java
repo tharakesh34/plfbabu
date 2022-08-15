@@ -78,13 +78,12 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -97,6 +96,8 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 /**
  * This is the controller class for the /WEB-INF/pages/financemanagement/PresentmentHeader/presentmentDetailDialog.zul
@@ -145,6 +146,14 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	protected Tab includeTab;
 	protected Tab manualExcludeTab;
 	protected Tab autoExcludeTab;
+	private boolean isRepresentment;
+	protected Listheader listHeader_Include_BankName;
+	protected Listheader listHeader_Include_PrvsBatchNumb;
+	protected Listheader listHeader_ManualExclude_BankName;
+	protected Listheader listHeader_ManualExclude_PrvsBatchNumb;
+	protected Listheader listHeader_AutoExclude_BankName;
+	protected Listheader listHeader_AutoExclude_PrvsBatchNumb;
+	protected Label label_PresentmentDetailList_Status;
 
 	private transient PresentmentDetailListCtrl presentmentDetailListCtrl;
 	private transient PresentmentDetailService presentmentDetailService;
@@ -204,9 +213,13 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			this.presentmentHeader = (PresentmentHeader) arguments.get("presentmentHeader");
 			this.moduleType = (String) arguments.get("moduleType");
 			this.presentmentDetailListCtrl = (PresentmentDetailListCtrl) arguments.get("presentmentDetailListCtrl");
+
 			if (this.presentmentHeader == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
+
+			isRepresentment = PennantConstants.PROCESS_REPRESENTMENT
+					.equalsIgnoreCase(presentmentHeader.getPresentmentType());
 			getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 
 			doSetFieldProperties();
@@ -429,7 +442,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			whereClause.append(" ExcludeReason = " + RepayConstants.PEXC_MANUAL_EXCLUDE);
 		} else {
 			whereClause.append(" ExcludeReason != " + RepayConstants.PEXC_EMIINCLUDE + " AND ExcludeReason != "
-					+ RepayConstants.PEXC_MANUAL_EXCLUDE);
+					+ RepayConstants.PEXC_MANUAL_EXCLUDE + " AND ExcludeReason != " + RepayConstants.PEXC_ADVINT);
 		}
 		this.parameterSearchObject.addWhereClause(whereClause.toString());
 		listBox.setPageSize(10);
@@ -664,6 +677,13 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 		doEdit();
 		doWriteBeanToComponents(presentmentHeader);
+
+		if (isRepresentment) {
+			this.window_title.setValue(Labels.getLabel("RePresentmentHeaderDialog.title"));
+			this.label_PresentmentDetailList_Status
+					.setValue(Labels.getLabel("label_RePresentmentDetailList_PresentmentStatus.value"));
+		}
+
 		try {
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {

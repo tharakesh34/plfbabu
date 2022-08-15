@@ -312,7 +312,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	private boolean checkRepayMethod(FinanceMain finmain) {
 		String rpymentod = StringUtils.trimToEmpty(finmain.getFinRepayMethod());
 		if (rpymentod.equals(MandateConstants.TYPE_ECS) || rpymentod.equals(MandateConstants.TYPE_DDM)
-				|| rpymentod.equals(MandateConstants.TYPE_NACH)) {
+				|| rpymentod.equals(MandateConstants.TYPE_NACH) || rpymentod.equals(MandateConstants.TYPE_EMANDATE)) {
 			return true;
 		} else {
 			return false;

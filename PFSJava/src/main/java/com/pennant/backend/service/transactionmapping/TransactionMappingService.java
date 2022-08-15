@@ -1,7 +1,7 @@
 package com.pennant.backend.service.transactionmapping;
 
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
+import com.pennanttech.pff.cd.model.TransactionMapping;
 
 public interface TransactionMappingService {
 

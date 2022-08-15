@@ -95,4 +95,6 @@ public interface JointAccountDetailService {
 	JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type);
 
 	JointAccountDetail getJointAccountDetailByRef(long finID, String custCIF, String type);
+
+	List<Long> getCustIdsByFinID(long finID);
 }

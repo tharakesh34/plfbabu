@@ -42,7 +42,7 @@
 			</column>
 		</createTable>
 	</changeSet>
-
+	
 	<!-- <changeSet id="2.1" author="murthy.y" >
 		<createIndex tableName="FINID_MAPPING" indexName="idx_FM_FR">
 			<column name="FinReference" type="varchar(20)" />
@@ -5705,4 +5705,351 @@
 		</sql>
 	</changeSet>
 
+	<!-- changes moved 5.17 & 5.18 -->
+	
+	<changeSet id="200_pre1" author="murthy.y">
+		<dropTable tableName="FINID_MAPPING"/>
+	</changeSet>
+	
+	<changeSet id="200_pre2" author="murthy.y">
+		<createTable tableName="FINID_MAPPING">
+			<column name="FinID" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_FINID_MAPPING" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints unique="true" uniqueConstraintName="UK_FINID_MAPPING_FINREF" />
+			</column>
+		</createTable>
+	</changeSet>
+	 
+	<changeSet id="200_pre3" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Insert into FINID_MAPPING (FinID, FinReference) 
+				select distinct FinID, FinReference from (
+				select distinct FinID, FinReference from FinanceMain
+				union all
+				select distinct FinID, FinReference from FinanceMain_Temp where FinReference not in (select FinReference from FinanceMain)
+				union all
+				select distinct FinID, FinReference from RejectFinanceMain where FinReference not in (select FinReference from FinanceMain union all select FinReference from FinanceMain_Temp)
+				union all
+				select distinct FinID, FinReference from WIFFinanceMain where FinReference not in (select FinReference from FinanceMain union all select FinReference from FinanceMain_Temp)
+				union all
+				select distinct FinID, FinReference from WIFFinanceMain_Temp where FinReference not in (select FinReference from FinanceMain union all select FinReference from FinanceMain_Temp)
+				) T 
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="200" author="murthy.y">
+		<addColumn tableName="XIRRSchedule">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="200.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update XIRRSchedule set FinID = (select m.FinID from FINID_MAPPING m where XIRRSchedule.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="200.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_XIRRSchedule_finid"
+			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="XIRRSchedule" referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="200.3" author="murthy.y">
+		<createIndex tableName="XIRRSchedule" indexName="idx_XIRRSchedule_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201" author="murthy.y">
+		<addColumn tableName="TAN_ASSIGNMENTS">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="201.1" author="murthy.y">
+		<addColumn tableName="TAN_ASSIGNMENTS_temp">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="201.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update TAN_ASSIGNMENTS set FinID = (select m.FinID from FINID_MAPPING m where TAN_ASSIGNMENTS.FinReference = m.FinReference);
+				Update TAN_ASSIGNMENTS_Temp set FinID = (select m.FinID from FINID_MAPPING m where TAN_ASSIGNMENTS_Temp.FinReference = m.FinReference); 
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="201.3" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_TAN_ASSIGNMENTS_finid"
+			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="TAN_ASSIGNMENTS"
+			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="201.4" author="murthy.y">
+		<createIndex tableName="TAN_ASSIGNMENTS" indexName="idx_TAN_ASSIGNMENTS_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201.5" author="murthy.y">
+		<createIndex tableName="TAN_ASSIGNMENTS_temp" indexName="idx_TAN_ASSIGNMENTS_t_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="202" author="murthy.y">
+		<addColumn tableName="EFS_LMS_EVENTS">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="202.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update EFS_LMS_EVENTS set FinID = (select m.FinID from FINID_MAPPING m where EFS_LMS_EVENTS.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="202.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_EFS_LMS_EVENTS_finid"
+			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="EFS_LMS_EVENTS"
+			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="202.3" author="murthy.y">
+		<createIndex tableName="EFS_LMS_EVENTS" indexName="idx_EFS_LMS_EVENTS_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="203" author="murthy.y">
+		<addColumn tableName="Document_Status">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="203.1" author="murthy.y">
+		<addColumn tableName="Document_Status_temp">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="203.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update Document_Status set FinID = (select m.FinID from FINID_MAPPING m where Document_Status.FinReference = m.FinReference);
+				Update Document_Status_Temp set FinID = (select m.FinID from FINID_MAPPING m where Document_Status_Temp.FinReference = m.FinReference); 
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="203.3" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_TAN_ASSIGNMENTS_finid"
+			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="Document_Status"
+			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="203.4" author="murthy.y">
+		<createIndex tableName="Document_Status" indexName="idx_Document_Status_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="203.5" author="murthy.y">
+		<createIndex tableName="Document_Status_temp" indexName="idx_Document_Status_t_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="204" author="murthy.y">
+		<addColumn tableName="FeeWaiverUploads">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="204.1" author="murthy.y">
+		<addColumn tableName="FeeWaiverUploads_temp">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="204.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update FeeWaiverUploads set FinID = (select m.FinID from FINID_MAPPING m where FeeWaiverUploads.FinReference = m.FinReference);
+				Update FeeWaiverUploads_Temp set FinID = (select m.FinID from FINID_MAPPING m where FeeWaiverUploads_Temp.FinReference = m.FinReference); 
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="204.3" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_FeeWaiverUploads_finid"
+			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="FeeWaiverUploads"
+			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="204.4" author="murthy.y">
+		<createIndex tableName="FeeWaiverUploads" indexName="idx_FeeWaiverUploads_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="204.5" author="murthy.y">
+		<createIndex tableName="FeeWaiverUploads_temp" indexName="idx_FeeWaiverUploads_t_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="PSD#201899" author="NagaVamsi.p">
+		<dropView viewName="LINKEDFINANCES_VIEW"/>
+		<dropView viewName="LINKEDFINANCES_AVIEW"/>
+		<dropView viewName="LINKEDFINANCES_TVIEW"/>
+	</changeSet>
+ 
+	<changeSet id="PSD#201899.0" author="NagaVamsi.p">
+		<dropSequence sequenceName="SeqLinkedFinances"/>
+	</changeSet>
+
+	<changeSet id="PSD#201899.1.1" author="NagaVamsi.P">
+		<renameTable newTableName="LINKEDFINANCES_BKP" oldTableName="LINKEDFINANCES"/>
+		<renameTable newTableName="LINKEDFINANCES_TEMP_BKP" oldTableName="LINKEDFINANCES_TEMP"/>
+	</changeSet> 
+
+	<changeSet id="PSD#201899.1" author="NagaVamsi.P">
+		<createSequence sequenceName="SeqLinkedFinances" maxValue="999999999999999999" minValue="1"
+			incrementBy="1" startValue="1" />
+	</changeSet>
+
+	<changeSet id="PSD#201899.2" author="Gopal.p">
+		<createTable tableName="LINKEDFINANCES">
+			<column name="Id" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LinkedReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="Varchar(8)" />
+			<column name="Version" type="int" />
+			<column name="LastmntBy" type="bigint" />
+			<column name="LastmntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="PSD#201899.3" author="Gopal.p">
+		<createTable tableName="LINKEDFINANCES_TEMP">
+			<column name="Id" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LinkedReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="Varchar(8)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="PSD#201899.4" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+	 			INSERT INTO LINKEDFINANCES (ID, FINID, FINREFERENCE, LINKEDREFERENCE, STATUS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  SELECT ID, FINID, FINREFERENCE, LINKEDREFERENCE, STATUS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID FROM LINKEDFINANCES_BKP;
+	  			INSERT INTO LINKEDFINANCES_TEMP (ID, FINID, FINREFERENCE, LINKEDREFERENCE, STATUS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) SELECT ID, FINID, FINREFERENCE, LINKEDREFERENCE, STATUS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID FROM LINKEDFINANCES_TEMP_BKP;
+	        ]]>
+		</sql>
+	</changeSet>
+
+	
+	<changeSet id="PSD#201899.5" author="NagaVamsi.P" dbms="oracle">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval NUMBER(19);
+			begin
+			select COALESCE(max(T.ID),0)+1 into v_maxval from
+			(select COALESCE(ID, 0) ID from LINKEDFINANCES union all select COALESCE(ID, 0) ID from LINKEDFINANCES_Temp) T;
+			EXECUTE IMMEDIATE 'alter
+			sequence SeqLinkedFinances restart start with ' || v_maxval;
+			end;
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="PSD#201899.5" author="NagaVamsi.P" dbms="postgresql">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval BIGINT;
+			begin
+			select COALESCE(max(T.ID),0)+1 into v_maxval from
+			(select COALESCE(ID, 0) ID from LINKEDFINANCES union all select COALESCE(ID, 0) ID from LINKEDFINANCES_Temp) T;
+			EXECUTE 'alter sequence
+			SeqLinkedFinances restart start with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#201899.5" author="NagaVamsi.P" dbms="mssql">
+		<sql splitStatements="false">
+		<![CDATA[
+			DECLARE @SQLCmd NVARCHAR(MAX);
+				DECLARE @Seq BIGINT;
+				SELECT @Seq=COALESCE(max(T.ID),0)+1
+				from
+				(select COALESCE(ID, 0) ID from LINKEDFINANCES union all select COALESCE(ID, 0) ID from LINKEDFINANCES_TEMP) T;
+				
+				SET @SQLCmd = '
+				ALTER SEQUENCE SeqLinkedFinances
+				RESTART WITH ' + CAST( @Seq AS VARCHAR(30));
+							
+				EXEC SP_EXECUTESQL  @SQLCmd;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#201899.6" author="NagaVamsi.P">
+		<dropTable tableName="LinkedFinances_BKP"/>
+		<dropTable tableName="LinkedFinances_Temp_BKP"/>
+	</changeSet>
+	
+	<changeSet id="PSD#201899.10_pre" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="LINKEDFINANCES"
+			columnName="ID" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="PSD#201899.10" author="NagaVamsi.P">
+		<addPrimaryKey tableName="LINKEDFINANCES" columnNames="ID" />
+	</changeSet>
+	
+	<changeSet id="PSD#201899.11_pre" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="LINKEDFINANCES_TEMP"
+			columnName="ID" columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="PSD#201899.11" author="NagaVamsi.P">
+		<addPrimaryKey tableName="LINKEDFINANCES_TEMP" columnNames="ID" />
+	</changeSet>
+	
 </databaseChangeLog>

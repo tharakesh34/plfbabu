@@ -28,11 +28,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtractService;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public interface PresentmentDetailDAO {
 
@@ -59,7 +59,7 @@ public interface PresentmentDetailDAO {
 
 	PresentmentDetail getRePresentmentDetails(String presentmentRef);
 
-	void updateReceptId(long id, long receiptID);
+	void updateReceptId(PresentmentDetail pd);
 
 	List<PresentmentDetail> getPresentmenToPost(long custId, Date schData);
 
@@ -169,4 +169,8 @@ public interface PresentmentDetailDAO {
 	String getPresentmentType(long id);
 
 	List<Long> getManualExcludeList(long id);
+
+	int getApprovedPresentmentCount(String finReference);
+
+	void updateReceptIdAndAmounts(PresentmentDetail pd);
 }

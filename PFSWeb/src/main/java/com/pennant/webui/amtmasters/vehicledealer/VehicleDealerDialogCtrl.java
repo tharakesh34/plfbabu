@@ -1370,11 +1370,11 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			if (!this.taxNumber.isReadonly()) {
 				this.taxNumber.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_TAXNumber.value"),
-								PennantRegularExpressions.REGEX_GSTIN, true));
+								PennantRegularExpressions.REGEX_GSTIN, false));
 			}
 		}
 
-		if (module.equals("DSA")) {
+		if (module.equals("DSA") || module.equals("SVDM")) {
 			if (!this.accountNo.isReadonly()) {
 				this.accountNo.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_AccountNo.value"),
@@ -1383,7 +1383,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			if (!this.uidNumber.isReadonly()) {
 				this.uidNumber.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_UIDNumber.value"),
-								PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
+								PennantRegularExpressions.REGEX_AADHAR_NUMBER, false));
 			}
 		}
 

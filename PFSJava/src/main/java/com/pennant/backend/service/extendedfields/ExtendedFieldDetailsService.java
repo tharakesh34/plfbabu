@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -601,7 +602,11 @@ public class ExtendedFieldDetailsService {
 					updateRecord = true;
 				}
 			} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(recordType)) {
-				updateRecord = true;
+				if (!extendedFieldRenderDAO.isExists(efr.getReference(), efr.getSeqNo(), tableName + type)) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
 			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(recordType)) {
 				if (approveRec) {
 					deleteRecord = true;
@@ -1886,6 +1891,11 @@ public class ExtendedFieldDetailsService {
 
 	public List<ErrorDetail> validateExtendedFieldDetails(List<ExtendedField> ef, String module, String subModule,
 			String event) {
+		return validateExtendedFieldDetails(ef, module, subModule, event, false);
+	}
+
+	public List<ErrorDetail> validateExtendedFieldDetails(List<ExtendedField> ef, String module, String subModule,
+			String event, boolean isDedupe) {
 		logger.debug(Literal.ENTERING);
 
 		String extEvent = null;
@@ -1966,6 +1976,14 @@ public class ExtendedFieldDetailsService {
 							valueParm[0] = "fieldValue";
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 							return errorDetails;
+						}
+
+						if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP && !isDedupe) {
+							errorDetails.add(validateUCICNumber(subModule, extFieldData));
+
+							if (CollectionUtils.isNotEmpty(errorDetails)) {
+								return errorDetails;
+							}
 						}
 
 						boolean isFeild = false;
@@ -2526,6 +2544,27 @@ public class ExtendedFieldDetailsService {
 		}
 
 		return instructionUID;
+	}
+
+	public String getUCICNumber(String tableName, Object ucic) {
+		return extendedFieldRenderDAO.getUCICNumber(tableName, ucic);
+	}
+
+	private ErrorDetail validateUCICNumber(String subModule, ExtendedFieldData extFieldData) {
+		Object fieldValue = extFieldData.getFieldValue();
+
+		if ("UCIC".equalsIgnoreCase(extFieldData.getFieldName()) && fieldValue != null) {
+			String reference = extendedFieldRenderDAO.getUCICNumber(subModule, fieldValue);
+
+			if (reference != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "FieldValue:" + fieldValue;
+				valueParm[1] = "CustCif:" + reference;
+				return ErrorUtil.getErrorDetail(new ErrorDetail("41018", "", valueParm));
+			}
+		}
+
+		return null;
 	}
 
 	/**

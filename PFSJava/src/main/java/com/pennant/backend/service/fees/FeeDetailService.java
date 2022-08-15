@@ -127,11 +127,11 @@ public class FeeDetailService {
 			if (StringUtils.isNotEmpty(fee.getRuleCode())) {
 				feeRuleCodes.add(fee.getRuleCode());
 			}
-
-			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, fee.getTaxComponent())) {
-				BigDecimal totalGST = GSTCalculator.getExclusiveGST(fee.getPaidAmount(), gstPercentages).gettGST();
-				fee.setPaidAmountOriginal(totalGST);
-				fee.setPaidAmount(fee.getPaidAmountOriginal());
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
+				BigDecimal totalGST = GSTCalculator.getExclusiveGST(fee.getPaidAmount(), gstPercentages)
+						.gettGST();
+				fee.setPaidAmountOriginal(fee.getPaidAmount());
+				fee.setPaidAmount(fee.getPaidAmountOriginal().add(totalGST));
 			}
 		}
 
@@ -220,11 +220,6 @@ public class FeeDetailService {
 				break;
 			case CalculationConstants.REMFEE_PART_OF_SALE_PRICE:
 				feeAddToDisbTot = feeAddToDisbTot.add(fee.getRemainingFee());
-				break;
-			case CalculationConstants.REMFEE_PAID_BY_CUSTOMER:
-				if (fee.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
-					fee.setPaidAmount(fee.getActualAmount());
-				}
 				break;
 			case CalculationConstants.REMFEE_WAIVED_BY_BANK:
 				if (fee.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0) {
@@ -1001,7 +996,9 @@ public class FeeDetailService {
 		fee.setMaxWaiverPerc(feeType.getMaxWaiverPerc());
 		fee.setAlwModifyFee(feeType.isAlwModifyFee());
 		fee.setAlwModifyFeeSchdMthd(feeType.isAlwModifyFeeSchdMthd());
-
+		fee.setPrvTaxComponent(feeType.getTaxComponent());
+		fee.setTaxComponent(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+		fee.setTaxApplicable(feeType.isTaxApplicable());
 		fee.setCalculatedAmount(feeType.getAmount());
 
 		fee.setTaxComponent(feeType.getTaxComponent());
@@ -1067,6 +1064,7 @@ public class FeeDetailService {
 			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getWaivedAmount()).subtract(fee.getPaidAmount()));
 		}
 
+		fee.setTaxComponent(fee.getPrvTaxComponent());
 		fee.setRecordType(PennantConstants.RCD_ADD);
 		fee.setFinReference(null);
 		fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

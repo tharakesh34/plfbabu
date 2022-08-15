@@ -112,11 +112,18 @@
 									<columns>
 										<column width="200px" />
 										<column />
+										<column width="200px" />
+										<column />
 									</columns>
 									<rows>
 										<row>
 											<label value="${c:l('label_ReceiptCancellationDialog_CustID.value')}" />
 											<extendedcombobox id="custID" />
+											<label
+												id="label_ReceiptCancellationDialog_externalRef"
+												value="${c:l('label_ReceiptCancellationDialog_extReference.value')}" />
+											<textbox id="extReference"
+												width="180px" readonly="true" />
 										</row>
 									</rows>
 								</grid>
