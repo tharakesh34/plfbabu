@@ -42,6 +42,29 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public CovenantDocument copyEntity() {
+		CovenantDocument entity = new CovenantDocument();
+		entity.setId(this.id);
+		entity.setCovenantId(this.covenantId);
+		entity.setDocumentId(this.documentId);
+		entity.setReceivableDate(this.receivableDate);
+		entity.setFrequencyDate(this.frequencyDate);
+		entity.setDocumentReceivedDate(this.documentReceivedDate);
+		entity.setOriginalDocument(this.originalDocument);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setDocumentDetail(this.documentDetail == null ? null : this.documentDetail.copyEntity());
+		entity.setCovenantType(this.covenantType);
+		entity.setDocCategory(this.docCategory);
+		entity.setDocName(this.docName);
+		entity.setDoctype(this.doctype);
+		entity.setCustId(this.custId);
+		entity.setDocImage(this.docImage);
+		entity.setDocStatus(this.docStatus);
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 

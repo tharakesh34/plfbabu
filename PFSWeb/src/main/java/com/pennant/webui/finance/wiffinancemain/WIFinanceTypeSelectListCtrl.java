@@ -153,9 +153,8 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	 * selected FinanceType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceTypeSelect(Event event) throws Exception {
+	public void onCreate$window_FinanceTypeSelect(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (arguments.containsKey("WIFFinanceMainDialogCtrl")) {
@@ -765,11 +764,8 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	 * Call the Customer dialog with a new empty entry. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InterfaceException
-	 * @throws Exception
 	 */
-	public WIFCustomer fetchCustomerData() throws InterruptedException, InterfaceException {
+	public WIFCustomer fetchCustomerData() {
 		logger.debug("Entering");
 
 		// Get the data of Customer from Core Banking Customer

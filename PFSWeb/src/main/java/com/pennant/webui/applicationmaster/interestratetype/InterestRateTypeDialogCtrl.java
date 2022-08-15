@@ -102,9 +102,8 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	 * selected InterestRateType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_InterestRateTypeDialog(Event event) throws Exception {
+	public void onCreate$window_InterestRateTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -356,9 +355,8 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aInterestRateType
-	 * @throws Exception
 	 */
-	public void doShowDialog(InterestRateType aInterestRateType) throws Exception {
+	public void doShowDialog(InterestRateType aInterestRateType) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -792,10 +790,8 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.interestRateType);
 	}
 

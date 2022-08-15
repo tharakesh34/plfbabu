@@ -67,7 +67,7 @@ public class BounceReasonListModelItemRenderer implements ListitemRenderer<Bounc
 	}
 
 	@Override
-	public void render(Listitem item, BounceReason bounceReason, int count) throws Exception {
+	public void render(Listitem item, BounceReason bounceReason, int count) {
 
 		Listcell lc;
 		lc = new Listcell(bounceReason.getBounceCode());

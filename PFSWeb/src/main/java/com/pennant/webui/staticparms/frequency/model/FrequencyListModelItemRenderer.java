@@ -67,7 +67,7 @@ public class FrequencyListModelItemRenderer implements ListitemRenderer<Frequenc
 	}
 
 	@Override
-	public void render(Listitem item, Frequency frequency, int count) throws Exception {
+	public void render(Listitem item, Frequency frequency, int count) {
 
 		Listcell lc;
 		lc = new Listcell(frequency.getFrqCode());

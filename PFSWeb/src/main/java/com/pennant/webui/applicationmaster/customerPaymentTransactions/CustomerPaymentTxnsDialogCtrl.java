@@ -141,7 +141,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 		super.pageRightName = "PayOrderIssueDialog";
 	}
 
-	public void onCreate$window_CustomerPaymentTxnsDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerPaymentTxnsDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		setPageComponents(window_CustomerPaymentTxnsDialog);
 
@@ -314,9 +314,8 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param header
-	 * @throws Exception
 	 */
-	public void doShowDialog(PaymentTransaction paymentTransaction) throws Exception {
+	public void doShowDialog(PaymentTransaction paymentTransaction) {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -424,14 +423,14 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 		logger.debug("Leaving fillComboBox()");
 	}
 
-	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) throws Exception {
+	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		disbursementInstCtrl.onClickNew(this.customerPaymentTxnsListCtrl, this, ModuleType_CUSTPMTTXN,
 				getFinAdvancePaymentsList(), null, null);
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws Exception {
+	public void onFinAdvancePaymentsItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		disbursementInstCtrl.onDoubleClick(this.customerPaymentTxnsListCtrl, this, ModuleType_CUSTPMTTXN, true, null);
 		logger.debug(Literal.LEAVING + event.toString());

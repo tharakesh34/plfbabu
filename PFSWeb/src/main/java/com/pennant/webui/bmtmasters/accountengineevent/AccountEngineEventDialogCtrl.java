@@ -98,9 +98,8 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	 * selected AccountEngineEvent object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AccountEngineEventDialog(Event event) throws Exception {
+	public void onCreate$window_AccountEngineEventDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -323,9 +322,8 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAccountEngineEvent
-	 * @throws Exception
 	 */
-	public void doShowDialog(AccountEngineEvent aAccountEngineEvent) throws Exception {
+	public void doShowDialog(AccountEngineEvent aAccountEngineEvent) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -747,10 +745,8 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.accountEngineEvent);
 	}
 

@@ -262,9 +262,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * selected CollateralSetup object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CollateralSetupDialog(Event event) throws Exception {
+	public void onCreate$window_CollateralSetupDialog(Event event) {
 		logger.debug("Entring" + event.toString());
 
 		// Set the page level components.
@@ -432,9 +431,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		if (fromLoan) {
 			doSaveFinCollaterals();
 		} else {
@@ -822,10 +820,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	// ### 16-05-2018 - End- Development Item 82
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the border layout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void appendCustomerDetailTab(boolean onLoad) throws InterruptedException {
+	private void appendCustomerDetailTab(boolean onLoad) {
 		logger.debug("Entering");
 		try {
 			if (onLoad) {
@@ -945,10 +941,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	/**
 	 * Method for Append Recommend Details Tab
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void appendRecommendDetailTab(boolean onLoadProcess) throws InterruptedException {
+	private void appendRecommendDetailTab(boolean onLoadProcess) {
 		logger.debug("Entering");
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
@@ -1014,9 +1008,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aCollateralSetup
-	 * @throws Exception
 	 */
-	private void doWriteComponentsToBean(CollateralSetup aCollateralSetup) throws Exception {
+	private void doWriteComponentsToBean(CollateralSetup aCollateralSetup) {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -1195,9 +1188,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws Exception
 	 */
-	private boolean doSave_CheckList(CollateralSetup aCollateralSetup, boolean isForAgreementGen) throws Exception {
+	private boolean doSave_CheckList(CollateralSetup aCollateralSetup, boolean isForAgreementGen) {
 		logger.debug("Entering ");
 
 		boolean validationSuccess = true;
@@ -1733,7 +1725,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	// Double click the list
-	public void onCoOwnerItemDoubleClicked(Event event) throws Exception {
+	public void onCoOwnerItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Listitem item = this.listBoxCoownerDetail.getSelectedItem();
@@ -1769,7 +1761,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	// ================Coowner Details
-	public void onClick$btnAddCoownerDetails(Event event) throws Exception {
+	public void onClick$btnAddCoownerDetails(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (StringUtils.isEmpty(this.depositorCif.getValue())) {
@@ -1868,7 +1860,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	// Double click Third Party Assignment Deatils list
-	public void onCollateralThirdPartyItemDoubleClicked(Event event) throws Exception {
+	public void onCollateralThirdPartyItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Listitem item = this.listBoxThirdParty.getSelectedItem();
@@ -1904,7 +1896,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	// ================Add Third Party Assignment Deatils
-	public void onClick$btnAddThirdPartyDetail(Event event) throws Exception {
+	public void onClick$btnAddThirdPartyDetail(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (StringUtils.isEmpty(this.depositorCif.getValue())) {
@@ -1934,13 +1926,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	/**
-	 * Saves the components to table. from financemain <br>
-	 * 
-	 * @throws Exception
-	 * 
-	 * @throws InterruptedException
+	 * Saves the components to table. from financemain
 	 */
-	private void doSaveFinCollaterals() throws Exception {
+	private void doSaveFinCollaterals() {
 		logger.debug("Entering");
 
 		final CollateralSetup aCollateralSetup = new CollateralSetup();
@@ -2079,7 +2067,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		logger.debug("Leaving");
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() {
 		logger.debug("Entering");
 
 		final CollateralSetup aCollateralSetup = new CollateralSetup();
@@ -2876,7 +2864,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectTab(ForwardEvent event) throws Exception {
+	public void onSelectTab(ForwardEvent event) {
 
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + "Entering");

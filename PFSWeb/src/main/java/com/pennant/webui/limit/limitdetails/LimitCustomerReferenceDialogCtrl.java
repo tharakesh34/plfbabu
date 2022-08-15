@@ -72,11 +72,9 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 	 * selected LimitHeader object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_LimitCustomerReferenceDialog(Event event) throws Exception {
+	public void onCreate$window_LimitCustomerReferenceDialog(Event event) {
 		logger.debug("Entering");
 
 		List<LimitReferenceMapping> limitReferences = new ArrayList<LimitReferenceMapping>();
@@ -109,8 +107,7 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param customerLimitDetails
-	 *            LimitHeader
+	 * @param customerLimitDetails LimitHeader
 	 */
 	public void doWriteBeanToComponents(LimitDetails limitDetails, List<LimitReferenceMapping> mappings) {
 		logger.debug("Entering");
@@ -159,7 +156,7 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 
 	}
 
-	public void onClickReference(ForwardEvent event) throws Exception {
+	public void onClickReference(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		LimitReferenceMapping lmtRefMap = (LimitReferenceMapping) event.getData();
@@ -178,8 +175,7 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param LimitTransactionDetail
-	 *            LimitTransactionDetail
+	 * @param LimitTransactionDetail LimitTransactionDetail
 	 */
 	private void doFillLimitTransactionListbox(List<LimitTransactionDetail> limitTransaction) {
 		logger.debug("Entering");

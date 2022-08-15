@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PasswordDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    : 1-07-2011    														*
- *                                                                  						*
- * Modified Date    : 21-10-2011  														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PasswordDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 1-07-2011 * * Modified
+ * Date : 21-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-10-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.index;
@@ -132,9 +114,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	 * Creating Dialog Window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ChangePasswordDialog(Event event) throws Exception {
+	public void onCreate$window_ChangePasswordDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -144,8 +125,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		newPassword = (org.zkoss.zhtml.Input) window_ChangePasswordDialog.getFellowIfAny("newPassword");
 		retypeNewPassword = (org.zkoss.zhtml.Input) window_ChangePasswordDialog.getFellowIfAny("retypeNewPassword");
 
-		doSetFieldProperties();//set field properties
-		//getting security user details
+		doSetFieldProperties();// set field properties
+		// getting security user details
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 		User userDetails = (User) currentUser.getPrincipal();
 		this.securityUser = userDetails.getSecurityUser();
@@ -161,9 +142,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	 * when user clicks "save" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		doValidations();
@@ -200,7 +180,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 			int expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS");
 			getSecurityUser().setPwdExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), expDays));
 
-			//update the password by calling securityUserService's changePassword method.
+			// update the password by calling securityUserService's changePassword method.
 			auditHeader = getAuditHeader(getSecurityUser(), PennantConstants.TRAN_UPD);
 			getsecurityUserService().changePassword(auditHeader);
 			Executions.sendRedirect("/csrfLogout.zul");
@@ -248,7 +228,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		}
 
 		try {
-			//checking for newPassword following defined password criteria by calling changePasswordModel's validate() method
+			// checking for newPassword following defined password criteria by calling changePasswordModel's validate()
+			// method
 			if (StringUtils.isNotBlank(this.newPassword1.getValue())) {
 				if ((changePasswordModel.checkPasswordCriteria(getSecurityUser().getUsrLogin(),
 						StringUtils.trimToEmpty(
@@ -262,7 +243,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 			wve.add(we);
 		}
 		try {
-			//checking new password and retype password are same 
+			// checking new password and retype password are same
 
 			if (StringUtils.isNotBlank(this.newPassword1.getValue())
 					&& StringUtils.isNotBlank(this.retypeNewPassword1.getValue())) {
@@ -279,7 +260,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 
 		try {
 			if (StringUtils.isNotBlank(this.newPassword1.getValue())) {
-				//checking for is new password and old passwords are same by calling changePasswordModel's checkWithLastPasswords() method
+				// checking for is new password and old passwords are same by calling changePasswordModel's
+				// checkWithLastPasswords() method
 				if (changePasswordModel.checkWithPreviousPasswords(getSecurityUser(),
 						AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue()))) {
 					throw new WrongValueException(this.newPassword, Labels.getLabel("label_Oldpwd_Newpwd_Same",
@@ -291,7 +273,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		}
 		try {
 			if (StringUtils.isNotBlank(this.password1.getValue())) {
-				//checking  for old password entered by user is Correct Old password by calling changePasswordModel's IsPaswordsSame() method 
+				// checking for old password entered by user is Correct Old password by calling changePasswordModel's
+				// IsPaswordsSame() method
 				if (!changePasswordModel.isPaswordsSame(getSecurityUser().getUsrPwd(),
 						AESCipherUtil.decrypt(this.password1.getValue(), txtbox_randomKey.getValue()))) {
 					throw new WrongValueException(this.password, Labels.getLabel("label_Incorrect_Oldpassword"));
@@ -324,8 +307,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		this.newPassword1.setValue("");
 		this.retypeNewPassword1.setValue("");
 		this.password.setAutofocus(true);
-		//this.div_PwdStatusMeter.setStyle("background-color:white");
-		//this.label_PwdStatus.setValue("");
+		// this.div_PwdStatusMeter.setStyle("background-color:white");
+		// this.label_PwdStatus.setValue("");
 		logger.debug("Leaving ");
 	}
 
@@ -338,8 +321,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		this.userName.setReadonly(true);
 		this.userName.setReadonly(true);
 		this.password.setMaxlength(pwdMaxLenght);
-		this.password.setAutofocus(true); //set focus
-		//this.newPassword.addEventListener("onChanging", new OnChanging());
+		this.password.setAutofocus(true); // set focus
+		// this.newPassword.addEventListener("onChanging", new OnChanging());
 		this.newPassword.setMaxlength(pwdMaxLenght);
 		this.retypeNewPassword.setMaxlength(pwdMaxLenght);
 		logger.debug("Leaving ");
@@ -377,7 +360,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			logger.debug("Entering ");
 
 			int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
@@ -387,12 +370,12 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 			int splCharCount = 0;
 			String pwd = ((org.zkoss.zk.ui.event.InputEvent) event).getValue();
 			for (int i = 0; i < pwd.length(); i++) {
-				//get count of all characters and digits
+				// get count of all characters and digits
 				if (Character.isLetterOrDigit(pwd.charAt(i))) {
 					splCharCount++;
 				}
 			}
-			splCharCount = pwd.length() - splCharCount;//get special character count
+			splCharCount = pwd.length() - splCharCount;// get special character count
 			/* if criteria not matched */
 			if (changePasswordModel.checkPasswordCriteria(getSecurityUser().getUsrLogin(),
 					StringUtils.trimToEmpty(pwd))) {
@@ -431,8 +414,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	/**
 	 * This method displays passwordStatusMeter and label_PwdStatus
 	 * 
-	 * @param pwdstatusCode
-	 *            (int)
+	 * @param pwdstatusCode (int)
 	 */
 	public void showPasswordStatusMeter(int pwdstatusCode) {
 		switch (pwdstatusCode) {
@@ -477,9 +459,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	 * when user clicks "close" method
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		closeDialog();
 	}
 

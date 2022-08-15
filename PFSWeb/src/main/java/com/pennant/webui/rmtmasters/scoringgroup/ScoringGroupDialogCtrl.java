@@ -169,9 +169,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * selected ScoringGroup object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ScoringGroupDialog(Event event) throws Exception {
+	public void onCreate$window_ScoringGroupDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -291,16 +290,12 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_ScoringGroupDialog(Event event) throws Exception {
+	public void onClose$window_ScoringGroupDialog(Event event) {
 		logger.debug("Entering" + event.toString());
-		try {
-			doClose(null);
-		} catch (final WrongValueException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		}
+
+		doClose(null);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -392,9 +387,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * When user clicks on "btnNewScoringSlab"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNewScoringSlab(Event event) throws Exception {
+	public void onClick$btnNewScoringSlab(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		/*
@@ -423,9 +417,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * When user double clicks "scorings Lab"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onScoringSlabItemDoubleClicked(Event event) throws Exception {
+	public void onScoringSlabItemDoubleClicked(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		final Listitem item = this.listboxScoringSlab.getSelectedItem();
@@ -476,9 +469,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * When user clicks on "btnNewScoringMetrics"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNewRetailScoringMetrics(Event event) throws Exception {
+	public void onClick$btnNewRetailScoringMetrics(Event event) {
 		logger.debug("Entering" + event.toString());
 		showDialogWindow(getScoringGroup().getScoringMetricsList(), "R");
 		logger.debug("Leaving" + event.toString());
@@ -488,9 +480,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * When user clicks on "btnNewFinScoringMetrics"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNewFinScoringMetrics(Event event) throws Exception {
+	public void onClick$btnNewFinScoringMetrics(Event event) {
 		logger.debug("Entering" + event.toString());
 		showDialogWindow(getScoringGroup().getFinScoringMetricsList(), "F");
 		logger.debug("Leaving" + event.toString());
@@ -500,16 +491,14 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * When user clicks on "btnNewNFScoringMetrics"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNewNFScoringMetrics(Event event) throws Exception {
+	public void onClick$btnNewNFScoringMetrics(Event event) {
 		logger.debug("Entering" + event.toString());
 		showDialogWindow(getScoringGroup().getNonFinScoringMetricsList(), "N");
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void showDialogWindow(List<ScoringMetrics> scoringMetrics, String categoryValue)
-			throws InterruptedException {
+	private void showDialogWindow(List<ScoringMetrics> scoringMetrics, String categoryValue) {
 		/*
 		 * we can call our ScoringGroupDialog ZUL-file with parameters. So we can call them with a object of the
 		 * selected ScoringGroup. For handed over these parameter only a Map is accepted. So we put the ScoringGroup
@@ -540,9 +529,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * When user double "scoring metrics"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onScoringMetricsItemDoubleClicked(Event event) throws Exception {
+	public void onScoringMetricsItemDoubleClicked(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		final Listitem item = this.listBoxRetailScoringMetrics.getSelectedItem();
@@ -578,9 +566,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * When user double "scoring metrics"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onScoringMetricsFinGroupItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onScoringMetricsFinGroupItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering " + event.toString());
 
 		if (event.getOrigin() != null && event.getOrigin().getTarget() != null) {
@@ -620,9 +607,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * When user double "scoring metrics"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onScoringMetricsNonFinGroupItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onScoringMetricsNonFinGroupItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering " + event.toString());
 
 		if (event.getOrigin() != null && event.getOrigin().getTarget() != null) {
@@ -952,9 +938,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aScoringGroup
-	 * @throws Exception
 	 */
-	public void doShowDialog(ScoringGroup aScoringGroup) throws Exception {
+	public void doShowDialog(ScoringGroup aScoringGroup) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -1662,10 +1647,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.scoringGroup);
 	}
 

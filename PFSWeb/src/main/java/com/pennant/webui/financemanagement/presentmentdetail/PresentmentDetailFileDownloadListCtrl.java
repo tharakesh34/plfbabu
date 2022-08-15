@@ -83,7 +83,7 @@ public class PresentmentDetailFileDownloadListCtrl extends GFCBaseListCtrl<FileD
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	public void onCreate$window_PresentmentDetailFileDownloadList(Event event) throws Exception {
+	public void onCreate$window_PresentmentDetailFileDownloadList(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -123,7 +123,7 @@ public class PresentmentDetailFileDownloadListCtrl extends GFCBaseListCtrl<FileD
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		refresh();
 	}
 
@@ -132,7 +132,7 @@ public class PresentmentDetailFileDownloadListCtrl extends GFCBaseListCtrl<FileD
 		search();
 	}
 
-	public void onClick_Downlaod(ForwardEvent event) throws Exception {
+	public void onClick_Downlaod(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 
@@ -202,7 +202,7 @@ public class PresentmentDetailFileDownloadListCtrl extends GFCBaseListCtrl<FileD
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
+		public void render(Listitem item, FileDownlaod fileDownlaod, int count) {
 			Listcell lc;
 
 			lc = new Listcell(fileDownlaod.getName());

@@ -42,8 +42,6 @@ package com.pennant.webui.finance.financemain;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -67,8 +65,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.security.auth.login.AccountNotFoundException;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -155,6 +151,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.IRRCalculator;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
@@ -2715,10 +2712,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendCustomerDetailTab(boolean onLoad) throws InterruptedException {
+	protected void appendCustomerDetailTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
@@ -2852,10 +2847,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Append Recommend Details Tab
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendRecommendDetailTab(boolean onLoadProcess) throws InterruptedException {
+	protected void appendRecommendDetailTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
@@ -3074,7 +3067,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.trace(Literal.LEAVING);
 	}
 
-	public void onSelectTab(ForwardEvent event) throws Exception {
+	public void onSelectTab(ForwardEvent event) {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + Literal.ENTERING);
 		String module = getIDbyTab(tab.getId());
@@ -4964,9 +4957,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	protected void doShowDialog(FinanceDetail afinanceDetail) throws InterruptedException {
+	protected void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		// set Read only mode accordingly if the object is new or not.
@@ -6350,9 +6342,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void doSetLOVValidation() {
 		logger.debug(Literal.ENTERING);
 
-		if (isBackwardCase(financeDetail.getFinScheduleData().getFinanceMain())) {
-			return;
-		}
+		// if (isBackwardCase(financeDetail.getFinScheduleData().getFinanceMain())) {
+		// return;
+		// }
 
 		// FinanceMain Details Tab ---> 1. Basic Details
 
@@ -8864,9 +8856,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws Exception
 	 */
-	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = true;
@@ -9153,8 +9144,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return processCompleted;
 	}
 
-	private boolean doSaveProcess(AuditHeader auditHeader, String method)
-			throws InterfaceException, InterruptedException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
@@ -9419,7 +9409,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	// Allow Loan Start Date set to update based on AppDate
-	public void autoFinStartDateUpdation(FinanceDetail aFinanceDetail) throws ParseException {
+	public void autoFinStartDateUpdation(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)) {
 			return;
@@ -9441,7 +9431,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.financeTypeDetailsTab.setSelected(true);
 	}
 
-	public void setLlDateInAdvPayments(FinanceDetail aFinanceDetail) throws ParseException {
+	public void setLlDateInAdvPayments(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -10860,19 +10850,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.finGrcMinRate, this.finGrcMaxRate);
 			}
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
-			if (this.graceRate.getMarginValue() != null) {
-				RateDetail rateDetail = RateUtil.rates(this.graceRate.getBaseValue(), this.finCcy.getValue(),
-						this.graceRate.getSpecialValue(),
-						this.graceRate.getMarginValue() == null ? BigDecimal.ZERO : this.graceRate.getMarginValue(),
-						this.finGrcMinRate.getValue() != null
-								&& this.finGrcMinRate.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO
-										: this.finGrcMinRate.getValue(),
-						this.finGrcMaxRate.getValue() != null
-								&& this.finGrcMaxRate.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO
-										: this.finGrcMaxRate.getValue());
-				this.graceRate.setEffRateText(
-						PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
+			if (this.graceRate.getMarginValue() == null) {
+				this.graceRate.setMarginValue(BigDecimal.ZERO);
 			}
+
+			RateDetail rateDetail = RateUtil.rates(this.graceRate.getBaseValue(), this.finCcy.getValue(),
+					this.graceRate.getSpecialValue(),
+					this.graceRate.getMarginValue() == null ? BigDecimal.ZERO : this.graceRate.getMarginValue(),
+					this.finGrcMinRate.getValue() != null
+							&& this.finGrcMinRate.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO
+									: this.finGrcMinRate.getValue(),
+					this.finGrcMaxRate.getValue() != null
+							&& this.finGrcMaxRate.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO
+									: this.finGrcMaxRate.getValue());
+			this.graceRate
+					.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -11263,19 +11255,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.finMinRate, this.finMaxRate);
 			}
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
-			if (this.repayRate.getMarginValue() != null) {
-				RateDetail rateDetail = RateUtil.rates(this.repayRate.getBaseValue(), this.finCcy.getValue(),
-						this.repayRate.getSpecialValue(),
-						this.repayRate.getMarginValue() == null ? BigDecimal.ZERO : this.repayRate.getMarginValue(),
-						this.finMinRate.getValue() != null && this.finMinRate.getValue().compareTo(BigDecimal.ZERO) <= 0
-								? BigDecimal.ZERO
-								: this.finMinRate.getValue(),
-						this.finMaxRate.getValue() != null && this.finMaxRate.getValue().compareTo(BigDecimal.ZERO) <= 0
-								? BigDecimal.ZERO
-								: this.finMaxRate.getValue());
-				this.repayRate.setEffRateText(
-						PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
+
+			if (this.repayRate.getMarginValue() == null) {
+				this.repayRate.setMarginValue(BigDecimal.ZERO);
 			}
+
+			RateDetail rateDetail = RateUtil.rates(this.repayRate.getBaseValue(), this.finCcy.getValue(),
+					this.repayRate.getSpecialValue(),
+					this.repayRate.getMarginValue() == null ? BigDecimal.ZERO : this.repayRate.getMarginValue(),
+					this.finMinRate.getValue() != null && this.finMinRate.getValue().compareTo(BigDecimal.ZERO) <= 0
+							? BigDecimal.ZERO
+							: this.finMinRate.getValue(),
+					this.finMaxRate.getValue() != null && this.finMaxRate.getValue().compareTo(BigDecimal.ZERO) <= 0
+							? BigDecimal.ZERO
+							: this.finMaxRate.getValue());
+			this.repayRate
+					.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 
 		}
 		logger.debug(Literal.LEAVING + event.toString());
@@ -11652,7 +11647,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 */
-	private boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
+	private boolean doValidation(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -12349,12 +12344,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceSchData (FinScheduleData)
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterruptedException
 	 */
-	protected ArrayList<WrongValueException> doWriteComponentsToBean(FinScheduleData aFinanceSchData)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	protected ArrayList<WrongValueException> doWriteComponentsToBean(FinScheduleData aFinanceSchData) {
 
 		// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 		boolean validateDetails = true;
@@ -14602,9 +14593,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// FinanceMain Details Tab Validation Error Throwing
-		if (!FinanceConstants.PRODUCT_CONVENTIONAL.equalsIgnoreCase(getProductCode())) {
-			showErrorDetails(wve, financeTypeDetailsTab);
-		}
+		showErrorDetails(wve, financeTypeDetailsTab);
 
 		long intiateUser = aFinanceMain.getInitiateUser();
 
@@ -14770,10 +14759,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		buildEvent = false;
 
@@ -14835,11 +14822,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
@@ -14982,8 +14966,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail) {
 
 		FinScheduleData finScheduleData = getFinanceDetail().getFinScheduleData();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -15151,9 +15134,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws Exception
 	 */
-	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) throws Exception {
+	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) {
 		logger.debug(Literal.ENTERING);
 
 		setFinanceDetail(aFinanceDetail);
@@ -15194,11 +15176,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param financeDetail
 	 * @param validatePhone
 	 * @return
-	 * @throws ParseException
-	 * @throws InterruptedException
 	 */
-	public boolean processCustomerDetails(FinanceDetail financeDetail, boolean validatePhone)
-			throws ParseException, InterruptedException {
+	public boolean processCustomerDetails(FinanceDetail financeDetail, boolean validatePhone) {
 		logger.debug(Literal.ENTERING);
 		if (customerDialogCtrl.getCustomerDetails() != null) {
 			return customerDialogCtrl.doSave_CustomerDetail(financeDetail, custDetailTab, validatePhone);
@@ -16776,7 +16755,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void onClick$btnSearchCommitmentRef(Event event) throws Exception {
+	public void onClick$btnSearchCommitmentRef(Event event) {
 		logger.debug(Literal.ENTERING);
 		this.commitmentRef.setErrorMessage("");
 
@@ -17239,9 +17218,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceDetail
 	 * @return
-	 * @throws InterruptedException
 	 */
-	private boolean doValidateCommitment(FinanceDetail aFinanceDetail) throws InterruptedException {
+	private boolean doValidateCommitment(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain finMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -17333,9 +17311,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Checking Recommendation for Mandatory
 	 * 
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doValidateRecommendation() throws InterruptedException {
+	protected boolean doValidateRecommendation() {
 		logger.debug(Literal.ENTERING);
 		boolean isRecommendEntered = true;
 		logger.debug(Literal.LEAVING);
@@ -17413,9 +17390,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeDetail.getFinScheduleData().getFinanceMain());
 	}
 
@@ -17435,7 +17411,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				break;
 			}
 		}
-		;
 
 		if (!filterApplied) {
 			return;
@@ -17458,7 +17433,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				break;
 			}
 		}
-		;
 
 		if (!filterApplied) {
 			return;
@@ -18968,9 +18942,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Stores the default values, sets the validation and validates the given finance details.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnValidate(Event event) throws Exception {
+	public void onClick$btnValidate(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		buildEvent = false;
 		validate();
@@ -18982,9 +18955,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Stores the default values, sets the validation, validates the given finance details, builds the schedule.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnBuildSchedule(Event event) throws Exception {
+	public void onClick$btnBuildSchedule(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		this.buildEvent = true;
@@ -19157,6 +19129,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					} else {
 						appendScheduleDetailTab(false, false);
 					}
+
+					// Calculation of IRR based on Future dated Disbursement Instructions
+					if (ImplementationConstants.FUR_DISBINST_ACC_REQ) {
+						calculateIRR();
+					}
 				}
 				// Calculating the Net FinanceAmount After Schedule is Built
 				setNetFinanceAmount(false);
@@ -19269,10 +19246,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method to Rebuild the Schedule and recalculate the Overdraft Schedule Details
-	 * 
-	 * @throws InterruptedException
 	 */
-	private FinScheduleData rebuildODSchd(FinScheduleData finScheduleData) throws InterruptedException {
+	private FinScheduleData rebuildODSchd(FinScheduleData finScheduleData) {
 		logger.debug(Literal.ENTERING);
 
 		// Validate Limit Increases after New Maturity Date
@@ -19313,15 +19288,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method to validate given details
-	 * 
-	 * @throws InterruptedException
-	 * @return validfinanceDetail
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws ParseException
 	 */
-	private FinanceDetail validate()
-			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException {
+	private FinanceDetail validate() {
 		logger.debug(Literal.ENTERING);
 
 		recSave = false;
@@ -19480,8 +19448,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// WorkFlow Components
 
-	protected void doLoadWorkFlow(FinanceMain financeMain)
-			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+	protected void doLoadWorkFlow(FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 		String roleCode = null;
 		if (StringUtils.isEmpty(moduleDefiner) && !financeMain.isNewRecord()
@@ -20688,7 +20655,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$enquiryCombobox(Event event) throws Exception {
+	public void onChange$enquiryCombobox(Event event) {
 		logger.debug(Literal.ENTERING);
 		String enquiryType = this.enquiryCombobox.getSelectedItem().getValue();
 		FinanceMain financeMain = null;
@@ -20772,7 +20739,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	//
-	protected String validateTemplate(FinanceReferenceDetail frefdata) throws Exception {
+	protected String validateTemplate(FinanceReferenceDetail frefdata) {
 		String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 		String templateName = "";
 		String msg = "Y";
@@ -20796,7 +20763,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	// tasks #503 Auto Generation of Agreements
 	protected DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata, FinanceDetail financeDetail,
 			AgreementDefinition agreementDefinition, List<DocumentDetails> existingUploadDocList,
-			AgreementDetail detail) throws Exception {
+			AgreementDetail detail) {
 		logger.debug(Literal.ENTERING);
 		DocumentDetails details = new DocumentDetails();
 
@@ -20852,7 +20819,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					// since it is an existing document record has to be store
 					// in document manager
-					exstDetails.setDocRefId(Long.MIN_VALUE);
+					exstDetails.setDocRefId(null);
 					return exstDetails;
 				}
 
@@ -20976,7 +20943,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return null;
 	}
 
-	public void onClick$btnLockRecord(Event event) throws Exception {
+	public void onClick$btnLockRecord(Event event) {
 		logger.info(Literal.ENTERING);
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -21162,7 +21129,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	// Split screen start
-	public void onOpen$btnSplitDoc(Event event) throws Exception {
+	public void onOpen$btnSplitDoc(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (this.btnSplitDoc.isOpen()) {
@@ -21334,7 +21301,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClicked(ForwardEvent event) throws Exception {
+	public void onClicked(ForwardEvent event) {
 
 		A href = (A) event.getOrigin().getTarget();
 		DocumentDetails details = (DocumentDetails) href.getAttribute("Object");
@@ -22213,12 +22180,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceSchData
 	 * @return
-	 * @throws InterruptedException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
 	 */
-	private FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
@@ -22425,6 +22388,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for Recalculating IRR based on Disbursement Transaction dates.
+	 */
+	public void calculateIRR() {
+		List<FinAdvancePayments> advPayList = finAdvancePaymentsListCtrl.getFinAdvancePaymentsList();
+		if (CollectionUtils.isNotEmpty(advPayList)) {
+			boolean isXIRRCalc = SysParamUtil.isAllowed("CALC_EFFRATE_ON_XIRR");
+			IRRCalculator.calculateXIRRAndIRR(getFinanceDetail().getFinScheduleData(), advPayList, isXIRRCalc);
+			if (scheduleDetailDialogCtrl != null) {
+				scheduleDetailDialogCtrl.doFillIrrDetails(getFinanceDetail().getFinScheduleData().getiRRDetails());
+			}
+		}
 	}
 
 	public List<String> getAssignCollateralRef() {

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinFeeReceiptDAOImpl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  1-06-2017    														*
- *                                                                  						*
- * Modified Date    :  1-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinFeeReceiptDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 1-06-2017 * * Modified
+ * Date : 1-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 1-06-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 1-06-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -80,10 +62,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 	/**
 	 * Fetch the Record Goods Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinFeeReceipt
 	 */
 	@Override
@@ -219,10 +199,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 	 * This method Deletes the Record from the FinFeeReceipt or FinFeeReceipt_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Details by key LoanRefNumber
 	 * 
-	 * @param Goods
-	 *            Details (FinFeeReceipt)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Goods Details (FinFeeReceipt)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -251,10 +229,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 	 * 
 	 * save Goods Details
 	 * 
-	 * @param Goods
-	 *            Details (FinFeeReceipt)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Goods Details (FinFeeReceipt)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -292,10 +268,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 	 * This method updates the Record FinFeeReceipt or FinFeeReceipt_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Details by key LoanRefNumber and Version
 	 * 
-	 * @param Goods
-	 *            Details (FinFeeReceipt)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Goods Details (FinFeeReceipt)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -363,8 +337,6 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 	@Override
 	public BigDecimal getUpfrontFee(long feeId, String tableType) {
-
-		BigDecimal upFrontFee = BigDecimal.ZERO;
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" select sum(paidamount) from finfeereceipts");
 		selectSql.append(tableType);
@@ -374,14 +346,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("feeId", feeId);
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			return upFrontFee;
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			return upFrontFee;
-		}
+
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
 	}
 
 	// Getting FinFee and Receipt details for Disbursement Memo Report.
@@ -397,15 +363,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		selectSql.append(" where ffd.finreference=:finReference");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("finReference", finReference);
-		try {
-			return this.jdbcTemplate.queryForList(selectSql.toString(), source);
-		} catch (EmptyResultDataAccessException e) {
-			return null;
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			return null;
-		}
 
+		return this.jdbcTemplate.queryForList(selectSql.toString(), source);
 	}
 
 	@Override
@@ -445,7 +404,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), source);
 		} catch (DataAccessException e) {
-			//throw new DependencyFoundException(e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug(Literal.LEAVING);
 	}

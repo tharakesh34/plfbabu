@@ -297,7 +297,7 @@ public class FeePostingController extends ExtendedTestClass {
 
 		fd.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finID));
 
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 		finFeeDetail.setCalculatedAmount(manualAdvise.getAdviseAmount());
 

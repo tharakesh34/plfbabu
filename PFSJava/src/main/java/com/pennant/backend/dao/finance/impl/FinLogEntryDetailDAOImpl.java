@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
@@ -13,6 +12,7 @@ import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> implements FinLogEntryDetailDAO {
 	private static Logger logger = LogManager.getLogger(FinLogEntryDetailDAOImpl.class);
@@ -100,11 +100,10 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 
 				return logDtls;
 			}, logKey, 0);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
-
 	}
 
 	@Override
@@ -125,12 +124,7 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Date.class, finID, 1);
-		} catch (DataAccessException e) {
-			//
-		}
-		return null;
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID, 1);
 	}
 
 	@Override
@@ -141,13 +135,7 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 
 		java.sql.Date postDate = JdbcUtil.getDate(date);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, postDate, 1, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0l;
+		return this.jdbcOperations.queryForObject(sql, Long.class, postDate, 1, finID);
 	}
 
 	@Override
@@ -156,13 +144,7 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 
 		logger.trace(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID);
 	}
 
 	@Override
@@ -190,9 +172,8 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 				return logDtls;
 			}, finID, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 }

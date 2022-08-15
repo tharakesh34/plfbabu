@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.organization.model.Organization;
@@ -23,7 +24,6 @@ public class OrganizationDAOImpl extends SequenceDao<Organization> implements Or
 	@Override
 	public Organization getOrganization(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		Organization organization = null;
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from organizations").append(type).append(" where id=:id");
@@ -33,13 +33,11 @@ public class OrganizationDAOImpl extends SequenceDao<Organization> implements Or
 		paramSource.addValue("id", id);
 
 		try {
-			organization = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return organization;
 	}
 
 	public long save(Organization organization, TableType tableType) {
@@ -154,7 +152,7 @@ public class OrganizationDAOImpl extends SequenceDao<Organization> implements Or
 	@Override
 	public boolean organizationExistForIncomeExpense(long organizationId, String type) {
 		logger.debug(Literal.ENTERING);
-		int count = 0;
+
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("orgid", organizationId);
 
@@ -163,14 +161,7 @@ public class OrganizationDAOImpl extends SequenceDao<Organization> implements Or
 		selectSql.append(" Where orgid = :orgid");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-		logger.debug(Literal.LEAVING);
-		return count > 0 ? true : false;
 
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
 }

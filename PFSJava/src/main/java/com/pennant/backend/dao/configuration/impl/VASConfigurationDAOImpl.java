@@ -28,7 +28,6 @@ package com.pennant.backend.dao.configuration.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -308,57 +307,33 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 	 */
 	@Override
 	public boolean isVASTypeExists(String productType) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
+		logger.debug(Literal.ENTERING);
 
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append(
 				" Select COUNT(*) from VasStructure T1 INNER JOIN VASRecording T2 On T1.ProductCode = T2.ProductCode");
 		sql.append(" Where T1.ProductType = :ProductType ");
-		logger.debug("Sql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ProductType", productType);
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
-		}
-		return false;
+
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
 	public int getFeeAccountingCount(long feeAccountId, String type) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = null;
-		int count = 0;
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From VasStructure");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FeeAccounting = :FeeAccounting");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FeeAccounting", feeAccountId);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -393,38 +368,31 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, productCode);
-				}
-			}, new RowMapper<VASPremiumCalcDetails>() {
-				@Override
-				public VASPremiumCalcDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					VASPremiumCalcDetails vas = new VASPremiumCalcDetails();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, productCode);
+			}
+		}, new RowMapper<VASPremiumCalcDetails>() {
+			@Override
+			public VASPremiumCalcDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+				VASPremiumCalcDetails vas = new VASPremiumCalcDetails();
 
-					vas.setBatchId(rs.getLong("BatchId"));
-					vas.setProductCode(rs.getString("ProductCode"));
-					vas.setManufacturerId(rs.getLong("ManufacturerId"));
-					vas.setCustomerAge(rs.getInt("CustomerAge"));
-					vas.setGender(rs.getString("Gender"));
-					vas.setPolicyAge(rs.getInt("PolicyAge"));
-					vas.setPremiumPercentage(rs.getBigDecimal("PremiumPercentage"));
-					vas.setMinAmount(rs.getBigDecimal("MinAmount"));
-					vas.setMaxAmount(rs.getBigDecimal("MaxAmount"));
-					vas.setLoanAge(rs.getInt("LoanAge"));
+				vas.setBatchId(rs.getLong("BatchId"));
+				vas.setProductCode(rs.getString("ProductCode"));
+				vas.setManufacturerId(rs.getLong("ManufacturerId"));
+				vas.setCustomerAge(rs.getInt("CustomerAge"));
+				vas.setGender(rs.getString("Gender"));
+				vas.setPolicyAge(rs.getInt("PolicyAge"));
+				vas.setPremiumPercentage(rs.getBigDecimal("PremiumPercentage"));
+				vas.setMinAmount(rs.getBigDecimal("MinAmount"));
+				vas.setMaxAmount(rs.getBigDecimal("MaxAmount"));
+				vas.setLoanAge(rs.getInt("LoanAge"));
 
-					return vas;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return vas;
+			}
+		});
 	}
 
 	@Override

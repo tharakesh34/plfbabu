@@ -18,6 +18,8 @@ import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinServiceInstruction extends AbstractWorkflowEntity {
@@ -79,7 +81,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	@XmlElement(name = "allocationDetail")
 	private List<UploadAlloctionDetail> uploadAllocationDetails;
 	@XmlElement
-	private String receiptPurpose;
+	private ReceiptPurpose receiptPurpose;
 	private Map<String, BigDecimal> dueMap = new HashMap<>();
 	@XmlElement
 	private boolean pftIntact = false;
@@ -170,8 +172,8 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String moduleDefiner;
 	private boolean wif;
 	private BigDecimal remPartPayAmt = BigDecimal.ZERO;
-	@XmlElement
-	private long UploadDetailId;// ### 18-07-2018 Ticket ID : 124998,receipt upload
+	@XmlElement(name = "UploadDetailId")
+	private long uploadDetailId;// ### 18-07-2018 Ticket ID : 124998,receipt upload
 
 	// ### 27-07-2018 Ticket id:124998
 	@XmlElement
@@ -286,10 +288,9 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private Date checkerAppDate;
 
 	private Date checkerSysDate;
-	private long linkedTranId = 0l;
 	private String reference;
 	private long maker = Long.MIN_VALUE;
-	private long checker = Long.MIN_VALUE;;
+	private long checker = Long.MIN_VALUE;
 
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
@@ -305,174 +306,186 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	@XmlElement
 	private long paymentId = Long.MIN_VALUE;
 	private Long logKey;
+	private RequestSource requestSource = RequestSource.UI;
 
 	public FinServiceInstruction copyEntity() {
-		FinServiceInstruction entity = new FinServiceInstruction();
-		entity.setServiceSeqId(this.serviceSeqId);
-		entity.setFinID(this.finID);
-		entity.setFinReference(this.finReference);
-		entity.setFinEvent(this.finEvent);
-		entity.setExternalReference(this.externalReference);
-		entity.setModule(this.module);
-		entity.setValueDate(this.valueDate);
-		entity.setFromDate(this.fromDate);
-		entity.setToDate(this.toDate);
-		entity.setPftDaysBasis(this.pftDaysBasis);
-		entity.setActualRate(this.actualRate);
-		entity.setBaseRate(this.baseRate);
-		entity.setSplRate(this.splRate);
-		entity.setMargin(this.margin);
-		entity.setRecalType(this.recalType);
-		entity.setRecalFromDate(this.recalFromDate);
-		entity.setRecalToDate(this.recalToDate);
-		entity.setNonStp(this.nonStp);
-		entity.setProcessStage(this.processStage);
-		entity.setReqType(this.reqType);
-		entity.setReceiptdetailExits(this.receiptdetailExits);
-		entity.setAmount(this.amount);
-		entity.setSchdMethod(this.schdMethod);
-		entity.setAllocationType(this.allocationType);
-		entity.setFundingAc(this.fundingAc);
-		entity.setInitiatedDate(this.initiatedDate);
-		entity.setApprovedDate(this.approvedDate);
+		FinServiceInstruction fsi = new FinServiceInstruction();
+
+		fsi.setServiceSeqId(this.serviceSeqId);
+		fsi.setFinID(this.finID);
+		fsi.setFinReference(this.finReference);
+		fsi.setFinEvent(this.finEvent);
+		fsi.setExternalReference(this.externalReference);
+		fsi.setModule(this.module);
+		fsi.setValueDate(this.valueDate);
+		fsi.setFromDate(this.fromDate);
+		fsi.setToDate(this.toDate);
+		fsi.setPftDaysBasis(this.pftDaysBasis);
+		fsi.setActualRate(this.actualRate);
+		fsi.setBaseRate(this.baseRate);
+		fsi.setSplRate(this.splRate);
+		fsi.setMargin(this.margin);
+		fsi.setRecalType(this.recalType);
+		fsi.setRecalFromDate(this.recalFromDate);
+		fsi.setRecalToDate(this.recalToDate);
+		fsi.setNonStp(this.nonStp);
+		fsi.setProcessStage(this.processStage);
+		fsi.setReqType(this.reqType);
+		fsi.setReceiptdetailExits(this.receiptdetailExits);
+		fsi.setAmount(this.amount);
+		fsi.setSchdMethod(this.schdMethod);
+		fsi.setAllocationType(this.allocationType);
+		fsi.setFundingAc(this.fundingAc);
+		fsi.setInitiatedDate(this.initiatedDate);
+		fsi.setApprovedDate(this.approvedDate);
+
 		if (uploadAllocationDetails != null) {
-			entity.setUploadAllocationDetails(new ArrayList<UploadAlloctionDetail>());
+			fsi.setUploadAllocationDetails(new ArrayList<>());
 			this.uploadAllocationDetails.stream()
-					.forEach(e -> entity.getUploadAllocationDetails().add(e == null ? null : e.copyEntity()));
+					.forEach(e -> fsi.getUploadAllocationDetails().add(e == null ? null : e.copyEntity()));
 		}
-		entity.setReceiptPurpose(this.receiptPurpose);
-		this.dueMap.entrySet().stream().forEach(e -> entity.getDueMap().put(e.getKey(), e.getValue()));
-		entity.setPftIntact(this.pftIntact);
-		entity.setTerms(this.terms);
+
+		if (this.receiptPurpose != null) {
+			fsi.setReceiptPurpose(this.receiptPurpose.code());
+		}
+
+		this.dueMap.entrySet().stream().forEach(e -> fsi.getDueMap().put(e.getKey(), e.getValue()));
+		fsi.setPftIntact(this.pftIntact);
+		fsi.setTerms(this.terms);
+
 		if (returnStatus != null) {
-			entity.setReturnStatus(new ArrayList<WSReturnStatus>());
-			this.returnStatus.stream().forEach(e -> entity.getReturnStatus().add(e == null ? null : e.copyEntity()));
+			fsi.setReturnStatus(new ArrayList<>());
+			this.returnStatus.stream().forEach(e -> fsi.getReturnStatus().add(e == null ? null : e.copyEntity()));
 		}
-		entity.setPaymentRef(this.paymentRef);
-		entity.setFavourNumber(this.favourNumber);
-		entity.setBankCode(this.bankCode);
-		entity.setChequeNo(this.chequeNo);
-		entity.setTransactionRef(this.transactionRef);
-		entity.setStatus(this.status);
-		entity.setDepositDate(this.depositDate);
-		entity.setRealizationDate(this.realizationDate);
-		entity.setInstrumentDate(this.instrumentDate);
-		entity.setServiceReqNo(this.serviceReqNo);
-		entity.setReceivedDate(this.receivedDate);
-		entity.setRemarks(this.remarks);
-		entity.setRepayFrq(this.repayFrq);
-		entity.setRepayPftFrq(this.repayPftFrq);
-		entity.setRepayRvwFrq(this.repayRvwFrq);
-		entity.setRepayCpzFrq(this.repayCpzFrq);
-		entity.setGrcPftFrq(this.grcPftFrq);
-		entity.setGrcRvwFrq(this.grcRvwFrq);
-		entity.setGrcCpzFrq(this.grcCpzFrq);
-		entity.setGrcPeriodEndDate(this.grcPeriodEndDate);
-		entity.setNextGrcRepayDate(this.nextGrcRepayDate);
-		entity.setNextRepayDate(this.nextRepayDate);
-		entity.setPftChg(this.pftChg);
-		entity.setTenor(this.tenor);
-		entity.setMaturityDate(this.maturityDate);
-		entity.setDroplineFrq(this.droplineFrq);
-		entity.setDroplineDate(this.droplineDate);
-		entity.setRateReviewFrq(this.rateReviewFrq);
-		entity.setFrqDay(this.frqDay);
-		entity.setRefund(this.refund);
-		entity.setDsaCode(this.dsaCode);
-		entity.setSalesDepartment(this.salesDepartment);
-		entity.setDmaCode(this.dmaCode);
-		entity.setAccountsOfficer(this.accountsOfficer);
-		entity.setReferralId(this.referralId);
-		entity.setAdjRpyTerms(this.adjRpyTerms);
-		entity.setPaymentMode(this.paymentMode);
-		entity.setExcessAdjustTo(this.excessAdjustTo);
-		entity.setReceiptDetail(this.receiptDetail == null ? null : this.receiptDetail.copyEntity());
+
+		fsi.setPaymentRef(this.paymentRef);
+		fsi.setFavourNumber(this.favourNumber);
+		fsi.setBankCode(this.bankCode);
+		fsi.setChequeNo(this.chequeNo);
+		fsi.setTransactionRef(this.transactionRef);
+		fsi.setStatus(this.status);
+		fsi.setDepositDate(this.depositDate);
+		fsi.setRealizationDate(this.realizationDate);
+		fsi.setInstrumentDate(this.instrumentDate);
+		fsi.setServiceReqNo(this.serviceReqNo);
+		fsi.setReceivedDate(this.receivedDate);
+		fsi.setRemarks(this.remarks);
+		fsi.setRepayFrq(this.repayFrq);
+		fsi.setRepayPftFrq(this.repayPftFrq);
+		fsi.setRepayRvwFrq(this.repayRvwFrq);
+		fsi.setRepayCpzFrq(this.repayCpzFrq);
+		fsi.setGrcPftFrq(this.grcPftFrq);
+		fsi.setGrcRvwFrq(this.grcRvwFrq);
+		fsi.setGrcCpzFrq(this.grcCpzFrq);
+		fsi.setGrcPeriodEndDate(this.grcPeriodEndDate);
+		fsi.setNextGrcRepayDate(this.nextGrcRepayDate);
+		fsi.setNextRepayDate(this.nextRepayDate);
+		fsi.setPftChg(this.pftChg);
+		fsi.setTenor(this.tenor);
+		fsi.setMaturityDate(this.maturityDate);
+		fsi.setDroplineFrq(this.droplineFrq);
+		fsi.setDroplineDate(this.droplineDate);
+		fsi.setRateReviewFrq(this.rateReviewFrq);
+		fsi.setFrqDay(this.frqDay);
+		fsi.setRefund(this.refund);
+		fsi.setDsaCode(this.dsaCode);
+		fsi.setSalesDepartment(this.salesDepartment);
+		fsi.setDmaCode(this.dmaCode);
+		fsi.setAccountsOfficer(this.accountsOfficer);
+		fsi.setReferralId(this.referralId);
+		fsi.setAdjRpyTerms(this.adjRpyTerms);
+		fsi.setPaymentMode(this.paymentMode);
+		fsi.setExcessAdjustTo(this.excessAdjustTo);
+		fsi.setReceiptDetail(this.receiptDetail == null ? null : this.receiptDetail.copyEntity());
+
 		if (disbursementDetails != null) {
-			entity.setDisbursementDetails(new ArrayList<FinAdvancePayments>());
+			fsi.setDisbursementDetails(new ArrayList<>());
 			this.disbursementDetails.stream()
-					.forEach(e -> entity.getDisbursementDetails().add(e == null ? null : e.copyEntity()));
+					.forEach(e -> fsi.getDisbursementDetails().add(e == null ? null : e.copyEntity()));
 		}
-		this.finFeeDetails.stream().forEach(e -> entity.getFinFeeDetails().add(e == null ? null : e.copyEntity()));
-		entity.setFinODPenaltyRate(this.finODPenaltyRate == null ? null : this.finODPenaltyRate.copyEntity());
-		entity.setModuleDefiner(this.moduleDefiner);
-		entity.setNewRecord(super.isNewRecord());
-		entity.setWif(this.wif);
-		entity.setRemPartPayAmt(this.remPartPayAmt);
-		entity.setUploadDetailId(this.UploadDetailId);
-		entity.setReceiptFileName(this.receiptFileName);
-		entity.setEntity(this.entity);
-		entity.setEntityDesc(this.entityDesc);
-		entity.setRestructuringType(this.restructuringType);
-		entity.setQuickDisb(this.quickDisb);
-		entity.setStrtPrdHdays(this.strtPrdHdays);
-		entity.setSubReceiptMode(this.subReceiptMode);
-		entity.setReceiptChannel(this.receiptChannel);
-		entity.setCollectionAgentId(this.collectionAgentId);
-		entity.setReceivedFrom(this.receivedFrom);
-		entity.setPanNumber(this.panNumber);
-		entity.setEarlySettlementReason(this.earlySettlementReason);
-		entity.setAdviseId(this.adviseId);
-		entity.setAdviseAmount(this.adviseAmount);
-		entity.setDepositAcc(this.depositAcc);
-		entity.setClosingBal(this.closingBal);
-		entity.setRootId(this.rootId);
-		entity.setGrcTerms(this.grcTerms);
-		entity.setBckdtdWthOldDues(this.bckdtdWthOldDues);
-		entity.setReceiptResponse(this.receiptResponse);
-		this.manualAllocMap.entrySet().stream().forEach(e -> entity.getManualAllocMap().put(e.getKey(), e.getValue()));
-		this.manualWaiverMap.entrySet().stream()
-				.forEach(e -> entity.getManualWaiverMap().put(e.getKey(), e.getValue()));
-		entity.setReceiptUpload(this.isReceiptUpload);
-		entity.setFinType(this.finType);
-		entity.setCurrency(this.currency);
-		this.finTypeFeeList.stream().forEach(e -> entity.getFinTypeFeeList().add(e == null ? null : e.copyEntity()));
-		entity.setReceiptId(this.receiptId);
-		entity.setFromBranch(this.fromBranch);
-		entity.setToBranch(this.toBranch);
-		entity.setInstructionUID(this.instructionUID);
-		entity.setLinkedTranID(this.linkedTranID);
-		entity.setReqFrom(this.reqFrom);
-		entity.setAppDate(this.appDate);
-		entity.setSystemDate(this.systemDate);
-		entity.setMakerAppDate(this.makerAppDate);
-		entity.setMakerSysDate(this.makerSysDate);
-		entity.setCheckerAppDate(this.checkerAppDate);
-		entity.setCheckerSysDate(this.checkerSysDate);
-		entity.setLinkedTranId(this.linkedTranId);
-		entity.setReference(this.reference);
-		entity.setMaker(this.maker);
-		entity.setChecker(this.checker);
-		entity.setExcldTdsCal(this.excldTdsCal);
-		entity.setBpiAmount(this.bpiAmount);
+
+		this.finFeeDetails.stream().forEach(e -> fsi.getFinFeeDetails().add(e == null ? null : e.copyEntity()));
+		fsi.setFinODPenaltyRate(this.finODPenaltyRate == null ? null : this.finODPenaltyRate.copyEntity());
+		fsi.setModuleDefiner(this.moduleDefiner);
+		fsi.setNewRecord(super.isNewRecord());
+		fsi.setWif(this.wif);
+		fsi.setRemPartPayAmt(this.remPartPayAmt);
+		fsi.setUploadDetailId(this.uploadDetailId);
+		fsi.setReceiptFileName(this.receiptFileName);
+		fsi.setEntity(this.entity);
+		fsi.setEntityDesc(this.entityDesc);
+		fsi.setRestructuringType(this.restructuringType);
+		fsi.setQuickDisb(this.quickDisb);
+		fsi.setStrtPrdHdays(this.strtPrdHdays);
+		fsi.setSubReceiptMode(this.subReceiptMode);
+		fsi.setReceiptChannel(this.receiptChannel);
+		fsi.setCollectionAgentId(this.collectionAgentId);
+		fsi.setReceivedFrom(this.receivedFrom);
+		fsi.setPanNumber(this.panNumber);
+		fsi.setEarlySettlementReason(this.earlySettlementReason);
+		fsi.setAdviseId(this.adviseId);
+		fsi.setAdviseAmount(this.adviseAmount);
+		fsi.setDepositAcc(this.depositAcc);
+		fsi.setClosingBal(this.closingBal);
+		fsi.setRootId(this.rootId);
+		fsi.setGrcTerms(this.grcTerms);
+		fsi.setBckdtdWthOldDues(this.bckdtdWthOldDues);
+		fsi.setReceiptResponse(this.receiptResponse);
+		this.manualAllocMap.entrySet().stream().forEach(e -> fsi.getManualAllocMap().put(e.getKey(), e.getValue()));
+		this.manualWaiverMap.entrySet().stream().forEach(e -> fsi.getManualWaiverMap().put(e.getKey(), e.getValue()));
+		fsi.setReceiptUpload(this.isReceiptUpload);
+		fsi.setFinType(this.finType);
+		fsi.setCurrency(this.currency);
+		this.finTypeFeeList.stream().forEach(e -> fsi.getFinTypeFeeList().add(e == null ? null : e.copyEntity()));
+		fsi.setReceiptId(this.receiptId);
+		fsi.setFromBranch(this.fromBranch);
+		fsi.setToBranch(this.toBranch);
+		fsi.setInstructionUID(this.instructionUID);
+		fsi.setLinkedTranID(this.linkedTranID);
+		fsi.setReqFrom(this.reqFrom);
+		fsi.setAppDate(this.appDate);
+		fsi.setSystemDate(this.systemDate);
+		fsi.setMakerAppDate(this.makerAppDate);
+		fsi.setMakerSysDate(this.makerSysDate);
+		fsi.setCheckerAppDate(this.checkerAppDate);
+		fsi.setCheckerSysDate(this.checkerSysDate);
+		fsi.setReference(this.reference);
+		fsi.setMaker(this.maker);
+		fsi.setChecker(this.checker);
+		fsi.setExcldTdsCal(this.excldTdsCal);
+		fsi.setBpiAmount(this.bpiAmount);
+
 		if (extendedDetails != null) {
-			entity.setExtendedDetails(new ArrayList<ExtendedField>());
-			this.extendedDetails.stream()
-					.forEach(e -> entity.getExtendedDetails().add(e == null ? null : e.copyEntity()));
+			fsi.setExtendedDetails(new ArrayList<>());
+			this.extendedDetails.stream().forEach(e -> fsi.getExtendedDetails().add(e == null ? null : e.copyEntity()));
 		}
-		entity.setLoggedInUser(this.loggedInUser);
-		entity.setFlexiDisb(this.isFlexiDisb);
-		entity.setNormalLoanClosure(this.normalLoanClosure);
-		entity.setPaymentId(this.paymentId);
-		entity.setCustID(this.custID);
-		entity.setCustCIF(this.custCIF);
-		entity.setTdsAmount(this.tdsAmount);
-		entity.setReceiptSource(this.receiptSource);
-		entity.setRecAgainst(this.recAgainst);
-		entity.setCollectionAgency(this.collectionAgency);
-		entity.setDivision(this.division);
-		entity.setLogKey(this.logKey);
-		entity.setRecordStatus(super.getRecordStatus());
-		entity.setRoleCode(super.getRoleCode());
-		entity.setNextRoleCode(super.getNextRoleCode());
-		entity.setTaskId(super.getTaskId());
-		entity.setNextTaskId(super.getNextTaskId());
-		entity.setRecordType(super.getRecordType());
-		entity.setWorkflowId(super.getWorkflowId());
-		entity.setUserAction(super.getUserAction());
-		entity.setVersion(super.getVersion());
-		entity.setLastMntBy(super.getLastMntBy());
-		entity.setLastMntOn(super.getLastMntOn());
-		return entity;
+
+		fsi.setLoggedInUser(this.loggedInUser);
+		fsi.setFlexiDisb(this.isFlexiDisb);
+		fsi.setNormalLoanClosure(this.normalLoanClosure);
+		fsi.setPaymentId(this.paymentId);
+		fsi.setCustID(this.custID);
+		fsi.setCustCIF(this.custCIF);
+		fsi.setTdsAmount(this.tdsAmount);
+		fsi.setReceiptSource(this.receiptSource);
+		fsi.setRecAgainst(this.recAgainst);
+		fsi.setCollectionAgency(this.collectionAgency);
+		fsi.setDivision(this.division);
+		fsi.setLogKey(this.logKey);
+		fsi.setRequestSource(this.requestSource);
+
+		fsi.setRecordStatus(super.getRecordStatus());
+		fsi.setRoleCode(super.getRoleCode());
+		fsi.setNextRoleCode(super.getNextRoleCode());
+		fsi.setTaskId(super.getTaskId());
+		fsi.setNextTaskId(super.getNextTaskId());
+		fsi.setRecordType(super.getRecordType());
+		fsi.setWorkflowId(super.getWorkflowId());
+		fsi.setUserAction(super.getUserAction());
+		fsi.setVersion(super.getVersion());
+		fsi.setLastMntBy(super.getLastMntBy());
+		fsi.setLastMntOn(super.getLastMntOn());
+		return fsi;
 	}
 
 	private long custID;
@@ -1170,11 +1183,11 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	}
 
 	public long getUploadDetailId() {
-		return UploadDetailId;
+		return uploadDetailId;
 	}
 
 	public void setUploadDetailId(long uploadDetailId) {
-		UploadDetailId = uploadDetailId;
+		this.uploadDetailId = uploadDetailId;
 	}
 
 	public String getReceiptFileName() {
@@ -1265,12 +1278,12 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		this.uploadAllocationDetails = uploadAllocationDetails;
 	}
 
-	public String getReceiptPurpose() {
+	public ReceiptPurpose getReceiptPurpose() {
 		return receiptPurpose;
 	}
 
 	public void setReceiptPurpose(String receiptPurpose) {
-		this.receiptPurpose = receiptPurpose;
+		this.receiptPurpose = ReceiptPurpose.purpose(receiptPurpose);
 	}
 
 	public long getLinkedTranID() {
@@ -1335,14 +1348,6 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setCheckerSysDate(Date checkerSysDate) {
 		this.checkerSysDate = checkerSysDate;
-	}
-
-	public long getLinkedTranId() {
-		return linkedTranId;
-	}
-
-	public void setLinkedTranId(long linkedTranId) {
-		this.linkedTranId = linkedTranId;
 	}
 
 	public String getReference() {
@@ -1580,4 +1585,13 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	public void setApprovedDate(Date approvedDate) {
 		this.approvedDate = approvedDate;
 	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
+	}
+
 }

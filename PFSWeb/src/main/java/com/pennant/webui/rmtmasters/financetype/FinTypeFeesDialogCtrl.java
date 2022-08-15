@@ -153,9 +153,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 * selected finTypeFees object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinTypeFeesDialog(Event event) throws Exception {
+	public void onCreate$window_FinTypeFeesDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -481,7 +480,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.active.setChecked(aFinTypeFees.isActive());
 		this.alwPreIncomization.setChecked(aFinTypeFees.isAlwPreIncomization());
 		this.recordStatus.setValue(aFinTypeFees.getRecordStatus());
-		
+
 		// ### START SFA_20210405 -->
 		if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
 			this.inclForAssignment.setChecked(aFinTypeFees.isInclForAssignment());
@@ -1468,7 +1467,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finTypeFees);
 	}
 

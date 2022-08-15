@@ -69,7 +69,7 @@ public class CustomerDocumentListModelItemRenderer implements ListitemRenderer<C
 	}
 
 	@Override
-	public void render(Listitem item, CustomerDocument customerDocument, int count) throws Exception {
+	public void render(Listitem item, CustomerDocument customerDocument, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customerDocument.getLovDescCustCIF());

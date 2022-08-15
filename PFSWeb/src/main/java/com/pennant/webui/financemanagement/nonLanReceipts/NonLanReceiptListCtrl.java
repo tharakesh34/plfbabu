@@ -1,6 +1,7 @@
 package com.pennant.webui.financemanagement.nonLanReceipts;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -140,7 +142,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private ReceiptService receiptService;
 	private NonLanReceiptService nonLanReceiptService;
 
-	private String workflowCode = FinServiceEvent.RECEIPT;;
+	private String workflowCode = FinServiceEvent.RECEIPT;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 
 	private transient WorkFlowDetails workFlowDetails = null;
@@ -234,6 +236,11 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
 			if (filter != null) {
+
+				if (filter.getProperty().equals("receiptAmount")) {
+					filter.setValue(CurrencyUtil.unFormat((BigDecimal) filter.getValue(), 2));
+				}
+
 				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
 						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
 					Filter[] filters = new Filter[2];
@@ -402,7 +409,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
-	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listHeaderCheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		for (int i = 0; i < listBoxReceipts.getItems().size(); i++) {
@@ -423,7 +430,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
 	 */
-	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listCellCheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
@@ -453,7 +460,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		}
 
 		@Override
-		public void render(Listitem item, FinReceiptHeader finReceiptHeader, int count) throws Exception {
+		public void render(Listitem item, FinReceiptHeader finReceiptHeader, int count) {
 
 			headerMap.put(finReceiptHeader.getReceiptID(), finReceiptHeader); // Setting all FinReceiptHeader into Map
 

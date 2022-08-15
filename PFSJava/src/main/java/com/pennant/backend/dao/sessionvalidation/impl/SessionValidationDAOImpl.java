@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.sessionvalidation.SessionValidationDAO;
 import com.pennant.backend.model.sessionvalidation.SessionValidation;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class SessionValidationDAOImpl implements SessionValidationDAO {
 
@@ -22,8 +23,7 @@ public class SessionValidationDAOImpl implements SessionValidationDAO {
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	/**
-	 * @param dataSource
-	 *            the dataSource to set
+	 * @param dataSource the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -61,15 +61,11 @@ public class SessionValidationDAOImpl implements SessionValidationDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			sessionValidation = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-			sessionValidation = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return sessionValidation;
 	}
 
 	@Override
@@ -81,11 +77,7 @@ public class SessionValidationDAOImpl implements SessionValidationDAO {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sessionValidation);
 
-		try {
-			this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.debug("Error" + e.getMessage());
-		}
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 	}

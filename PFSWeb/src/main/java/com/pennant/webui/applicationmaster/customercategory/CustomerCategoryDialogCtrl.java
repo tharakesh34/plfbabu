@@ -108,9 +108,8 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	 * selected CustomerCategory object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerCategoryDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerCategoryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -376,9 +375,8 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerCategory
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerCategory aCustomerCategory) throws Exception {
+	public void doShowDialog(CustomerCategory aCustomerCategory) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -822,10 +820,8 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();

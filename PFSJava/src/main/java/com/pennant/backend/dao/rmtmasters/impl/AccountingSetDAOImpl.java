@@ -40,6 +40,7 @@ import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>AccountingSet model</b> class.<br>
@@ -82,13 +83,11 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 		RowMapper<AccountingSet> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountingSet.class);
 
 		try {
-			accountingSet = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			accountingSet = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return accountingSet;
 	}
 
 	/**
@@ -224,16 +223,12 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
 
-		long accSetId = 0;
-
 		try {
-			accSetId = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			accSetId = 0;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0L;
 		}
-		logger.debug("Leaving");
-		return accSetId;
 	}
 
 	@Override
@@ -279,13 +274,10 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 		RowMapper<AccountingSet> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountingSet.class);
 
 		try {
-			accountingset = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			accountingset = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return accountingset;
 	}
-
 }

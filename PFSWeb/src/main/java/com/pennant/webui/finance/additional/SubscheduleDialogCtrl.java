@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *											    											*
- * FileName    		:  SubScheduleDialogCtrl.java                          	            * 	  
- *                                                                    			    		*
- * Author      		:  PENNANT TECHONOLOGIES              				    				*
- *                                                                  			    		*
- * Creation Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Modified Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Description 		:                                             			    			*
- *                                                                                          *
+ * * FileName : SubScheduleDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-10-2011 * *
+ * Modified Date : 05-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-10-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.additional;
@@ -117,9 +99,8 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SubScheduleDialog(Event event) throws Exception {
+	public void onCreate$window_SubScheduleDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -162,9 +143,8 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(FinScheduleData aFinScheduleData) throws InterruptedException {
+	public void doShowDialog(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 		try {
 			// fill the components with the data
@@ -192,8 +172,7 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -246,11 +225,11 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		//Schedule Calculation Process
+		// Schedule Calculation Process
 		setFinScheduleData(ScheduleCalculator.addSubSchedule(getFinScheduleData(), this.numOfTerms.getValue(),
 				this.firstDate.getValue(), this.termFrq.getValue()));
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
-		//Show Error Details in Schedule Maintainance
+		// Show Error Details in Schedule Maintainance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
@@ -300,8 +279,7 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);

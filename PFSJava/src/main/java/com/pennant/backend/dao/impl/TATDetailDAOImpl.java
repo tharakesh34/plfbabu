@@ -9,8 +9,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.model.finance.TATDetail;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetailDAO {
 	private static Logger logger = LogManager.getLogger(TATDetailDAOImpl.class);
@@ -43,10 +45,9 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 				return tat;
 			}, reference, rolecode);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -72,11 +73,13 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 				ps.setString(index++, tat.getFinType());
 			});
 		} catch (DuplicateKeyException e) {
-			//
+			throw new ConcurrencyException(e);
 		}
 	}
 
 	public void update(TATDetail aTatDetail) {
+		logger.debug(Literal.ENTERING);
+
 		TATDetail tatDetail = getTATDetail(aTatDetail.getReference(), aTatDetail.getRoleCode());
 		Timestamp startTime = tatDetail.gettATStartTime();
 
@@ -90,20 +93,17 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-				ps.setTimestamp(index++, startTime);
-				ps.setTimestamp(index++, tatDetail.gettATEndTime());
-				ps.setTimestamp(index++, tatDetail.getTriggerTime());
+			ps.setTimestamp(index++, startTime);
+			ps.setTimestamp(index++, tatDetail.gettATEndTime());
+			ps.setTimestamp(index++, tatDetail.getTriggerTime());
 
-				ps.setString(index++, aTatDetail.getReference());
-				ps.setLong(index++, aTatDetail.getSerialNo());
-			});
-		} catch (Exception e) {
-			//
-		}
+			ps.setString(index++, aTatDetail.getReference());
+			ps.setLong(index++, aTatDetail.getSerialNo());
+		});
+
+		logger.debug(Literal.LEAVING);
 	}
-
 }

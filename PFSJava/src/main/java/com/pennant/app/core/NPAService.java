@@ -34,7 +34,6 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -106,9 +105,8 @@ public class NPAService extends ServiceHelper {
 	 * 
 	 * @param custEODEvent
 	 * @return
-	 * @throws Exception
 	 */
-	public void processProvisions(CustEODEvent custEODEvent) throws Exception {
+	public void processProvisions(CustEODEvent custEODEvent) {
 		String strCustId = custEODEvent.getCustIdAsString();
 		logger.info("Provision Calculation started for the Customer ID {}", strCustId);
 
@@ -163,7 +161,7 @@ public class NPAService extends ServiceHelper {
 	}
 
 	private FinEODEvent findProvision(FinEODEvent finEODEvent, Date valueDate, String provisionBooks,
-			Provision provision) throws SQLException {
+			Provision provision) {
 		long finID = finEODEvent.getFinProfitDetail().getFinID();
 
 		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
@@ -347,7 +345,7 @@ public class NPAService extends ServiceHelper {
 		}
 	}
 
-	private Provision getProvision(FinEODEvent finEODEvent, String provisionBooks) throws SQLException {
+	private Provision getProvision(FinEODEvent finEODEvent, String provisionBooks) {
 		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain financeMain = finEODEvent.getFinanceMain();
 		String finType = financeMain.getFinType();
@@ -548,7 +546,7 @@ public class NPAService extends ServiceHelper {
 		return false;
 	}
 
-	private Provision getMaxProvisionAsset(List<FinEODEvent> finEODEvents, String provisionBooks) throws SQLException {
+	private Provision getMaxProvisionAsset(List<FinEODEvent> finEODEvents, String provisionBooks) {
 		Provision maxProvision = new Provision();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -585,7 +583,7 @@ public class NPAService extends ServiceHelper {
 		return maxProvision;
 	}
 
-	public void processAccounting(CustEODEvent custEODEvent) throws Exception {
+	public void processAccounting(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		Date eodDate = custEODEvent.getEodDate();
@@ -615,8 +613,7 @@ public class NPAService extends ServiceHelper {
 		}
 	}
 
-	private FinEODEvent processProvAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision)
-			throws Exception {
+	private FinEODEvent processProvAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision) {
 
 		String eventCode = AccountingEvent.PROVSN;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
@@ -653,7 +650,7 @@ public class NPAService extends ServiceHelper {
 	}
 
 	private FinEODEvent processProvAccountingReversal(FinEODEvent finEODEvent, CustEODEvent custEODEvent,
-			Provision provision) throws Exception {
+			Provision provision) {
 
 		String eventCode = AccountingEvent.PRVSN_MN;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
@@ -687,8 +684,8 @@ public class NPAService extends ServiceHelper {
 		return finEODEvent;
 	}
 
-	private FinEODEvent processNPAChgAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision)
-			throws Exception {
+	private FinEODEvent processNPAChgAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent,
+			Provision provision) {
 
 		if (!provision.isAssetFwdMov()) {
 			return finEODEvent;
@@ -707,8 +704,7 @@ public class NPAService extends ServiceHelper {
 		return finEODEvent;
 	}
 
-	private AEEvent executeNPAAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision)
-			throws Exception {
+	private AEEvent executeNPAAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision) {
 
 		String eventCode = AccountingEvent.PROVCHG;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();

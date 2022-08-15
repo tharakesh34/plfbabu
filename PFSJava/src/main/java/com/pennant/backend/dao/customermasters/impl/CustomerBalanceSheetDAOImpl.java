@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerBalanceSheetDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  07-12-2011    														*
- *                                                                  						*
- * Modified Date    :  07-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerBalanceSheetDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 07-12-2011 * *
+ * Modified Date : 07-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 07-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 07-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.List;
@@ -59,6 +41,7 @@ import com.pennant.backend.model.customermasters.CustomerBalanceSheet;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerBalanceSheet model</b> class.<br>
@@ -74,10 +57,8 @@ public class CustomerBalanceSheetDAOImpl extends BasicDao<CustomerBalanceSheet> 
 	/**
 	 * Fetch the Record Customer Balance Sheet Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerBalanceSheet
 	 */
 	@Override
@@ -105,23 +86,18 @@ public class CustomerBalanceSheetDAOImpl extends BasicDao<CustomerBalanceSheet> 
 		RowMapper<CustomerBalanceSheet> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerBalanceSheet.class);
 
 		try {
-			customerBalanceSheet = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerBalanceSheet = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerBalanceSheet;
 	}
 
 	/**
 	 * Fetch the Records Customer Balance Sheet List Details by CustomerID
 	 * 
-	 * @param id
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (long)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerBalanceSheet
 	 */
 	@Override
@@ -154,10 +130,8 @@ public class CustomerBalanceSheetDAOImpl extends BasicDao<CustomerBalanceSheet> 
 	 * This method Deletes the Record from the CustomerBalanceSheet or CustomerBalanceSheet_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Customer Balance Sheet Details by key CustId
 	 * 
-	 * @param Customer
-	 *            Balance Sheet Details (customerBalanceSheet)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Balance Sheet Details (customerBalanceSheet)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -188,10 +162,8 @@ public class CustomerBalanceSheetDAOImpl extends BasicDao<CustomerBalanceSheet> 
 	 * This method Deletes the Records from the CustomerBalanceSheet or CustomerBalanceSheet_Temp. delete Customer
 	 * Balance Sheet Details List by key CustId
 	 * 
-	 * @param CustomerID
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CustomerID (long)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * 
 	 */
@@ -215,10 +187,8 @@ public class CustomerBalanceSheetDAOImpl extends BasicDao<CustomerBalanceSheet> 
 	 *
 	 * save Customer Balance Sheet Details
 	 * 
-	 * @param Customer
-	 *            Balance Sheet Details (customerBalanceSheet)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Balance Sheet Details (customerBalanceSheet)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -250,10 +220,8 @@ public class CustomerBalanceSheetDAOImpl extends BasicDao<CustomerBalanceSheet> 
 	 * This method updates the Record CustomerBalanceSheet or CustomerBalanceSheet_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update Customer Balance Sheet Details by key CustId and Version
 	 * 
-	 * @param Customer
-	 *            Balance Sheet Details (customerBalanceSheet)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Balance Sheet Details (customerBalanceSheet)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

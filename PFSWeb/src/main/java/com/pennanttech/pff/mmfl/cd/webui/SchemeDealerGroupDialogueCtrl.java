@@ -74,9 +74,8 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_schemeDealerGroupDialogue(Event event) throws AppException {
+	public void onCreate$window_schemeDealerGroupDialogue(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_schemeDealerGroupDialogue);
@@ -677,7 +676,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 				getOverideMap());
 	}
 
-	public void onClick$btnSchemeId(Event event) throws Exception {
+	public void onClick$btnSchemeId(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_schemeDealerGroupDialogue, "Promotion",
 				String.valueOf(this.schemeId.getValue()), null);

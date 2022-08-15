@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ReportSearchTemplateDAOImpl.java								        *                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  5-09-2012															*
- *                                                                  
- * Modified Date    :  5-09-2012														    *
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ReportSearchTemplateDAOImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 5-09-2012 *
+ * 
+ * Modified Date : 5-09-2012 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 5-09-2012	       Pennant	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 5-09-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.reports.impl;
@@ -47,7 +38,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -55,7 +46,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.reports.ReportSearchTemplateDAO;
 import com.pennant.backend.model.reports.ReportSearchTemplate;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> implements ReportSearchTemplateDAO {
 	private static Logger logger = LogManager.getLogger(ReportSearchTemplateDAOImpl.class);
@@ -81,8 +75,8 @@ public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> 
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportSearchTemplate);
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 			logger.debug("Leaving");
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -91,7 +85,7 @@ public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> 
 	 */
 	@Override
 	public List<ReportSearchTemplate> getReportSearchTemplateByReportId(long reportID, long usrID) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		ReportSearchTemplate aReportSearchTemplate = new ReportSearchTemplate();
 		aReportSearchTemplate.setReportID(reportID);
 		aReportSearchTemplate.setUsrID(usrID);
@@ -101,17 +95,13 @@ public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> 
 		selectSql.append(",Version,LastMntBy,LastMntOn,RecordStatus");
 		selectSql.append(",RoleCode,NextRoleCode,TaskId,RecordType,WorkflowId ");
 		selectSql.append(" FROM REPORTSEARCHTEMPLATE  where ReportID=:ReportID and UsrID in (-1,:UsrID)");
-		logger.debug("selectSql : " + selectSql.toString());
-		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aReportSearchTemplate);
-			RowMapper<ReportSearchTemplate> typeRowMapper = BeanPropertyRowMapper
-					.newInstance(ReportSearchTemplate.class);
-			logger.debug("Leaving ");
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
-			return null;
-		}
+		logger.debug(Literal.SQL + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aReportSearchTemplate);
+		RowMapper<ReportSearchTemplate> typeRowMapper = BeanPropertyRowMapper.newInstance(ReportSearchTemplate.class);
+		logger.debug(Literal.LEAVING);
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -119,7 +109,6 @@ public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> 
 	 */
 	@Override
 	public int getRecordCountByTemplateName(long reportId, long usrId, String templateName) {
-		int status;
 		logger.debug("Entering ");
 		ReportSearchTemplate aReportSearchTemplate = new ReportSearchTemplate();
 		aReportSearchTemplate.setUsrID(usrId);
@@ -131,15 +120,7 @@ public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> 
 		selectSql.append("usrID=:usrID and reportID=:reportID");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try {
-			status = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			status = 0;
-			logger.error("Exception: ", e);
-		}
-
-		logger.debug("Leaving");
-		return status;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -162,8 +143,7 @@ public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> 
 				rcdDeleted = true;
 			}
 		} catch (DataAccessException e) {
-			logger.debug("Exception: ", e);
-			rcdDeleted = false;
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 		return rcdDeleted;

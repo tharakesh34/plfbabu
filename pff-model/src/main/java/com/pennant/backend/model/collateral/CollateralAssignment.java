@@ -104,6 +104,45 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public CollateralAssignment copyEntity() {
+		CollateralAssignment entity = new CollateralAssignment();
+		entity.setReference(this.reference);
+		entity.setModule(this.module);
+		entity.setCollateralRef(this.collateralRef);
+		entity.setCollateralCcy(this.collateralCcy);
+		entity.setBankValuation(this.bankValuation);
+		entity.setCollateralValue(this.collateralValue);
+		entity.setAssignPerc(this.assignPerc);
+		entity.setAvailableAssignPerc(this.availableAssignPerc);
+		entity.setAssignedValue(this.assignedValue);
+		entity.setAvailableAssignValue(this.availableAssignValue);
+		entity.setTotAssignedPerc(this.totAssignedPerc);
+		entity.setActive(this.active);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setHostReference(this.hostReference);
+		entity.setAssignPercent(this.assignPercent);
+		entity.setSpecialLTV(this.specialLTV);
+		entity.setBankLTV(this.bankLTV);
+		entity.setAssignmentReference(this.assignmentReference);
+		entity.setAssignmentSeq(this.assignmentSeq);
+		entity.setDepositorCIF(this.depositorCIF);
+		entity.setCollateralType(this.collateralType);
+		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public String getReference() {
 		return reference;
 	}

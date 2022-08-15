@@ -147,7 +147,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	public void onCreate$window_CollateralSetupList(Event event) throws Exception {
+	public void onCreate$window_CollateralSetupList(Event event) {
 
 		// Getting moduleName from mainmenu.xml
 		module = getArgument("module");
@@ -265,10 +265,8 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	 * see: com.pennant.webui.collateral.collateralsetup.model.CollateralSetupListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onCollateralSetupItemDoubleClicked(Event event) throws Exception {
+	public void onCollateralSetupItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.

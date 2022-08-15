@@ -40,10 +40,9 @@ public class LoanDownSizingMovementCtrl extends GFCBaseCtrl<FinAssetAmtMovement>
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_LoanDownSizingMovement(Event event) throws Exception {
+	public void onCreate$window_LoanDownSizingMovement(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -114,8 +113,7 @@ public class LoanDownSizingMovementCtrl extends GFCBaseCtrl<FinAssetAmtMovement>
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);

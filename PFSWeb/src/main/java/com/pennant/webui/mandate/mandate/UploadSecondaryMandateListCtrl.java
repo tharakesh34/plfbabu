@@ -195,9 +195,9 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 	 * when the "Upload" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws IOException If an I/O error occurred.
 	 */
-	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnUpload(UploadEvent event) throws IOException {
 		logger.debug(Literal.ENTERING);
 		fileName.setText("");
 		Media media = event.getMedia();
@@ -216,7 +216,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		if (StringUtils.isBlank(fileName.getValue())) {
 			MessageUtil.showError("Please upload a excel file");
 		} else {
@@ -233,9 +233,8 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 	 * when the "refresh" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doResetData();
@@ -289,9 +288,8 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 	 * reading whole excel and calling other methods to prepare mandate object and Save the mandates .
 	 * 
 	 * @return String
-	 * @throws Exception
 	 */
-	public void doProcessMandates(String fName) throws Exception {
+	public void doProcessMandates(String fName) {
 		logger.debug("Entering");
 
 		if (this.workbook instanceof HSSFWorkbook) {

@@ -20,7 +20,7 @@ public class ReturnedChequeListModelItemRender implements ListitemRenderer<Retur
 	}
 
 	@Override
-	public void render(Listitem item, ReturnedChequeDetails returnedCheque, int count) throws Exception {
+	public void render(Listitem item, ReturnedChequeDetails returnedCheque, int count) {
 		Listcell lc;
 		lc = new Listcell(returnedCheque.getCustCIF());
 		lc.setParent(item);

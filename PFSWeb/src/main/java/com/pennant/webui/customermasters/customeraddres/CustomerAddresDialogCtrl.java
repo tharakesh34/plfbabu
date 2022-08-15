@@ -168,10 +168,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * selected CustomerAddres object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CustomerAddresDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerAddresDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -719,9 +718,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerAddres
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerAddres aCustomerAddres) throws InterruptedException {
+	public void doShowDialog(CustomerAddres aCustomerAddres) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1793,11 +1791,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 	/**
 	 * To load the customerSelect filter dialog
-	 * 
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	private void onLoad() throws SuspendNotAllowedException, InterruptedException {
+	private void onLoad() {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
@@ -1858,10 +1853,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerAddres);
 	}
 
@@ -1873,7 +1866,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		return getCustomerAddres().getCustID() + PennantConstants.KEY_SEPERATOR + getCustomerAddres().getCustAddrType();
 	}
 
-	public void onChange$sameasAddressType(Event event) throws Exception {
+	public void onChange$sameasAddressType(Event event) {
 		if (!"#".equals(getComboboxValue(this.sameasAddressType))) {
 			for (CustomerAddres address : getApprovedCustomerAddressList()) {
 				if (StringUtils.equals(getComboboxValue(this.sameasAddressType), address.getCustAddrType())) {

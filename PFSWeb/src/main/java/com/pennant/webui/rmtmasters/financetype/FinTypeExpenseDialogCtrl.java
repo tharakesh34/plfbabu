@@ -121,9 +121,8 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 	 * selected FinTypeExpenses object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinTypeExpenseDialog(Event event) throws Exception {
+	public void onCreate$window_FinTypeExpenseDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -827,7 +826,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finTypeExpense);
 	}
 

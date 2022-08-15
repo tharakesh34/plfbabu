@@ -27,7 +27,7 @@ public class QueryDocumentViewCtrl extends GFCBaseCtrl<DocumentDetails> {
 		super();
 	}
 
-	public void onCreate$window_Query(Event event) throws Exception {
+	public void onCreate$window_Query(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

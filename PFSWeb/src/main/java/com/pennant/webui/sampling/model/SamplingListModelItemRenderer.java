@@ -18,7 +18,7 @@ public class SamplingListModelItemRenderer implements ListitemRenderer<Sampling>
 	}
 
 	@Override
-	public void render(Listitem item, Sampling sampling, int index) throws Exception {
+	public void render(Listitem item, Sampling sampling, int index) {
 		Listcell lc;
 		lc = new Listcell(sampling.getCustCif());
 		lc.setParent(item);

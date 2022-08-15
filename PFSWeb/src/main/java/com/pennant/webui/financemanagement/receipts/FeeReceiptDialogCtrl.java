@@ -283,9 +283,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FeeReceiptDialog(Event event) throws Exception {
+	public void onCreate$window_FeeReceiptDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -1237,15 +1236,14 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for event of Changing Repayment Amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnReceipt(Event event) throws Exception {
+	public void onClick$btnReceipt(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doSave() throws WrongValueException, InterruptedException {
+	public void doSave() {
 		logger.debug("Entering");
 
 		try {
@@ -1382,10 +1380,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Process Repayment Details
-	 * 
-	 * @throws Exception
 	 */
-	private void doProcessReceipt() throws Exception {
+	private void doProcessReceipt() {
 		logger.debug("Entering");
 
 		// Receipt Header Details workflow fields
@@ -1799,10 +1795,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void executeAccounting() throws Exception {
+	public void executeAccounting() {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
@@ -2314,9 +2308,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws InterruptedException {
+	protected boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -2399,9 +2392,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws InterruptedException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -2525,9 +2517,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(getReceiptHeader());
 	}
 

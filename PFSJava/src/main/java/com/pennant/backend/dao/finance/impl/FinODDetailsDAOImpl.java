@@ -46,6 +46,7 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
@@ -85,10 +86,9 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				return fod;
 			}, finID, schdDate);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -354,9 +354,9 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				return od;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -475,13 +475,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, objects);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, objects);
 	}
 
 	@Override
@@ -506,10 +500,9 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -623,25 +616,19 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinODDetails od = new FinODDetails();
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			FinODDetails od = new FinODDetails();
 
-				od.setTotPenaltyAmt(rs.getBigDecimal("TotPenaltyAmt"));
-				od.setTotPenaltyPaid(rs.getBigDecimal("TotPenaltyPaid"));
-				od.setTotWaived(rs.getBigDecimal("TotWaived"));
-				od.setLPIAmt(rs.getBigDecimal("LPIAmt"));
-				od.setLPIPaid(rs.getBigDecimal("LPIPaid"));
-				od.setLPIWaived(rs.getBigDecimal("LPIWaived"));
+			od.setTotPenaltyAmt(rs.getBigDecimal("TotPenaltyAmt"));
+			od.setTotPenaltyPaid(rs.getBigDecimal("TotPenaltyPaid"));
+			od.setTotWaived(rs.getBigDecimal("TotWaived"));
+			od.setLPIAmt(rs.getBigDecimal("LPIAmt"));
+			od.setLPIPaid(rs.getBigDecimal("LPIPaid"));
+			od.setLPIWaived(rs.getBigDecimal("LPIWaived"));
 
-				return od;
+			return od;
 
-			}, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		}, finID);
 	}
 
 	@Override
@@ -673,12 +660,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, parameters);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, parameters);
 	}
 
 	@Override
@@ -693,7 +675,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" From FinODDetails");
 		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		List<FinODDetails> odList = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -1006,10 +988,9 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				return od;
 			}, parameters);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public static List<FinODDetails> sort(List<FinODDetails> odDetails) {

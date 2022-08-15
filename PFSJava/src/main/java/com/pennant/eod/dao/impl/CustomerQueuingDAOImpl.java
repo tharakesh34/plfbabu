@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.SysParamUtil;
@@ -174,45 +173,34 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public void updateFinRunningCount() {
-		try {
-			if (App.DATABASE == Database.SQL_SERVER || App.DATABASE == Database.POSTGRES) {
-				logger.trace(Literal.SQL + UPDATE_SQL_RUNCOUNT);
-				this.jdbcOperations.update(UPDATE_SQL_RUNCOUNT);
-			} else if (App.DATABASE == Database.ORACLE) {
-				logger.trace(Literal.SQL + UPDATE_ORCL_RUNCOUNT);
-				this.jdbcOperations.update(UPDATE_ORCL_RUNCOUNT);
-			}
-
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(Literal.EXCEPTION, dae);
+		if (App.DATABASE == Database.SQL_SERVER || App.DATABASE == Database.POSTGRES) {
+			logger.trace(Literal.SQL + UPDATE_SQL_RUNCOUNT);
+			this.jdbcOperations.update(UPDATE_SQL_RUNCOUNT);
+		} else if (App.DATABASE == Database.ORACLE) {
+			logger.trace(Literal.SQL + UPDATE_ORCL_RUNCOUNT);
+			this.jdbcOperations.update(UPDATE_ORCL_RUNCOUNT);
 		}
 	}
 
 	@Override
 	public int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId) {
-		try {
-			if (noOfRows == 0) {
-				logger.trace(Literal.SQL + UPDATE_SQL);
-				return this.jdbcOperations.update(UPDATE_SQL, threadId, 0);
-			} else {
-				if (App.DATABASE == Database.SQL_SERVER) {
-					logger.trace(Literal.SQL + UPDATE_SQL_RC);
-					return this.jdbcOperations.update(UPDATE_SQL_RC, noOfRows, threadId, 0);
-				} else if (App.DATABASE == Database.ORACLE) {
-					logger.trace(Literal.SQL + UPDATE_ORCL_RC);
-					return this.jdbcOperations.update(UPDATE_ORCL_RC, threadId, noOfRows, 0);
-				} else if (App.DATABASE == Database.POSTGRES) {
-					logger.trace(Literal.SQL + UPDATE_POSTGRES_RC);
-					return this.jdbcOperations.update(UPDATE_POSTGRES_RC, threadId, 0, 0, noOfRows);
-				}
+		if (noOfRows == 0) {
+			logger.trace(Literal.SQL + UPDATE_SQL);
+			return this.jdbcOperations.update(UPDATE_SQL, threadId, 0);
+		} else {
+			if (App.DATABASE == Database.SQL_SERVER) {
+				logger.trace(Literal.SQL + UPDATE_SQL_RC);
+				return this.jdbcOperations.update(UPDATE_SQL_RC, noOfRows, threadId, 0);
+			} else if (App.DATABASE == Database.ORACLE) {
+				logger.trace(Literal.SQL + UPDATE_ORCL_RC);
+				return this.jdbcOperations.update(UPDATE_ORCL_RC, threadId, noOfRows, 0);
+			} else if (App.DATABASE == Database.POSTGRES) {
+				logger.trace(Literal.SQL + UPDATE_POSTGRES_RC);
+				return this.jdbcOperations.update(UPDATE_POSTGRES_RC, threadId, 0, 0, noOfRows);
 			}
-
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(Literal.EXCEPTION, dae);
 		}
 
 		return 0;
-
 	}
 
 	@Override
@@ -608,25 +596,14 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	public long getLoanCountByProgress() {
 		String sql = "select COALESCE(sum(FinCount),0) from CustomerQueuing where Progress = ?";
 		logger.trace(Literal.SQL + sql);
-		try {
-			return this.jdbcOperations.queryForObject(sql, new Object[] { EodConstants.PROGRESS_WAIT }, Long.class);
-		} catch (Exception dae) {
-			logger.error(Literal.EXCEPTION, dae);
-		}
-		return 0;
+
+		return this.jdbcOperations.queryForObject(sql, new Object[] { EodConstants.PROGRESS_WAIT }, Long.class);
 	}
 
 	@Override
 	public int updateThreadIDByLoanCount(Date date, long from, long to, int threadId) {
-		try {
-			logger.trace(Literal.SQL + UPDATE_LOANCOUNT);
-			return this.jdbcOperations.update(UPDATE_LOANCOUNT, threadId, from, to, 0);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error(Literal.EXCEPTION, dae);
-		}
-
-		return 0;
-
+		logger.trace(Literal.SQL + UPDATE_LOANCOUNT);
+		return this.jdbcOperations.update(UPDATE_LOANCOUNT, threadId, from, to, 0);
 	}
 
 	@Override

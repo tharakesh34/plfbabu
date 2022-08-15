@@ -65,7 +65,7 @@ public class FacilityReferenceDetailListModelItemRenderer implements ListitemRen
 	}
 
 	@Override
-	public void render(Listitem item, CAFFacilityType facilityType, int count) throws Exception {
+	public void render(Listitem item, CAFFacilityType facilityType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(facilityType.getFacilityType().toUpperCase());

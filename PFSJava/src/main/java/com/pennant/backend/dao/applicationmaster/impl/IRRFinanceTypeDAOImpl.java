@@ -1,51 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  IRRFinanceTypeDAOImpl.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-06-2017    														*
- *                                                                  						*
- * Modified Date    :  21-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : IRRFinanceTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-06-2017 * *
+ * Modified Date : 21-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-06-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- * 23-07-2018       Sai Krishna              0.2          bugs #492 Unable to save & submit * 
- *                                                        Loan Types                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-06-2017 PENNANT 0.1 * * 23-07-2018 Sai Krishna 0.2 bugs #492 Unable to save & submit * Loan Types * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,6 +48,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -107,14 +89,11 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		RowMapper<IRRFinanceType> rowMapper = BeanPropertyRowMapper.newInstance(IRRFinanceType.class);
 
 		try {
-			iRRFinanceType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			iRRFinanceType = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return iRRFinanceType;
 	}
 
 	@Override
@@ -151,7 +130,8 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		// 23-07-2018 bugs #492 Unable to save & submit Loan Types due to updating the primary key in the update statement.
+		// 23-07-2018 bugs #492 Unable to save & submit Loan Types due to updating the primary key in the update
+		// statement.
 		StringBuilder sql = new StringBuilder("update IRRFinanceTypes");
 		sql.append(tableType.getSuffix());
 		sql.append("  set");
@@ -159,7 +139,7 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where iRRID = :iRRID and finType = :finType ");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -183,7 +163,7 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		StringBuilder sql = new StringBuilder("delete from IRRFinanceTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(" where iRRID = :iRRID ");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -216,32 +196,25 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finType);
-				}
-			}, new RowMapper<IRRFinanceType>() {
-				@Override
-				public IRRFinanceType mapRow(ResultSet rs, int rowNum) throws SQLException {
-					IRRFinanceType ft = new IRRFinanceType();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, finType);
+			}
+		}, new RowMapper<IRRFinanceType>() {
+			@Override
+			public IRRFinanceType mapRow(ResultSet rs, int rowNum) throws SQLException {
+				IRRFinanceType ft = new IRRFinanceType();
 
-					ft.setFinType(rs.getString("FinType"));
-					ft.setIRRID(rs.getLong("IRRID"));
-					ft.setIrrCode(rs.getString("IrrCode"));
-					ft.setIrrCodeDesc(rs.getString("IrrCodeDesc"));
+				ft.setFinType(rs.getString("FinType"));
+				ft.setIRRID(rs.getLong("IRRID"));
+				ft.setIrrCode(rs.getString("IrrCode"));
+				ft.setIrrCodeDesc(rs.getString("IrrCodeDesc"));
 
-					return ft;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return ft;
+			}
+		});
 	}
 
 	@Override

@@ -165,10 +165,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * selected DocumentDetails object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinDocumentDetailDialog(Event event) throws Exception {
+	public void onCreate$window_FinDocumentDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -602,7 +601,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			} else {
 				aDocumentDetails.setDocImage(null);
 				aDocumentDetails.setDoctype(null);
-				aDocumentDetails.setDocRefId(Long.MIN_VALUE);
+				aDocumentDetails.setDocRefId(null);
 			}
 
 		} catch (WrongValueException we) {
@@ -680,9 +679,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDocumentDetails
-	 * @throws Exception
 	 */
-	public void doShowDialog(DocumentDetails aDocumentDetails) throws Exception {
+	public void doShowDialog(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1186,10 +1184,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finDocumentDetail);
 	}
 
@@ -1201,10 +1197,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onCheck$docReceived(Event event) throws Exception {
+	public void onCheck$docReceived(Event event) {
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setDisabled(false);
 			this.space_docReceivedDt.setSclass("mandatory");
@@ -1232,10 +1226,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onCheck$docOriginal(Event event) throws Exception {
+	public void onCheck$docOriginal(Event event) {
 		if (this.docOriginal.isChecked()) {
 			this.space_docBarcode.setClass("mandatory");
 		} else {
@@ -1407,7 +1399,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
 				documentDetails.setDoctype(docType);
 				documentDetails.setDocImage(ddaImageData);
-				documentDetails.setDocRefId(Long.MIN_VALUE);
+				documentDetails.setDocRefId(null);
 				documentDetails.setDocUri(null);
 				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);

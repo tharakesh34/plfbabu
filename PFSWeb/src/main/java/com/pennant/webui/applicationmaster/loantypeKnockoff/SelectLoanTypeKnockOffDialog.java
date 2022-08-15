@@ -71,9 +71,8 @@ public class SelectLoanTypeKnockOffDialog extends GFCBaseCtrl<FinTypeKnockOff> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SelectLoanTypeKnockOffDialog(Event event) throws Exception {
+	public void onCreate$window_SelectLoanTypeKnockOffDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -136,9 +135,8 @@ public class SelectLoanTypeKnockOffDialog extends GFCBaseCtrl<FinTypeKnockOff> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		doSetValidation();
@@ -158,8 +156,7 @@ public class SelectLoanTypeKnockOffDialog extends GFCBaseCtrl<FinTypeKnockOff> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param financeType
-	 *            The entity that need to be passed to the dialog.
+	 * @param financeType The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(FinTypeKnockOff financeType) {
 		logger.debug(Literal.ENTERING);

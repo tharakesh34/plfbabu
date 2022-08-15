@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -64,7 +63,6 @@ import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -155,9 +153,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LoanDownSizing(Event event) throws Exception {
+	public void onCreate$window_LoanDownSizing(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -268,9 +265,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws Exception
 	 */
-	private void doShowDialog(FinanceMain aFinanceMain) throws Exception {
+	private void doShowDialog(FinanceMain aFinanceMain) {
 		logger.debug(Literal.ENTERING);
 
 		this.downSizingAmt.focus();
@@ -308,9 +304,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain FinanceMain
-	 * @throws Exception
 	 */
-	private void doWriteBeanToComponents(FinanceMain aFinanceMain) throws Exception {
+	private void doWriteBeanToComponents(FinanceMain aFinanceMain) {
 		logger.debug(Literal.ENTERING);
 
 		getFinanceDetail().setModuleDefiner(moduleDefiner);
@@ -357,9 +352,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * @param aFinanceDetail
 	 * @param onLoad
 	 * @param isReqToLoad
-	 * @throws Exception
 	 */
-	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad, boolean isReqToLoad) throws Exception {
+	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad, boolean isReqToLoad) {
 		logger.debug(Literal.ENTERING);
 
 		// Schedule Details Tab Adding
@@ -447,9 +441,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		doSave();
@@ -461,10 +454,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(getFinanceMain());
 	}
 
@@ -480,9 +471,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnAssetMvnt(Event event) throws Exception {
+	public void onClick$btnAssetMvnt(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (assetAmtMvntList == null) {
@@ -507,9 +497,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onFulfill$downSizingAmt(Event event) throws Exception {
+	public void onFulfill$downSizingAmt(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -599,11 +588,9 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	protected void doSave() throws Exception {
+	protected void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		recSave = false;
@@ -723,11 +710,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * @param tranType  (String)
 	 * 
 	 * @return boolean
-	 * @throws JaxenException
-	 * @throws InterfaceException
-	 * 
 	 */
-	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
@@ -833,11 +817,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * @param method      (String)
 	 * 
 	 * @return boolean
-	 * @throws JaxenException
-	 * @throws InterfaceException
-	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean deleteNotes = false;
@@ -971,9 +952,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinScheduleData
-	 * @throws Exception
 	 */
-	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData) throws Exception {
+	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData) {
 		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -1064,9 +1044,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Schedule recalculated based on New Grace End Date.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnValidate(Event event) throws Exception {
+	public void onClick$btnValidate(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		getScheduleDetails(getFinanceDetail().getFinScheduleData());
@@ -1081,10 +1060,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	/**
 	 * Method for Recalculate Schedule Based On New Schedule Date
-	 * 
-	 * @throws Exception
 	 */
-	private void getScheduleDetails(FinScheduleData finScheduleData) throws Exception {
+	private void getScheduleDetails(FinScheduleData finScheduleData) {
 		logger.debug(Literal.ENTERING);
 
 		Cloner cloner = new Cloner();
@@ -1126,9 +1103,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * @param financeDetail
 	 * @param onLoadProcess
 	 * @param isFeeRender
-	 * @throws Exception
 	 */
-	public void appendScheduleDetailTab(FinanceDetail financeDetail, Boolean onLoadProcess) throws Exception {
+	public void appendScheduleDetailTab(FinanceDetail financeDetail, Boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 
 		// 1. ---> TAB Creation
@@ -1231,9 +1207,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * 
 	 * @param onLoadProcess
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 
 		boolean isOverdraft = false;
@@ -1266,11 +1241,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 
 		// TODO : VALIDATE Execute Accounting
@@ -1299,10 +1271,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	/**
 	 * Prepare Accounting Data
-	 * 
-	 * @throws Exception
 	 */
-	private void prepareAccountingData(boolean onLoadProcess) throws Exception {
+	private void prepareAccountingData(boolean onLoadProcess) {
 
 		if (onLoadProcess) {
 			doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
@@ -1415,9 +1385,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSelectTab(ForwardEvent event) throws Exception {
+	public void onSelectTab(ForwardEvent event) {
 
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + "Entering");

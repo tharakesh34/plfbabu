@@ -26,7 +26,6 @@
 
 package com.pennant.backend.service.finance.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -54,10 +53,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
@@ -71,9 +66,9 @@ import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadHeaderDAO;
 import com.pennant.backend.dao.finance.UploadAllocationDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
-import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -96,11 +91,12 @@ import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
-import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.upload.ReceiptUploadThreadProcess;
 
@@ -562,35 +558,31 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		rut.setImportStatusMap(statusMap);
 		rut.setTotalProcesses(5);
 
-		validateFileData(workbook, ruh, rudList, rut);
-
-		prepareAllocations(workbook, uadList, rut);
-
-		linkReceiptAllocations(rudList, uadList, rut);
-
-		ruh.setBefImage(ruh);
-
-		validateReceipt(ruh, rudList, rut);
-
-		ruh.setReceiptUploadList(rudList);
-
 		try {
-			fileImport.backUpFile();
-		} catch (IOException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			validateFileData(workbook, ruh, rudList, rut);
 
-		saveRecord(ruh, rut);
-		statusMap.remove(ruh.getId());
+			prepareAllocations(workbook, uadList, rut);
+
+			linkReceiptAllocations(rudList, uadList, rut);
+
+			ruh.setBefImage(ruh);
+
+			validateReceipt(ruh, rudList, rut);
+
+			ruh.setReceiptUploadList(rudList);
+
+			fileImport.backUpFile();
+
+			saveRecord(ruh, rut);
+
+			statusMap.remove(ruh.getId());
+		} catch (Exception e) {
+			updateImportFail(ruh);
+		}
 	}
 
 	public void updateImportFail(ReceiptUploadHeader ruh) {
-		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus transactionStatus = transactionManager.getTransaction(txDef);
 		updateUploadProgress(ruh.getId(), ReceiptUploadConstants.RECEIPT_IMPORTFAILED);
-		transactionManager.commit(transactionStatus);
 	}
 
 	private void saveRecord(ReceiptUploadHeader ruh, ReceiptUploadTracker rut) {
@@ -652,14 +644,16 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, ruh.getEntityCode());
 			fsi.setReqType("Inquiry");
 			fsi.setReceiptUpload(true);
-			FinanceDetail financeDetail = receiptService.receiptTransaction(fsi, fsi.getReceiptPurpose());
+			fsi.setRequestSource(RequestSource.UPLOAD);
+			FinanceDetail financeDetail = receiptService.receiptTransaction(fsi);
 
-			WSReturnStatus returnStatus = financeDetail.getReturnStatus();
-			if (returnStatus != null) {
+			FinScheduleData schd = financeDetail.getFinScheduleData();
+			if (!schd.getErrorDetails().isEmpty()) {
+				ErrorDetail error = schd.getErrorDetails().get(0);
 				rud.setProcessingStatus(ReceiptDetailStatus.FAILED.getValue());
 
-				String code = StringUtils.trimToEmpty(returnStatus.getReturnCode());
-				String description = StringUtils.trimToEmpty(returnStatus.getReturnText());
+				String code = StringUtils.trimToEmpty(error.getCode());
+				String description = StringUtils.trimToEmpty(error.getError());
 
 				rud.setReason(String.format("%s %s %s", code, "-", description));
 			} else {
@@ -677,6 +671,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 
 		String fileName = ruh.getFileName();
 		long headerId = ruh.getId();
+		LoggedInUser userDetails = ruh.getUserDetails();
 
 		final Set<String> setTxnKeys = new HashSet<String>();
 		final Set<String> setTxnKeysCheque = new HashSet<String>();
@@ -698,17 +693,19 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 
 			ReceiptUploadDetail rud = prepareReceiptUploadDetail(rchRow, headerId, appDate);
 
-			if (rud.getFavourNumber() != null && rud.getFavourNumber().length() > 6) {
-				errorMsg = "Favour Number more than 6 digits";
-				setErrorToRUD(rud, "90405", errorMsg);
-			}
-
 			Long finID = getFinID(rud.getReference(), ruh.getEntityCode(), TableType.MAIN_TAB);
 
 			if (finID == null) {
 				setErrorToRUD(rud, "RU0004", rud.getReference());
+				rudList.add(rud);
+				continue;
 			} else {
 				rud.setFinID(finID);
+			}
+
+			if (rud.getFavourNumber() != null && rud.getFavourNumber().length() > 6) {
+				errorMsg = "Favour Number more than 6 digits";
+				setErrorToRUD(rud, "90405", errorMsg);
 			}
 
 			if (dedupCheck) {
@@ -783,8 +780,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				logger.info("There is No Duplicate Receipt found in ReceiptUploadDetails_Temp table..");
 			}
 
-			if (StringUtils.equals(rud.getReceiptPurpose(), FinanceConstants.EARLYSETTLEMENT)
-					|| StringUtils.equals(rud.getReceiptPurpose(), FinanceConstants.PARTIALSETTLEMENT)) {
+			if (FinanceConstants.EARLYSETTLEMENT.equals(rud.getReceiptPurpose())
+					|| FinanceConstants.PARTIALSETTLEMENT.equals(rud.getReceiptPurpose())) {
 				if (StringUtils.isNotBlank(fileName)) {
 					String finReferenceValue = getLoanReferenc(rud.getReference(), fileName);
 					if (StringUtils.isNotBlank(finReferenceValue)) {
@@ -800,14 +797,14 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				rud.getErrorDetails().add(ErrorUtil.getErrorDetail(errorDetail));
 			}
 
+			rud.setLoggedInUser(userDetails);
 			rudList.add(rud);
 
 			rut.incrementProgress();
 		}
 
 		if (rudList == null || rudList.isEmpty()) {
-			MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_NoData"));
-			return true;
+			throw new AppException(Labels.getLabel("label_ReceiptUpload_File_NoData"));
 		}
 
 		logger.info("File Data Validation and ReceiptUploadDetails Preparation was completed...");

@@ -61,7 +61,7 @@ public class SecurityGroupRightModelItemRenderer implements ListitemRenderer<Sec
 	}
 
 	@Override
-	public void render(Listitem item, SecurityRight secRights, int count) throws Exception {
+	public void render(Listitem item, SecurityRight secRights, int count) {
 
 		Listcell lc = new Listcell(secRights.getRightName());
 		lc.setParent(item);

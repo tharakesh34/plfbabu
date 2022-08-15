@@ -108,9 +108,8 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	 * selected IncomeType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_IncomeTypeDialog(Event event) throws Exception {
+	public void onCreate$window_IncomeTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -375,9 +374,8 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aIncomeType
-	 * @throws Exception
 	 */
-	public void doShowDialog(IncomeType aIncomeType) throws Exception {
+	public void doShowDialog(IncomeType aIncomeType) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -836,10 +834,8 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.incomeType);
 	}
 

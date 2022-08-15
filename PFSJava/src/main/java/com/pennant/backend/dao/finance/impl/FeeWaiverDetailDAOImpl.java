@@ -1,49 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeeWaiverDetailDAOImpl.java                                          * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-11-2017    														*
- *                                                                  						*
- * Modified Date    :  			    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeeWaiverDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-11-2017 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-11-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-11-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,7 +32,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -194,14 +174,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverDetail);
 		RowMapper<FeeWaiverDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeWaiverDetail.class);
 
-		try {
-			return jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			feeWaiverDetail = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+		return jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -228,13 +201,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 
 		RowMapper<FeeWaiverDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeWaiverDetail.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	@Override
@@ -253,15 +220,6 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		parameterSource.addValue("FinReference", finReference);
 		parameterSource.addValue("adviseId", adviseId);
 
-		BigDecimal currwaivergst = BigDecimal.ZERO;
-
-		try {
-			currwaivergst = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			currwaivergst = BigDecimal.ZERO;
-		}
-		logger.debug(Literal.LEAVING);
-		return currwaivergst;
+		return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, BigDecimal.class);
 	}
 }

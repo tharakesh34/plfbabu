@@ -174,7 +174,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private long bounceId;
 	private String custBaseCcy;
 	private Long reasonCode;
-	private List<DocumentDetails> documentDetails = new ArrayList<>(1);;
+	private List<DocumentDetails> documentDetails = new ArrayList<>(1);
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private String prvReceiptPurpose;
 	private Long partnerBankId;

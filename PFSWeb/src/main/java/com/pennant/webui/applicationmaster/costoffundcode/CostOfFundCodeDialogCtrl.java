@@ -102,9 +102,8 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * selected CostOfFundCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CostOfFundCodeDialog(Event event) throws Exception {
+	public void onCreate$window_CostOfFundCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -342,9 +341,8 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCostOfFundCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(CostOfFundCode aCostOfFundCode) throws Exception {
+	public void doShowDialog(CostOfFundCode aCostOfFundCode) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -776,10 +774,8 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();

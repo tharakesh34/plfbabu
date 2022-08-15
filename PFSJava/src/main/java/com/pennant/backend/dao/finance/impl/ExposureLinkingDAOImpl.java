@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -14,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.finance.ExposureLinkingDAO;
 import com.pennant.backend.model.finance.ExposureLinking;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -42,9 +44,8 @@ public class ExposureLinkingDAOImpl extends BasicDao<ExposureLinking> implements
 
 		try {
 			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);

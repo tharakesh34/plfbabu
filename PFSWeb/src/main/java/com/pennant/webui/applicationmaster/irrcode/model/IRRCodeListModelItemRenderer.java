@@ -66,7 +66,7 @@ public class IRRCodeListModelItemRenderer implements ListitemRenderer<IRRCode>, 
 	}
 
 	@Override
-	public void render(Listitem item, IRRCode iRRCode, int count) throws Exception {
+	public void render(Listitem item, IRRCode iRRCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(iRRCode.getIRRCode());

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  NumberToEnglishWords.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-09-2011    														*
- *                                                                  						*
- * Modified Date    :  17-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : NumberToEnglishWords.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-09-2011 * * Modified
+ * Date : 17-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *17-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 13-06-2018       Siva					 0.4        Receipt Print Option Added 			*
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-09-2011 Pennant 0.1 * * 13-06-2018 Siva 0.4 Receipt Print Option Added * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -76,9 +58,8 @@ public class NumberToEnglishWords {
 	 * 
 	 * @param number
 	 * @return number in words like "ten" for 10 (String)
-	 * @throws Exception
 	 */
-	public static String getNumberToWords(BigInteger number) throws Exception {
+	public static String getNumberToWords(BigInteger number) {
 		String sign = "";
 		if (number.compareTo(BigInteger.ZERO) < 0) {
 			sign = "-";
@@ -96,10 +77,8 @@ public class NumberToEnglishWords {
 	 * @param amount
 	 * @param ccyCode
 	 * @return Amount in words with currency symbol (String)
-	 * @throws Exception
 	 */
-
-	public static String getAmountInText(BigDecimal amount, String ccyCode) throws Exception {
+	public static String getAmountInText(BigDecimal amount, String ccyCode) {
 		boolean minus = false;
 		String strAmount = "";
 		String minorCcyDesc = "";
@@ -154,10 +133,8 @@ public class NumberToEnglishWords {
 	 * 
 	 * @param number
 	 * @return number in words (String)
-	 * @throws Exception
 	 */
-
-	private static String convertWordToBillions(BigInteger number) throws Exception {
+	private static String convertWordToBillions(BigInteger number) {
 		String word = "";
 		if (number.compareTo(BigInteger.ZERO) == 0) {
 			return wrdOnes[0];
@@ -180,9 +157,8 @@ public class NumberToEnglishWords {
 	 * 
 	 * @param number
 	 * @return number in words (String)
-	 * @throws Exception
 	 */
-	private static String convertWordToCrores(BigInteger number) throws Exception {
+	private static String convertWordToCrores(BigInteger number) {
 		String result = "";
 		int count = 0;
 		if (number.compareTo(BigInteger.ZERO) == 0) {
@@ -229,15 +205,14 @@ public class NumberToEnglishWords {
 	 * 
 	 * @param snumber
 	 * @return
-	 * @throws Exception
 	 */
-	private static String formatInLakhs(String snumber, String oldresult) throws Exception {
+	private static String formatInLakhs(String snumber, String oldresult) {
 		String result = "";
-		//XXnnnnn
+		// XXnnnnn
 		int lakhs = Integer.parseInt(snumber.substring(0, 2));
-		//nnXXnnn
+		// nnXXnnn
 		int thousands = Integer.parseInt(snumber.substring(2, 4));
-		//nnnnXXX
+		// nnnnXXX
 		int hundreds = Integer.parseInt(snumber.substring(4, 7));
 
 		String tradLakhs;
@@ -288,9 +263,8 @@ public class NumberToEnglishWords {
 	 * 
 	 * @param number
 	 * @return
-	 * @throws Exception
 	 */
-	private static String convertThousands(long number) throws Exception {
+	private static String convertThousands(long number) {
 		String word = "";
 		long rem = number / 100;
 		long mod = number % 100;
@@ -311,9 +285,8 @@ public class NumberToEnglishWords {
 	 * 
 	 * @param number
 	 * @return
-	 * @throws Exception
 	 */
-	private static String convertOnes(int number) throws Exception {
+	private static String convertOnes(int number) {
 
 		if (number < 20) {
 			return wrdOnes[number];
@@ -346,7 +319,7 @@ public class NumberToEnglishWords {
 		List<T> aGroupedObjectsList = new ArrayList<T>();
 		int size = childRecordsList.size();
 		try {
-			//Sorting the list with sortField
+			// Sorting the list with sortField
 			Collections.sort(childRecordsList, comp);
 			for (int i = 0; i < size; i++) {
 				Object objectOne = childRecordsList.get(i).getClass().getMethod(compareMethod)
@@ -356,25 +329,25 @@ public class NumberToEnglishWords {
 					objectTwo = childRecordsList.get(i + 1).getClass().getMethod(compareMethod)
 							.invoke(childRecordsList.get(i + 1));
 				}
-				//if not last Element and field is Equal to next field
+				// if not last Element and field is Equal to next field
 				if (i != size - 1 && objectOne.equals(objectTwo)) {
-					//If object is already in Map 
+					// If object is already in Map
 					if (groupRecordsMap.containsKey(objectOne)) {
 						aGroupedObjectsList.add(childRecordsList.get(i));
 					} else {
-						//If object is  new Entry
+						// If object is new Entry
 						aGroupedObjectsList = new ArrayList<T>();
 						aGroupedObjectsList.add(childRecordsList.get(i));
 					}
 					groupRecordsMap.put(objectOne, aGroupedObjectsList);
 				} else {
 					if (groupRecordsMap.containsKey(objectOne)) {
-						//If object is already in Map (in case last element is already in map)
+						// If object is already in Map (in case last element is already in map)
 						List<T> tempList = groupRecordsMap.get(objectOne);
 						tempList.add(childRecordsList.get(i));
 						groupRecordsMap.put(objectOne, tempList);
 					} else {
-						//If object is  new Entry
+						// If object is new Entry
 						aGroupedObjectsList = new ArrayList<T>();
 						aGroupedObjectsList.add(childRecordsList.get(i));
 						groupRecordsMap.put(objectOne, aGroupedObjectsList);

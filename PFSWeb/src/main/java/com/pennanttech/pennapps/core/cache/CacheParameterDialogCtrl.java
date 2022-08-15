@@ -50,7 +50,7 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CacheProcessDialog(Event event) throws Exception {
+	public void onCreate$window_CacheProcessDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_CacheProcessDialog);

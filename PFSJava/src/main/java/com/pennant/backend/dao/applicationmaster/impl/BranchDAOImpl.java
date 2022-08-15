@@ -46,6 +46,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -429,16 +430,11 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(branch);
 
-		String branchDesc = null;
 		try {
-			branchDesc = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			branchDesc = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return branchDesc;
 	}
-
 }

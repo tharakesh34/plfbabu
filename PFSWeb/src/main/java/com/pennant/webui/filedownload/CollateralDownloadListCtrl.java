@@ -1,43 +1,25 @@
 /**
-' * Copyright 2011 - Pennant Technologies
+ * ' * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollateralDownloadListCtrl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-08-2019 															*
- *                                                                  						*
- * Modified Date    :  			    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollateralDownloadListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-08-2019 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-08-2019       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-08-2019 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -182,8 +164,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_CollateralDownloadList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -249,7 +230,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnDownload(Event event) throws Exception {
+	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		List<CollateralSetup> collateralList;
@@ -269,7 +250,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 		}
 
 		if (CollectionUtils.isNotEmpty(collateralList)) {
-			//Iterating and collection list of custCif to limitRef 
+			// Iterating and collection list of custCif to limitRef
 			collateralList.stream().forEach(s -> collateralRef.add(s.getCollateralRef()));
 			try {
 				String filePath = collateralDownloadService.processDownload(collateralRef);
@@ -344,7 +325,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 
 	}
 
-	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listHeaderCheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		for (int i = 0; i < listBoxCollateralDownload.getItems().size(); i++) {
@@ -362,7 +343,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listCellCheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
@@ -516,7 +497,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, CollateralSetup collateralSetup, int count) throws Exception {
+		public void render(Listitem item, CollateralSetup collateralSetup, int count) {
 			Listcell lc;
 
 			lc = new Listcell();

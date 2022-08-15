@@ -92,7 +92,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_ChangeCustomerDialog(Event event) throws Exception {
+	public void onCreate$window_ChangeCustomerDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -298,7 +298,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 		}
 
 		@Override
-		public void render(Listitem item, JointAccountDetail changeCustomer, int index) throws Exception {
+		public void render(Listitem item, JointAccountDetail changeCustomer, int index) {
 			Listcell lc = new Listcell();
 			Radio radio = new Radio();
 			radio.setValue(changeCustomer.getCustID());
@@ -337,7 +337,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 		}
 	}
 
-	public void onCheck_radioButtonGroupBtn(ForwardEvent event) throws Exception {
+	public void onCheck_radioButtonGroupBtn(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		Radio checkBox = (Radio) event.getOrigin().getTarget();

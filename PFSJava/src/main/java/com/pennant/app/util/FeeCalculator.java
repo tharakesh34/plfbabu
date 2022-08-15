@@ -60,16 +60,15 @@ public class FeeCalculator {
 	private FinTypeFeesDAO finTypeFeesDAO;
 
 	public FinReceiptData calculateFees(FinReceiptData rd) {
-		long finID = rd.getFinID();
-		String finReference = rd.getFinReference();
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
+		FinanceDetail fd = rd.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 		convertToFinanceFees(rd, taxPercentages);
 
-		FinanceDetail fd = rd.getFinanceDetail();
-		FinScheduleData schdData = fd.getFinScheduleData();
 		List<FinFeeDetail> finFeeDetailList = schdData.getFinFeeDetailList();
-
 		if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
 			calculateFeeDetail(rd, taxPercentages);
 		}
@@ -299,7 +298,7 @@ public class FeeCalculator {
 			}
 
 			if (finFeeConfig.isTaxApplicable()) {
-				Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
+				Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 				this.finFeeDetailService.convertGSTFinFeeConfig(fee, finFeeConfig, fd, taxPercentages);
 			} else {
 				fee.setActualAmountOriginal(finFeeConfig.getAmount());
@@ -355,7 +354,6 @@ public class FeeCalculator {
 
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		for (FinFeeDetail fee : fees) {
 			this.finFeeDetailService.calculateFees(fee, fm, taxPercentages);

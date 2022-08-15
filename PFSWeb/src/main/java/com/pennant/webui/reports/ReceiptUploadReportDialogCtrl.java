@@ -90,9 +90,8 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	 * 
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReceiptUploadReportDialogCtrl(Event event) throws Exception {
+	public void onCreate$window_ReceiptUploadReportDialogCtrl(Event event) {
 
 		logger.debug("Entering");
 
@@ -261,9 +260,8 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReceiptUploadHeader
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 
 		this.window_ReceiptUploadReportDialogCtrl.doModal();

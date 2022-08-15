@@ -75,9 +75,8 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 	 * selected QueueAssingment object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_QueueAssignmentList(Event event) throws Exception {
+	public void onCreate$window_QueueAssignmentList(Event event) {
 		logger.debug("Entering");
 
 		this.borderLayout_QueueAssignmentList.setHeight(getBorderLayoutHeight());
@@ -143,9 +142,8 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 	 * see: com.pennant.webui.finance.financemain.model. AssignmentListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onQueueAssignmentItemDoubleClicked(Event event) throws Exception {
+	public void onQueueAssignmentItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected QueueAssignmentHeader object
 		final Listitem item = this.listBoxQueueAssignment.getSelectedItem();

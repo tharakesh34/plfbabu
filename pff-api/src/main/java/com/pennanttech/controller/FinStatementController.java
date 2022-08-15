@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
-import java.text.ParseException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -275,9 +275,8 @@ public class FinStatementController extends SummaryDetailService {
 	 * 
 	 * @param fd
 	 * @return
-	 * @throws Exception
 	 */
-	private FinanceDetail getForeClosureDetails(FinanceDetail fd, int days, Date fromDate) throws Exception {
+	private FinanceDetail getForeClosureDetails(FinanceDetail fd, int days, Date fromDate) {
 		logger.debug(Literal.ENTERING);
 
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -491,9 +490,8 @@ public class FinStatementController extends SummaryDetailService {
 	 * @param fd
 	 * @param fsi
 	 * @return
-	 * @throws Exception
 	 */
-	public FinanceDetail doProcessPayments(FinanceDetail fd, FinServiceInstruction fsi) throws Exception {
+	public FinanceDetail doProcessPayments(FinanceDetail fd, FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
 		if (fsi.getFromDate() == null) {
@@ -570,7 +568,7 @@ public class FinStatementController extends SummaryDetailService {
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
 
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 		TaxAmountSplit taxSplit = null;
 		BigDecimal bounceGst = BigDecimal.ZERO;
 		BigDecimal receivableGst = BigDecimal.ZERO;
@@ -1763,13 +1761,8 @@ public class FinStatementController extends SummaryDetailService {
 		startDate = DateUtil.getDate(year, 3, 1);
 		endDate = DateUtil.getDate(year + 1, 2, 31);
 
-		InterestCertificate intCert = null;
-		try {
-			intCert = interestCertificateService.getInterestCertificateDetails(statementRequest.getFinReference(),
-					startDate, endDate, false);
-		} catch (ParseException e) {
-			logger.error("Unable to retrieve model from service");
-		}
+		InterestCertificate intCert = interestCertificateService
+				.getInterestCertificateDetails(statementRequest.getFinReference(), startDate, endDate, false);
 		if (intCert == null) {
 			logger.error("Empty Model");
 		}
@@ -1878,7 +1871,7 @@ public class FinStatementController extends SummaryDetailService {
 	JndiObjectFactoryBean jndiObjectFactoryBean;
 
 	private byte[] doShowReport(String whereCond, String whereCond1, Date fromDate, Date toDate, String finRefernce)
-			throws Exception {
+			throws SQLException {
 
 		logger.debug(Literal.ENTERING);
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());

@@ -238,9 +238,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_VASConfigurationDialog(Event event) throws Exception {
+	public void onCreate$window_VASConfigurationDialog(Event event) {
 		logger.debug("Entring" + event.toString());
 
 		// Set the page level components.
@@ -423,9 +422,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_VASConfigurationDialog(Event event) throws Exception {
+	public void onClose$window_VASConfigurationDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		doClose();
 		logger.debug("Leaving" + event.toString());
@@ -435,10 +433,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.vASConfiguration);
 	}
 
@@ -2054,7 +2050,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 	// File import related changes start//
 
-	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnUpload(UploadEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		isImported = false;

@@ -66,7 +66,7 @@ public class AccountEngineEventListModelItemRenderer implements ListitemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, AccountEngineEvent accountEngineEvent, int count) throws Exception {
+	public void render(Listitem item, AccountEngineEvent accountEngineEvent, int count) {
 
 		Listcell lc;
 		lc = new Listcell(accountEngineEvent.getAEEventCode());

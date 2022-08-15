@@ -354,7 +354,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) {
 		logger.info(Literal.ENTERING);
 
 		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
@@ -772,7 +772,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public void saveMultiReceipt(AuditHeader auditHeader) throws Exception {
+	public void saveMultiReceipt(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 		boolean flag = false;
 		String error = "";
@@ -1796,7 +1796,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public void processCollectionAPILog() throws Exception {
+	public void processCollectionAPILog() {
 		logger.debug(Literal.ENTERING);
 
 		List<ReceiptAPIRequest> logList = finReceiptHeaderDAO.getCollectionAPILog();

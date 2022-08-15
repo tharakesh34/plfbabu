@@ -70,7 +70,7 @@ public class SuspenseService extends ServiceHelper {
 		super();
 	}
 
-	public void processSuspense(Date date, FinanceMain fm, FinRepayQueue finRepayQueue) throws Exception {
+	public void processSuspense(Date date, FinanceMain fm, FinRepayQueue finRepayQueue) {
 		suspensePreparation(fm, finRepayQueue, date, false);
 		// SUSPENSE RELEASE
 		boolean releaseSuspemnse = false;
@@ -91,8 +91,8 @@ public class SuspenseService extends ServiceHelper {
 
 	}
 
-	private void suspensePreparation(FinanceMain fm, FinRepayQueue repayQueue, Date valueDate, boolean isPastDeferment)
-			throws Exception {
+	private void suspensePreparation(FinanceMain fm, FinRepayQueue repayQueue, Date valueDate,
+			boolean isPastDeferment) {
 		logger.debug(Literal.ENTERING);
 
 		long finID = fm.getFinID();
@@ -162,7 +162,7 @@ public class SuspenseService extends ServiceHelper {
 	}
 
 	private void suspReleasePreparation(FinanceMain fm, BigDecimal releasePftAmount, FinRepayQueue repayQueue,
-			Date valueDate) throws Exception {
+			Date valueDate) {
 		logger.debug(Literal.ENTERING);
 
 		long finID = repayQueue.getFinID();

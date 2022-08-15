@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -69,10 +70,9 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -331,10 +331,9 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, queryId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	private StringBuilder sqlSelectQuery(String type) {

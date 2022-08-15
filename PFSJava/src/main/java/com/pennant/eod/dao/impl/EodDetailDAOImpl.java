@@ -15,6 +15,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.dao.EodDetailDAO;
 import com.pennant.eod.model.EodDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDAO {
 	private static Logger logger = LogManager.getLogger(EodDetailDAOImpl.class);
@@ -47,14 +49,11 @@ public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDA
 		StringBuilder selectSql = new StringBuilder(
 				"UPDATE EodDetails set EndTime=:EndTime, Status=:Status Where ProcessDate=:ProcessDate");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
-			this.jdbcTemplate.update(selectSql.toString(), beanParameters);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-		}
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
+		this.jdbcTemplate.update(selectSql.toString(), beanParameters);
+
 		logger.debug("Leaving");
 
 	}
@@ -71,16 +70,12 @@ public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDA
 		StringBuilder selectSql = new StringBuilder(
 				"UPDATE EodDetails set Status=:Status Where ProcessDate=:ProcessDate");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
-			this.jdbcTemplate.update(selectSql.toString(), beanParameters);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-		}
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
+		this.jdbcTemplate.update(selectSql.toString(), beanParameters);
+
 		logger.debug("Leaving");
-
 	}
 
 	@Override
@@ -95,7 +90,7 @@ public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDA
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}

@@ -68,7 +68,7 @@ public class DepositDetailsListModelItemRenderer implements ListitemRenderer<Dep
 	}
 
 	@Override
-	public void render(Listitem item, DepositDetails depositDetails, int count) throws Exception {
+	public void render(Listitem item, DepositDetails depositDetails, int count) {
 
 		Listcell lc;
 

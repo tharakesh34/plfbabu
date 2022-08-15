@@ -66,7 +66,7 @@ public class ProfitCenterListModelItemRenderer implements ListitemRenderer<Profi
 	}
 
 	@Override
-	public void render(Listitem item, ProfitCenter profitCenter, int count) throws Exception {
+	public void render(Listitem item, ProfitCenter profitCenter, int count) {
 
 		Listcell lc;
 		lc = new Listcell(profitCenter.getProfitCenterCode());

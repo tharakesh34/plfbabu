@@ -312,9 +312,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_financialSummaryDialog(Event event) throws Exception {
+	public void onCreate$window_financialSummaryDialog(Event event) {
 		logger.debug(Literal.LEAVING);
 
 		// Set the page level components.
@@ -1190,7 +1189,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onFinancialSummaryRisksAndMitigantsItemDoubleClicked(Event event) throws Exception {
+	public void onFinancialSummaryRisksAndMitigantsItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxRisksAndMitigantsDetails.getSelectedItem();
@@ -1218,7 +1217,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onFinancialSummarySanctionConditionsItemDoubleClicked(Event event) throws Exception {
+	public void onFinancialSummarySanctionConditionsItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxSanctionConditionsDetails.getSelectedItem();
@@ -1246,7 +1245,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onFinancialSummaryDealRecommendationMeritsItemDoubleClicked(Event event) throws Exception {
+	public void onFinancialSummaryDealRecommendationMeritsItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxDealRecommendationMeritsDetails.getSelectedItem();
@@ -1340,7 +1339,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnNew_NewRisksAndMitigants(Event event) throws Exception {
+	public void onClick$btnNew_NewRisksAndMitigants(Event event) {
 		logger.debug("Entering");
 		RisksAndMitigants risksAndMitigants = new RisksAndMitigants();
 		risksAndMitigants.setNewRecord(true);
@@ -1369,7 +1368,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnNew_NewSanctionConditions(Event event) throws Exception {
+	public void onClick$btnNew_NewSanctionConditions(Event event) {
 		logger.debug("Entering");
 		SanctionConditions sanctionConditions = new SanctionConditions();
 		sanctionConditions.setNewRecord(true);
@@ -1401,7 +1400,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnNew_NewDealRecommendationMerits(Event event) throws Exception {
+	public void onClick$btnNew_NewDealRecommendationMerits(Event event) {
 		logger.debug("Entering");
 		DealRecommendationMerits dealRecommendationMerits = new DealRecommendationMerits();
 		dealRecommendationMerits.setNewRecord(true);
@@ -1685,7 +1684,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	public void onChangeStatus(ForwardEvent event) throws Exception {
+	public void onChangeStatus(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Combobox statusCombo = (Combobox) event.getOrigin().getTarget();
@@ -1695,7 +1694,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onChangeRemarks(ForwardEvent event) throws Exception {
+	public void onChangeRemarks(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Textarea remarksTextArea = (Textarea) event.getOrigin().getTarget();
@@ -1706,7 +1705,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onChangeComments(ForwardEvent event) throws Exception {
+	public void onChangeComments(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Textarea commentsTextArea = (Textarea) event.getOrigin().getTarget();
@@ -1717,133 +1716,134 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgBasicDetails(Event event) throws Exception {
+	public void onClick$imgBasicDetails(Event event) {
 		logger.debug("Entering");
 		gb_basicDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgBtDetails(Event event) throws Exception {
+	public void onClick$imgBtDetails(Event event) {
 		logger.debug("Entering");
 		gb_btDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgCustomerDetails(Event event) throws Exception {
+	public void onClick$imgCustomerDetails(Event event) {
 		logger.debug("Entering");
 		gb_customerDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgDueDiligence(Event event) throws Exception {
+	public void onClick$imgDueDiligence(Event event) {
 		logger.debug("Entering");
 		gb_dueDiligenceDetail.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgReferences(Event event) throws Exception {
+	public void onClick$imgReferences(Event event) {
 		logger.debug("Entering");
 		gb_references.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgSynopsisandpddetails(Event event) throws Exception {
+	public void onClick$imgSynopsisandpddetails(Event event) {
 		logger.debug("Entering");
 		gb_synopsisAndPdDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgDeviations(Event event) throws Exception {
+	public void onClick$imgDeviations(Event event) {
 		logger.debug("Entering");
 		gb_deviations.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgDealRecommendationMerits(Event event) throws Exception {
+	public void onClick$imgDealRecommendationMerits(Event event) {
 		logger.debug("Entering");
 		gb_dealRecommendationMeritsDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgSanctionConditions(Event event) throws Exception {
+	public void onClick$imgSanctionConditions(Event event) {
 		logger.debug("Entering");
 		gb_sanctionConditionsDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgRisksMigigants(Event event) throws Exception {
+	public void onClick$imgRisksMigigants(Event event) {
 		logger.debug("Entering");
 		gb_risksAndMitigants.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgInterfaces(Event event) throws Exception {
+	public void onClick$imgInterfaces(Event event) {
 		logger.debug("Entering");
 		gb_interfacesDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgScoring(Event event) throws Exception {
+	public void onClick$imgScoring(Event event) {
 		logger.debug("Entering");
 		gb_scoringDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgEligibility(Event event) throws Exception {
+	public void onClick$imgEligibility(Event event) {
 		logger.debug("Entering");
 		gb_eligibilityDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgRecommendations(Event event) throws Exception {
+	public void onClick$imgRecommendations(Event event) {
 		logger.debug("Entering");
 		gb_recommendationsDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgQueries(Event event) throws Exception {
+	public void onClick$imgQueries(Event event) {
 		logger.debug("Entering");
 		gb_queriesDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgConvents(Event event) throws Exception {
+	public void onClick$imgConvents(Event event) {
 		logger.debug("Entering");
 		gb_convenantsDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgDocumentCheckList(Event event) throws Exception {
+	public void onClick$imgDocumentCheckList(Event event) {
 		logger.debug("Entering");
 		gb_documentCheckListDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgCollateralDetails(Event event) throws Exception {
+	public void onClick$imgCollateralDetails(Event event) {
 		logger.debug("Entering");
 		gb_collateralDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgAssetDetails(Event event) throws Exception {
+	public void onClick$imgAssetDetails(Event event) {
 		logger.debug("Entering");
 		gb_assetDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgOtherDetails(Event event) throws Exception {
+	public void onClick$imgOtherDetails(Event event) {
 		logger.debug("Entering");
 		gb_otherDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgRecommendationNote(Event event) throws Exception {
+	public void onClick$imgRecommendationNote(Event event) {
 		logger.debug("Entering");
 		gb_recommendationNoteDetails.focus();
 		logger.debug("Leaving");
 	}
 
-	public void onClick$button_FinancialSummaryDailog_DelphiCheck(Event event) throws Exception {
+	public void onClick$button_FinancialSummaryDailog_DelphiCheck(Event event)
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		customerEligibiltyService.checkCustomerEligility(financeDetail);
 		setCustomerDialogCtrl(fetchCustomerDialogCtrl());
@@ -1854,8 +1854,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public CustomerDialogCtrl fetchCustomerDialogCtrl() throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public CustomerDialogCtrl fetchCustomerDialogCtrl()
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		CustomerDialogCtrl customerDialogCtrl = null;
 		if (getFinanceMainDialogCtrl().getClass().getMethod("getCustomerDialogCtrl") != null) {

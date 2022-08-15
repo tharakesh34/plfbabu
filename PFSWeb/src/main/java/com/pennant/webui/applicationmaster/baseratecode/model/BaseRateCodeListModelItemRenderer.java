@@ -66,7 +66,7 @@ public class BaseRateCodeListModelItemRenderer implements ListitemRenderer<BaseR
 	}
 
 	@Override
-	public void render(Listitem item, BaseRateCode baseRateCode, int count) throws Exception {
+	public void render(Listitem item, BaseRateCode baseRateCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(baseRateCode.getBRType());

@@ -35,6 +35,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -121,10 +122,8 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 	/**
 	 * Start the process
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btn_Start(Event event) throws Exception {
+	public void onClick$btn_Start(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		String monthEnd = doWriteComponentsToBean();
@@ -152,7 +151,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 			// Start amortization process
 			doStartCalAvgPOSProcess(monthEnd);
 
-		} catch (Exception e) {
+		} catch (AppException e) {
 
 			doReadOnly(false);
 			this.label_Status.setValue(Labels.getLabel("label_Failed_CalAvgPOS"));
@@ -208,9 +207,8 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 	/**
 	 * 
 	 * @param amzMonthEnd
-	 * @throws Exception
 	 */
-	public void doStartCalAvgPOSProcess(String amzMonthEnd) throws Exception {
+	public void doStartCalAvgPOSProcess(String amzMonthEnd) {
 		logger.debug(Literal.ENTERING);
 
 		// Application Deployment Date and AMZ Month End
@@ -227,7 +225,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 				this.label_Status.setValue(Labels.getLabel("label_NOFinances_CalAvgPOS"));
 			}
 		} else {
-			throw new Exception(Labels.getLabel("error.unhandled"));
+			throw new AppException(Labels.getLabel("error.unhandled"));
 		}
 
 		logger.debug("Leaving");
@@ -238,9 +236,8 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 	 * 
 	 * @param startDate
 	 * @param monthEndDate
-	 * @throws Exception
 	 */
-	private int processAmortizationUsingThreads(Date startDate, Date monthEndDate) throws Exception {
+	private int processAmortizationUsingThreads(Date startDate, Date monthEndDate) {
 		logger.debug("Entering");
 
 		int finListSize = 0;

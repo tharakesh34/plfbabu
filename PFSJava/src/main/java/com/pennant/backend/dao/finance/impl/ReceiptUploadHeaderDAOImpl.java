@@ -44,6 +44,7 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadLog;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -136,7 +137,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(", UploadProgress = ?");
 		sql.append(" Where UploadHeaderId = ?");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		int recordCount = jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 			int index = 1;
@@ -180,7 +181,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		try {
 			this.jdbcOperations.update(sql.toString(), new Object[] { receiptUploadHeader.getUploadHeaderId() });
 		} catch (DataAccessException e) {
-			logger.error(e);
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -195,7 +196,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where UploadHeaderId =?");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { uploadHeaderId }, (rs, rowNum) -> {
@@ -235,7 +236,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(" Set SuccessCount = ?,  FailedCount = ?, TotalRecords = ?");
 		sql.append(" Where UploadHeaderId = ?");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -254,7 +255,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(" Set UploadProgress = ? ");
 		sql.append(" Where UploadHeaderId = ?");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -272,7 +273,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(" From ReceiptUploadheader_view");
 		sql.append(" Where UploadHeaderId = ? and UploadProgress= ?");
 
-		logger.trace(Literal.SQL, sql);
+		logger.trace(Literal.SQL + sql);
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(),
@@ -289,7 +290,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 	public List<Long> getHeaderStatusCnt(long uploadHeaderId) {
 		String sql = "Select ReceiptId From  ReceiptUploadDetails Where UploadHeaderId = ?";
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, uploadHeaderId), (rs, rowNum) -> {
 			if (rs.getLong("ReceiptId") == 0)

@@ -28,7 +28,7 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, ReturnDataSet dataSet, int count) throws Exception {
+	public void render(Listitem item, ReturnDataSet dataSet, int count) {
 
 		if (item instanceof Listgroup) {
 			if (StringUtils.equals(PennantConstants.EVENTBASE, dataSet.getPostingGroupBy())) {

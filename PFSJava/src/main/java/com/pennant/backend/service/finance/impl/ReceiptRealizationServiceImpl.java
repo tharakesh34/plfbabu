@@ -1,13 +1,10 @@
 package com.pennant.backend.service.finance.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -180,13 +177,9 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
-	 * @throws AccountNotFoundException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";

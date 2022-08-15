@@ -68,7 +68,7 @@ public class DedupFieldsListModelItemRenderer implements ListitemRenderer<DedupF
 	}
 
 	@Override
-	public void render(Listitem item, DedupFields dedupFields, int count) throws Exception {
+	public void render(Listitem item, DedupFields dedupFields, int count) {
 
 		Listcell lc;
 		lc = new Listcell(dedupFields.getFieldName());

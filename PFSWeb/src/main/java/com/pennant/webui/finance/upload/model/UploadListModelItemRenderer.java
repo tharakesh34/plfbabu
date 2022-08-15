@@ -76,7 +76,7 @@ public class UploadListModelItemRenderer implements ListitemRenderer<UploadHeade
 	}
 
 	@Override
-	public void render(Listitem item, UploadHeader uploadHeader, int count) throws Exception {
+	public void render(Listitem item, UploadHeader uploadHeader, int count) {
 
 		((Listbox) item.getParent()).setMultiple(true);
 		Listcell lc;

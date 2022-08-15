@@ -117,10 +117,6 @@ public class ExtFinanceUploadService {
 		status = successRcdCount + " records has been processed out of " + rcdCount;
 
 		try {
-			System.out.println("======================        START     ==========================");
-			System.out.println("==================================================================");
-			System.out.println("----> START EXTENDED FINANCE UPLOAD  --------> :: "
-					+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 			POIFSFileSystem finFileSystem = new POIFSFileSystem(finInput);
 			@SuppressWarnings("resource")
 			HSSFWorkbook finWorkBook = new HSSFWorkbook(finFileSystem);
@@ -308,9 +304,6 @@ public class ExtFinanceUploadService {
 	public ExtFinanceData prepareExtFinanceData(HSSFRow finRow, ExtFinanceData extFinData) {
 		logger.debug("Entering");
 
-		System.out.println("----> START PREPARING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
-
 		BigDecimal decimal100 = BigDecimal.valueOf(100);
 		String strYES = "YES";
 
@@ -457,8 +450,7 @@ public class ExtFinanceUploadService {
 		extFinData.setExpRateAtGrcEnd(getDecimalValue(finRow.getCell(28)));
 
 		logger.debug("Leaving");
-		System.out.println("----> END SETTING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+
 		return extFinData;
 	}
 
@@ -470,9 +462,6 @@ public class ExtFinanceUploadService {
 	public ExtFinanceData validateExtFinanceData(ExtFinanceData extFinData, FinanceMain fm)
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-
-		System.out.println("----> START VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 
 		// Validate REFERENCE
 		if (extFinData.getFinReference() == null) {
@@ -692,8 +681,7 @@ public class ExtFinanceUploadService {
 		// Storing original finance main data to reset
 		oldFinMain = new FinanceMain();
 		BeanUtils.copyProperties(fm, oldFinMain);
-		System.out.println("----> END VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+
 		return extFinData;
 	}
 
@@ -909,8 +897,6 @@ public class ExtFinanceUploadService {
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		System.out.println("----> START VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		finType = getFinanceTypeDAO().getFinanceTypeByID(extFinData.getFinType(), "");
 		// Validate REFERENCE
 		if (extFinData.getFinReference() == null) {
@@ -1143,8 +1129,7 @@ public class ExtFinanceUploadService {
 		// Storing original finance main data to reset
 		oldFinMain = new FinanceMain();
 		BeanUtils.copyProperties(fm, oldFinMain);
-		System.out.println("----> END VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+
 		return extFinData;
 	}
 

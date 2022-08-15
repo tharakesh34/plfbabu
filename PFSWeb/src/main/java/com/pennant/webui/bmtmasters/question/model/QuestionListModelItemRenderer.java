@@ -67,7 +67,7 @@ public class QuestionListModelItemRenderer implements ListitemRenderer<Question>
 	}
 
 	@Override
-	public void render(Listitem item, Question question, int count) throws Exception {
+	public void render(Listitem item, Question question, int count) {
 
 		Listcell lc;
 		lc = new Listcell(question.getQuestionDesc());

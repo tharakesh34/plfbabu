@@ -115,12 +115,15 @@ public class FetchBlackListDetails {
 					if (address.getCustAddrPriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 						custAddress.append(address.getCustAddrHNbr()).append(", ");
 						custAddress.append(StringUtils.isNotBlank(address.getCustAddrStreet())
-								? address.getCustAddrStreet().concat(", ") : "");
+								? address.getCustAddrStreet().concat(", ")
+								: "");
 						if (ImplementationConstants.CUSTOM_BLACKLIST_PARAMS) {
 							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine2())
-									? address.getCustAddrLine2().concat(", ") : "");
+									? address.getCustAddrLine2().concat(", ")
+									: "");
 							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine1())
-									? address.getCustAddrLine1().concat(", ") : "");
+									? address.getCustAddrLine1().concat(", ")
+									: "");
 							custAddress.append(address.getLovDescCustAddrCityName()).append(", ");
 							custAddress.append(address.getLovDescCustAddrProvinceName()).append(", ");
 							custAddress.append(address.getLovDescCustAddrCountryName()).append(", ");
@@ -167,7 +170,6 @@ public class FetchBlackListDetails {
 			details = (ShowBlackListDetailBox) dataObject;
 
 			if (details != null) {
-				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
 				logger.debug("The User Action is " + details.getUserAction());
 				userAction = details.getUserAction();
 				setFinBlacklistCustomer((List<FinBlacklistCustomer>) details.getObject());

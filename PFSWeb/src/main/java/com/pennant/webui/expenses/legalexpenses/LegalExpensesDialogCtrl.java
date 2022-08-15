@@ -197,9 +197,8 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	 * selected LegalExpenses object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LegalExpensesDialog(Event event) throws Exception {
+	public void onCreate$window_LegalExpensesDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -328,10 +327,8 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 

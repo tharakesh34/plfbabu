@@ -10,6 +10,15 @@ public class SanctionCondition {
 
 	private boolean applicable = false;
 
+	public SanctionCondition copyEntity() {
+		SanctionCondition entity = new SanctionCondition();
+		entity.setFinReference(this.finReference);
+		entity.setCondition(this.condition);
+		entity.setStatus(this.status);
+		entity.setApplicable(this.applicable);
+		return entity;
+	}
+
 	public String getFinReference() {
 		return finReference;
 	}

@@ -61,7 +61,7 @@ public class CollateralStructureListModelItemRenderer implements ListitemRendere
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, CollateralStructure cs, int count) throws Exception {
+	public void render(Listitem item, CollateralStructure cs, int count) {
 
 		Listcell lc;
 

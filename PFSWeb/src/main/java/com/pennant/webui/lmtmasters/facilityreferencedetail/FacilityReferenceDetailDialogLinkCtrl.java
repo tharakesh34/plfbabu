@@ -167,10 +167,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	 * selected FacilityReferenceDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onCreate$window_FacilityReferenceDetailDialogLink(Event event) throws Exception {
+	public void onCreate$window_FacilityReferenceDetailDialogLink(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -532,9 +530,8 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFacilityReferenceDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(FacilityReferenceDetail aFacilityReferenceDetail) throws Exception {
+	public void doShowDialog(FacilityReferenceDetail aFacilityReferenceDetail) {
 		logger.debug("Entering");
 
 		/* fill the components with the data */
@@ -838,7 +835,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.facilityReferenceDetail);
 	}
 
@@ -1035,7 +1032,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 
 		}
 
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			logger.debug("onEvent()");
 			Checkbox checkbox = (Checkbox) event.getTarget();
 			switch (checkbox.getTabindex()) {

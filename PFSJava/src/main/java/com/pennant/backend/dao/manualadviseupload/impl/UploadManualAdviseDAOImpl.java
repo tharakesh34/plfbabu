@@ -11,6 +11,7 @@ import com.pennant.backend.dao.manualadviseupload.UploadManualAdviseDAO;
 import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -186,7 +187,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 				ps.setLong(1, uploadId);
 			});
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
 

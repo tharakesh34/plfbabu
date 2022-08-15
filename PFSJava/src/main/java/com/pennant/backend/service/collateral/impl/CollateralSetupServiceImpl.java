@@ -35,11 +35,13 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
@@ -71,6 +73,7 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.ScriptError;
@@ -171,18 +174,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
 	private CustomerAddresDAO customerAddresDAO;
+	private FinanceTypeDAO financeTypeDAO;
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * CollateralDetail/CollateralDetail_Temp by using CollateralDetailDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using CollateralDetailDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtCollateralDetail by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -3312,62 +3305,147 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		return cd;
 	}
 
+	@Override
+	public List<CollateralSetup> getCollateralSetupByCustomer(long custID, String finType) {
+		logger.debug(Literal.ENTERING);
+
+		List<CollateralSetup> csList = new ArrayList<>();
+
+		String collateralTypes = financeTypeDAO.getAllowedCollateralTypes(finType);
+
+		if (collateralTypes == null) {
+			logger.debug(Literal.LEAVING);
+			return csList;
+		}
+
+		/**
+		 * Fetch all the collaterals against to customer id from collateral setup setup.
+		 */
+		List<CollateralSetup> tempCSList = collateralSetupDAO.getCollateralSetupByCustomer(custID);
+
+		/**
+		 * Fetch all the collaterals against to customer id from collateral third party setup.
+		 */
+		List<CollateralSetup> thirdParyCSList = collateralSetupDAO.getCollateralSetupByReference(custID);
+
+		/**
+		 * Removing dublicate collaterals based on collateral reference.
+		 */
+		List<String> collateralRefs = new ArrayList<>();
+
+		tempCSList.stream().forEach(ca -> collateralRefs.add(ca.getCollateralType()));
+		
+		tempCSList.addAll(thirdParyCSList.stream().filter(ca -> !collateralRefs.contains(ca.getCollateralRef()))
+				.collect(Collectors.toList()));
+
+		if (tempCSList.isEmpty()) {
+			logger.debug(Literal.LEAVING);
+			return csList;
+		}
+
+		/**
+		 * Filter the Collateral setup's if the collateral type is not configured in Loan Type.
+		 */
+		tempCSList = tempCSList.stream().filter(ca -> collateralTypes.contains(ca.getCollateralType()))
+				.collect(Collectors.toList());
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		/**
+		 * Filter the Collateral setup's if the collateral is expired.
+		 */
+		tempCSList = tempCSList.stream()
+				.filter(ca -> (ca.getExpiryDate() == null || ca.getExpiryDate().compareTo(appDate) >= 0))
+				.collect(Collectors.toList());
+
+		/**
+		 * Filter the Collateral setup's based on the collateral type is opted for multi-assignment or not.
+		 * 
+		 * if not multi-assignment, check whether the collateral is already assigned or not
+		 */
+		tempCSList.forEach(ca -> {
+			if (ca.isMultiLoanAssignment()) {
+				csList.add(ca);
+			} else if (collateralSetupDAO.isNotAssigned(ca.getCollateralRef())) {
+				csList.add(ca);
+			}
+		});
+
+		logger.debug(Literal.LEAVING);
+		return csList;
+	}
+
+	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	@Autowired
 	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
 		this.collateralSetupDAO = collateralSetupDAO;
 	}
 
+	@Autowired
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
 	}
 
+	@Autowired
 	public void setCollateralThirdPartyDAO(CollateralThirdPartyDAO collateralThirdPartyDAO) {
 		this.collateralThirdPartyDAO = collateralThirdPartyDAO;
 	}
 
+	@Autowired
 	public void setCoOwnerDetailDAO(CoOwnerDetailDAO coOwnerDetailDAO) {
 		this.coOwnerDetailDAO = coOwnerDetailDAO;
 	}
 
+	@Autowired
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
+	@Autowired
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
 
+	@Autowired
 	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
 		this.finFlagDetailsDAO = finFlagDetailsDAO;
 	}
 
+	@Autowired
 	public void setFinanceCheckListReferenceDAO(FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
 		this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
 	}
 
+	@Autowired
 	public void setCityDAO(CityDAO cityDAO) {
 		this.cityDAO = cityDAO;
 	}
 
+	@Autowired
 	public void setCheckListDetailService(CheckListDetailService checkListDetailService) {
 		this.checkListDetailService = checkListDetailService;
 	}
 
+	@Autowired
 	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {
 		this.collateralStructureService = collateralStructureService;
 	}
 
+	@Autowired
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		this.currencyDAO = currencyDAO;
 	}
 
+	@Autowired
 	public void setDocumentTypeService(DocumentTypeService documentTypeService) {
 		this.documentTypeService = documentTypeService;
 	}
 
+	@Autowired
 	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
 	}
@@ -3388,76 +3466,99 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		this.coOwnerDetailsValidation = coOwnerDetailsValidation;
 	}
 
+	@Autowired
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
+	@Autowired
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
 
+	@Autowired
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
 
+	@Autowired
 	public void setPrimaryAccountDAO(PrimaryAccountDAO primaryAccountDAO) {
 		this.primaryAccountDAO = primaryAccountDAO;
 	}
 
+	@Autowired
 	public void setCustomerEmploymentDetailDAO(CustomerEmploymentDetailDAO customerEmploymentDetailDAO) {
 		this.customerEmploymentDetailDAO = customerEmploymentDetailDAO;
 	}
 
+	@Autowired
 	public void setCustEmployeeDetailDAO(CustEmployeeDetailDAO custEmployeeDetailDAO) {
 		this.custEmployeeDetailDAO = custEmployeeDetailDAO;
 	}
 
+	@Autowired
 	public void setIncomeDetailDAO(IncomeDetailDAO incomeDetailDAO) {
 		this.incomeDetailDAO = incomeDetailDAO;
 	}
 
+	@Autowired
 	public void setDirectorDetailDAO(DirectorDetailDAO directorDetailDAO) {
 		this.directorDetailDAO = directorDetailDAO;
 	}
 
+	@Autowired
 	public void setCustomerRatingDAO(CustomerRatingDAO customerRatingDAO) {
 		this.customerRatingDAO = customerRatingDAO;
 	}
 
+	@Autowired
 	public void setCustomerPhoneNumberDAO(CustomerPhoneNumberDAO customerPhoneNumberDAO) {
 		this.customerPhoneNumberDAO = customerPhoneNumberDAO;
 	}
 
+	@Autowired
 	public void setCustomerEMailDAO(CustomerEMailDAO customerEMailDAO) {
 		this.customerEMailDAO = customerEMailDAO;
 	}
 
+	@Autowired
 	public void setCustomerBankInfoDAO(CustomerBankInfoDAO customerBankInfoDAO) {
 		this.customerBankInfoDAO = customerBankInfoDAO;
 	}
 
+	@Autowired
 	public void setCustomerGstDetailDAO(CustomerGstDetailDAO customerGstDetailDAO) {
 		this.customerGstDetailDAO = customerGstDetailDAO;
 	}
 
+	@Autowired
 	public void setCustomerChequeInfoDAO(CustomerChequeInfoDAO customerChequeInfoDAO) {
 		this.customerChequeInfoDAO = customerChequeInfoDAO;
 	}
 
+	@Autowired
 	public void setExternalLiabilityDAO(ExternalLiabilityDAO externalLiabilityDAO) {
 		this.externalLiabilityDAO = externalLiabilityDAO;
 	}
 
+	@Autowired
 	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
 		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
 	}
 
+	@Autowired
 	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
 		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
 	}
 
+	@Autowired
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	@Autowired
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
 	}
 
 	public CollateralThirdPartyValidation getCollateralThirdPartyValidation() {

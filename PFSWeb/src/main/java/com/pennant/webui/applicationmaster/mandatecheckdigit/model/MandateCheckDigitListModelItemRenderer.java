@@ -67,7 +67,7 @@ public class MandateCheckDigitListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, MandateCheckDigit mandateCheckDigit, int count) throws Exception {
+	public void render(Listitem item, MandateCheckDigit mandateCheckDigit, int count) {
 
 		Listcell lc;
 		lc = new Listcell(PennantApplicationUtil.formateInt(mandateCheckDigit.getCheckDigitValue()));

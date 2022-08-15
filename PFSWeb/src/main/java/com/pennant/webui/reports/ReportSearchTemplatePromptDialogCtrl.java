@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReportGenerationPromptDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-09-2012   														*
- *                                                                  						*
- * Modified Date    :  23-09-2012      														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReportGenerationPromptDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-09-2012
+ * * * Modified Date : 23-09-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-09-2012         Pennant	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-09-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reports;
@@ -85,9 +67,8 @@ public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSear
 	 * On creating Window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReportSearchTemplateDialog(Event event) throws Exception {
+	public void onCreate$window_ReportSearchTemplateDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -110,9 +91,8 @@ public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSear
 	 * on Click button "btnSaveTemplate"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSaveTemplate(Event event) throws Exception {
+	public void onClick$btnSaveTemplate(Event event) {
 		logger.debug("Entering" + event.toString());
 		dosaveTemplateName();
 		logger.debug("Leaving" + event.toString());
@@ -120,11 +100,8 @@ public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSear
 
 	/**
 	 * This method calls reportGenerationPromptDialogCtrl's doSaveTemplate() method
-	 * 
-	 * @throws InterruptedException
-	 * @throws WrongValueException
 	 */
-	private void dosaveTemplateName() throws WrongValueException, InterruptedException {
+	private void dosaveTemplateName() {
 		logger.debug("Entering");
 		if (("").equals(this.templateName.getValue().trim())) {
 			throw new WrongValueException(this.templateName,
@@ -150,15 +127,14 @@ public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSear
 	 * on Closing window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_ReportSearchTemplateDialog(Event event) throws Exception {
+	public void onClose$window_ReportSearchTemplateDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.window_ReportSearchTemplateDialog.onClose();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	//Getters and Setters 
+	// Getters and Setters
 	public void setReportConfigurationService(ReportConfigurationService reportConfigurationService) {
 		this.reportConfigurationService = reportConfigurationService;
 	}

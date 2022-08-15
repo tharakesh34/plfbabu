@@ -101,9 +101,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRen
 	 * Method for creating window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ExtendedFieldCaptureDialog(Event event) throws Exception {
+	public void onCreate$window_ExtendedFieldCaptureDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_ExtendedFieldCaptureDialog);
@@ -183,7 +182,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRen
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 		generator.setWindow(this.window_ExtendedFieldCaptureDialog);
 		generator.setTabpanel(extendedFieldTabPanel);

@@ -45,7 +45,7 @@ public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> 
 	protected Grid grid_GrcDetails;
 	protected Grid grid_Installments;
 
-	//Basic Details
+	// Basic Details
 	protected Textbox finReference;
 	protected Textbox finStatus;
 	protected Textbox finType;
@@ -129,9 +129,8 @@ public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> 
 	 * selected FinanceProfitEnquiry object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinProfitEnquiryDialog(Event event) throws Exception {
+	public void onCreate$window_FinProfitEnquiryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -215,8 +214,7 @@ public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> 
 
 			list.add(financeSummary);
 			String userName = getUserWorkspace().getLoggedInUser().getUserName();
-			ReportsUtil.generatePDF("FinanceDetail", financeSummary, list, userName,
-					window_FinProfitEnquiryDialog);
+			ReportsUtil.generatePDF("FinanceDetail", financeSummary, list, userName, window_FinProfitEnquiryDialog);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -229,9 +227,8 @@ public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param FinanceProfitEnquiry
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(FinanceSummary financeSummary) throws InterruptedException {
+	public void doShowDialog(FinanceSummary financeSummary) {
 		logger.debug("Entering");
 		doReadOnly();
 		try {

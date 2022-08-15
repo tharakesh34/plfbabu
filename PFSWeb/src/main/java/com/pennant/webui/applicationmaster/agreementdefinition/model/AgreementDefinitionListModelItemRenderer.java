@@ -67,7 +67,7 @@ public class AgreementDefinitionListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, AgreementDefinition agreementDefinition, int count) throws Exception {
+	public void render(Listitem item, AgreementDefinition agreementDefinition, int count) {
 
 		Listcell lc;
 		lc = new Listcell(agreementDefinition.getAggCode());

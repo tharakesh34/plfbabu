@@ -5,6 +5,14 @@ public class VasCustomer {
 	private String custCIF;
 	private String custShrtName;
 
+	public VasCustomer copyEntity() {
+		VasCustomer entity = new VasCustomer();
+		entity.setCustomerId(this.customerId);
+		entity.setCustCIF(this.custCIF);
+		entity.setCustShrtName(this.custShrtName);
+		return entity;
+	}
+
 	public long getCustomerId() {
 		return customerId;
 	}

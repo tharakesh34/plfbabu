@@ -101,9 +101,8 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	 * selected Industry object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_IndustryDialog(Event event) throws Exception {
+	public void onCreate$window_IndustryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -352,9 +351,8 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aIndustry
-	 * @throws Exception
 	 */
-	public void doShowDialog(Industry aIndustry) throws Exception {
+	public void doShowDialog(Industry aIndustry) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -793,10 +791,8 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.industry);
 	}
 

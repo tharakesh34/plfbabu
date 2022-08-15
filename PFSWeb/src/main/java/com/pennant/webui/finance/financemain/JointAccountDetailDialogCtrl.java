@@ -155,9 +155,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_JointAccountDetailDialog(Event event) throws Exception {
+	public void onCreate$window_JointAccountDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -573,7 +572,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	}
 
-	public void onFinJointItemDoubleClicked(Event event) throws Exception {
+	public void onFinJointItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxJointAccountDetails.getSelectedItem();
@@ -759,9 +758,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Method for Uploading Agreement Details File
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onViewGurantorProofFile(ForwardEvent event) throws Exception {
+	public void onViewGurantorProofFile(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		String guarantorProofName = null;
 		byte[] guarantorProof = null;
@@ -818,7 +816,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onFinGurantorItemDoubleClicked(Event event) throws Exception {
+	public void onFinGurantorItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxGurantorsDetail.getSelectedItem();

@@ -199,9 +199,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	 * selected DirectorDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DirectorDetailDialog(Event event) throws Exception {
+	public void onCreate$window_DirectorDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -831,9 +830,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDirectorDetail
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(DirectorDetail aDirectorDetail) throws InterruptedException {
+	public void doShowDialog(DirectorDetail aDirectorDetail) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -2002,10 +2000,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.directorDetail);
 	}
 

@@ -171,14 +171,8 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	protected void doPrintResults() {
-		// super.doPrintResults();
-		try {
-			new PTListReportUtils(this.loanType.getValue() + "FinanceMain", super.searchObject,
-					this.pagingFinanceMainList.getTotalSize() + 1);
-		} catch (InterruptedException e) {
-			logger.error("Exception:", e);
-
-		}
+		new PTListReportUtils(this.loanType.getValue() + "FinanceMain", super.searchObject,
+				this.pagingFinanceMainList.getTotalSize() + 1);
 	}
 
 	/**
@@ -280,7 +274,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onFinanceMainItemDoubleClicked(Event event) throws Exception {
+	public void onFinanceMainItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.

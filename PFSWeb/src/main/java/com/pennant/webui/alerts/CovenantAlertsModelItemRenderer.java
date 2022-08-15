@@ -25,7 +25,7 @@ public class CovenantAlertsModelItemRenderer implements ListitemRenderer<Covenan
 	}
 
 	@Override
-	public void render(Listitem item, Covenant covenant, int index) throws Exception {
+	public void render(Listitem item, Covenant covenant, int index) {
 		Listcell lc;
 		lc = new Listcell(covenant.getKeyReference());
 		lc.setParent(item);

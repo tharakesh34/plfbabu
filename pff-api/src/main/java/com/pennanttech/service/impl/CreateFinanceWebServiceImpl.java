@@ -355,7 +355,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			valueParm[1] = "Zero";
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90281", valueParm);
 			String alterMessage = status.getReturnText();
-			System.out.println("Text is  :" + status.getReturnText());
 			status.setReturnText(alterMessage);
 			fd.setReturnStatus(status);
 			return fd;
@@ -975,7 +974,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 					fd.setReturnStatus(returnStatus);
 					return fd;
 				}
-			
+
 				fd.setFinReference(fm.getFinReference());
 				fd.setFinID(fm.getFinID());
 			}

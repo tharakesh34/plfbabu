@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		: SecurityGroupRightsDAOImpl.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-07-2011															*
- *                                                                  
- * Modified Date    :  10-08-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SecurityGroupRightsDAOImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-07-2011 *
+ * 
+ * Modified Date : 10-08-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.administration.impl;
@@ -63,6 +54,7 @@ import com.pennant.backend.model.administration.SecurityRight;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> implements SecurityGroupRightsDAO {
 	private static Logger logger = LogManager.getLogger(SecurityGroupRightsDAOImpl.class);
@@ -81,8 +73,7 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 	/**
 	 * This method selects the {@link List} of {@link SecurityGroupRights} from SecGroupRights
 	 * 
-	 * @param SecurityGroup
-	 *            (SecurityGroup)
+	 * @param SecurityGroup (SecurityGroup)
 	 * @returns {@link List} of {@link SecurityGroupRights}
 	 */
 	public List<SecurityGroupRights> getSecurityGroupRightsByGrpId(SecurityGroup securityGroup) {
@@ -104,8 +95,7 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 	/**
 	 * This method selects the {@link List} of {@link SecurityGroupRights} from SecGroupRights
 	 * 
-	 * @param SecurityGroup
-	 *            (SecurityGroup)
+	 * @param SecurityGroup (SecurityGroup)
 	 * @returns {@link List} of {@link SecurityGroupRights}
 	 */
 	public List<SecurityGroupRights> getSecurityGroupRightsByGrpId(long grpId) {
@@ -127,8 +117,7 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 	/**
 	 * This method saves new record into SecGroupRights table
 	 * 
-	 * @param securityGroupRights
-	 *            (SecurityGroupRights)
+	 * @param securityGroupRights (SecurityGroupRights)
 	 */
 	public void save(SecurityGroupRights securityGroupRights) {
 		logger.debug("Entering ");
@@ -151,8 +140,7 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 	/**
 	 * This method deletes the record from SecGroupRights where GrpID,RightID condition
 	 * 
-	 * @param securityGroupRights
-	 *            (SecurityGroupRights)
+	 * @param securityGroupRights (SecurityGroupRights)
 	 * @throws DataAccessException
 	 */
 	public void delete(SecurityGroupRights securityGroupRights) {
@@ -179,22 +167,13 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 	 * @return int
 	 */
 	public int getGroupIdCount(long groupId) {
-		int status;
 		logger.debug("Entering ");
 		Map<String, Long> namedParamters = Collections.singletonMap("GrpID", groupId);
 
 		String groupIdCountSql = "SELECT COUNT(*) FROM SecGroupRights_view where GrpID=:GrpID ";
 		logger.debug("getGroupIdCountSql: " + groupIdCountSql);
 
-		try {
-			status = this.jdbcTemplate.queryForObject(groupIdCountSql, namedParamters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			status = 0;
-		}
-
-		logger.debug("Leaving");
-		return status;
+		return this.jdbcTemplate.queryForObject(groupIdCountSql, namedParamters, Integer.class);
 	}
 
 	/**
@@ -203,22 +182,13 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 	 * @return int
 	 */
 	public int getRightIdCount(long rightID) {
-		int status;
 		logger.debug("Entering ");
 
 		Map<String, Long> namedParamters = Collections.singletonMap("RightID", rightID);
 		String righIdCountSql = "SELECT COUNT(*) FROM SecGroupRights_view where RightID=:RightID ";
 		logger.debug("selectSql: " + righIdCountSql);
 
-		try {
-			status = this.jdbcTemplate.queryForObject(righIdCountSql, namedParamters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			status = 0;
-		}
-
-		logger.debug("Leaving ");
-		return status;
+		return this.jdbcTemplate.queryForObject(righIdCountSql, namedParamters, Integer.class);
 	}
 
 	/**
@@ -278,13 +248,11 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 		RowMapper<SecurityGroupRights> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityGroupRights.class);
 
 		try {
-			secGroupRights = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			secGroupRights = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving ");
-		return secGroupRights;
 	}
 
 	@Override

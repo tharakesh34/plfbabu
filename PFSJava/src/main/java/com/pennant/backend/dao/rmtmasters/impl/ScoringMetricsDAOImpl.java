@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringMetricsDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-12-2011    														*
- *                                                                  						*
- * Modified Date    :  05-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringMetricsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-12-2011 * *
+ * Modified Date : 05-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -61,6 +43,7 @@ import com.pennant.backend.model.rmtmasters.ScoringMetrics;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ScoringMetrics model</b> class.<br>
@@ -77,10 +60,8 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 	/**
 	 * Fetch the Record Scoring Metrics Details details by key fields
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ScoringMetrics
 	 */
 	@Override
@@ -104,13 +85,11 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		RowMapper<ScoringMetrics> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringMetrics.class);
 
 		try {
-			scoringMetrics = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			scoringMetrics = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return scoringMetrics;
 	}
 
 	/**
@@ -143,10 +122,8 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 	 * This method Deletes the Record from the RMTScoringMetrics or RMTScoringMetrics_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Scoring Metrics Details by key ScoreGroupId and ScoringId
 	 * 
-	 * @param Scoring
-	 *            Metrics Details (scoringMetrics)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Scoring Metrics Details (scoringMetrics)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -197,10 +174,8 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 	 *
 	 * save Scoring Metrics Details
 	 * 
-	 * @param Scoring
-	 *            Metrics Details (scoringMetrics)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Scoring Metrics Details (scoringMetrics)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -230,10 +205,8 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 	 * This method updates the Record RMTScoringMetrics or RMTScoringMetrics_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Scoring Metrics Details by key ScoreGroupId and Version
 	 * 
-	 * @param Scoring
-	 *            Metrics Details (scoringMetrics)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Scoring Metrics Details (scoringMetrics)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

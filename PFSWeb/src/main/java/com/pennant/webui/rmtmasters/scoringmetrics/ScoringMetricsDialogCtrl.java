@@ -126,10 +126,9 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringMetrics> {
 	 * selected ScoringMetrics object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_ScoringMetricsDialog(Event event) throws Exception {
+	public void onCreate$window_ScoringMetricsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -379,9 +378,8 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringMetrics> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aScoringMetrics
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(ScoringMetrics aScoringMetrics) throws InterruptedException {
+	public void doShowDialog(ScoringMetrics aScoringMetrics) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -537,7 +535,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringMetrics> {
 			}
 			if (codevalue[i].contains(";")) {
 				String code = codevalue[i].substring(codevalue[i].indexOf('=') + 1, codevalue[i].indexOf(';'));
-				System.out.println("values " + code);
+
 				if (code.contains("'")) {
 					code = code.replace("'", "");
 				}
@@ -938,10 +936,8 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringMetrics> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();

@@ -14,7 +14,6 @@ import com.pennanttech.ws.model.customer.DocumentList;
 
 @Produces(MediaType.APPLICATION_JSON)
 public interface DocumentRestService {
-
 	@POST
 	@Path("/documentService/addDocument")
 	WSReturnStatus addDocument(DocumentDetails documentDetails);
@@ -25,6 +24,5 @@ public interface DocumentRestService {
 
 	@GET
 	@Path("/documentService/getDocuments/{finReferance}")
-	DocumentList getDocuments(@PathParam("finReferance") String finReferance) throws ServiceException;;
-
+	DocumentList getDocuments(@PathParam("finReferance") String finReferance) throws ServiceException;
 }

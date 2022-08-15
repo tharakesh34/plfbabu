@@ -24,6 +24,7 @@
  */
 package com.pennant.webui.collateral.collateralsetup;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -179,7 +180,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		super.pageRightName = "CoOwnerDetailDialog";
 	}
 
-	public void onCreate$window_CoOwnerDetailDialog(Event event) throws Exception {
+	public void onCreate$window_CoOwnerDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -318,10 +319,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 			ScreenCTL.displayNotes(getNotes("CoOwnerDetail", String.valueOf(getCoOwnerDetail().getCoOwnerId()),
@@ -704,9 +703,9 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 * Method for Uploading Proof Details File
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public void onUpload$btnUploadCoOwnerProof(UploadEvent event) throws Exception {
+	public void onUpload$btnUploadCoOwnerProof(UploadEvent event) throws IOException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
 

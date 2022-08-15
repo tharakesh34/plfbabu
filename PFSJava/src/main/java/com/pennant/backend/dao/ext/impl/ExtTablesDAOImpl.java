@@ -93,27 +93,22 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 
 		logger.debug("selectSql: " + builder.toString());
 
-		try {
+		this.jdbcTemplate.getJdbcOperations().execute(new CallableStatementCreator() {
+			public CallableStatement createCallableStatement(Connection con) throws SQLException {
+				CallableStatement cs = con.prepareCall(builder.toString());
+				cs.setString(1, tabdata);
+				cs.setString(2, ouptut);
+				cs.setString(3, messageReturn);
 
-			this.jdbcTemplate.getJdbcOperations().execute(new CallableStatementCreator() {
-				public CallableStatement createCallableStatement(Connection con) throws SQLException {
-					CallableStatement cs = con.prepareCall(builder.toString());
-					cs.setString(1, tabdata);
-					cs.setString(2, ouptut);
-					cs.setString(3, messageReturn);
+				return cs;
+			}
+		}, new CallableStatementCallback<Object>() {
+			public Object doInCallableStatement(CallableStatement cs) throws SQLException {
+				cs.execute();
+				return "";
+			}
+		});
 
-					return cs;
-				}
-			}, new CallableStatementCallback<Object>() {
-				public Object doInCallableStatement(CallableStatement cs) throws SQLException {
-					cs.execute();
-					return "";
-				}
-			});
-
-		} catch (Exception e) {
-			logger.info(e);
-		}
 		logger.debug("Leaving");
 		return "";
 	}

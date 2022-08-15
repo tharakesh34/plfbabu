@@ -41,6 +41,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>LegalExpenses model</b> class.<br>
@@ -97,10 +98,9 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 				return legal;
 			}, reference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -244,14 +244,6 @@ public class LegalExpensesDAOImpl extends SequenceDao<LegalExpenses> implements 
 		String sql = "Select sum(Amount) From FinLegalExpenses_Aview where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
-
 }

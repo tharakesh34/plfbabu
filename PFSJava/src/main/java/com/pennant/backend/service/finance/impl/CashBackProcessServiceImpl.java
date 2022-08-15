@@ -77,6 +77,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 
 public class CashBackProcessServiceImpl implements CashBackProcessService {
 	private static final Logger logger = LogManager.getLogger(CashBackProcessServiceImpl.class);
@@ -398,8 +399,8 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		serviceInstr.setAdviseId(cb.getAdviseId());
 		serviceInstr.setAdviseAmount(rcptAmt);
 
-		// Create Receipt Against Loan
-		FinanceDetail detail = receiptService.receiptTransaction(serviceInstr, FinServiceEvent.SCHDRPY);
+		serviceInstr.setReceiptPurpose(ReceiptPurpose.SCHDRPY.code());
+		FinanceDetail detail = receiptService.receiptTransaction(serviceInstr);
 		if (detail.getReturnStatus() != null) {
 			throw new AppException("AppException", detail.getReturnStatus().getReturnText());
 		}
@@ -778,8 +779,8 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		fsi.setReceiptDetail(rcd);
 		fsi.setExcldTdsCal(true);
 
-		// Create Receipt Against Loan
-		FinanceDetail detail = receiptService.receiptTransaction(fsi, FinServiceEvent.RESTRUCTURE);
+		fsi.setReceiptPurpose(ReceiptPurpose.RESTRUCTURE.code());
+		FinanceDetail detail = receiptService.receiptTransaction(fsi);
 		if (detail.getReturnStatus() != null) {
 			throw new AppException("AppException", detail.getReturnStatus().getReturnText());
 		}

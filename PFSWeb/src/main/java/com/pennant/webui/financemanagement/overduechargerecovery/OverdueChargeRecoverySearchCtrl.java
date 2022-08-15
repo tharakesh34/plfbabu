@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OverdueChargeRecoverySearchCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-05-2012    														*
- *                                                                  						*
- * Modified Date    :  11-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OverdueChargeRecoverySearchCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-05-2012 *
+ * * Modified Date : 11-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.financemanagement.overduechargerecovery;
 
 import java.util.ArrayList;
@@ -129,10 +111,9 @@ public class OverdueChargeRecoverySearchCtrl extends GFCBaseCtrl<OverdueChargeRe
 
 	/**
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_OverdueChargeRecoverySearch(Event event) throws Exception {
+	public void onCreate$window_OverdueChargeRecoverySearch(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -152,7 +133,7 @@ public class OverdueChargeRecoverySearchCtrl extends GFCBaseCtrl<OverdueChargeRe
 			this.overdueChargeRecoveryCtrl = null;
 		}
 
-		// DropDown ListBox	
+		// DropDown ListBox
 		this.sortOperator_finReference
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
 		this.sortOperator_finReference.setItemRenderer(new SearchOperatorListModelItemRenderer());
@@ -290,8 +271,7 @@ public class OverdueChargeRecoverySearchCtrl extends GFCBaseCtrl<OverdueChargeRe
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -300,7 +280,7 @@ public class OverdueChargeRecoverySearchCtrl extends GFCBaseCtrl<OverdueChargeRe
 	/**
 	 * Opens the SearchDialog window modal.
 	 */
-	private void showOverdueChargeRecoverySeekDialog() throws InterruptedException {
+	private void showOverdueChargeRecoverySeekDialog() {
 
 		try {
 			// open the dialog in modal mode

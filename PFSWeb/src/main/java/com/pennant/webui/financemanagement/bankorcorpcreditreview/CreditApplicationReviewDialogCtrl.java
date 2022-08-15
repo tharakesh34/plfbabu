@@ -113,10 +113,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	private static final long serialVersionUID = 8602015982512929710L;
 	private static final Logger logger = LogManager.getLogger(CreditApplicationReviewDialogCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	public Window window_CreditApplicationReviewDialog; // autowired
 
 	protected Borderlayout borderlayout_CreditApplicationReview;
@@ -137,102 +133,85 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	protected CurrencyBox marketPrice; // autowired
 	protected Combobox auditPeriod; // autowired
 	protected Decimalbox totLibAsstDiff; // autowired
-
 	protected Groupbox gb_CreditReviwDetails;
 	protected Tabbox tabBoxIndexCenter;
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Button btnCopyTo; // autowired
-
 	protected Listitem duplicateItem;
 	protected Grid grid_Basicdetails; // autoWired
 	protected Label label_CreditApplicationReviewDialog_BankName; // autowired
 	protected Space space_BankName; // autowired
 	protected Groupbox gb_basicDetails; // autowire
-
-	private CustomerDialogCtrl customerDialogCtrl;
-	protected JdbcSearchObject<Customer> newSearchObject;
-
-	// not auto wired vars
-	private FinCreditReviewDetails creditReviewDetails; // overhanded per param
-	private transient CreditApplicationReviewListCtrl creditApplicationReviewListCtrl; // overhanded per param
-	private transient CreditReviewSummaryData creditReviewSummaryData;
-	private Map<String, List<FinCreditReviewSummary>> creditReviewSummaryMap;
-	public List<CustomerDocument> custDocList;
-	public List<CustomerDocument> customerDocumentList = new ArrayList<CustomerDocument>();
-	public List<Notes> notesList = new ArrayList<Notes>();
-	public List<CreditReviewSubCtgDetails> creditReviewSubCtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
-	public CreditReviewSubCtgDetails creditReviewSubCtgDetailsHeaders = new CreditReviewSubCtgDetails();
-	Date date = DateUtility.getAppDate();
-
-	@SuppressWarnings("unused")
-	private boolean ratioFlag = false;
-
-	private transient BigDecimal totLiabilities = BigDecimal.ZERO;
-	private transient BigDecimal totAssets = BigDecimal.ZERO;
-
-	private transient boolean validationOn;
-
-	int prevAuditPeriod;
-
 	protected Button btnPrint; // autowire
-
-	protected Button button_addDetails;
-	protected Button btnSearchAccountSetCode; // autowire
-	// ServiceDAOs / Domain Classes
-	protected List<ValueLabel> listMainSubCategoryCodes = new ArrayList<ValueLabel>();
-	private transient CreditApplicationReviewService creditApplicationReviewService;
-	private transient FinCreditRevSubCategoryService finCreditRevSubCategoryService;
-	private transient CustomerDetailsService customerDetailsService;
-	private transient CustomerDocumentService customerDocumentService;
-	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
-	private List<FinCreditReviewSummary> creditReviewSummaryList = new ArrayList<FinCreditReviewSummary>();
-	private List<FinCreditRevCategory> listOfFinCreditRevCategory = null;
-	private Map<String, BigDecimal> curYearValuesMap = new HashMap<String, BigDecimal>();
-	private Map<String, BigDecimal> extValuesMap = new HashMap<String, BigDecimal>();
-	private Map<String, BigDecimal> prvYearValuesMap = null;
-	private Map<String, FinCreditReviewSummary> summaryMap = new HashMap<String, FinCreditReviewSummary>();
-	public List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory = null;
-	public List<FinCreditRevSubCategory> modifiedFinCreditRevSubCategoryList = new ArrayList<FinCreditRevSubCategory>();
-
-	private Customer customer = null;
-	private Map<String, BigDecimal> prv1YearValuesMap = null;
-
-	private String creditRevCode;
-	int listRows;
-	int currFormatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
-	String amtFormat = PennantApplicationUtil.getAmountFormate(currFormatter);
-	List<Filter> filterList = null;
-
-	private String AUDITUNAUDIT_LISTHEADER = "auditUnaudit";
 	protected Combobox auditType; // autowire
 	protected Radiogroup qualifiedUnQualified; // autowire
 	protected Radio qualRadio; // autowire
 	protected Radio unQualRadio; // autowire
 	protected Textbox lovDescFinCcyName; // autowire
 	protected ExtendedCombobox currencyType; // autowire
+	protected Button button_addDetails;
+	protected Button btnSearchAccountSetCode; // autowire
 
+	protected JdbcSearchObject<Customer> newSearchObject;
+	protected List<ValueLabel> listMainSubCategoryCodes = new ArrayList<ValueLabel>();
+
+	// not auto wired vars
+	private transient CreditApplicationReviewListCtrl creditApplicationReviewListCtrl; // overhanded per param
+	private CustomerDialogCtrl customerDialogCtrl;
+	public CreditReviewSubCtgDetails creditReviewSubCtgDetailsHeaders = new CreditReviewSubCtgDetails();
+	private FinCreditReviewDetails creditReviewDetails; // overhanded per param
+	private Customer customer = null;
+	private transient CreditReviewSummaryData creditReviewSummaryData;
+
+	public List<CustomerDocument> custDocList;
+	public List<CustomerDocument> customerDocumentList = new ArrayList<CustomerDocument>();
+	public List<Notes> notesList = new ArrayList<Notes>();
+	public List<CreditReviewSubCtgDetails> creditReviewSubCtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
+	public List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory = null;
+	public List<FinCreditRevSubCategory> modifiedFinCreditRevSubCategoryList = new ArrayList<FinCreditRevSubCategory>();
+	private List<FinCreditReviewSummary> creditReviewSummaryList = new ArrayList<FinCreditReviewSummary>();
+	private List<FinCreditRevCategory> listOfFinCreditRevCategory = null;
+
+	@SuppressWarnings("unused")
+	private boolean ratioFlag = false;
+	private transient BigDecimal totLiabilities = BigDecimal.ZERO;
+	private transient BigDecimal totAssets = BigDecimal.ZERO;
+	private transient boolean validationOn;
+
+	// ServiceDAOs / Domain Classes
+	private transient CreditApplicationReviewService creditApplicationReviewService;
+	private transient FinCreditRevSubCategoryService finCreditRevSubCategoryService;
+	private transient CustomerDetailsService customerDetailsService;
+	private transient CustomerDocumentService customerDocumentService;
 	private NotificationService notificationService;
 
+	private Map<String, List<FinCreditReviewSummary>> creditReviewSummaryMap;
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
+	private Map<String, BigDecimal> curYearValuesMap = new HashMap<String, BigDecimal>();
+	private Map<String, BigDecimal> extValuesMap = new HashMap<String, BigDecimal>();
+	private Map<String, BigDecimal> prvYearValuesMap = null;
+	private Map<String, FinCreditReviewSummary> summaryMap = new HashMap<String, FinCreditReviewSummary>();
+	private Map<String, BigDecimal> prv1YearValuesMap = null;
 	private Map<String, Object> engine = new HashMap<>();
 
-	/**
-	 * default constructor.<br>
-	 */
+	private String creditRevCode;
+	Date date = SysParamUtil.getAppDate();
+	int prevAuditPeriod;
+	int listRows;
+	int currFormatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
+	String amtFormat = PennantApplicationUtil.getAmountFormate(currFormatter);
+	List<Filter> filterList = null;
+
+	private String AUDITUNAUDIT_LISTHEADER = "auditUnaudit";
+
 	public CreditApplicationReviewDialogCtrl() {
 		super();
 	}
 
 	// Component Events
 
-	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected FinCreditReviewDetails object in a Map.
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onCreate$window_CreditApplicationReviewDialog(Event event) throws Exception {
+	public void onCreate$window_CreditApplicationReviewDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -297,11 +276,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * set default values zero for Extended Fields to remove exceptions in console and work performance
-	 * 
-	 * @return
-	 */
 	private Map<String, BigDecimal> setExtValuesMap() {
 		extValuesMap.put("EXT_CREDITTRANNO", BigDecimal.ZERO);
 		extValuesMap.put("EXT_CREDITTRANAMT", BigDecimal.ZERO);
@@ -334,9 +308,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		return extValuesMap;
 	}
 
-	/**
-	 * Set the properties of the fields, like maxLength.<br>
-	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
@@ -370,13 +341,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * User rights check. <br>
-	 * Only components are set visible=true if the logged-in <br>
-	 * user have the right for it. <br>
-	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
-	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
@@ -392,19 +356,13 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * when the "save" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$button_addDetails(Event event) throws Exception {
+	public void onClick$button_addDetails(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (tabBoxIndexCenter.getSelectedPanel() != null) {
 			if ((Listbox) tabBoxIndexCenter.getSelectedPanel().getFirstChild().getChildren().get(0) != null
@@ -427,7 +385,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void addDetails(FinCreditRevSubCategory aFinCreditRevSubCategory) throws InterruptedException {
+	public void addDetails(FinCreditRevSubCategory aFinCreditRevSubCategory) {
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finCreditRevSubCategory", aFinCreditRevSubCategory);
 		map.put("listOfFinCreditRevCategory", listOfFinCreditRevCategory);
@@ -445,67 +403,34 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 	}
 
-	/**
-	 * when the "edit" button is clicked. <br>
-	 * 
-	 * @param event
-	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug("Entering" + event.toString());
 		doEdit();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * when the "help" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_CreditApplicationReviewDialog);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * when the "delete" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * when the "cancel" button is clicked. <br>
-	 * 
-	 * @param event
-	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering" + event.toString());
 		doCancel();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * The Click event is raised when the Close Button control is clicked.
-	 * 
-	 * @param event An event sent to the event handler of a component.
-	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
 
-	/**
-	 * Cancel the actual operation. <br>
-	 * <br>
-	 * Resets to the original status.<br>
-	 * 
-	 */
 	private void doCancel() {
 		logger.debug("Entering");
 		doWriteBeanToComponents(this.creditReviewDetails.getBefImage());
@@ -513,13 +438,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		this.btnCtrl.setInitEdit();
 		logger.debug("Leaving");
 	}
-
-	/**
-	 * Writes the bean data to the components.<br>
-	 * 
-	 * @param aCreditReviewDetails (FinCreditReviewDetails)
-	 * @throws Exception
-	 */
 
 	public void doWriteBeanToComponents(FinCreditReviewDetails aCreditReviewDetails) {
 		logger.debug("Entering");
@@ -588,11 +506,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Writes the components values to the bean.<br>
-	 * 
-	 * @param aCreditReviewDetails
-	 */
 	public void doWriteComponentsToBean(FinCreditReviewDetails aCreditReviewDetails) {
 		logger.debug("Entering");
 		doSetLOVValidation();
@@ -752,15 +665,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Opens the Dialog window modal.
-	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
-	 * 
-	 * @param aCreditReviewDetails
-	 * @throws Exception
-	 */
-	public void doShowDialog(FinCreditReviewDetails aCreditReviewDetails) throws Exception {
+	public void doShowDialog(FinCreditReviewDetails aCreditReviewDetails) {
 		logger.debug("Entering");
 
 		if (customer != null) {
@@ -825,15 +730,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_CreditApplicationReviewDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Sets the Validation by setting the accordingly constraints to the fields.
-	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
@@ -869,9 +770,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Disables the Validation by setting empty constraints.
-	 */
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 		setValidationOn(false);
@@ -887,9 +785,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Sets the Validation by setting the accordingly constraints to the LOVFields.
-	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
 		this.custCIF.setConstraint(new PTStringValidator(
@@ -901,9 +796,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Disables the Validation by setting empty constraints to the LOVFields.
-	 */
 	private void doRemoveLOVValidation() {
 		logger.debug("Entering");
 		this.custCIF.setConstraint("");
@@ -912,9 +804,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Clear the Error Messages
-	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -931,9 +820,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for refreshing the list in ListCtrl
-	 */
 	protected void refreshList() {
 		getCreditApplicationReviewListCtrl().search();
 	}
@@ -949,9 +835,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Set the components for edit mode. <br>
-	 */
 	private void doEdit() {
 		logger.debug("Entering");
 
@@ -996,9 +879,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Set the components to ReadOnly. <br>
-	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.custCIF.setReadonly(true);
@@ -1028,9 +908,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Clears the components values. <br>
-	 */
 	public void doClear() {
 		logger.debug("Entering");
 
@@ -1047,12 +924,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
-	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final FinCreditReviewDetails aCreditReviewDetails = new FinCreditReviewDetails();
@@ -1121,16 +993,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Set the workFlow Details List to Object
-	 * 
-	 * @param aCreditReviewDetails (FinCreditReviewDetails)
-	 * 
-	 * @param tranType             (String)
-	 * 
-	 * @return boolean
-	 * 
-	 */
 	protected boolean doProcess(FinCreditReviewDetails aCreditReviewDetails, String tranType) {
 		logger.debug("Entering");
 
@@ -1215,16 +1077,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		return processCompleted;
 	}
 
-	/**
-	 * Get the result after processing DataBase Operations
-	 * 
-	 * @param auditHeader (AuditHeader)
-	 * 
-	 * @param method      (String)
-	 * 
-	 * @return boolean
-	 * 
-	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
@@ -1292,14 +1144,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	}
 
 	// WorkFlow Components
-
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aAcademic
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(FinCreditReviewDetails aCreditReviewDetails, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCreditReviewDetails.getBefImage(),
 				aCreditReviewDetails);
@@ -1307,11 +1151,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				aCreditReviewDetails.getUserDetails(), getOverideMap());
 	}
 
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1325,14 +1164,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Get the window for entering Notes
-	 * 
-	 * @param event (Event)
-	 * 
-	 * @throws Exception
-	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.creditReviewDetails);
 	}
 
@@ -1340,10 +1172,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	protected String getReference() {
 		return String.valueOf(this.creditReviewDetails.getDetailId());
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
@@ -1389,13 +1217,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		this.creditReviewSummaryList = creditReviewSummaryList;
 	}
 
-	/**
-	 * This method to read the list items and then add to the list.<br>
-	 * 
-	 * @return
-	 * @throws InterruptedException
-	 */
-	public void setListDetails(FinCreditReviewDetails finCreditReviewDetails) throws InterruptedException {
+	public void setListDetails(FinCreditReviewDetails finCreditReviewDetails) {
 		logger.debug("Entering");
 		boolean isNewSubCategory = false;
 		List<FinCreditReviewSummary> listOfCreditReviewSummary = new ArrayList<FinCreditReviewSummary>();
@@ -1497,13 +1319,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * when clicks on button "SearchFinCcy"
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onFulfill$currencyType(Event event) throws Exception {
+	public void onFulfill$currencyType(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		this.currencyType.setConstraint("");
@@ -1534,12 +1350,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
-	 * This method for setting the tabs according to the sheets we define.
-	 * 
-	 * @throws Exception
-	 */
-	public void setTabs() throws Exception {
+	public void setTabs() {
 		logger.debug("Entering");
 
 		this.tabpanelsBoxIndexCenter.setId("tabpanelsBoxIndexCenter");
@@ -1585,7 +1396,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	public void onSelectRatiosTab(ForwardEvent event) throws Exception {
+	public void onSelectRatiosTab(ForwardEvent event) {
 		logger.debug("Entering");
 		Tabpanel tabpanel;
 		String ratioPanelId = "tabPanel_"
@@ -1860,10 +1671,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 	}
 
-	/**
-	 * This method for building the listbox with dynamic headers.<br>
-	 * 
-	 */
 	public Listbox setListToTab(Tabpanel tabPanel, FinCreditRevCategory fcrc) {
 		logger.debug("Entering");
 
@@ -2071,13 +1878,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 	}
 
-	/**
-	 * onChange get the customer Details
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onChange$custCIF(Event event) throws Exception {
+	public void onChange$custCIF(Event event) {
 		logger.debug("Entering" + event.toString());
 		/*
 		 * this.custCIF.clearErrorMessage();
@@ -2096,25 +1897,12 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * Method for Calling list Of existed Customers
-	 * 
-	 * @param event
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
-	 */
 	public void onFulfill$custCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onload();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * To load the customerSelect filter dialog
-	 * 
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
-	 */
 	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -2128,13 +1916,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * To set the customer id from Customer filter
-	 * 
-	 * @param nCustomer
-	 * @throws Exception
-	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws Exception {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
@@ -2329,16 +2111,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * This Method for rendering
-	 * 
-	 * @param categoryId
-	 * @param listbox
-	 * @throws Exception
-	 */
-
 	@SuppressWarnings("unused")
-	public void render(FinCreditRevCategory fcrc, Listbox listbox) throws Exception {
+	public void render(FinCreditRevCategory fcrc, Listbox listbox) {
 		logger.debug("Entering");
 
 		Listitem item = null;
@@ -2365,11 +2139,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method to add a new SubCategory
-	 * 
-	 * @param event
-	 */
 	public void onClick$addNewRecord(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem oldItem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
@@ -2385,10 +2154,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 
 	}
-
-	/**
-	 * Method for getting new Record
-	 */
 
 	public Listitem getNewItem(FinCreditRevSubCategory finCreditRevSubCategory, Listitem oldItem, boolean isEdit) {
 		logger.debug("Leaving");
@@ -2518,13 +2283,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		return newItem;
 	}
 
-	/**
-	 * onClick$removeRecord Event For Removing New Item from List box
-	 * 
-	 * @throws Exception
-	 */
-
-	public void onClick$removeRecord(ForwardEvent event) throws Exception {
+	public void onClick$removeRecord(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		Listitem oldItem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
@@ -2541,11 +2300,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * Method for getting listbox with newly calculated values
-	 * 
-	 * @param listbox
-	 */
 	public void getListboxDetails(Listbox listbox) {
 		logger.debug("Entering");
 
@@ -2671,11 +2425,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method For Removing FinCreditSubCategory From FinCreditSubCategoryList
-	 * 
-	 * @param aFinCreditRevSubCategory
-	 */
 	public void removeRecordFromFinSubCategoryList(FinCreditRevSubCategory aFinCreditRevSubCategory) {
 		logger.debug("Entering");
 
@@ -2722,11 +2471,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		return listbox;
 	}
 
-	/**
-	 * Method to save a new Sub Category Code
-	 * 
-	 * @param event
-	 */
 	public void onClick$btnForSave(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem listitem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
@@ -2884,12 +2628,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * 
-	 * @param finCreditRevSubCategory
-	 * @param listbox
-	 * @param oldListItem
-	 */
 	public void fillRenderer(FinCreditRevSubCategory finCreditRevSubCategory, Listbox listbox, Listitem oldListItem,
 			boolean isNewRecord, String categoryDesc) {
 		logger.debug("Entering");
@@ -3175,10 +2913,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		getListItemsDisabled(listbox, false);
 	}
 
-	/**
-	 * 
-	 * @param event
-	 */
 	public void onClick$editRecord(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
@@ -3252,7 +2986,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onAddListitem(ForwardEvent event) throws Exception {
+	public void onAddListitem(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		Listitem listitemOld = (Listitem) event.getOrigin().getTarget().getParent().getParent();
@@ -3287,13 +3021,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * This method for set the data according to the formulae.<br>
-	 * 
-	 * @param listItem
-	 * @throws Exception
-	 */
-	public void setData(Map<String, BigDecimal> dataMap) throws Exception {
+	public void setData(Map<String, BigDecimal> dataMap) {
 		logger.debug("Entering");
 
 		engine.put("EXCHANGE", this.conversionRate.getValue());
@@ -3378,13 +3106,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		return formatedFormula;
 	}
 
-	/**
-	 * This Method/Event is for calculating values
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onChange$auditedValue(ForwardEvent event) throws Exception {
+	public void onChange$auditedValue(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		Listbox listbox = (Listbox) event.getOrigin().getTarget().getAttribute("ListBoxdata");
@@ -3430,13 +3152,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 	}
 
-	/**
-	 * This Method/Event is change the conversion Rate
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onChange$conversionRate(ForwardEvent event) throws Exception {
+	public void onChange$conversionRate(ForwardEvent event) {
 		logger.debug(event + "Entering");
 		doClearMessage();
 
@@ -3457,7 +3173,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug(event + "Leaving");
 	}
 
-	public void refreshTabs() throws Exception {
+	public void refreshTabs() {
 
 		creditReviewSubCtgDetailsList.clear();
 		if (this.conversionRate.getValue().compareTo(BigDecimal.ZERO) == 0) {
@@ -3640,7 +3356,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/*
 	 * Double Clicked Event For SubCategory Item
 	 */
-	public void onSubCategoryItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onSubCategoryItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected Academic object
 		final Listitem item = (Listitem) event.getOrigin().getTarget();

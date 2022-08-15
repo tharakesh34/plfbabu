@@ -99,9 +99,8 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	 * selected Department object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DepartmentDialog(Event event) throws Exception {
+	public void onCreate$window_DepartmentDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -340,9 +339,8 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDepartment
-	 * @throws Exception
 	 */
-	public void doShowDialog(Department aDepartment) throws Exception {
+	public void doShowDialog(Department aDepartment) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -763,10 +761,8 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.department);
 	}
 

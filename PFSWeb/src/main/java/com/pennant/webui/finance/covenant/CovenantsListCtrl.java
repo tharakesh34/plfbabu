@@ -173,7 +173,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	// Component Events
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$covenantListWindow(ForwardEvent event) throws Exception {
+	public void onCreate$covenantListWindow(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(covenantListWindow);
@@ -663,7 +663,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		doSave();
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financedetail.getFinScheduleData().getFinanceMain());
 	}
 
@@ -1075,7 +1075,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	}
 
-	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnFileUpload(UploadEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (config == null) {

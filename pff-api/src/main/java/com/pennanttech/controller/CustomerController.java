@@ -2026,10 +2026,9 @@ public class CustomerController extends GenericService<Object> {
 	 * This method for set the data according to the formulae.<br>
 	 * 
 	 * @param listItem
-	 * @throws Exception
 	 */
 	public void setData(Map<String, BigDecimal> dataMap, FinCreditReviewDetails finCreditReviewDetails,
-			List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory, Map<String, Object> engine) throws Exception {
+			List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory, Map<String, Object> engine) {
 		logger.debug(Literal.ENTERING);
 
 		engine.put("EXCHANGE", finCreditReviewDetails.getConversionRate());

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProvinceDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProvinceDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified Date
+ * : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -63,6 +45,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -80,10 +63,8 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	/**
 	 * Fetch the Record Province details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Province
 	 */
 	public Province getProvinceById(final String cPCountry, String cPProvince, String type) {
@@ -126,10 +107,8 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	 * This method Deletes the Record from the RMTCountryVsProvince or RMTCountryVsProvince_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Province by key CPCountry
 	 * 
-	 * @param Province
-	 *            (province)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Province (province)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -164,10 +143,8 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	 * 
 	 * save Province
 	 * 
-	 * @param Province
-	 *            (province)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Province (province)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -203,10 +180,8 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	 * This method updates the Record RMTCountryVsProvince or RMTCountryVsProvince_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update Province by key CPCountry and Version
 	 * 
-	 * @param Province
-	 *            (province)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Province (province)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -242,10 +217,8 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	/**
 	 * Fetch the count of system default values by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Gender
 	 */
 	@Override
@@ -262,17 +235,13 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(province);
-		String dftCPProvince = "";
+
 		try {
-			dftCPProvince = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			dftCPProvince = "";
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
 		}
-
-		logger.debug(Literal.LEAVING);
-		return dftCPProvince;
-
 	}
 
 	@Override
@@ -353,53 +322,31 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	public int getBusinessAreaCount(String businessAreaValue, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From RMTCountryVsProvince");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BusinessArea = :BusinessArea");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BusinessArea", businessAreaValue);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
 	public int geStateCodeCount(String taxStateCode, String cpProvince, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(TaxStateCode) From RMTCountryVsProvince");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where TaxStateCode = :TaxStateCode And CPPROVINCE <> :CPPROVINCE");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TaxStateCode", taxStateCode);
 		source.addValue("CPPROVINCE", cpProvince);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -416,11 +363,9 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cPProvince }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	private class ProvinceRowMapper implements RowMapper<Province> {

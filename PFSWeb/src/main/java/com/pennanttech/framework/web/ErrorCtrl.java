@@ -45,11 +45,9 @@ public class ErrorCtrl extends GenericForwardComposer<Component> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 * @throws Exception
+	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_ErrorDialog(Event event) throws Exception {
+	public void onCreate$window_ErrorDialog(Event event) {
 		panel.setTitle(App.NAME);
 		message.setValue(AppException.getDefaultMessage().concat("\n\n"));
 

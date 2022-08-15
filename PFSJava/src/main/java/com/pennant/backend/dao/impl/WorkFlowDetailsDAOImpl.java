@@ -36,6 +36,7 @@ package com.pennant.backend.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -46,10 +47,13 @@ import org.springframework.jdbc.core.RowMapper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.ExecutionError;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> implements WorkFlowDetailsDAO {
 	private static Logger logger = LogManager.getLogger(WorkFlowDetailsDAOImpl.class);
@@ -73,8 +77,8 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 	public WorkFlowDetails getWorkFlowDetailsByID(long workFlowID) {
 		try {
 			return workflowCache.get(workFlowID);
-		} catch (Exception e) {
-			//
+		} catch (ExecutionException | UncheckedExecutionException | ExecutionError e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return loadWorkFlowDetails(workFlowID);
@@ -89,10 +93,9 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new WorklowDetailsRM(), workFlowID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType, boolean api) {
@@ -104,10 +107,9 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new WorklowDetailsRM(), workFlowType, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public List<WorkFlowDetails> getActiveWorkFlowDetails() {
@@ -174,11 +176,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 	}
 
 	public void clearWorkflowCache(long id) {
-		try {
-			workflowCache.invalidate(String.valueOf(id));
-		} catch (Exception ex) {
-			logger.warn("Exception: ", ex);
-		}
+		workflowCache.invalidate(String.valueOf(id));
 	}
 
 	@Override
@@ -187,13 +185,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, workFlowId, 1);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Long.class, workFlowId, 1);
 	}
 
 	@Override
@@ -205,10 +197,9 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		try {
 			return this.jdbcOperations.queryForObject(sql, Integer.class, workFlowId, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -78,12 +77,7 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 		RowMapper<PaymentRecoveryDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
 
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
-		return null;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -105,12 +99,7 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 		RowMapper<PaymentRecoveryDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
 
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
-		return null;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -126,11 +115,6 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 		RowMapper<PaymentRecoveryDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
 
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
-		return null;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 }

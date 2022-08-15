@@ -2,12 +2,14 @@ package com.pennant.backend.dao.finance.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.finance.PricingDetailDAO;
 import com.pennant.backend.model.finance.PricingDetail;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class PricingDetailDAOImpl extends SequenceDao<PricingDetail> implements PricingDetailDAO {
 
@@ -31,10 +33,9 @@ public class PricingDetailDAOImpl extends SequenceDao<PricingDetail> implements 
 
 		try {
 			return jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 }

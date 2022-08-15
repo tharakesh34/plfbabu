@@ -139,9 +139,8 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReScheduleDialog(Event event) throws Exception {
+	public void onCreate$window_ReScheduleDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -185,9 +184,8 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinScheduleData aFinScheduleData) throws Exception {
+	public void doShowDialog(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 
 		try {
@@ -198,8 +196,6 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_ReScheduleDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
 
 		logger.debug("Leaving");

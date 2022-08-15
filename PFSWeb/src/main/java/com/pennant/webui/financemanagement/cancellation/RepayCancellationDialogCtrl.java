@@ -132,9 +132,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * selected RepayCancellation object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_RepayCancellationDialog(Event event) throws Exception {
+	public void onCreate$window_RepayCancellationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -232,9 +231,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRepayCancel(Event event) throws Exception {
+	public void onClick$btnRepayCancel(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		boolean recSave = false;
@@ -312,9 +310,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinanceDetail afinanceDetail) throws Exception {
+	public void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -392,11 +389,9 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
@@ -718,9 +713,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeMain);
 	}
 

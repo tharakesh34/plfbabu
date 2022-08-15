@@ -56,6 +56,33 @@ public class BaseRate extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public BaseRate copyEntity() {
+		BaseRate entity = new BaseRate();
+		entity.setBRType(this.bRType);
+		entity.setLovDescBRTypeName(this.lovDescBRTypeName);
+		entity.setCurrency(this.currency);
+		entity.setBREffDate(this.bREffDate);
+		entity.setLastMdfDate(this.lastMdfDate);
+		entity.setBRRate(this.bRRate);
+		entity.setDelExistingRates(this.delExistingRates);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setbRTypeIsActive(this.bRTypeIsActive);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public BaseRate(String id) {
 		super();
 		this.setId(id);

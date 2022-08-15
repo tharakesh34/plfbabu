@@ -68,7 +68,7 @@ public class CustomerIdentityListModelItemRenderer implements ListitemRenderer<C
 	}
 
 	@Override
-	public void render(Listitem item, CustomerIdentity customerIdentity, int count) throws Exception {
+	public void render(Listitem item, CustomerIdentity customerIdentity, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(String.valueOf(customerIdentity.getLovDescCustCIF())));

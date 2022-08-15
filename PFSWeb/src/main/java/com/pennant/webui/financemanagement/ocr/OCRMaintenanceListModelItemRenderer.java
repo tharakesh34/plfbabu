@@ -16,7 +16,7 @@ public class OCRMaintenanceListModelItemRenderer implements ListitemRenderer<Fin
 	private static final long serialVersionUID = -8480551675388111310L;
 
 	@Override
-	public void render(Listitem item, FinOCRHeader finOCRHeader, int index) throws Exception {
+	public void render(Listitem item, FinOCRHeader finOCRHeader, int index) {
 
 		Listcell lc;
 		lc = new Listcell(finOCRHeader.getFinReference());

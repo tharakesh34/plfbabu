@@ -128,9 +128,8 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 * selected CustomerAdditionalDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerAdditionalDetailDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerAdditionalDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -404,9 +403,8 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerAdditionalDetail
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerAdditionalDetail aCustomerAdditionalDetail) throws InterruptedException {
+	public void doShowDialog(CustomerAdditionalDetail aCustomerAdditionalDetail) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -896,11 +894,8 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 
 	/**
 	 * To load the customerSelect filter dialog
-	 * 
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	private void onLoad() throws SuspendNotAllowedException, InterruptedException {
+	private void onLoad() {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 
@@ -966,10 +961,8 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerAdditionalDetail);
 
 	}

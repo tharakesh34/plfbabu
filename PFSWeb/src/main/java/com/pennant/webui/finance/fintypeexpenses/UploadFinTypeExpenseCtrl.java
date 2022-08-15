@@ -1,11 +1,13 @@
 package com.pennant.webui.finance.fintypeexpenses;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +51,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -91,9 +94,8 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinTypeExpenseUpload(Event event) throws Exception {
+	public void onCreate$window_FinTypeExpenseUpload(Event event) {
 		// Store the before image.
 		UploadHeader uploadHeader = new UploadHeader();
 		BeanUtils.copyProperties(this.uploadHeader, uploadHeader);
@@ -226,9 +228,8 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * where we go the wrong data
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnUpload(UploadEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		this.txtFileName.setText("");
@@ -279,9 +280,8 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
 	 * 
 	 * @return String
-	 * @throws Exception
 	 */
-	private List<UploadFinTypeExpense> processUploadDetails(long uploadId) throws Exception {
+	private List<UploadFinTypeExpense> processUploadDetails(long uploadId) {
 		logger.debug("Entering");
 
 		List<UploadFinTypeExpense> uploadDetails = new ArrayList<UploadFinTypeExpense>();
@@ -512,9 +512,8 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * when the "refresh" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doResetData();
@@ -545,9 +544,8 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doValidations();
@@ -602,7 +600,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() throws IOException, DataFormatException {
 		logger.debug(Literal.ENTERING);
 
 		String tranType;
@@ -621,7 +619,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 
 				if (!keys.contains("Loan Type") || !keys.contains("Expense Type Code") || !keys.contains("Amount")
 						|| !keys.contains("Percentage (%)")) {
-					throw new Exception(
+					throw new AppException(
 							"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
 				}
 

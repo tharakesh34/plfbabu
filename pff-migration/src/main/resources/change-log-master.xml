@@ -37,6 +37,7 @@
 	<include file="change-logs/change-log-db-cleanup.xml" /> 
 	<include file="change-logs/change-log-otp.xml" />
 	<include file="change-logs/change-log-kinara.xml" />
+	<include file="change-logs/change-log-db-cleanup.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
 	
 </databaseChangeLog>

@@ -155,9 +155,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * selected Securityoperations object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$win_Operation_Roles_Dialog(Event event) throws Exception {
+	public void onCreate$win_Operation_Roles_Dialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -263,10 +262,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 	/**
 	 * Opens the Dialog window modal.
-	 * 
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering ");
 		doSetPanelProperties();
 
@@ -714,9 +711,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when "reset" button is clicked
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		logger.debug("Entering " + event.toString());
 		this.listbox_UnAssignedRoles.getItems().clear();
 		refreshListBox(getUnAssigneListWrapper(), new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
@@ -729,9 +725,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when clicks on "btn_SearchUnAssignedRoles"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btn_SearchRoles(Event event) throws Exception {
+	public void onClick$btn_SearchRoles(Event event) {
 		logger.debug("Entering " + event.toString());
 		doSetPanelProperties();
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -773,9 +768,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when clicks on "btnSelectRoles"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSelectRoles(Event event) throws Exception {
+	public void onClick$btnSelectRoles(Event event) {
 		logger.debug(event.toString());
 		setAssignedRoles();
 
@@ -785,10 +779,9 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when clicks on "btnUnSelectRoles"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 
-	public void onClick$btnUnSelectRoles(Event event) throws Exception {
+	public void onClick$btnUnSelectRoles(Event event) {
 		logger.debug(event.toString());
 		setUnAssignedRoles();
 
@@ -798,10 +791,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when clicks on "btnUnSelectRoles"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onClick$btnUnSelectAllRoles(Event event) throws Exception {
+	public void onClick$btnUnSelectAllRoles(Event event) {
 		logger.debug(event.toString());
 		if (this.listbox_AssignedRoles.getItemCount() > 0) {
 			this.listbox_AssignedRoles.setMultiple(true);
@@ -894,9 +885,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * This method is forwarded from the listBoxes item renderer. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSecurityRoleItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onSecurityRoleItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering ");
 		this.panel_OperationRoleGroups.setOpen(true);
 		doShowRoleGroups(event);
@@ -905,10 +895,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 	/**
 	 * This method display the list of groups Assigned to selected role
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void doShowRoleGroups(ForwardEvent event) throws InterruptedException {
+	public void doShowRoleGroups(ForwardEvent event) {
 
 		logger.debug("Entering ");
 
@@ -943,9 +931,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * This method is forwarded from the listBoxes item renderer. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSecurityGroupItemDoubleClicked(Event event) throws Exception {
+	public void onSecurityGroupItemDoubleClicked(Event event) {
 		logger.debug("Entering " + event.toString());
 		this.panel_SecurityGroupRights.setOpen(true);
 		doShowGroupsRights();
@@ -954,10 +941,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 	/**
 	 * This method display the list of rights assigned to selected group.
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void doShowGroupsRights() throws InterruptedException {
+	public void doShowGroupsRights() {
 
 		logger.debug("Entering ");
 
@@ -999,7 +984,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityOperationRoles oprRoles, int count) throws Exception {
+		public void render(Listitem item, SecurityOperationRoles oprRoles, int count) {
 
 			Listcell listCell;
 
@@ -1024,7 +1009,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityRoleGroups roleGroups, int count) throws Exception {
+		public void render(Listitem item, SecurityRoleGroups roleGroups, int count) {
 
 			Listcell listCell;
 
@@ -1049,7 +1034,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityGroupRights groupRights, int count) throws Exception {
+		public void render(Listitem item, SecurityGroupRights groupRights, int count) {
 
 			Listcell listCell;
 
@@ -1156,10 +1141,8 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.securityOperation);
 	}
 

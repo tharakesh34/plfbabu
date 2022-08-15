@@ -43,6 +43,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -88,13 +89,11 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 		RowMapper<City> typeRowMapper = BeanPropertyRowMapper.newInstance(City.class);
 
 		try {
-			city = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			city = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return city;
 	}
 
 	/**
@@ -249,27 +248,15 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 	public int getPCProvinceCount(String pcProvince, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(*) from RMTProvinceVsCity");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where PCProvince = :PCProvince");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PCProvince", pcProvince);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override

@@ -104,9 +104,8 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ChangeProfitDialog(Event event) throws Exception {
+	public void onCreate$window_ChangeProfitDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -147,9 +146,8 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinScheduleData aFinScheduleData) throws Exception {
+	public void doShowDialog(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 		try {
 			// fill the components with the data

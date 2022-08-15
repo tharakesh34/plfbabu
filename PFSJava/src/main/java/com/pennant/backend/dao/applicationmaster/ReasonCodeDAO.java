@@ -15,31 +15,14 @@
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReasionCodeDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-12-2017    														*
- *                                                                  						*
- * Modified Date    :  19-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReasionCodeDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-12-2017 * * Modified Date
+ * : 19-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-12-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-12-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster;
 
 import java.util.List;
@@ -53,10 +36,8 @@ public interface ReasonCodeDAO extends BasicCrudDao<ReasonCode> {
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
-	 * @param id
-	 *            id of the ReasionCode.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param id        id of the ReasionCode.
+	 * @param tableType The type of the table.
 	 * @return ReasionCode
 	 */
 	ReasonCode getReasonCode(long id, String type);
@@ -83,7 +64,11 @@ public interface ReasonCodeDAO extends BasicCrudDao<ReasonCode> {
 	boolean isreasonTypeIDExists(long rTypeCode);
 
 	List<ReasonCode> getReasonDetails(String reasonTypeCode);
-	
+
 	ReasonCode getReasonCode(long id, String reasontypeCode, String type);
+
+	public ReasonCode getReasonCode(long id);
+
+	public String getReasonTypeCode(long id);
 
 }

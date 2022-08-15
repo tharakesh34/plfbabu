@@ -151,7 +151,7 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 		getPagedListWrapper().initList(menuItemFinalList, listBoxMenuRoles, pagingMenuRolesList);
 	}
 
-	public void onClick$btnDownload(Event event) throws Exception {
+	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -352,7 +352,7 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, MenuItem menuItem, int count) throws Exception {
+		public void render(Listitem item, MenuItem menuItem, int count) {
 
 			Listcell lc;
 

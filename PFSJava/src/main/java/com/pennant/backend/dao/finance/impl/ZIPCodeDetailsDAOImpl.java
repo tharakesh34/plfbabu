@@ -12,6 +12,7 @@ import com.pennant.backend.dao.finance.ZIPCodeDetailsDAO;
 import com.pennant.backend.model.finance.ZIPCodeDetails;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class ZIPCodeDetailsDAOImpl extends BasicDao<ZIPCodeDetails> implements ZIPCodeDetailsDAO {
 
@@ -47,14 +48,10 @@ public class ZIPCodeDetailsDAOImpl extends BasicDao<ZIPCodeDetails> implements Z
 		RowMapper<ZIPCodeDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(ZIPCodeDetails.class);
 
 		try {
-			zIPCodeDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			zIPCodeDetails = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return zIPCodeDetails;
-
 	}
-
 }

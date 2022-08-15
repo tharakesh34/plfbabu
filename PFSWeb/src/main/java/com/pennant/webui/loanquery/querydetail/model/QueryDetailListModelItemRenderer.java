@@ -66,7 +66,7 @@ public class QueryDetailListModelItemRenderer implements ListitemRenderer<QueryD
 	}
 
 	@Override
-	public void render(Listitem item, QueryDetail queryDetail, int count) throws Exception {
+	public void render(Listitem item, QueryDetail queryDetail, int count) {
 
 		Listcell lc;
 

@@ -18,7 +18,6 @@ public class Item implements Serializable {
 	}
 
 	public Item(String stringJSON) {
-		System.out.println("hi");
 		this.item = stringJSON;
 	}
 

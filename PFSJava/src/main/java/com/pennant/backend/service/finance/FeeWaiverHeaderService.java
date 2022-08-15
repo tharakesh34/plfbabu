@@ -67,7 +67,7 @@ public interface FeeWaiverHeaderService {
 
 	AuditHeader delete(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader auditHeader) throws Exception;
+	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
 

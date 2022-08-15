@@ -139,9 +139,8 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * selected ErrorDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ErrorDetailDialog(Event event) throws Exception {
+	public void onCreate$window_ErrorDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -245,9 +244,8 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnDelete(Event event) throws Exception {
+	public void onClick$btnDelete(Event event) {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
@@ -257,9 +255,8 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -310,10 +307,8 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.errorDetail);
 
 	}
@@ -600,7 +595,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		getErrorDetailListCtrl().search();
 	}
 
-	private void doDelete() throws Exception {
+	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		final ErrorDetail aErrorDetail = new ErrorDetail();
@@ -627,11 +622,9 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 		final ErrorDetail aErrorDetail = new ErrorDetail();
 		BeanUtils.copyProperties(getErrorDetail(), aErrorDetail);
@@ -702,8 +695,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * @return boolean
 	 * 
 	 */
-
-	protected boolean doProcess(ErrorDetail aErrorDetail, String tranType) throws Exception {
+	protected boolean doProcess(ErrorDetail aErrorDetail, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		aErrorDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

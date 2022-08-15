@@ -29,7 +29,7 @@ public class ExceptionLogCtrl extends GFCBaseCtrl<DataEngineLog> {
 	protected List<DataEngineLog> list;
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window(Event event) throws Exception {
+	public void onCreate$window(Event event) {
 		logger.debug("Entering" + event.toString());
 		setPageComponents(window);
 
@@ -50,9 +50,8 @@ public class ExceptionLogCtrl extends GFCBaseCtrl<DataEngineLog> {
 	 * When user clicks on "Close"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (preview) {
 			this.window.onClose();
@@ -68,7 +67,7 @@ public class ExceptionLogCtrl extends GFCBaseCtrl<DataEngineLog> {
 	 */
 	public class ExceptionLogListModelItemRenderer implements ListitemRenderer<DataEngineLog> {
 
-		public void render(Listitem item, DataEngineLog deLog, int count) throws Exception {
+		public void render(Listitem item, DataEngineLog deLog, int count) {
 			Listcell lc;
 
 			lc = new Listcell(String.valueOf(deLog.getId()));

@@ -125,9 +125,8 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	 * selected WeekendMaster object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_WeekendMasterDialog(Event event) throws Exception {
+	public void onCreate$window_WeekendMasterDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -389,9 +388,8 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aWeekendMaster
-	 * @throws Exception
 	 */
-	public void doShowDialog(WeekendMaster aWeekendMaster) throws Exception {
+	public void doShowDialog(WeekendMaster aWeekendMaster) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -781,7 +779,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		logger.debug("Leaving ");
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.weekendMaster);
 	}
 
@@ -814,7 +812,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		}
 
 		@Override
-		public void render(Listitem item, ValueLabel valueLabel, int count) throws Exception {
+		public void render(Listitem item, ValueLabel valueLabel, int count) {
 			Listcell lc;
 			Checkbox checkbox = new Checkbox();
 			checkbox.setValue(valueLabel.getValue());
@@ -840,7 +838,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		}
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			logger.debug("onEvent()");
 			Checkbox checkbox = (Checkbox) event.getTarget();
 			if (checkbox.isChecked()) {

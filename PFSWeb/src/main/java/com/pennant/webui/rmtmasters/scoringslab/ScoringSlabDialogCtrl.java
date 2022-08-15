@@ -101,9 +101,8 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * selected ScoringSlab object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ScoringSlabDialog(Event event) throws Exception {
+	public void onCreate$window_ScoringSlabDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -329,9 +328,8 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aScoringSlab
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(ScoringSlab aScoringSlab) throws InterruptedException {
+	public void doShowDialog(ScoringSlab aScoringSlab) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -680,10 +678,8 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.scoringSlab);
 
 	}

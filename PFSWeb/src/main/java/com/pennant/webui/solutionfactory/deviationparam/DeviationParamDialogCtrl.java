@@ -136,9 +136,8 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 	 * selected DeviationParam object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DeviationParamDialog(Event event) throws Exception {
+	public void onCreate$window_DeviationParamDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -269,10 +268,8 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 

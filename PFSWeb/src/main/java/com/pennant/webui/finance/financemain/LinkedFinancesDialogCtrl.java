@@ -24,6 +24,7 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -164,10 +165,9 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_LinkedFinancesDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_LinkedFinancesDialog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -293,9 +293,8 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		doSave();
 	}
 
@@ -307,10 +306,8 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	 * when the "link" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnLink() throws Exception {
+	public void onClick$btnLink() {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -393,9 +390,8 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	 * when the "remove" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRemove() throws Exception {
+	public void onClick$btnRemove() {
 		logger.debug(Literal.ENTERING);
 
 		doRemove();
@@ -403,7 +399,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnAdd() throws Exception {
+	public void onClick$btnAdd() {
 		logger.debug(Literal.ENTERING);
 
 		if (!this.listBoxLinkedFinances.getSelectedItems().isEmpty()) {
@@ -415,7 +411,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doLink(LinkedFinances linkedFinance) throws Exception {
+	public void doLink(LinkedFinances linkedFinance) {
 		logger.debug(Literal.ENTERING);
 
 		Listitem listitem = new Listitem();
@@ -439,7 +435,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doRemove() throws Exception {
+	public void doRemove() {
 		logger.debug(Literal.ENTERING);
 
 		if (!this.listBoxLinkedFinances.getSelectedItems().isEmpty()) {
@@ -469,7 +465,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doAdd() throws Exception {
+	public void doAdd() {
 		logger.debug(Literal.ENTERING);
 
 		for (Listitem listitem : this.listBoxLinkedFinances.getSelectedItems()) {
@@ -496,9 +492,8 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param LinkedFinances LinkedFinances
-	 * @throws Exception
 	 */
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail) throws Exception {
+	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		if (StringUtils.isNotEmpty(moduleDefiner)) {
@@ -623,9 +618,8 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param LinkedFinances
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(FinanceDetail financeDetail) throws Exception {
+	public void doWriteComponentsToBean(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -655,9 +649,12 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aLinkedFinances
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void doShowDialog(FinanceDetail aFinanceDetail) throws Exception {
+	public void doShowDialog(FinanceDetail aFinanceDetail)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug(Literal.ENTERING);
 
 		FinScheduleData finScheduleData = aFinanceDetail.getFinScheduleData();
@@ -697,8 +694,6 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		} catch (UiException e) {
 			logger.error(Literal.EXCEPTION, e);
 			this.window_LinkedFinancesDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
 
 		if (StringUtils.isEmpty(moduleDefiner)) {
@@ -819,12 +814,9 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
-	 * 
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		final FinMaintainInstruction finMainInst = new FinMaintainInstruction();
@@ -1087,7 +1079,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		return processCompleted;
 	}
 
-	public void doSaveLinkedFinances(FinanceDetail financeDetail) throws Exception {
+	public void doSaveLinkedFinances(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		doWriteComponentsToBean(financeDetail);

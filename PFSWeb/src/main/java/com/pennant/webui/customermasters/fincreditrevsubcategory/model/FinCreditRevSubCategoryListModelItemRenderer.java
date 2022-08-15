@@ -67,7 +67,7 @@ public class FinCreditRevSubCategoryListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, FinCreditRevSubCategory finCreditRevSubCategory, int count) throws Exception {
+	public void render(Listitem item, FinCreditRevSubCategory finCreditRevSubCategory, int count) {
 		Listcell lc;
 		lc = new Listcell(finCreditRevSubCategory.getRecordStatus());
 		lc.setParent(item);

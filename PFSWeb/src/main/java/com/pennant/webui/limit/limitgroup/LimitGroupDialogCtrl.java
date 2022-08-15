@@ -181,9 +181,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	 * selected LimitGroup object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LimitGroupDialog(Event event) throws Exception {
+	public void onCreate$window_LimitGroupDialog(Event event) {
 		logger.debug("Entring" + event.toString());
 		try {
 			setPageComponents(window_LimitGroupDialog);
@@ -316,7 +315,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	 * 
 	 * @param event
 	 */
-	public void onSelect$groupOf(ForwardEvent event) throws Exception {
+	public void onSelect$groupOf(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		if (groupOf.getSelectedItem() != null && (StringUtils.equals(LimitConstants.LIMIT_GROUP_LINE,
@@ -423,10 +422,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	 * To add row
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnAddLimitLine(ForwardEvent event) throws Exception {
+	public void onClick$btnAddLimitLine(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		doAddRow();
@@ -437,10 +434,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	 * To add row
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnAddGroup(ForwardEvent event) throws Exception {
+	public void onClick$btnAddGroup(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		doAddRow();
@@ -881,7 +876,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		getLimitGroupListCtrl().search();
 	}
 
-	public void doAddRow() throws InterruptedException {
+	public void doAddRow() {
 		logger.debug("Entering");
 
 		// Group Code
@@ -932,7 +927,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	private class AssignedLimitGroupItemListModelItemRenderer implements ListitemRenderer<LimitGroupLines> {
 
 		@Override
-		public void render(Listitem item, LimitGroupLines limitGroupItems, int count) throws Exception {
+		public void render(Listitem item, LimitGroupLines limitGroupItems, int count) {
 			logger.debug("Entering");
 			Listcell lc;
 			Combobox limitGroupCode = new Combobox();

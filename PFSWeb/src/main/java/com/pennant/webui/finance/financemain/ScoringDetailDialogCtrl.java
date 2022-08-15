@@ -1,46 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceMainDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceMainDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -55,7 +38,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
-import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
@@ -188,9 +170,12 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onCreate$window_ScoringDetailDialog(Event event) throws Exception {
+	public void onCreate$window_ScoringDetailDialog(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -220,11 +205,12 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            financeMain
-	 * @throws Exception
+	 * @param aFinanceMain financeMain
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 
 		FinanceMain main = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -257,7 +243,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		logger.debug("Leaving");
 	}
 
-	public void fillFinCustScoring() throws InterruptedException {
+	public void fillFinCustScoring() {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -297,34 +283,32 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 * Method for Executing Finance Scoring Details List
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnScoringGroup(Event event) throws Exception {
+	public void onClick$btnScoringGroup(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 		doExecuteScoring(true);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doExecuteScoring(boolean isUserAction) throws Exception {
+	public void doExecuteScoring(boolean isUserAction)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		if (getFinanceDetail() != null) {
 			boolean custValidated = true;
 			if (!isWIF) {
-				try {
-					custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doCustomerValidation")
-							.invoke(getFinanceMainDialogCtrl());
-					setFinanceDetail((FinanceDetail) getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail")
-							.invoke(getFinanceMainDialogCtrl()));
-					custValidated = (Boolean) getFinanceMainDialogCtrl().getClass()
-							.getMethod("doExtendedDetailsValidation").invoke(getFinanceMainDialogCtrl());
-					custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doPSLDetailsValidation")
-							.invoke(getFinanceMainDialogCtrl());
-				} catch (Exception e) {
-					if (e.getCause().getClass().equals(WrongValuesException.class)) {
-						throw e;
-					}
-					logger.error("Exception: ", e);
-				}
+				custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doCustomerValidation")
+						.invoke(getFinanceMainDialogCtrl());
+				setFinanceDetail((FinanceDetail) getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail")
+						.invoke(getFinanceMainDialogCtrl()));
+				custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doExtendedDetailsValidation")
+						.invoke(getFinanceMainDialogCtrl());
+				custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doPSLDetailsValidation")
+						.invoke(getFinanceMainDialogCtrl());
+
 				// Prepare Data for Rule Executions
 				try {
 					Object object = getFinanceMainDialogCtrl().getClass()
@@ -353,7 +337,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		}
 	}
 
-	private void executeScore() throws InterruptedException {
+	private void executeScore() {
 		logger.debug(" Entering ");
 		this.listBoxRetailScoRef.getItems().clear();
 		this.listBoxFinancialScoRef.getItems().clear();
@@ -376,16 +360,12 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	/**
 	 * Method to fill list box in Scoring Group Tab <br>
 	 * 
-	 * @param financeReferenceDetail
-	 *            (List<FinanceReferenceDetail>)
-	 * @param listbox
-	 *            (Listbox)
-	 * @param execute
-	 *            (boolean)
-	 * @throws InterruptedException
+	 * @param financeReferenceDetail (List<FinanceReferenceDetail>)
+	 * @param listbox                (Listbox)
+	 * @param execute                (boolean)
 	 */
 	public void doFillRetailScoringListbox(List<FinanceReferenceDetail> financeReferenceDetail, Listbox listbox,
-			boolean isExecute) throws InterruptedException {
+			boolean isExecute) {
 		logger.debug("Entering");
 
 		this.label_TotalScore.setVisible(false);
@@ -428,7 +408,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 					header = new FinanceScoreHeader();
 				}
 
-				addListGroup("", listbox, PennantConstants.PFF_CUSTCTG_INDIV, finrefdet);//, header.isOverride()
+				addListGroup("", listbox, PennantConstants.PFF_CUSTCTG_INDIV, finrefdet);// , header.isOverride()
 
 				totalGrpMaxScore = BigDecimal.ZERO;
 				totalGrpExecScore = BigDecimal.ZERO;
@@ -472,7 +452,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 				totalClientExecScore = totalClientExecScore.add(totalGrpExecScore);
 			}
 
-			//Score Card preparation as Per Calculation Formula
+			// Score Card preparation as Per Calculation Formula
 			totalClientExecScore = totalClientExecScore.add(new BigDecimal(206));
 			totalClientExecScore = new BigDecimal(100)
 					.add(totalClientExecScore.subtract(new BigDecimal(100)).multiply(BigDecimal.valueOf(1.875)));
@@ -500,9 +480,8 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 * Method for Filling Corporate Scoring Details
 	 * 
 	 * @param isExecute
-	 * @throws InterruptedException
 	 */
-	private void doFillCorpScoringMetricDetails(boolean isExecute) throws InterruptedException {
+	private void doFillCorpScoringMetricDetails(boolean isExecute) {
 		logger.debug("Entering");
 		BigDecimal obligorScore = BigDecimal.ZERO;
 		List<FinanceScoreHeader> finScoreHeaderList = getFinanceDetail().getFinScoreHeaderList();
@@ -601,7 +580,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 			}
 
 			this.maxFinTotScore.setValue(totalFinScore);
-			//totalNFRuleScore = BigDecimal.ZERO;
+			// totalNFRuleScore = BigDecimal.ZERO;
 			this.listBoxNonFinancialScoRef.getItems().clear();
 			BigDecimal totalNonFinScore = BigDecimal.ZERO;
 
@@ -644,14 +623,14 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 			this.maxNonFinTotScore.setValue(totalNonFinScore);
 			//
 
-			//Set Total Calculated Score Result
+			// Set Total Calculated Score Result
 			// BigDecimal totScore = totalExecScore.add(totalNFRuleScore);
 			BigDecimal totScore = totalExecScore;
 			this.calTotScore.setValue(totScore);
 
 			this.totalCorpScore.setValue(String.valueOf(totScore));
 
-			//Credit Worth based on OBLIGOR Risk Grade Score
+			// Credit Worth based on OBLIGOR Risk Grade Score
 			BigDecimal totalScore = this.maxFinTotScore.getValue().add(this.maxNonFinTotScore.getValue());
 			if (totalScore.compareTo(new BigDecimal(0)) > 0) {
 				obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100)))
@@ -840,13 +819,13 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 			dupIntbox.setValue(orgNFRuleScore);
 		}
 
-		//Set Total Calculated Score Result
+		// Set Total Calculated Score Result
 		BigDecimal totScore = totalExecScore.add(totalNFRuleScore);
 		this.calTotScore.setValue(totScore);
 
 		this.totalCorpScore.setValue(String.valueOf(totScore));
 
-		//Credit Worth based on OBLIGOR Risk Grade Score
+		// Credit Worth based on OBLIGOR Risk Grade Score
 		BigDecimal totalScore = this.maxFinTotScore.getValue().add(this.maxNonFinTotScore.getValue());
 		BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100)))
 				.divide(totalScore, 2, RoundingMode.HALF_DOWN);
@@ -883,12 +862,12 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		logger.debug("Entering" + event.toString());
 
 		List<FinanceScoreHeader> finScoreHeaderList = getFinanceDetail().getFinScoreHeaderList();
-		//Set Total Calculated Score Result
+		// Set Total Calculated Score Result
 		BigDecimal totScore = totalExecScore.add(totalNFRuleScore);
 
 		this.totalCorpScore.setValue(String.valueOf(totScore));
 
-		//Credit Worth based on OBLIGOR Risk Grade Score
+		// Credit Worth based on OBLIGOR Risk Grade Score
 		BigDecimal totalScore = this.maxFinTotScore.getValue().add(this.maxNonFinTotScore.getValue());
 		BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100)))
 				.divide(totalScore, 2, RoundingMode.HALF_DOWN);
@@ -987,10 +966,9 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 * 
 	 * @param scoringMetric
 	 * @param listbox
-	 * @throws InterruptedException
 	 */
 	private void addListFooter(BigDecimal totalMaxGrpScore, BigDecimal totalExecGrpScore, Listbox listbox,
-			String creditWorth, String ctgType, long grpId) throws InterruptedException {
+			String creditWorth, String ctgType, long grpId) {
 		logger.debug("Entering");
 
 		Listgroupfoot listgroupfoot = new Listgroupfoot();
@@ -1033,7 +1011,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		if ("I".equals(ctgType)) {
 			label.setId(grpId + "_TS");
 		}
-		//	}
+		// }
 		listgroupfoot.appendChild(cell);
 
 		listbox.appendChild(listgroupfoot);
@@ -1067,7 +1045,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 						}
 					}
 					code = String.valueOf(RuleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap, null,
-							RuleReturnType.INTEGER)); //FIXME Code should be checked
+							RuleReturnType.INTEGER)); // FIXME Code should be checked
 				}
 
 				if (new BigDecimal(code.trim()).compareTo(max) > 0) {
@@ -1082,15 +1060,11 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	/**
 	 * Method to show the credit worthiness in Scoring Tab *
 	 * 
-	 * @param refId
-	 *            (long)
-	 * @param grpTotalScore
-	 *            (int)
+	 * @param refId         (long)
+	 * @param grpTotalScore (int)
 	 * @return String
-	 * @throws InterruptedException
 	 */
-	private String getScrSlab(long refId, BigDecimal grpTotalScore, String execCreditWorth, boolean isRetail)
-			throws InterruptedException {
+	private String getScrSlab(long refId, BigDecimal grpTotalScore, String execCreditWorth, boolean isRetail) {
 		logger.debug("Entering");
 		List<ScoringSlab> slabList = getFinanceDetail().getScoringSlabs().get(refId);
 		String creditWorth = "None";
@@ -1217,7 +1191,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 					header.setOverrideScore(this.overrideScore.intValue());
 				}
 
-				//Credit Worth based on OBLIGOR Risk Grade Score
+				// Credit Worth based on OBLIGOR Risk Grade Score
 				BigDecimal totalScore = this.maxFinTotScore.getValue().add(this.maxNonFinTotScore.getValue());
 				BigDecimal obligorScore = (new BigDecimal(this.totalCorpScore.getValue()).multiply(new BigDecimal(100)))
 						.divide(totalScore, 2, RoundingMode.HALF_DOWN);
@@ -1237,7 +1211,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 							scoreDetail = new FinanceScoreDetail();
 							scoreDetail.setRuleId(metric.getScoringId());
 							scoreDetail.setSubGroupId(finMetric.getScoringId());
-							scoreDetail.setMaxScore(metric.getLovDescMetricMaxPoints());//getMaxMetricScore(metric.getLovDescSQLRule())
+							scoreDetail.setMaxScore(metric.getLovDescMetricMaxPoints());// getMaxMetricScore(metric.getLovDescSQLRule())
 							scoreDetail.setCategoryType(finMetric.getCategoryType());
 							scoreDetail.setSubGrpCodeDesc(finMetric.getLovDescScoringCodeDesc());
 							scoreDetail.setRuleCode(metric.getLovDescScoringCode());
@@ -1301,7 +1275,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 				financeDetail.getScoreDetailListMap());
 		aFinanceDetail.setSufficientScore(sufficientScore);
 
-		//Score Card preparation as Per Calculation Formula
+		// Score Card preparation as Per Calculation Formula
 		totalCheckScore = totalCheckScore.add(new BigDecimal(206));
 		totalCheckScore = new BigDecimal(100)
 				.add(totalCheckScore.subtract(new BigDecimal(100)).multiply(BigDecimal.valueOf(1.875)));

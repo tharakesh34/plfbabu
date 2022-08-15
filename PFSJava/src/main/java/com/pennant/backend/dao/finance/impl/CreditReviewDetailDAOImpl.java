@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,8 +21,10 @@ import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.ExtBreDetails;
 import com.pennant.backend.model.finance.ExtCreditReviewConfig;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> implements CreditReviewDetailDAO {
@@ -59,10 +62,9 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 				return crd;
 			}, creditReviewDetail.getEligibilityMethod());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -99,11 +101,9 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 				return crd;
 			}, finID, templateName);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
-
 	}
 
 	@Override
@@ -190,8 +190,8 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 			jdbcOperations.update(sql.toString(), ps -> {
 				ps.setLong(1, finID);
 			});
-		} catch (Exception e) {
-			//
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -290,10 +290,9 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		RowMapper<ExtBreDetails> rowMapper = BeanPropertyRowMapper.newInstance(ExtBreDetails.class);
 		try {
 			return jdbcTemplate.queryForObject(sql, source, rowMapper);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 }

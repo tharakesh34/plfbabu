@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.RescheduleLogHeader;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> implements ReschedulReportGenerationDAO {
@@ -82,10 +83,9 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 				return rl;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new RescheduleLog();
 		}
-
-		return new RescheduleLog();
 	}
 
 	@Override
@@ -311,10 +311,9 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 				return fpd;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

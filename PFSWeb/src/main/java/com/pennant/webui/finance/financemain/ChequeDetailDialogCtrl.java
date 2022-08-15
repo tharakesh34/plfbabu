@@ -209,10 +209,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_ChequeDetailDialog(Event event) throws Exception {
+	public void onCreate$window_ChequeDetailDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -915,10 +914,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aChequeDetail
-	 * @throws ParseException
 	 */
-	public ArrayList<WrongValueException> doWriteComponentsToBean(ChequeHeader chequeHeader, boolean isGenarate)
-			throws ParseException {
+	public ArrayList<WrongValueException> doWriteComponentsToBean(ChequeHeader chequeHeader, boolean isGenarate) {
 		logger.debug(Literal.LEAVING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -1206,11 +1203,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws ParseException
+	 * Saves the components to table.
 	 */
-	public void doSave_PDC(FinanceDetail financeDetail, String finReference) throws ParseException {
+	public void doSave_PDC(FinanceDetail financeDetail, String finReference) {
 		logger.debug(Literal.ENTERING);
 
 		ChequeHeader aChequeHeader = new ChequeHeader();
@@ -1749,10 +1744,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * 
 	 * @param chequeDetails
 	 * @param validate
-	 * @throws ParseException
 	 */
-	private ArrayList<WrongValueException> validateChequeDetails(List<ChequeDetail> chequeDetails, boolean validate)
-			throws ParseException {
+	private ArrayList<WrongValueException> validateChequeDetails(List<ChequeDetail> chequeDetails, boolean validate) {
 		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
@@ -1964,7 +1957,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChangeEmiDate(Event event) throws Exception {
+	public void onChangeEmiDate(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		@SuppressWarnings("unchecked")
@@ -2086,10 +2079,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * 
 	 * @param listbox
 	 * @param chequeHeader
-	 * @throws ParseException
 	 */
-	private ArrayList<WrongValueException> doPrepareList(Listbox listbox, ChequeHeader chequeHeader)
-			throws ParseException {
+	private ArrayList<WrongValueException> doPrepareList(Listbox listbox, ChequeHeader chequeHeader) {
 		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();

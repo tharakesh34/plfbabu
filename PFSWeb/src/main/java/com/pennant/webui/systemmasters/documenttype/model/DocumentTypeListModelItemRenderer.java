@@ -67,7 +67,7 @@ public class DocumentTypeListModelItemRenderer implements ListitemRenderer<Docum
 	}
 
 	@Override
-	public void render(Listitem item, DocumentType documentType, int count) throws Exception {
+	public void render(Listitem item, DocumentType documentType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(documentType.getDocTypeCode());

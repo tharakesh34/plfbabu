@@ -56,6 +56,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -106,7 +107,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_ReceiptUpload(Event event) throws Exception {
+	public void onCreate$window_ReceiptUpload(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(this.window_ReceiptUpload);
@@ -199,7 +200,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		logger.debug("Leaving");
 	}
 
-	public void onUpload$btnBrowse(UploadEvent event) throws Exception {
+	public void onUpload$btnBrowse(UploadEvent event) {
 		logger.debug(Literal.ENTERING);
 		doRemoveValidation();
 		this.fileName.setText("");
@@ -238,9 +239,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	 * when the "refresh" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		doResetData();
 	}
 
@@ -262,7 +262,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		this.formulaEvaluator = null;
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 		final Set<String> setRowIds = new HashSet<String>();
 
@@ -324,13 +324,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			logger.info("Initiating Import Process For the HeaderID{}", ruh.getId());
 
 			new Thread(() -> {
-				try {
-					receiptUploadHeaderService.initiateImport(ruh, workbook,
-							ReceiptUploadHeaderListCtrl.importStatusMap, fileImport);
-				} catch (Exception e) {
-					receiptUploadHeaderService.updateImportFail(ruh);
-				}
-
+				receiptUploadHeaderService.initiateImport(ruh, workbook, ReceiptUploadHeaderListCtrl.importStatusMap,
+						fileImport);
 			}).start();
 
 			ReceiptUploadHeaderListCtrl.importStatusMap.put(ruh.getId(), 0);
@@ -379,7 +374,9 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		ruh.setVersion(0);
 		ruh.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		ruh.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		ruh.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+		ruh.setUserDetails(loggedInUser);
+		ruh.setLastMntBy(loggedInUser.getUserId());
 		receiptUploadHeaderDAO.save(ruh, TableType.TEMP_TAB);
 	}
 
@@ -437,8 +434,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 	/**
 	 * Method for Validate uploaded file content whether data in proper manner or not
-	 * 
-	 * @throws Exception
 	 */
 	private boolean validateFileContent() {
 		logger.debug(Literal.ENTERING);

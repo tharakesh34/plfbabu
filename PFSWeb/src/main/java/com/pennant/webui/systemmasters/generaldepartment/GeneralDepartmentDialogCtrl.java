@@ -99,9 +99,8 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * selected GeneralDepartment object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_GeneralDepartmentDialog(Event event) throws Exception {
+	public void onCreate$window_GeneralDepartmentDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -335,9 +334,8 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aGeneralDepartment
-	 * @throws Exception
 	 */
-	public void doShowDialog(GeneralDepartment aGeneralDepartment) throws Exception {
+	public void doShowDialog(GeneralDepartment aGeneralDepartment) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -779,10 +777,8 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.generalDepartment);
 	}
 

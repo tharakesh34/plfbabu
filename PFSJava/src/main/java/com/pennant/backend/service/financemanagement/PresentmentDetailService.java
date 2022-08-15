@@ -37,7 +37,7 @@ public interface PresentmentDetailService {
 
 	PresentmentHeader getPresentmentHeader(long id);
 
-	String savePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception;
+	String savePresentmentDetails(PresentmentHeader presentmentHeader);
 
 	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove,
 			String type);

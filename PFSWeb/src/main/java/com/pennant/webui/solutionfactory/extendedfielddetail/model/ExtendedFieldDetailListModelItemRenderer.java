@@ -69,7 +69,7 @@ public class ExtendedFieldDetailListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, ExtendedFieldHeader extendedFieldDetail, int count) throws Exception {
+	public void render(Listitem item, ExtendedFieldHeader extendedFieldDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(PennantAppUtil.getlabelDesc(extendedFieldDetail.getModuleName(), this.modulesList));

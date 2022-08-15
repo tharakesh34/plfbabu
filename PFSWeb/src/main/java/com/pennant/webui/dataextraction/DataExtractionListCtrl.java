@@ -173,7 +173,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		doClear();
 	}
 
@@ -238,10 +238,8 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 
 	/**
 	 * Save GstTransaction Data from Pennant datasource into Interface datasource(Bajaj)
-	 * 
-	 * @throws Exception
 	 */
-	private String saveGstTransactionData(String configName, TaxDownlaodExtract process) throws Exception {
+	private String saveGstTransactionData(String configName, TaxDownlaodExtract process) {
 
 		process.clearTables();
 		process.preparePosingsData();
@@ -257,8 +255,6 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 
 	/**
 	 * Download the GstTransaction data from Interface datasource into browser as excel file format
-	 * 
-	 * @throws Exception
 	 */
 	private String downloadGstTransactionData(String configName, TaxDownlaodExtract process) throws Exception {
 
@@ -279,10 +275,8 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 
 	/**
 	 * Save Data from Pennant datasource into Interface datasource(Bajaj)
-	 * 
-	 * @throws Exception
 	 */
-	private String saveGstSummaryData(String configName, TaxDownlaodExtract process) throws Exception {
+	private String saveGstSummaryData(String configName, TaxDownlaodExtract process) {
 
 		process.clearTables();
 		process.preparePosingsData();

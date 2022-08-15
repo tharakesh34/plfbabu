@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -64,11 +65,13 @@ import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements QueueAssignmentDAO {
 	private static Logger logger = LogManager.getLogger(QueueAssignmentDAOImpl.class);
@@ -179,9 +182,7 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		try {
 			queueAssignment = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			e = null;
-			throw new EmptyResultDataAccessException(PennantJavaUtil.getLabel("label_NoUsers_ToAssign"), 1);
+			throw new AppException(PennantJavaUtil.getLabel("label_NoUsers_ToAssign"), e);
 		}
 		if (queueAssignment.getLovDescQAUserId() == 0) {
 			queueAssignment.setModule(module);
@@ -254,9 +255,8 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 			inputs.put("@MODULE", PennantConstants.WORFLOW_MODULE_FINANCE);
 			new StoredProcedureUtil(this.dataSource, "SP_ReassignFinRecords", inputParamMap, outputParamMap)
 					.execute(inputs);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			logger.info("Queue Assignment Updation failed");
+		} catch (DataAccessException e) {
+			logger.warn("Queue Assignment Updation failed");
 		}
 		logger.debug("Leaving");
 	}
@@ -352,8 +352,8 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		logger.debug("Leaving");
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -436,14 +436,11 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		RowMapper<QueueAssignmentHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(QueueAssignmentHeader.class);
 
 		try {
-			queueAssignmentHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-		logger.debug("Leaving");
-		return queueAssignmentHeader;
 	}
 
 	@Override
@@ -464,8 +461,8 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		logger.debug("Leaving");
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -545,30 +542,23 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), source, new RowMapper<QueueAssignment>() {
-				@Override
-				public QueueAssignment mapRow(ResultSet rs, int rowNum) throws SQLException {
-					QueueAssignment ta = new QueueAssignment();
+		return this.jdbcTemplate.query(sql.toString(), source, new RowMapper<QueueAssignment>() {
+			@Override
+			public QueueAssignment mapRow(ResultSet rs, int rowNum) throws SQLException {
+				QueueAssignment ta = new QueueAssignment();
 
-					ta.setModule(rs.getString("Module"));
-					ta.setUserId(rs.getLong("UserId"));
-					ta.setUserRoleCode(rs.getString("UserRoleCode"));
-					ta.setAssignedCount(rs.getInt("AssignedCount"));
-					ta.setLastAssignedOn(rs.getTimestamp("LastAssignedOn"));
-					ta.setProcessedCount(rs.getInt("ProcessedCount"));
-					ta.setLastProcessedOn(rs.getTimestamp("LastProcessedOn"));
-					ta.setUserActive(rs.getBoolean("UserActive"));
+				ta.setModule(rs.getString("Module"));
+				ta.setUserId(rs.getLong("UserId"));
+				ta.setUserRoleCode(rs.getString("UserRoleCode"));
+				ta.setAssignedCount(rs.getInt("AssignedCount"));
+				ta.setLastAssignedOn(rs.getTimestamp("LastAssignedOn"));
+				ta.setProcessedCount(rs.getInt("ProcessedCount"));
+				ta.setLastProcessedOn(rs.getTimestamp("LastProcessedOn"));
+				ta.setUserActive(rs.getBoolean("UserActive"));
 
-					return ta;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return ta;
+			}
+		});
 	}
 
 	@Override

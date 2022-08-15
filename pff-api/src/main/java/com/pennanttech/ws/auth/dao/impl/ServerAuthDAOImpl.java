@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant PFF-API Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant PFF-API Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  WebServiceServerSecurityDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  07-10-2016    														*
- *                                                                  						*
- * Modified Date    :  07-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : WebServiceServerSecurityDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 07-10-2016 *
+ * * Modified Date : 07-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 07-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 07-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennanttech.ws.auth.dao.impl;
 
 import org.apache.logging.log4j.LogManager;
@@ -51,6 +33,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.ws.auth.dao.ServerAuthDAO;
 import com.pennanttech.ws.auth.model.ServerAuthentication;
 
@@ -68,10 +51,8 @@ public class ServerAuthDAOImpl extends BasicDao<ServerAuthentication> implements
 	/**
 	 * Fetch the Record WebServiceServerSecurity details by key field
 	 * 
-	 * @param tokenId
-	 *            (String)
-	 * @param IPAddress
-	 *            (String)
+	 * @param tokenId   (String)
+	 * @param IPAddress (String)
 	 * 
 	 * @return WebServiceServerSecurity
 	 */
@@ -90,14 +71,10 @@ public class ServerAuthDAOImpl extends BasicDao<ServerAuthentication> implements
 		RowMapper<ServerAuthentication> typeRowMapper = BeanPropertyRowMapper.newInstance(ServerAuthentication.class);
 
 		try {
-			webServiceServerSecurity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			webServiceServerSecurity = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving ");
-		return webServiceServerSecurity;
-
 	}
 }

@@ -48,7 +48,7 @@ public class BusinessVerticalListModelItemRenderer implements ListitemRenderer<B
 	}
 
 	@Override
-	public void render(Listitem item, BusinessVertical businessVertical, int count) throws Exception {
+	public void render(Listitem item, BusinessVertical businessVertical, int count) {
 
 		Listcell lc;
 		lc = new Listcell(businessVertical.getCode());

@@ -106,9 +106,8 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 * selected LovFieldDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LovFieldDetailDialog(Event event) throws Exception {
+	public void onCreate$window_LovFieldDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -373,9 +372,8 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aLovFieldDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(LovFieldDetail aLovFieldDetail) throws Exception {
+	public void doShowDialog(LovFieldDetail aLovFieldDetail) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -800,9 +798,8 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 * when "btnNotes" is clicked
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.lovFieldDetail);
 	}
 

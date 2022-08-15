@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -67,10 +68,9 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new PaymentInstructionRM(type), id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -83,10 +83,9 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new PaymentInstructionRM(type), paymentId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -282,13 +281,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, partnerBankId);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, partnerBankId);
 	}
 
 	@Override

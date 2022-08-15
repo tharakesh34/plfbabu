@@ -102,9 +102,8 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	 * selected RejectDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_RejectDetailDialog(Event event) throws Exception {
+	public void onCreate$window_RejectDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -347,9 +346,8 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aRejectDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(RejectDetail aRejectDetail) throws Exception {
+	public void doShowDialog(RejectDetail aRejectDetail) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -777,10 +775,8 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.rejectDetail);
 	}
 

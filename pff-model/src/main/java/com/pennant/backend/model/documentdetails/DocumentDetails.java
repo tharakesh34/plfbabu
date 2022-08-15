@@ -181,6 +181,17 @@ public class DocumentDetails extends AbstractWorkflowEntity {
 		entity.setLovDescCustShrtName(this.lovDescCustShrtName);
 		entity.setRefId(this.refId);
 		entity.setDocTypeId(this.docTypeId);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
 		return entity;
 	}
 

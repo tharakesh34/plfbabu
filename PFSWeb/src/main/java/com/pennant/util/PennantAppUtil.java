@@ -1145,9 +1145,8 @@ public class PennantAppUtil {
 	 * 
 	 * @param columns
 	 * @return
-	 * @throws Exception
 	 */
-	public static String[] getQueryModuleCustomColumns(String columns) throws Exception {
+	public static String[] getQueryModuleCustomColumns(String columns) {
 		String queryfileds[] = columns.split(",");
 		String[] fields = new String[queryfileds.length];
 		for (int i = 0; i < queryfileds.length; i++) {
@@ -1166,7 +1165,6 @@ public class PennantAppUtil {
 	 * 
 	 * @param columns
 	 * @return
-	 * @throws Exception
 	 */
 	public static List<Query> getSubqueries() {
 		List<Query> qbFieldDetailsList = new ArrayList<Query>();

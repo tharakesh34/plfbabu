@@ -1,49 +1,39 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  LimtRuleDAOImpl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : LimtRuleDAOImpl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 03-06-2011
+ * 
+ * Modified Date : 03-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
 package com.pennant.backend.dao.rulefactory.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,6 +56,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>
@@ -114,10 +105,8 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 	/**
 	 * Fetch the Record Dedup Parameters details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DedupParm
 	 */
 	@Override
@@ -144,28 +133,24 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		RowMapper<LimitFilterQuery> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFilterQuery.class);
 
 		try {
-			dedupParm = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			dedupParm = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return dedupParm;
 	}
 
 	/**
 	 * Fetch the Record Dedup Parameters details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DedupParm
 	 */
 	@Override
 	public List<LimitFilterQuery> getLimitRuleByModule(String queryModule, String querySubCode, String type) {
 		logger.debug("Entering");
-		List<LimitFilterQuery> dedupParmList = new ArrayList<LimitFilterQuery>();
+
 		LimitFilterQuery dedupParm = new LimitFilterQuery();
 		dedupParm.setQueryModule(queryModule);
 		dedupParm.setQuerySubCode(querySubCode);
@@ -184,23 +169,15 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
 		RowMapper<LimitFilterQuery> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFilterQuery.class);
 
-		try {
-			dedupParmList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		}
-		logger.debug("Leaving");
-		return dedupParmList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
 	 * This method Deletes the Record from the DedupParams or DedupParams_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Dedup Parameters by key QueryCode
 	 * 
-	 * @param Dedup
-	 *            Parameters (dedupParm)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Dedup Parameters (dedupParm)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -234,10 +211,8 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 	 *
 	 * save Dedup Parameters
 	 * 
-	 * @param Dedup
-	 *            Parameters (dedupParm)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Dedup Parameters (dedupParm)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -273,10 +248,8 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 	 * This method updates the Record DedupParams or DedupParams_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Dedup Parameters by key QueryCode and Version
 	 * 
-	 * @param Dedup
-	 *            Parameters (dedupParm)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Dedup Parameters (dedupParm)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -315,11 +288,9 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 	/**
 	 * This method return the columns list of the tables sent as parameters
 	 * 
-	 * @param module
-	 *            (String)
+	 * @param module (String)
 	 * 
-	 * @param event
-	 *            (String)
+	 * @param event  (String)
 	 * 
 	 * @return List
 	 * 
@@ -338,7 +309,6 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		source.addValue("RBModule", module);
 		source.addValue("RBEvent", event);
 
-		List<BMTRBFldDetails> fieldList = new ArrayList<BMTRBFldDetails>();
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT RBModule , RBEvent , RBFldName , RBFldDesc,");
 		selectSql.append(" RBFldType ,RBFldLen , RBForCalFlds, RBForBldFlds, RBFldTableName , RBSTFlds ");
@@ -348,15 +318,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<BMTRBFldDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(BMTRBFldDetails.class);
 
-		try {
-			fieldList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-			fieldList = null;
-		}
-
-		logger.debug("Leaving");
-		return fieldList;
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -366,7 +328,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 	 */
 	public List<LimitFldCriterias> getOperatorsList() {
 		logger.debug("Entering");
-		List<LimitFldCriterias> fieldList = new ArrayList<LimitFldCriterias>();
+
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" SELECT QBFldType , QBSTFld , QBFldCriteriaNames , QBFldCriteriaValues ");
@@ -375,14 +337,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<LimitFldCriterias> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFldCriterias.class);
 
-		try {
-			fieldList = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-			fieldList = null;
-		}
-		logger.debug("Leaving");
-		return fieldList;
+		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
 	}
 
 	@Override
@@ -404,8 +359,8 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
-
 }

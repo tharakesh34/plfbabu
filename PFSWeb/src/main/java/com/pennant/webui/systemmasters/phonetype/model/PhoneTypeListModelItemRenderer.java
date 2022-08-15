@@ -68,7 +68,7 @@ public class PhoneTypeListModelItemRenderer implements ListitemRenderer<PhoneTyp
 	}
 
 	@Override
-	public void render(Listitem item, PhoneType phoneType, int count) throws Exception {
+	public void render(Listitem item, PhoneType phoneType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(phoneType.getPhoneTypeCode());

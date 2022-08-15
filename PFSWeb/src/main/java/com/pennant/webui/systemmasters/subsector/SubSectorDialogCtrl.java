@@ -99,9 +99,8 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	 * selected SubSector object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SubSectorDialog(Event event) throws Exception {
+	public void onCreate$window_SubSectorDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -353,9 +352,8 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSubSector
-	 * @throws Exception
 	 */
-	public void doShowDialog(SubSector aSubSector) throws Exception {
+	public void doShowDialog(SubSector aSubSector) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -792,10 +790,8 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.subSector);
 	}
 

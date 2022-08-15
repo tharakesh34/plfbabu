@@ -46,8 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -152,7 +150,6 @@ import com.pennant.webui.financemanagement.payments.ManualPaymentDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1192,10 +1189,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendFeeDetailTab(boolean isLoadProcess) throws InterruptedException {
+	protected void appendFeeDetailTab(boolean isLoadProcess) {
 		logger.debug("Entering");
 		try {
 
@@ -1358,10 +1353,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void appendCustomerDetailTab() throws InterruptedException {
+	public void appendCustomerDetailTab() {
 		logger.debug("Entering");
 
 		try {
@@ -1525,10 +1518,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Append Recommend Details Tab
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void appendRecommendDetailTab(boolean onLoadProcess) throws InterruptedException {
+	public void appendRecommendDetailTab(boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		// Memo Tab Details -- Comments or Recommendations
@@ -1807,14 +1798,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain financeMain
-	 * @throws ParseException
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
 	 */
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
+	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) {
 		logger.debug("Entering");
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -2396,7 +2381,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.repayCpzFrq.setDisabled(true);
 			readOnlyComponent(true, this.nextRepayCpzDate);
-			System.out.println(nextRepayCpzDate.isDisabled());
 		}
 
 		if (!isOverdraft && (!aFinanceMain.isNewRecord() || StringUtils.isNotBlank(aFinanceMain.getFinReference()))) {
@@ -3898,12 +3882,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceSchData (FinScheduleData)
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterruptedException
 	 */
-	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData, ArrayList<WrongValueException> wve)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData, List<WrongValueException> wve) {
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -5033,12 +5013,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceSchData
 	 * @return
-	 * @throws InterruptedException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
 	 */
-	protected FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	protected FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData) {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
@@ -6539,9 +6515,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Checking Recommendation for Mandatory
 	 * 
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doValidateRecommendation() throws InterruptedException {
+	protected boolean doValidateRecommendation() {
 		logger.debug("Entering");
 		boolean isRecommendEntered = true;
 		/*
@@ -6782,9 +6757,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws Exception
 	 */
-	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) throws Exception {
+	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) {
 		logger.debug("Entering ");
 
 		setFinanceDetail(aFinanceDetail);

@@ -1,7 +1,6 @@
 package com.pennant.webui.assettype.assettypeassignment;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,9 +93,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldRend
 	 * Method for creating window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AssetTypeAssignmentDialog(Event event) throws Exception {
+	public void onCreate$window_AssetTypeAssignmentDialog(Event event) {
 		logger.debug("Entering");
 		// Set the page level components.
 		setPageComponents(window_AssetTypeAssignmentDialog);
@@ -153,9 +151,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldRend
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param collateralAssignment
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(ExtendedFieldRender extendedFieldRender) throws InterruptedException {
+	public void doShowDialog(ExtendedFieldRender extendedFieldRender) {
 		logger.debug("Entering");
 
 		if (isNewRecord()) {
@@ -288,65 +285,61 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldRend
 			if (details != null) {
 				this.assetType.setValue(details.getAssetType());
 				this.assetType.setDescription(details.getAssetDesc());
-				try {
-					this.assetType.setReadonly(true);
-					AssetType assetType = assetTypeService.getAssetTypeById(details.getAssetType());
-					getExtendedFieldRender().setTypeCode(assetType.getAssetType());
-					getExtendedFieldRender().setTypeCodeDesc(assetType.getAssetDesc());
-					setPreValidationScript(assetType.getPreValidation());
-					setPostValidationScript(assetType.getPostValidation());
-					setExtendedFieldHeader(assetType.getExtendedFieldHeader());
+				this.assetType.setReadonly(true);
+				AssetType assetType = assetTypeService.getAssetTypeById(details.getAssetType());
+				getExtendedFieldRender().setTypeCode(assetType.getAssetType());
+				getExtendedFieldRender().setTypeCodeDesc(assetType.getAssetDesc());
+				setPreValidationScript(assetType.getPreValidation());
+				setPostValidationScript(assetType.getPostValidation());
+				setExtendedFieldHeader(assetType.getExtendedFieldHeader());
 
-					// Pre-Validation Checking & Setting Defaults
-					Map<String, Object> fieldValuesMap = null;
-					if (getExtendedFieldRender().getMapValues() != null) {
-						fieldValuesMap = getExtendedFieldRender().getMapValues();
-					}
+				// Pre-Validation Checking & Setting Defaults
+				Map<String, Object> fieldValuesMap = null;
+				if (getExtendedFieldRender().getMapValues() != null) {
+					fieldValuesMap = getExtendedFieldRender().getMapValues();
+				}
 
-					if (newRecord) {
-						// get pre-validation script if record is new
-						if (StringUtils.isNotEmpty(getPreValidationScript())) {
-							ScriptErrors defaults = getScriptValidationService()
-									.setPreValidationDefaults(getPreValidationScript(), fieldValuesMap);
+				if (newRecord) {
+					// get pre-validation script if record is new
+					if (StringUtils.isNotEmpty(getPreValidationScript())) {
+						ScriptErrors defaults = getScriptValidationService()
+								.setPreValidationDefaults(getPreValidationScript(), fieldValuesMap);
 
-							// Initiation of Field Value Map
-							if (fieldValuesMap == null) {
-								fieldValuesMap = new HashMap<>();
+						// Initiation of Field Value Map
+						if (fieldValuesMap == null) {
+							fieldValuesMap = new HashMap<>();
+						}
+
+						// Overriding Default values
+						List<ScriptError> defaultList = defaults.getAll();
+						for (int i = 0; i < defaultList.size(); i++) {
+							ScriptError dftKeyValue = defaultList.get(i);
+
+							if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
+								fieldValuesMap.remove(dftKeyValue.getProperty());
 							}
-
-							// Overriding Default values
-							List<ScriptError> defaultList = defaults.getAll();
-							for (int i = 0; i < defaultList.size(); i++) {
-								ScriptError dftKeyValue = defaultList.get(i);
-
-								if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
-									fieldValuesMap.remove(dftKeyValue.getProperty());
-								}
-								fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
-							}
+							fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
 						}
 					}
-
-					if (fieldValuesMap != null) {
-						generator.setFieldValueMap((Map<String, Object>) fieldValuesMap);
-					}
-
-					generator.renderWindow(getExtendedFieldHeader(), newRecord);
-				} catch (ParseException e) {
-					logger.error(e);
 				}
+
+				if (fieldValuesMap != null) {
+					generator.setFieldValueMap((Map<String, Object>) fieldValuesMap);
+				}
+
+				generator.renderWindow(getExtendedFieldHeader(), newRecord);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		try {

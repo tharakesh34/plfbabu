@@ -66,7 +66,7 @@ public class ScoringSlabListModelItemRenderer implements ListitemRenderer<Scorin
 	}
 
 	@Override
-	public void render(Listitem item, ScoringSlab scoringSlab, int count) throws Exception {
+	public void render(Listitem item, ScoringSlab scoringSlab, int count) {
 
 		Listcell lc;
 		lc = new Listcell(String.valueOf(scoringSlab.getScoringSlab()));

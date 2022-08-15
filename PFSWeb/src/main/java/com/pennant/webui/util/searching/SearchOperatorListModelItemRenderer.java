@@ -63,7 +63,7 @@ public class SearchOperatorListModelItemRenderer implements ListitemRenderer<Sea
 	}
 
 	@Override
-	public void render(Listitem item, SearchOperators searchOp, int count) throws Exception {
+	public void render(Listitem item, SearchOperators searchOp, int count) {
 
 		final Listcell lc = new Listcell(searchOp.getSearchOperatorSign());
 		lc.setParent(item);

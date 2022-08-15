@@ -64,7 +64,7 @@ public class RateReviewService extends ServiceHelper {
 		super();
 	}
 
-	public void processRateReview(CustEODEvent custEODEvent) throws Exception {
+	public void processRateReview(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -80,7 +80,7 @@ public class RateReviewService extends ServiceHelper {
 		}
 	}
 
-	private void processRateReview(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+	private void processRateReview(FinEODEvent finEODEvent, Date valueDate) {
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
@@ -168,7 +168,7 @@ public class RateReviewService extends ServiceHelper {
 		finEODEvent.setRateReviewExist(true);
 	}
 
-	private void reviewRateUpdate(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+	private void reviewRateUpdate(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
 		String finReference = finEODEvent.getFinanceMain().getFinReference();
 		logger.info("Processing rate review for the FinReference >> {}", finReference);
 
@@ -227,8 +227,7 @@ public class RateReviewService extends ServiceHelper {
 		// Rate Changes applied for Finance Schedule Data
 		schdData = ScheduleCalculator.refreshRates(schdData);
 
-		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
-		newProfitDetail = accrualService.calProfitDetails(fm, schedules, profitDetail, valueDate);
+		FinanceProfitDetail newProfitDetail = accrualService.calProfitDetails(fm, schedules, profitDetail, valueDate);
 		// Amount Codes Details Preparation
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profitDetail, schedules, AccountingEvent.RATCHG, valueDate,
 				valueDate);
@@ -312,7 +311,7 @@ public class RateReviewService extends ServiceHelper {
 	private Date findRecalFromDate(FinEODEvent finEODEvent, int iEvtFrom) {
 
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
-		FinanceScheduleDetail schd = new FinanceScheduleDetail();
+		FinanceScheduleDetail schd;
 
 		int sdSize = schedules.size();
 		Date recalFromDate = null;

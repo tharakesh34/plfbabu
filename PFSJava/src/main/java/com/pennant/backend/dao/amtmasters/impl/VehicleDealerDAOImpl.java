@@ -27,7 +27,6 @@ package com.pennant.backend.dao.amtmasters.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -52,6 +50,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>VehicleDealer model</b> class.<br>
@@ -62,30 +61,6 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	public VehicleDealerDAOImpl() {
 		super();
 	}
-
-	/*
-	 * @Override public List<VehicleDealer> getVehicleDealerList(String type) { logger.debug("Entering");
-	 * List<VehicleDealer> vehicleDealer = new ArrayList<VehicleDealer>(); StringBuilder selectSql = new
-	 * StringBuilder(); selectSql.
-	 * append("SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
-	 * selectSql.append(
-	 * "DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,"
-	 * ); selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
-	 * selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, " );
-	 * selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType ");
-	 * selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
-	 * selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription");
-	 * selectSql.append(" FROM  AMTVehicleDealer"); selectSql.append(StringUtils.trimToEmpty(type));
-	 * logger.debug("selectSql: " + selectSql.toString()); SqlParameterSource beanParameters = new
-	 * BeanPropertySqlParameterSource(vehicleDealer); RowMapper<VehicleDealer> typeRowMapper = BeanPropertyRowMapper
-	 * .newInstance(VehicleDealer.class);
-	 * 
-	 * try { vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper); }
-	 * catch (EmptyResultDataAccessException e) { logger.warn("Exception: ", e); vehicleDealer = null; }
-	 * logger.debug("Leaving"); return vehicleDealer;
-	 * 
-	 * }
-	 */
 
 	/**
 	 * get the Collection Tables List
@@ -115,92 +90,85 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, dealerType);
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, dealerType);
+			}
+		}, new RowMapper<VehicleDealer>() {
+			@Override
+			public VehicleDealer mapRow(ResultSet rs, int rowNum) throws SQLException {
+				VehicleDealer vd = new VehicleDealer();
+
+				vd.setDealerId(rs.getLong("DealerId"));
+				vd.setDealerType(rs.getString("DealerType"));
+				vd.setDealerName(rs.getString("DealerName"));
+				vd.setDealerTelephone(rs.getString("DealerTelephone"));
+				vd.setDealerFax(rs.getString("DealerFax"));
+				vd.setDealerAddress1(rs.getString("DealerAddress1"));
+				vd.setDealerAddress2(rs.getString("DealerAddress2"));
+				vd.setDealerAddress3(rs.getString("DealerAddress3"));
+				vd.setDealerAddress4(rs.getString("DealerAddress4"));
+				vd.setDealerCountry(rs.getString("DealerCountry"));
+				vd.setDealerCity(rs.getString("DealerCity"));
+				vd.setDealerProvince(rs.getString("DealerProvince"));
+				vd.setEmail(rs.getString("Email"));
+				vd.setPOBox(rs.getString("POBox"));
+				vd.setZipCode(rs.getString("ZipCode"));
+				vd.setActive(rs.getBoolean("Active"));
+				vd.setEmirates(rs.getString("Emirates"));
+				vd.setCommisionPaidAt(rs.getString("CommisionPaidAt"));
+				vd.setCode(rs.getString("Code"));
+				vd.setShortCode(rs.getString("ShortCode"));
+				vd.setCalculationRule(rs.getString("CalculationRule"));
+				vd.setPaymentMode(rs.getString("PaymentMode"));
+				vd.setAccountNumber(rs.getString("AccountNumber"));
+				vd.setAccountingSetId(JdbcUtil.getLong(rs.getObject("AccountingSetId")));
+				vd.setPanNumber(rs.getString("PanNumber"));
+				vd.setUidNumber(rs.getString("UidNumber"));
+				vd.setTaxNumber(rs.getString("TaxNumber"));
+				vd.setFromprovince(rs.getString("Fromprovince"));
+				vd.setToprovince(rs.getString("Toprovince"));
+				vd.setAccountNo(rs.getString("AccountNo"));
+				vd.setAccountType(rs.getString("AccountType"));
+				vd.setBankBranchID(JdbcUtil.getLong(rs.getObject("BankBranchID")));
+				vd.setVersion(rs.getInt("Version"));
+				vd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				vd.setLastMntBy(rs.getLong("LastMntBy"));
+				vd.setRecordStatus(rs.getString("RecordStatus"));
+				vd.setRoleCode(rs.getString("RoleCode"));
+				vd.setNextRoleCode(rs.getString("NextRoleCode"));
+				vd.setTaskId(rs.getString("TaskId"));
+				vd.setNextTaskId(rs.getString("NextTaskId"));
+				vd.setRecordType(rs.getString("RecordType"));
+				vd.setWorkflowId(rs.getLong("WorkflowId"));
+				vd.setSellerType(rs.getString("SellerType"));
+				vd.setBranchCode(rs.getString("BranchCode"));
+				vd.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					vd.setLovDescCountry(rs.getString("LovDescCountry"));
+					vd.setLovDescCity(rs.getString("LovDescCity"));
+					vd.setLovDescProvince(rs.getString("LovDescProvince"));
+					vd.setCalRuleDesc(rs.getString("CalRuleDesc"));
+					vd.setAccountingSetCode(rs.getString("AccountingSetCode"));
+					vd.setAccountingSetDesc(rs.getString("AccountingSetDesc"));
+					vd.setEmiratesDescription(rs.getString("EmiratesDescription"));
+					vd.setFromprovinceName(rs.getString("FromprovinceName"));
+					vd.setToprovinceName(rs.getString("ToprovinceName"));
+					vd.setBankBranchCode(rs.getString("BankBranchCode"));
+					vd.setBankBranchCodeName(rs.getString("BankBranchCodeName"));
+					vd.setBankName(rs.getString("BankName"));
+					vd.setBranchIFSCCode(rs.getString("BranchIFSCCode"));
+					vd.setBranchMICRCode(rs.getString("BranchMICRCode"));
+					vd.setBranchCity(rs.getString("BranchCity"));
+					vd.setAreaName(rs.getString("AreaName"));
 				}
-			}, new RowMapper<VehicleDealer>() {
-				@Override
-				public VehicleDealer mapRow(ResultSet rs, int rowNum) throws SQLException {
-					VehicleDealer vd = new VehicleDealer();
 
-					vd.setDealerId(rs.getLong("DealerId"));
-					vd.setDealerType(rs.getString("DealerType"));
-					vd.setDealerName(rs.getString("DealerName"));
-					vd.setDealerTelephone(rs.getString("DealerTelephone"));
-					vd.setDealerFax(rs.getString("DealerFax"));
-					vd.setDealerAddress1(rs.getString("DealerAddress1"));
-					vd.setDealerAddress2(rs.getString("DealerAddress2"));
-					vd.setDealerAddress3(rs.getString("DealerAddress3"));
-					vd.setDealerAddress4(rs.getString("DealerAddress4"));
-					vd.setDealerCountry(rs.getString("DealerCountry"));
-					vd.setDealerCity(rs.getString("DealerCity"));
-					vd.setDealerProvince(rs.getString("DealerProvince"));
-					vd.setEmail(rs.getString("Email"));
-					vd.setPOBox(rs.getString("POBox"));
-					vd.setZipCode(rs.getString("ZipCode"));
-					vd.setActive(rs.getBoolean("Active"));
-					vd.setEmirates(rs.getString("Emirates"));
-					vd.setCommisionPaidAt(rs.getString("CommisionPaidAt"));
-					vd.setCode(rs.getString("Code"));
-					vd.setShortCode(rs.getString("ShortCode"));
-					vd.setCalculationRule(rs.getString("CalculationRule"));
-					vd.setPaymentMode(rs.getString("PaymentMode"));
-					vd.setAccountNumber(rs.getString("AccountNumber"));
-					vd.setAccountingSetId(JdbcUtil.getLong(rs.getObject("AccountingSetId")));
-					vd.setPanNumber(rs.getString("PanNumber"));
-					vd.setUidNumber(rs.getString("UidNumber"));
-					vd.setTaxNumber(rs.getString("TaxNumber"));
-					vd.setFromprovince(rs.getString("Fromprovince"));
-					vd.setToprovince(rs.getString("Toprovince"));
-					vd.setAccountNo(rs.getString("AccountNo"));
-					vd.setAccountType(rs.getString("AccountType"));
-					vd.setBankBranchID(JdbcUtil.getLong(rs.getObject("BankBranchID")));
-					vd.setVersion(rs.getInt("Version"));
-					vd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					vd.setLastMntBy(rs.getLong("LastMntBy"));
-					vd.setRecordStatus(rs.getString("RecordStatus"));
-					vd.setRoleCode(rs.getString("RoleCode"));
-					vd.setNextRoleCode(rs.getString("NextRoleCode"));
-					vd.setTaskId(rs.getString("TaskId"));
-					vd.setNextTaskId(rs.getString("NextTaskId"));
-					vd.setRecordType(rs.getString("RecordType"));
-					vd.setWorkflowId(rs.getLong("WorkflowId"));
-					vd.setSellerType(rs.getString("SellerType"));
-					vd.setBranchCode(rs.getString("BranchCode"));
-					vd.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
-
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						vd.setLovDescCountry(rs.getString("LovDescCountry"));
-						vd.setLovDescCity(rs.getString("LovDescCity"));
-						vd.setLovDescProvince(rs.getString("LovDescProvince"));
-						vd.setCalRuleDesc(rs.getString("CalRuleDesc"));
-						vd.setAccountingSetCode(rs.getString("AccountingSetCode"));
-						vd.setAccountingSetDesc(rs.getString("AccountingSetDesc"));
-						vd.setEmiratesDescription(rs.getString("EmiratesDescription"));
-						vd.setFromprovinceName(rs.getString("FromprovinceName"));
-						vd.setToprovinceName(rs.getString("ToprovinceName"));
-						vd.setBankBranchCode(rs.getString("BankBranchCode"));
-						vd.setBankBranchCodeName(rs.getString("BankBranchCodeName"));
-						vd.setBankName(rs.getString("BankName"));
-						vd.setBranchIFSCCode(rs.getString("BranchIFSCCode"));
-						vd.setBranchMICRCode(rs.getString("BranchMICRCode"));
-						vd.setBranchCity(rs.getString("BranchCity"));
-						vd.setAreaName(rs.getString("AreaName"));
-					}
-
-					return vd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return vd;
+			}
+		});
 	}
 
 	/**
@@ -311,11 +279,9 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -337,14 +303,11 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		paramMap.put("DealerType", "SOPT");
 
 		try {
-			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			vehicleDealer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return vehicleDealer;
 	}
 
 	/**
@@ -481,26 +444,14 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	@Override
 	public boolean SearchName(String dealerName, String dealerType) {
 		logger.debug("Entering");
-		logger.debug(" Inside searchname");
-		boolean status = false;
-		try {
-			String searchQuery = "select count(dealerName) from AMTVehicleDealer_View where dealerName=:dealerName and dealerType=:dealerType";
 
-			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-			parameterSource.addValue("dealerName", dealerName);
-			parameterSource.addValue("dealerType", dealerType);
+		String searchQuery = "select count(dealerName) from AMTVehicleDealer_View where dealerName=:dealerName and dealerType=:dealerType";
 
-			int count = jdbcTemplate.queryForObject(searchQuery, parameterSource, Integer.class);
-			logger.debug(" dealer name  : " + count);
-			if (count != 0) {
-				status = true;
-			}
-		} catch (IncorrectResultSizeDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
-		logger.debug("Leaving");
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("dealerName", dealerName);
+		parameterSource.addValue("dealerType", dealerType);
 
-		return status;
+		return jdbcTemplate.queryForObject(searchQuery, parameterSource, Integer.class) > 0;
 	}
 
 	/**
@@ -516,7 +467,6 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		VehicleDealer vehicleDealer = new VehicleDealer();
 
 		vehicleDealer.setDealerType(dealerType);
-		;
 		vehicleDealer.setDealerName(name);
 		vehicleDealer.setDealerId(id);
 
@@ -537,7 +487,6 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ManufacturerName", dealerName);
-		int count;
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From VASStructure");
@@ -546,14 +495,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			return 0;
-		}
-		logger.debug("Leaving");
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -573,7 +515,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		sql.deleteCharAt(sql.length() - 1);
 		sql.append(")");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -666,14 +608,11 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		RowMapper<VehicleDealer> typeRowMapper = BeanPropertyRowMapper.newInstance(VehicleDealer.class);
 
 		try {
-			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			vehicleDealer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return vehicleDealer;
-
 	}
 
 	@Override
@@ -715,14 +654,11 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		RowMapper<VehicleDealer> typeRowMapper = BeanPropertyRowMapper.newInstance(VehicleDealer.class);
 
 		try {
-			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.debug(Literal.EXCEPTION, e);
-			vehicleDealer = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return vehicleDealer;
-
 	}
 
 	@Override

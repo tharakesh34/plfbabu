@@ -47,6 +47,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinanceMain model</b> class.<br>
@@ -321,10 +322,9 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				return gsi;
 			}, args);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -352,10 +352,9 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				return sgi;
 			}, args);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -455,10 +454,9 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				return (JdbcUtil.getLong(rs.getLong("InvoiceId")));
 			}, tranId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

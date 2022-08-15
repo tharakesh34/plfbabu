@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReasonCodeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-12-2017    														*
- *                                                                  						*
- * Modified Date    :  19-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReasonCodeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-12-2017 * * Modified
+ * Date : 19-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-12-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-12-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
@@ -62,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -103,14 +86,11 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		RowMapper<ReasonCode> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCode.class);
 
 		try {
-			reasonCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			reasonCode = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return reasonCode;
 	}
 
 	@Override
@@ -294,14 +274,7 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		sqlParameterSource.addValue("reasonTypeCode", reasonTypeCode);
 		RowMapper<ReasonCode> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCode.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), sqlParameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
+		return jdbcTemplate.query(sql.toString(), sqlParameterSource, rowMapper);
 	}
 
 	@Override
@@ -330,13 +303,61 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonCode);
 		RowMapper<ReasonCode> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCode.class);
 		try {
-			reasonCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			reasonCode = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
+	}
 
-		logger.debug(Literal.LEAVING);
-		return reasonCode;
+	@Override
+	public ReasonCode getReasonCode(long id) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" r.Id, r.ReasonTypeID, r.ReasonCategoryID, r.Code, r.Description");
+		sql.append(", rc.Code ReasonCategoryCode, rc.Description ReasonCategoryDesc");
+		sql.append(", rt.Code ReasonTypeCode, rt.Description ReasonTypeDesc");
+		sql.append(" From Reasons r");
+		sql.append(" Inner Join ReasonCategory rc On rc.id = r.ReasonCategoryId");
+		sql.append(" Inner Join ReasonTypes rt On rt.id = r.ReasonTypeId");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ReasonCode rc = new ReasonCode();
+				rc.setId(rs.getLong("Id"));
+				rc.setReasonTypeID(rs.getLong("ReasonTypeID"));
+				rc.setReasonCategoryID(rs.getLong("ReasonCategoryID"));
+				rc.setCode(rs.getString("Code"));
+				rc.setDescription(rs.getString("Description"));
+				rc.setReasonCategoryCode(rs.getString("ReasonCategoryCode"));
+				rc.setReasonCategoryDesc(rs.getString("ReasonCategoryDesc"));
+				rc.setReasonTypeCode(rs.getString("ReasonTypeCode"));
+				rc.setReasonTypeDesc(rs.getString("ReasonTypeDesc"));
+
+				return rc;
+			}, id);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public String getReasonTypeCode(long id) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" rt.Code ReasonTypeCode");
+		sql.append(" From Reasons r");
+		sql.append(" Inner Join ReasonCategory rc On rc.id = r.ReasonCategoryId");
+		sql.append(" Inner Join ReasonTypes rt On rt.id = r.ReasonTypeId");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), String.class, id);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 }

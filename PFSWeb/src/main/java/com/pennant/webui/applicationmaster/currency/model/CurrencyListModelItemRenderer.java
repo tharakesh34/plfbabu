@@ -67,7 +67,7 @@ public class CurrencyListModelItemRenderer implements ListitemRenderer<Currency>
 	}
 
 	@Override
-	public void render(Listitem item, Currency currency, int count) throws Exception {
+	public void render(Listitem item, Currency currency, int count) {
 
 		Listcell lc;
 		lc = new Listcell(currency.getCcyCode());

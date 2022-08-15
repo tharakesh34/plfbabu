@@ -312,10 +312,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_VASRecordingDialog(Event event) throws Exception {
+	public void onCreate$window_VASRecordingDialog(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		// Set the page level components.
@@ -464,9 +463,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		doSave();
 		logger.debug(Literal.LEAVING + event.toString());
@@ -476,10 +474,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.vASRecording);
 	}
 
@@ -668,11 +664,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		final VASRecording aVASRecording = new VASRecording();
@@ -1809,10 +1803,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	/**
 	 * Method for Append Recommend Details Tab
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void appendRecommendDetailTab(boolean onLoadProcess) throws InterruptedException {
+	private void appendRecommendDetailTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
@@ -1889,9 +1881,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws Exception
 	 */
-	private boolean doSave_CheckList(VASRecording vasRecording, boolean isForAgreementGen) throws Exception {
+	private boolean doSave_CheckList(VASRecording vasRecording, boolean isForAgreementGen) {
 		logger.debug(Literal.ENTERING);
 
 		boolean validationSuccess = true;
@@ -2061,9 +2052,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aVASConfiguration
-	 * @throws ParseException
 	 */
-	public void doWriteComponentsToBean(VASRecording aVASRecording, boolean isSave) throws ParseException {
+	public void doWriteComponentsToBean(VASRecording aVASRecording, boolean isSave) {
 		logger.debug(Literal.ENTERING);
 		// doSetValidation();
 
@@ -2586,7 +2576,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onSelectTab(ForwardEvent event) throws Exception {
+	public void onSelectTab(ForwardEvent event) {
 
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + Literal.ENTERING);
@@ -2688,10 +2678,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void executeAccounting() throws Exception {
+	public void executeAccounting() {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
@@ -2834,9 +2822,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Method for action Event of Changing Waived Amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onFulfill$waivedAmt(Event event) throws InterruptedException {
+	public void onFulfill$waivedAmt(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		BigDecimal vasFee = PennantApplicationUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat());
@@ -2856,9 +2843,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Method for action Event of Changing VAS FEE Amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onFeeAmountChange(ForwardEvent event) throws Exception {
+	public void onFeeAmountChange(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		this.paidAmt.setValue(this.fee.getActualValue());
 		this.waivedAmt.setValue(BigDecimal.ZERO);
@@ -3436,7 +3422,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnInsurance_VasRecording(Event event) throws Exception {
+	public void onClick$btnInsurance_VasRecording(Event event) throws ParseException {
 
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();

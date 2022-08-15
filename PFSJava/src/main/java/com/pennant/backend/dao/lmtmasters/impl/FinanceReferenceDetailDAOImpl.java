@@ -54,6 +54,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinanceReferenceDetail model</b> class.<br>
@@ -136,14 +137,11 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 				.newInstance(FinanceReferenceDetail.class);
 
 		try {
-			financeReferenceDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeReferenceDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return financeReferenceDetail;
 	}
 
 	/**
@@ -361,7 +359,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 					map.put(rs.getLong("FinRefId"), rs.getString("LovDescCodeLov"));
 				}
 				return map;
-			};
+			}
 		});
 		logger.debug(Literal.LEAVING);
 		return map;
@@ -434,10 +432,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.debug(e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
-
 	}
 
 	/**
@@ -832,10 +829,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, args);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
@@ -857,8 +853,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
-		} catch (Exception e) {
-			logger.warn("Exception", e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
@@ -879,11 +875,10 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
-		} catch (Exception e) {
-			logger.warn("Exception", e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return 0;
 		}
-
 	}
 
 	@Override
@@ -902,11 +897,10 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
-		} catch (Exception e) {
-			logger.warn("Exception", e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return 0;
 		}
-
 	}
 
 	@Override
@@ -926,8 +920,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
-		} catch (Exception e) {
-			logger.warn("Exception", e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
@@ -1027,15 +1021,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), mapSqlParameter, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-
-		return null;
+		return this.jdbcTemplate.query(sql.toString(), mapSqlParameter, typeRowMapper);
 	}
 
 	@Override

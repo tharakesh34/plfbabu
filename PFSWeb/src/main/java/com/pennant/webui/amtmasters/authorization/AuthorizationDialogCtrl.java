@@ -139,9 +139,8 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	 * selected Authorization object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AuthorizationDialog(Event event) throws Exception {
+	public void onCreate$window_AuthorizationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -268,10 +267,8 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 			ScreenCTL.displayNotes(getNotes("Authorization", String.valueOf(getAuthorization().getAuthUserId()),
@@ -305,9 +302,8 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAuthorization
-	 * @throws Exception
 	 */
-	public void doShowDialog(Authorization aAuthorization) throws Exception {
+	public void doShowDialog(Authorization aAuthorization) {
 		logger.debug("Entering");
 		try {
 			// fill the components with the data
@@ -338,7 +334,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	// 6 WorkFlow Edit
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
-		System.out.println();
+
 		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
 				this.userAction, this.authType, this.authUserId));
 		if (!getAuthorization().isNewRecord()) {

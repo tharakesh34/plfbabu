@@ -27,6 +27,7 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1048,7 +1049,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		return totalRecords;
 	}
 
-	public void processGstTransactionData() throws Exception {
+	public void processGstTransactionData() {
 		long id = saveHeader();
 		processTrnExtractionTypeData(id);
 		if (processedCount <= 0) {
@@ -1058,7 +1059,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		updateHeader(id, processedCount);
 	}
 
-	public void processGstSummaryData() throws Exception {
+	public void processGstSummaryData() {
 		long id = saveHeader();
 		processSumExtractionTypeData(id);
 
@@ -1069,13 +1070,13 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		updateHeader(id, processedCount);
 	}
 
-	private void throwPostException() throws Exception {
+	private void throwPostException() {
 		StringBuilder msg = new StringBuilder("No records are available for the PostDates");
 		msg.append(", From Date : ").append(fromDate);
 		msg.append(", To Date : ").append(toDate);
 		msg.append(", Application Date : ").append(appDate);
 
-		throw new Exception(msg.toString());
+		throw new AppException(msg.toString());
 	}
 
 	public long setGstSummaryRecords() {
@@ -1208,7 +1209,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 	}
 
 	@Override
-	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
+	protected MapSqlParameterSource mapData(ResultSet rs) {
 		return null;
 	}
 }

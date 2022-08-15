@@ -53,8 +53,7 @@ public class PresentmentDetailImportChangesListCtrl extends GFCBaseCtrl<Presentm
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_PresentmentDetailList(Event event) {
@@ -146,7 +145,6 @@ public class PresentmentDetailImportChangesListCtrl extends GFCBaseCtrl<Presentm
 				lc = new Listcell("Cannot change AutoExlcude record");
 				lc.setParent(item);
 				item.setDisabled(true);
-				;
 				break;
 			case 4:
 				lc = new Listcell("No record available");

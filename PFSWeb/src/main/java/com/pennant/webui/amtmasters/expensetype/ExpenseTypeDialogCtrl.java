@@ -106,9 +106,8 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	 * selected ExpenseType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ExpenseTypeDialog(Event event) throws Exception {
+	public void onCreate$window_ExpenseTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -368,9 +367,8 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aExpenseType
-	 * @throws Exception
 	 */
-	public void doShowDialog(ExpenseType aExpenseType) throws Exception {
+	public void doShowDialog(ExpenseType aExpenseType) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -781,7 +779,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.expenseType);
 
 	}

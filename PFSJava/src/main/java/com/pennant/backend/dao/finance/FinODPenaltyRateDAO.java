@@ -15,4 +15,6 @@ public interface FinODPenaltyRateDAO {
 	void saveLog(FinODPenaltyRate finODPenaltyRate, String type);
 
 	FinODPenaltyRate getDMFinODPenaltyRateByRef(long finID, String type);
+
+	FinODPenaltyRate getFinODPenaltyRateForLMSEvent(long finID);
 }

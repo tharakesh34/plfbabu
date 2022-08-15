@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,6 +82,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -148,10 +150,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, nextRoleCode);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -166,10 +167,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -184,10 +184,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -199,11 +198,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new DIsbursementFMRowMapper(), finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
-
 	}
 
 	@Override
@@ -215,11 +212,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new DIsbursementFMRowMapper(), finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
-
 	}
 
 	private StringBuilder getDisbursementFmQuery(TableType tableType) {
@@ -329,10 +324,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -413,10 +407,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -499,10 +492,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1057,13 +1049,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finReference) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finReference) > 0;
 	}
 
 	@Override
@@ -1087,7 +1073,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				return fm;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		List<BigDecimal> list = new ArrayList<BigDecimal>();
@@ -1265,10 +1251,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				return fs;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public Boolean saveRejectFinanceDetails(FinanceMain fm) {
@@ -1475,10 +1460,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return jdbcOperations.queryForObject(sql, String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1716,10 +1700,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1728,13 +1711,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, custID, 1);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, custID, 1);
 	}
 
 	@Override
@@ -1743,13 +1720,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, mandateID, 1);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, mandateID, 1);
 	}
 
 	@Override
@@ -1761,10 +1732,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, finReference, mandateID, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1830,10 +1800,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1870,10 +1839,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1969,10 +1937,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			}, FinID);
 
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2171,10 +2138,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, isActive);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2382,9 +2348,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -2409,9 +2375,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return Long.MIN_VALUE;
 		}
-		return Long.MIN_VALUE;
 	}
 
 	@Override
@@ -2420,13 +2386,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
 	}
 
 	@Override
@@ -2460,15 +2420,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.SQL, sql);
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2480,13 +2439,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finType) > 0;
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finType) > 0;
 	}
 
 	@Override
@@ -2538,13 +2491,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" where Finpurpose = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, loanPurposeCode) > 0;
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, loanPurposeCode) > 0;
 	}
 
 	@Override
@@ -2557,9 +2504,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2597,13 +2544,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finType, custID, 1);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finType, custID, 1);
 	}
 
 	@Override
@@ -2612,13 +2553,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finType, custID);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finType, custID);
 	}
 
 	@Override
@@ -2670,10 +2605,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return jdbcOperations.queryForObject(sql, String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public FinanceMain getEntityNEntityDesc(long finID, String type, boolean wif) {
@@ -2704,10 +2638,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2733,10 +2666,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2748,10 +2680,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2769,10 +2700,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, entity);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2790,13 +2720,11 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcOperations.queryForObject(sql.toString(), Boolean.class, finID);
+			return this.jdbcOperations.queryForObject(sql.toString(), Boolean.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
-
 	}
 
 	// FIXME to custom RowMapper
@@ -2815,10 +2743,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), typeRowMapper, source);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2847,10 +2774,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2865,10 +2791,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2927,10 +2852,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	// FIXME Remove order by clause and handle in code.
@@ -2978,34 +2902,51 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 	}
 
-	@Override
-	public Map<String, Object> getGLSubHeadCodes(long finID) {
+	private Map<String, Object> getGLSubHeadCodes(long finID, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinReference, fm.FinBranch, bv.Code, dd.EntityCode");
+		sql.append(", c.SubCategory, pc.PCCityName, ft.FinCollateralReq, ft.FinDivision");
+		sql.append(" From FinanceMain");
+		sql.append(tableType.getSuffix());
+		sql.append(" fm");
+		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Inner Join RMTBranches br on br.BranchCode = fm.FinBranch");
+		sql.append(" Inner Join RMTProvincevsCity pc on pc.PcCity = br.BranchCity");
+		sql.append(" Left Join Business_Vertical bv on bv.ID = fm.BusinessVertical");
+		sql.append(" Inner Join SMTDivisionDetail dd on dd.DivisionCode = ft.FinDivision");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		final Map<String, Object> map = new HashMap<>();
 
-		StringBuilder sql = selectGLSubHeadCodes();
-		sql.append(" From GL_SubHeadCodes_View Where FinID = ?");
 		return this.jdbcOperations.query(sql.toString(), (ResultSet rs) -> {
 			while (rs.next()) {
-				map.put("FINREFERENCE", rs.getString("FinrefeRence"));
-				map.put("ENTITYCODE", rs.getString("EntityCode"));
-				map.put("ALWFLEXI", rs.getBoolean("AlwFlexi"));
+				map.put("FINREFERENCE", rs.getString("FinReference"));
 				map.put("FINBRANCH", rs.getString("FinBranch"));
-				map.put("BTLOAN", rs.getString("BTLoan"));
-				map.put("BUSINESSVERTICAL", rs.getString("BusinessVertical"));
-				map.put("EMPTYPE", rs.getString("EmpType"));
-				map.put("BRANCHCITY", rs.getString("BranchCity"));
+				map.put("ENTITYCODE", rs.getString("EntityCode"));
+				map.put("BUSINESSVERTICAL", rs.getString("Code"));
+				map.put("EMPTYPE", rs.getString("SubCategory"));
+				map.put("BRANCHCITY", rs.getString("PCCityName"));
 				map.put("FINCOLLATERALREQ", rs.getBoolean("FinCollateralReq"));
 				map.put("FINDIVISION", rs.getString("FinDivision"));
+				map.put("ALWFLEXI", false);
+				map.put("BTLOAN", null);
 			}
 			return map;
 		}, finID);
 	}
 
-	private StringBuilder selectGLSubHeadCodes() {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinrefeRence, EntityCode, AlwFlexi, FinBranch, BTLoan, BusinessVertical");
-		sql.append(", EmpType, BranchCity, FinCollateralReq, FinDivision");
-		return sql;
+	@Override
+	public Map<String, Object> getGLSubHeadCodes(long finID) {
+		Map<String, Object> glSubHeadCodes = getGLSubHeadCodes(finID, TableType.MAIN_TAB);
+
+		if (MapUtils.isEmpty(glSubHeadCodes)) {
+			glSubHeadCodes = getGLSubHeadCodes(finID, TableType.TEMP_TAB);
+		}
+
+		return glSubHeadCodes;
 	}
 
 	@Override
@@ -3014,13 +2955,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
 	}
 
 	@Override
@@ -3084,6 +3019,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -3305,10 +3242,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				return fm;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -3324,12 +3260,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
-		} catch (EmptyResultDataAccessException e) {
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
 	}
 
 	@Override
@@ -3427,22 +3358,18 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-				map.put("FinID", rs.getLong("FinID"));
-				map.put("FinReference", rs.getString("FinReference"));
-				map.put("FinCCY", rs.getString("FinCCY"));
-				map.put("FinBranch", rs.getString("FinBranch"));
-				map.put("CustBranch", rs.getString("CustBranch"));
-				map.put("CustProvince", rs.getString("CustProvince"));
-				map.put("CustCountry", rs.getString("CustCountry"));
-				map.put("ResidentialStatus", rs.getString("ResidentialStatus"));
-				map.put("CustResidentialSts", rs.getString("CustResidentialSts"));
-				return map;
-			}, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH), finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
+		this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			map.put("FinID", rs.getLong("FinID"));
+			map.put("FinReference", rs.getString("FinReference"));
+			map.put("FinCCY", rs.getString("FinCCY"));
+			map.put("FinBranch", rs.getString("FinBranch"));
+			map.put("CustBranch", rs.getString("CustBranch"));
+			map.put("CustProvince", rs.getString("CustProvince"));
+			map.put("CustCountry", rs.getString("CustCountry"));
+			map.put("ResidentialStatus", rs.getString("ResidentialStatus"));
+			map.put("CustResidentialSts", rs.getString("CustResidentialSts"));
+			return map;
+		}, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH), finID);
 
 		return map;
 	}
@@ -3471,18 +3398,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-				map.put("CustBranch", rs.getString("CustBranch"));
-				map.put("CustProvince", rs.getString("CustProvince"));
-				map.put("CustCountry", rs.getString("CustCountry"));
-				map.put("ResidentialStatus", rs.getString("ResidentialStatus"));
-				map.put("CustResidentialSts", rs.getString("CustResidentialSts"));
-				return map;
-			}, custId, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
+		this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			map.put("CustBranch", rs.getString("CustBranch"));
+			map.put("CustProvince", rs.getString("CustProvince"));
+			map.put("CustCountry", rs.getString("CustCountry"));
+			map.put("ResidentialStatus", rs.getString("ResidentialStatus"));
+			map.put("CustResidentialSts", rs.getString("CustResidentialSts"));
+			return map;
+		}, custId, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
 
 		return map;
 	}
@@ -3496,40 +3419,29 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
 	}
 
 	@Override
-	public String getFinanceMainByRcdMaintenance(long finID, String type) {
-		StringBuilder sql = new StringBuilder("Select RcdMaintainSts From FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ?");
+	public String getFinanceMainByRcdMaintenance(long finID) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select RcdMaintainSts From (");
+		sql.append(" Select RcdMaintainSts From FinanceMain_Temp Where FinID = ?");
+		sql.append(" Union All");
+		sql.append(" Select RcdMaintainSts From FinanceMain Where FinID = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
+		sql.append(" ) fm");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
+
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
-	}
-
-	@Override
-	public String getFinanceMainByRcdMaintenance(String finReference, String type) {
-		StringBuilder sql = new StringBuilder("Select RcdMaintainSts From FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return null;
 	}
 
 	@Override
@@ -3552,9 +3464,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -3618,10 +3530,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, oldFinReference, active);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -3696,10 +3607,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -3752,13 +3662,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finID, active);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, active);
 	}
 
 	@Override
@@ -3767,13 +3671,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, hostReference);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, hostReference);
 	}
 
 	@Override
@@ -3788,10 +3686,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -3805,10 +3702,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -3873,9 +3769,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, oldFinReference, active);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -3884,13 +3780,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, oldHostReference);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, oldHostReference);
 	}
 
 	@Override
@@ -3901,13 +3791,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, oldHostReference, 0);
-		} catch (EmptyResultDataAccessException dae) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, oldHostReference, 0);
 	}
 
 	@Override
@@ -3954,9 +3838,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -3983,9 +3867,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	// FIXME to custom RowMapper
@@ -4103,10 +3987,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				return fm;
 			}, "ELGMETHOD", finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -4115,13 +3998,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, referenceId) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, referenceId) > 0;
 	}
 
 	@Override
@@ -4130,12 +4007,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, brType) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, brType) > 0;
 	}
 
 	@Override
@@ -4144,12 +4016,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, brType) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, brType) > 0;
 	}
 
 	@Override
@@ -4182,11 +4049,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
-
 	}
 
 	@Override
@@ -4861,9 +4726,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -4888,10 +4753,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, leadId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	// FIXME to custom RowMapper
@@ -4978,24 +4842,22 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql.toString());
 
 		FinCustomerDetails cd = null;
-		try {
-			SqlRowSet rowSet = this.jdbcOperations.queryForRowSet(sql.toString(), offerID);
-			if (rowSet != null) {
-				cd = new FinCustomerDetails();
-				while (rowSet.next()) {
-					FinCustomerDetails.Category category = cd.new Category();
-					cd.setFinID(rowSet.getLong("FinID"));
-					cd.setFinReference(rowSet.getString("Finreference"));
-					category.setName(rowSet.getString("CustShrtName"));
-					category.setCategory("Primary");
-					category.setCif(rowSet.getString("CustCif"));
-					cd.getCif().add(category);
-				}
-				setJointAccountDetails(cd);
+
+		SqlRowSet rowSet = this.jdbcOperations.queryForRowSet(sql.toString(), offerID);
+		if (rowSet != null) {
+			cd = new FinCustomerDetails();
+			while (rowSet.next()) {
+				FinCustomerDetails.Category category = cd.new Category();
+				cd.setFinID(rowSet.getLong("FinID"));
+				cd.setFinReference(rowSet.getString("Finreference"));
+				category.setName(rowSet.getString("CustShrtName"));
+				category.setCategory("Primary");
+				category.setCif(rowSet.getString("CustCif"));
+				cd.getCif().add(category);
 			}
-		} catch (EmptyResultDataAccessException e) {
-			//
+			setJointAccountDetails(cd);
 		}
+
 		return cd;
 	}
 
@@ -5012,19 +4874,15 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			SqlRowSet rowSet = this.jdbcOperations.queryForRowSet(sql.toString(), cd.getFinID());
-			if (rowSet != null) {
-				while (rowSet.next()) {
-					FinCustomerDetails.Category category = cd.new Category();
-					category.setCif(rowSet.getString("custcif"));
-					category.setCategory("Co-Applicant");
-					category.setName(rowSet.getString("custshrtname"));
-					cd.getCif().add(category);
-				}
+		SqlRowSet rowSet = this.jdbcOperations.queryForRowSet(sql.toString(), cd.getFinID());
+		if (rowSet != null) {
+			while (rowSet.next()) {
+				FinCustomerDetails.Category category = cd.new Category();
+				category.setCif(rowSet.getString("custcif"));
+				category.setCategory("Co-Applicant");
+				category.setName(rowSet.getString("custshrtname"));
+				cd.getCif().add(category);
 			}
-		} catch (EmptyResultDataAccessException e) {
-			//
 		}
 	}
 
@@ -5052,9 +4910,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, dmsQueue.getFinID());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -5152,10 +5010,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				return fm;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	// FIXME to PreparedStatement
@@ -5241,9 +5098,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				return fm;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -5296,11 +5153,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		try {
 			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
-		} catch (DataAccessException e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -5329,10 +5185,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Boolean.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
 	}
 
 	@Override
@@ -5441,10 +5296,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql, String.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public List<Long> getChildFinRefByParentRef(String parentRef) {
@@ -5572,10 +5426,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -5607,10 +5460,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	private String getBasicFieldsQuery(String tableType, boolean isFinReference) {
@@ -5619,7 +5471,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinBranch, FinAmount, fm.FinCcy, FinPurpose, FinStartDate");
 		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
-		sql.append(", FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.RecordStatus, fm.RecordType, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
 		sql.append(" From FinanceMain").append(tableType).append(" fm");
 		sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
@@ -5631,6 +5482,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Where FinID = ?");
 		}
 		return sql.toString();
+
 	}
 
 	private String getBasicFieldsQuery(TableType tableType, boolean isFinReference) {
@@ -5671,9 +5523,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finReference, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -5692,10 +5544,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -5707,9 +5558,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finID, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -5728,10 +5579,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public Long getFinID(String finReference) {
@@ -5745,10 +5595,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public Long getActiveFinID(String finReference) {
@@ -5762,10 +5611,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, 1, finReference, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public Long getFinID(String finReference, TableType tableType) {
@@ -5799,10 +5647,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, object);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public Long getActiveFinID(String finReference, TableType tableType) {
@@ -5836,10 +5683,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, object);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public Long getActiveWIFFinID(String finReference, TableType tableType) {
@@ -5850,10 +5696,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	private class FinanceMainRM implements RowMapper<FinanceMain> {
@@ -5905,7 +5750,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" Inner Join FinPftDetails FP ON FM.FinID = FP.FinID");
 		sql.append(" Where FM.FinID = ?");
 
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
@@ -5967,10 +5812,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				return fm;
 			}, finReference);
 		} catch (EmptyResultDataAccessException dae) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -5991,10 +5835,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				return fm;
 			}, finReference);
 		} catch (EmptyResultDataAccessException dae) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -6007,5 +5850,276 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.queryForObject(sql.toString(), String.class, finReference);
+	}
+
+	@Override
+	public FinanceMain getFinanceMainForLMSEvent(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  FinID, fm.FinReference, fm.FinID, fm.CustID, fm.FinBranch, fm.FinType, fm.FinAmount");
+		sql.append(", fm.FinAssetValue, fm.FinCurrAssetValue, fm.DeductFeeDisb, fm.FeeChargeAmt");
+		sql.append(", fm.FinStartDate, fm.FinCategory, fm.ApplicationNo, fm.ReferralId, fm.SalesDepartment");
+		sql.append(", fm.RepayFrq, fm.MaturityDate, fm.GraceTerms, fm.NumberOfTerms, fm.GrcPeriodEndDate");
+		sql.append(", fm.GrcPftFrq, fm.NextGrcCpzDate, fm.GrcCpzFrq, fm.GrcPftRvwFrq, fm.GraceBaseRate");
+		sql.append(", fm.GraceSpecialRate, fm.GrcMargin, fm.GrcPftRate, fm.GrcSchdMthd, fm.RepayBaseRate");
+		sql.append(", fm.RepaySpecialRate, fm.RepayMargin, fm.RepayProfitRate, fm.RepayPftFrq, fm.RepayCpzFrq");
+		sql.append(", fm.ReqRepayAmount, fm.ScheduleMethod, fm.ProfitDaysBasis, fm.FinRepayMethod, fm.MandateID");
+		sql.append(", fm.BpiTreatment, fm.BpiAmount, fm.NoOfSteps, fm.StepType, fm.ReqMaturity, fm.CalTerms");
+		sql.append(", fm.CalMaturity, fm.ClosingStatus, fm.FinPurpose, fm.CustDSR, fm.JointCustId");
+		sql.append(", fm.Version, fm.LastMntBy, fm.LastMntOn, fm.InitiateUser, fm.InitiateDate, fm.BusinessVertical");
+		sql.append(", fm.AllowGrcPftRvw, fm.AllowGrcCpz, fm.RepayRvwFrq, fm.BpiPftDaysBasis, fm.FinCcy, fm.RpyMinRate");
+		sql.append(", fm.CalRoundingMode, fm.RoundingTarget, fm.FinRepaymentAmount, fm.TotalRepayAmt, fm.FirstRepay");
+		sql.append(", fm.TotalGracePft, fm.TotalProfit, fm.AdvanceEMI, fm.RecalType, fm.PlanEMIHMethod");
+		sql.append(", fm.NextGrcPftRvwDate, fm.GrcProfitDaysBasis, fm.ProductCategory, fm.DroplineFrq");
+		sql.append(", fm.DownPayment, fm.NextUserId, fm.NextTaskId, fm.ParentRef, fm.AdvType, fm.DownPayBank");
+		sql.append(", fm.TotalGrossPft, fm.RepayRateBasis, fm.AllowGrcPeriod, fm.GrcMaxAmount, fm.PlanEMIHMaxPerYear");
+		sql.append(", fm.PlanEMIHMax, fm.PlanEMIHLockPeriod, fm.GrcMinRate, fm.SanBsdSchdle, fm.LastRepayDate");
+		sql.append(", fm.FinOcrRequired, fm.LastRepayCpzDate, fm.LastRepayPftDate, fm.LastRepayRvwDate");
+		sql.append(", fm.NextGrcPftDate, fm.NextRepayPftDate, fm.AllowRepayRvw, fm.AdvTerms, fm.TotalGraceCpz");
+		sql.append(", fm.TotalCpz, fm.StepFinance, fm.RvwRateApplFor, fm.FixedRateTenor, fm.NextRepayDate");
+		sql.append(", fm.FixedTenorRate, fm.GrcRateBasis, fm.AllowRepayCpz, fm.ScheduleMaintained");
+		sql.append(", fm.TotalGrossGrcPft, fm.AdvStage, fm.FirstDroplineDate, fm.QuickDisb, fm.AllowGrcRepay");
+		sql.append(", fm.TDSApplicable, fm.AlwBPI, fm.AlwManualSteps, fm.FinIsActive, fm.ScheduleRegenerated");
+		sql.append(", fm.JointAccount, fm.AlwMultiDisb, fm.AllowSubvention, fm.CpzAtGraceEnd");
+		sql.append(", fm.FinRepayPftOnFrq, fm.PlanEMIHAlw, fm.DeviationApproval, fm.PlanEMICpz");
+		sql.append(", fm.PlanEMIHAlwInGrace, fm.FinIsRateRvwAtGrcEnd, fm.ManualSchedule, fm.ReAgeCpz, fm.UnPlanEMICpz");
+		sql.append(", fm.RecordType, fm.FinContractDate, fm.FinApprovedDate, fm.FinCommitmentRef, fm.SvAmount");
+		sql.append(", fm.CbAmount, fm.FinStatus, fm.FinStsReason, fm.PastduePftCalMthd, fm.PastduePftMargin");
+		sql.append(", fm.EligibilityMethod, fm.PromotionCode, fm.SchdVersion");
+		sql.append(", e.EntityCode, fm.DmaCode, fm.MigratedFinance, fm.MaxReAgeHolidays");
+		sql.append(", fm.LinkedFinRef, fm.WifReference, fm.UnPlanEMIHLockPeriod, fm.NextRepayCpzDate");
+		sql.append(", fm.Priority, fm.PlanDeferCount, fm.Connector, fm.AllowedDefFrqChange, fm.RecordStatus");
+		sql.append(", fm.RpyMaxRate, fm.AllowedDefRpyChange, fm.FinLimitRef, fm.SamplingRequired, fm.TdsType");
+		sql.append(", fm.FinSourceID, fm.RcdMaintainSts, fm.MaxUnplannedEmi, fm.AvailedUnPlanEmi, fm.TaskId");
+		sql.append(", fm.FinRemarks, fm.AnualizedPercRate, fm.OverrideLimit, fm.DsaCode");
+		sql.append(", fm.NextRepayRvwDate, fm.SchCalOnRvw, fm.Defferments, fm.StepPolicy, fm.WorkflowId");
+		sql.append(", fm.AccountsOfficer, fm.MinDownPayPerc, fm.GrcMaxRate, fm.WriteoffLoan");
+		sql.append(", fm.InvestmentRef, fm.FinPreApprovedRef, fm.LastRepay, fm.EmployeeName, fm.EffectiveRateOfReturn");
+		sql.append(", fm.RoleCode, fm.DownPaySupl, fm.RateChgAnyDay, fm.AvailedReAgeH, fm.NextRoleCode, fm.LimitValid");
+		sql.append(", fm.AvailedDefRpyChange, fm.DroppingMethod, fm.PftServicingODLimit");
+		sql.append(", fm.ReAgeBucket, fm.AvailedDefFrqChange, fm.LegalRequired, ft.FinTypeDesc, b.BranchDesc");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join RMTFinanceTypes ft On fm.FinType = ft.FinType");
+		sql.append(" Inner Join Customers c On fm.CustID = c.CustID");
+		sql.append(" Inner Join SmtDivisionDetail d On d.DivisionCode = ft.FinDivision");
+		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
+		sql.append(" Inner Join RMTBranches b on b.BranchCode = fm.FinBranch");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setFinBranch(rs.getString("FinBranch"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+				fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+				fm.setDeductFeeDisb(rs.getBigDecimal("DeductFeeDisb"));
+				fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+				fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+				fm.setFinCategory(rs.getString("FinCategory"));
+				fm.setApplicationNo(rs.getString("ApplicationNo"));
+				fm.setReferralId(rs.getString("ReferralId"));
+				fm.setSalesDepartment(rs.getString("SalesDepartment"));
+				fm.setRepayFrq(rs.getString("RepayFrq"));
+				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+				fm.setGraceTerms(rs.getInt("GraceTerms"));
+				fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+				fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+				fm.setGrcPftFrq(rs.getString("GrcPftFrq"));
+				fm.setNextGrcCpzDate(rs.getTimestamp("NextGrcCpzDate"));
+				fm.setGrcCpzFrq(rs.getString("GrcCpzFrq"));
+				fm.setGrcPftRvwFrq(rs.getString("GrcPftRvwFrq"));
+				fm.setGraceBaseRate(rs.getString("GraceBaseRate"));
+				fm.setGraceSpecialRate(rs.getString("GraceSpecialRate"));
+				fm.setGrcMargin(rs.getBigDecimal("GrcMargin"));
+				fm.setGrcPftRate(rs.getBigDecimal("GrcPftRate"));
+				fm.setGrcSchdMthd(rs.getString("GrcSchdMthd"));
+				fm.setRepayBaseRate(rs.getString("RepayBaseRate"));
+				fm.setRepaySpecialRate(rs.getString("RepaySpecialRate"));
+				fm.setRepayMargin(rs.getBigDecimal("RepayMargin"));
+				fm.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
+				fm.setRepayPftFrq(rs.getString("RepayPftFrq"));
+				fm.setRepayCpzFrq(rs.getString("RepayCpzFrq"));
+				fm.setReqRepayAmount(rs.getBigDecimal("ReqRepayAmount"));
+				fm.setScheduleMethod(rs.getString("ScheduleMethod"));
+				fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+				fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
+				fm.setMandateID(rs.getLong("MandateID"));
+				fm.setBpiTreatment(rs.getString("BpiTreatment"));
+				fm.setBpiAmount(rs.getBigDecimal("BpiAmount"));
+				fm.setNoOfSteps(rs.getInt("NoOfSteps"));
+				fm.setStepType(rs.getString("StepType"));
+				fm.setReqMaturity(rs.getTimestamp("ReqMaturity"));
+				fm.setCalTerms(rs.getInt("CalTerms"));
+				fm.setCalMaturity(rs.getTimestamp("CalMaturity"));
+				fm.setClosingStatus(rs.getString("ClosingStatus"));
+				fm.setFinPurpose(rs.getString("FinPurpose"));
+				fm.setCustDSR(rs.getBigDecimal("CustDSR"));
+				fm.setJointCustId(rs.getLong("JointCustId"));
+				fm.setVersion(rs.getInt("Version"));
+				fm.setLastMntBy(rs.getLong("LastMntBy"));
+				fm.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				fm.setInitiateUser(rs.getLong("InitiateUser"));
+				fm.setInitiateDate(rs.getTimestamp("InitiateDate"));
+				fm.setBusinessVertical(rs.getLong("BusinessVertical"));
+				fm.setAllowGrcPftRvw(rs.getBoolean("AllowGrcPftRvw"));
+				fm.setAllowGrcCpz(rs.getBoolean("AllowGrcCpz"));
+				fm.setRepayRvwFrq(rs.getString("RepayRvwFrq"));
+				fm.setBpiPftDaysBasis(rs.getString("BpiPftDaysBasis"));
+				fm.setFinCcy(rs.getString("FinCcy"));
+				fm.setRpyMinRate(rs.getBigDecimal("RpyMinRate"));
+				fm.setCalRoundingMode(rs.getString("CalRoundingMode"));
+				fm.setRoundingTarget(rs.getInt("RoundingTarget"));
+				fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
+				fm.setTotalRepayAmt(rs.getBigDecimal("TotalRepayAmt"));
+				fm.setFirstRepay(rs.getBigDecimal("FirstRepay"));
+				fm.setTotalGracePft(rs.getBigDecimal("TotalGracePft"));
+				fm.setTotalProfit(rs.getBigDecimal("TotalProfit"));
+				fm.setAdvanceEMI(rs.getBigDecimal("AdvanceEMI"));
+				fm.setRecalType(rs.getString("RecalType"));
+				fm.setPlanEMIHMethod(rs.getString("PlanEMIHMethod"));
+				fm.setNextGrcPftRvwDate(rs.getTimestamp("NextGrcPftRvwDate"));
+				fm.setGrcProfitDaysBasis(rs.getString("GrcProfitDaysBasis"));
+				fm.setProductCategory(rs.getString("ProductCategory"));
+				fm.setDroplineFrq(rs.getString("DroplineFrq"));
+				fm.setDownPayment(rs.getBigDecimal("DownPayment"));
+				fm.setNextUserId(rs.getString("NextUserId"));
+				fm.setNextTaskId(rs.getString("NextTaskId"));
+				fm.setParentRef(rs.getString("ParentRef"));
+				fm.setAdvType(rs.getString("AdvType"));
+				fm.setDownPayBank(rs.getBigDecimal("DownPayBank"));
+				fm.setTotalGrossPft(rs.getBigDecimal("TotalGrossPft"));
+				fm.setRepayRateBasis(rs.getString("RepayRateBasis"));
+				fm.setAllowGrcPeriod(rs.getBoolean("AllowGrcPeriod"));
+				fm.setGrcMaxAmount(rs.getBigDecimal("GrcMaxAmount"));
+				fm.setPlanEMIHMaxPerYear(rs.getInt("PlanEMIHMaxPerYear"));
+				fm.setPlanEMIHMax(rs.getInt("PlanEMIHMax"));
+				fm.setPlanEMIHLockPeriod(rs.getInt("PlanEMIHLockPeriod"));
+				fm.setGrcMinRate(rs.getBigDecimal("GrcMinRate"));
+				fm.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
+				fm.setLastRepayDate(rs.getTimestamp("LastRepayDate"));
+				fm.setFinOcrRequired(rs.getBoolean("FinOcrRequired"));
+				fm.setLastRepayCpzDate(rs.getTimestamp("LastRepayCpzDate"));
+				fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
+				fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
+				fm.setNextGrcPftDate(rs.getTimestamp("NextGrcPftDate"));
+				fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
+				fm.setAllowRepayRvw(rs.getBoolean("AllowRepayRvw"));
+				fm.setAdvTerms(rs.getInt("AdvTerms"));
+				fm.setTotalGraceCpz(rs.getBigDecimal("TotalGraceCpz"));
+				fm.setTotalCpz(rs.getBigDecimal("TotalCpz"));
+				fm.setStepFinance(rs.getBoolean("StepFinance"));
+				fm.setRvwRateApplFor(rs.getString("RvwRateApplFor"));
+				fm.setFixedRateTenor(rs.getInt("FixedRateTenor"));
+				fm.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
+				fm.setFixedTenorRate(rs.getBigDecimal("FixedTenorRate"));
+				fm.setGrcRateBasis(rs.getString("GrcRateBasis"));
+				fm.setAllowRepayCpz(rs.getBoolean("AllowRepayCpz"));
+				fm.setScheduleMaintained(rs.getBoolean("ScheduleMaintained"));
+				fm.setTotalGrossGrcPft(rs.getBigDecimal("TotalGrossGrcPft"));
+				fm.setAdvStage(rs.getString("AdvStage"));
+				fm.setFirstDroplineDate(rs.getTimestamp("FirstDroplineDate"));
+				fm.setQuickDisb(rs.getBoolean("QuickDisb"));
+				fm.setAllowGrcRepay(rs.getBoolean("AllowGrcRepay"));
+				fm.setTDSApplicable(rs.getBoolean("TDSApplicable"));
+				fm.setAlwBPI(rs.getBoolean("AlwBPI"));
+				fm.setAlwManualSteps(rs.getBoolean("AlwManualSteps"));
+				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+				fm.setScheduleRegenerated(rs.getBoolean("ScheduleRegenerated"));
+				fm.setJointAccount(rs.getBoolean("JointAccount"));
+				fm.setAlwMultiDisb(rs.getBoolean("AlwMultiDisb"));
+				fm.setAllowSubvention(rs.getBoolean("AllowSubvention"));
+				fm.setCpzAtGraceEnd(rs.getBoolean("CpzAtGraceEnd"));
+				fm.setFinRepayPftOnFrq(rs.getBoolean("FinRepayPftOnFrq"));
+				fm.setPlanEMIHAlw(rs.getBoolean("PlanEMIHAlw"));
+				fm.setDeviationApproval(rs.getBoolean("DeviationApproval"));
+				fm.setPlanEMICpz(rs.getBoolean("PlanEMICpz"));
+				fm.setPlanEMIHAlwInGrace(rs.getBoolean("PlanEMIHAlwInGrace"));
+				fm.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
+				fm.setManualSchedule(rs.getBoolean("ManualSchedule"));
+				fm.setReAgeCpz(rs.getBoolean("ReAgeCpz"));
+				fm.setUnPlanEMICpz(rs.getBoolean("UnPlanEMICpz"));
+				fm.setRecordType(rs.getString("RecordType"));
+				fm.setFinContractDate(rs.getTimestamp("FinContractDate"));
+				fm.setFinApprovedDate(rs.getTimestamp("FinApprovedDate"));
+				fm.setFinCommitmentRef(rs.getString("FinCommitmentRef"));
+				fm.setSvAmount(rs.getBigDecimal("SvAmount"));
+				fm.setCbAmount(rs.getBigDecimal("CbAmount"));
+				fm.setFinStatus(rs.getString("FinStatus"));
+				fm.setFinStsReason(rs.getString("FinStsReason"));
+				fm.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
+				fm.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
+				fm.setEligibilityMethod(rs.getLong("EligibilityMethod"));
+				fm.setPromotionCode(rs.getString("PromotionCode"));
+				fm.setSchdVersion(rs.getInt("SchdVersion"));
+				fm.setEntityCode(rs.getString("EntityCode"));
+				fm.setLovDescEntityCode(rs.getString("EntityCode"));
+				fm.setDmaCode(rs.getString("DmaCode"));
+				fm.setMigratedFinance(rs.getBoolean("MigratedFinance"));
+				fm.setMaxReAgeHolidays(rs.getInt("MaxReAgeHolidays"));
+				fm.setLinkedFinRef(rs.getString("LinkedFinRef"));
+				fm.setWifReference(rs.getString("WifReference"));
+				fm.setUnPlanEMIHLockPeriod(rs.getInt("UnPlanEMIHLockPeriod"));
+				fm.setNextRepayCpzDate(rs.getTimestamp("NextRepayCpzDate"));
+				fm.setPriority(rs.getInt("Priority"));
+				fm.setPlanDeferCount(rs.getInt("PlanDeferCount"));
+				fm.setConnector(rs.getLong("Connector"));
+				fm.setAllowedDefFrqChange(rs.getInt("AllowedDefFrqChange"));
+				fm.setRecordStatus(rs.getString("RecordStatus"));
+				fm.setRpyMaxRate(rs.getBigDecimal("RpyMaxRate"));
+				fm.setAllowedDefRpyChange(rs.getInt("AllowedDefRpyChange"));
+				fm.setFinLimitRef(rs.getString("FinLimitRef"));
+				fm.setSamplingRequired(rs.getBoolean("SamplingRequired"));
+				fm.setTdsType(rs.getString("TdsType"));
+				fm.setFinSourceID(rs.getString("FinSourceID"));
+				fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
+				fm.setMaxUnplannedEmi(rs.getInt("MaxUnplannedEmi"));
+				fm.setAvailedUnPlanEmi(rs.getInt("AvailedUnPlanEmi"));
+				fm.setTaskId(rs.getString("TaskId"));
+				fm.setFinRemarks(rs.getString("FinRemarks"));
+				fm.setAnualizedPercRate(rs.getBigDecimal("AnualizedPercRate"));
+				fm.setOverrideLimit(rs.getBoolean("OverrideLimit"));
+				fm.setDsaCode(rs.getString("DsaCode"));
+				fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
+				fm.setSchCalOnRvw(rs.getString("SchCalOnRvw"));
+				fm.setDefferments(rs.getInt("Defferments"));
+				fm.setStepPolicy(rs.getString("StepPolicy"));
+				fm.setWorkflowId(rs.getLong("WorkflowId"));
+				fm.setAccountsOfficer(rs.getLong("AccountsOfficer"));
+				fm.setMinDownPayPerc(rs.getBigDecimal("MinDownPayPerc"));
+				fm.setGrcMaxRate(rs.getBigDecimal("GrcMaxRate"));
+				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+				fm.setInvestmentRef(rs.getString("InvestmentRef"));
+				fm.setFinPreApprovedRef(rs.getString("FinPreApprovedRef"));
+				fm.setLastRepay(rs.getBigDecimal("LastRepay"));
+				fm.setEmployeeName(rs.getString("EmployeeName"));
+				fm.setEffectiveRateOfReturn(rs.getBigDecimal("EffectiveRateOfReturn"));
+				fm.setRoleCode(rs.getString("RoleCode"));
+				fm.setDownPaySupl(rs.getBigDecimal("DownPaySupl"));
+				fm.setRateChgAnyDay(rs.getBoolean("RateChgAnyDay"));
+				fm.setAvailedReAgeH(rs.getInt("AvailedReAgeH"));
+				fm.setNextRoleCode(rs.getString("NextRoleCode"));
+				fm.setLimitValid(rs.getBoolean("LimitValid"));
+				fm.setAvailedDefRpyChange(rs.getInt("AvailedDefRpyChange"));
+				fm.setDroppingMethod(rs.getString("DroppingMethod"));
+				fm.setPftServicingODLimit(rs.getBoolean("PftServicingODLimit"));
+				fm.setReAgeBucket(rs.getInt("ReAgeBucket"));
+				fm.setAvailedDefFrqChange(rs.getInt("AvailedDefFrqChange"));
+				fm.setLegalRequired(rs.getBoolean("LegalRequired"));
+				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
+				fm.setLovDescFinBranchName(rs.getString("BranchDesc"));
+
+				return fm;
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 }

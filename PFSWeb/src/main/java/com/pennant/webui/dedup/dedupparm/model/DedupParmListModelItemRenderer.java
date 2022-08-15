@@ -68,7 +68,7 @@ public class DedupParmListModelItemRenderer implements ListitemRenderer<DedupPar
 	}
 
 	@Override
-	public void render(Listitem item, DedupParm dedupParm, int count) throws Exception {
+	public void render(Listitem item, DedupParm dedupParm, int count) {
 
 		Listcell lc;
 		lc = new Listcell(dedupParm.getQueryCode());

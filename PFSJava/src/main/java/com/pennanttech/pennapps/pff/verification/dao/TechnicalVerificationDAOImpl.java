@@ -1,21 +1,18 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennanttech.pennapps.pff.verification.dao;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +40,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
@@ -107,15 +105,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -135,15 +125,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -274,10 +256,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	 */
 	@Override
 	public TechnicalVerification getTechnicalVerification(long id, String type) {
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
-
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select verificationId, agentCode, agentName, type,  verifiedDate, status, reason,");
 		sql.append(" summaryRemarks, sourceFormName, verificationFormName, observationRemarks,  valuationAmount,");
 		sql.append(" documentname, documentRef,");
@@ -295,18 +274,16 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(" Where verificationId = :verificationId ");
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("verificationId", id);
 
 		RowMapper<TechnicalVerification> typeRowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -325,20 +302,12 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
 	public List<Verification> getTvValuation(List<Long> verificationIDs, String type) {
-		logger.debug(Literal.ENTERING); // Prepare the SQL. 
+		logger.debug(Literal.ENTERING); // Prepare the SQL.
 		StringBuilder sql = new StringBuilder(
 				"SELECT VERIFICATIONID AS ID, COLLATERALREF REFERENCEFOR, VALUATIONAMOUNT, AGENCYNAME, ");
 		sql.append(
@@ -347,18 +316,14 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" WHERE RECORDSTATUS = :RECORDSTATUS ");
 		sql.append(" AND VERIFICATIONID IN (:VERIFICATIONIDS) ");
-		// Execute the SQL, binding the arguments. 
+		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("VERIFICATIONIDS", verificationIDs);
 		paramSource.addValue("RECORDSTATUS", PennantConstants.RCD_STATUS_APPROVED);
-		try {
-			RowMapper<Verification> typeRowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
-			return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			return Collections.emptyList();
-		}
+		RowMapper<Verification> typeRowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
+
+		return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 	}
 
 	public void updateValuationAmount(Verification verification, TableType tableType) {
@@ -405,20 +370,19 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		try {
 			return jdbcTemplate.queryForMap(sql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in Collateral{}_ed main and tables for the specified Reference >> {}",
-					subModuleName, collRef);
-		} catch (Exception e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new HashMap<>();
+		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
+			return new HashMap<>();
 		}
-
-		return new HashMap<>();
 	}
 
 	@Override
 	public String getPropertyCity(String collRef, String subModuleName) {
 
 		String column = "CITY";
-		//Agency filter issue based on Collateral City
+		// Agency filter issue based on Collateral City
 		String value = ImplementationConstants.VER_TV_COLL_ED_ADDR_COLUMN;
 		if (StringUtils.isNotBlank(value)) {
 			column = value;
@@ -446,29 +410,28 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
 	public String getCollaterlType(long id) {
-		StringBuilder sql = null;
-		String collateraltype = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT collateralType From verification_tv_view ");
 		sql.append(" where verificationid = :id");
 
-		source = new MapSqlParameterSource();
+		// Execute the SQL, binding the arguments.
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("id", id);
+
 		try {
-			collateraltype = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return collateraltype;
 	}
 }

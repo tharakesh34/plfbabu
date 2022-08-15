@@ -110,9 +110,8 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	 * selected RelationshipOfficer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_RelationshipOfficerDialog(Event event) throws Exception {
+	public void onCreate$window_RelationshipOfficerDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -404,9 +403,8 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aRelationshipOfficer
-	 * @throws Exception
 	 */
-	public void doShowDialog(RelationshipOfficer aRelationshipOfficer) throws Exception {
+	public void doShowDialog(RelationshipOfficer aRelationshipOfficer) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -867,10 +865,8 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.relationshipOfficer);
 	}
 

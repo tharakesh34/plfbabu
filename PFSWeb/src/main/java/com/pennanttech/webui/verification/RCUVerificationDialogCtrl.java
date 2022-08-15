@@ -147,7 +147,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_RCUVerificationDialog(Event event) throws Exception {
+	public void onCreate$window_RCUVerificationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_RCUVerificationDialog);
@@ -803,7 +803,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return null;
 	}
 
-	public void onChnageTv(ForwardEvent event) throws Exception {
+	public void onChnageTv(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 
 		Combobox cfiv = (Combobox) getComponent(listitem, "RequestType");
@@ -842,7 +842,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeAgency(ForwardEvent event) throws Exception {
+	public void onChangeAgency(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "Agency");
 		Object dataObject = agency.getObject();
@@ -858,7 +858,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeReason(ForwardEvent event) throws Exception {
+	public void onChangeReason(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reason = (ExtendedCombobox) getComponent(listitem, "Reason");
 		Object dataObject = reason.getObject();
@@ -890,7 +890,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeDecision(ForwardEvent event) throws Exception {
+	public void onChangeDecision(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reInitAgency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 		Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");

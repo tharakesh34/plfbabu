@@ -63,7 +63,7 @@ public class FeeTypeListModelItemRenderer implements ListitemRenderer<FeeType>, 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, FeeType feeType, int count) throws Exception {
+	public void render(Listitem item, FeeType feeType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(feeType.getFeeTypeCode());

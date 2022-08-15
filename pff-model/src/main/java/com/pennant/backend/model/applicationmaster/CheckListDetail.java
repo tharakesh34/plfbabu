@@ -72,6 +72,43 @@ public class CheckListDetail extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public CheckListDetail copyEntity() {
+		CheckListDetail entity = new CheckListDetail();
+		entity.setCheckListId(this.checkListId);
+		entity.setAnsSeqNo(this.ansSeqNo);
+		entity.setAnsDesc(this.ansDesc);
+		entity.setAnsCond(this.ansCond);
+		entity.setRemarksMand(this.remarksMand);
+		entity.setRemarksAllow(this.remarksAllow);
+		entity.setDocRequired(this.docRequired);
+		entity.setDocType(this.docType);
+		entity.setCategoryCode(this.categoryCode);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setLovDescCheckListDesc(this.lovDescCheckListDesc);
+		entity.setLovDescCheckMinCount(this.lovDescCheckMinCount);
+		entity.setLovDescCheckMaxCount(this.lovDescCheckMaxCount);
+		entity.setLovDescRemarks(this.lovDescRemarks);
+		entity.setLovDescFinRefDetail(this.lovDescFinRefDetail == null ? null : this.lovDescFinRefDetail.copyEntity());
+		entity.setLovDescUserRole(this.lovDescUserRole);
+		entity.setLovDescDocType(this.lovDescDocType);
+		entity.setLovDescDocCategory(this.lovDescDocCategory);
+		entity.setLovDescFinRefId(this.lovDescFinRefId);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public CheckListDetail(long id) {
 		super();
 		this.setId(id);

@@ -12,7 +12,6 @@
 package com.pennant.webui.verification.fieldinvestigation;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -179,9 +178,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_FieldInvestigationDialog(Event event) throws Exception {
+	public void onCreate$window_FieldInvestigationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -618,11 +616,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 		// Extended Field validations
 		if (fi.getExtendedFieldHeader() != null) {
-			try {
-				fi.setExtendedFieldRender(extendedFieldCtrl.save(true));
-			} catch (ParseException e) {
-				logger.debug(Literal.EXCEPTION);
-			}
+			fi.setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 
 		try {

@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  RuleListCtrl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : RuleListCtrl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 03-06-2011
+ * 
+ * Modified Date : 03-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rulefactory.rule;
@@ -94,7 +85,7 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	protected Listheader listheader_QueryDesc; // autoWired
 	protected Listheader listheader_Active;
 
-	//Search
+	// Search
 	protected Listbox sortOperator_queryCode; // autoWired
 	protected Textbox queryDesc; // autoWired
 	protected Listbox sortOperator_queryDesc; // autoWired
@@ -103,7 +94,7 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	protected Listbox sortOperator_queryModule; // autoWired
 	protected Textbox sQLQuery; // autoWired
 	protected Combobox querySubCode; // autoWired
-	protected Listbox sortOperator_querySubCode;// autoWired 
+	protected Listbox sortOperator_querySubCode;// autoWired
 	protected Listbox sortOperator_sQLQuery; // autoWired
 	protected Listbox sortOperator_active;
 	protected Checkbox active;
@@ -150,9 +141,8 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	 * selected DedupParam object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LimitRuleList(Event event) throws Exception {
+	public void onCreate$window_LimitRuleList(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Set the page level components.
@@ -180,7 +170,7 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	/**
 	 * Invoke Search
 	 */
-	public void onClick$button_DedupParmList_DedupParmSearchDialog(Event event) throws Exception {
+	public void onClick$button_DedupParmList_DedupParmSearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		search();
 		logger.debug("Leaving" + event.toString());
@@ -189,8 +179,7 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -200,7 +189,7 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	/**
 	 * Call the DedupParm dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_DedupParmList_NewDedupParm(Event event) throws Exception {
+	public void onClick$button_DedupParmList_NewDedupParm(Event event) {
 		logger.debug("Entering" + event.toString());
 		// create a new DedupParm object, We GET it from the backEnd.
 		final LimitFilterQuery aDedupParm = limitRuleService.getNewLimitRule();
@@ -215,9 +204,8 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	 * see: com.pennant.webui.dedup.dedupparm.model.DedupParmListModelItemRenderer .java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onDedupParmItemDoubleClicked(Event event) throws Exception {
+	public void onDedupParmItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Get the selected record.
@@ -253,11 +241,9 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param DedupParm
-	 *            (aDedupParm)
-	 * @throws Exception
+	 * @param DedupParm (aDedupParm)
 	 */
-	private void doShowDialogPage(LimitFilterQuery dedupParm) throws Exception {
+	private void doShowDialogPage(LimitFilterQuery dedupParm) {
 		logger.debug("Entering");
 		Map<String, Object> arg = getDefaultArguments();
 
@@ -283,8 +269,7 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -293,8 +278,7 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		doShowHelp(event);

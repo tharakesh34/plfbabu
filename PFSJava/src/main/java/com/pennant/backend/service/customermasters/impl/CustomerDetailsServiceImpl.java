@@ -520,9 +520,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (CollectionUtils.isNotEmpty(headerIdList)) {
 			customerDetails.getCustomerFinances().addAll(financeMainDAO.getAllFinanceDetailsByCustId(id));
-		} else {
-			customerDetails.getFinanceMainList().forEach(fm -> customerDetails.getCustomerFinances().addAll(
-					customerDAO.getCustomerFinances(customer.getCustID(), fm.getFinID(), customer.getCustCtgCode())));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2190,7 +2187,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							if (pincode != null) {
 								adress.setCustAddrZIP(pincode.getPinCode());
 								pinCodeValidation(pincode, adress, auditDetail, errorDetail);
-								;
 							} else {
 								String[] valueParm = new String[1];
 								valueParm[0] = "PinCodeId " + String.valueOf(adress.getPinCodeId());
@@ -3096,11 +3092,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		ErrorDetail errorDetail = new ErrorDetail();
 		if (date != null) {
 			Date defaultAppDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
-			if (date.compareTo(DateUtility.getAppDate()) != -1 || defaultAppDate.compareTo(date) >= 0) {
+			if (date.compareTo(SysParamUtil.getAppDate()) != -1 || defaultAppDate.compareTo(date) >= 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = label;
 				valueParm[1] = DateUtility.format(defaultAppDate, PennantConstants.XMLDateFormat);
-				valueParm[2] = DateUtility.format(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
+				valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 			}
 		}

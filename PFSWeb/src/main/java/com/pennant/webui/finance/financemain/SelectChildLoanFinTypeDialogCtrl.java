@@ -66,10 +66,8 @@ public class SelectChildLoanFinTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail>
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
-	public void onCreate$window_SelectChildLoanFinanceTypeDialog(Event event) throws Exception {
+	public void onCreate$window_SelectChildLoanFinanceTypeDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -101,9 +99,8 @@ public class SelectChildLoanFinTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail>
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		doFieldValidation();
 		String finType = this.finType.getSelectedItem().getValue();
 		pricingDetailListCtrl.getTopUpFinType().put(finType, pricingDetailService.getFinanceTypeById(finType));
@@ -111,7 +108,7 @@ public class SelectChildLoanFinTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail>
 		closeDialog();
 	}
 
-	private void doFieldValidation() throws InterruptedException {
+	private void doFieldValidation() {
 		doClearMessage();
 		doRemoveValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();

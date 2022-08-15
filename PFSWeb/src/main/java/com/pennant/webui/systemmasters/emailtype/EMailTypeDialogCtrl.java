@@ -104,9 +104,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	 * selected EMailType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_EMailTypeDialog(Event event) throws Exception {
+	public void onCreate$window_EMailTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -360,9 +359,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aEMailType
-	 * @throws Exception
 	 */
-	public void doShowDialog(EMailType aEMailType) throws Exception {
+	public void doShowDialog(EMailType aEMailType) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -804,10 +802,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.eMailType);
 	}
 

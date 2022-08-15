@@ -2,7 +2,6 @@ package com.pennant.backend.dao.dms.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -11,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -27,8 +27,11 @@ import com.pennant.backend.dao.dms.DMSIdentificationDAO;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.util.DmsDocumentConstants;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> implements DMSIdentificationDAO {
 	private static Logger logger = LogManager.getLogger(DMSIdentificationDAOImpl.class);
@@ -46,21 +49,8 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 	private DefaultTransactionDefinition transDef;
 
 	private enum Field {
-		Id(1),
-		FinReference(2),
-		DocModule(3),
-		DocRefId(4),
-		State(5),
-		Status(6),
-		ReferenceId(7),
-		RetryCount(8),
-		CustomerCif(9),
-		DocId(10),
-		DocCategory(11),
-		DocDesc(12),
-		DocExt(13),
-		LastMntOn(14),
-		CreatedOn(15),
+		Id(1), FinReference(2), DocModule(3), DocRefId(4), State(5), Status(6), ReferenceId(7), RetryCount(8),
+		CustomerCif(9), DocId(10), DocCategory(11), DocDesc(12), DocExt(13), LastMntOn(14), CreatedOn(15),
 		ErrorDesc(16);
 
 		private int index;
@@ -80,13 +70,13 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 		}
 
 		try {
-			//dmsDocumentDetailList.stream().forEach(details -> details.setId(getNextValue("SeqDmsIdentification")));
+			// dmsDocumentDetailList.stream().forEach(details -> details.setId(getNextValue("SeqDmsIdentification")));
 
 			SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(dmsDocumentDetailList.toArray());
 			jdbcTemplate.batchUpdate(insertQuery, params);
 
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -252,34 +242,29 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 
 	@Override
 	public List<DocumentDetails> retrieveDMSDocumentReference() {
-		try {
-			return this.jdbcTemplate.query("select * from DmsDocProcess", new RowMapper<DocumentDetails>() {
-				@Override
-				public DocumentDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					DocumentDetails documentDetail = new DocumentDetails();
+		return this.jdbcTemplate.query("select * from DmsDocProcess", new RowMapper<DocumentDetails>() {
+			@Override
+			public DocumentDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+				DocumentDetails documentDetail = new DocumentDetails();
 
-					documentDetail.setId(rs.getLong(Field.Id.index));
-					documentDetail.setFinReference(rs.getString(Field.FinReference.index));
-					documentDetail.setDocModule(rs.getString(Field.DocModule.index));
-					documentDetail.setDocRefId(rs.getLong(Field.DocRefId.index));
-					documentDetail.setState(rs.getString(Field.State.index));
-					documentDetail.setStatus(rs.getString(Field.Status.index));
-					//	documentDetail.setLastMntOn(rs.getTimestamp(Field.LastMntOn.index));
-					//	documentDetail.setCreatedOn(rs.getTimestamp(Field.CreatedOn.index));
-					documentDetail.setCustomerCif(rs.getString(Field.CustomerCif.index));
-					documentDetail.setReferenceId(rs.getString(Field.ReferenceId.index));
-					documentDetail.setDocId(rs.getLong(Field.DocId.index));
-					documentDetail.setDocCategory(rs.getString(Field.DocCategory.index));
-					documentDetail.setDocDesc(rs.getString(Field.DocDesc.index));
-					documentDetail.setDocExt(rs.getString(Field.DocExt.index));
+				documentDetail.setId(rs.getLong(Field.Id.index));
+				documentDetail.setFinReference(rs.getString(Field.FinReference.index));
+				documentDetail.setDocModule(rs.getString(Field.DocModule.index));
+				documentDetail.setDocRefId(JdbcUtil.getLong(rs.getObject(Field.DocRefId.index)));
+				documentDetail.setState(rs.getString(Field.State.index));
+				documentDetail.setStatus(rs.getString(Field.Status.index));
+				// documentDetail.setLastMntOn(rs.getTimestamp(Field.LastMntOn.index));
+				// documentDetail.setCreatedOn(rs.getTimestamp(Field.CreatedOn.index));
+				documentDetail.setCustomerCif(rs.getString(Field.CustomerCif.index));
+				documentDetail.setReferenceId(rs.getString(Field.ReferenceId.index));
+				documentDetail.setDocId(rs.getLong(Field.DocId.index));
+				documentDetail.setDocCategory(rs.getString(Field.DocCategory.index));
+				documentDetail.setDocDesc(rs.getString(Field.DocDesc.index));
+				documentDetail.setDocExt(rs.getString(Field.DocExt.index));
 
-					return documentDetail;
-				}
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return new ArrayList<>();
+				return documentDetail;
+			}
+		});
 	}
 
 	@Override
@@ -354,38 +339,33 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 	public List<DocumentDetails> retrieveDMSDocumentLogs(long dmsId) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("dmsId", dmsId);
-		try {
-			return this.jdbcTemplate.query("select * from DmsDocProcessLog  where id = :dmsId", paramMap,
-					new RowMapper<DocumentDetails>() {
-						@Override
-						public DocumentDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-							DocumentDetails documentDetail = new DocumentDetails();
 
-							documentDetail.setId(rs.getLong(Field.Id.index));
-							documentDetail.setFinReference(rs.getString(Field.FinReference.index));
-							documentDetail.setDocModule(rs.getString(Field.DocModule.index));
-							documentDetail.setDocRefId(rs.getLong(rs.getString(Field.DocRefId.index)));
-							documentDetail.setState(rs.getString(Field.State.index));
-							documentDetail.setStatus(rs.getString(Field.Status.index));
-							//documentDetail.setLastMntOn(rs.getTimestamp(Field.LastMntOn.index));
-							//documentDetail.setCreatedOn(rs.getTimestamp(Field.CreatedOn.index));
-							documentDetail.setCustomerCif(rs.getString(Field.CustomerCif.index));
-							documentDetail.setReferenceId(rs.getString(Field.ReferenceId.index));
-							documentDetail.setDocId(rs.getLong(rs.getString(Field.DocId.index)));
-							documentDetail.setDocCategory(rs.getString(Field.DocCategory.index));
-							documentDetail.setDocDesc(rs.getString(Field.DocDesc.index));
-							documentDetail.setDocExt(rs.getString(Field.DocExt.index));
-							documentDetail.setRetryCount(rs.getInt(Field.RetryCount.index));
-							documentDetail.setErrorDesc(rs.getString(Field.ErrorDesc.index));
+		return this.jdbcTemplate.query("select * from DmsDocProcessLog  where id = :dmsId", paramMap,
+				new RowMapper<DocumentDetails>() {
+					@Override
+					public DocumentDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+						DocumentDetails documentDetail = new DocumentDetails();
 
-							return documentDetail;
-						}
-					});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return new ArrayList<>();
+						documentDetail.setId(rs.getLong(Field.Id.index));
+						documentDetail.setFinReference(rs.getString(Field.FinReference.index));
+						documentDetail.setDocModule(rs.getString(Field.DocModule.index));
+						documentDetail.setDocRefId(JdbcUtil.getLong(rs.getObject(rs.getString(Field.DocRefId.index))));
+						documentDetail.setState(rs.getString(Field.State.index));
+						documentDetail.setStatus(rs.getString(Field.Status.index));
+						// documentDetail.setLastMntOn(rs.getTimestamp(Field.LastMntOn.index));
+						// documentDetail.setCreatedOn(rs.getTimestamp(Field.CreatedOn.index));
+						documentDetail.setCustomerCif(rs.getString(Field.CustomerCif.index));
+						documentDetail.setReferenceId(rs.getString(Field.ReferenceId.index));
+						documentDetail.setDocId(rs.getLong(rs.getString(Field.DocId.index)));
+						documentDetail.setDocCategory(rs.getString(Field.DocCategory.index));
+						documentDetail.setDocDesc(rs.getString(Field.DocDesc.index));
+						documentDetail.setDocExt(rs.getString(Field.DocExt.index));
+						documentDetail.setRetryCount(rs.getInt(Field.RetryCount.index));
+						documentDetail.setErrorDesc(rs.getString(Field.ErrorDesc.index));
 
+						return documentDetail;
+					}
+				});
 	}
 
 	public DocumentManager retrieveDocumentManagerDocImage(long docRefId) {
@@ -400,14 +380,11 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 		RowMapper<DocumentManager> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentManager.class);
 
 		try {
-			documentManager = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			documentManager = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return documentManager;
 	}
 
 	@Override

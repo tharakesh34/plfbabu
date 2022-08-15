@@ -3,7 +3,6 @@ package com.pennant.backend.dao.customermasters.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +24,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> implements CustomerCardSalesInfoDAO {
 	private static Logger logger = LogManager.getLogger(CustomerCardSalesInfoDAOImpl.class);
@@ -47,19 +47,18 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 		sql.append(" FROM  CUSTCARDSALES");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where Id = :Id");
-		//sql.append(" Where MerchantId = :MerchantId");
+		// sql.append(" Where MerchantId = :MerchantId");
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCardSalesInfo);
 		RowMapper<CustCardSales> typeRowMapper = BeanPropertyRowMapper.newInstance(CustCardSales.class);
 
 		try {
-			customerCardSalesInfo = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerCardSalesInfo = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return customerCardSalesInfo;
 	}
 
 	public List<CustCardSales> getCardSalesInfoByCustomer(final long id, String type) {
@@ -198,14 +197,12 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-			recordCount = 0;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		return recordCount;
 	}
 
 	@Override
@@ -225,12 +222,11 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCardSalesInfo);
 		RowMapper<CustCardSales> typeRowMapper = BeanPropertyRowMapper.newInstance(CustCardSales.class);
 		try {
-			customerCardSalesInfo = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerCardSalesInfo = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return customerCardSalesInfo;
 	}
 
 	@Override
@@ -247,50 +243,42 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 		sql.append(" Where CardSalesId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, CardSaleId);
+			}
+		}, new RowMapper<CustCardSalesDetails>() {
+			@Override
+			public CustCardSalesDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CustCardSalesDetails csd = new CustCardSalesDetails();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, CardSaleId);
-				}
-			}, new RowMapper<CustCardSalesDetails>() {
-				@Override
-				public CustCardSalesDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustCardSalesDetails csd = new CustCardSalesDetails();
+				csd.setId(rs.getLong("Id"));
+				csd.setCardSalesId(rs.getLong("CardSalesId"));
+				csd.setMonth(rs.getTimestamp("Month"));
+				csd.setSalesAmount(rs.getBigDecimal("SalesAmount"));
+				csd.setNoOfSettlements(rs.getInt("NoOfSettlements"));
+				csd.setTotalNoOfCredits(rs.getInt("TotalNoOfCredits"));
+				csd.setTotalNoOfDebits(rs.getInt("TotalNoOfDebits"));
+				csd.setTotalCreditValue(rs.getBigDecimal("TotalCreditValue"));
+				csd.setTotalDebitValue(rs.getBigDecimal("TotalDebitValue"));
+				csd.setInwardBounce(rs.getBigDecimal("InwardBounce"));
+				csd.setOutwardBounce(rs.getBigDecimal("OutwardBounce"));
+				csd.setVersion(rs.getInt("Version"));
+				csd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				csd.setLastMntBy(rs.getLong("LastMntBy"));
+				csd.setRecordStatus(rs.getString("RecordStatus"));
+				csd.setRoleCode(rs.getString("RoleCode"));
+				csd.setNextRoleCode(rs.getString("NextRoleCode"));
+				csd.setTaskId(rs.getString("TaskId"));
+				csd.setNextTaskId(rs.getString("NextTaskId"));
+				csd.setRecordType(rs.getString("RecordType"));
+				csd.setWorkflowId(rs.getLong("WorkflowId"));
 
-					csd.setId(rs.getLong("Id"));
-					csd.setCardSalesId(rs.getLong("CardSalesId"));
-					csd.setMonth(rs.getTimestamp("Month"));
-					csd.setSalesAmount(rs.getBigDecimal("SalesAmount"));
-					csd.setNoOfSettlements(rs.getInt("NoOfSettlements"));
-					csd.setTotalNoOfCredits(rs.getInt("TotalNoOfCredits"));
-					csd.setTotalNoOfDebits(rs.getInt("TotalNoOfDebits"));
-					csd.setTotalCreditValue(rs.getBigDecimal("TotalCreditValue"));
-					csd.setTotalDebitValue(rs.getBigDecimal("TotalDebitValue"));
-					csd.setInwardBounce(rs.getBigDecimal("InwardBounce"));
-					csd.setOutwardBounce(rs.getBigDecimal("OutwardBounce"));
-					csd.setVersion(rs.getInt("Version"));
-					csd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					csd.setLastMntBy(rs.getLong("LastMntBy"));
-					csd.setRecordStatus(rs.getString("RecordStatus"));
-					csd.setRoleCode(rs.getString("RoleCode"));
-					csd.setNextRoleCode(rs.getString("NextRoleCode"));
-					csd.setTaskId(rs.getString("TaskId"));
-					csd.setNextTaskId(rs.getString("NextTaskId"));
-					csd.setRecordType(rs.getString("RecordType"));
-					csd.setWorkflowId(rs.getLong("WorkflowId"));
-
-					return csd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				return csd;
+			}
+		});
 	}
 
 	@Override

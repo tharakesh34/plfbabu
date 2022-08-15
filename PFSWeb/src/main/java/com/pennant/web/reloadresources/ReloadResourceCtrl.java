@@ -44,7 +44,7 @@ public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Seria
 		super();
 	}
 
-	public void onCreate$window_ReloadConfig(Event event) throws Exception {
+	public void onCreate$window_ReloadConfig(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -103,17 +103,17 @@ public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Seria
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick_button_masterDef(Event event) throws Exception {
+	public void onClick_button_masterDef(Event event) {
 		MasterDefUtil.loadMasterDef();
 		MessageUtil.showMessage("Master Definitions reloaded successfully.");
 	}
 
-	public void onClick_button_labels(Event event) throws Exception {
+	public void onClick_button_labels(Event event) {
 		ApplicationStartup.loadCustomLabels();
 		MessageUtil.showMessage("Label's reloaded successfully.");
 	}
 
-	public void onClick_button_regex(Event event) throws Exception {
+	public void onClick_button_regex(Event event) {
 		ApplicationStartup.loadCustomRegex();
 		MessageUtil.showMessage("Regular expression's reloaded successfully.");
 	}

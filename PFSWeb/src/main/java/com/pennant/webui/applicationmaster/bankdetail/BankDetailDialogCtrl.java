@@ -102,9 +102,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	 * selected BankDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_BankDetailDialog(Event event) throws Exception {
+	public void onCreate$window_BankDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -380,9 +379,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBankDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(BankDetail aBankDetail) throws Exception {
+	public void doShowDialog(BankDetail aBankDetail) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -837,10 +835,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.bankDetail);
 	}
 

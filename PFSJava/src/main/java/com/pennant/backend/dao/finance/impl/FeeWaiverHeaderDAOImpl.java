@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -67,10 +68,9 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), new FeeWaiverHeaderRowMapper(), waiverId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -83,10 +83,9 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), new FeeWaiverHeaderRowMapper(), finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -94,14 +93,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 		String sql = "Select max(ValueDate) From FeeWaiverHeader Where FinID = ? and ValueDate >= ? and ValueDate < ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, Date.class, finID, receiptDate, appDate);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID, receiptDate, appDate);
 	}
 
 	@Override

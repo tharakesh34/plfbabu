@@ -109,9 +109,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	 * selected CustomerPhoneNumber object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_sanctionConditionsDialog(Event event) throws Exception {
+	public void onCreate$window_sanctionConditionsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -349,9 +348,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerPhoneNumber
-	 * @throws Exception
 	 */
-	public void doShowDialog(SanctionConditions sanctionConditions) throws Exception {
+	public void doShowDialog(SanctionConditions sanctionConditions) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -905,10 +903,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.sanctionConditions);
 	}
 

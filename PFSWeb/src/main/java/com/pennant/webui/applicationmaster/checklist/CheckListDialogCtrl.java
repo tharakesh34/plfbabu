@@ -147,9 +147,8 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	 * selected CheckList object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CheckListDialog(Event event) throws Exception {
+	public void onCreate$window_CheckListDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -484,9 +483,8 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCheckList
-	 * @throws Exception
 	 */
-	public void doShowDialog(CheckList aCheckList) throws Exception {
+	public void doShowDialog(CheckList aCheckList) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -975,10 +973,8 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.checkList);
 	}
 
@@ -993,9 +989,8 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	 * when clicks on "btnNew_DetailsOfExpense"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNew_CheckListDetail(Event event) throws Exception {
+	public void onClick$btnNew_CheckListDetail(Event event) {
 		logger.debug("Entering " + event.toString());
 		CheckListDetail checkListDetail = new CheckListDetail();
 		checkListDetail.setNewRecord(true);
@@ -1018,9 +1013,8 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheckListDetailItemDoubleClicked(Event event) throws Exception {
+	public void onCheckListDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		// get the selected invoiceHeader object
@@ -1115,9 +1109,8 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	 * On Document Required Checked
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$docRequired(Event event) throws Exception {
+	public void onCheck$docRequired(Event event) {
 		logger.debug("Entering " + event.toString());
 		if (docRequired.isChecked()) {
 			this.checkMaxCount.setValue(0);

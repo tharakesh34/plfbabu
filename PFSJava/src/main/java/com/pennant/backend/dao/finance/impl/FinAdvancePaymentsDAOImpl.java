@@ -46,6 +46,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinAdvancePayments model</b> class.<br>
@@ -71,10 +72,9 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, fap.getPaymentId());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -89,10 +89,9 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, paymentId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -334,14 +333,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(" Where BankBranchID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, bankBranchID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, bankBranchID);
 	}
 
 	@Override
@@ -352,14 +344,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(" Where PartnerBankID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, partnerBankID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, partnerBankID);
 	}
 
 	@Override
@@ -431,14 +416,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(" Where BankCode = ?");
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, bankCode);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, bankCode);
 	}
 
 	@Override
@@ -446,14 +424,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		String sql = "Select Max(PaymentSeq) From FinAdvancePayments Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID);
 	}
 
 	@Override
@@ -476,14 +447,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		}
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, objects);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, objects);
 	}
 
 	@Override
@@ -494,14 +458,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(" Where PartnerBankId = ?");
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, partnerBankId);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, partnerBankId);
 	}
 
 	@Override
@@ -559,13 +516,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(" Where FinID = ? and VasReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, vasReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, vasReference);
 	}
 
 	@Override

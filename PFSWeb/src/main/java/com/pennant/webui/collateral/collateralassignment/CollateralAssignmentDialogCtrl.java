@@ -55,7 +55,6 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -107,7 +106,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CollateralAssignmentDetailDialog(Event event) throws Exception {
+	public void onCreate$window_CollateralAssignmentDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -200,7 +199,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -243,10 +242,8 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 			ScreenCTL.displayNotes(
@@ -1025,7 +1022,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		logger.debug("Leaving");
 	}
 
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final CollateralAssignment aCollateralAssignment = new CollateralAssignment();
@@ -1163,29 +1160,22 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		return auditHeader;
 	}
 
-	// Getting the approved collateral setup values from search object and adding the newly created collateral setup
-	// list
 	private void setCollateralTypeList(List<CollateralSetup> collateralSetupList) {
+		List<CollateralSetup> csList = collateralSetupService.getCollateralSetupByCustomer(customerId, finType);
 
-		StringBuilder whereClause = getWhereClause();
-
-		Search search = new Search(CollateralSetup.class);
-		search.addTabelName("CollateralSetup_AView");
-		search.addWhereClause(whereClause.toString());
-		List<CollateralSetup> collateralSetupSearchList = searchProcessor.getResults(search);
-
-		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
-			collateralSetupSearchList = new ArrayList<CollateralSetup>();
+		if (CollectionUtils.isEmpty(csList)) {
+			csList = new ArrayList<>();
 		}
 
 		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
-			collateralSetupSearchList.addAll(collateralSetupList);
+			csList.addAll(collateralSetupList);
 		}
-		// Setting null if collateralSetupSearchList is empty to throw the validation for collateralRef
-		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
-			collateralSetupSearchList = null;
+
+		if (CollectionUtils.isEmpty(csList)) {
+			csList = null;
 		}
-		this.collateralRef.setList(collateralSetupSearchList);
+
+		this.collateralRef.setList(csList);
 	}
 
 	private StringBuilder getWhereClause() {
@@ -1209,7 +1199,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		whereClause.append(" Union All");
 		whereClause.append(" Select CollateralRef From CollateralAssignment_Temp)) ");
 		whereClause.append(" OR MultiLoanAssignment = 1))  ");
-		whereClause.append(" AND (expirydate isNull");
+		whereClause.append(" AND (expirydate is Null");
 		whereClause.append(" OR expirydate >= '" + JdbcUtil.getDate(SysParamUtil.getAppDate()) + "')");
 
 		return whereClause;

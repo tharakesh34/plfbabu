@@ -104,9 +104,8 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 	 * selected RatingType object in a Map.
 	 * 
 	 * @parameter event
-	 * @throws Exception
 	 */
-	public void onCreate$window_RatingTypeDialog(Event event) throws Exception {
+	public void onCreate$window_RatingTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -354,9 +353,8 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aRatingType
-	 * @throws Exception
 	 */
-	public void doShowDialog(RatingType aRatingType) throws Exception {
+	public void doShowDialog(RatingType aRatingType) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -786,10 +784,8 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.mRatingTytpe);
 
 	}

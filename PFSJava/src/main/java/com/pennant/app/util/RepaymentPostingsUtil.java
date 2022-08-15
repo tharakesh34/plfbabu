@@ -33,7 +33,6 @@
  */
 package com.pennant.app.util;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -111,7 +110,6 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -699,22 +697,18 @@ public class RepaymentPostingsUtil {
 	 * @param financeProfitDetail
 	 * @param dateValueDate
 	 * @param curSchDate
-	 * @throws Exception
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterfaceException
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date dateValueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail, List<FinODDetails> overdueList,
-			String receiptPurpose, boolean isPresentProc) throws Exception {
+			String receiptPurpose, boolean isPresentProc) {
 
 		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, overdueList, receiptPurpose,
 				isPresentProc);
 	}
 
 	private FinanceMain updateRepayStatus(FinanceMain fm, Date dateValueDate, List<FinanceScheduleDetail> schedules,
-			FinanceProfitDetail pftDetail, List<FinODDetails> overdueList, String receiptPurpose, boolean isPresentProc)
-			throws Exception {
+			FinanceProfitDetail pftDetail, List<FinODDetails> overdueList, String receiptPurpose,
+			boolean isPresentProc) {
 		logger.debug(Literal.ENTERING);
 
 		// Finance Profit Details Updation
@@ -786,7 +780,7 @@ public class RepaymentPostingsUtil {
 		pftDetail.setClosingStatus(fm.getClosingStatus());
 
 		// Reset Back Repayments Details
-		List<FinanceRepayments> repayList = financeRepaymentsDAO.getFinRepayListByFinRef(fm.getFinID(), true, "");
+		List<FinanceRepayments> repayList = financeRepaymentsDAO.getFinRepayListByLinkedTranID(fm.getFinID());
 
 		if (CollectionUtils.isNotEmpty(repayList)) {
 			BigDecimal totPri = BigDecimal.ZERO;
@@ -817,8 +811,11 @@ public class RepaymentPostingsUtil {
 		CustEODEvent custEODEvent = new CustEODEvent();
 		custEODEvent.setEodDate(dateValueDate);
 		custEODEvent.setEodValueDate(dateValueDate);
-		Customer customer = customerDAO.getCustomerStatus(fm.getCustID());
+
+		Customer customer = new Customer();
+		customer.setCustSts(customerDAO.getCustomerStatus(fm.getCustID()));
 		custEODEvent.setCustomer(customer);
+
 		latePayMarkingService.processCustomerStatus(custEODEvent);
 
 		logger.debug(Literal.LEAVING);

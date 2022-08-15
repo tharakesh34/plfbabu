@@ -160,7 +160,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private String defaultComponentWidth = "250px";
 	private boolean overflow;
 	private boolean appendActivityLog = false;
-	private List<Object> finHeaderList = new ArrayList<>();;
+	private List<Object> finHeaderList = new ArrayList<>();
 	private int seqNo = 0;
 	private long instructionUID = Long.MIN_VALUE;
 
@@ -186,9 +186,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * 
 	 * @param extendedFieldHeader
 	 * @param newRecord
-	 * @throws ParseException
 	 */
-	public void renderWindow(ExtendedFieldHeader fieldHeader, boolean newRecord) throws ParseException {
+	public void renderWindow(ExtendedFieldHeader fieldHeader, boolean newRecord) {
 		logger.debug(Literal.ENTERING);
 
 		if (tabHeight > 0) {
@@ -306,11 +305,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param newRecord
 	 * @param columnCount
 	 * @param inputElemetswithParents
-	 * @throws ParseException
 	 */
 	private void processChildElements(boolean newRecord, int columnCount,
-			List<ExtendedFieldDetail> inputElemetswithParents, ExtendedFieldDetail containerElement)
-			throws ParseException {
+			List<ExtendedFieldDetail> inputElemetswithParents, ExtendedFieldDetail containerElement) {
 		List<ExtendedFieldDetail> childlist = getChilds(inputElemetswithParents, containerElement);
 		if (childlist != null && !childlist.isEmpty()) {
 			Collections.sort(childlist, new ExtendedFieldsComparator());
@@ -339,10 +336,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param isReadOnly
 	 * @param newRecord
 	 * @param i
-	 * @throws ParseException
 	 */
 	private void renderComponents(ExtendedFieldDetail detail, int columnCount, Component parentComponent,
-			boolean isReadOnly, boolean newRecord, int i) throws ParseException {
+			boolean isReadOnly, boolean newRecord, int i) {
 
 		if (rowWidth == 0) {
 			rowWidth = 220;// default
@@ -419,7 +415,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 								&& ExtendedFieldConstants.FIELDTYPE_AMOUNT.equals(detail.getFieldType())) {
 							component.addEventListener(eventName, new EventListener<Event>() {
 								@Override
-								public void onEvent(Event e) throws Exception {
+								public void onEvent(Event e) {
 									String data = "0";
 
 									if (e.getData() != null) {
@@ -885,8 +881,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						values.put(detail.getFieldName(), accSelectionBox.getValue());
 					} catch (WrongValueException we) {
 						wveMap.put(detail, we);
-					} catch (InterruptedException e) {
-						logger.error(e);
 					}
 				} else if (component instanceof FrequencyBox) {
 					try {
@@ -1299,7 +1293,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			Checkbox checkbox = (Checkbox) event.getTarget();
 			Listitem listItem = (Listitem) checkbox.getParent().getParent();
 			Bandbox bandBox = (Bandbox) listItem.getParent().getParent().getParent();
@@ -1342,7 +1336,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 		@Override
 		@SuppressWarnings("unchecked")
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			Button button = (Button) event.getTarget();
 			List<Object> paras = (List<Object>) button.getAttribute("data");
 			String moduleCode = String.valueOf(paras.get(0));
@@ -2095,7 +2089,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 */
 	private class MyExtendedComboListener implements EventListener {
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event)
+				throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 			Component component = event.getTarget();
 			ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
 			String componentId = extendedCombobox.getId();
@@ -2138,8 +2133,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 	}
 
-	private void displayFields(ExtendedFieldDetail detail) throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException {
+	private void displayFields(ExtendedFieldDetail detail)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		for (ExtendedFieldDetail fieldDetail : getExtendedFieldDetails()) {
 			String defValue = fieldDetail.getDefValue();
 			if (StringUtils.isNotBlank((defValue))) {
@@ -3113,7 +3108,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		} else {
 			target.addEventListener(eventName, new EventListener<Event>() {
 				@Override
-				public void onEvent(Event e) throws Exception {
+				public void onEvent(Event e) throws InterruptedException {
 					if (e.getData() != null) {
 						Thread.sleep(2000);
 					}
@@ -3130,7 +3125,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 */
 	private class CalcAgeListener implements EventListener {
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) throws InterruptedException {
 			Component component = event.getTarget();
 			Datebox dob = (Datebox) component;
 			int age = getAge(dob.getValue());

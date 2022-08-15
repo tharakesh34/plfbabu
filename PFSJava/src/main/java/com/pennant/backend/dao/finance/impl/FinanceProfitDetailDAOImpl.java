@@ -47,6 +47,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinanceProfitDetail model</b> class.<br>
@@ -171,10 +172,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				return fpd;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinanceProfitDetail pd = new FinanceProfitDetail();
 
 				pd.setAcrTillLBD(rs.getBigDecimal("AcrTillLBD"));
@@ -204,10 +204,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -233,10 +232,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -569,9 +567,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		try {
 			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -753,10 +751,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		try {
 			return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -768,10 +765,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		try {
 			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
 	}
 
 	@Override
@@ -783,12 +779,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId);
 	}
 
 	@Override
@@ -801,12 +792,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
 	}
 
 	@Override
@@ -832,9 +818,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		try {
 			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -846,9 +832,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		try {
 			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -1037,10 +1023,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

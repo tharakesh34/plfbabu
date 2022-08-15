@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DedupFieldsSearchCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DedupFieldsSearchCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * *
+ * Modified Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.dedup.dedupfields;
 
 import java.util.List;
@@ -111,10 +93,9 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields> {
 
 	/**
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_DedupFieldsSearch(Event event) throws Exception {
+	public void onCreate$window_DedupFieldsSearch(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -212,8 +193,7 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -222,8 +202,7 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields> {
 	/**
 	 * Opens the SearchDialog window modal.
 	 */
-	private void showDedupFieldsSeekDialog() throws InterruptedException {
-
+	private void showDedupFieldsSeekDialog() {
 		try {
 			// open the dialog in modal mode
 			this.window_DedupFieldsSearch.doModal();

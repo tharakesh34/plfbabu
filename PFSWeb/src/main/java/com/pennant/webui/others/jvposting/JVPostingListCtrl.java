@@ -121,7 +121,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_JVPostingList(Event event) throws Exception {
+	public void onCreate$window_JVPostingList(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -198,7 +198,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onJVPostingItemDoubleClicked(Event event) throws Exception {
+	public void onJVPostingItemDoubleClicked(Event event) {
 		logger.debug(event.toString());
 		this.timer.stop();
 		isItemDoubleClicked = true;
@@ -270,9 +270,8 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	 * Displays the dialog page with the required parameters as map.
 	 * 
 	 * @param academic The entity that need to be passed to the dialog.
-	 * @throws InterruptedException
 	 */
-	private void doShowDialogPage(JVPosting aJVPosting) throws InterruptedException {
+	private void doShowDialogPage(JVPosting aJVPosting) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
@@ -354,9 +353,8 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromApproved(Event event) throws Exception {
+	public void onCheck$fromApproved(Event event) {
 		logger.debug("Entering " + event.toString());
 		search();
 		logger.debug("Leaving " + event.toString());
@@ -366,9 +364,8 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	 * When user clicks on "fromWorkflow"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromWorkFlow(Event event) throws Exception {
+	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
 

@@ -1,10 +1,12 @@
 package com.pennant.webui.finance.finfeefactor;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +45,7 @@ import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -85,9 +88,8 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinFeeFactoreUpload(Event event) throws Exception {
+	public void onCreate$window_FinFeeFactoreUpload(Event event) {
 		// Store the before image.
 		UploadHeader uploadHeader = new UploadHeader();
 		BeanUtils.copyProperties(this.uploadHeader, uploadHeader);
@@ -220,9 +222,8 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * where we go the wrong data
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnUpload(UploadEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		this.txtFileName.setText("");
@@ -270,9 +271,8 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
 	 * 
 	 * @return String
-	 * @throws Exception
 	 */
-	private List<UploadTaxPercent> processUploadDetails(long uploadId) throws Exception {
+	private List<UploadTaxPercent> processUploadDetails(long uploadId) {
 		logger.debug("Entering");
 
 		List<UploadTaxPercent> uploadDetails = new ArrayList<UploadTaxPercent>();
@@ -416,7 +416,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		return uploadDetails;
 	}
 
-	public List<String> getAllValuesOfRowByIndex(Workbook workbook, int sheetIndex, int rowindex) throws Exception {
+	public List<String> getAllValuesOfRowByIndex(Workbook workbook, int sheetIndex, int rowindex) {
 		List<String> keys = new ArrayList<String>();
 		Sheet sheet = workbook.getSheetAt(sheetIndex);
 		org.apache.poi.ss.usermodel.Row headings = sheet.getRow(rowindex);
@@ -433,9 +433,8 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * when the "refresh" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doResetData();
@@ -467,9 +466,8 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doValidations();
@@ -530,7 +528,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() throws IOException, DataFormatException {
 		logger.debug(Literal.ENTERING);
 
 		if (this.fileImport == null) {
@@ -552,7 +550,8 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		List<String> keys = getAllValuesOfRowByIndex(this.workbook, 0, 0);
 
 		if (!keys.contains("Loan Reference")) {
-			throw new Exception("The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
+			throw new AppException(
+					"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
 		}
 
 		Sheet sheet = this.workbook.getSheetAt(0);

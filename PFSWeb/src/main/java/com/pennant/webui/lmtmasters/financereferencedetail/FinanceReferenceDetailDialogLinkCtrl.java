@@ -212,10 +212,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	 * selected FinanceReferenceDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onCreate$window_FinanceReferenceDetailDialogLink(Event event) throws Exception {
+	public void onCreate$window_FinanceReferenceDetailDialogLink(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -742,9 +740,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceReferenceDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinanceReferenceDetail aFinanceReferenceDetail) throws Exception {
+	public void doShowDialog(FinanceReferenceDetail aFinanceReferenceDetail) {
 		logger.debug("Entering");
 
 		/* fill the components with the data */
@@ -1095,7 +1092,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeReferenceDetail);
 	}
 
@@ -1524,7 +1521,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 		}
 
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			logger.debug("Entering" + event.toString());
 
 			Checkbox checkbox = (Checkbox) event.getTarget();

@@ -10,6 +10,14 @@ public class ExposureLinking {
 
 	private BigDecimal pos;
 
+	public ExposureLinking copyEntity() {
+		ExposureLinking entity = new ExposureLinking();
+		entity.setFinReference(this.finReference);
+		entity.setExpReference(this.expReference);
+		entity.setPos(this.pos);
+		return entity;
+	}
+
 	public String getFinReference() {
 		return finReference;
 	}

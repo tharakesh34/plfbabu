@@ -26,6 +26,31 @@ public class LowerTaxDeduction extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public LowerTaxDeduction copyEntity() {
+		LowerTaxDeduction entity = new LowerTaxDeduction();
+		entity.setId(this.id);
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setSeqNo(this.seqNo);
+		entity.setPercentage(this.percentage);
+		entity.setStartDate(this.startDate);
+		entity.setEndDate(this.endDate);
+		entity.setLimitAmt(this.limitAmt);
+		entity.setFinMaintainId(this.finMaintainId);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
@@ -102,7 +127,7 @@ public class LowerTaxDeduction extends AbstractWorkflowEntity {
 	public void setFinMaintainId(long finMaintainId) {
 		this.finMaintainId = finMaintainId;
 	}
-	
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		// TODO Auto-generated method stub
 

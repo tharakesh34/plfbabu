@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements FinanceSuspHeadDAO {
 	private static Logger logger = LogManager.getLogger(FinanceSuspHeadDAOImpl.class);
@@ -118,10 +119,9 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 				return fsh;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -133,10 +133,9 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 		try {
 			return jdbcOperations.queryForObject(sql, Date.class, finID, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

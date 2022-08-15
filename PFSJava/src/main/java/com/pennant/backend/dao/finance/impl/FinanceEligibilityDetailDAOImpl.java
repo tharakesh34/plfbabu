@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.finance.FinanceEligibilityDetailDAO;
@@ -69,13 +68,7 @@ public class FinanceEligibilityDetailDAOImpl extends BasicDao<FinanceEligibility
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, fed.getFinID(), fed.getElgRuleCode());
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, fed.getFinID(), fed.getElgRuleCode());
 	}
 
 	@Override

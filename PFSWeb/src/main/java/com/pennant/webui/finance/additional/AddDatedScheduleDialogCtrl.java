@@ -24,7 +24,6 @@
  */
 package com.pennant.webui.finance.additional;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,9 +103,8 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AddDatedScheduleDialog(Event event) throws Exception {
+	public void onCreate$window_AddDatedScheduleDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -164,9 +162,8 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws Exception
 	 */
-	private void doShowDialog(FinScheduleData aFinScheduleData) throws Exception {
+	private void doShowDialog(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 		if (aFinScheduleData == null) {
 			/** !!! DO NOT BREAK THE TIERS !!! */
@@ -229,13 +226,8 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterruptedException
-	 * @throws WrongValueException
 	 */
-	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData)
-			throws WrongValueException, InterruptedException, IllegalAccessException, InvocationTargetException {
+	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 
 		doSetValidation();
@@ -346,7 +338,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnAddDatedSchedule(Event event) throws Exception {
+	public void onClick$btnAddDatedSchedule(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (getFinanceScheduleDetail() != null) {
 			if (isDataChanged()) {
@@ -379,7 +371,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doClose(false);
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() {
 		logger.debug("Entering");
 		final FinScheduleData aFinScheduleData = new FinScheduleData();
 		doSetValidation();

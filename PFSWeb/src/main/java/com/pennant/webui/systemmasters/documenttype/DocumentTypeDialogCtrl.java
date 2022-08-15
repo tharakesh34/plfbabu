@@ -118,9 +118,8 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * selected DocumentType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DocumentTypeDialog(Event event) throws Exception {
+	public void onCreate$window_DocumentTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -515,9 +514,8 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDocumentType
-	 * @throws Exception
 	 */
-	public void doShowDialog(DocumentType aDocumentType) throws Exception {
+	public void doShowDialog(DocumentType aDocumentType) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -1040,10 +1038,8 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.documentType);
 	}
 

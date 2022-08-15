@@ -68,7 +68,7 @@ public class BranchListModelItemRenderer implements ListitemRenderer<Branch>, Se
 	}
 
 	@Override
-	public void render(Listitem item, Branch branch, int count) throws Exception {
+	public void render(Listitem item, Branch branch, int count) {
 
 		Listcell lc;
 		lc = new Listcell(branch.getBranchCode());

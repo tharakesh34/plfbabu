@@ -39,7 +39,7 @@ public class BranchCashLimitListModelItemRenderer implements ListitemRenderer<Br
 	}
 
 	@Override
-	public void render(Listitem item, BranchCashLimit branchCashLimit, int count) throws Exception {
+	public void render(Listitem item, BranchCashLimit branchCashLimit, int count) {
 
 		Listcell lc;
 		lc = new Listcell(branchCashLimit.getBranchCode());

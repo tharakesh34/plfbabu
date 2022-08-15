@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectCDFinanceSchemeDialogCtrl.java                                     * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-11-2011    														*
- *                                                                  						*
- * Modified Date    :  16-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectCDFinanceSchemeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-11-2011 *
+ * * Modified Date : 16-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -47,8 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -167,7 +147,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 	protected Row finTypeRow;
 	protected Row row_custCtgType;
 
-	protected FinanceMainListCtrl financeMainListCtrl; //over handed parameter
+	protected FinanceMainListCtrl financeMainListCtrl; // over handed parameter
 	protected transient FinanceWorkFlow financeWorkFlow;
 	private transient WorkFlowDetails workFlowDetails = null;
 	private List<String> userRoleCodeList = new ArrayList<String>();
@@ -218,10 +198,9 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SelectCDFinanceSchemeDialog(Event event) throws Exception {
+	public void onCreate$window_SelectCDFinanceSchemeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -257,7 +236,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		//String whereClause = getWhereClauseWithFirstTask();
+		// String whereClause = getWhereClauseWithFirstTask();
 
 		// Finance Type
 		this.finType.setReadonly(true);
@@ -396,9 +375,8 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doFieldValidation();
@@ -412,11 +390,10 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer)
-			throws InterruptedException, FactoryConfigurationError {
+	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer) {
 		FinanceDetail financeDetail = null;
 
-		//Customer Data Fetching
+		// Customer Data Fetching
 		CustomerDetails customerDetails = new CustomerDetails();
 
 		// Customer Data Fetching
@@ -489,7 +466,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 		}
 
 		try {
-			//Fetch & set Default statuses f
+			// Fetch & set Default statuses f
 			if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
 				financeDetail.getFinScheduleData().getFinanceMain().setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
 				financeDetail.getFinScheduleData().getFinanceMain()
@@ -499,7 +476,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 			logger.debug(e);
 		}
 
-		//Workflow Details Setup
+		// Workflow Details Setup
 		if (this.financeWorkFlow != null) {
 			workFlowDetails = WorkFlowUtil.getDetailsByType(this.financeWorkFlow.getWorkFlowType());
 		}
@@ -562,7 +539,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 		financeDetail.setCustomerDetails(customerDetails);
 		financeDetail.getFinScheduleData().getFinanceMain().setCustID(customerDetails.getCustomer().getCustID());
 
-		//Fetching Finance Reference Detail
+		// Fetching Finance Reference Detail
 		if (isWorkFlowEnabled()) {
 			financeDetail = this.financeDetailService.getFinanceReferenceDetails(financeDetail, getRole(),
 					this.financeWorkFlow.getScreenCode(), "", financeEvent, true);
@@ -577,7 +554,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 			String finEvent = PennantApplicationUtil.getEventCode(finStartDate);
 			financeDetail.getFinScheduleData().setFeeEvent(finEvent);
 
-			// Fee Details Fetching From Promotion/Scheme 
+			// Fee Details Fetching From Promotion/Scheme
 			financeDetail.setFinTypeFeesList(this.financeDetailService.getSchemeFeesList(finMain.getPromotionSeqId(),
 					finEvent, true, FinanceConstants.MODULEID_PROMOTION));
 
@@ -593,7 +570,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 			financeDetail.setCustomerDedupList(customerDedupList);
 		}
 
-		//  Business Vertical Tagged with Loan
+		// Business Vertical Tagged with Loan
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		SecurityUser user = getUserWorkspace().getUserDetails().getSecurityUser();
 		financeMain.setBusinessVertical(user.getBusinessVertical());
@@ -605,7 +582,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 	}
 
 	// GUI Process
-	private void showDetailView(FinanceDetail financeDetail) throws InterruptedException {
+	private void showDetailView(FinanceDetail financeDetail) {
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
 		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
@@ -622,7 +599,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 			map.put("financeMainListCtrl", this.financeMainListCtrl);
 			map.put("menuItemRightName", menuItemRightName);
 
-			//Customer dedup 
+			// Customer dedup
 			if (financeDetail.getCustomerDedupList() != null && !financeDetail.getCustomerDedupList().isEmpty()) {
 				map.put("isFromLoan", true);
 				map.put("isInternalDedupLoan", true);
@@ -658,7 +635,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 	/**
 	 * Opens the SelectCDFinanceSchemeDialog window modal.
 	 */
-	private void showSelectCDFinanceSchemeDialog() throws InterruptedException {
+	private void showSelectCDFinanceSchemeDialog() {
 		logger.debug("Entering");
 		try {
 			// open the dialog in modal mode
@@ -671,10 +648,8 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doFieldValidation() throws InterruptedException {
+	private void doFieldValidation() {
 		logger.debug("Entering ");
 		doClearMessage();
 		doRemoveValidation();
@@ -750,7 +725,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 		logger.debug("Leaving ");
 	}
 
-	private boolean checkDedup() throws Exception {
+	private boolean checkDedup() {
 		if (newCust.isChecked()) {
 			String primaryId = eidNumber.getValue();
 
@@ -784,7 +759,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 		return false;
 	}
 
-	private boolean checkExternalDedup(String primaryId) throws Exception {
+	private boolean checkExternalDedup(String primaryId) {
 		CustomerDetails customerDetails = new CustomerDetails();
 		CustomerDedup custDedup = new CustomerDedup();
 		String primaryIDType = null;
@@ -911,11 +886,8 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 	 * Call the Customer dialog with a new empty entry. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InterfaceException
-	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData(boolean isRetail) throws InterruptedException, InterfaceException {
+	public CustomerDetails fetchCustomerData(boolean isRetail) {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -926,12 +898,12 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 			this.custCIF.setErrorMessage("");
 			this.custCIF.clearErrorMessage();
 			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
-			//If  customer exist is checked 
+			// If customer exist is checked
 			if (this.existingCust.isChecked()) {
 				Customer customer = null;
-				//FIXME comment need to be removed when the version issue get resolved
-				//check Customer Data in LOCAL PFF system
-				//customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.TEMP_TAB.getSuffix());
+				// FIXME comment need to be removed when the version issue get resolved
+				// check Customer Data in LOCAL PFF system
+				// customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.TEMP_TAB.getSuffix());
 
 				if (customer == null) {
 					isCustFromTemp = false;
@@ -950,7 +922,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 					}
 				}
 
-				//Interface Core Banking System call CRM
+				// Interface Core Banking System call CRM
 				if (customer == null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))
 						&& customerExternalInterfaceService != null) {
 					customerDetails.setNewRecord(true);
@@ -1069,7 +1041,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 			}
 		}
 
-		//Setting Primary Relation Ship Officer
+		// Setting Primary Relation Ship Officer
 		RelationshipOfficer officer = this.relationshipOfficerService
 				.getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
 
@@ -1078,7 +1050,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 			customer.setLovDescCustRO1Name(officer.getROfficerDesc());
 		}
 
-		//Setting User Branch to Customer Branch
+		// Setting User Branch to Customer Branch
 		Branch branch = this.branchService
 				.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 
@@ -1185,7 +1157,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 		Clients.clearWrongValue(this.finType);
 		this.eidNumber.setValue("");
 		this.mobileNo.setValue("");
-		//### 01-05-2018 Tuleapp id #360			
+		// ### 01-05-2018 Tuleapp id #360
 		doSetPrimaryIdAttributes();
 
 		logger.debug("Leaving");

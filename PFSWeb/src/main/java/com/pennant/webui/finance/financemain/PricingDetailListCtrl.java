@@ -215,9 +215,8 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 	 * selected FinAdvancePayment object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PricingDetailList(ForwardEvent event) throws Exception {
+	public void onCreate$window_PricingDetailList(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -365,7 +364,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
 
-	public boolean doSave(FinanceDetail aFinanceDetail, Tab pricingTab, boolean recSave) throws InterruptedException {
+	public boolean doSave(FinanceDetail aFinanceDetail, Tab pricingTab, boolean recSave) {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
@@ -405,7 +404,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 		FinanceMain fm = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 		List<FinFeeDetail> templist = pricingDetail.getActualFinFeeDetails();
 		for (FinFeeDetail finFeeDetail : aFinanceDetail.getFinScheduleData().getFinFeeDetailList()) {
@@ -621,8 +620,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		}
 	}
 
-	public ArrayList<WrongValueException> doWriteComponentsToBean(PricingDetail pricingDetail, boolean saveAction)
-			throws InterruptedException {
+	public ArrayList<WrongValueException> doWriteComponentsToBean(PricingDetail pricingDetail, boolean saveAction) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain parentFinMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -657,6 +655,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				}
 
 				finMain = (FinanceMain) calBox.getAttribute("finMain");
+				int format = CurrencyUtil.getFormat(finMain.getFinCcy());
 				String numberOnly = topup_label.replaceAll("[^0-9]", "");
 				int topUpCount = Integer.valueOf(numberOnly);
 				Checkbox checkbox = (Checkbox) listBoxPricingDetail.getItems().get(topUpCount)
@@ -669,6 +668,18 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 					BigDecimal amt = getBigDecimalValue(calBox);
 					finMain.setFinAssetValue(amt);
+
+					try {
+						if (finMain.getFinAssetValue() != null && finMain.getFinAmount() != null
+								&& finMain.getFinAssetValue().compareTo(finMain.getFinAmount()) < 0) {
+							throw new WrongValueException(calBox, Labels.getLabel("NUMBER_MINVALUE_EQ", new String[] {
+									PennantApplicationUtil.amountFormate(finMain.getFinAssetValue(), format),
+									String.valueOf(Labels.getLabel("label_FinanceMainDialog_FinAmount.value")) }));
+						}
+					} catch (WrongValueException e) {
+						parenttab.setSelected(true);
+						throw e;
+					}
 
 					Decimalbox rateBox = (Decimalbox) listitem.getFellowIfAny("ROI_" + topup_label);
 					Clients.clearWrongValue(rateBox);

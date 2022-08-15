@@ -1,47 +1,38 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant CXF Webservices Application Framework. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant CXF Webservices Application Framework. All components/modules/functions/classes/logic in
+ * this software, unless otherwise stated, the property of Pennant Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  DateFormatterAdapter.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  07-10-2016															*
- *                                                                  
- * Modified Date    :  07-10-2016															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : DateFormatterAdapter.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 07-10-2016 *
+ * 
+ * Modified Date : 07-10-2016 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 07-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 07-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennanttech.model.adapter;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -52,7 +43,7 @@ public class DateFormatterAdapter extends XmlAdapter<String, Date> {
 
 	// this method is used to convert String to Date for CXFwebservices
 	@Override
-	public Date unmarshal(final String dateAsString) throws Exception {
+	public Date unmarshal(final String dateAsString) throws ParseException {
 		if (dateAsString != null && !dateAsString.trim().equals("")) {
 			return dateFormat.parse(dateAsString);
 		}
@@ -61,7 +52,7 @@ public class DateFormatterAdapter extends XmlAdapter<String, Date> {
 
 	// this method is used to convert Date to String for CXFWebServices
 	@Override
-	public String marshal(final Date date) throws Exception {
+	public String marshal(final Date date) {
 		if (date == null) {
 
 		}

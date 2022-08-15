@@ -126,9 +126,8 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 	 * selected ProvisionMovement object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ProvisionMovementList(Event event) throws Exception {
+	public void onCreate$window_ProvisionMovementList(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -168,9 +167,8 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProvision
-	 * @throws Exception
 	 */
-	public void doShowDialog(Provision aProvision) throws Exception {
+	public void doShowDialog(Provision aProvision) {
 		logger.debug("Entering");
 
 		// if aAccountingSet == null then we opened the Dialog without
@@ -254,9 +252,8 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 	 * see: com.pennant.webui.provision.provisionmovement.model. ProvisionMovementListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onProvisionMovementItemDoubleClicked(Event event) throws Exception {
+	public void onProvisionMovementItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected ProvisionMovement object
@@ -321,9 +318,8 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 	 * Overhanded some params in a map if needed. <br>
 	 * 
 	 * @param ProvisionMovement (aProvisionMovement)
-	 * @throws Exception
 	 */
-	private void showDetailView(ProvisionMovement aProvisionMovement) throws Exception {
+	private void showDetailView(ProvisionMovement aProvisionMovement) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For

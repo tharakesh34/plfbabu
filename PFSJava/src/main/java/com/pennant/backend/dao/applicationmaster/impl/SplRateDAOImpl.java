@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SplRateDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SplRateDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * * Modified Date
+ * : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
@@ -61,6 +43,7 @@ import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>SplRate model</b> class.<br>
@@ -76,10 +59,8 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	/**
 	 * Fetch the Record Special Rates details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SplRate
 	 */
 	@Override
@@ -105,23 +86,19 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 		RowMapper<SplRate> typeRowMapper = BeanPropertyRowMapper.newInstance(SplRate.class);
 
 		try {
-			splRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			splRate = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return splRate;
 	}
 
 	/**
 	 * This method Deletes the Record from the RMTSplRates or RMTSplRates_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Special Rates by key SRType
 	 * 
-	 * @param Special
-	 *            Rates (splRate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Special Rates (splRate)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -155,10 +132,8 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	 * 
 	 * save Special Rates
 	 * 
-	 * @param Special
-	 *            Rates (splRate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Special Rates (splRate)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -187,10 +162,8 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	 * This method updates the Record RMTSplRates or RMTSplRates_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Special Rates by key SRType and Version
 	 * 
-	 * @param Special
-	 *            Rates (splRate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Special Rates (splRate)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 */
@@ -337,8 +310,7 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	 * This method Deletes the Record from the RMTSplRates If Record not deleted then throws DataAccessException with
 	 * error 41003. delete SplRates greater than effective date
 	 * 
-	 * @param SplRate
-	 *            (splRate)
+	 * @param SplRate (splRate)
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -365,8 +337,7 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 	 * Fetch record count of special rate code.
 	 * 
 	 * @param repaySpecialRate
-	 * @param type
-	 *            (table type)
+	 * @param type             (table type)
 	 * @return Integer
 	 */
 	@Override
@@ -380,15 +351,6 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 		selectSql.append(" WHERE SRType = :SRType");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn("Warning", dae);
-			recordCount = 0;
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 }

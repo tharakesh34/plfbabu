@@ -43,7 +43,7 @@ public class CustomerRatinglistItemRenderer implements ListitemRenderer<Customer
 	}
 
 	@Override
-	public void render(Listitem item, CustomerRating rating, int count) throws Exception {
+	public void render(Listitem item, CustomerRating rating, int count) {
 
 		Listcell lc;
 		if (StringUtils.equals(rating.getRecordType(), PennantConstants.RCD_ADD)

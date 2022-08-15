@@ -56,6 +56,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
@@ -81,11 +82,10 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, schdDate);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public void deleteByFinReference(long finID, String type, boolean isWIF, long logKey) {
@@ -302,23 +302,19 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
-					FinanceScheduleDetail fsd = schdList.get(i);
-					setPrepareStatementSetter(fsd, ps);
-				}
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceScheduleDetail fsd = schdList.get(i);
+				setPrepareStatementSetter(fsd, ps);
+			}
 
-				@Override
-				public int getBatchSize() {
-					return schdList.size();
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
+			@Override
+			public int getBatchSize() {
+				return schdList.size();
+			}
+		});
 	}
 
 	private void setPrepareStatementSetter(FinanceScheduleDetail schd, PreparedStatement ps) throws SQLException {
@@ -462,19 +458,14 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
 
-		List<FinanceScheduleDetail> finSchdDetails = null;
+		List<FinanceScheduleDetail> finSchdDetails = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, Custid);
+			if (isActive) {
+				ps.setBoolean(2, isActive);
+			}
 
-		try {
-			finSchdDetails = this.jdbcOperations.query(sql.toString(), ps -> {
-				ps.setLong(1, Custid);
-				if (isActive) {
-					ps.setBoolean(2, isActive);
-				}
+		}, rowMapper);
 
-			}, rowMapper);
-		} catch (Exception e) {
-			finSchdDetails = new ArrayList<>();
-		}
 		return ScheduleCalculator.sortSchdDetails(finSchdDetails);
 	}
 
@@ -503,7 +494,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" from FinScheduleDetails");
 		sql.append(" Where FinID = ?");
 
-		return jdbcOperations.query(sql.toString(), ps -> {
+		List<FinanceScheduleDetail> finSchdDetails = jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, finID);
 		}, (rs, rowNum) -> {
 			FinanceScheduleDetail schd = new FinanceScheduleDetail();
@@ -535,6 +526,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 			return schd;
 		});
+
+		return ScheduleCalculator.sortSchdDetails(finSchdDetails);
 	}
 
 	@Override
@@ -572,15 +565,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		String sql = "Select sum((ProfitSchd - SchdPftPaid) + (PrincipalSchd - SchdPriPaid) + (FeeSchd - SchdFeePaid)) From FinScheduleDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
-
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 	@Override
@@ -588,14 +573,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		String sql = "Select sum((PrincipalSchd - SchdPriPaid) - WriteoffPrincipal) From FinScheduleDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 	@Override
@@ -603,14 +581,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		String sql = "Select sum((ProfitSchd - SchdPftPaid) - WriteoffProfit) From FinScheduleDetails  Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 	@Override
@@ -627,25 +598,19 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinanceWriteoff fw = new FinanceWriteoff();
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			FinanceWriteoff fw = new FinanceWriteoff();
 
-				fw.setWrittenoffPri(rs.getBigDecimal("WrittenoffPri"));
-				fw.setWrittenoffPft(rs.getBigDecimal("WrittenoffPft"));
-				fw.setWrittenoffSchFee(rs.getBigDecimal("WrittenoffSchFee"));
-				fw.setUnPaidSchdPri(rs.getBigDecimal("UnPaidSchdPri"));
-				fw.setUnPaidSchdPft(rs.getBigDecimal("UnPaidSchdPft"));
-				fw.setUnpaidSchFee(rs.getBigDecimal("UnpaidSchFee"));
+			fw.setWrittenoffPri(rs.getBigDecimal("WrittenoffPri"));
+			fw.setWrittenoffPft(rs.getBigDecimal("WrittenoffPft"));
+			fw.setWrittenoffSchFee(rs.getBigDecimal("WrittenoffSchFee"));
+			fw.setUnPaidSchdPri(rs.getBigDecimal("UnPaidSchdPri"));
+			fw.setUnPaidSchdPft(rs.getBigDecimal("UnPaidSchdPft"));
+			fw.setUnpaidSchFee(rs.getBigDecimal("UnpaidSchFee"));
 
-				return fw;
+			return fw;
 
-			}, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		}, finID);
 	}
 
 	@Override
@@ -658,14 +623,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" Where FinID = ? and (RepayOnSchDate = 1 or (PftOnSchDate = 1 and RepayAmount > 0))");
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID);
 	}
 
 	@Override
@@ -680,26 +638,19 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" From FinScheduleDetails Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql);
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			FinanceScheduleDetail schedule = new FinanceScheduleDetail();
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinanceScheduleDetail schedule = new FinanceScheduleDetail();
+			schedule.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+			schedule.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
+			schedule.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+			schedule.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+			schedule.setProfitCalc(rs.getBigDecimal("ProfitCalc"));
+			schedule.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
 
-				schedule.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
-				schedule.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
-				schedule.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
-				schedule.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
-				schedule.setProfitCalc(rs.getBigDecimal("ProfitCalc"));
-				schedule.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
+			return schedule;
 
-				return schedule;
-
-			}, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		}, finID);
 	}
 
 	@Override
@@ -717,11 +668,10 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, curBussDate, 1);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -737,14 +687,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		selectSql.append(" Where FinID = ? and SchDate = ?");
 
 		logger.debug(Literal.SQL + selectSql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(selectSql.toString(), Integer.class, finID, fromDate) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(selectSql.toString(), Integer.class, finID, fromDate) > 0;
 	}
 
 	@Override
@@ -752,14 +695,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		String sql = "Select Coalesce(sum(SchdPriPaid), 0) From FinScheduleDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 	@Override
@@ -767,14 +703,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		String sql = "Select sum(FeeSchd) -  sum(SchdFeePaid) From FinScheduleDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 	@Override
@@ -782,14 +711,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		String sql = "Select max(SchDate) from FinScheduleDetails Where FinID = ? and SchDate <= ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate);
 	}
 
 	@Override
@@ -802,11 +724,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, lastPrevDate)
 					.compareTo(BigDecimal.ZERO) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
-
 	}
 
 	@Override
@@ -823,10 +743,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, finID, valueDate);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-
-		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -936,10 +855,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 			}, finID, finID, curBussDate);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -981,13 +899,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), rowMapper, finID);
-		} catch (Exception e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.query(sql.toString(), rowMapper, finID);
 	}
 
 	// FIXME Move to FinanceMainDAO
@@ -1019,10 +931,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				return fm;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1199,11 +1110,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID, schdate);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
-
 	}
 
 	@Override
@@ -1263,12 +1172,10 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, valueDate, 1);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
-
 	}
 
 	@Override
@@ -1279,12 +1186,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" and RepayAmount > ? and SchdPriPaid = ? and SchdPftPaid = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, appDate, 0, 0, 0);
-		} catch (Exception e) {
-			return null;
-		}
+		return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, appDate, 0, 0, 0);
 	}
 
 	@Override
@@ -1301,5 +1203,10 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		});
 
 		return list.stream().sorted((l1, l2) -> l1.compareTo(l2)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<FinanceScheduleDetail> getSchedulesForLMSEvent(long finID) {
+		return getFinScheduleDetails(finID, "", false);
 	}
 }

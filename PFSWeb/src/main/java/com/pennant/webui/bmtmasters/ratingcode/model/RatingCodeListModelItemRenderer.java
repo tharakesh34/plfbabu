@@ -67,7 +67,7 @@ public class RatingCodeListModelItemRenderer implements ListitemRenderer<RatingC
 	}
 
 	@Override
-	public void render(Listitem item, RatingCode ratingCode, int count) throws Exception {
+	public void render(Listitem item, RatingCode ratingCode, int count) {
 		Listcell lc;
 		lc = new Listcell(ratingCode.getRatingType() + "-" + ratingCode.getLovDescRatingTypeName());
 		lc.setParent(item);

@@ -33,13 +33,12 @@ public class CommitmentMovementDialogCtrl extends GFCBaseCtrl<CommitmentMovement
 	 * selected CheckListDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CheckListDetailDialog(Event event) throws Exception {
+	public void onCreate$window_CheckListDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
-		//setPageComponents(window_CheckListDetailDialog);
+		// setPageComponents(window_CheckListDetailDialog);
 
 		/* set components visible dependent of the users rights */
 

@@ -16,7 +16,7 @@ public interface ReceiptCancellationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader auditHeader) throws Exception;
+	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
@@ -24,15 +24,14 @@ public interface ReceiptCancellationService {
 
 	List<ReturnDataSet> getPostingsByPostRef(long postRef);
 
-	PresentmentDetail presentmentCancellation(PresentmentDetail pd, String returnCode, String bounceRemarks)
-			throws Exception;
+	PresentmentDetail presentmentCancellation(PresentmentDetail pd, String returnCode, String bounceRemarks);
 
 	Map<String, Object> getGLSubHeadCodes(long finID);
 
 	// ### 16-12-2020, ST#1627
-	AuditHeader doApproveNonLanReceipt(AuditHeader auditHeader) throws Exception;
+	AuditHeader doApproveNonLanReceipt(AuditHeader auditHeader);
 
-	PresentmentDetail presentmentCancellation(PresentmentDetail pd, CustEODEvent custEODEvent) throws Exception;
+	PresentmentDetail presentmentCancellation(PresentmentDetail pd, CustEODEvent custEODEvent);
 
 	FinanceMain getFinBasicDetails(String reference);
 }

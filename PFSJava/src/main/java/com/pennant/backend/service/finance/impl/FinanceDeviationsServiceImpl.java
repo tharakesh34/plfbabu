@@ -225,6 +225,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				auditDetails.add(getFinDeviationsAudit(financeDeviations, ++count, PennantConstants.TRAN_DEL));
 				continue;
 			}
+
 			financeDeviations.setFinID(finID);
 			if (!(StringUtils.isEmpty(financeDeviations.getApprovalStatus())
 					|| StringUtils.equals(financeDeviations.getApprovalStatus(), PennantConstants.List_Select))) {

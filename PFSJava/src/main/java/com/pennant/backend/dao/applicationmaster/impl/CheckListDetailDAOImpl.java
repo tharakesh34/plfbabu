@@ -46,6 +46,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CheckListDetail model</b> class.<br>
@@ -89,10 +90,9 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new CheckListDetailRM(type), id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -107,10 +107,9 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 			return this.jdbcOperations.queryForObject(sql.toString(), new CheckListDetailRM(""), docType,
 					FinanceConstants.PROCEDT_CHECKLIST, finType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public List<CheckListDetail> getCheckListDetailByChkList(final long checkListId, String type) {

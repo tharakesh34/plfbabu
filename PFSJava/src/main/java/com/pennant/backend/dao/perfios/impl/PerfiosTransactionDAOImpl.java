@@ -3,7 +3,7 @@ package com.pennant.backend.dao.perfios.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.pennant.backend.dao.perfios.PerfiosTransactionDAO;
@@ -30,11 +30,8 @@ public class PerfiosTransactionDAOImpl extends BasicDao<PerfiosTransaction> impl
 					preparedStatement.setString(index++, perfios.getTransationId());
 				}
 			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new InterfaceException(Literal.EXCEPTION, e.getMessage());
+		} catch (DataAccessException e) {
+			throw new InterfaceException(Literal.EXCEPTION, e.getMessage(), e);
 		}
 		logger.debug(Literal.LEAVING);
 		return result != 0 ? "Perfios Status Updated Successfully" : "Perfios Status Update Failed";

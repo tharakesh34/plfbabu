@@ -67,7 +67,7 @@ public class LanguageListModelItemRenderer implements ListitemRenderer<Language>
 	}
 
 	@Override
-	public void render(Listitem item, Language language, int count) throws Exception {
+	public void render(Listitem item, Language language, int count) {
 
 		Listcell lc;
 		lc = new Listcell(language.getLngCode());

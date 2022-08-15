@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PromotionDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-03-2017    														*
- *                                                                  						*
- * Modified Date    :  21-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PromotionDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-03-2017 * * Modified
+ * Date : 21-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-03-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-03-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -45,8 +27,6 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -67,6 +47,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Promotion model</b> class.<br>
@@ -83,10 +64,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	/**
 	 * Fetch the Record Promotion details by key field
 	 * 
-	 * @param promotionCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionCode (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return Promotion
 	 */
 	@Override
@@ -103,21 +82,17 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { promotionCode }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	/**
 	 * This method Deletes the Record from the Promotions or Promotions_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Promotion by key PromotionCode
 	 * 
-	 * @param Promotion
-	 *            (promotion)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Promotion (promotion)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -142,7 +117,6 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
 			throw new DependencyFoundException(e);
 		}
 
@@ -154,10 +128,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	 * 
 	 * save Promotion
 	 * 
-	 * @param Promotion
-	 *            (promotion)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Promotion (promotion)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -210,10 +182,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	 * This method updates the Record Promotions or Promotions_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Promotion by key PromotionCode and Version
 	 * 
-	 * @param Promotion
-	 *            (promotion)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Promotion (promotion)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -268,26 +238,15 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	public int getPromtionCodeCount(String promotionCode, String type) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From Promotions");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where PromotionCode = :PromotionCode");
 		logger.debug(Literal.SQL + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PromotionCode", promotionCode);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -300,7 +259,6 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	public int getFinanceTypeCountById(String finType) {
 		logger.debug(Literal.ENTERING);
 
-		int financeTypeCount = 0;
 		Promotion promotion = new Promotion();
 		promotion.setFinType(finType);
 
@@ -310,14 +268,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 
-		try {
-			financeTypeCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			financeTypeCount = 0;
-		}
-		logger.debug(Literal.LEAVING);
-		return financeTypeCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	/**
@@ -340,16 +291,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 		RowMapper<Promotion> typeRowMapper = BeanPropertyRowMapper.newInstance(Promotion.class);
-		List<Promotion> PromotionList = new ArrayList<>();
-		try {
-			PromotionList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-			return Collections.emptyList();
-		}
 
-		logger.debug(Literal.LEAVING);
-		return PromotionList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -451,10 +394,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	/**
 	 * Fetch the Record Promotion details by key field
 	 * 
-	 * @param promotionId
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionId (long)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return Promotion
 	 */
 	@Override
@@ -471,27 +412,21 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { promotionId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	/**
 	 * Fetch the Record Promotion details by key field
 	 * 
-	 * @param referenceId
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param referenceId (long)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return Promotion
 	 */
 	@Override
 	public Promotion getPromotionByReferenceId(long referenceId, String type) {
 		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = null;
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT PromotionId, promotionCode, promotionDesc, finType, startDate, endDate");
@@ -505,7 +440,6 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 			sql.append(", finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc");
 			sql.append(", productCategory");
 		}
-
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
 		sql.append(" From Promotions");
@@ -513,19 +447,16 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		sql.append(" Where ReferenceID = :ReferenceID");
 		logger.debug(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReferenceID", referenceId);
 		RowMapper<Promotion> typeRowMapper = BeanPropertyRowMapper.newInstance(Promotion.class);
+
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-
-		} finally {
-			source = null;
-			sql = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	private StringBuilder getSqlQuery(String type) {
@@ -648,17 +579,15 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
 
-		int recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Fetch the Record Promotion details by key field
 	 * 
-	 * @param promotionCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionCode (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return Promotion
 	 */
 	@Override
@@ -676,10 +605,48 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 			return this.jdbcOperations.queryForObject(sql.toString(),
 					new Object[] { promotion.getPromotionCode(), promotion.getReferenceID() }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
+	}
 
-		logger.debug(Literal.LEAVING);
-		return null;
+	@Override
+	public Promotion getPromotionForLMSEvent(String code) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PromotionCode, PromotionDesc, FinIsDwPayRequired, DownPayRule, ActualInterestRate, FinBaseRate");
+		sql.append(", FinSplRate, FinMargin, ApplyRpyPricing, RpyPricingMethod, FinMinTerm, FinMaxTerm");
+		sql.append(", FinMinAmount, FinMaxAmount, FinMinRate, FinMaxRate");
+		sql.append(" From Promotions");
+		sql.append(" Where PromotionCode = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Promotion p = new Promotion();
+
+				p.setPromotionCode(rs.getString("PromotionCode"));
+				p.setPromotionDesc(rs.getString("PromotionDesc"));
+				p.setFinIsDwPayRequired(rs.getBoolean("FinIsDwPayRequired"));
+				p.setDownPayRule(rs.getLong("DownPayRule"));
+				p.setActualInterestRate(rs.getBigDecimal("ActualInterestRate"));
+				p.setFinBaseRate(rs.getString("FinBaseRate"));
+				p.setFinSplRate(rs.getString("FinSplRate"));
+				p.setFinMargin(rs.getBigDecimal("FinMargin"));
+				p.setApplyRpyPricing(rs.getBoolean("ApplyRpyPricing"));
+				p.setRpyPricingMethod(rs.getLong("RpyPricingMethod"));
+				p.setFinMinTerm(rs.getInt("FinMinTerm"));
+				p.setFinMaxTerm(rs.getInt("FinMaxTerm"));
+				p.setFinMinAmount(rs.getBigDecimal("FinMinAmount"));
+				p.setFinMaxAmount(rs.getBigDecimal("FinMaxAmount"));
+				p.setFinMinRate(rs.getBigDecimal("FinMinRate"));
+				p.setFinMaxRate(rs.getBigDecimal("FinMaxRate"));
+
+				return p;
+			}, code);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 }

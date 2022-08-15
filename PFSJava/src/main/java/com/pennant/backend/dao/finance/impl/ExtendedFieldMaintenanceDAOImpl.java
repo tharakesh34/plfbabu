@@ -25,6 +25,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -37,8 +38,10 @@ import com.pennant.backend.dao.finance.ExtendedFieldMaintenanceDAO;
 import com.pennant.backend.model.finance.ExtendedFieldMaintenance;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -75,12 +78,11 @@ public class ExtendedFieldMaintenanceDAOImpl extends SequenceDao<ExtendedFieldMa
 				.newInstance(ExtendedFieldMaintenance.class);
 
 		try {
-			extendedFieldMaintenance = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			extendedFieldMaintenance = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return extendedFieldMaintenance;
 	}
 
 	@Override
@@ -188,8 +190,8 @@ public class ExtendedFieldMaintenanceDAOImpl extends SequenceDao<ExtendedFieldMa
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
 	}
 

@@ -118,9 +118,8 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SelectFinanceReferenceDialog(Event event) throws Exception {
+	public void onCreate$window_SelectFinanceReferenceDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		setPageComponents(window_SelectFinanceReferenceDialog);
 		try {
@@ -160,7 +159,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	/**
 	 * Opens the SelectPaymentHeaderDialog window modal.
 	 */
-	private void showSelectPaymentHeaderDialog() throws InterruptedException {
+	private void showSelectPaymentHeaderDialog() {
 		logger.debug("Entering");
 		try {
 			this.window_SelectFinanceReferenceDialog.doModal();
@@ -208,9 +207,8 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		if (!doFieldValidation()) {
@@ -220,7 +218,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		long finID = ComponentUtil.getFinID(this.finReference);
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMntnSts)
 				&& (!FinServiceEvent.MANUALADVISE.equals(rcdMntnSts) || !FinServiceEvent.HOLDDISB.equals(rcdMntnSts))) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));

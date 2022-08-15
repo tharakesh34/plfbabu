@@ -50,7 +50,7 @@ public class PayOrderIssueListModelItemRenderer implements ListitemRenderer<PayO
 	}
 
 	@Override
-	public void render(Listitem item, PayOrderIssueHeader payOrderIssueHeader, int count) throws Exception {
+	public void render(Listitem item, PayOrderIssueHeader payOrderIssueHeader, int count) {
 
 		Listcell lc;
 		lc = new Listcell(payOrderIssueHeader.getCustCIF());

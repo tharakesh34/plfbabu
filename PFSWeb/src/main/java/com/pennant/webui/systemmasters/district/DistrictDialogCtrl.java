@@ -99,9 +99,8 @@ public class DistrictDialogCtrl extends GFCBaseCtrl<District> {
 	 * selected Country object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DistrictDialog(Event event) throws Exception {
+	public void onCreate$window_DistrictDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -321,9 +320,8 @@ public class DistrictDialogCtrl extends GFCBaseCtrl<District> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDistrict
-	 * @throws Exception
 	 */
-	public void doShowDialog(District aDistrict) throws Exception {
+	public void doShowDialog(District aDistrict) {
 		logger.debug("Entering");
 		if (aDistrict.isNew()) { // set Read only mode accordingly if the object is new or not.
 			this.btnCtrl.setInitNew();
@@ -748,10 +746,8 @@ public class DistrictDialogCtrl extends GFCBaseCtrl<District> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.district);
 	}
 

@@ -72,7 +72,7 @@ public class TransactionEntryListModelItemRenderer implements ListitemRenderer<T
 	}
 
 	@Override
-	public void render(Listitem item, TransactionEntry transactionEntry, int count) throws Exception {
+	public void render(Listitem item, TransactionEntry transactionEntry, int count) {
 
 		Listcell lc;
 		lc = new Listcell(PennantAppUtil.formateInt(transactionEntry.getTransOrder()));

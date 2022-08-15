@@ -49,13 +49,13 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>JointAccountDetail model</b> class.<br>
  * 
  */
-
 public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> implements JointAccountDetailDAO {
 	private static Logger logger = LogManager.getLogger(JointAccountDetailDAOImpl.class);
 
@@ -96,10 +96,9 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -231,10 +230,9 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, jointAccountId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -550,21 +548,14 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
-				FinanceExposure fe = new FinanceExposure();
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
 
-				fe.setOverdueAmt(rs.getBigDecimal("OverdueAmt"));
-				fe.setPastdueDays(rs.getString("PastdueDays"));
+			fe.setOverdueAmt(rs.getBigDecimal("OverdueAmt"));
+			fe.setPastdueDays(rs.getString("PastdueDays"));
 
-				return fe;
-			}, exposer.getFinID());
-		} catch (Exception e) {
-			//
-		} finally {
-			//
-		}
-		return null;
+			return fe;
+		}, exposer.getFinID());
 	}
 
 	public JointAccountDetail getJointAccountDetailByRef(long finID, String custCIF, String type) {
@@ -578,10 +569,9 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, custCIF);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type) {
@@ -595,10 +585,9 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finReference, custCIF);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -607,25 +596,19 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		sql.append(" Custctgcode, Count(*) Count");
 		sql.append(" From FinJointAccountDetails_View F");
 		sql.append(" Inner Join Customers C on C.CustCIF =  F.CustCIF Where FinID = ? group by CustCtgCode");
-		Map<String, Integer> map = new HashMap<String, Integer>();
-		try {
-			map = this.jdbcTemplate.query(sql.toString(), new ResultSetExtractor<Map<String, Integer>>() {
-				Map<String, Integer> map = new HashMap<String, Integer>();
 
-				@Override
-				public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					while (rs.next()) {
-						map.put(rs.getString(1), rs.getInt(2));
-					}
-					return map;
+		return this.jdbcOperations.query(sql.toString(), new ResultSetExtractor<Map<String, Integer>>() {
+			Map<String, Integer> map = new HashMap<String, Integer>();
+
+			@Override
+			public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				while (rs.next()) {
+					map.put(rs.getString(1), rs.getInt(2));
 				}
+				return map;
+			}
 
-			});
-		} catch (Exception e) {
-			//
-		}
-
-		return map;
+		}, finID);
 	}
 
 	private StringBuilder sqlSelectQuery(String type) {

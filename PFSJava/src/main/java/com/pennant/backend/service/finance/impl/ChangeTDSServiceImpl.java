@@ -128,7 +128,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		inst.setMaker(auditHeader.getAuditUsrId());
 		inst.setMakerAppDate(SysParamUtil.getAppDate());
 		inst.setMakerSysDate(DateUtility.getSysDate());
-		inst.setLinkedTranId(0);
+		inst.setLinkedTranID(0);
 
 		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
 
@@ -284,7 +284,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 			fsi.setMaker(auditHeader.getAuditUsrId());
 			fsi.setMakerAppDate(appDate);
 			fsi.setMakerSysDate(DateUtility.getSysDate());
-			fsi.setLinkedTranId(0);
+			fsi.setLinkedTranID(0);
 		}
 
 		finServiceInstructionDAO.deleteList(finID, "", TableType.TEMP_TAB.getSuffix());

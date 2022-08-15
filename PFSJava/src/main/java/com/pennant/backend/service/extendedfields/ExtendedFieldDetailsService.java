@@ -957,8 +957,6 @@ public class ExtendedFieldDetailsService {
 			efr.setBefImage(efr);
 			deatils.get(i).setExtended(true);
 			deatils.get(i).setModelData(efr);
-
-			System.out.println("");
 		}
 		logger.debug(Literal.LEAVING);
 		return deatils;
@@ -1583,15 +1581,15 @@ public class ExtendedFieldDetailsService {
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
 		case ExtendedFieldConstants.FIELDTYPE_BASERATE:
-			String key = deatils.getFieldList();
+			String name = deatils.getFieldList();
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE, deatils.getFieldType())) {
-				key = "BaseRate";
+				name = "BaseRate";
 			}
-			if (key != null && key.contains(PennantConstants.DELIMITER_COMMA)) {
-				String[] values = key.split(PennantConstants.DELIMITER_COMMA);
-				key = values[0];
+			if (name != null && name.contains(PennantConstants.DELIMITER_COMMA)) {
+				String[] values = name.split(PennantConstants.DELIMITER_COMMA);
+				name = values[0];
 			}
-			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(key);
+			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(name);
 			if (moduleMapping != null) {
 				String[] lovFields = moduleMapping.getLovFields();
 				Object[][] filters = moduleMapping.getLovFilters();

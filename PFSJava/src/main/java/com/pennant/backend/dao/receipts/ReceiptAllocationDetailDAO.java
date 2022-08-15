@@ -15,5 +15,5 @@ public interface ReceiptAllocationDetailDAO {
 
 	List<ReceiptAllocationDetail> getDMAllocationsByReference(String reference, String type);
 
-	List<ReceiptAllocationDetail> getManualAllocationsByRef(String finReference, long curReceiptID);
+	List<ReceiptAllocationDetail> getManualAllocationsByRef(long finID, long curReceiptID);
 }

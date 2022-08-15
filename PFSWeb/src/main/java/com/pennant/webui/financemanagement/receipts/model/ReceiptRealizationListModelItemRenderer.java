@@ -73,7 +73,7 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, FinReceiptHeader header, int count) throws Exception {
+	public void render(Listitem item, FinReceiptHeader header, int count) {
 
 		Listcell lc;
 

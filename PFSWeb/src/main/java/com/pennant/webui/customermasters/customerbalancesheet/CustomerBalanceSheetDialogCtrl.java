@@ -138,9 +138,8 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * selected CustomerBalanceSheet object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerBalanceSheetDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerBalanceSheetDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -492,9 +491,8 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerBalanceSheet
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerBalanceSheet aCustomerBalanceSheet) throws InterruptedException {
+	public void doShowDialog(CustomerBalanceSheet aCustomerBalanceSheet) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1080,11 +1078,8 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 
 	/**
 	 * To load the customerSelect filter dialog
-	 * 
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	private void onload() throws SuspendNotAllowedException, InterruptedException {
+	private void onload() {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
@@ -1149,10 +1144,8 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerBalanceSheet);
 	}
 

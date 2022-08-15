@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CostOfFundDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CostOfFundDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified
+ * Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
@@ -63,6 +45,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -80,10 +63,8 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 	/**
 	 * Fetch the Record CostOfFunds details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CostOfFund
 	 */
 	@Override
@@ -110,14 +91,11 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);
 		RowMapper<CostOfFund> typeRowMapper = BeanPropertyRowMapper.newInstance(CostOfFund.class);
 		try {
-			costOfFund = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			costOfFund = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return costOfFund;
 	}
 
 	@Override
@@ -382,8 +360,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 	 * This method Deletes the Record from the CostOfFunds If Record not deleted then throws DataAccessException with
 	 * error 41003. delete CostOfFunds greater than effective date
 	 * 
-	 * @param CostOfFunds
-	 *            (costOfFund)
+	 * @param CostOfFunds (costOfFund)
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -425,15 +402,6 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		selectSql.append(" WHERE CofCode = :CofCode AND Currency = :Currency");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn("Warning", dae);
-			recordCount = 0;
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 }

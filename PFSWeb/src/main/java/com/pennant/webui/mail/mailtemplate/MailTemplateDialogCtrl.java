@@ -24,6 +24,7 @@
  */
 package com.pennant.webui.mail.mailtemplate;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -179,9 +180,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	 * selected MailTemplate object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_MailTemplateDialog(Event event) throws Exception {
+	public void onCreate$window_MailTemplateDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -316,9 +316,9 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
+	 * @throws UnsupportedEncodingException
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) throws UnsupportedEncodingException {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -397,7 +397,6 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aMailTemplate MailTemplate
-	 * @throws Exception
 	 */
 	public void doWriteBeanToComponents(MailTemplate aMailTemplate) {
 		logger.debug("Entering");
@@ -488,9 +487,9 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aMailTemplate
-	 * @throws Exception
+	 * @throws UnsupportedEncodingException
 	 */
-	public void doWriteComponentsToBean(MailTemplate aMailTemplate) throws Exception {
+	public void doWriteComponentsToBean(MailTemplate aMailTemplate) throws UnsupportedEncodingException {
 		logger.debug("Entering");
 		doSetLOVValidation();
 
@@ -722,9 +721,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aMailTemplate
-	 * @throws Exception
 	 */
-	public void doShowDialog(MailTemplate aMailTemplate) throws Exception {
+	public void doShowDialog(MailTemplate aMailTemplate) {
 		logger.debug("Entering");
 
 		if (enqModule) {
@@ -963,11 +961,11 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
+	 * Saves the components to table.
 	 * 
-	 * @throws Exception
+	 * @throws UnsupportedEncodingException
 	 */
-	public void doSave() throws Exception {
+	public void doSave() throws UnsupportedEncodingException {
 		logger.debug("Entering");
 
 		final MailTemplate aMailTemplate = new MailTemplate();
@@ -1279,10 +1277,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.mailTemplate);
 	}
 
@@ -1294,7 +1290,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	/*
 	 * onselect Event for Content Type
 	 */
-	public void onChange$emailFormat(Event event) throws Exception {
+	public void onChange$emailFormat(Event event) {
 		logger.debug("Entering" + event.toString());
 		String emailTypeVal = (String) this.emailFormat.getSelectedItem().getValue();
 		this.row_EmailSendTo.setVisible(true);
@@ -1454,7 +1450,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 	}
 
-	public void onClick$btnSimulate(Event event) throws Exception {
+	public void onClick$btnSimulate(Event event) {
 		logger.debug(event.toString());
 		Clients.clearWrongValue(this.Space_htmlArtifact);
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -1491,7 +1487,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		logger.debug("Leaving");
 	}
 
-	private void createSimulator(String mailContent) throws InterruptedException {
+	private void createSimulator(String mailContent) {
 		logger.debug("Entering");
 
 		final Map<String, String> fieldsMap = new HashMap<String, String>();

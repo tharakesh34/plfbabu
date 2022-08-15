@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PartnerBankDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-03-2017    														*
- *                                                                  						*
- * Modified Date    :  09-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PartnerBankDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-03-2017 * * Modified
+ * Date : 09-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-03-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -45,8 +27,6 @@ package com.pennant.backend.dao.partnerbank.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -70,6 +50,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -85,15 +66,6 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		super();
 	}
 
-	/**
-	 * Fetch the Record PartnerBank details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return PartnerBank
-	 */
 	@Override
 	public PartnerBank getPartnerBankById(long id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
@@ -170,10 +142,9 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 				}
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -372,7 +343,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error(e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -388,41 +359,23 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<PartnerBankModes> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBankModes.class);
-		List<PartnerBankModes> PartnerBankModeList = new ArrayList<PartnerBankModes>();
-		try {
-			PartnerBankModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return PartnerBankModeList;
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
 	public int geBankCodeCount(String partnerBankCodeValue, String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
 		StringBuilder selectSql = new StringBuilder("Select Count(PartnerBankCode) From PartnerBanks");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where PartnerBankCode = :PartnerBankCode");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PartnerBankCode", partnerBankCodeValue);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	public List<PartnerBranchModes> getPartnerBranchModesId(long id) {
@@ -437,15 +390,8 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<PartnerBranchModes> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBranchModes.class);
-		List<PartnerBranchModes> PartnerBranchModeList = new ArrayList<PartnerBranchModes>();
-		try {
-			PartnerBranchModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return PartnerBranchModeList;
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -464,7 +410,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error(e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 
@@ -527,16 +473,8 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		selectSql.append(" WHERE Entity= :Entity");
 
 		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
 
-		return recordCount > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
@@ -552,11 +490,9 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(Literal.EXCEPTION, dae);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -611,11 +547,9 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(Literal.EXCEPTION, dae);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -648,7 +582,28 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 			pbm.setPaymentMode(rs.getString("PaymentMode"));
 			return pbm;
 		});
+	}
 
+	@Override
+	public PartnerBank getPartnerBankById(long partnerBankId) {
+		String sql = "Select AccountNo, AcType From PartnerBanks Where PartnerBankId = ?";
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				PartnerBank pb = new PartnerBank();
+
+				pb.setAccountNo(rs.getString("AccountNo"));
+				pb.setAcType(rs.getString("AcType"));
+
+				return pb;
+
+			}, partnerBankId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 }

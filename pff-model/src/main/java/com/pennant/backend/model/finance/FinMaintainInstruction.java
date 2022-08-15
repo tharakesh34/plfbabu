@@ -73,6 +73,47 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public FinMaintainInstruction copyEntity() {
+		FinMaintainInstruction entity = new FinMaintainInstruction();
+		entity.setFinMaintainId(this.finMaintainId);
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setEvent(this.event);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setTdsPercentage(this.tdsPercentage);
+		entity.setTdsStartDate(this.tdsStartDate);
+		entity.setTdsEndDate(this.tdsEndDate);
+		entity.setTdsLimit(this.tdsLimit);
+
+		this.finCovenantTypeList.stream()
+				.forEach(e -> entity.getFinCovenantTypeList().add(e == null ? null : e.copyEntity()));
+		this.covenants.stream().forEach(e -> entity.getCovenants().add(e == null ? null : e.copyEntity()));
+		this.finOptions.stream().forEach(e -> entity.getFinOptions().add(e == null ? null : e.copyEntity()));
+		this.collateralAssignments.stream()
+				.forEach(e -> entity.getCollateralAssignments().add(e == null ? null : e.copyEntity()));
+		entity.setExtendedFieldHeader(this.extendedFieldHeader == null ? null : this.extendedFieldHeader.copyEntity());
+		// FIXME
+		// entity.setExtendedFieldRender(this.extendedFieldRender == null ? null :
+		// this.extendedFieldRender.copyEntity());
+		this.finServiceInstructions.stream()
+				.forEach(e -> entity.getFinServiceInstructions().add(e == null ? null : e.copyEntity()));
+		entity.settDSApplicable(this.tDSApplicable);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("covenants");

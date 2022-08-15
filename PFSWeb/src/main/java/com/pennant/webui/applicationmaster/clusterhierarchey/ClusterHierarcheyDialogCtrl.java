@@ -111,9 +111,8 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_ClusterHierarcheyDialog(Event event) throws Exception {
+	public void onCreate$window_ClusterHierarcheyDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -239,7 +238,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 
 		listBoxClusterType.appendChild(item);
 
-		if (clusterHierarchy.getNextRoleCode().equals("CLUSTER_HIERARCHY_APPROVER")
+		if ("CLUSTER_HIERARCHY_APPROVER".equals(clusterHierarchy.getNextRoleCode())
 				&& ("Submitted".equals(clusterHierarchy.getRecordStatus()))) {
 			textBox.setReadonly(true);
 			seqOrder.setReadonly(true);

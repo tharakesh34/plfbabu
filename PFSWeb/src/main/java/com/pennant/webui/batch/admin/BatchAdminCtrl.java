@@ -144,7 +144,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		BatchMonitor.getInstance();
 	}
 
-	public void onCreate$window_BatchAdmin(Event event) throws Exception {
+	public void onCreate$window_BatchAdmin(Event event) {
 
 		if (EOD_BATCH_REFRESH_TIME == -1) {
 			EOD_BATCH_REFRESH_TIME = SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME");
@@ -418,7 +418,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 	}
 
-	public void onClick$btnStartJob(Event event) throws Exception {
+	public void onClick$btnStartJob(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		String msg = "";
@@ -520,7 +520,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnStaleJob(Event event) throws Exception {
+	public void onClick$btnStaleJob(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		PFSBatchAdmin.getInstance();
@@ -553,10 +553,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * Method for Rendering Step Execution Details List
 	 * 
 	 * @param stepExecution
-	 * @throws Exception
 	 */
-
-	private void doFillStepExecutions(List<StepExecution> stepExecutionList) throws Exception {
+	private void doFillStepExecutions(List<StepExecution> stepExecutionList) {
 		if (this.jobExecution == null || CollectionUtils.isEmpty(stepExecutionList)) {
 			return;
 		}

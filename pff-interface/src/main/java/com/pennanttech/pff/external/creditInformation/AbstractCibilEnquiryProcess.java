@@ -130,10 +130,9 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 * 
 	 * @param auditHeader
 	 * @return auditHeader
-	 * @throws Exception
 	 */
 	@Override
-	public AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader, boolean isFromCustomer) throws Exception {
+	public AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader, boolean isFromCustomer) {
 		logger.debug(Literal.ENTERING);
 
 		String cibilReq = SysParamUtil.getValueAsString("CBIL_PROCESS_REQ");
@@ -181,11 +180,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 * 
 	 * @param auditHeader
 	 * @return auditHeader
-	 * @throws Exception
 	 */
 	@Override
 	public CustomerDetails procesCreditEnquiry(CustomerDetails customerDetails, FinanceMain financeMain,
-			boolean override) throws Exception {
+			boolean override) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -1146,10 +1144,8 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 * <li>It can appear only once per Enquiry Record.
 	 * <li>All the fields must be provided otherwise the entire Enquiry Record is rejected</li>.
 	 * <li>All fields must be valid.</li>
-	 * 
 	 */
-	private void prepareCibilHeader(StringBuilder builder, CustomerDetails customerDetails, FinanceMain financeMain)
-			throws Exception {
+	private void prepareCibilHeader(StringBuilder builder, CustomerDetails customerDetails, FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 
 		builder.append(InterfaceConstants.Enquiry_Header_Segment);
@@ -1207,8 +1203,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 * <li>It occurs only once per record.</li>
 	 * <li>Tag 06 is reserved for future use.</li>
 	 */
-
-	private void prepareCustomerNameSegment(StringBuilder builder, CustomerDetails customerDetails) throws Exception {
+	private void prepareCustomerNameSegment(StringBuilder builder, CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 		writeValue(builder, InterfaceConstants.Name_Segment, "N01", "03");
 		writeCustomerName(builder, customerDetails.getCustomer());
@@ -1315,7 +1310,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 * <li>It occurs at least once, but no more than twice per Enquiry Record. Where possible, enter the Current Address
 	 * in the first Address Segment and the Permanent Address in the second Address Segment</li>.
 	 */
-	private void prepareAddressSegment(StringBuilder builder, CustomerDetails customerDetails) throws Exception {
+	private void prepareAddressSegment(StringBuilder builder, CustomerDetails customerDetails) {
 
 		List<CustomerAddres> addresses = customerDetails.getAddressList();
 
@@ -1416,7 +1411,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 	}
 
-	private void writeCustomerName(StringBuilder writer, Customer customer) throws Exception {
+	private void writeCustomerName(StringBuilder writer, Customer customer) {
 		StringBuilder builder = new StringBuilder();
 
 		if (customer.getCustFName() != null) {
@@ -1481,7 +1476,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 	}
 
-	private void writeCustomerAddress(StringBuilder writer, CustomerAddres custAddr) throws IOException {
+	private void writeCustomerAddress(StringBuilder writer, CustomerAddres custAddr) {
 		StringBuilder builder = new StringBuilder();
 
 		if (custAddr.getCustAddrHNbr() != null) {
@@ -1721,7 +1716,6 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 * 
 	 * @param detailsResult
 	 */
-
 	private JSONObject parseDetailsresponse(Map<String, String> detailsResult) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -2333,7 +2327,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 					primaryApplicant.put("ExtWrittenOffNonCredit", extWrittenOffNonCredit);
 					primaryApplicant.put("ExtWrittenOffCredit", extWrittenOffCredit);
 					primaryApplicant.put("ExtDerog", extDerog);
-					System.out.println("response :::" + primaryApplicant);
+
 					noOfAccountsIn30dpdL12M = 0;
 					noOfAccountsIn1dpdL6M = 0;
 				}
@@ -3870,7 +3864,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		String formattedTime = time.substring(0, 2) + ":" + time.substring(2, 4) + ":" + time.substring(4, 6);
 		cibilHeader.put("TimeProcessed", formattedTime);
 		jsonObject.put("cibilHeader", cibilHeader);
-		System.out.println(jsonObject.toString());
+
 		logger.debug("Parsed header respone :" + cibilHeader.toString());
 		logger.debug(Literal.LEAVING);
 

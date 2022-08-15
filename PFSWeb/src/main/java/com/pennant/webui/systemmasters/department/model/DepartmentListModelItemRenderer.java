@@ -67,7 +67,7 @@ public class DepartmentListModelItemRenderer implements ListitemRenderer<Departm
 	}
 
 	@Override
-	public void render(Listitem item, Department department, int count) throws Exception {
+	public void render(Listitem item, Department department, int count) {
 
 		Listcell lc;
 		lc = new Listcell(department.getDeptCode());

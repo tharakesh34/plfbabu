@@ -69,9 +69,8 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 	 * selected object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ScriptValidationResult(Event event) throws Exception {
+	public void onCreate$window_ScriptValidationResult(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -169,8 +168,7 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);

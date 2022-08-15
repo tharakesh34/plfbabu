@@ -105,9 +105,8 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	 * selected LoanPurpose object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LoanPurposeDialog(Event event) throws Exception {
+	public void onCreate$window_LoanPurposeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -346,9 +345,8 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aLoanPurpose
-	 * @throws Exception
 	 */
-	public void doShowDialog(LoanPurpose aLoanPurpose) throws Exception {
+	public void doShowDialog(LoanPurpose aLoanPurpose) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -784,10 +782,8 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.loanpurpose);
 	}
 

@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FacilityDetailListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-12-2013    														*
- *                                                                  						*
- * Modified Date    :  04-12-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FacilityDetailListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-12-2013 * *
+ * Modified Date : 04-12-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-12-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-12-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.facility.facility;
@@ -122,7 +104,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 
 	}
 
-	public void onCreate$window_FacilityDetailList(ForwardEvent event) throws Exception {
+	public void onCreate$window_FacilityDetailList(ForwardEvent event) {
 		logger.debug("Entering");
 		try {
 			if (arguments.containsKey("enqModule")) {
@@ -177,9 +159,8 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	 * see: com.pennant.webui.collateral.facilitydetail.model. FacilityDetailListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onFacilityDetailItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onFacilityDetailItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 		FacilityDetail itemdata = (FacilityDetail) item.getAttribute("data");
@@ -202,7 +183,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	/**
 	 * Call the FacilityDetail dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_FacilityDetailList_NewFacilityDetail(Event event) throws Exception {
+	public void onClick$button_FacilityDetailList_NewFacilityDetail(Event event) {
 		logger.debug("Entering" + event.toString());
 		// create a new IncomeExpenseDetail object, We GET it from the backEnd.
 		Map<String, Object> map = getDefaultArguments();
@@ -224,7 +205,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void loadWindow(FacilityDetail aFacilityDetail, Commitment commitment) throws InterruptedException {
+	public void loadWindow(FacilityDetail aFacilityDetail, Commitment commitment) {
 		Map<String, Object> map = getDefaultArguments();
 		map.put("facilityDetail", aFacilityDetail);
 		map.put("facilityDetailListCtrl", this);
@@ -350,11 +331,11 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 
 		// Summary Calculation
 		for (FinanceSummary financeSummary : existFinances) {
-			//Check Commitment Exists. 
+			// Check Commitment Exists.
 			if (StringUtils.isNotBlank(financeSummary.getFinCommitmentRef())) {
-				//Check Commitment Expired.
+				// Check Commitment Expired.
 				if (financeSummary.getCmtExpiryDate() != null && financeSummary.getCmtExpiryDate().before(appldate)) {
-					//Check Finance Matured.
+					// Check Finance Matured.
 					if (financeSummary.getMaturityDate().before(appldate)) {
 						continue;
 					}
@@ -423,7 +404,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 		this.listBoxFinances.appendChild(item);
 		// List Group And Child's With Commitments
 		doFillCommitmentGroups(item, cell, group, commitmentMap);
-		//Finance With Out Commitment
+		// Finance With Out Commitment
 		doFillUnCommitedGroup(item, cell, group, nonCommitmentList, unCmtTotOutstanding);
 		logger.debug("Leaving");
 	}

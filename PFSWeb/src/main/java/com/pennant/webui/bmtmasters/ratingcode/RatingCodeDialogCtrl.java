@@ -111,9 +111,8 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	 * selected RatingCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_RatingCodeDialog(Event event) throws Exception {
+	public void onCreate$window_RatingCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -369,9 +368,8 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aRatingCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(RatingCode aRatingCode) throws Exception {
+	public void doShowDialog(RatingCode aRatingCode) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -816,33 +814,11 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	}
 
 	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering");
-
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			System.out.println(e);
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_RatingCodeDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();

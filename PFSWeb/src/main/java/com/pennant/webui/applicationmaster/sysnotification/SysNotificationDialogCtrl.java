@@ -159,9 +159,8 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	 * selected SysNotification object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SysNotificationDialog(Event event) throws Exception {
+	public void onCreate$window_SysNotificationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -421,7 +420,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSendMail(Event event) throws Exception {
+	public void onClick$btnSendMail(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (!this.listBox_CustomersList.getSelectedItems().isEmpty()) {

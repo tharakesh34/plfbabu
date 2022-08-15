@@ -93,7 +93,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -230,9 +230,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * selected JVPosting object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_JVPostingDialog(Event event) throws Exception {
+	public void onCreate$window_JVPostingDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -376,10 +375,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -396,7 +393,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	/**
 	 * Call the JVPosting dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnNewJVPostingEntry(Event event) throws Exception {
+	public void onClick$btnNewJVPostingEntry(Event event) {
 		logger.debug(event.toString());
 		// create a new JVPosting object, We GET it from the backend.
 		JVPostingEntry aJVPostingEntry = new JVPostingEntry();
@@ -413,10 +410,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * Overhanded some params in a map if needed. <br>
 	 * 
 	 * @param JVPosting (aJVPosting)
-	 * @throws Exception
 	 */
-	private void showDetailView(JVPostingEntry aJVPostingEntry, boolean isFilter, boolean setNewRecord)
-			throws Exception {
+	private void showDetailView(JVPostingEntry aJVPostingEntry, boolean isFilter, boolean setNewRecord) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
@@ -475,10 +470,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * see: com.pennant.webui.others.jvposting.model.JVPostingListModelItemRenderer .java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onJVPostingEntryItemDoubleClicked(Event event) throws Exception {
+	public void onJVPostingEntryItemDoubleClicked(Event event) {
 		logger.debug(event.toString());
 		// get the selected JVPosting object
 		final Listitem item = this.listBoxJVPostingEntry.getSelectedItem();
@@ -565,9 +558,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aJVPosting
-	 * @throws Exception
 	 */
-	public void doShowDialog(JVPosting aJVPosting) throws Exception {
+	public void doShowDialog(JVPosting aJVPosting) {
 		logger.debug("Entering");
 		// set Read only mode accordingly if the object is new or not.
 		if (aJVPosting.isNewRecord()) {
@@ -1033,7 +1025,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * 
 	 * @param aJVPosting
 	 */
-	public void doWriteComponentsToBean(JVPosting aJVPosting, boolean addList) throws InterruptedException {
+	public void doWriteComponentsToBean(JVPosting aJVPosting, boolean addList) {
 		logger.debug("Entering");
 		doSetLOVValidation();
 
@@ -1685,12 +1677,12 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		return this.jVPostingListCtrl;
 	}
 
-	public void setDefaultDirectory() throws Exception {
+	public void setDefaultDirectory() {
 		String path = "C:/Pennant/UPP";
 		File file = new File(path);
 
 		if (!file.exists() || !file.canWrite()) {
-			throw new Exception(Labels.getLabel("dir_not_found"));
+			throw new AppException(Labels.getLabel("dir_not_found"));
 		}
 
 		setDirectory(file);
@@ -1844,9 +1836,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * Stores the default values, sets the validation and validates the given finance details.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnValidate(Event event) throws Exception, InterfaceException {
+	public void onClick$btnValidate(Event event) {
 		logger.debug("Entering" + event.toString());
 		final JVPosting aJVPosting = new JVPosting();
 		BeanUtils.copyProperties(getJVPosting(), aJVPosting);

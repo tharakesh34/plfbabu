@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerEmploymentDetail model</b> class.<br>
@@ -89,13 +90,11 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 				.newInstance(CustomerEmploymentDetail.class);
 
 		try {
-			customerEmploymentDetail = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			customerEmploymentDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerEmploymentDetail;
 	}
 
 	@Override
@@ -114,14 +113,7 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
 
-		try {
-			int custEmployment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-			logger.debug("Leaving");
-			return custEmployment;
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			throw e;
-		}
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	/**
@@ -144,14 +136,11 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 				.newInstance(CustomerEmploymentDetail.class);
 
 		try {
-			customerEmploymentDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerEmploymentDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerEmploymentDetail;
 	}
 
 	/**
@@ -365,11 +354,9 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 		logger.trace(Literal.SQL + sql.toString());
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (Exception e) {
-
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		logger.debug("Leaving");
-		return 0;
 	}
-
 }

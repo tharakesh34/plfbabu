@@ -98,10 +98,8 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exceptionif (isWorkFlowEnabled()) { this.userAction = setListRecordStatus(this.userAction);
-	 *                     getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerAddresDialog"); }
 	 */
-	public void onCreate$window_ReportingManagerDialog(Event event) throws Exception {
+	public void onCreate$window_ReportingManagerDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.

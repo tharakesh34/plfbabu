@@ -23,6 +23,34 @@ public class VASPremiumCalcDetails {
 	private String policyAgeF;
 	private String loanAgeF;
 
+	public VASPremiumCalcDetails() {
+		super();
+	}
+
+	public VASPremiumCalcDetails copyEntity() {
+		VASPremiumCalcDetails entity = new VASPremiumCalcDetails();
+		entity.setBatchId(this.batchId);
+		entity.setProductCode(this.productCode);
+		entity.setManufacturerId(this.manufacturerId);
+		entity.setManufacturerName(this.manufacturerName);
+		entity.setCustomerAge(this.customerAge);
+		entity.setGender(this.gender);
+		entity.setPolicyAge(this.policyAge);
+		entity.setLoanAge(this.loanAge);
+		entity.setPremiumPercentage(this.premiumPercentage);
+		entity.setMinAmount(this.minAmount);
+		entity.setMaxAmount(this.maxAmount);
+		entity.setFinAmount(this.finAmount);
+		entity.setFinType(this.finType);
+		entity.setPremiumPercentageF(this.premiumPercentageF);
+		entity.setMinAmountF(this.minAmountF);
+		entity.setMaxAmountF(this.maxAmountF);
+		entity.setCustomerAgeF(this.customerAgeF);
+		entity.setPolicyAgeF(this.policyAgeF);
+		entity.setLoanAgeF(this.loanAgeF);
+		return entity;
+	}
+
 	public String getProductCode() {
 		return productCode;
 	}

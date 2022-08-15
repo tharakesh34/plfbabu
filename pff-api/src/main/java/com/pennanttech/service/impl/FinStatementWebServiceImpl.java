@@ -690,7 +690,7 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			FinanceDetail financeDetail = finStatement.getFinance().get(0);
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 			TaxAmountSplit taxSplit;
 			BigDecimal totalADgstAmt = BigDecimal.ZERO;
 			BigDecimal totalBCgstFee = BigDecimal.ZERO;

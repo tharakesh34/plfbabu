@@ -52,6 +52,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -240,9 +241,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, ca.getReference(), ca.getModule(),
 					ca.getCollateralRef());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -252,7 +253,6 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	public int getAssignedCollateralCount(String collateralRef, String type) {
 		logger.debug("Entering");
 
-		int assignedCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 
@@ -261,16 +261,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CollateralRef = :CollateralRef ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			assignedCount = 0;
-		}
-		logger.debug("Leaving");
-		return assignedCount;
+		logger.debug(Literal.SQL + selectSql.toString());
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -280,7 +272,6 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	public BigDecimal getAssignedPerc(String collateralRef, String reference, String type) {
 		logger.debug("Entering");
 
-		BigDecimal totAssignExptCur = BigDecimal.ZERO;
 		CollateralAssignment collateralAssignment = new CollateralAssignment();
 		collateralAssignment.setCollateralRef(collateralRef);
 		collateralAssignment.setReference(reference);
@@ -296,14 +287,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
 
-		try {
-			totAssignExptCur = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			totAssignExptCur = BigDecimal.ZERO;
-		}
-		logger.debug("Leaving");
-		return totAssignExptCur;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
 	}
 
 	/**
@@ -434,10 +418,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, reference, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	/**
@@ -491,14 +474,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		source.addValue("CollateralRef", collateralRef);
 		source.addValue("Reference", reference);
 
-		try {
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -659,13 +636,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", finReference);
 
-		try {
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return 0;
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -678,14 +650,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(" GROUP by CA.Reference");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
 	}
 
 	private BigDecimal getAssignedPerc(String collateralRef) {
@@ -693,14 +658,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(" From CollateralAssignment Where CollateralRef = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, collateralRef);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, collateralRef);
 	}
 
 	private BigDecimal getAssignedPercFromView(String collateralRef) {
@@ -715,13 +673,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		Object[] param = new Object[] { collateralRef, collateralRef };
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, param);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, param);
 	}
 
 	private Map<String, Object> getTotalUtilized(String collateralRef) {
@@ -734,15 +686,10 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(" Where ca.CollateralRef = ? group by ca.Reference");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-				map.put(rs.getString("Reference"), rs.getBigDecimal("TotalUtilized"));
-				return map;
-			}, collateralRef);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
+		this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			map.put(rs.getString("Reference"), rs.getBigDecimal("TotalUtilized"));
+			return map;
+		}, collateralRef);
 
 		return map;
 	}

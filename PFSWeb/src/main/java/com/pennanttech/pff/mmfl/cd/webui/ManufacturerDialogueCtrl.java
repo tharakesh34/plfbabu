@@ -73,9 +73,8 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_manufacturerDialogue(Event event) throws AppException {
+	public void onCreate$window_manufacturerDialogue(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_manufacturerDialogue);
@@ -481,7 +480,6 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 		this.name.setValue("");
 		this.description.setValue("");
 		this.txtchannel.setValue("");
-		;
 		this.active.setChecked(false);
 		logger.debug(Literal.LEAVING);
 	}
@@ -699,7 +697,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 				getOverideMap());
 	}
 
-	public void onClick$btnchannels(Event event) throws Exception {
+	public void onClick$btnchannels(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_manufacturerDialogue, "ChannelTypes",
 				String.valueOf(this.txtchannel.getValue()), null);

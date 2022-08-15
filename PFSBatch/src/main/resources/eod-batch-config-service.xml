@@ -187,8 +187,6 @@
 		<property name="changeGraceEndService" ref="changeGraceEndService" />
 	</bean>
 
-	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper" />
-
 	<bean id="changeGraceEndService" class="com.pennant.app.core.ChangeGraceEndService" parent="serviceHelper">
 		<property name="accrualService" ref="accrualService" />
 	</bean>
@@ -504,22 +502,7 @@
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
 	</bean>
 
-	<bean name="collateralSetupService" class="com.pennant.backend.service.collateral.impl.CollateralSetupServiceImpl">
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
-		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="collateralThirdPartyDAO" ref="collateralThirdPartyDAO" />
-		<property name="coOwnerDetailDAO" ref="coOwnerDetailDAO" />
-		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-		<property name="financeCheckListReferenceDAO" ref="financeCheckListReferenceDAO" />
-		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
-		<property name="checkListDetailService" ref="finCheckListDetailService" />
-		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
-		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
-		<property name="collateralStructureService" ref="collateralStructureService" />
-		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
-	</bean>
+	<bean name="collateralSetupService" class="com.pennant.backend.service.collateral.impl.CollateralSetupServiceImpl"/>
 
 	<!--============ Account Engine Rule Execution ============== -->
 	<bean name="engineExecution" class="com.pennant.app.util.AccountEngineExecution" scope="prototype">
@@ -647,5 +630,10 @@
 		<property name="finMaintainInstructionDAO" ref="finMaintainInstructionDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+
+	<bean id="cityDAO" class="com.pennant.backend.dao.systemmasters.impl.CityDAOImpl" parent="basicDao" />
+	
+	<bean name="documentTypeService" class="com.pennant.backend.service.systemmasters.impl.DocumentTypeServiceImpl"/>
+	
 
 </beans>

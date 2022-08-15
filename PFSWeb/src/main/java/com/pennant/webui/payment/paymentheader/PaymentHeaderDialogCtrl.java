@@ -209,9 +209,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_PaymentHeaderDialog(Event event) throws Exception {
+	public void onCreate$window_PaymentHeaderDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -513,7 +512,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onSelectTab(ForwardEvent event) throws Exception {
+	public void onSelectTab(ForwardEvent event) {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + "Entering");
 		String module = getIDbyTab(tab.getId());
@@ -1131,10 +1130,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	/**
 	 * Method for Executing Accountng Details
-	 * 
-	 * @throws Exception
 	 */
-	public void executeAccounting() throws Exception {
+	public void executeAccounting() {
 		logger.debug(Literal.ENTERING);
 
 		AEEvent aeEvent = new AEEvent();
@@ -1245,7 +1242,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				if (taxPercMap == null) {
 					FinanceDetail financeDetail = new FinanceDetail();
 					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-					taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinID());
+					taxPercMap = GSTCalculator.getTaxPercentages(financeMain);
 				}
 
 				// GST Calculations
@@ -1519,9 +1516,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * Method for action Forward event for changing PayAmountChange
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onPayAmountChange(ForwardEvent event) throws Exception {
+	public void onPayAmountChange(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Decimalbox paymentAmt = (Decimalbox) event.getOrigin().getTarget();
@@ -1671,7 +1667,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		if (detail.isTaxApplicable() && taxHeader != null) {
 
 			if (taxPercMap == null) {
-				taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinID());
+				taxPercMap = GSTCalculator.getTaxPercentages(financeMain);
 			}
 
 			// GST Calculations
@@ -1968,9 +1964,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * Method for action Forward event for changing PayAmountChangeForExcessAndEMI
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onPayAmountChangeForExcessAndEMI(ForwardEvent event) throws Exception {
+	public void onPayAmountChangeForExcessAndEMI(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Decimalbox paymentAmt = (Decimalbox) event.getOrigin().getTarget();
@@ -2004,7 +1999,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onAddPaymentHeader(Event event) throws Exception {
+	public void onAddPaymentHeader(Event event) {
 		logger.debug("Entering " + event.toString());
 		this.deleteButton = false;
 		this.buttonVisible = true;
@@ -2017,7 +2012,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onDeletePaymentHeader(Event event) throws Exception {
+	public void onDeletePaymentHeader(Event event) {
 
 		logger.debug("Entering " + event.toString());
 		this.buttonVisible = false;
@@ -2143,9 +2138,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * Method for action Forward event for changing onPayAmountFoEventChanges
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onPayAmountForEventChanges(ForwardEvent event) throws Exception {
+	public void onPayAmountForEventChanges(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Decimalbox paymentAmount = (Decimalbox) event.getOrigin().getTarget();

@@ -66,7 +66,7 @@ public class FeeWaiverListModelItemRenderer implements ListitemRenderer<FeeWaive
 	}
 
 	@Override
-	public void render(Listitem item, FeeWaiverHeader feeWaiverHeader, int count) throws Exception {
+	public void render(Listitem item, FeeWaiverHeader feeWaiverHeader, int count) {
 
 		Listcell lc;
 

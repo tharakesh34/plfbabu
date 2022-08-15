@@ -123,7 +123,7 @@ public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceipt
 
 	}
 
-	public void onCreate$window_SelectNonLanReceiptPaymentDialog(Event event) throws Exception {
+	public void onCreate$window_SelectNonLanReceiptPaymentDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Set the page level components.
@@ -227,9 +227,8 @@ public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceipt
 	 * When user changes textbox "custCIF"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$receiptMode(Event event) throws Exception {
+	public void onChange$receiptMode(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		this.row_subReceiptMode.setVisible(false);
@@ -257,7 +256,7 @@ public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceipt
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$receivedFrom(Event event) throws Exception {
+	public void onChange$receivedFrom(Event event) {
 		logger.debug("Entering");
 		String receivedFrom = this.receivedFrom.getSelectedItem().getValue().toString();
 		this.row_CustId.setVisible(false);
@@ -276,9 +275,8 @@ public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceipt
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 		receiptData.setEnquiry(true);
 		doSetValidation();
@@ -362,7 +360,7 @@ public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceipt
 
 	}
 
-	public void doWriteComponentsToBean() throws Exception {
+	public void doWriteComponentsToBean() {
 		logger.debug("Entering ");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();

@@ -84,7 +84,7 @@ import com.pennant.backend.model.finance.FeePaymentDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
-import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -229,9 +229,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 * selected FinAdvancePayment object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FeeDetailList(ForwardEvent event) throws Exception {
+	public void onCreate$window_FeeDetailList(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -516,25 +515,19 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		long receiptid = 0;
 		boolean receiptFound = false;
 		BigDecimal receiptAmount = BigDecimal.ZERO;
-		List<FinReceiptDetail> finReceiptdetailList = financeDetail.getFinScheduleData().getFinReceiptDetails();
+		List<FinReceiptHeader> imdReceipts = financeDetail.getFinScheduleData().getImdReceipts();
 		List<FinFeeReceipt> prevFeeReceipts = financeDetail.getFinScheduleData().getFinFeeReceipts();
 
-		for (FinReceiptDetail finReceiptDetail : finReceiptdetailList) {
-			String reference = "";
+		for (FinReceiptHeader rch : imdReceipts) {
+			String reference = rch.getTransactionRef();
 			BigDecimal receiptAvlAmount = BigDecimal.ZERO;
 			BigDecimal receiptPaidAmount = BigDecimal.ZERO;
-			receiptid = finReceiptDetail.getReceiptID();
-			receiptAmount = finReceiptDetail.getAmount();
-			List<FinFeeReceipt> currentFeeReceipts = new ArrayList<FinFeeReceipt>();
-
-			if (StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())) {
-				reference = finReceiptDetail.getTransactionRef();
-			} else if (StringUtils.isNotBlank(finReceiptDetail.getFavourNumber())) {
-				reference = finReceiptDetail.getFavourNumber();
-			}
+			receiptid = rch.getReceiptID();
+			receiptAmount = rch.getReceiptAmount();
+			List<FinFeeReceipt> currentFeeReceipts = new ArrayList<>();
 
 			if (prevFeeReceipts.isEmpty()) {
-				receiptAvlAmount = finReceiptDetail.getAmount();
+				receiptAvlAmount = rch.getReceiptAmount();
 			} else {
 				for (FinFeeReceipt finFeeReceipt : prevFeeReceipts) {
 					if (receiptid == finFeeReceipt.getReceiptID()) {
@@ -559,11 +552,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			} else {
 				FinFeeReceipt finFeeReceipt = new FinFeeReceipt();
 				finFeeReceipt.setNewRecord(true);
-				finFeeReceipt.setReceiptAmount(finReceiptDetail.getAmount());
+				finFeeReceipt.setReceiptAmount(rch.getReceiptAmount());
 				finFeeReceipt.setReceiptReference(reference);
-				finFeeReceipt.setReceiptType(finReceiptDetail.getPaymentType());
-				finFeeReceipt.setRemainingFee(finReceiptDetail.getAmount());
-				finFeeReceipt.setAvailableAmount(finReceiptDetail.getAmount());
+				finFeeReceipt.setReceiptType(rch.getReceiptMode());
+				finFeeReceipt.setRemainingFee(rch.getReceiptAmount());
+				finFeeReceipt.setAvailableAmount(rch.getReceiptAmount());
 				finFeeReceipt.setReceiptID(receiptid);
 				finFeeReceipt.setWorkflowId(financeMain.getWorkflowId());
 				finFeeReceipt.setRecordType(PennantConstants.RCD_ADD);
@@ -835,7 +828,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Map<String, FinFeeDetail> finFeeDetailsMapTemp = new LinkedHashMap<>();
 		Map<String, FinFeeDetail> finFeeDetailsMap = new LinkedHashMap<>();
 		Map<String, BigDecimal> availableFeeAmount = new LinkedHashMap<>();
-		List<FinReceiptDetail> finReceiptdetailList = financeDetail.getFinScheduleData().getFinReceiptDetails();
+		List<FinReceiptHeader> imdReceipts = financeDetail.getFinScheduleData().getImdReceipts();
 
 		BigDecimal totFeesPaidAmount = BigDecimal.ZERO;
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
@@ -855,10 +848,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 
 		BigDecimal totReceiptPaidAmount = BigDecimal.ZERO;
-		for (FinReceiptDetail finReceiptDetail : finReceiptdetailList) {
-			totReceiptPaidAmount = totReceiptPaidAmount.add(finReceiptDetail.getAmount());
+		for (FinReceiptHeader rch : imdReceipts) {
+			totReceiptPaidAmount = totReceiptPaidAmount.add(rch.getReceiptAmount());
 		}
-
 		if (totReceiptPaidAmount.compareTo(totFeesPaidAmount) < 0) {
 			MessageUtil.showError(Labels.getLabel("label_FinFeeReceiptDialog_PaiBox_Error.value"));
 			return;
@@ -869,17 +861,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			BigDecimal receiptAmount = BigDecimal.ZERO;
 			Map<Long, List<FinFeeReceipt>> curFeeReceiptMap = new LinkedHashMap<>();
 
-			for (FinReceiptDetail finReceiptDetail : finReceiptdetailList) {
-				String reference = "";
-				receiptid = finReceiptDetail.getReceiptID();
-				receiptAmount = finReceiptDetail.getAmount();
-				List<FinFeeReceipt> currentFeeReceipts = new ArrayList<FinFeeReceipt>();
-
-				if (StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())) {
-					reference = finReceiptDetail.getTransactionRef();
-				} else if (StringUtils.isNotBlank(finReceiptDetail.getFavourNumber())) {
-					reference = finReceiptDetail.getFavourNumber();
-				}
+			for (FinReceiptHeader rch : imdReceipts) {
+				String reference = rch.getTransactionRef();
+				receiptid = rch.getReceiptID();
+				receiptAmount = rch.getReceiptAmount();
+				List<FinFeeReceipt> currentFeeReceipts = new ArrayList<>();
 
 				for (String key : finFeeDetailsMap.keySet()) {
 					if (!finFeeDetailsMapTemp.containsKey(key)) {
@@ -899,12 +885,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						finFeeReceipt.setFeeTypeDesc(finFeeDetail.getVasReference());
 					}
 					finFeeReceipt.setReceiptReference(reference);
-					finFeeReceipt.setReceiptType(finReceiptDetail.getPaymentType());
-					finFeeReceipt.setRemainingFee(finReceiptDetail.getAmount());
-					finFeeReceipt.setAvailableAmount(finReceiptDetail.getAmount());
+					finFeeReceipt.setReceiptType(rch.getReceiptMode());
+					finFeeReceipt.setRemainingFee(rch.getReceiptAmount());
+					finFeeReceipt.setAvailableAmount(rch.getReceiptAmount());
 					finFeeReceipt.setReceiptID(receiptid);
 					finFeeReceipt.setWorkflowId(financeMain.getWorkflowId());
-					finFeeReceipt.setReceiptAmount(finReceiptDetail.getAmount());
+					finFeeReceipt.setReceiptAmount(rch.getReceiptAmount());
 					currentFeeReceipts.add(finFeeReceipt);
 
 					BigDecimal feepaidAmount = availableFeeAmount.get(key);
@@ -927,11 +913,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				} else {
 					FinFeeReceipt finFeeReceipt = new FinFeeReceipt();
 					finFeeReceipt.setNewRecord(true);
-					finFeeReceipt.setReceiptAmount(finReceiptDetail.getAmount());
+					finFeeReceipt.setReceiptAmount(rch.getReceiptAmount());
 					finFeeReceipt.setReceiptReference(reference);
-					finFeeReceipt.setReceiptType(finReceiptDetail.getPaymentType());
-					finFeeReceipt.setRemainingFee(finReceiptDetail.getAmount());
-					finFeeReceipt.setAvailableAmount(finReceiptDetail.getAmount());
+					finFeeReceipt.setReceiptType(rch.getReceiptMode());
+					finFeeReceipt.setRemainingFee(rch.getReceiptAmount());
+					finFeeReceipt.setAvailableAmount(rch.getReceiptAmount());
 					finFeeReceipt.setReceiptID(receiptid);
 					finFeeReceipt.setWorkflowId(financeMain.getWorkflowId());
 					finFeeReceipt.setRecordType(PennantConstants.RCD_ADD);
@@ -2154,9 +2140,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 * onClick FeeType Hyper Link it will redirect to FeeType Master
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClickFeeType(ForwardEvent event) throws Exception {
+	public void onClickFeeType(ForwardEvent event) {
 		logger.debug("Entering");
 
 		FinFeeDetail details = (FinFeeDetail) event.getData();
@@ -2323,7 +2308,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		} else if (BigDecimal.valueOf(paidBox.doubleValue()).compareTo(BigDecimal.ZERO) < 0) {
 			adjustButton.setDisabled(true);
 		} else {
-			if (getFinanceDetail().getFinScheduleData().getFinReceiptDetails().isEmpty()) {
+			if (getFinanceDetail().getFinScheduleData().getImdReceipts().isEmpty()) {
 				adjustButton.setDisabled(true);
 			} else {
 				readOnlyComponent(isReadOnly("FinFeeDetailListCtrl_Adjust"), adjustButton);

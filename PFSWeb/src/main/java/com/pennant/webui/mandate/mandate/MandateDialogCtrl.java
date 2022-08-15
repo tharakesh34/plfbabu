@@ -284,10 +284,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * selected Mandate object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_MandateDialog(Event event) throws Exception {
+	public void onCreate$window_MandateDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -606,10 +605,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * when the "cancel" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
-	 * @throws WrongValueException
 	 */
-	public void onClick$btnCancel(Event event) throws WrongValueException, Exception {
+	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering" + event.toString());
 		doCancel();
 		logger.debug("Leaving" + event.toString());
@@ -666,10 +663,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -760,7 +755,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onCheck$useExisting(Event event) throws WrongValueException, Exception {
+	public void onCheck$useExisting(Event event) {
 		logger.debug("Entering" + event.toString());
 		doClearMessage();
 		useExisting();
@@ -1321,13 +1316,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
-	 * Resets to the original status.<br>
-	 * 
-	 * @throws Exception
-	 * @throws WrongValueException
-	 * 
+	 * Resets to the original status.
 	 */
-	private void doCancel() throws WrongValueException, Exception {
+	private void doCancel() {
 		logger.debug("Entering ");
 
 		doWriteBeanToComponents(this.mandate.getBefImage());
@@ -1390,11 +1381,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aMandate Mandate
-	 * @param tab
-	 * @throws Exception
-	 * @throws WrongValueException
 	 */
-	public void doWriteBeanToComponents(Mandate aMandate) throws WrongValueException, Exception {
+	public void doWriteBeanToComponents(Mandate aMandate) {
 		logger.debug("Entering");
 		if (fromLoan) {
 			this.useExisting.setChecked(aMandate.isUseExisting());
@@ -1471,7 +1459,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 	}
 
-	private void doWriteData(Mandate aMandate) throws WrongValueException, Exception {
+	private void doWriteData(Mandate aMandate) {
 		ccyFormatter = CurrencyUtil.getFormat(aMandate.getMandateCcy());
 
 		if (aMandate.isNewRecord()) {
@@ -2206,7 +2194,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 	}
 
-	public void onFulfill$mandateRef(Event event) throws WrongValueException, Exception {
+	public void onFulfill$mandateRef(Event event) {
 		logger.debug("Entering");
 
 		Object dataObject = mandateRef.getObject();
@@ -2274,7 +2262,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$maxLimit(Event event) throws WrongValueException, Exception {
+	public void onFulfill$maxLimit(Event event) {
 		logger.debug("Entering");
 
 		this.amountInWords.setValue(AmtInitialCap());
@@ -2282,7 +2270,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving");
 	}
 
-	private String AmtInitialCap() throws WrongValueException, Exception {
+	private String AmtInitialCap() {
 		String amtInWords = NumberToEnglishWords.getNumberToWords(this.maxLimit.getActualValue().toBigInteger());
 
 		String[] words = amtInWords.split(" ");
@@ -2632,7 +2620,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 	}
 
-	public void doSave_Mandate(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
+	public void doSave_Mandate(FinanceDetail financeDetail, Tab tab, boolean recSave) {
 		logger.debug("Entering");
 
 		doClearMessage();

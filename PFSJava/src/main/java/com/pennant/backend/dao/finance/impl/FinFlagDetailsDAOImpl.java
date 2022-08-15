@@ -65,10 +65,8 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 	 * 
 	 * save FinanceFlags
 	 * 
-	 * @param FinanceFlags
-	 *            (finFlagsDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinanceFlags (finFlagsDetail)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -135,10 +133,8 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 	/**
 	 * Fetch the Record Finance Flags details by key field
 	 * 
-	 * @param finRef
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finRef (String)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return finFlagsDetail
 	 */
 	@Override
@@ -322,16 +318,6 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 
-		int rcdCount = 0;
-		try {
-			rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(dae);
-			rcdCount = 0;
-		}
-
-		logger.debug("Leaving");
-		return rcdCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
-
 }

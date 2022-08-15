@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LoanDetailsEnquiryDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LoanDetailsEnquiryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -104,10 +86,9 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_PostingDetailDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_PostingDetailDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -133,14 +114,13 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 
 		try {
 
-			//Fill Posting Details
+			// Fill Posting Details
 			doFillPostings();
 
 			getBorderLayoutHeight();
@@ -152,7 +132,7 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Leaving");
 	}
 
-	public void onCheck$showZeroCals(Event event) throws Exception {
+	public void onCheck$showZeroCals(Event event) {
 		logger.debug("Entering");
 		doFillPostings();
 		logger.debug("Leaving");
@@ -205,9 +185,8 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * when the "BtnPrintPostings" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPrintPostings(Event event) throws Exception {
+	public void onClick$btnPrintPostings(Event event) {
 		logger.debug("Entering" + event.toString());
 		String usrName = getUserWorkspace().getLoggedInUser().getUserName();
 		List<Object> list = null;

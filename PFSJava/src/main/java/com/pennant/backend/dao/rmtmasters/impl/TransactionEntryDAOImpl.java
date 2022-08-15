@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  TransactionEntryDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2011    														*
- *                                                                  						*
- * Modified Date    :  14-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : TransactionEntryDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2011 * *
+ * Modified Date : 14-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
@@ -76,6 +58,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>TransactionEntry model</b> class.<br>
@@ -122,10 +105,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	/**
 	 * Fetch the Record Transaction Entry details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return TransactionEntry
 	 */
 	@Override
@@ -158,22 +139,18 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 
 		try {
-			transactionEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			transactionEntry = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return transactionEntry;
 	}
 
 	/**
 	 * Fetch the Record Transaction Entry details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return TransactionEntry
 	 */
 	@Override
@@ -247,10 +224,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	/**
 	 * Fetch the Record Transaction Entry details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return TransactionEntry
 	 */
 	@Override
@@ -266,44 +241,37 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		List<TransactionEntry> list = null;
+		List<TransactionEntry> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index, id);
 
-		try {
-			list = this.jdbcOperations.query(sql.toString(), ps -> {
-				int index = 1;
-				ps.setLong(index, id);
+		}, (rs, rowNum) -> {
+			TransactionEntry te = new TransactionEntry();
 
-			}, (rs, rowNum) -> {
-				TransactionEntry te = new TransactionEntry();
+			te.setAccountSetid(rs.getLong("AccountSetid"));
+			te.setTransOrder(rs.getInt("TransOrder"));
+			te.setTransDesc(rs.getString("TransDesc"));
+			te.setDebitcredit(rs.getString("Debitcredit"));
+			te.setShadowPosting(rs.getBoolean("ShadowPosting"));
+			te.setAccount(rs.getString("Account"));
+			te.setAccountType(rs.getString("AccountType"));
+			te.setAccountBranch(rs.getString("AccountBranch"));
+			te.setAccountSubHeadRule(rs.getString("AccountSubHeadRule"));
+			te.setTranscationCode(rs.getString("TranscationCode"));
+			te.setRvsTransactionCode(rs.getString("RvsTransactionCode"));
+			te.setAmountRule(rs.getString("AmountRule"));
+			te.setChargeType(rs.getString("ChargeType"));
+			te.setFeeCode(rs.getString("FeeCode"));
+			te.setOpenNewFinAc(rs.getBoolean("OpenNewFinAc"));
+			te.setPostToSys(rs.getString("PostToSys"));
+			te.setDerivedTranOrder(rs.getInt("DerivedTranOrder"));
+			te.setFeeRepeat(rs.getBoolean("FeeRepeat"));
+			te.setReceivableOrPayable(rs.getInt("ReceivableOrPayable"));
+			te.setAssignmentEntry(rs.getBoolean("AssignmentEntry"));
+			te.setBulking(rs.getBoolean("Bulking"));
+			return te;
 
-				te.setAccountSetid(rs.getLong("AccountSetid"));
-				te.setTransOrder(rs.getInt("TransOrder"));
-				te.setTransDesc(rs.getString("TransDesc"));
-				te.setDebitcredit(rs.getString("Debitcredit"));
-				te.setShadowPosting(rs.getBoolean("ShadowPosting"));
-				te.setAccount(rs.getString("Account"));
-				te.setAccountType(rs.getString("AccountType"));
-				te.setAccountBranch(rs.getString("AccountBranch"));
-				te.setAccountSubHeadRule(rs.getString("AccountSubHeadRule"));
-				te.setTranscationCode(rs.getString("TranscationCode"));
-				te.setRvsTransactionCode(rs.getString("RvsTransactionCode"));
-				te.setAmountRule(rs.getString("AmountRule"));
-				te.setChargeType(rs.getString("ChargeType"));
-				te.setFeeCode(rs.getString("FeeCode"));
-				te.setOpenNewFinAc(rs.getBoolean("OpenNewFinAc"));
-				te.setPostToSys(rs.getString("PostToSys"));
-				te.setDerivedTranOrder(rs.getInt("DerivedTranOrder"));
-				te.setFeeRepeat(rs.getBoolean("FeeRepeat"));
-				te.setReceivableOrPayable(rs.getInt("ReceivableOrPayable"));
-				te.setAssignmentEntry(rs.getBoolean("AssignmentEntry"));
-				te.setBulking(rs.getBoolean("Bulking"));
-				return te;
-
-			});
-		} catch (EmptyResultDataAccessException e) {
-			list = new ArrayList<>();
-			logger.error(Literal.EXCEPTION, e);
-		}
+		});
 
 		return sortTxnEntries(list);
 	}
@@ -311,10 +279,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	/**
 	 * Fetch the Record Transaction Entry details by key field and RefType
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return TransactionEntry
 	 */
 	@Override
@@ -331,7 +297,9 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 			sql.append(", LovDescEventCodeName, LovDescAccSetCodeName");
 
 			if (!postingsProcess) {
-				sql.append(", LovDescAccountTypeName, LovDescAccountSubHeadRuleName"); //LovDescAccountTypeName column is not availble in table and AEView 
+				sql.append(", LovDescAccountTypeName, LovDescAccountSubHeadRuleName"); // LovDescAccountTypeName column
+																						// is not availble in table and
+																						// AEView
 				sql.append(", LovDescTranscationCodeName, LovDescRvsTransactionCodeName");
 				sql.append(", LovDescAccountBranchName, LovDescSysInAcTypeName, LovDescAccSetCodeDesc");
 			}
@@ -352,86 +320,77 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finType);
-					ps.setString(index++, finEvent);
-					ps.setInt(index++, refType);
-					ps.setString(index++, "%" + roleCode + "%");
-				}
-			}, new RowMapper<TransactionEntry>() {
-				@Override
-				public TransactionEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
-					TransactionEntry te = new TransactionEntry();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, finType);
+				ps.setString(index++, finEvent);
+				ps.setInt(index++, refType);
+				ps.setString(index++, "%" + roleCode + "%");
+			}
+		}, new RowMapper<TransactionEntry>() {
+			@Override
+			public TransactionEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
+				TransactionEntry te = new TransactionEntry();
 
-					te.setAccountSetid(rs.getLong("AccountSetid"));
-					te.setTransOrder(rs.getInt("TransOrder"));
-					te.setTransDesc(rs.getString("TransDesc"));
-					te.setDebitcredit(rs.getString("Debitcredit"));
-					te.setShadowPosting(rs.getBoolean("ShadowPosting"));
-					te.setAccount(rs.getString("Account"));
-					te.setAccountType(rs.getString("AccountType"));
-					te.setAccountBranch(rs.getString("AccountBranch"));
-					te.setAccountSubHeadRule(rs.getString("AccountSubHeadRule"));
-					te.setTranscationCode(rs.getString("TranscationCode"));
-					te.setRvsTransactionCode(rs.getString("RvsTransactionCode"));
-					te.setAmountRule(rs.getString("AmountRule"));
-					te.setChargeType(rs.getString("ChargeType"));
-					te.setFeeCode(rs.getString("FeeCode"));
-					te.setEntryByInvestment(rs.getBoolean("EntryByInvestment"));
-					te.setOpenNewFinAc(rs.getBoolean("OpenNewFinAc"));
-					te.setPostToSys(rs.getString("PostToSys"));
-					te.setDerivedTranOrder(rs.getInt("DerivedTranOrder"));
+				te.setAccountSetid(rs.getLong("AccountSetid"));
+				te.setTransOrder(rs.getInt("TransOrder"));
+				te.setTransDesc(rs.getString("TransDesc"));
+				te.setDebitcredit(rs.getString("Debitcredit"));
+				te.setShadowPosting(rs.getBoolean("ShadowPosting"));
+				te.setAccount(rs.getString("Account"));
+				te.setAccountType(rs.getString("AccountType"));
+				te.setAccountBranch(rs.getString("AccountBranch"));
+				te.setAccountSubHeadRule(rs.getString("AccountSubHeadRule"));
+				te.setTranscationCode(rs.getString("TranscationCode"));
+				te.setRvsTransactionCode(rs.getString("RvsTransactionCode"));
+				te.setAmountRule(rs.getString("AmountRule"));
+				te.setChargeType(rs.getString("ChargeType"));
+				te.setFeeCode(rs.getString("FeeCode"));
+				te.setEntryByInvestment(rs.getBoolean("EntryByInvestment"));
+				te.setOpenNewFinAc(rs.getBoolean("OpenNewFinAc"));
+				te.setPostToSys(rs.getString("PostToSys"));
+				te.setDerivedTranOrder(rs.getInt("DerivedTranOrder"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						te.setLovDescEventCodeName(rs.getString("LovDescEventCodeName"));
-						te.setLovDescAccSetCodeName(rs.getString("LovDescAccSetCodeName"));
-
-						if (!postingsProcess) {
-							te.setLovDescAccountTypeName(rs.getString("LovDescAccountTypeName"));
-							te.setLovDescAccountSubHeadRuleName(rs.getString("LovDescAccountSubHeadRuleName"));
-							te.setLovDescTranscationCodeName(rs.getString("LovDescTranscationCodeName"));
-							te.setLovDescRvsTransactionCodeName(rs.getString("LovDescRvsTransactionCodeName"));
-							te.setLovDescAccountBranchName(rs.getString("LovDescAccountBranchName"));
-							te.setLovDescSysInAcTypeName(rs.getString("LovDescSysInAcTypeName"));
-							te.setLovDescAccSetCodeDesc(rs.getString("LovDescAccSetCodeDesc"));
-						}
-					}
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					te.setLovDescEventCodeName(rs.getString("LovDescEventCodeName"));
+					te.setLovDescAccSetCodeName(rs.getString("LovDescAccSetCodeName"));
 
 					if (!postingsProcess) {
-						te.setVersion(rs.getInt("Version"));
-						te.setLastMntBy(rs.getLong("LastMntBy"));
-						te.setLastMntOn(rs.getTimestamp("LastMntOn"));
-						te.setRecordStatus(rs.getString("RecordStatus"));
-						te.setRoleCode(rs.getString("RoleCode"));
-						te.setNextRoleCode(rs.getString("NextRoleCode"));
-						te.setTaskId(rs.getString("TaskId"));
-						te.setNextTaskId(rs.getString("NextTaskId"));
-						te.setRecordType(rs.getString("RecordType"));
-						te.setWorkflowId(rs.getLong("WorkflowId"));
+						te.setLovDescAccountTypeName(rs.getString("LovDescAccountTypeName"));
+						te.setLovDescAccountSubHeadRuleName(rs.getString("LovDescAccountSubHeadRuleName"));
+						te.setLovDescTranscationCodeName(rs.getString("LovDescTranscationCodeName"));
+						te.setLovDescRvsTransactionCodeName(rs.getString("LovDescRvsTransactionCodeName"));
+						te.setLovDescAccountBranchName(rs.getString("LovDescAccountBranchName"));
+						te.setLovDescSysInAcTypeName(rs.getString("LovDescSysInAcTypeName"));
+						te.setLovDescAccSetCodeDesc(rs.getString("LovDescAccSetCodeDesc"));
 					}
-
-					return te;
 				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				if (!postingsProcess) {
+					te.setVersion(rs.getInt("Version"));
+					te.setLastMntBy(rs.getLong("LastMntBy"));
+					te.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					te.setRecordStatus(rs.getString("RecordStatus"));
+					te.setRoleCode(rs.getString("RoleCode"));
+					te.setNextRoleCode(rs.getString("NextRoleCode"));
+					te.setTaskId(rs.getString("TaskId"));
+					te.setNextTaskId(rs.getString("NextTaskId"));
+					te.setRecordType(rs.getString("RecordType"));
+					te.setWorkflowId(rs.getLong("WorkflowId"));
+				}
+
+				return te;
+			}
+		});
 	}
 
 	/**
 	 * Fetch the Record Rule Details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Rules
 	 */
 	@Override
@@ -448,7 +407,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		if (!feeCodeList.isEmpty()) {
 
-			//Adding Fee Codes to List For Filter Search
+			// Adding Fee Codes to List For Filter Search
 			List<String> feeCodes = new ArrayList<String>();
 			for (String feeCodeValue : feeCodeList) {
 
@@ -497,10 +456,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	/**
 	 * Fetch the accounting fee codes list by accountingids
 	 * 
-	 * @param accountSetId
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param accountSetId (int)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return Rules
 	 */
 	@Override
@@ -521,10 +478,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	/**
 	 * Fetch the accounting fee codes list by accountingids
 	 * 
-	 * @param accountSetId
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param accountSetId (int)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return Rules
 	 */
 	@Override
@@ -595,10 +550,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	 * This method Deletes the Record from the RMTTransactionEntry or RMTTransactionEntry_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Transaction Entry by key AccountSetid
 	 * 
-	 * @param Transaction
-	 *            Entry (transactionEntry)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Transaction Entry (transactionEntry)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -629,10 +582,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	 * This method Deletes the Records from the RMTTransactionEntry or RMTTransactionEntry_Temp. delete Transaction
 	 * Entry(s) by key AccountSetid
 	 * 
-	 * @param accountingSetId
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param accountingSetId (long)
+	 * @param type            (String) ""/_Temp/_View
 	 * @return
 	 */
 	public void deleteByAccountingSetId(final long accountingSetId, String type) {
@@ -656,10 +607,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	 * 
 	 * save Transaction Entry
 	 * 
-	 * @param Transaction
-	 *            Entry (transactionEntry)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Transaction Entry (transactionEntry)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -679,7 +628,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		insertSql.append(" Values(:AccountSetid, :TransOrder, :TransDesc, :Debitcredit, :ShadowPosting,");
 		insertSql.append(" :Account, :AccountType,:AccountBranch, :AccountSubHeadRule, :TranscationCode,");
 		insertSql.append(" :RvsTransactionCode, :AmountRule,:FeeCode,:ChargeType, :EntryByInvestment ,:OpenNewFinAc,");
-		insertSql.append(" :PostToSys, :DerivedTranOrder, :FeeRepeat, :ReceivableOrPayable, :AssignmentEntry, :Bulking,");
+		insertSql.append(
+				" :PostToSys, :DerivedTranOrder, :FeeRepeat, :ReceivableOrPayable, :AssignmentEntry, :Bulking,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -694,10 +644,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	 * This method updates the Record RMTTransactionEntry or RMTTransactionEntry_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Transaction Entry by key AccountSetid and Version
 	 * 
-	 * @param Transaction
-	 *            Entry (transactionEntry)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Transaction Entry (transactionEntry)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -741,10 +689,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	/**
 	 * Fetch the Record Transaction Entry details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return TransactionEntry
 	 */
 	@Override

@@ -1,6 +1,5 @@
 package com.pennant.webui.sampling;
 
-import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SamplingExtendedFieldDialog(Event event) throws Exception {
+	public void onCreate$window_SamplingExtendedFieldDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_SamplingExtendedFieldDialog);
@@ -205,13 +204,9 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private void doWriteComponentsToBean(Sampling sampling) {
 		logger.debug(Literal.ENTERING);
 		if (sampling.getExtendedFieldHeader() != null) {
-			try {
-				ExtendedFieldRender fields = extendedFieldCtrl.save(true);
-				fields.setSeqNo(sampling.getCollateral().getSeqNo());
-				sampling.setExtendedFieldRender(fields);
-			} catch (ParseException e) {
-				logger.debug(Literal.EXCEPTION);
-			}
+			ExtendedFieldRender fields = extendedFieldCtrl.save(true);
+			fields.setSeqNo(sampling.getCollateral().getSeqNo());
+			sampling.setExtendedFieldRender(fields);
 		}
 		int seqNo = sampling.getCollateral().getSeqNo();
 		if (!extFieldRenderList.containsKey(sLinkId.concat("-").concat(String.valueOf(seqNo)))) {

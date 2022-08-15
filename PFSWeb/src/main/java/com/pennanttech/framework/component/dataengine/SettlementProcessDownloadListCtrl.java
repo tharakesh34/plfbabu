@@ -81,7 +81,7 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 
 	}
 
-	public void onCreate$window_SettlementProcessDownLoad(Event event) throws Exception {
+	public void onCreate$window_SettlementProcessDownLoad(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -111,13 +111,13 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 	}
 
 	protected void doAddFilters() {
-		//super.doAddFilters();
+		// super.doAddFilters();
 	}
 
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		refresh();
 	}
 
@@ -126,7 +126,7 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 		search();
 	}
 
-	public void onClick_Downlaod(ForwardEvent event) throws Exception {
+	public void onClick_Downlaod(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 
@@ -182,7 +182,7 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SettlementProcess fileDownlaod, int count) throws Exception {
+		public void render(Listitem item, SettlementProcess fileDownlaod, int count) {
 			Listcell lc;
 
 			lc = new Listcell(fileDownlaod.getName());

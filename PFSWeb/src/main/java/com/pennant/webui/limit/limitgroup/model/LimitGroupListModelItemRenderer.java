@@ -64,7 +64,7 @@ public class LimitGroupListModelItemRenderer implements ListitemRenderer<LimitGr
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, LimitGroup limitGroup, int count) throws Exception {
+	public void render(Listitem item, LimitGroup limitGroup, int count) {
 
 		Listcell lc;
 		lc = new Listcell(limitGroup.getGroupCode());

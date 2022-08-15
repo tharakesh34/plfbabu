@@ -70,9 +70,8 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	 * On creating Window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LoanMasterReport(Event event) throws Exception {
+	public void onCreate$window_LoanMasterReport(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -84,8 +83,7 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -95,9 +93,8 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	 * When user Clicks on "Search"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSearch(Event event) throws Exception {
+	public void onClick$btnSearch(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		String finRef = this.finReference.getValue();
 		Integer year = loanStartYear.getValue();
@@ -132,9 +129,8 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	 * When user Clicks on "Search"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClear(Event event) throws Exception {
+	public void onClick$btnClear(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		this.finReference.setValue("");
 		logger.debug(Literal.LEAVING + event.toString());
@@ -159,14 +155,14 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	/**
 	 * This method will prepare a xl for a given loanReports
 	 * 
-	 * @param LoanReport
+	 * @param loanReports
 	 * @return
 	 */
 	private byte[] processLoanMasterForXLDownload(List<LoanReport> loanReports) {
 		FileInputStream file = null;
 		Workbook workbook = null;
 		Sheet sheet = null;
-		String path = PathUtil.getPath(PathUtil.LoanReport) + "/LoanMasterReport.xlsx";
+		String path = PathUtil.getPath(PathUtil.LOAN_REPORT) + "/LoanMasterReport.xlsx";
 		try {
 			// Reading the template
 			file = new FileInputStream(new File(path));
@@ -196,7 +192,7 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 				}
 			} catch (IOException e) {
 				logger.error(Literal.EXCEPTION, e);
-			} 
+			}
 		}
 		return null;
 	}

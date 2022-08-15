@@ -94,9 +94,8 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	 * selected ReturnedCheque object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReturnedChequeDialog(Event event) throws Exception {
+	public void onCreate$window_ReturnedChequeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -401,10 +400,8 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReturnedCheque
-	 * 
-	 * @throws Exception
 	 */
-	public void doShowDialog(ReturnedChequeDetails aReturnedCheque) throws Exception {
+	public void doShowDialog(ReturnedChequeDetails aReturnedCheque) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -857,10 +854,8 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.returnedCheque);
 	}
 

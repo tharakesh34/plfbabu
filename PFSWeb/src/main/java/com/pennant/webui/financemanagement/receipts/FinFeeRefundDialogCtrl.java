@@ -205,9 +205,8 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinFeeRefundDialog(Event event) throws Exception {
+	public void onCreate$window_FinFeeRefundDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_FinFeeRefundDialog);
@@ -1083,9 +1082,8 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	 * Method for event of Changing Repayment Amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnReceipt(Event event) throws Exception {
+	public void onClick$btnReceipt(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -1229,10 +1227,8 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void executeAccounting() throws Exception {
+	public void executeAccounting() {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
@@ -1388,9 +1384,8 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(getFeeRefundHeader());
 	}
 

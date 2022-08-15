@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollectionManagerDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-09-2012    														*
- *                                                                  						*
- * Modified Date    :  14-09-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollectionManagerDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-09-2012 * *
+ * Modified Date : 14-09-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-09-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-09-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.util;
@@ -113,9 +95,8 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	 * Initializes the screen
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_UserDialog(Event event) throws Exception {
+	public void onCreate$window_UserDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -303,9 +284,8 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	 * "OfflineMessagebackup" table for show message when they login
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$sendMessage(Event event) throws Exception {
+	public void onClick$sendMessage(Event event) {
 		logger.debug("Entering");
 
 		if (StringUtils.isEmpty(this.messageBox.getValue())) {

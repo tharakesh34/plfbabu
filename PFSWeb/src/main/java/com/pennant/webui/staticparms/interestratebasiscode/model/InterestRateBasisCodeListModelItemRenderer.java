@@ -68,7 +68,7 @@ public class InterestRateBasisCodeListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, InterestRateBasisCode interestRateBasisCode, int count) throws Exception {
+	public void render(Listitem item, InterestRateBasisCode interestRateBasisCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(interestRateBasisCode.getIntRateBasisCode());

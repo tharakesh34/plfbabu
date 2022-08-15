@@ -110,9 +110,8 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	 * selected SecurityOperation object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SecurityOperationDialog(Event event) throws Exception {
+	public void onCreate$window_SecurityOperationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -332,9 +331,8 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSecurityOperation
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(SecurityOperation aSecurityOperation) throws InterruptedException {
+	public void doShowDialog(SecurityOperation aSecurityOperation) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -731,9 +729,8 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	 * when user clicks on "Notes" button.
 	 *
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.securityOperation);
 
 	}

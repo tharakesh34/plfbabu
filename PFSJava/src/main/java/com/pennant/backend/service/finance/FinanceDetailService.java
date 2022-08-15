@@ -117,8 +117,6 @@ public interface FinanceDetailService {
 	FinanceDetail fetchFinCustDetails(FinanceDetail financeDetail, String ctgType, String finType, String userRole,
 			String procEdtEvent);
 
-	List<FinanceRepayments> getFinanceRepaymentsByFinRef(long finID, boolean isRpyCancelProc);
-
 	AuditHeader doCheckExceptions(AuditHeader auditHeader);
 
 	String getCustStatusByMinDueDays();
@@ -264,7 +262,7 @@ public interface FinanceDetailService {
 
 	FinanceMain getFinanceMainForRateReport(long finID, String type);
 
-	String getFinanceMainByRcdMaintenance(long finID, String type);
+	String getFinanceMainByRcdMaintenance(long finID);
 
 	FinanceMain getRcdMaintenanceByRef(long finID, String type);
 
@@ -303,4 +301,6 @@ public interface FinanceDetailService {
 	Long getFinID(String referenceId, TableType tableType);
 
 	String getFinCategory(String finType);
+
+	List<FinanceRepayments> getFinRepayList(long finID);
 }

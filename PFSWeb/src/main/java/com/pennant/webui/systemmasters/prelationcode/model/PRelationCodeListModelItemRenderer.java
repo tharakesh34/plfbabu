@@ -67,7 +67,7 @@ public class PRelationCodeListModelItemRenderer implements ListitemRenderer<PRel
 	}
 
 	@Override
-	public void render(Listitem item, PRelationCode pRelationCode, int count) throws Exception {
+	public void render(Listitem item, PRelationCode pRelationCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(pRelationCode.getPRelationCode());

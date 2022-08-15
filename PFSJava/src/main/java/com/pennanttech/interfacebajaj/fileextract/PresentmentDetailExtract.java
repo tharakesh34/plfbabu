@@ -353,14 +353,14 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			if (failedCount.intValue() > 0) {
 				remarks.append(" Completed with exceptions, total Records: ");
 				remarks.append(recordCount.intValue());
-				remarks.append(", Sucess: ");
+				remarks.append(", Success: ");
 				remarks.append(successCount.intValue() + ".");
 				remarks.append(", Failure: ");
 				remarks.append(failedCount.intValue() + ".");
 			} else {
 				remarks.append(" Completed successfully, total Records: ");
 				remarks.append(recordCount.intValue());
-				remarks.append(", Sucess: ");
+				remarks.append(", Success: ");
 				remarks.append(successCount.intValue() + ".");
 			}
 		}

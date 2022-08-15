@@ -1,6 +1,5 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -47,11 +47,9 @@ public class ReportingManagerDAOImpl extends SequenceDao<ReportingManager> imple
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -68,14 +66,7 @@ public class ReportingManagerDAOImpl extends SequenceDao<ReportingManager> imple
 
 		RowMapper<ReportingManager> rowMapper = BeanPropertyRowMapper.newInstance(ReportingManager.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	private StringBuilder getReportingManagerQuery(String type) {

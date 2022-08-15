@@ -67,7 +67,7 @@ public class RelationshipOfficerListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, RelationshipOfficer relationshipOfficer, int count) throws Exception {
+	public void render(Listitem item, RelationshipOfficer relationshipOfficer, int count) {
 		Listcell lc;
 		lc = new Listcell(relationshipOfficer.getROfficerCode());
 		lc.setParent(item);

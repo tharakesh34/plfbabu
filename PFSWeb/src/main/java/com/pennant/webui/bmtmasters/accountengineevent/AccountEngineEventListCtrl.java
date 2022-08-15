@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountEngineEventListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-06-2011    														*
- *                                                                  						*
- * Modified Date    :  27-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountEngineEventListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-06-2011 * *
+ * Modified Date : 27-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.bmtmasters.accountengineevent;
@@ -121,9 +103,8 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	 * selected AccountEngineEventCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AccountEngineEventList(Event event) throws Exception {
+	public void onCreate$window_AccountEngineEventList(Event event) {
 		logger.debug("Entering");
 
 		/* set components visible dependent of the users rights */
@@ -198,9 +179,8 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	 * see: com.pennant.webui.bmtmasters.accountengineevent.model. AccountEngineEventListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAccountEngineEventItemDoubleClicked(Event event) throws Exception {
+	public void onAccountEngineEventItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected AccountEngineEvent object
@@ -250,9 +230,8 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	 * Call the AccountEngineEvent dialog with a new empty entry. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_AccountEngineEventList_NewAccountEngineEvent(Event event) throws Exception {
+	public void onClick$button_AccountEngineEventList_NewAccountEngineEvent(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// create a new AccountEngineEvent object, We GET it from the backEnd.
@@ -265,11 +244,9 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	 * Opens the detail view. <br>
 	 * OverHanded some parameters in a map if needed. <br>
 	 * 
-	 * @param AccountEngineEvent
-	 *            (aAccountEngineEvent)
-	 * @throws Exception
+	 * @param AccountEngineEvent (aAccountEngineEvent)
 	 */
-	private void showDetailView(AccountEngineEvent aAccountEngineEvent) throws Exception {
+	private void showDetailView(AccountEngineEvent aAccountEngineEvent) {
 		logger.debug("Entering");
 
 		/*
@@ -330,9 +307,8 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 	 * call the AccountEngineEvent dialog
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_AccountEngineEventList_AccountEngineEventSearchDialog(Event event) throws Exception {
+	public void onClick$button_AccountEngineEventList_AccountEngineEventSearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		/*

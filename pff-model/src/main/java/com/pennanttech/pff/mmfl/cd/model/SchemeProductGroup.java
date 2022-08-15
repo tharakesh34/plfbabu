@@ -13,7 +13,7 @@ public class SchemeProductGroup extends AbstractWorkflowEntity {
 	private long schemeProductGroupId = Long.MIN_VALUE;
 	private String promotionId;
 	private int productGroupCode;
-	private boolean POSVendor;
+	private boolean posVendor;
 	private boolean active;
 	private SchemeProductGroup befImage;
 	private LoggedInUser userDetails;
@@ -50,12 +50,12 @@ public class SchemeProductGroup extends AbstractWorkflowEntity {
 		this.productGroupCode = productGroupCode;
 	}
 
-	public boolean isPOSVendor() {
-		return POSVendor;
+	public boolean isPosVendor() {
+		return posVendor;
 	}
 
-	public void setPOSVendor(boolean pOSVendor) {
-		POSVendor = pOSVendor;
+	public void setPosVendor(boolean posVendor) {
+		this.posVendor = posVendor;
 	}
 
 	public boolean isActive() {

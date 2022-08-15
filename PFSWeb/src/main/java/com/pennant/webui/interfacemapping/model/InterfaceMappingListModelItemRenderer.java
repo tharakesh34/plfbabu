@@ -66,7 +66,7 @@ public class InterfaceMappingListModelItemRenderer implements ListitemRenderer<I
 	}
 
 	@Override
-	public void render(Listitem item, InterfaceMapping interfaceMapping, int count) throws Exception {
+	public void render(Listitem item, InterfaceMapping interfaceMapping, int count) {
 
 		Listcell lc;
 		lc = new Listcell(interfaceMapping.getInterfaceName());

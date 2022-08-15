@@ -17,6 +17,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -186,47 +187,31 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 
 		DealerGroup dealerGroup = new DealerGroup();
 		dealerGroup.setId(id);
-		//dealerGroup.setFieldCode("CHANNEL");
+		// dealerGroup.setFieldCode("CHANNEL");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dealerGroup);
 		RowMapper<DealerGroup> rowMapper = BeanPropertyRowMapper.newInstance(DealerGroup.class);
 
 		try {
-			dealerGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			dealerGroup = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return dealerGroup;
 	}
 
 	@Override
 	public boolean isIdExists(long id) {
 		logger.debug("Entering");
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
 
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select COUNT(*) from CD_DealerGroup ");
 		sql.append(" Where dealerGroupId = :dealerGroupId ");
 		logger.debug("Sql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("dealerGroupId", id);
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
-		}
-		return false;
-	}
 
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
+	}
 }

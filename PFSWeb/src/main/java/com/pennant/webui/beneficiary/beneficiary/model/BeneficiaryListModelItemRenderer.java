@@ -66,7 +66,7 @@ public class BeneficiaryListModelItemRenderer implements ListitemRenderer<Benefi
 	}
 
 	@Override
-	public void render(Listitem item, Beneficiary beneficiary, int count) throws Exception {
+	public void render(Listitem item, Beneficiary beneficiary, int count) {
 
 		Listcell lc;
 		lc = new Listcell(StringUtils.trimToEmpty(String.valueOf(beneficiary.getCustCIF())));

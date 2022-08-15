@@ -24,7 +24,6 @@
  */
 package com.pennant.webui.finance.financemain;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -36,8 +35,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -221,9 +218,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceMaintenanceDialog(Event event) throws Exception {
+	public void onCreate$window_FinanceMaintenanceDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -466,9 +462,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering " + event.toString());
 		doSave();
 		logger.debug("Leaving " + event.toString());
@@ -501,12 +496,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnDelete(Event event) throws Exception {
+	public void onClick$btnDelete(Event event) {
 		logger.debug("Entering " + event.toString());
 		doDelete();
 		logger.debug("Leaving " + event.toString());
@@ -605,14 +596,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain financeMain
-	 * @throws ParseException
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
 	 */
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
+	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
@@ -819,10 +804,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceSchData (FinScheduleData)
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(FinanceDetail aFinanceDetail)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void doWriteComponentsToBean(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
 
 		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
@@ -1075,9 +1058,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinanceDetail afinanceDetail) throws Exception {
+	public void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -1175,10 +1157,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		buildEvent = false;
@@ -1254,12 +1234,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws InterfaceException
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug("Entering");
 		if (StringUtils.isNotBlank(this.custCIF.getValue())) {
 
@@ -1858,7 +1834,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	private void doDelete() throws Exception {
+	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail afinanceDetail = new FinanceDetail();
@@ -1879,7 +1855,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void onDoDelete(FinanceDetail afinanceDetail, FinanceMain afinanceMain) throws Exception {
+	private void onDoDelete(FinanceDetail afinanceDetail, FinanceMain afinanceMain) {
 
 		String tranType = PennantConstants.TRAN_WF;
 		if (StringUtils.isBlank(afinanceMain.getRecordType())) {
@@ -2016,11 +1992,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
@@ -2432,7 +2406,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -2568,7 +2542,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		return processCompleted;
 	}
 
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -3097,9 +3071,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		this.btnNotes.setSclass("");
@@ -3154,9 +3127,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * To pass Data For Agreement Child Windows Used in reflection
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
-	public FinanceDetail getAgrFinanceDetails() throws Exception {
+	public FinanceDetail getAgrFinanceDetails() {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
@@ -3204,9 +3176,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws Exception
 	 */
-	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) throws Exception {
+	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) {
 		logger.debug("Entering ");
 
 		setFinanceDetail(aFinanceDetail);

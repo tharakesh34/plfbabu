@@ -64,7 +64,7 @@ public class BeneficiarySelectItemRenderer implements ListitemRenderer<Beneficia
 	}
 
 	@Override
-	public void render(Listitem item, Beneficiary beneficiary, int index) throws Exception {
+	public void render(Listitem item, Beneficiary beneficiary, int index) {
 		Listcell lc;
 		lc = new Listcell(beneficiary.getCustCIF());
 		lc.setParent(item);

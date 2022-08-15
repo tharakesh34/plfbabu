@@ -168,9 +168,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ChangeTDSDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ChangeTDSDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -676,9 +675,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain financeMain
-	 * @throws InterruptedException
 	 */
-	public void doWriteBeanToComponents() throws InterruptedException {
+	public void doWriteBeanToComponents() {
 		logger.debug("Entering");
 		this.custCIF.setValue(financeMain.getCustCIF());
 		this.custShrtName.setValue(financeMain.getLovDescCustShrtName());
@@ -778,9 +776,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 * 
 	 * @param appList
 	 * @return
-	 * @throws Exception
 	 */
-	public Listbox renderNotes(List<Notes> appList) throws Exception {
+	public Listbox renderNotes(List<Notes> appList) {
 		logger.debug("Entering");
 
 		// Retrieve Notes List By Module Reference
@@ -829,20 +826,11 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	}
 
 	/**
-	 * Opens the Dialog window modal.
-	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
-	 * 
-	 * @param afinanceMain
-	 * @throws Exception
-	 */
-	/**
 	 * Displays the dialog page.
 	 * 
 	 * @param aFinMaintainInstruction The entity that need to be render.
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(FinMaintainInstruction finMaintainInstruction) throws InterruptedException {
+	public void doShowDialog(FinMaintainInstruction finMaintainInstruction) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.

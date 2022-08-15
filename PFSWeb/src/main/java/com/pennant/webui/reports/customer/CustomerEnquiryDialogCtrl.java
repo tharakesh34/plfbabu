@@ -94,9 +94,8 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	 * selected Academic object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerEnquiryDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerEnquiryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -251,9 +250,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	}
 
 	/**
-	 * This method fill the CustomerName and CIF values by using Search box. <br>
-	 * 
-	 * @throws Exception
+	 * This method fill the CustomerName and CIF values by using Search box.
 	 **/
 	public void onFulfill$custCIF(Event event) {
 		logger.debug("Entering");
@@ -279,9 +276,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	}
 
 	/**
-	 * This method fill the Finance Details by Clicking on Search box. <br>
-	 * 
-	 * @throws Exception
+	 * This method fill the Finance Details by Clicking on Search box.
 	 **/
 	public void doFillFinDetails(long custId) {
 		logger.debug("Entering");
@@ -293,7 +288,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		 * CustomerEnquiryListModelItemRender());
 		 */
 
-		//Adding to Listbox
+		// Adding to Listbox
 		String fintype = "";
 		String finCcy = "";
 		BigDecimal grpTotal = BigDecimal.ZERO;
@@ -302,7 +297,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 
 			FinanceEnquiry aFinanceEnq = financeEnqList.get(i);
 
-			//Adding List Group
+			// Adding List Group
 			if (!fintype.equals(aFinanceEnq.getFinType())) {
 				fintype = aFinanceEnq.getFinType();
 				finCcy = aFinanceEnq.getFinCcy();
@@ -315,12 +310,12 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 				grpTotal = BigDecimal.ZERO;
 			}
 
-			//Adding List Item
+			// Adding List Item
 			addListItem(aFinanceEnq);
 			grpTotal = grpTotal.add(aFinanceEnq.getFinAmount().add(aFinanceEnq.getFeeChargeAmt())
 					.subtract(aFinanceEnq.getFinRepaymentAmount()));
 
-			//Adding List Footer
+			// Adding List Footer
 			if (i == financeEnqList.size() - 1) {
 				addListFooter(grpTotal, CurrencyUtil.getFormat(aFinanceEnq.getFinCcy()));
 			} else {
@@ -435,9 +430,8 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	 * Methodd for fetching Finance Record
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onLoanItemDoubleClicked(Event event) throws Exception {
+	public void onLoanItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Listitem item = this.listBoxEnquiryResult.getSelectedItem();

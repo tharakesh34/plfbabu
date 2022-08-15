@@ -76,9 +76,8 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_schemeProductGroupDialogue(Event event) throws AppException {
+	public void onCreate$window_schemeProductGroupDialogue(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_schemeProductGroupDialogue);
@@ -254,7 +253,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 
 		this.schemeId.setText(schemeProductGroup.getPromotionId());
 		this.productGroupCode.setValue(schemeProductGroup.getProductGroupCode());
-		this.posVendor.setValue(schemeProductGroup.isPOSVendor() ? "1" : "0");
+		this.posVendor.setValue(schemeProductGroup.isPosVendor() ? "1" : "0");
 		this.active.setChecked(schemeProductGroup.isActive());
 		if (schemeProductGroup.isNewRecord()
 				|| (schemeProductGroup.getRecordType() != null ? schemeProductGroup.getRecordType() : "")
@@ -290,7 +289,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 		}
 
 		try {
-			schemeProductGroup.setPOSVendor(this.posVendor.getValue().equals("1") ? true : false);
+			schemeProductGroup.setPosVendor(this.posVendor.getValue().equals("1"));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -697,7 +696,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 				getOverideMap());
 	}
 
-	public void onClick$btnSchemeId(Event event) throws Exception {
+	public void onClick$btnSchemeId(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_schemeProductGroupDialogue, "Promotion",
 				String.valueOf(this.schemeId.getValue()), null);

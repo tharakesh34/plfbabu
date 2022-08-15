@@ -12,7 +12,6 @@
 package com.pennant.webui.verification.personaldiscussion;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -180,9 +179,8 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_PersonalDiscussionDialog(Event event) throws Exception {
+	public void onCreate$window_PersonalDiscussionDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -620,11 +618,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 
 		// Extended Field validations
 		if (pd.getExtendedFieldHeader() != null) {
-			try {
-				pd.setExtendedFieldRender(extendedFieldCtrl.save(true));
-			} catch (ParseException e) {
-				logger.debug(Literal.EXCEPTION);
-			}
+			pd.setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 
 		try {

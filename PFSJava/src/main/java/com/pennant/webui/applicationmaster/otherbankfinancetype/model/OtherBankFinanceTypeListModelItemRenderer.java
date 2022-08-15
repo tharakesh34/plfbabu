@@ -67,7 +67,7 @@ public class OtherBankFinanceTypeListModelItemRenderer implements ListitemRender
 	}
 
 	@Override
-	public void render(Listitem item, OtherBankFinanceType data, int index) throws Exception {
+	public void render(Listitem item, OtherBankFinanceType data, int index) {
 
 		final OtherBankFinanceType otherBankFinanceType = (OtherBankFinanceType) data;
 		Listcell lc;

@@ -1206,7 +1206,7 @@ public class NotificationService extends GenericService<Notification> {
 
 		String finReference = fm.getFinReference();
 		String drwingPwr = PennantApplicationUtil.amountFormate(drawingPowerService.getDrawingPower(finReference), 2);
-		BigDecimal emiOnFinAssetValue = ScheduleCalculator.getEMIOnFinAssetValue(fd);
+		BigDecimal emiOnFinAssetValue = ScheduleCalculator.getEMIOnFinAssetValue(fd.getFinScheduleData());
 		String prefix = FieldPrefix.Putcall.getPrefix();
 
 		dataMap.putAll(lmsServiceLog.getDeclaredFieldValues());
@@ -1381,7 +1381,7 @@ public class NotificationService extends GenericService<Notification> {
 				for (DocumentDetails document : documents) {
 					if (documnetCode.equals(document.getDocCategory())) {
 						byte[] docImg = document.getDocImage();
-						if (docImg == null && document.getDocRefId() != Long.MIN_VALUE) {
+						if (docImg == null && document.getDocRefId() != null) {
 							byte[] docManager = getDocumentImage(document.getDocRefId());
 							if (docManager != null) {
 								docImg = docManager;

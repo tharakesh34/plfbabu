@@ -130,9 +130,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	 * selected CustomerRating object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerRatingDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerRatingDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -449,9 +448,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerRating
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerRating aCustomerRating) throws InterruptedException {
+	public void doShowDialog(CustomerRating aCustomerRating) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1100,11 +1098,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 
 	/**
 	 * To load the customerSelect filter dialog
-	 * 
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	private void onload() throws SuspendNotAllowedException, InterruptedException {
+	private void onload() {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
@@ -1168,10 +1163,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Serializable> map = new HashMap<String, Serializable>();

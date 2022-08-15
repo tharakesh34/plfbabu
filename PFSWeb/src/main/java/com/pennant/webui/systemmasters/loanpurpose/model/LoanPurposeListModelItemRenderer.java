@@ -67,7 +67,7 @@ public class LoanPurposeListModelItemRenderer implements ListitemRenderer<LoanPu
 	}
 
 	@Override
-	public void render(Listitem item, LoanPurpose loanPurpose, int count) throws Exception {
+	public void render(Listitem item, LoanPurpose loanPurpose, int count) {
 
 		Listcell lc;
 		lc = new Listcell(loanPurpose.getLoanPurposeCode());

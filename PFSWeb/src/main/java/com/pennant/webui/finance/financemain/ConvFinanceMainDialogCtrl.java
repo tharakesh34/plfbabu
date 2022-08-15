@@ -87,9 +87,8 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ConvFinanceMainDialog(Event event) throws Exception {
+	public void onCreate$window_ConvFinanceMainDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -168,7 +167,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	}
 
 	@Override
-	protected void doShowDialog(FinanceDetail financeDetail) throws InterruptedException {
+	protected void doShowDialog(FinanceDetail financeDetail) {
 		super.doShowDialog(financeDetail);
 	}
 
@@ -216,9 +215,8 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_ConvFinanceMainDialog(Event event) throws Exception {
+	public void onClose$window_ConvFinanceMainDialog(Event event) {
 		logger.debug("Entering " + event.toString());
 		doClose();
 		logger.debug("Leaving " + event.toString());
@@ -228,9 +226,8 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -277,7 +274,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doFillReasons(int reason) throws InterruptedException {
+	public void doFillReasons(int reason) {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);
@@ -307,9 +304,8 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		try {
@@ -321,7 +317,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void onCheck$manualSchedule(Event event) throws Exception {
+	public void onCheck$manualSchedule(Event event) {
 		logger.debug("Entering " + event.toString());
 		super.onCheckmanualSchedule();
 		logger.debug("Leaving " + event.toString());

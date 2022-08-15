@@ -127,9 +127,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	 * selected DisbursementInstructionsDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DisbursementsInstructionsDialog(Event event) throws Exception {
+	public void onCreate$window_DisbursementsInstructionsDialog(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		// Set the page level components.

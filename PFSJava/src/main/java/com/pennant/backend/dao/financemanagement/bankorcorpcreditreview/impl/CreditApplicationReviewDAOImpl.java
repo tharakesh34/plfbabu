@@ -31,6 +31,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewDetails>
 		implements CreditApplicationReviewDAO {
@@ -103,14 +104,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		RowMapper<FinCreditRevCategory> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCreditRevCategory.class);
 
 		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -151,7 +145,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		selectSql.append(" RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId");
 		selectSql.append(
 				" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId and SubCategoryItemType= :SubCategoryItemType order by CalcSeque"); // 2nd
-																																							// Time
+																																					// Time
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = BeanPropertyRowMapper
@@ -250,10 +244,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	/**
 	 * Fetch the Record FinCreditReviewDetails by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinCreditReviewDetails
 	 */
 	@Override
@@ -282,13 +274,11 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 				.newInstance(FinCreditReviewDetails.class);
 
 		try {
-			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			creditReviewDetails = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return creditReviewDetails;
 	}
 
 	/*
@@ -322,13 +312,11 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 				.newInstance(FinCreditReviewDetails.class);
 
 		try {
-			creditReviewDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			creditReviewDetails = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return creditReviewDetails;
 	}
 
 	public int getCreditReviewAuditPeriodByAuditYear(final long customerId, final String auditYear, int auditPeriod,
@@ -339,29 +327,19 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		creditReviewDetails.setCustomerId(customerId);
 		creditReviewDetails.setAuditYear(auditYear);
 
-		int period = 0;
 		StringBuilder selectSql = new StringBuilder();
 		SqlParameterSource beanParameters;
 
-		try {
-			if (isEnquiry) {
-				selectSql.append("SELECT  COALESCE(MAX(AuditPeriod),0) ");
-				selectSql.append(" From FinCreditReviewDetails");
-				selectSql.append(StringUtils.trimToEmpty(type));
-				selectSql.append(" Where CustomerId =:customerId and AuditYear = :auditYear");
-				beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-				period = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-			} else {
-				period = getAuditPeriod(customerId, auditYear, auditPeriod, type);
-			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-		logger.debug("Leaving");
-		if (period == 0) {
-			return 0;
+		if (isEnquiry) {
+			selectSql.append("SELECT  COALESCE(MAX(AuditPeriod),0) ");
+			selectSql.append(" From FinCreditReviewDetails");
+			selectSql.append(StringUtils.trimToEmpty(type));
+			selectSql.append(" Where CustomerId =:customerId and AuditYear = :auditYear");
+			beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
+
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} else {
-			return period;
+			return getAuditPeriod(customerId, auditYear, auditPeriod, type);
 		}
 	}
 
@@ -369,10 +347,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	 * This method Deletes the Record from the CreditReviewDetails or CreditReviewDetails_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete FinCreditReviewDetails by key detailId
 	 * 
-	 * @param FinCreditReviewDetails
-	 *            (creditReviewDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinCreditReviewDetails (creditReviewDetails)
+	 * @param type                   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -406,10 +382,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	 *
 	 * save FinCreditReviewDetails
 	 * 
-	 * @param FinCreditReviewDetails
-	 *            (creditReviewDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinCreditReviewDetails (creditReviewDetails)
+	 * @param type                   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -448,8 +422,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	 * DataAccessException with error 41004. update FinCreditReviewDetails by key detailId and Version
 	 * 
 	 * @param FinCreditReviewDetails(creditReviewDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param type                                        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -543,8 +516,6 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		FinCreditReviewDetails creditReviewDetails = new FinCreditReviewDetails();
 		creditReviewDetails.setCustomerId(customerId);
 		creditReviewDetails.setAuditYear(auditYear);
-		int period = 0;
-		SqlParameterSource beanParameters;
 
 		StringBuilder selectSql = new StringBuilder("Select CASE WHEN T2.AuditPeriod IS null THEN MAXAuditPeriod ");
 		selectSql.append(" ELSE T2.AuditPeriod  END AuditPeriod FROM (");
@@ -561,14 +532,13 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		logger.debug("selectSql: " + selectSql.toString());
 		creditReviewDetails.setAuditPeriod(auditPeriod);
-		beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
 		try {
-			period = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		logger.debug("Leaving");
-		return period;
 	}
 
 	@Override
@@ -584,11 +554,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		logger.trace(Literal.SQL + sql.toString());
 
 		beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		try {
-			maxAuditYear = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
+
+		maxAuditYear = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
 
 		return String.valueOf(maxAuditYear);
 	}
@@ -633,14 +600,9 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		RowMapper<FinCreditReviewDetails> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewDetails.class);
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-		return null;
 
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -660,13 +622,9 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditRevSubCategory.class);
+
 		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-		return null;
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -702,21 +660,16 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("DetailId", detailid);
 
-		try {
-			this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {
+		this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {
 
-				@Override
-				public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
-					map.put(rs.getString("SubcategoryCode"), rs.getBigDecimal("ItemValue"));
-					// return map;
-					return map;
-				}
-			});
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
+			@Override
+			public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+				map.put(rs.getString("SubcategoryCode"), rs.getBigDecimal("ItemValue"));
+				// return map;
+				return map;
+			}
+		});
 
 		return map;
 	}
-
 }

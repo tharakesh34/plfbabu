@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AssignmentUploadDAOImpl.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-11-2018    														*
- *                                                                  						*
- * Modified Date    :  19-11-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AssignmentUploadDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-11-2018 * *
+ * Modified Date : 19-11-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-11-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-11-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -59,6 +41,7 @@ import com.pennant.backend.dao.assignmentupload.AssignmentUploadDAO;
 import com.pennant.backend.model.assignmentupload.AssignmentUpload;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -76,10 +59,8 @@ public class AssignmentUploadDAOImpl extends SequenceDao<AssignmentUpload> imple
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -113,10 +94,8 @@ public class AssignmentUploadDAOImpl extends SequenceDao<AssignmentUpload> imple
 	 * 
 	 * save Finance Types
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -155,10 +134,8 @@ public class AssignmentUploadDAOImpl extends SequenceDao<AssignmentUpload> imple
 	 * This method updates the Record RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -197,41 +174,37 @@ public class AssignmentUploadDAOImpl extends SequenceDao<AssignmentUpload> imple
 	/**
 	 * This method initialize the Record.
 	 * 
-	 * @param FinanceType
-	 *            (financeType)
+	 * @param FinanceType (financeType)
 	 * @return FinanceType
 	 */
 
 	@Override
 	public void deleteByUploadId(long uploadId, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AssignmentUpload assignmentUpload = new AssignmentUpload();
 		assignmentUpload.setUploadId(uploadId);
 		StringBuilder deleteSql = new StringBuilder("Delete From AssignmentUploads");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where UploadId = :UploadId");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assignmentUpload);
 
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			throw new DependencyFoundException(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public boolean getAssignmentUploadsByFinReference(String finReference, long uploadId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select Count(FinReference) from AssignmentUploads");
 		sql.append(type);
 		sql.append(" Where FinReference = :FinReference And Status = :Status");
@@ -240,21 +213,10 @@ public class AssignmentUploadDAOImpl extends SequenceDao<AssignmentUpload> imple
 		}
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("Status", UploadConstants.REFUND_UPLOAD_STATUS_SUCCESS);
 
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
-		}
-		return false;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 }

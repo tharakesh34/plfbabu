@@ -25,6 +25,7 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,6 +60,35 @@ public class IRRCode extends AbstractWorkflowEntity {
 	public IRRCode(long id) {
 		super();
 		this.setId(id);
+	}
+
+	public IRRCode copyEntity() {
+		IRRCode entity = new IRRCode();
+		entity.setIRRID(this.iRRID);
+		entity.setIRRCode(this.iRRCode);
+		entity.setIRRCodeDesc(this.iRRCodeDesc);
+		entity.setActive(this.active);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		if (irrFeeTypesList != null) {
+			entity.setIrrFeeTypesList(new ArrayList<>());
+			this.irrFeeTypesList.stream()
+					.forEach(e -> entity.getIrrFeeTypesList().add(e == null ? null : e.copyEntity()));
+		}
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+
+		return entity;
 	}
 
 	public Set<String> getExcludeFields() {

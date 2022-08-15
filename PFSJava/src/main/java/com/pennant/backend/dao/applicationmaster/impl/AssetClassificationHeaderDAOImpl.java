@@ -1,48 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AssetClassificationHeaderDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-05-2020    														*
- *                                                                  						*
- * Modified Date    :  04-05-2020    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AssetClassificationHeaderDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-05-2020
+ * * * Modified Date : 04-05-2020 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-05-2020       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-05-2020 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -129,45 +110,38 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), ps -> {
-				int index = 1;
-				ps.setLong(index, templateId);
-			}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index, templateId);
+		}, (rs, rowNum) -> {
 
-				AssetClassificationHeader ah = new AssetClassificationHeader();
+			AssetClassificationHeader ah = new AssetClassificationHeader();
 
-				ah.setId(rs.getLong("Id"));
-				ah.setCode(rs.getString("Code"));
-				ah.setDescription(rs.getString("Description"));
-				ah.setStageOrder(rs.getInt("StageOrder"));
-				ah.setActive(rs.getBoolean("Active"));
-				ah.setVersion(rs.getInt("Version"));
-				ah.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				ah.setLastMntBy(rs.getLong("LastMntBy"));
-				ah.setRecordStatus(rs.getString("RecordStatus"));
-				ah.setRoleCode(rs.getString("RoleCode"));
-				ah.setNextRoleCode(rs.getString("NextRoleCode"));
-				ah.setTaskId(rs.getString("TaskId"));
-				ah.setNextTaskId(rs.getString("NextTaskId"));
-				ah.setRecordType(rs.getString("RecordType"));
-				ah.setWorkflowId(rs.getLong("WorkflowId"));
-				ah.setNpaTemplateId(rs.getLong("NpaTemplateId"));
+			ah.setId(rs.getLong("Id"));
+			ah.setCode(rs.getString("Code"));
+			ah.setDescription(rs.getString("Description"));
+			ah.setStageOrder(rs.getInt("StageOrder"));
+			ah.setActive(rs.getBoolean("Active"));
+			ah.setVersion(rs.getInt("Version"));
+			ah.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ah.setLastMntBy(rs.getLong("LastMntBy"));
+			ah.setRecordStatus(rs.getString("RecordStatus"));
+			ah.setRoleCode(rs.getString("RoleCode"));
+			ah.setNextRoleCode(rs.getString("NextRoleCode"));
+			ah.setTaskId(rs.getString("TaskId"));
+			ah.setNextTaskId(rs.getString("NextTaskId"));
+			ah.setRecordType(rs.getString("RecordType"));
+			ah.setWorkflowId(rs.getLong("WorkflowId"));
+			ah.setNpaTemplateId(rs.getLong("NpaTemplateId"));
 
-				if (type.contains("View")) {
-					ah.setNpaTemplateDesc(rs.getString("NpaTemplateDesc"));
-					ah.setNpaTemplateCode(rs.getString("NpaTemplateCode"));
-				}
+			if (type.contains("View")) {
+				ah.setNpaTemplateDesc(rs.getString("NpaTemplateDesc"));
+				ah.setNpaTemplateCode(rs.getString("NpaTemplateCode"));
+			}
 
-				return ah;
+			return ah;
 
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		});
 	}
 
 	@Override
@@ -426,15 +400,8 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 
 		RowMapper<AssetClassificationDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationDetail.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return null;
-
+		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	public AssetClassificationDetail getAssetClassificationDetail(long id, String type) {
@@ -487,15 +454,7 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		source = new MapSqlParameterSource();
 		source.addValue("Code", code);
 
-		try {
-			if (jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return false;
+		return jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
@@ -512,15 +471,8 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		source = new MapSqlParameterSource();
 		source.addValue("StageOrder", stageOrder);
 		source.addValue("npaTemplateId", npaTemplateId);
-		try {
-			if (jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return false;
+
+		return jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
 	}
 
 	@Override
@@ -542,18 +494,12 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 
 		AssetClassificationDetail detail = new AssetClassificationDetail();
 		detail.setFinType(finType);
-		;
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		RowMapper<AssetClassificationDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationDetail.class);
-		List<AssetClassificationDetail> query = null;
-		try {
-			query = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		}
-		logger.debug(Literal.LEAVING);
-		return query;
+
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BounceReasonDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-04-2017    														*
- *                                                                  						*
- * Modified Date    :  22-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BounceReasonDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-04-2017 * * Modified
+ * Date : 22-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -100,14 +83,11 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		RowMapper<BounceReason> rowMapper = BeanPropertyRowMapper.newInstance(BounceReason.class);
 
 		try {
-			bounceReason = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			bounceReason = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return bounceReason;
 	}
 
 	@Override
@@ -246,10 +226,7 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 	public BounceReason getBounceReasonByReturnCode(String returnCode, String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT bounceID, bounceCode, reasonType, category, reason, action, ");
 		sql.append(" ruleID, returnCode, active, ");
 		if (type.contains("View")) {
@@ -261,20 +238,16 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		sql.append(" Where ReturnCode = :ReturnCode");
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReturnCode", returnCode);
 
 		RowMapper<BounceReason> rowMapper = BeanPropertyRowMapper.newInstance(BounceReason.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override

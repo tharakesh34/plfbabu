@@ -100,7 +100,7 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinTypeAccountingList(Event event) throws Exception {
+	public void onCreate$window_FinTypeAccountingList(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

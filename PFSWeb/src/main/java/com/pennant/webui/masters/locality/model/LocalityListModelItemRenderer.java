@@ -63,7 +63,7 @@ public class LocalityListModelItemRenderer implements ListitemRenderer<Locality>
 	}
 
 	@Override
-	public void render(Listitem item, Locality locality, int count) throws Exception {
+	public void render(Listitem item, Locality locality, int count) {
 		Listcell lc = new Listcell(String.valueOf(locality.getId()));
 		lc.setParent(item);
 

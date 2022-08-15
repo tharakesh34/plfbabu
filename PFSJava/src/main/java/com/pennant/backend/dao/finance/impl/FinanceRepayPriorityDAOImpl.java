@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceRepayPriorityDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-03-2012    														*
- *                                                                  						*
- * Modified Date    :  16-03-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceRepayPriorityDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-03-2012 * *
+ * Modified Date : 16-03-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-03-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-03-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
@@ -60,6 +42,7 @@ import com.pennant.backend.model.finance.FinanceRepayPriority;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinanceRepayPriority model</b> class.<br>
@@ -76,10 +59,8 @@ public class FinanceRepayPriorityDAOImpl extends BasicDao<FinanceRepayPriority> 
 	/**
 	 * Fetch the Record Finance Repay Priority Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceRepayPriority
 	 */
 	@Override
@@ -104,14 +85,11 @@ public class FinanceRepayPriorityDAOImpl extends BasicDao<FinanceRepayPriority> 
 		RowMapper<FinanceRepayPriority> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceRepayPriority.class);
 
 		try {
-			financeRepayPriority = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeRepayPriority = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return financeRepayPriority;
 	}
 
 	@Override
@@ -137,10 +115,8 @@ public class FinanceRepayPriorityDAOImpl extends BasicDao<FinanceRepayPriority> 
 	 * This method Deletes the Record from the FinRpyPriority or FinRpyPriority_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Finance Repay Priority Details by key FinType
 	 * 
-	 * @param Finance
-	 *            Repay Priority Details (financeRepayPriority)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Repay Priority Details (financeRepayPriority)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -173,10 +149,8 @@ public class FinanceRepayPriorityDAOImpl extends BasicDao<FinanceRepayPriority> 
 	 *
 	 * save Finance Repay Priority Details
 	 * 
-	 * @param Finance
-	 *            Repay Priority Details (financeRepayPriority)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Repay Priority Details (financeRepayPriority)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -207,10 +181,8 @@ public class FinanceRepayPriorityDAOImpl extends BasicDao<FinanceRepayPriority> 
 	 * This method updates the Record FinRpyPriority or FinRpyPriority_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Finance Repay Priority Details by key FinType and Version
 	 * 
-	 * @param Finance
-	 *            Repay Priority Details (financeRepayPriority)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Repay Priority Details (financeRepayPriority)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

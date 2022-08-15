@@ -101,7 +101,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		super.pageRightName = "OrganizationIncomeExpenseDialog";
 	}
 
-	public void onCreate$window_IncomeExpenseDetailsDialog(Event event) throws Exception {
+	public void onCreate$window_IncomeExpenseDetailsDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.

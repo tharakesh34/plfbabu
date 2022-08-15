@@ -47,6 +47,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>JVPosting model</b> class.<br>
@@ -139,10 +140,9 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 				return jvp;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -160,10 +160,9 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -367,10 +366,8 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, expReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-
-		return 0;
 	}
-
 }

@@ -66,7 +66,7 @@ public class ScheduleMethodListModelItemRenderer implements ListitemRenderer<Sch
 	}
 
 	@Override
-	public void render(Listitem item, ScheduleMethod scheduleMethod, int count) throws Exception {
+	public void render(Listitem item, ScheduleMethod scheduleMethod, int count) {
 
 		Listcell lc;
 		lc = new Listcell(scheduleMethod.getSchdMethod());

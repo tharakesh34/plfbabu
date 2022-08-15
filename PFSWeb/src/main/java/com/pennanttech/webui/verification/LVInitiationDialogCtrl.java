@@ -180,10 +180,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * selected CustomerPhoneNumber object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_LVInitiationDialog(Event event) throws Exception {
+	public void onCreate$window_LVInitiationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -351,7 +350,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.collateral.setList(collateralSetupSearchList);
 	}
 
-	public void onChangeCollateral(ForwardEvent event) throws Exception {
+	public void onChangeCollateral(ForwardEvent event) {
 		Object dataObject = this.collateral.getObject();
 		if (dataObject != null) {
 			if (listBoxCollateralDocuments.getItems() != null) {
@@ -558,11 +557,12 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 					if (newDoc.getDocumentType() == DocumentType.COLLATRL.getKey()
 							&& newDoc.getDocumentId().equals(oldDoc.getDocumentId())) {
 						Verification vrf = new Verification();
-						vrf.setId(oldDoc.getVerificationId());
-						if (!newDoc.getDocumentRefId().equals(oldDoc.getDocumentRefId())
-								&& verificationService.isVerificationInRecording(vrf, VerificationType.LV)
-								&& !oldDocumentRefIds.contains(String.valueOf(newDoc.getDocumentRefId()))) {
-							changedDocuments.put(newDoc.getDocumentRefId(), String.valueOf(newDoc.getDocumentId()));
+						if (newDoc.getDocumentRefId() != null && oldDoc.getDocumentRefId() != null) {
+							if (!newDoc.getDocumentRefId().equals(oldDoc.getDocumentRefId())
+									&& verificationService.isVerificationInRecording(vrf, VerificationType.LV)
+									&& !oldDocumentRefIds.contains(String.valueOf(newDoc.getDocumentRefId()))) {
+								changedDocuments.put(newDoc.getDocumentRefId(), String.valueOf(newDoc.getDocumentId()));
+							}
 						}
 					}
 				}
@@ -782,9 +782,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param verification
-	 * @throws Exception
 	 */
-	public void doShowDialog(Verification verification) throws Exception {
+	public void doShowDialog(Verification verification) {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1362,8 +1361,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.verification);

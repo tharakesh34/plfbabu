@@ -79,7 +79,7 @@ public class FinanceTypeListModelItemRenderer implements ListitemRenderer<Financ
 	}
 
 	@Override
-	public void render(Listitem item, FinanceType financeType, int count) throws Exception {
+	public void render(Listitem item, FinanceType financeType, int count) {
 
 		if (item instanceof Listgroup) {
 			Listcell cell = new Listcell(financeType.getFinCategoryDesc());

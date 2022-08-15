@@ -20,7 +20,7 @@ public class QualificationListModelItemRenderer implements ListitemRenderer<Qual
 	}
 
 	@Override
-	public void render(Listitem item, Qualification qualification, int count) throws Exception {
+	public void render(Listitem item, Qualification qualification, int count) {
 		Listcell lc;
 		lc = new Listcell(qualification.getCode());
 		lc.setParent(item);

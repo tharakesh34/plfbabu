@@ -134,7 +134,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 		return referenceBuffer.toString();
 	}
 
-	public void onCreate$window_AssignmentDialog(Event event) throws Exception {
+	public void onCreate$window_AssignmentDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -793,7 +793,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$buttonAssignmentRateDialog_btnNew(Event event) throws Exception {
+	public void onClick$buttonAssignmentRateDialog_btnNew(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		AssignmentRate assignmentRate = new AssignmentRate();
@@ -818,7 +818,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onAssignmentRateItemDoubleClicked(Event event) throws Exception {
+	public void onAssignmentRateItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// get the selected invoiceHeader object

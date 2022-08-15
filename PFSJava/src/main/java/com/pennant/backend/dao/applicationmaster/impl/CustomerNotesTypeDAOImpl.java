@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerNotesTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerNotesTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
@@ -57,6 +39,7 @@ import com.pennant.backend.model.applicationmaster.CustomerNotesType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerNotesType model</b> class.<br>
@@ -72,10 +55,8 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 	/**
 	 * Fetch the Record Customer Notes Type details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerNotesType
 	 */
 	@Override
@@ -103,23 +84,19 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 		RowMapper<CustomerNotesType> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerNotesType.class);
 
 		try {
-			customerNotesType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			customerNotesType = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerNotesType;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTCustNotesTypes or BMTCustNotesTypes_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Customer Notes Type by key CustNotesTypeCode
 	 * 
-	 * @param Customer
-	 *            Notes Type (customerNotesType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Notes Type (customerNotesType)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -153,10 +130,8 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 	 * 
 	 * save Customer Notes Type
 	 * 
-	 * @param Customer
-	 *            Notes Type (customerNotesType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Notes Type (customerNotesType)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -191,10 +166,8 @@ public class CustomerNotesTypeDAOImpl extends BasicDao<CustomerNotesType> implem
 	 * This method updates the Record BMTCustNotesTypes or BMTCustNotesTypes_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Customer Notes Type by key CustNotesTypeCode and Version
 	 * 
-	 * @param Customer
-	 *            Notes Type (customerNotesType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Notes Type (customerNotesType)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BeneficiarySelectCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-05-2020    														*
- *                                                                  						*
- * Modified Date    :      														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BeneficiarySelectCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-05-2020 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-05-2020       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-05-2020 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.beneficiary.beneficiary;
@@ -134,10 +116,9 @@ public class BeneficiarySelectCtrl extends GFCBaseCtrl<Beneficiary> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_BeneficiarySelect(Event event) throws Exception {
+	public void onCreate$window_BeneficiarySelect(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -258,7 +239,7 @@ public class BeneficiarySelectCtrl extends GFCBaseCtrl<Beneficiary> {
 	/**
 	 * Opens the SearchDialog window modal.
 	 */
-	private void showBeneficiarySeekDialog() throws InterruptedException {
+	private void showBeneficiarySeekDialog() {
 		logger.debug(Literal.ENTERING);
 		try {
 			// open the dialog in modal mode
@@ -386,9 +367,9 @@ public class BeneficiarySelectCtrl extends GFCBaseCtrl<Beneficiary> {
 				}
 			}
 		}
-		//we have to display only supplied customer beneficiaries only
+		// we have to display only supplied customer beneficiaries only
 		if (CollectionUtils.isNotEmpty(custCIFs)) {
-			//Filters for the Customer CIF
+			// Filters for the Customer CIF
 			Filter filter[] = new Filter[1];
 			filter[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);
 			searchObject.addFilters(filter);
@@ -414,7 +395,7 @@ public class BeneficiarySelectCtrl extends GFCBaseCtrl<Beneficiary> {
 
 	// when item double clicked
 	@SuppressWarnings("rawtypes")
-	public void onBeneficiaryItemDoubleClicked(Event event) throws Exception {
+	public void onBeneficiaryItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		if (this.listBoxBeneficiary.getSelectedItem() != null) {
@@ -475,7 +456,7 @@ public class BeneficiarySelectCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.custCIF.setValidateColumns(new String[] { "CustCIF" });
 		this.custCIF.setValue(StringUtils.trimToEmpty(primaryCIF));
 		if (CollectionUtils.isNotEmpty(custCIFs)) {
-			//Filters for the Customer CIF
+			// Filters for the Customer CIF
 			Filter filter[] = new Filter[1];
 			filter[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);
 			this.custCIF.setFilters(filter);

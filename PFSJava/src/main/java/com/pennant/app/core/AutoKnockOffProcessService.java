@@ -81,7 +81,7 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 	private transient EntityDAO entityDAO;
 	private transient ManualAdviseDAO manualAdviseDAO;
 
-	public void processAutoKnockOff(AutoKnockOffData knockOffData) throws Exception {
+	public void processAutoKnockOff(AutoKnockOffData knockOffData) {
 		String finreference = knockOffData.getFinReference();
 		List<AutoKnockOffFeeMapping> feeMappingList = knockOffData.getFeeMappingList();
 
@@ -235,12 +235,8 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		for (ReceiptAllocationDetail allocate : allocationDtls) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
 			allocate.setWaivedAvailable(allocate.getWaivedAmount());
-			allocate.setPaidAmount(BigDecimal.ZERO);
-			allocate.setPaidGST(BigDecimal.ZERO);
-			allocate.setTotalPaid(BigDecimal.ZERO);
 			allocate.setBalance(allocate.getTotalDue());
-			allocate.setWaivedAmount(BigDecimal.ZERO);
-			allocate.setWaivedGST(BigDecimal.ZERO);
+			receiptCalculator.resetPaidAllocations(allocate);
 		}
 
 		receiptCalculator.initiateReceipt(receiptData, false);
@@ -295,19 +291,20 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 	}
 
 	private FinReceiptData getInProcessReceiptData(FinReceiptData receiptData) {
-		String finReference = receiptData.getReceiptHeader().getReference();
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		String finReference = rch.getReference();
 		// Multi Receipts: Get In Process Receipts
 		long curReceiptID = 0;
-		if (receiptData.getReceiptHeader() != null) {
-			curReceiptID = receiptData.getReceiptHeader().getReceiptID();
+		if (rch != null) {
+			curReceiptID = rch.getReceiptID();
 		}
 
 		List<ReceiptAllocationDetail> radList = null;
-		List<FinReceiptHeader> rchList = finReceiptHeaderDAO.getInProcessReceipts(finReference);
+		List<FinReceiptHeader> rchList = finReceiptHeaderDAO.getInprocessReceipts(rch.getFinID());
 
 		if (rchList != null) {
 			receiptData.setInProcRchList(rchList);
-			radList = receiptAllocationDetailDAO.getManualAllocationsByRef(finReference, curReceiptID);
+			radList = receiptAllocationDetailDAO.getManualAllocationsByRef(rch.getFinID(), curReceiptID);
 
 			if (radList != null) {
 				receiptData.setInProcRadList(radList);

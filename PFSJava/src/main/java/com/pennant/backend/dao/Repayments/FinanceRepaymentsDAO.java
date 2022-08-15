@@ -15,8 +15,6 @@ public interface FinanceRepaymentsDAO {
 
 	void save(List<FinanceRepayments> list, String type);
 
-	List<FinanceRepayments> getFinRepayListByFinRef(long finID, boolean isRpyCancelProc, String type);
-
 	void deleteRpyDetailbyLinkedTranId(long linkedTranId, long finID);
 
 	// Manual Repayment Details : Finance Repay Header Details & Finance Repay Schedule Details
@@ -72,4 +70,8 @@ public interface FinanceRepaymentsDAO {
 	Date getMaxValueDate(long finID);
 
 	Date getFinSchdDateByReceiptId(long receiptid, String type);
+
+	List<FinanceRepayments> getFinRepayList(long finID);
+
+	List<FinanceRepayments> getFinRepayListByLinkedTranID(long finID);
 }

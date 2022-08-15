@@ -150,17 +150,9 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	@Override
 	protected void doPrintResults() {
 		if (facility) {
-			try {
-				new PTListReportUtils("FacilityApprovalStatus", searchObject, this.paging.getTotalSize() + 1);
-			} catch (InterruptedException e) {
-				logger.error("Exception:", e);
-			}
+			new PTListReportUtils("FacilityApprovalStatus", searchObject, this.paging.getTotalSize() + 1);
 		} else {
-			try {
-				new PTListReportUtils("FinanceApprovalStatus", searchObject, this.paging.getTotalSize() + 1);
-			} catch (InterruptedException e) {
-				logger.error("Exception:", e);
-			}
+			new PTListReportUtils("FinanceApprovalStatus", searchObject, this.paging.getTotalSize() + 1);
 		}
 	}
 
@@ -328,7 +320,6 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public void onCheck$fromApproved(Event event) {
 		approvedList = true;
@@ -346,7 +337,6 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public void onCheck$fromWorkFlow(Event event) {
 		approvedList = false;

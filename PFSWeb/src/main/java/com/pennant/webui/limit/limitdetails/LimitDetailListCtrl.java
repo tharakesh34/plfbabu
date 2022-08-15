@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitDetailsListCtrl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitDetailsListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * * Modified
+ * Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.limit.limitdetails;
@@ -186,7 +168,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	// *************** Component Events ******************//
 	// ***************************************************//
 
-	public void onCreate$window_LimitDetailsList(Event event) throws Exception {
+	public void onCreate$window_LimitDetailsList(Event event) {
 		logger.debug("Entering");
 		setPageComponents(window_LimitDetailsList, borderLayout_LimitDetailsList, listBoxLimitDetails,
 				pagingLimitDetailsList);
@@ -337,8 +319,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_LimitStructureList_LimitStructureSearch(Event event) {
 		doSearch();
@@ -347,8 +328,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		this.sortOperator_Name.setSelectedIndex(0);
@@ -379,10 +359,9 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onClick$button_LimitDetailsList_NewLimitDetails(Event event) throws Exception {
+	public void onClick$button_LimitDetailsList_NewLimitDetails(Event event) {
 		logger.debug(event.toString());
 		// Create a new entity.
 		LimitHeader aLimitHeader = new LimitHeader();
@@ -402,10 +381,8 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	 * see: com.pennant.webui.limit.limitdetail.model. LimitDetailsListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onLimitDetailsItemDoubleClicked(Event event) throws Exception {
+	public void onLimitDetailsItemDoubleClicked(Event event) {
 		logger.debug(event.toString());
 
 		// Get the selected record.
@@ -448,7 +425,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	/**
 	 * Invoke Search
 	 */
-	public void onClick$button_LimitDetailsList_LimitDetailsSearch(Event event) throws Exception {
+	public void onClick$button_LimitDetailsList_LimitDetailsSearch(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSearch();
 		logger.debug("Leaving" + event.toString());
@@ -469,8 +446,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -478,17 +454,12 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 	@Override
 	protected void doPrintResults() {
-		try {
-			if (StringUtils.equals(LimitConstants.LIMIT_UTILIZATION, limitType.getValue())) {
-				this.searchObj.addTabelName("LimitHeader_AView");
-				new PTListReportUtils("LimitUtilization", searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
-			} else {
-				this.searchObj.addTabelName("LimitHeader_View");
-				new PTListReportUtils(moduleCode, searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
-			}
-
-		} catch (InterruptedException e) {
-			logger.error("Exception:", e);
+		if (StringUtils.equals(LimitConstants.LIMIT_UTILIZATION, limitType.getValue())) {
+			this.searchObj.addTabelName("LimitHeader_AView");
+			new PTListReportUtils("LimitUtilization", searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
+		} else {
+			this.searchObj.addTabelName("LimitHeader_View");
+			new PTListReportUtils(moduleCode, searchObj, this.pagingLimitDetailsList.getTotalSize() + 1);
 		}
 	}
 
@@ -496,9 +467,8 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromApproved(Event event) throws Exception {
+	public void onCheck$fromApproved(Event event) {
 		logger.debug("Entering " + event.toString());
 		doSearch();
 		logger.debug("Leaving " + event.toString());
@@ -508,9 +478,8 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromWorkFlow(Event event) throws Exception {
+	public void onCheck$fromWorkFlow(Event event) {
 		logger.debug("Entering " + event.toString());
 		doSearch();
 		logger.debug("Leaving " + event.toString());
@@ -538,8 +507,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param academic
-	 *            The entity that need to be passed to the dialog.
+	 * @param academic The entity that need to be passed to the dialog.
 	 */
 	protected void doShowDialogPage(LimitHeader aLimitHeader) {
 		logger.debug("Entering");
@@ -565,7 +533,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		logger.debug("Leaving");
 	}
 
-	private void showDetailViewLimitHeader(LimitHeader aLimitHeader) throws Exception {
+	private void showDetailViewLimitHeader(LimitHeader aLimitHeader) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
@@ -698,7 +666,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 
 			}
 		} else if (StringUtils.equals(LimitConstants.LIMIT_RULE, limitType.getValue())) {
-			//RuleCode
+			// RuleCode
 			if (!StringUtils.trimToEmpty(this.id.getValue()).equals("")) {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_Id.getSelectedItem(), this.id.getValue(),
 						"RuleCode");

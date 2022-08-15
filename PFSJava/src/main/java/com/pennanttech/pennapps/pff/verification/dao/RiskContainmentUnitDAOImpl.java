@@ -2,7 +2,6 @@ package com.pennanttech.pennapps.pff.verification.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +22,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
@@ -145,14 +145,13 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		source.addValue("verificationId", verificationId);
 
 		RowMapper<RiskContainmentUnit> typeRowMapper = BeanPropertyRowMapper.newInstance(RiskContainmentUnit.class);
+
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -307,15 +306,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 
 		RowMapper<RiskContainmentUnit> rowMapper = BeanPropertyRowMapper.newInstance(RiskContainmentUnit.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -400,14 +391,8 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		source.addValue("verificationId", verificationId);
 
 		RowMapper<RCUDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(RCUDocument.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -436,9 +421,8 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 				sql.append(" where verificationId =:verificationId");
 				jdbcTemplate.update(sql.toString(), paramSource);
 			}
-
 		} catch (DataAccessException e) {
-
+			throw new DependencyFoundException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -474,15 +458,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 
 		RowMapper<RCUDocument> rowMapper = BeanPropertyRowMapper.newInstance(RCUDocument.class);
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 	}
 
 	@Override
@@ -549,11 +525,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 
 	@Override
 	public List<RCUDocument> getRCUDocument(long verificationId, RCUDocument rcuDocument) {
-
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
-
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select * from verification_rcu_details_view ");
 		sql.append(" where verificationId=:verificationId and documentType=:documentType ");
 		sql.append(" and documentId=:documentId ");
@@ -564,48 +536,29 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 		source.addValue("documentId", rcuDocument.getDocumentId());
 		source.addValue("documentType", rcuDocument.getDocumentType());
 		source.addValue("documentSubId", rcuDocument.getDocumentSubId());
 
 		RowMapper<RCUDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(RCUDocument.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			// logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
 	public int getRCUDocumentsCount(long verificationId) {
-
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
-
+		StringBuilder sql = new StringBuilder();
 		sql.append(" select count(*) from  verification_rcu_details_stage");
 		sql.append(" where verificationId=:verificationId");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
-		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return 0;
+		return jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -627,23 +580,16 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		sql.append(" WHERE VERIFICATIONID IN (SELECT ID FROM VERIFICATIONS WHERE KEYREFERENCE = ?)");
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-				RCUDocument rcu = new RCUDocument();
 
-				rcu.setSeqNo((rs.getInt("seqNo")));
-				rcu.setDocumentType(rs.getInt("documentType"));
-				rcu.setDocumentSubId(rs.getString("documentSubId"));
-				rcu.setVerificationId(rs.getLong("verificationId"));
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			RCUDocument rcu = new RCUDocument();
 
-				return rcu;
-			}, keyReference);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			rcu.setSeqNo((rs.getInt("seqNo")));
+			rcu.setDocumentType(rs.getInt("documentType"));
+			rcu.setDocumentSubId(rs.getString("documentSubId"));
+			rcu.setVerificationId(rs.getLong("verificationId"));
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
+			return rcu;
+		}, keyReference);
 	}
 }

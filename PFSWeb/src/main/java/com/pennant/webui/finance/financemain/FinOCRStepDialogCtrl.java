@@ -74,9 +74,8 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$windowFinOCRStepDialog(Event event) throws Exception {
+	public void onCreate$windowFinOCRStepDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.

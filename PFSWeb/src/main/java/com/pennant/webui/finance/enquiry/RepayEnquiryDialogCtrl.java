@@ -65,10 +65,9 @@ public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_RepayEnquiryDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_RepayEnquiryDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -108,15 +107,14 @@ public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 
 		try {
 
-			//Fill Repayment Details
+			// Fill Repayment Details
 			if (finRepayments != null) {
 				this.listBox_RepayEnquiry
 						.setModel(new GroupsModelArray(finRepayments.toArray(), new RepayEnquiryComparator()));

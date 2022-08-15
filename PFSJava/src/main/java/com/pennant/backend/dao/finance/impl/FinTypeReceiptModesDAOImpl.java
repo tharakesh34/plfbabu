@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.finance.FinTypeReceiptModesDAO;
 import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinTypeReceiptModesDAOImpl extends BasicDao<FinTypeReceiptModes> implements FinTypeReceiptModesDAO {
 	private static Logger logger = LogManager.getLogger(FinTypeReceiptModesDAOImpl.class);
@@ -28,10 +29,8 @@ public class FinTypeReceiptModesDAOImpl extends BasicDao<FinTypeReceiptModes> im
 	 * 
 	 * save FinTypeReceiptModes
 	 * 
-	 * @param FinTypeReceiptModes
-	 *            (finTypeReceiptModes)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinTypeReceiptModes (finTypeReceiptModes)
+	 * @param type                (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -126,10 +125,8 @@ public class FinTypeReceiptModesDAOImpl extends BasicDao<FinTypeReceiptModes> im
 	/**
 	 * Fetch the Record Finance Flags details by key field
 	 * 
-	 * @param finRef
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finRef (String)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return finFlagsDetail
 	 */
 	@Override
@@ -151,13 +148,11 @@ public class FinTypeReceiptModesDAOImpl extends BasicDao<FinTypeReceiptModes> im
 		RowMapper<FinTypeReceiptModes> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeReceiptModes.class);
 
 		try {
-			finTypeReceiptModes = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finTypeReceiptModes = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return finTypeReceiptModes;
 	}
 
 	@Override

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProvisionMovementListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-05-2012    														*
- *                                                                  						*
- * Modified Date    :  31-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProvisionMovementListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-05-2012 * *
+ * Modified Date : 31-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.suspense;
@@ -139,9 +121,8 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	 * selected ProvisionMovement object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SuspenseEnquiryDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_SuspenseEnquiryDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -181,9 +162,8 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSuspHead
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinanceSuspHead aSuspHead) throws Exception {
+	public void doShowDialog(FinanceSuspHead aSuspHead) {
 		logger.debug("Entering");
 
 		// if aAccountingSet == null then we opened the Dialog without
@@ -230,8 +210,7 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param FinanceSuspHead
-	 *            aSuspHead
+	 * @param FinanceSuspHead aSuspHead
 	 */
 	public void doWriteBeanToComponents(FinanceSuspHead aSuspHead) {
 		logger.debug("Entering");
@@ -257,7 +236,7 @@ public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDeta
 			this.finSuspDate.setValue(aSuspHead.getFinSuspDate());
 			this.finSuspTrfDate.setValue(aSuspHead.getFinSuspTrfDate());
 
-			//Suspense Details List
+			// Suspense Details List
 			doFilllistbox(aSuspHead.getSuspDetailsList(), format);
 			doFillPostingslistbox(aSuspHead.getSuspPostingsList(), format);
 		}

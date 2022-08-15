@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -13,6 +12,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -26,9 +26,11 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.backend.dao.ExtractCustomerDataDAO;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.model.CustomerStaging;
@@ -74,12 +76,9 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 			}, keyHolder);
 
 			return keyHolder.getKey().longValue();
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-
-		logger.debug(Literal.LEAVING);
-		return 0;
 	}
 
 	@Override
@@ -132,44 +131,37 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
 
-					ps.setTimestamp(index++, curTime);
-					ps.setInt(index++, 1);
-					ps.setInt(index++, 0);
-					ps.setString(index++, "E");
-					ps.setString(index++, "M");
-					ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
+				ps.setTimestamp(index++, curTime);
+				ps.setInt(index++, 1);
+				ps.setInt(index++, 0);
+				ps.setString(index++, "E");
+				ps.setString(index++, "M");
+				ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
 
-					if (prevTime != null) {
-						ps.setTimestamp(index++, prevTime);
-					}
-
-					ps.setInt(index++, 1);
-					ps.setInt(index++, 0);
-					ps.setString(index++, "E");
-					ps.setString(index++, "M");
-					ps.setTimestamp(index++, curTime);
+				if (prevTime != null) {
 					ps.setTimestamp(index++, prevTime);
-
 				}
 
-			}, new RowMapper<Long>() {
-				@Override
-				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getLong("CustID");
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+				ps.setInt(index++, 1);
+				ps.setInt(index++, 0);
+				ps.setString(index++, "E");
+				ps.setString(index++, "M");
+				ps.setTimestamp(index++, curTime);
+				ps.setTimestamp(index++, prevTime);
 
+			}
+
+		}, new RowMapper<Long>() {
+			@Override
+			public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getLong("CustID");
+			}
+		});
 	}
 
 	@Override
@@ -188,34 +180,27 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
 
-					ps.setTimestamp(index++, curTime);
-					ps.setInt(index++, 0);
-					ps.setString(index++, "C");
-					ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
+				ps.setTimestamp(index++, curTime);
+				ps.setInt(index++, 0);
+				ps.setString(index++, "C");
+				ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
 
-					if (prevTime != null) {
-						ps.setTimestamp(index++, prevTime);
-					}
+				if (prevTime != null) {
+					ps.setTimestamp(index++, prevTime);
 				}
+			}
 
-			}, new RowMapper<Long>() {
-				@Override
-				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getLong("CustID");
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		}, new RowMapper<Long>() {
+			@Override
+			public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getLong("CustID");
+			}
+		});
 	}
 
 	@Override
@@ -230,30 +215,23 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
 
-					ps.setInt(index++, 1);
-					ps.setInt(index++, 0);
-					ps.setString(index++, "E");
-					ps.setString(index, "M");
-				}
+				ps.setInt(index++, 1);
+				ps.setInt(index++, 0);
+				ps.setString(index++, "E");
+				ps.setString(index, "M");
+			}
 
-			}, new RowMapper<Long>() {
-				@Override
-				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getLong("CustID");
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		}, new RowMapper<Long>() {
+			@Override
+			public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getLong("CustID");
+			}
+		});
 	}
 
 	@Override
@@ -270,31 +248,24 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
 
-					ps.setTimestamp(index++, curTime);
-					ps.setInt(index++, 1);
-					ps.setInt(index++, 0);
-					ps.setString(index++, "E");
-					ps.setString(index, "M");
-				}
+				ps.setTimestamp(index++, curTime);
+				ps.setInt(index++, 1);
+				ps.setInt(index++, 0);
+				ps.setString(index++, "E");
+				ps.setString(index, "M");
+			}
 
-			}, new RowMapper<Long>() {
-				@Override
-				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getLong("CustID");
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		}, new RowMapper<Long>() {
+			@Override
+			public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getLong("CustID");
+			}
+		});
 	}
 
 	@Override
@@ -346,9 +317,10 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 					ps.setString(index++, cs.getAltPhoneNo());
 				}
 			});
-		} catch (Exception e) {
-			logger.warn(Literal.ENTERING, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -400,17 +372,14 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
 	public void setCustAddressDetails(long custId, CustomerStaging custData) {
 		logger.debug(Literal.ENTERING);
-		List<String> custAdress = null;
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustAddrHNbr, CustFlatNbr, CustAddrStreet AddrStreet, CustPOBox");
@@ -423,38 +392,34 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			custAdress = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, custId);
-					ps.setInt(index, 5);
-				}
-			}, new RowMapper<String>() {
-				@Override
-				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-					StringBuilder adr = new StringBuilder();
+		List<String> custAdress = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, custId);
+				ps.setInt(index, 5);
+			}
+		}, new RowMapper<String>() {
+			@Override
+			public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+				StringBuilder adr = new StringBuilder();
 
-					adr.append(StringUtils.trimToEmpty(rs.getString("CustAddrHNbr"))).append(" ");
-					adr.append(StringUtils.trimToEmpty(rs.getString("CustFlatNbr"))).append(" ");
-					adr.append(StringUtils.trimToEmpty(rs.getString("AddrStreet"))).append(" ");
-					adr.append(rs.getString("CustAddrLine1") != null ? rs.getString("CustAddrLine1") : "").append(" ");
-					adr.append(rs.getString("CustAddrLine2") != null ? rs.getString("CustAddrLine2") : "").append(" ");
-					adr.append(rs.getString("PCCityName") != null ? rs.getString("PCCityName") : "").append(" ");
-					adr.append(rs.getString("CountryDesc") != null ? rs.getString("CountryDesc") : "").append(" ");
-					adr.append(rs.getString("DistrictName") != null ? rs.getString("DistrictName") : "").append(" ");
-					adr.append(rs.getString("ProvinceName") != null ? rs.getString("ProvinceName") : "").append(" ");
-					adr.append(rs.getString("CustAddrZIP") != null ? rs.getString("CustAddrZIP") : "").append(" ");
-					adr.append(rs.getString("CustPOBox") != null ? rs.getString("CustPOBox") : "").append(" ");
-					adr.append(rs.getString("CustAddrCity") != null ? rs.getString("CustAddrCity") : "").append(" ");
+				adr.append(StringUtils.trimToEmpty(rs.getString("CustAddrHNbr"))).append(" ");
+				adr.append(StringUtils.trimToEmpty(rs.getString("CustFlatNbr"))).append(" ");
+				adr.append(StringUtils.trimToEmpty(rs.getString("AddrStreet"))).append(" ");
+				adr.append(rs.getString("CustAddrLine1") != null ? rs.getString("CustAddrLine1") : "").append(" ");
+				adr.append(rs.getString("CustAddrLine2") != null ? rs.getString("CustAddrLine2") : "").append(" ");
+				adr.append(rs.getString("PCCityName") != null ? rs.getString("PCCityName") : "").append(" ");
+				adr.append(rs.getString("CountryDesc") != null ? rs.getString("CountryDesc") : "").append(" ");
+				adr.append(rs.getString("DistrictName") != null ? rs.getString("DistrictName") : "").append(" ");
+				adr.append(rs.getString("ProvinceName") != null ? rs.getString("ProvinceName") : "").append(" ");
+				adr.append(rs.getString("CustAddrZIP") != null ? rs.getString("CustAddrZIP") : "").append(" ");
+				adr.append(rs.getString("CustPOBox") != null ? rs.getString("CustPOBox") : "").append(" ");
+				adr.append(rs.getString("CustAddrCity") != null ? rs.getString("CustAddrCity") : "").append(" ");
 
-					return adr.toString();
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+				return adr.toString();
+			}
+		});
 
 		if (custAdress != null && !custAdress.isEmpty()) {
 			custData.setAddress(custAdress.get(0));
@@ -467,37 +432,31 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 	public void setCustPhoneDetails(long custId, CustomerStaging custData) {
 		logger.debug(Literal.ENTERING);
 
-		List<CustomerPhoneNumber> cpn = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" phoneNumber, phoneTypePriority");
 		sql.append(" From CUSTOMERPHONENUMBERS");
 		sql.append(" Where PhoneCustID = ?");
 		sql.append(" order by phoneTypePriority desc");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			cpn = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index, custId);
-				}
-			}, new RowMapper<CustomerPhoneNumber>() {
-				@Override
-				public CustomerPhoneNumber mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerPhoneNumber cpn = new CustomerPhoneNumber();
+		List<CustomerPhoneNumber> cpn = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index, custId);
+			}
+		}, new RowMapper<CustomerPhoneNumber>() {
+			@Override
+			public CustomerPhoneNumber mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CustomerPhoneNumber cpn = new CustomerPhoneNumber();
 
-					cpn.setPhoneNumber(rs.getString("PhoneNumber"));
-					cpn.setPhoneTypePriority(rs.getInt("PhoneTypePriority"));
+				cpn.setPhoneNumber(rs.getString("PhoneNumber"));
+				cpn.setPhoneTypePriority(rs.getInt("PhoneTypePriority"));
 
-					return cpn;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+				return cpn;
+			}
+		});
 
 		cpn.forEach(custPhone -> {
 			if (custPhone.getPhoneTypePriority() == 5) {
@@ -514,37 +473,31 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 	public void setCustEmailDetails(long custId, CustomerStaging custData) {
 		logger.debug(Literal.ENTERING);
 
-		List<CustomerEMail> custEmails = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" custEMail, custEMailPriority");
 		sql.append(" From CUSTOMEREMAILS");
 		sql.append(" Where custID = ?");
 		sql.append(" order by custEMailPriority desc");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			custEmails = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index, custId);
-				}
-			}, new RowMapper<CustomerEMail>() {
-				@Override
-				public CustomerEMail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerEMail ce = new CustomerEMail();
+		List<CustomerEMail> custEmails = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index, custId);
+			}
+		}, new RowMapper<CustomerEMail>() {
+			@Override
+			public CustomerEMail mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CustomerEMail ce = new CustomerEMail();
 
-					ce.setCustEMail(rs.getString("CustEMail"));
-					ce.setCustEMailPriority(rs.getInt("CustEMailPriority"));
+				ce.setCustEMail(rs.getString("CustEMail"));
+				ce.setCustEMailPriority(rs.getInt("CustEMailPriority"));
 
-					return ce;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+				return ce;
+			}
+		});
 
 		custEmails.forEach(custEmail -> {
 			if (custEmail.getCustEMailPriority() == 5) {
@@ -561,8 +514,6 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 	public void setCustDocDetails(long custId, CustomerStaging custData) {
 		logger.debug(Literal.ENTERING);
 
-		List<CustomerDocument> custDocs = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustDocCategory, CustDocTitle");
 		sql.append(" From CustomerDocuments");
@@ -570,29 +521,25 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			custDocs = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, custId);
-					ps.setString(index++, "01");
-					ps.setString(index, "03");
-				}
-			}, new RowMapper<CustomerDocument>() {
-				@Override
-				public CustomerDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerDocument cd = new CustomerDocument();
+		List<CustomerDocument> custDocs = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, custId);
+				ps.setString(index++, "01");
+				ps.setString(index, "03");
+			}
+		}, new RowMapper<CustomerDocument>() {
+			@Override
+			public CustomerDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CustomerDocument cd = new CustomerDocument();
 
-					cd.setCustDocCategory(rs.getString("CustDocCategory"));
-					cd.setCustDocTitle(rs.getString("CustDocTitle"));
+				cd.setCustDocCategory(rs.getString("CustDocCategory"));
+				cd.setCustDocTitle(rs.getString("CustDocTitle"));
 
-					return cd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+				return cd;
+			}
+		});
 
 		custDocs.forEach(doc -> {
 			if ("03".equals(doc.getCustDocCategory())) {

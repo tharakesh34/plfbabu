@@ -64,7 +64,7 @@ public class FinTaxUploadDetailItemRenderer implements ListitemRenderer<FinTaxUp
 	private static final long serialVersionUID = -4562142056572229437L;
 
 	@Override
-	public void render(Listitem item, FinTaxUploadHeader finTaxUploadHeader, int count) throws Exception {
+	public void render(Listitem item, FinTaxUploadHeader finTaxUploadHeader, int count) {
 
 		Listcell lc;
 		lc = new Listcell(String.valueOf(finTaxUploadHeader.getBatchReference()));

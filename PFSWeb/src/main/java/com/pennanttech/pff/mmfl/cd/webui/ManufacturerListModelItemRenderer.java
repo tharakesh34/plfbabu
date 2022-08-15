@@ -18,7 +18,7 @@ public class ManufacturerListModelItemRenderer implements ListitemRenderer<Manuf
 	}
 
 	@Override
-	public void render(Listitem item, Manufacturer manufacturer, int count) throws Exception {
+	public void render(Listitem item, Manufacturer manufacturer, int count) {
 
 		Listcell lc;
 		lc = new Listcell(manufacturer.getName());

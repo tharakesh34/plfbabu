@@ -39,9 +39,11 @@ import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.finance.SubventionScheduleDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
@@ -95,12 +97,10 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 
 				return sd;
 			}, finID);
-
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 				ps.setLong(index++, sd.getFinID());
 			});
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -302,16 +302,12 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setBigDecimal(index++, totalSubVentionAmt);
-				ps.setLong(index++, finID);
-			});
-		} catch (DataAccessException e) {
-			//
-		}
+			ps.setBigDecimal(index++, totalSubVentionAmt);
+			ps.setLong(index++, finID);
+		});
 	}
 
 	@Override
@@ -323,9 +319,8 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 		try {
 			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-
-		return BigDecimal.ZERO;
 	}
 }

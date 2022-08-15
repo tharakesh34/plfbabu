@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DepartmentDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DepartmentDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * * Modified
+ * Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -61,6 +43,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -78,10 +61,8 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 	/**
 	 * Fetch the Record Departments details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Department
 	 */
 	@Override
@@ -103,23 +84,19 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 		RowMapper<Department> typeRowMapper = BeanPropertyRowMapper.newInstance(Department.class);
 
 		try {
-			department = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			department = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving getDepartmentByID()");
-		return department;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTDepartments or BMTDepartments_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Departments by key DeptCode
 	 * 
-	 * @param Departments
-	 *            (department)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Departments (department)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -156,10 +133,8 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 	 * 
 	 * save Departments
 	 * 
-	 * @param Departments
-	 *            (department)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Departments (department)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -195,10 +170,8 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 	 * This method updates the Record BMTDepartments or BMTDepartments_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Departments by key DeptCode and Version
 	 * 
-	 * @param Departments
-	 *            (department)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Departments (department)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -233,12 +206,9 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 	/**
 	 * This method for getting the error details
 	 * 
-	 * @param errorId
-	 *            (String)
-	 * @param Id
-	 *            (String)
-	 * @param userLanguage
-	 *            (String)
+	 * @param errorId      (String)
+	 * @param Id           (String)
+	 * @param userLanguage (String)
 	 * @return ErrorDetails
 	 */
 	@Override

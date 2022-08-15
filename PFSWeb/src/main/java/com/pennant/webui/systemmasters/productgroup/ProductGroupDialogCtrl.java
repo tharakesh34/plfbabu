@@ -70,7 +70,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 		super.pageRightName = "ProductGroupDialog";
 	}
 
-	public void onCreate$window_ProductGroupDialog(Event event) throws Exception {
+	public void onCreate$window_ProductGroupDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -212,7 +212,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnchannels(Event event) throws Exception {
+	public void onClick$btnchannels(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_ProductGroupDialog, "ChannelTypes",
 				String.valueOf(this.txtchannel.getValue()), null);
@@ -224,7 +224,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 
 	}
 
-	public void onClick$btnModelId(Event event) throws Exception {
+	public void onClick$btnModelId(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_ProductGroupDialog, "ConsumerProduct",
 				String.valueOf(this.modelId.getValue()), null);

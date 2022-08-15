@@ -50,7 +50,7 @@ public class HoldDisbursementListModelItemRenderer implements ListitemRenderer<H
 	}
 
 	@Override
-	public void render(Listitem item, HoldDisbursement holdDisbursement, int count) throws Exception {
+	public void render(Listitem item, HoldDisbursement holdDisbursement, int count) {
 
 		Listcell lc;
 		lc = new Listcell(holdDisbursement.getFinReference());

@@ -54,7 +54,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 
 	private String paymentType;
 	private Date postDate;
-	private BigDecimal paymentAmount = BigDecimal.ZERO;;
+	private BigDecimal paymentAmount = BigDecimal.ZERO;
 	private long partnerBankId;
 	private String partnerBankCode;
 	private String partnerBankName;

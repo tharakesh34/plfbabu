@@ -135,9 +135,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * selected Suspense object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustSuspenseDialog(Event event) throws Exception {
+	public void onCreate$window_CustSuspenseDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -205,7 +204,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Leaving");
 	}
 
-	public void onCheck$custSuspSts(Event event) throws Exception {
+	public void onCheck$custSuspSts(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		/*
@@ -218,9 +217,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -230,9 +228,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnHelp(Event event) throws InterruptedException {
+	public void onClick$btnHelp(Event event) {
 		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_CustSuspenseDialog);
 		logger.debug("Leaving" + event.toString());
@@ -359,9 +356,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSuspHead
-	 * @throws Exception
 	 */
-	public void doShowDialog(Customer aCustomer) throws Exception {
+	public void doShowDialog(Customer aCustomer) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -538,11 +534,9 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	// CRUD operations
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final Customer aCustomer = new Customer();
@@ -925,7 +919,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 				getOverideMap());
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering");
 		// logger.debug(event.toString());
 

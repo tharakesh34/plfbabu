@@ -66,7 +66,7 @@ public class ReportListListModelItemRenderer implements ListitemRenderer<ReportL
 	}
 
 	@Override
-	public void render(Listitem item, ReportList reportList, int count) throws Exception {
+	public void render(Listitem item, ReportList reportList, int count) {
 
 		Listcell lc;
 		lc = new Listcell(reportList.getModule());

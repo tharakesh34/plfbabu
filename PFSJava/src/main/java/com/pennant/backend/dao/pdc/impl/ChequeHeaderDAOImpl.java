@@ -40,6 +40,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -99,10 +100,9 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 				return getRowMapper(rs);
 			}, headerID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -117,10 +117,9 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 				return getRowMapper(rs);
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -272,14 +271,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		}
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return jdbcOperations.queryForObject(sql, Integer.class, object) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return jdbcOperations.queryForObject(sql, Integer.class, object) > 0;
 	}
 
 	@Override
@@ -287,14 +279,6 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		String sql = "Select count(HeaderID) From ChequeHeader Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
 	}
-
 }

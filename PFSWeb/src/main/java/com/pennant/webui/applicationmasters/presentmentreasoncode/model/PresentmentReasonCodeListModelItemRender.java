@@ -20,7 +20,7 @@ public class PresentmentReasonCodeListModelItemRender implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, PresentmentReasonCode presentmentReasonCode, int count) throws Exception {
+	public void render(Listitem item, PresentmentReasonCode presentmentReasonCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(presentmentReasonCode.getCode());

@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -439,7 +440,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public AEEvent getChangeGrcEndPostings(FinScheduleData fsd) throws Exception {
+	public AEEvent getChangeGrcEndPostings(FinScheduleData fsd) {
 		FinanceMain fm = fsd.getFinanceMain();
 
 		long finID = fm.getFinID();
@@ -475,7 +476,11 @@ public class ChangeGraceEndService extends ServiceHelper {
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(finID);
+		Map<String, Object> map = fm.getGlSubHeadCodes();
+
+		if (MapUtils.isEmpty(map)) {
+			map = financeMainDAO.getGLSubHeadCodes(finID);
+		}
 
 		amountCodes.setBusinessvertical((String) map.get("BUSINESSVERTICAL"));
 		amountCodes.setAlwflexi(fm.isAlwFlexi());

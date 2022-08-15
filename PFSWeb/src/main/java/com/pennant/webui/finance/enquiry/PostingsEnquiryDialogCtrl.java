@@ -120,9 +120,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PostingsEnquiryDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_PostingsEnquiryDialog(ForwardEvent event) {
 		logger.info(Literal.ENTERING);
 
 		// Set the page level components.
@@ -181,9 +180,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.info(Literal.LEAVING);
 
 		try {
@@ -229,14 +227,14 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	/** ============================================================ */
 	/** Check Events For Postings */
 	/** ============================================================ */
-	public void onCheck$showAccrual(Event event) throws Exception {
+	public void onCheck$showAccrual(Event event) {
 		logger.debug("Entering");
 		this.listBoxFinPostings.getItems().clear();
 		doFillPostings();
 		logger.debug("Leaving");
 	}
 
-	public void onCheck$showZeroCals(Event event) throws Exception {
+	public void onCheck$showZeroCals(Event event) {
 		logger.debug("Entering");
 		this.listBoxFinPostings.getItems().clear();
 		doFillPostings();
@@ -296,9 +294,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * when the "btnPrintAccounting" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPrintAccounting(Event event) throws Exception {
+	public void onClick$btnPrintAccounting(Event event) {
 		logger.info(Literal.ENTERING);
 		String usrName = getUserWorkspace().getLoggedInUser().getUserName();
 		List<Object> list = null;

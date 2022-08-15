@@ -45,7 +45,7 @@ public class CustomerIncomeListItemRenderer implements ListitemRenderer<Customer
 	}
 
 	@Override
-	public void render(Listitem item, CustomerIncome income, int count) throws Exception {
+	public void render(Listitem item, CustomerIncome income, int count) {
 
 		int format = CurrencyUtil.getFormat(income.getToCcy());
 		Listcell lc;

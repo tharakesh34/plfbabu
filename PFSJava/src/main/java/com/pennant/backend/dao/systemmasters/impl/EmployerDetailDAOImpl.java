@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  EmployerDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-07-2013    														*
- *                                                                  						*
- * Modified Date    :  31-07-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : EmployerDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-07-2013 * *
+ * Modified Date : 31-07-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-07-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-07-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.systemmasters.impl;
 
@@ -61,6 +43,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -79,10 +62,8 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	/**
 	 * Fetch the Record Employer Detail details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return EmployerDetail
 	 */
 	@Override
@@ -109,23 +90,19 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 		RowMapper<EmployerDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(EmployerDetail.class);
 
 		try {
-			employerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			employerDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return employerDetail;
 	}
 
 	/**
 	 * This method Deletes the Record from the EmployerDetail or EmployerDetail_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Employer Detail by key EmployerId
 	 * 
-	 * @param Employer
-	 *            Detail (employerDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Employer Detail (employerDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -162,10 +139,8 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	 *
 	 * save Employer Detail
 	 * 
-	 * @param Employer
-	 *            Detail (employerDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Employer Detail (employerDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -208,10 +183,8 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	 * This method updates the Record EmployerDetail or EmployerDetail_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Employer Detail by key EmployerId and Version
 	 * 
-	 * @param Employer
-	 *            Detail (employerDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Employer Detail (employerDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -228,7 +201,7 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(", EmpCategory = :EmpCategory");
 		updateSql.append(" Where EmployerId =:EmployerId");
-		//updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		logger.trace(Literal.SQL + updateSql.toString());
 

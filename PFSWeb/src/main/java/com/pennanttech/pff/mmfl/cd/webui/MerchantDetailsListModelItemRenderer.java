@@ -18,7 +18,7 @@ public class MerchantDetailsListModelItemRenderer implements ListitemRenderer<Me
 	}
 
 	@Override
-	public void render(Listitem item, MerchantDetails merchantDetails, int count) throws Exception {
+	public void render(Listitem item, MerchantDetails merchantDetails, int count) {
 
 		Listcell lc;
 		lc = new Listcell(merchantDetails.getMerchantName());

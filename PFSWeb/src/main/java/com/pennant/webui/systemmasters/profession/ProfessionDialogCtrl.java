@@ -100,9 +100,8 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	 * selected Profession object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ProfessionDialog(Event event) throws Exception {
+	public void onCreate$window_ProfessionDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -341,9 +340,8 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProfession
-	 * @throws Exception
 	 */
-	public void doShowDialog(Profession aProfession) throws Exception {
+	public void doShowDialog(Profession aProfession) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -781,10 +779,8 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.profession);
 	}
 

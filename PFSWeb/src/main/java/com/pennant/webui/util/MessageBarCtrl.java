@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MessageBarCtrl.java                                                  * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-09-2012    														*
- *                                                                  						*
- * Modified Date    :  14-09-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MessageBarCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-09-2012 * * Modified Date
+ * : 14-09-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-09-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-09-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.util;
@@ -77,7 +59,7 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	private static final Logger logger = LogManager.getLogger(MessageBarCtrl.class);
 
 	protected Window statusBar;
-	//protected Row statusBarSections;
+	// protected Row statusBarSections;
 	protected A messageBox;
 	protected Label copyRight;
 	protected A copyRightInfo;
@@ -109,7 +91,7 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 		EventQueues.lookup(EventManager.QUEUE_NAME, EventQueues.APPLICATION, true)
 				.subscribe(new EventListener<Event>() {
 					@Override
-					public void onEvent(Event event) throws Exception {
+					public void onEvent(Event event) {
 						Object[] data = (Object[]) event.getData();
 
 						if (!EventManager.isRecipient(data, userName, listSecRoles)) {
@@ -204,7 +186,7 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 			msgWindow.setParent(statusBar);
 			msgWindow.addEventListener("onClose", new EventListener<Event>() {
 				@Override
-				public void onEvent(Event event) throws Exception {
+				public void onEvent(Event event) {
 					if (msgWindow != null) {
 						msgWindow.detach();
 						msgWindow = null;

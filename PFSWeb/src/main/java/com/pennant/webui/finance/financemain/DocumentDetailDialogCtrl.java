@@ -146,10 +146,9 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_documentDetailDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_documentDetailDialog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -227,9 +226,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -543,7 +541,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		return "";
 	}
 
-	public void onFinDocumentItemDoubleClicked(Event event) throws Exception {
+	public void onFinDocumentItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		// get the selected invoiceHeader object
@@ -610,8 +608,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void updateExistingDocument(DocumentDetails finDocumentDetail, long checklistID, boolean viewProcess)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void updateExistingDocument(DocumentDetails finDocumentDetail, long checklistID, boolean viewProcess) {
 		logger.debug(Literal.ENTERING);
 
 		final Map<String, Object> map = new HashMap<String, Object>();

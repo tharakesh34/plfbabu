@@ -66,7 +66,7 @@ public class GeneralDesignationListModelItemRenderer implements ListitemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, GeneralDesignation generalDesignation, int count) throws Exception {
+	public void render(Listitem item, GeneralDesignation generalDesignation, int count) {
 
 		Listcell lc;
 		lc = new Listcell(generalDesignation.getGenDesignation());

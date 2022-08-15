@@ -18,6 +18,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> implements InterfaceLoggingDAO {
@@ -104,11 +105,8 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 		try {
 			return this.jdbcTemplate.queryForObject(selectsql.toString(), paramMap, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
 		}
 	}
 

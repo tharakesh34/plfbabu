@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -172,11 +171,11 @@ public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDe
 		String sql = "Select coalesce(max(odSeqID), 0)+1 From OverdraftMovements";
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return 1;
+		return this.jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
+	}
+
+	@Override
+	public List<OverdraftScheduleDetail> getOverdraftScheduleForLMSEvent(long finID) {
+		return getOverdraftScheduleDetails(finID, "", false);
 	}
 }

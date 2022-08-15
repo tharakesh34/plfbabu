@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerStatusCodeDAOImpl.java                                       * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerStatusCodeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
@@ -62,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerStatusCode model</b> class.<br>
@@ -77,10 +60,8 @@ public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode> impl
 	/**
 	 * Fetch the Record Customer Status Codes details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerStatusCode
 	 */
 	@Override
@@ -105,23 +86,19 @@ public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode> impl
 		RowMapper<CustomerStatusCode> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerStatusCode.class);
 
 		try {
-			customerStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			customerStatusCode = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerStatusCode;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTCustStatusCodes or BMTCustStatusCodes_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Customer Status Codes by key CustStsCode
 	 * 
-	 * @param Customer
-	 *            Status Codes (customerStatusCode)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Status Codes (customerStatusCode)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -155,10 +132,8 @@ public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode> impl
 	 * 
 	 * save Customer Status Codes
 	 * 
-	 * @param Customer
-	 *            Status Codes (customerStatusCode)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Status Codes (customerStatusCode)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -190,10 +165,8 @@ public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode> impl
 	 * This method updates the Record BMTCustStatusCodes or BMTCustStatusCodes_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Customer Status Codes by key CustStsCode and Version
 	 * 
-	 * @param Customer
-	 *            Status Codes (customerStatusCode)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Status Codes (customerStatusCode)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -274,16 +247,12 @@ public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode> impl
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(odDetails);
 
-		String custStsCode = null;
 		try {
-			custStsCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			custStsCode = null;
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return custStsCode;
 	}
 
 	@Override
@@ -328,10 +297,8 @@ public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode> impl
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 }

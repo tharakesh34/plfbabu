@@ -144,9 +144,8 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	 * selected FacilityReferenceDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FacilityReferenceDetailDialog(Event event) throws Exception {
+	public void onCreate$window_FacilityReferenceDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -441,9 +440,8 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFacilityReferenceDetail
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(FacilityReference aFacilityReference) throws InterruptedException {
+	public void doShowDialog(FacilityReference aFacilityReference) {
 		logger.debug("Entering");
 
 		try {
@@ -912,7 +910,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.facilityReferenceDetail);
 	}
 
@@ -1027,7 +1025,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		callLinakgeZul(facilityReferenceDetail, FinanceConstants.PROCEDT_TEMPLATE);
 	}
 
-	public void onCheckListItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onCheckListItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		// Get the event target
 		Listitem item = (Listitem) event.getOrigin().getTarget();

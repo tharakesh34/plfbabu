@@ -69,7 +69,7 @@ public class CustomerGroupListModelItemRenderer implements ListitemRenderer<Cust
 	}
 
 	@Override
-	public void render(Listitem item, CustomerGroup customerGroup, int count) throws Exception {
+	public void render(Listitem item, CustomerGroup customerGroup, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customerGroup.getCustGrpCode());

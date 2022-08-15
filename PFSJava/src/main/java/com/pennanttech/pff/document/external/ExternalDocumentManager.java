@@ -47,7 +47,7 @@ public class ExternalDocumentManager {
 			amedia = new AMedia(documentDetails.getDocName(), null, null, documentDetails.getDocImage());
 		}
 
-		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
+		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != null) {
 			documentDetails.setDocImage(getDocumentImage(documentDetails.getDocRefId()));
 			amedia = new AMedia(documentDetails.getDocName(), null, null, documentDetails.getDocImage());
 		}
@@ -252,7 +252,7 @@ public class ExternalDocumentManager {
 			amedia = new AMedia(documentDetails.getDocName(), null, null, documentDetails.getDocImage());
 		}
 
-		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
+		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != null) {
 			documentDetails.setDocImage(dMSService.getById(documentDetails.getDocRefId()));
 			amedia = new AMedia(documentDetails.getDocName(), null, null, documentDetails.getDocImage());
 		}

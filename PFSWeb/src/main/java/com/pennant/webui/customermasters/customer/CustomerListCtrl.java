@@ -293,10 +293,8 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 
 	/**
 	 * Build the Customer Dialog Window with Existing Core banking Data
-	 * 
-	 * @throws Exception
 	 */
-	public void buildDialogWindow(CustomerDetails customerDetails, boolean newRecord) throws Exception {
+	public void buildDialogWindow(CustomerDetails customerDetails, boolean newRecord) {
 		logger.debug("Entering");
 		if (customerDetails != null) {
 			if (isWorkFlowEnabled() && customerDetails.getCustomer().getWorkflowId() == 0) {

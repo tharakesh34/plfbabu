@@ -1,47 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectFinReferenceDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-08-2016    														*
- *                                                                  						*
- * Modified Date    :  30-08-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectFinReferenceDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-08-2016 * *
+ * Modified Date : 30-08-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customer;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -76,7 +59,6 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -95,8 +77,6 @@ public class CrmDialogCtrl extends GFCBaseCtrl<CrmDetails> {
 	protected Label custId;
 	protected Label custName;
 
-	private ProcessExecution processExecution = null;
-	private PresentmentDetailExtract fileImport;
 	private FileExtractService<PresentmentDetailExtract> presentmentExtractService;
 
 	protected Window window_CrmDialog; // autoWired
@@ -116,7 +96,7 @@ public class CrmDialogCtrl extends GFCBaseCtrl<CrmDetails> {
 
 	// Component Events
 
-	public void onCreate$window_CrmDialog(Event event) throws Exception {
+	public void onCreate$window_CrmDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		setPageComponents(window_CrmDialog);
 		try {
@@ -189,7 +169,7 @@ public class CrmDialogCtrl extends GFCBaseCtrl<CrmDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnUpload(UploadEvent event) throws IOException {
 		logger.debug(Literal.ENTERING);
 		int row_NumberOfCells = 12;
 		Object valu = SysParamUtil.getValue(SMTParameterConstants.PRESENTMENT_RESPONSE_ROW_LENGTH);
@@ -230,26 +210,6 @@ public class CrmDialogCtrl extends GFCBaseCtrl<CrmDetails> {
 		logger.debug("Leaving");
 	}
 
-	private void renderPannel() {
-		logger.debug(Literal.ENTERING);
-
-		presentmentExtractService.renderPannel(fileImport);
-		processExecution.render();
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void setFileImportData() throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		if (fileImport == null) {
-			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getUserId(),
-					null);
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		Filter[] f1 = new Filter[1];
@@ -277,9 +237,8 @@ public class CrmDialogCtrl extends GFCBaseCtrl<CrmDetails> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		logger.debug("Leaving " + event.toString());

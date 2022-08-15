@@ -36,11 +36,7 @@ public class ValidationUtility {
 
 	private final int MAX_FAULT_MESSAGES = 10;
 
-	/**
-	 * 
-	 * @throws Exception
-	 */
-	public ValidationUtility() throws Exception {
+	public ValidationUtility() {
 		Configuration<?> config = Validation.byDefaultProvider().configure();
 
 		PathMatchingResourcePatternResolver loader = new PathMatchingResourcePatternResolver();
@@ -127,7 +123,7 @@ public class ValidationUtility {
 	}
 
 	/**
-	 * handling field level validations
+	 * Handling field level validations
 	 * 
 	 * @throws ServiceException
 	 */

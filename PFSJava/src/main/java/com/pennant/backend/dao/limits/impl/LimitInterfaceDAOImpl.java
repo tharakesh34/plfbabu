@@ -18,6 +18,7 @@ import com.pennant.backend.model.limits.LimitDetail;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> implements LimitInterfaceDAO {
 	private static Logger logger = LogManager.getLogger(LimitInterfaceDAOImpl.class);
@@ -122,9 +123,9 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 				return flp;
 			}, flps.getFinID(), flps.getRequestType(), flps.getCustCIF());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -162,9 +163,9 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 				return ld;
 			}, limitRef);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -267,9 +268,8 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 
 			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 }

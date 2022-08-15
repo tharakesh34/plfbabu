@@ -67,7 +67,7 @@ public class ExpenseTypeListModelItemRenderer implements ListitemRenderer<Expens
 	}
 
 	@Override
-	public void render(Listitem item, ExpenseType expenseType, int count) throws Exception {
+	public void render(Listitem item, ExpenseType expenseType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(expenseType.getExpenseTypeCode());

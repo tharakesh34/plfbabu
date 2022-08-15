@@ -68,7 +68,7 @@ public class VASRecordingListModelItemRenderer implements ListitemRenderer<VASRe
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, VASRecording vASRecording, int count) throws Exception {
+	public void render(Listitem item, VASRecording vASRecording, int count) {
 
 		Listcell lc;
 		lc = new Listcell(vASRecording.getProductCode());

@@ -34,6 +34,7 @@ import com.pennant.backend.dao.finance.FinAgreementDetailDAO;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinAgreementDetailDAOImpl extends BasicDao<FinAgreementDetail> implements FinAgreementDetailDAO {
 	private static Logger logger = LogManager.getLogger(FinAgreementDetailDAOImpl.class);
@@ -87,10 +88,9 @@ public class FinAgreementDetailDAOImpl extends BasicDao<FinAgreementDetail> impl
 				return fag;
 			}, finID, agrId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

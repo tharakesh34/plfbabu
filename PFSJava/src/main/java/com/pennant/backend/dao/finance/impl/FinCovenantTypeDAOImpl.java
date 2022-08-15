@@ -22,6 +22,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements FinCovenantTypeDAO {
 	private static Logger logger = LogManager.getLogger(FinCovenantTypeDAOImpl.class);
@@ -41,10 +42,9 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 			return this.jdbcOperations.queryForObject(sql.toString(), new FinCovenantTypeRowMapper(type, false),
 					fct.getFinReference(), fct.getCovenantType());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -196,10 +196,9 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 			return this.jdbcOperations.queryForObject(sql.toString(), new FinCovenantTypeRowMapper(type, false),
 					finReference, covenantType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -221,15 +220,8 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		sql.append(" Where FinReference = ? and CovenantType = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, fct.getFinReference(),
-					fct.getCovenantType()) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, fct.getFinReference(),
+				fct.getCovenantType()) > 0;
 	}
 
 	@Override
@@ -248,10 +240,9 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 				return dt;
 			}, "FINANCE", "COLLATERAL", covenantType);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -286,10 +277,9 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 				return sr;
 			}, obj);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -297,27 +287,20 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		String sql = "Select DocTypeCode, Pdd, Otc From BMTdocumentTypes Where Pdd = ? or Otc = ?";
 
 		logger.debug(Literal.SQL + sql);
+		return this.jdbcOperations.query(sql, ps -> {
+			int index = 1;
 
-		try {
-			return this.jdbcOperations.query(sql, ps -> {
-				int index = 1;
+			ps.setInt(index++, 1);
+			ps.setInt(index++, 1);
+		}, (rs, num) -> {
+			DocumentType dt = new DocumentType();
 
-				ps.setInt(index++, 1);
-				ps.setInt(index++, 1);
-			}, (rs, num) -> {
-				DocumentType dt = new DocumentType();
+			dt.setDocTypeCode(rs.getString("DocTypeCode"));
+			dt.setPdd(rs.getBoolean("Pdd"));
+			dt.setOtc(rs.getBoolean("Otc"));
 
-				dt.setDocTypeCode(rs.getString("DocTypeCode"));
-				dt.setPdd(rs.getBoolean("Pdd"));
-				dt.setOtc(rs.getBoolean("Otc"));
-
-				return dt;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+			return dt;
+		});
 	}
 
 	private StringBuilder sqlSelectQuery(String type, boolean isEnquiry) {

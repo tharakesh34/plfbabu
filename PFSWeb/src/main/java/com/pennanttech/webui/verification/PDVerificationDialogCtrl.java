@@ -130,7 +130,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_PDVerificationDialog(Event event) throws Exception {
+	public void onCreate$window_PDVerificationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_PDVerificationDialog);
@@ -211,7 +211,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return null;
 	}
 
-	public void onChnagePdv(ForwardEvent event) throws Exception {
+	public void onChnagePdv(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 
 		Combobox cfiv = (Combobox) getComponent(listitem, "RequestType");
@@ -245,7 +245,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeAgency(ForwardEvent event) throws Exception {
+	public void onChangeAgency(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "Agency");
 		Object dataObject = agency.getObject();
@@ -261,7 +261,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeReInitAgency(ForwardEvent event) throws Exception {
+	public void onChangeReInitAgency(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 		Object dataObject = agency.getObject();
@@ -277,7 +277,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeReason(ForwardEvent event) throws Exception {
+	public void onChangeReason(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reason = (ExtendedCombobox) getComponent(listitem, "Reason");
 		Object dataObject = reason.getObject();
@@ -293,7 +293,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeDecision(ForwardEvent event) throws Exception {
+	public void onChangeDecision(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reInitAgency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 		Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");
@@ -347,10 +347,10 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.listBoxPDVerification.getItems().clear();
 		}
 
-		//set Initiated flag to initiated Records
+		// set Initiated flag to initiated Records
 		setInitiated(this.verification.getVerifications());
 
-		//Render Verifications
+		// Render Verifications
 		int i = 0;
 		for (Verification vrf : this.verification.getVerifications()) {
 			i++;
@@ -749,7 +749,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		//set deleted addresses of Co-Applicant
+		// set deleted addresses of Co-Applicant
 		if (coApplicant) {
 			for (CustomerAddres addr : addresses) {
 				if (deletedJointAccountS.contains(addr.getCustID())) {
@@ -779,7 +779,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				oldVerifications.remove(previous);
 				continue;
 			}
-			//create new Verification if initiated Address has changed
+			// create new Verification if initiated Address has changed
 			Verification current = addressMap.get(previous.getReferenceFor());
 			if (current != null) {
 				for (CustomerAddres newAddress : addresses) {
@@ -819,8 +819,8 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		verifications.addAll(oldVerifications);
 
 		for (Verification item : verifications) {
-			if ((deleteSet.contains(item.getReferenceFor())
-					&& (item.isNewRecord() || !verificationService.isVerificationInRecording(item, VerificationType.PD)))) {
+			if ((deleteSet.contains(item.getReferenceFor()) && (item.isNewRecord()
+					|| !verificationService.isVerificationInRecording(item, VerificationType.PD)))) {
 				item.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
@@ -1201,8 +1201,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction)
-			throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) {
 		logger.debug(Literal.ENTERING);
 		this.userAction = userAction;
 		this.recSave = recSave;

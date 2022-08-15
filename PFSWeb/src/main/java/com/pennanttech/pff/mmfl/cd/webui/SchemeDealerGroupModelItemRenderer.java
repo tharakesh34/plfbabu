@@ -18,7 +18,7 @@ public class SchemeDealerGroupModelItemRenderer implements ListitemRenderer<Sche
 	}
 
 	@Override
-	public void render(Listitem item, SchemeDealerGroup schemeDealerGroup, int count) throws Exception {
+	public void render(Listitem item, SchemeDealerGroup schemeDealerGroup, int count) {
 
 		Listcell lc;
 		lc = new Listcell(schemeDealerGroup.getPromotionId());

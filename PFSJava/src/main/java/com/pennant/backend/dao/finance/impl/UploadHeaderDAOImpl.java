@@ -40,9 +40,11 @@ import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.receiptupload.UploadReceipt;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -99,10 +101,9 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 				return uph;
 			}, uploadId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -114,10 +115,9 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, fileName) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
 	}
 
 	@Override
@@ -257,10 +257,9 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 				return uph;
 			}, uploadId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -411,7 +410,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 
 			});
 		} catch (DataAccessException e) {
-			//
+			throw new DependencyFoundException(e);
 		}
 	}
 
@@ -437,13 +436,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
 	@Override
@@ -470,10 +463,9 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), Boolean.class, uploadID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
 	}
 
 	@Override

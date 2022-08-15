@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MandateDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-10-2016    														*
- *                                                                  						*
- * Modified Date    :  18-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MandateDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2016 * * Modified
+ * Date : 18-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -53,7 +35,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -149,7 +130,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Button btnProcess;
 	protected Button btnView;
 
-	//Added BarCode and Reg Status
+	// Added BarCode and Reg Status
 	protected Uppercasebox barCodeNumber;
 	protected Label amountInWords;
 	protected Label regStatus;
@@ -206,9 +187,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * selected Mandate object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinMandateEnquiryDialog(Event event) throws Exception {
+	public void onCreate$window_FinMandateEnquiryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -463,13 +443,10 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aMandate
-	 *            Mandate
+	 * @param aMandate Mandate
 	 * @param tab
-	 * @throws Exception
-	 * @throws WrongValueException
 	 */
-	public void doWriteBeanToComponents(Mandate aMandate) throws WrongValueException, Exception {
+	public void doWriteBeanToComponents(Mandate aMandate) {
 		logger.debug("Entering");
 		mandateID = aMandate.getMandateID();
 
@@ -490,7 +467,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving");
 	}
 
-	private void doWriteData(Mandate aMandate) throws WrongValueException, Exception {
+	private void doWriteData(Mandate aMandate) {
 
 		if (aMandate.getMandateID() != 0 && aMandate.getMandateID() != Long.MIN_VALUE) {
 			this.mandateRef.setAttribute("mandateID", aMandate.getMandateID());
@@ -546,7 +523,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil
 				.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
 
-		//Entity
+		// Entity
 		this.entityCode.setValue(aMandate.getEntityCode(), aMandate.getEntityDesc());
 
 		if (this.label_PartnerBank.isVisible() && aMandate.getPartnerBankId() != Long.MIN_VALUE
@@ -570,8 +547,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 				lc = new Listcell(finEnquiry.getFinReference());
 				lc.setParent(item);
 
-				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue()
-						.add(finEnquiry.getFeeChargeAmt());
+				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue().add(finEnquiry.getFeeChargeAmt());
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -605,7 +581,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnViewMandateDoc(Event event) throws Exception {
+	public void onClick$btnViewMandateDoc(Event event) {
 		logger.debug("Entering");
 
 		String custCIF = getMandate().getCustCIF();
@@ -638,7 +614,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private String AmtInitialCap() throws WrongValueException, Exception {
+	private String AmtInitialCap() {
 		String amtInWords = NumberToEnglishWords.getNumberToWords(this.maxLimit.getActualValue().toBigInteger());
 
 		String[] words = amtInWords.split(" ");

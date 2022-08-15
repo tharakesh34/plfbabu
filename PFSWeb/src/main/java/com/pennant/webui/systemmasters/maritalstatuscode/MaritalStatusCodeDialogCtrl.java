@@ -99,9 +99,8 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	 * selected MaritalStatusCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_MaritalStatusCodeDialog(Event event) throws Exception {
+	public void onCreate$window_MaritalStatusCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -343,9 +342,8 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aMaritalStatusCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(MaritalStatusCode aMaritalStatusCode) throws Exception {
+	public void doShowDialog(MaritalStatusCode aMaritalStatusCode) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -779,10 +777,8 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.maritalStatusCode);
 	}
 

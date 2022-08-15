@@ -67,7 +67,7 @@ public class DivisionDetailListModelItemRenderer implements ListitemRenderer<Div
 	}
 
 	@Override
-	public void render(Listitem item, DivisionDetail divisionDetail, int count) throws Exception {
+	public void render(Listitem item, DivisionDetail divisionDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(divisionDetail.getDivisionCode());

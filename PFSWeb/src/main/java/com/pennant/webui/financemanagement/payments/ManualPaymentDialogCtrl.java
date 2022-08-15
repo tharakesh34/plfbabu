@@ -337,9 +337,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ManualPaymentDialog(Event event) throws Exception {
+	public void onCreate$window_ManualPaymentDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -600,7 +599,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		int finformatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		;
 
 		Customer customer = null;
 		if (getFinanceDetail().getCustomerDetails() != null
@@ -1470,16 +1468,15 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method for event of Changing Repayment Amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPay(Event event) throws Exception {
+	public void onClick$btnPay(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
 	@SuppressWarnings("unused")
-	public void doSave() throws WrongValueException, InterruptedException {
+	public void doSave() {
 		logger.debug("Entering");
 
 		try {
@@ -1577,10 +1574,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param finSchDetails
 	 * @param repayInstructions
 	 * @param schdlReModified
-	 * @throws Exception
 	 */
 	private void processRepayScheduleList(FinanceMain aFinanceMain, List<FinanceScheduleDetail> finSchDetails,
-			List<RepayInstruction> repayInstructions, boolean schdlReModified) throws Exception {
+			List<RepayInstruction> repayInstructions, boolean schdlReModified) {
 		logger.debug("Entering");
 
 		RepayData data = new RepayData();
@@ -1865,7 +1861,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	public void onSelectAgreementDetailTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException {
+			throws IllegalAccessException, InvocationTargetException, InterruptedException {
 		this.doWriteComponentsToBean(false);
 
 		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
@@ -1881,10 +1877,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
@@ -1910,11 +1904,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -2098,9 +2089,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doProcess(RepayData aRepayData, String tranType) throws InterruptedException {
+	protected boolean doProcess(RepayData aRepayData, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -2206,9 +2196,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws InterruptedException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -2893,9 +2882,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeDetail.getFinScheduleData().getFinanceMain());
 	}
 

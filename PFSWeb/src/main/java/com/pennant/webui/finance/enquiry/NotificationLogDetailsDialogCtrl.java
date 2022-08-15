@@ -71,7 +71,7 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<Notification> 
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_NotificationLogEnquiryDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_NotificationLogEnquiryDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -102,7 +102,7 @@ public class NotificationLogDetailsDialogCtrl extends GFCBaseCtrl<Notification> 
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		logger.debug("Entering");
 
 		try {

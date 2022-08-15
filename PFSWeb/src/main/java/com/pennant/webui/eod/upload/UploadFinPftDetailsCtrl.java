@@ -21,7 +21,7 @@ public class UploadFinPftDetailsCtrl extends GFCBaseCtrl<Object> {
 	public static final Logger logger = LogManager.getLogger(UploadFinPftDetailsCtrl.class);
 
 	protected Window window_UploadFinPftDetails;
-	protected Button btnUpload; //autowire
+	protected Button btnUpload; // autowire
 	protected Timer timer;
 
 	ProcessExecution processs;
@@ -41,7 +41,7 @@ public class UploadFinPftDetailsCtrl extends GFCBaseCtrl<Object> {
 	int calcPercentage = 0;
 	int postingPercentage = 0;
 
-	public void onCreate$window_UploadFinPftDetails(Event event) throws Exception {
+	public void onCreate$window_UploadFinPftDetails(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -94,9 +94,8 @@ public class UploadFinPftDetailsCtrl extends GFCBaseCtrl<Object> {
 	 * Method for Rendering Step Execution Details List
 	 * 
 	 * @param stepExecution
-	 * @throws Exception
 	 */
-	private void doFillExecutions(UploadProfitDetailProcess process) throws Exception {
+	private void doFillExecutions(UploadProfitDetailProcess process) {
 		logger.debug("Entering");
 		this.processs.setProcess(process.getStatus());
 		this.processs.render();

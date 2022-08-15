@@ -1,6 +1,7 @@
 package com.pennant.webui.finance.financemain;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,7 +104,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		super.pageRightName = "FinanceTaxDetailDialog";
 	}
 
-	public void onCreate$window_FinTaxUploadDetail(Event event) throws Exception {
+	public void onCreate$window_FinTaxUploadDetail(Event event) {
 
 		logger.debug("Entering");
 
@@ -186,9 +187,9 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	 * when the "Upload" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnUpload(UploadEvent event) throws IOException {
 		logger.debug("Entering" + event.toString());
 		boolean header = true;
 		List<FinTaxUploadDetail> finTaxUploadDetailList = new ArrayList<>();
@@ -434,9 +435,8 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		doSave();
 	}
 

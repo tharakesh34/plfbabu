@@ -66,7 +66,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 
 	// Component Events
 
-	public void onCreate$window_PresentmentReasonCodeDialog(Event event) throws Exception {
+	public void onCreate$window_PresentmentReasonCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -183,10 +183,8 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.presentmentReasonCode);
 	}
 
@@ -198,10 +196,9 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aPresentmentReasonCode
-	 * @throws Exception
 	 */
 
-	public void doShowDialog(PresentmentReasonCode aPresentmentReasonCode) throws Exception {
+	public void doShowDialog(PresentmentReasonCode aPresentmentReasonCode) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.

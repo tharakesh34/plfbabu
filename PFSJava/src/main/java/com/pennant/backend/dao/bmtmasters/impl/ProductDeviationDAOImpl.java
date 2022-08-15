@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProductDeviationDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-11-2011    														*
- *                                                                  						*
- * Modified Date    :  19-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProductDeviationDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-11-2011 * *
+ * Modified Date : 19-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-11-2011       Pennant~	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-11-2011 Pennant~ 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -62,6 +44,7 @@ import com.pennant.backend.model.bmtmasters.ProductDeviation;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ProductDeviation model</b> class.<br>
@@ -109,10 +92,8 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 	/**
 	 * Fetch the Record Product Deviation Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Product Deviation
 	 */
 	@Override
@@ -138,23 +119,19 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 		RowMapper<ProductDeviation> typeRowMapper = BeanPropertyRowMapper.newInstance(ProductDeviation.class);
 
 		try {
-			productDeviation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			productDeviation = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return productDeviation;
 	}
 
 	/**
 	 * This method updates the Record ProductDeviations or ProductDeviations_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Product Deviation Details by key FinType and Version
 	 * 
-	 * @param Product
-	 *            Deviation (productDeviation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Product Deviation (productDeviation)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -213,10 +190,8 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 	 * This method Deletes the Record from the ProductDeviations or ProductDeviations_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Product Deviation Details by key ProductCode
 	 * 
-	 * @param Product
-	 *            Deviation Details (productDeviation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Product Deviation Details (productDeviation)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -252,10 +227,8 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 	 *
 	 * save Product Deviation Details
 	 * 
-	 * @param Product
-	 *            Deviations Details (productDeviation)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Product Deviations Details (productDeviation)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -313,7 +286,7 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 	@Override
 	public boolean isExistsDeviationID(long deviationID, String type) {
 		logger.debug("Entering");
-		int count = 0;
+
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("DeviationID", deviationID);
 
@@ -322,15 +295,7 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 		selectSql.append(" Where DeviationID = :DeviationID");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-		logger.debug("Leaving");
 
-		return count > 0 ? true : false;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class) > 0;
 	}
-
 }

@@ -3,11 +3,13 @@ package com.pennanttech.pff.subvention.dao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.subventionprocess.model.SubventionProcess;
 
@@ -73,24 +75,23 @@ public class SubventionProcessDAOImpl extends SequenceDao<SubventionProcess> imp
 
 	@Override
 	public long getLinkedTranIdByHostReference(String hostReference) {
-
 		logger.debug(Literal.ENTERING);
+
 		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = null;
 
 		sql = new StringBuilder();
 		sql.append(" Select LinkedTranId from SUBVENTION_REQUEST");
 		sql.append("  WHERE HOSTREFERENCE = :HOSTREFERENCE");
-		logger.debug("Sql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("HOSTREFERENCE", hostReference);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return 0;
 		}
 	}

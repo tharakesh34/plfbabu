@@ -112,7 +112,6 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
@@ -228,9 +227,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinWriteoffDialog(Event event) throws Exception {
+	public void onCreate$window_FinWriteoffDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -240,13 +238,12 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			if (arguments.containsKey("financeWriteoffHeader")) {
 				setFinanceWriteoffHeader((FinanceWriteoffHeader) arguments.get("financeWriteoffHeader"));
-				FinanceMain befImage = new FinanceMain();
 				setFinanceDetail(getFinanceWriteoffHeader().getFinanceDetail());
 				financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				financeWriteoff = getFinanceWriteoffHeader().getFinanceWriteoff();
 
 				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(financeMain);
+				FinanceMain befImage = cloner.deepClone(financeMain);
 				getFinanceWriteoffHeader().getFinanceDetail().getFinScheduleData().getFinanceMain()
 						.setBefImage(befImage);
 
@@ -642,9 +639,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method for Calculate Write-off Effect Schedule
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnWriteoffCal(Event event) throws Exception {
+	public void onClick$btnWriteoffCal(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (!isValidated()) {
@@ -675,8 +671,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private List<FinanceScheduleDetail> calScheduleWriteOffDetails(FinanceWriteoffHeader financeWriteoffHeader)
-			throws IllegalAccessException, InvocationTargetException {
+	private List<FinanceScheduleDetail> calScheduleWriteOffDetails(FinanceWriteoffHeader financeWriteoffHeader) {
 		logger.debug("Entering");
 
 		// Copy Total Finance Schedule Data for Calculation without Effecting the Original Schedule Data
@@ -864,9 +859,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method for Calculate Write-off Effect Schedule
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnWriteoffReCal(Event event) throws Exception {
+	public void onClick$btnWriteoffReCal(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		this.writeoffPriAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffPriAmt"));
@@ -884,7 +878,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private boolean isValidated() throws InterruptedException {
+	private boolean isValidated() {
 		logger.debug("Entering");
 
 		if ((this.writeoffPriAmt.getValue() == null || this.writeoffPriAmt.getValue().compareTo(BigDecimal.ZERO) <= 0)
@@ -995,9 +989,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method for event of Changing Repayment Amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnWriteoffPay(Event event) throws Exception {
+	public void onClick$btnWriteoffPay(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		boolean isDataChanged = false;
@@ -1013,9 +1006,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return;
 		}
 
-		FinanceWriteoffHeader aFinanceWriteoffHeader = new FinanceWriteoffHeader();
 		Cloner cloner = new Cloner();
-		aFinanceWriteoffHeader = cloner.deepClone(getFinanceWriteoffHeader());
+		FinanceWriteoffHeader aFinanceWriteoffHeader = cloner.deepClone(getFinanceWriteoffHeader());
 		FinanceDetail aFinanceDetail = aFinanceWriteoffHeader.getFinanceDetail();
 
 		aFinanceDetail.getFinScheduleData().setFinanceScheduleDetails(
@@ -1246,10 +1238,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doProcess(FinanceWriteoffHeader aFinanceWriteoffHeader, String tranType)
-			throws InterruptedException, InterfaceException {
+	protected boolean doProcess(FinanceWriteoffHeader aFinanceWriteoffHeader, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -1360,10 +1350,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws InterruptedException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method)
-			throws InterruptedException, InterfaceException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1507,9 +1495,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		this.btnNotes.setSclass("");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
@@ -1540,10 +1527,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
@@ -1569,11 +1554,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
@@ -1614,8 +1596,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail) {
 
 		Date curBDay = DateUtility.getAppDate();
 
@@ -1669,9 +1650,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		return aeEvent;
 	}
 
-	private void prepareDisbInstructionPosting(List<ReturnDataSet> accountingSetEntries, AEEvent aeEvent)
-			throws Exception {
-
+	private void prepareDisbInstructionPosting(List<ReturnDataSet> accountingSetEntries, AEEvent aeEvent) {
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setAccountingEvent(AccountingEvent.DISBINS);
 		List<FinAdvancePayments> advPayList = getFinanceDetail().getAdvancePaymentsList();

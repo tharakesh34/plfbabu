@@ -61,7 +61,7 @@ public class SecurityOperationListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = -3424682216721299542L;
 
 	@Override
-	public void render(Listitem item, SecurityOperation data, int count) throws Exception {
+	public void render(Listitem item, SecurityOperation data, int count) {
 
 		final SecurityOperation securityOperation = (SecurityOperation) data;
 		Listcell lc;

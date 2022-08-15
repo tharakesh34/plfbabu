@@ -111,9 +111,8 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 * selected DedupFields object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DedupFieldsDialog(Event event) throws Exception {
+	public void onCreate$window_DedupFieldsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -337,9 +336,8 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDedupFields
-	 * @throws Exception
 	 */
-	public void doShowDialog(DedupFields aDedupFields) throws Exception {
+	public void doShowDialog(DedupFields aDedupFields) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -777,7 +775,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.dedupFields);
 	}
 

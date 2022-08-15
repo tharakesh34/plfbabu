@@ -89,7 +89,6 @@ import com.pennant.backend.model.finance.LinkedFinances;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
 import com.pennant.backend.service.finance.ChangeTDSService;
@@ -252,10 +251,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinanceSelect(Event event) throws Exception {
+	public void onCreate$window_FinanceSelect(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (event.getTarget() != null && event.getTarget().getParent() != null
@@ -1229,7 +1227,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	// When item double clicked
 	@SuppressWarnings("rawtypes")
-	public void onFinanceItemDoubleClicked(Event event) throws Exception {
+	public void onFinanceItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		final Listitem item;
 		if (isDashboard && isDetailScreen) {
@@ -1397,7 +1395,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void openExtendedFieldsMaintanceDialog(Listitem item) throws Exception {
+	private void openExtendedFieldsMaintanceDialog(Listitem item) {
 
 		logger.debug(Literal.ENTERING);
 		// get the selected FinanceMain object
@@ -1476,7 +1474,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	}
 
-	private void showExtendedFieldsMaintainDetailView(ExtendedFieldMaintenance fldMnt, long finID) throws Exception {
+	private void showExtendedFieldsMaintainDetailView(ExtendedFieldMaintenance fldMnt, long finID) {
 
 		logger.debug("Entering");
 
@@ -1526,7 +1524,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	}
 
-	private void openFinanceMainDialog(Listitem item) throws Exception {
+	private void openFinanceMainDialog(Listitem item) {
 		logger.debug("Entering ");
 		// get the selected FinanceMain object
 
@@ -1536,8 +1534,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// Validate Loan is INPROGRESS in any Other Servicing option or NOT
 			// ?
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getFinID(),
-					"_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getFinID());
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference=?";
@@ -1655,7 +1652,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving ");
 	}
 
-	private void openFinMaintenanceDialog(Listitem item) throws Exception {
+	private void openFinMaintenanceDialog(Listitem item) {
 		logger.debug(Literal.ENTERING);
 
 		if (item == null) {
@@ -1667,7 +1664,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		long finID = aFm.getFinID();
 		String finRef = aFm.getFinReference();
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 		String whereCond1 = " Where FinReference = ?";
 
 		if (!doCheckAuthority(aFm, whereCond1, new Object[] { finRef })) {
@@ -1750,7 +1747,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void openFinanceRepaymentDialog(Listitem item) throws Exception {
+	private void openFinanceRepaymentDialog(Listitem item) {
 		logger.debug(Literal.ENTERING);
 
 		if (item == null) {
@@ -1763,7 +1760,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		String finRef = aFm.getFinReference();
 		long finID = aFm.getFinID();
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond1 = " where FinReference=?";
@@ -1850,7 +1847,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void openFinanceReceiptDialog(Listitem item) throws Exception {
+	private void openFinanceReceiptDialog(Listitem item) {
 		logger.debug(Literal.ENTERING);
 
 		if (item == null) {
@@ -1862,7 +1859,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		long finID = aFinanceMain.getFinID();
 		String finRef = aFinanceMain.getFinReference();
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond1 = " where FinReference=?";
@@ -1960,7 +1957,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 	}
 
-	private void openFinanceWriteoffDialog(Listitem item) throws Exception {
+	private void openFinanceWriteoffDialog(Listitem item) {
 		logger.debug(Literal.ENTERING);
 
 		if (item != null) {
@@ -1969,7 +1966,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			long finID = aFinanceMain.getFinID();
 			String finRef = aFinanceMain.getFinReference();
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference=?";
@@ -2087,7 +2084,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void openFinanceCancellationDialog(Listitem item) throws Exception {
+	private void openFinanceCancellationDialog(Listitem item) {
 		logger.debug(Literal.ENTERING);
 
 		if (item == null) {
@@ -2099,7 +2096,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		long finID = fm.getFinID();
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond1 = " where FinID = ?";
@@ -2181,7 +2178,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Check Repayments on Finance when it is not in Maintenance
 		if (StringUtils.isEmpty(maintainSts)) {
 			List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
-			listFinanceRepayments = financeDetailService.getFinanceRepaymentsByFinRef(finID, false);
+			listFinanceRepayments = financeDetailService.getFinRepayList(finID);
 			if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
 				boolean onlyBPIPayment = true;
 				for (FinanceRepayments financeRepayments : listFinanceRepayments) {
@@ -2254,9 +2251,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Method for Fetching Finance Repayment Details
 	 * 
 	 * @param item
-	 * @throws Exception
 	 */
-	private void openFinanceRepayCancelDialog(Listitem item) throws Exception {
+	private void openFinanceRepayCancelDialog(Listitem item) {
 		logger.debug("Entering ");
 		// get the selected FinanceMain object
 
@@ -2266,7 +2262,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			long finID = aFinanceMain.getFinID();
 			String finRef = aFinanceMain.getFinReference();
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference=?";
@@ -2358,9 +2354,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
 	 * @param FinanceMain (aFinanceMain)
-	 * @throws Exception
 	 */
-	private void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
+	private void showDetailView(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
@@ -2421,9 +2416,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
 	 * @param FinanceMain (aFinanceMain)
-	 * @throws Exception
 	 */
-	private void showMaintainDetailView(FinanceDetail aFinanceDetail) throws Exception {
+	private void showMaintainDetailView(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
 
 		/*
@@ -2462,9 +2456,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
 	 * @param FinanceMain (aFinanceMain)
-	 * @throws Exception
 	 */
-	private void showRepayDetailView(RepayData repayData) throws Exception {
+	private void showRepayDetailView(RepayData repayData) {
 		logger.debug("Entering");
 
 		/*
@@ -2497,9 +2490,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
 	 * @param FinanceMain (aFinanceMain)
-	 * @throws Exception
 	 */
-	private void showReceiptDetailView(FinReceiptData receiptData) throws Exception {
+	private void showReceiptDetailView(FinReceiptData receiptData) {
 		logger.debug("Entering");
 
 		/*
@@ -2532,9 +2524,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
 	 * @param FinanceMain (aFinanceMain)
-	 * @throws Exception
 	 */
-	private void showWriteoffDetailView(FinanceWriteoffHeader writeoffHeader) throws Exception {
+	private void showWriteoffDetailView(FinanceWriteoffHeader writeoffHeader) {
 		logger.debug("Entering");
 
 		/*
@@ -2570,41 +2561,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
 	 * @param FinanceMain (aFinanceMain)
-	 * @throws Exception
 	 */
-	private void showTakafulPremiumExcludefDetailView(FeeRule feeRule) throws Exception {
-		logger.debug("Entering");
-
-		/*
-		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
-		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
-		 */
-		map.put("feeRule", feeRule);
-		map.put("moduleCode", moduleDefiner);
-		map.put("moduleDefiner", moduleDefiner);
-		map.put("menuItemRightName", menuItemRightName);
-		map.put("financeSelectCtrl", this);
-		map.put("financeMain", getFinanceMain());
-		map.put("eventCode", eventCodeRef);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Payments/TakaFulPremiumExcludeDialog.zul",
-					null, map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Opens the detail view. <br>
-	 * Over handed some parameters in a map if needed. <br>
-	 * 
-	 * @param FinanceMain (aFinanceMain)
-	 * @throws Exception
-	 */
-	private void showCancellationDetailView(FinanceDetail financeDetail) throws Exception {
+	private void showCancellationDetailView(FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
 		/*
@@ -2638,9 +2596,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
 	 * @param FinanceMain (aFinanceMain)
-	 * @throws Exception
 	 */
-	private void showRepayCancelView(FinanceDetail financeDetail) throws Exception {
+	private void showRepayCancelView(FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
 		/*
@@ -2674,9 +2631,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * 
 	 * @param item
-	 * @throws Exception
 	 */
-	private void openFinCovenantMaintanceDialog(Listitem item) throws Exception {
+	private void openFinCovenantMaintanceDialog(Listitem item) {
 		logger.debug("Entering ");
 		// get the selected FinanceMain object
 
@@ -2686,7 +2642,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			long finID = aFinanceMain.getFinID();
 			String finRef = aFinanceMain.getFinReference();
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference=?";
@@ -2786,7 +2742,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving ");
 	}
 
-	private void openFinCollateralsMaintanceDialog(Listitem item) throws Exception {
+	private void openFinCollateralsMaintanceDialog(Listitem item) {
 
 		logger.debug(Literal.ENTERING);
 
@@ -2813,7 +2769,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -2890,7 +2846,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void openFinFinoptionMaintanceDialog(Listitem item) throws Exception {
+	private void openFinFinoptionMaintanceDialog(Listitem item) {
 		logger.debug(Literal.ENTERING);
 
 		if (item == null) {
@@ -2908,7 +2864,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -3001,9 +2957,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * 
 	 * @param item
-	 * @throws Exception
 	 */
-	private void openFeeWaiverHeaderDialog(Listitem item) throws Exception {
+	private void openFeeWaiverHeaderDialog(Listitem item) {
 		logger.debug(Literal.ENTERING);
 
 		if (item == null) {
@@ -3021,7 +2976,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -3121,7 +3076,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void openLinkDelinkMaintenanceDialog(Listitem item) throws Exception {
+	private void openLinkDelinkMaintenanceDialog(Listitem item) {
 
 		logger.debug(Literal.ENTERING);
 
@@ -3248,7 +3203,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	private void showFinCovenantMaintanceView(FinMaintainInstruction finMaintainInstruction,
-			FinanceDetail financeDetail) throws Exception {
+			FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		if (finMaintainInstruction.getWorkflowId() == 0 && isWorkFlowEnabled()) {
@@ -3282,7 +3237,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void showFinCollateralMaintanceView(FinMaintainInstruction fmi, FinanceDetail fd) throws Exception {
+	private void showFinCollateralMaintanceView(FinMaintainInstruction fmi, FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
 		if (fmi.getWorkflowId() == 0 && isWorkFlowEnabled()) {
@@ -3314,7 +3269,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void showFinOptionMaintanceView(FinMaintainInstruction fmi, FinanceDetail fd) throws Exception {
+	private void showFinOptionMaintanceView(FinMaintainInstruction fmi, FinanceDetail fd) {
 		logger.debug("Entering");
 
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -3374,8 +3329,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		return arrayList;
 	}
 
-	private void showFeeWaiverHeaderView(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail)
-			throws Exception {
+	private void showFeeWaiverHeaderView(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
 		if (feeWaiverHeader.getWorkflowId() == 0 && isWorkFlowEnabled()) {
@@ -3639,9 +3593,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Call the FinanceMain dialog with a new empty entry. <br>
+	 * Call the FinanceMain dialog with a new empty entry.
 	 */
-	public void onClick$btnNew(Event event) throws Exception {
+	public void onClick$btnNew(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		/*
@@ -3793,7 +3747,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		return arrayRoleCode;
 	}
 
-	private void openFinChangeTDSMaintanceDialog(Listitem item) throws Exception {
+	private void openFinChangeTDSMaintanceDialog(Listitem item) {
 		logger.debug("Entering ");
 		// get the selected FinanceMain object
 
@@ -3806,7 +3760,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference = ?";
@@ -3973,9 +3927,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * 
 	 * @param item
-	 * @throws Exception
 	 */
-	private void openLoanDownsizingDialog(Listitem item) throws Exception {
+	private void openLoanDownsizingDialog(Listitem item) {
 		logger.debug("Entering ");
 
 		if (item != null) {
@@ -3984,7 +3937,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 			long finID = aFinanceMain.getFinID();
 			String finRef = aFinanceMain.getFinReference();
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));

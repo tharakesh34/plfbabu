@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitStructureDAOImpl.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitStructureDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * *
+ * Modified Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.limit.impl;
 
@@ -62,6 +44,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>LimitStructure model</b> class.<br>
@@ -108,10 +91,8 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 	/**
 	 * Fetch the Record Limit Structure details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LimitStructure
 	 */
 	@Override
@@ -134,23 +115,19 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 		RowMapper<LimitStructure> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructure.class);
 
 		try {
-			limitStructure = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//logger.warn("Exception: ", e);
-			limitStructure = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return limitStructure;
 	}
 
 	/**
 	 * This method Deletes the Record from the LimitStructure or LimitStructure_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Limit Structure by key StructureCode
 	 * 
-	 * @param Limit
-	 *            Structure (limitStructure)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Structure (limitStructure)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -182,15 +159,12 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 	 *
 	 * save Limit Structure
 	 * 
-	 * @param Limit
-	 *            Structure (limitStructure)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Structure (limitStructure)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public String save(LimitStructure limitStructure, String type) {
 		logger.debug("Entering");
@@ -216,15 +190,12 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 	 * This method updates the Record LimitStructure or LimitStructure_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Limit Structure by key StructureCode and Version
 	 * 
-	 * @param Limit
-	 *            Structure (limitStructure)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Structure (limitStructure)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public void update(LimitStructure limitStructure, String type) {
 		int recordCount = 0;
@@ -273,16 +244,8 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitStructure);
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitStructure);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
 	}
 
 	@Override

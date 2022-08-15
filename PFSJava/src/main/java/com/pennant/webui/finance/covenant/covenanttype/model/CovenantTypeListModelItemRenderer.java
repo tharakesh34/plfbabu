@@ -70,7 +70,7 @@ public class CovenantTypeListModelItemRenderer implements ListitemRenderer<Coven
 	}
 
 	@Override
-	public void render(Listitem item, CovenantType covenantType, int count) throws Exception {
+	public void render(Listitem item, CovenantType covenantType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(covenantType.getCode());

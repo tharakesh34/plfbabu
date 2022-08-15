@@ -69,7 +69,7 @@ public class LovFieldCodeListModelItemRenderer implements ListitemRenderer<LovFi
 	}
 
 	@Override
-	public void render(Listitem item, LovFieldCode lovFieldCode, int count) throws Exception {
+	public void render(Listitem item, LovFieldCode lovFieldCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(lovFieldCode.getFieldCode());

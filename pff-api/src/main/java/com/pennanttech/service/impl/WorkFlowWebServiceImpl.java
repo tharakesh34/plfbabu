@@ -161,7 +161,6 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
 	 * 
 	 * @param response
-	 * @throws Exception
 	 */
 	private void doEmptyResponseObject(WorkFlowDetails response) {
 		response.setWorkFlowType(null);

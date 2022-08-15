@@ -1,55 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityUserAccessDAOImpl.java    		                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  30-07-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityUserAccessDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * *
+ * Modified Date : 30-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *  30-07-2011      Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-07-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.administration.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -61,6 +41,7 @@ import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -131,13 +112,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<Branch> typeRowMapper = BeanPropertyRowMapper.newInstance(Branch.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), typeRowMapper);
 	}
 
 	@Override
@@ -174,13 +149,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 
 		RowMapper<Cluster> typeRowMapper = BeanPropertyRowMapper.newInstance(Cluster.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	private int getChilds(String entity, String clusterType) {
@@ -196,19 +165,6 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 		parameterSource.addValue("entity", entity);
 
 		return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, Integer.class);
-	}
-
-	private Long getParentId(Long clusterId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select parent from clusters");
-		sql.append(" where id = :id");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("id", clusterId);
-
-		return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, Long.class);
 	}
 
 	@Override
@@ -258,7 +214,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 			this.jdbcTemplate.update(sql1.toString(), parameterSource);
 
 		} catch (DataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			throw new DependencyFoundException(e);
 		}
 		logger.debug(Literal.LEAVING);
 
@@ -277,13 +233,8 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("ClusterId", clusterId);
 		RowMapper<SecurityUserAccess> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUserAccess.class);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	@Override

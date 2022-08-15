@@ -3,7 +3,6 @@ package com.pennant.backend.dao.finance.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,15 +48,8 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 		logger.debug("selectSql : " + selectSql.toString());
 		RowMapper<Taxes> typeRowMapper = BeanPropertyRowMapper.newInstance(Taxes.class);
-		try {
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION);
-			logger.debug(Literal.LEAVING);
-			return new ArrayList<Taxes>();
-		}
 
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override

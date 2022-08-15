@@ -41,6 +41,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>VasMovementDetail model</b> class.<br>
@@ -66,40 +67,34 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), ps -> {
-				ps.setLong(1, id);
-			}, (rs, rowNum) -> {
-				VasMovementDetail vmd = new VasMovementDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, id);
+		}, (rs, rowNum) -> {
+			VasMovementDetail vmd = new VasMovementDetail();
 
-				vmd.setVasMovementId(rs.getLong("VasMovementId"));
-				vmd.setVasMovementDetailId(rs.getLong("VasMovementDetailId"));
-				vmd.setFinID(rs.getLong("FinID"));
-				vmd.setFinReference(rs.getString("FinReference"));
-				vmd.setVasReference(rs.getString("VasReference"));
-				vmd.setMovementDate(rs.getDate("MovementDate"));
-				vmd.setMovementAmt(rs.getBigDecimal("MovementAmt"));
-				vmd.setVasProvider(rs.getString("VasProvider"));
-				vmd.setVasProduct(rs.getString("VasProduct"));
-				vmd.setVasAmount(rs.getBigDecimal("VasAmount"));
-				vmd.setVersion(rs.getInt("Version"));
-				vmd.setLastMntBy(rs.getLong("LastMntBy"));
-				vmd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				vmd.setRecordStatus(rs.getString("RecordStatus"));
-				vmd.setRoleCode(rs.getString("RoleCode"));
-				vmd.setNextRoleCode(rs.getString("NextRoleCode"));
-				vmd.setTaskId(rs.getString("TaskId"));
-				vmd.setNextTaskId(rs.getString("NextTaskId"));
-				vmd.setRecordType(rs.getString("RecordType"));
-				vmd.setWorkflowId(rs.getLong("WorkflowId"));
+			vmd.setVasMovementId(rs.getLong("VasMovementId"));
+			vmd.setVasMovementDetailId(rs.getLong("VasMovementDetailId"));
+			vmd.setFinID(rs.getLong("FinID"));
+			vmd.setFinReference(rs.getString("FinReference"));
+			vmd.setVasReference(rs.getString("VasReference"));
+			vmd.setMovementDate(rs.getDate("MovementDate"));
+			vmd.setMovementAmt(rs.getBigDecimal("MovementAmt"));
+			vmd.setVasProvider(rs.getString("VasProvider"));
+			vmd.setVasProduct(rs.getString("VasProduct"));
+			vmd.setVasAmount(rs.getBigDecimal("VasAmount"));
+			vmd.setVersion(rs.getInt("Version"));
+			vmd.setLastMntBy(rs.getLong("LastMntBy"));
+			vmd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			vmd.setRecordStatus(rs.getString("RecordStatus"));
+			vmd.setRoleCode(rs.getString("RoleCode"));
+			vmd.setNextRoleCode(rs.getString("NextRoleCode"));
+			vmd.setTaskId(rs.getString("TaskId"));
+			vmd.setNextTaskId(rs.getString("NextTaskId"));
+			vmd.setRecordType(rs.getString("RecordType"));
+			vmd.setWorkflowId(rs.getLong("WorkflowId"));
 
-				return vmd;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+			return vmd;
+		});
 	}
 
 	public void delete(VasMovementDetail vmd, String type) {
@@ -242,9 +237,8 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference, finStartDate,
 					finEndDate);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-
-		return BigDecimal.ZERO;
 	}
 }

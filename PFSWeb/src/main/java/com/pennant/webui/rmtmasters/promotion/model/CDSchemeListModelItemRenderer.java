@@ -67,7 +67,7 @@ public class CDSchemeListModelItemRenderer implements ListitemRenderer<Promotion
 	}
 
 	@Override
-	public void render(Listitem item, Promotion promotion, int count) throws Exception {
+	public void render(Listitem item, Promotion promotion, int count) {
 
 		Listcell lc;
 		lc = new Listcell(promotion.getFinType());

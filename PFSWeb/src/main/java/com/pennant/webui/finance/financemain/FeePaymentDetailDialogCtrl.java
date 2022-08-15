@@ -127,9 +127,8 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 	 * selected FeePaymentDetailDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FeePaymentDetailDialog(Event event) throws Exception {
+	public void onCreate$window_FeePaymentDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -173,7 +172,6 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 
 				if (arguments.containsKey("ccyFormatter")) {
 					ccyFormatter = (Integer) arguments.get("ccyFormatter");
-					;
 				}
 
 				if (arguments.containsKey("newRecord")) {
@@ -281,10 +279,8 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.feePaymentDetail);
 	}
 

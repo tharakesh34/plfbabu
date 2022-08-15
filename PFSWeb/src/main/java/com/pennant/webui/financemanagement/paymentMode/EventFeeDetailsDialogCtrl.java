@@ -62,7 +62,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 	private boolean isLoanClosure = false;
 	private ReceiptCalculator receiptCalculator;
 
-	public void onCreate$window_EventFeeDetails(Event event) throws Exception {
+	public void onCreate$window_EventFeeDetails(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -191,7 +191,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 
 	}
 
-	public void onAllocatePaidChange(ForwardEvent event) throws Exception {
+	public void onAllocatePaidChange(ForwardEvent event) {
 		String id = "NewPercentage";
 		CurrencyBox newPercentage = (CurrencyBox) this.listDetails.getFellow(id);
 		newPercent = newPercentage.getValidateValue();
@@ -213,7 +213,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 						RoundingMode.HALF_DOWN);
 
 				if (StringUtils.equals(feeDetail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinID());
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain);
 					BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
 					BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4,
 							RoundingMode.HALF_DOWN);

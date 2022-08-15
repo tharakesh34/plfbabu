@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CurrencyDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CurrencyDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified Date
+ * : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
@@ -66,6 +48,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -83,10 +66,8 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 	/**
 	 * Fetch the Record Currency details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Currency
 	 */
 	@Override
@@ -166,10 +147,8 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 	/**
 	 * Fetch the Record Currency details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Currency
 	 */
 	@Override
@@ -187,45 +166,38 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		try {
-			currency = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			currency = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving ");
-		return currency;
 	}
 
 	/**
 	 * Fetch the Record Currency details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ValueLabel
 	 */
 	@Override
 	public String getCurrencyById(final String id) {
-		//logger.debug("Entering ");
-		String ccyCode = null;
+		// logger.debug("Entering ");
 		Currency currency = new Currency();
 		currency.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("SELECT CcyNumber FROM  RMTCurrencies");
 		selectSql.append(" Where CcyCode =:CcyCode");
 
-		//logger.trace(Literal.SQL + selectSql.toString());
+		// logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 
 		try {
-			ccyCode = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			//	logger.error("Exception: ", e);
-			ccyCode = "";
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
 		}
-		//logger.debug("Leaving ");
-		return ccyCode;
 	}
 
 	@Override
@@ -400,10 +372,8 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 	/**
 	 * Fetch the Record Currency details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ValueLabel
 	 */
 	@Override
@@ -425,7 +395,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 
 	@Override
 	public Currency getCurrency(String ccy) {
-		//	logger.debug("Entering ");
+		// logger.debug("Entering ");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CcyCode", ccy);
@@ -438,7 +408,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		Currency currencies = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-		//logger.debug("Leaving");
+		// logger.debug("Leaving");
 		return currencies;
 	}
 
@@ -482,7 +452,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 				return true;
 			}
 		} catch (EmptyResultDataAccessException ex) {
-			logger.warn("Exception: ", ex);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return false;
 		}
 		return false;

@@ -142,7 +142,7 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_CoreProvisionList(Event event) throws Exception {
+	public void onCreate$window_CoreProvisionList(Event event) {
 		// Set the page level components.
 		setPageComponents(window_CoreProvisionList, borderLayout_CoreProvisionList, listBoxProvisions,
 				pagingCoreProvisionList);
@@ -212,7 +212,7 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onProvisionItemChecked(Event event) throws Exception {
+	public void onProvisionItemChecked(Event event) {
 		logger.debug("Entering");
 		if (this.listBoxProvisions.getSelectedCount() > 0) {
 			this.button_ProvisionsList_ProvisionProcess.setVisible(true);

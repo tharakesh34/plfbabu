@@ -63,7 +63,7 @@ public class AbstractCersaiProcess extends AbstractInterface implements CersaiPr
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void receiveResponse(long respBatchId) throws Exception {
+	private void receiveResponse(long respBatchId) {
 
 		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = null;

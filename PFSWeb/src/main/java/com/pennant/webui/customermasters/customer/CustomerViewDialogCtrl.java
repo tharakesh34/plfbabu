@@ -440,10 +440,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
-	public void onCreate$window_CustomerDialogg(Event event) throws Exception {
+	public void onCreate$window_CustomerDialogg(Event event) {
 		logger.debug("Entering");
 
 		setPageComponents(window_CustomerDialogg);
@@ -530,9 +528,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomer
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerDetails aCustomerDetails) throws Exception {
+	public void doShowDialog(CustomerDetails aCustomerDetails) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -548,12 +545,11 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			doWriteBeanToComponents(aCustomerDetails);
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e) {
+		} catch (UiException | IOException e) {
 			logger.error("Exception: ", e);
 			window_CustomerDialogg.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -563,7 +559,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param aCustomer Customer
 	 * @throws IOException
 	 */
-
 	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) throws IOException {
 		logger.debug("Entering");
 		int i = 0;
@@ -1244,7 +1239,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return isCurrentEmp;
 	}
 
-	public void onCustomerEmploymentDetailItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerEmploymentDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerEmploymentDetail.getSelectedItem();
@@ -1275,7 +1270,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerDocumentItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerDocumentItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerDocuments.getSelectedItem();
@@ -1324,7 +1319,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerAddressItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerAddressItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerAddress.getSelectedItem();
@@ -1353,7 +1348,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerPhoneNumberItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerPhoneNumberItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerPhoneNumbers.getSelectedItem();
@@ -1383,7 +1378,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerEmailAddressItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerEmailAddressItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerEmails.getSelectedItem();
@@ -1412,7 +1407,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerBankInfoItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerBankInfoItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerBankInformation.getSelectedItem();
@@ -1445,7 +1440,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerChequeInfoItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerChequeInfoItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerChequeInformation.getSelectedItem();
@@ -1475,7 +1470,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerExtLiabilityItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerExtLiabilityItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerExternalLiability.getSelectedItem();
@@ -1506,7 +1501,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerIncomeItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerIncomeItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerIncome.getSelectedItem();
@@ -1534,7 +1529,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onDirectorDetailItemDoubleClicked(Event event) throws Exception {
+	public void onDirectorDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerDirectory.getSelectedItem();
@@ -2506,7 +2501,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	}
 
-	private ReportConfiguration getReportConfiguration(String reportMenuCode) throws Exception {
+	private ReportConfiguration getReportConfiguration(String reportMenuCode) {
 		ReportConfiguration aReportConfiguration = null;
 		logger.debug("Entering");
 		JdbcSearchObject<ReportConfiguration> searchObj = null;
@@ -2686,7 +2681,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	}
 
-	public void onCustomerCollateralItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerCollateralItemDoubleClicked(Event event) {
 
 		Listitem selectedItem = this.listBoxCustomerCollateralDetails.getSelectedItem();
 		CollateralSetup collateralSetup = (CollateralSetup) selectedItem.getAttribute("data");
@@ -2735,7 +2730,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	}
 
-	public void onCustomerVasItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerVasItemDoubleClicked(Event event) {
 		Listitem selectedItem = this.listBoxCustomerVasDetails.getSelectedItem();
 		VASRecording vasRecording = (VASRecording) selectedItem.getAttribute("data");
 
@@ -2798,7 +2793,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 	}
 
-	public void onCustomerLoanApprovalDetailsDoubleClicked(Event event) throws Exception {
+	public void onCustomerLoanApprovalDetailsDoubleClicked(Event event) {
 		logger.debug("Entering");
 		Listitem selectedItem = listBoxloanApprovalDetails.getSelectedItem();
 		CustomerFinanceDetail customerFinanceDetail = (CustomerFinanceDetail) selectedItem.getAttribute("data");
@@ -2835,7 +2830,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return aruments;
 	}
 
-	public void onCustomerLoanDetailsItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerLoanDetailsItemDoubleClicked(Event event) {
 		Listitem selectedItem = this.listBoxCustomerLoanDetails.getSelectedItem();
 		FinanceEnquiry financeEnquiry = (FinanceEnquiry) selectedItem.getAttribute("financeEnquiry");
 
@@ -2864,7 +2859,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return notes;
 	}
 
-	public void onClick$imgbasicDetails(Event event) throws Exception {
+	public void onClick$imgbasicDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(gb_basicDetails);
 		this.customerTitle.setValue("Customer View");
@@ -2872,7 +2867,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgkycDetails(Event event) throws Exception {
+	public void onClick$imgkycDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(gb_kycDetails);
 		Clients.scrollIntoView(gb_kycDetails);
@@ -2881,7 +2876,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgfinancialDetails(Event event) throws Exception {
+	public void onClick$imgfinancialDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(gb_financialDetails);
 		Clients.scrollIntoView(gb_financialDetails);
@@ -2890,7 +2885,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgshareHolderDetails(Event event) throws Exception {
+	public void onClick$imgshareHolderDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(shareHolder);
 		Clients.scrollIntoView(shareHolder);
@@ -2899,7 +2894,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgbankingDetails(Event event) throws Exception {
+	public void onClick$imgbankingDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(gb_bankingDetails);
 		Clients.scrollIntoView(gb_bankingDetails);
@@ -2908,7 +2903,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imghelp(Event event) throws Exception {
+	public void onClick$imghelp(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(gb_help);
 		Clients.scrollIntoView(gb_help);
@@ -2917,7 +2912,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgadditionalDetails(Event event) throws Exception {
+	public void onClick$imgadditionalDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(gb_additionalDetails);
 		Clients.scrollIntoView(gb_additionalDetails);
@@ -2926,7 +2921,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgcustomerSummary(Event event) throws Exception {
+	public void onClick$imgcustomerSummary(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(customerSumary);
 		Clients.scrollIntoView(customerSumary);
@@ -2935,7 +2930,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgloanDetails(Event event) throws Exception {
+	public void onClick$imgloanDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(loanDetails);
 		Clients.scrollIntoView(loanDetails);
@@ -2944,7 +2939,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgcollateralDetails(Event event) throws Exception {
+	public void onClick$imgcollateralDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(collateralDetails);
 		Clients.scrollIntoView(collateralDetails);
@@ -2953,7 +2948,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgvasDetails(Event event) throws Exception {
+	public void onClick$imgvasDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(vasDetails);
 		Clients.scrollIntoView(vasDetails);
@@ -2962,7 +2957,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$imgpendingLoanDetails(Event event) throws Exception {
+	public void onClick$imgpendingLoanDetails(Event event) {
 		logger.debug("Entering");
 		Clients.scrollIntoView(pendingLoanDetails);
 		Clients.scrollIntoView(pendingLoanDetails);
@@ -3067,7 +3062,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			path = PathUtil.getPath(PathUtil.CUSTOMER_DEALTH_CLAIM_FORM);
 			break;
 		case "FGICF":
-			path = PathUtil.getPath(PathUtil.CUSTOMER_FGI_CI_Claim_Form);
+			path = PathUtil.getPath(PathUtil.CUSTOMER_FGI_CI_CLAIM_FORM);
 			break;
 		case "FGNCF":
 			path = PathUtil.getPath(PathUtil.CUSTOMER_FUTURE_GENERAL_NEW_CLAIM_FORM);

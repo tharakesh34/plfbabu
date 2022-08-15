@@ -103,9 +103,8 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_merchantDetailsDialogue(Event event) throws AppException {
+	public void onCreate$window_merchantDetailsDialogue(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_merchantDetailsDialogue);
@@ -406,7 +405,6 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		try {
 			merchantDetails.setStoreState(this.state.getValidatedValue());
 			merchantDetails.setStateName(this.state.getDescription());
-			;
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1021,7 +1019,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 				getOverideMap());
 	}
 
-	public void onClick$btnChannel(Event event) throws Exception {
+	public void onClick$btnChannel(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_merchantDetailsDialogue, "ChannelTypes",
 				String.valueOf(this.txtchannel.getValue()), null);
@@ -1108,7 +1106,6 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 				this.city.setErrorMessage("");
 				this.state.setErrorMessage("");
 				this.country.setErrorMessage("");
-				;
 			}
 
 		}

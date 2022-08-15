@@ -2,15 +2,12 @@ package com.pennant.backend.service.finance;
 
 import java.util.List;
 
-import org.jaxen.JaxenException;
-
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAssetAmtMovement;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface LoanDownSizingService {
 
@@ -20,11 +17,11 @@ public interface LoanDownSizingService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, JaxenException;
+	AuditHeader doApprove(AuditHeader aAuditHeader);
 
 	FinScheduleData changeGraceEndAfterFullDisb(FinScheduleData finScheduleData);
 
 	List<FinAssetAmtMovement> getFinAssetAmtMovements(long finID, String movementType);
 
-	AEEvent getChangeGrcEndPostings(FinScheduleData finScheduleData) throws Exception;
+	AEEvent getChangeGrcEndPostings(FinScheduleData finScheduleData);
 }

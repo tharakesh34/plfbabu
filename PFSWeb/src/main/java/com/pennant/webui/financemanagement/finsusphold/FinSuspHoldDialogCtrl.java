@@ -126,9 +126,8 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	 * selected FinSuspHold object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinSuspHoldDialog(Event event) throws Exception {
+	public void onCreate$window_FinSuspHoldDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -606,9 +605,8 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinSuspHold
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinSuspHold aFinSuspHold) throws Exception {
+	public void doShowDialog(FinSuspHold aFinSuspHold) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -1173,10 +1171,8 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finSuspHold);
 	}
 

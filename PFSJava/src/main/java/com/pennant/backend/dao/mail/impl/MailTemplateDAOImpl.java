@@ -1,48 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MailTemplateDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-10-2012    														*
- *                                                                  						*
- * Modified Date    :  04-10-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MailTemplateDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-10-2012 * * Modified
+ * Date : 04-10-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-10-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-10-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.mail.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>MailTemplate model</b> class.<br>
@@ -76,10 +58,8 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	/**
 	 * Fetch the Record Mail Template details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return MailTemplate
 	 */
 	@Override
@@ -93,7 +73,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where TemplateId = ?");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
@@ -138,10 +118,8 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	/**
 	 * Fetch the Record Mail Template details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return MailTemplate
 	 */
 	@Override
@@ -165,24 +143,19 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 		RowMapper<MailTemplate> typeRowMapper = BeanPropertyRowMapper.newInstance(MailTemplate.class);
 
 		try {
-			mailTemplate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			mailTemplate = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return mailTemplate;
 	}
 
 	/**
 	 * This method Deletes the Record from the Templates or Templates_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Mail Template by key TemplateCode
 	 * 
-	 * @param Mail
-	 *            Template (mailTemplate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Mail Template (mailTemplate)
+	 * @param type (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -214,15 +187,12 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	 *
 	 * save Mail Template
 	 * 
-	 * @param Mail
-	 *            Template (mailTemplate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Mail Template (mailTemplate)
+	 * @param type (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public long save(MailTemplate mailTemplate, String type) {
 		logger.debug("Entering");
@@ -257,10 +227,8 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	 * This method updates the Record Templates or Templates_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update Mail Template by key TemplateCode and Version
 	 * 
-	 * @param Mail
-	 *            Template (mailTemplate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Mail Template (mailTemplate)
+	 * @param type (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -300,7 +268,6 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 
 	// TODO: Need to be checked whether this is required or not
 	public List<MailTemplate> getMailTemplates() {
-		List<MailTemplate> mailTemplateList = new ArrayList<MailTemplate>();
 		MailTemplate mailTemplate = new MailTemplate();
 		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, Event, TemplateCode, ");
 		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, ");
@@ -314,14 +281,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
 		RowMapper<MailTemplate> typeRowMapper = BeanPropertyRowMapper.newInstance(MailTemplate.class);
 
-		try {
-			mailTemplateList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		}
-		logger.debug("Leaving");
-		return mailTemplateList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override

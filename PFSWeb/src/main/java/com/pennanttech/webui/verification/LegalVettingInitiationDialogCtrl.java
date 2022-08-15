@@ -174,10 +174,9 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	 * selected CustomerPhoneNumber object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_LegalVettingInitiationDialog(Event event) throws Exception {
+	public void onCreate$window_LegalVettingInitiationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -344,7 +343,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 		this.collateral.setList(collateralSetupList);
 	}
 
-	public void onChangeCollateral(ForwardEvent event) throws Exception {
+	public void onChangeCollateral(ForwardEvent event) {
 		Object dataObject = this.collateral.getObject();
 		if (dataObject != null) {
 			if (listBoxCollateralDocuments.getItems() != null) {
@@ -731,9 +730,8 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param verification
-	 * @throws Exception
 	 */
-	public void doShowDialog(Verification verification) throws Exception {
+	public void doShowDialog(Verification verification) {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1295,8 +1293,6 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.verification);

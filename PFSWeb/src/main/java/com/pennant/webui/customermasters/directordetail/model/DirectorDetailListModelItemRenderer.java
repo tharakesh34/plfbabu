@@ -81,7 +81,7 @@ public class DirectorDetailListModelItemRenderer implements ListitemRenderer<Dir
 	}
 
 	@Override
-	public void render(Listitem item, DirectorDetail directorDetail, int count) throws Exception {
+	public void render(Listitem item, DirectorDetail directorDetail, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(String.valueOf(directorDetail.getLovDescCustCIF())));

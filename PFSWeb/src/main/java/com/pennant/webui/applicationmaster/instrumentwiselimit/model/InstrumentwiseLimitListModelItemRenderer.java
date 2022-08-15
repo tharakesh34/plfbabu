@@ -67,7 +67,7 @@ public class InstrumentwiseLimitListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, InstrumentwiseLimit instrumentwiseLimit, int count) throws Exception {
+	public void render(Listitem item, InstrumentwiseLimit instrumentwiseLimit, int count) {
 
 		Listcell lc;
 		lc = new Listcell(instrumentwiseLimit.getInstrumentMode());

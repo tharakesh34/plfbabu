@@ -1,6 +1,5 @@
 package com.pennant.webui.customermasters.customer;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -117,9 +116,8 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_customerGstDetailsDialog(Event event) throws Exception {
+	public void onCreate$window_customerGstDetailsDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -222,7 +220,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		logger.debug("Leaving");
 	}
 
-	public void doShowDialog(CustomerGST customerGst) throws Exception {
+	public void doShowDialog(CustomerGST customerGst) {
 		if (isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
@@ -247,8 +245,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		doWriteBeanToComponents(customerGst);
 	}
 
-	public void doWriteBeanToComponents(CustomerGST acustomerGST) throws ClassNotFoundException, NoSuchMethodException,
-			IllegalAccessException, InstantiationException, InvocationTargetException {
+	public void doWriteBeanToComponents(CustomerGST acustomerGST) {
 		logger.debug("Entering");
 
 		this.gstNumber.setValue(acustomerGST.getGstNumber());

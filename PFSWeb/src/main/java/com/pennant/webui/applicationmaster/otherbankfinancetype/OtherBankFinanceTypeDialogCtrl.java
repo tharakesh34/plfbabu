@@ -106,9 +106,8 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 	 * selected OtherBankFinanceType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_OtherBankFinanceTypeDialog(Event event) throws Exception {
+	public void onCreate$window_OtherBankFinanceTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -349,9 +348,8 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aOtherBankFinanceType
-	 * @throws Exception
 	 */
-	public void doShowDialog(OtherBankFinanceType aOtherBankFinanceType) throws Exception {
+	public void doShowDialog(OtherBankFinanceType aOtherBankFinanceType) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -766,7 +764,7 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.otherBankFinanceType);
 	}
 

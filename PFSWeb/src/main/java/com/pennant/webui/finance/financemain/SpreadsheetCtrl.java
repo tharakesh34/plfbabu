@@ -93,10 +93,9 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SpreadSheetDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_SpreadSheetDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

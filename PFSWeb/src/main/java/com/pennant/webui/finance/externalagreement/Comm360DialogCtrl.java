@@ -65,7 +65,7 @@ public class Comm360DialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		super.pageRightName = "COMM360Dialog";
 	}
 
-	public void onCreate$window_FetchExternalAgreementDialog(Event event) throws Exception {
+	public void onCreate$window_FetchExternalAgreementDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_FetchExternalAgreementDialog);
@@ -173,7 +173,7 @@ public class Comm360DialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		Map.Entry<String, String> map = (Entry<String, String>) event.getData();
-		
+
 		JSONObject reqObj = new JSONObject();
 		reqObj.put("lanNumber", financeMain.getFinReference());
 		reqObj.put("reportType", map.getValue());
@@ -187,7 +187,6 @@ public class Comm360DialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			WebClient client = null;
 			client = getClient(App.getProperty("comm360.api.url"), String.valueOf(Math.random()));
 			Response response = client.post(sb.toString());
-
 
 			if (response != null) {
 				String responseBody = response.readEntity(String.class);

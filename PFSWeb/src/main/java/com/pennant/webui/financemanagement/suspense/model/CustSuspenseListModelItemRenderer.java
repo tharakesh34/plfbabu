@@ -67,7 +67,7 @@ public class CustSuspenseListModelItemRenderer implements ListitemRenderer<Custo
 	}
 
 	@Override
-	public void render(Listitem item, Customer customer, int count) throws Exception {
+	public void render(Listitem item, Customer customer, int count) {
 
 		//final FinanceSuspHead suspHead = (FinanceSuspHead) data;
 		Listcell lc;

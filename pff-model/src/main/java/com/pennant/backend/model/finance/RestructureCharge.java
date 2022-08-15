@@ -39,6 +39,40 @@ public class RestructureCharge extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public RestructureCharge copyEntity() {
+		RestructureCharge entity = new RestructureCharge();
+		entity.setId(this.id);
+		entity.setRestructureId(this.restructureId);
+		entity.setChargeSeq(this.chargeSeq);
+		entity.setAlocType(this.alocType);
+		entity.setAlocTypeDesc(this.alocTypeDesc);
+		entity.setCapitalized(this.capitalized);
+		entity.setFeeCode(this.feeCode);
+		entity.setActualAmount(this.actualAmount);
+		entity.setTaxType(this.taxType);
+		entity.setCgst(this.cgst);
+		entity.setSgst(this.sgst);
+		entity.setUgst(this.ugst);
+		entity.setIgst(this.igst);
+		entity.setCess(this.cess);
+		entity.setTdsAmount(this.tdsAmount);
+		entity.setTotalAmount(this.totalAmount);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("alocTypeDesc");

@@ -1,43 +1,25 @@
 /**
-Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectFeeReceiptListCtrl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-03-2019    														*
- *                                                                  						*
- * Modified Date    :  21-03-2019    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectFeeReceiptListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-03-2019 * *
+ * Modified Date : 21-03-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-03-2019       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-03-2019 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.receipts;
@@ -101,9 +83,8 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SelectFeeReceiptList(Event event) throws Exception {
+	public void onCreate$window_SelectFeeReceiptList(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -124,7 +105,7 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (isWorkFlowEnabled() && !enqiryModule) {
 			getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 		}
-		//AS PER IMD CHANGES COMMENTING CUSTOMER
+		// AS PER IMD CHANGES COMMENTING CUSTOMER
 		String excludeFields = "";
 		if (arguments.containsKey("feeReceiptListCtrl")) {
 			excludeFields = "," + RepayConstants.RECEIPTTO_CUSTOMER + ",";
@@ -161,9 +142,8 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering ");
 
 		doSetValidation();
@@ -176,8 +156,7 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param financeType
-	 *            The entity that need to be passed to the dialog.
+	 * @param financeType The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(FinReceiptHeader receiptHeader) {
 		logger.debug("Entering");
@@ -234,7 +213,7 @@ public class SelectFeeReceiptListCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//product
+		// product
 		try {
 			if (isValidComboValue(this.recAgainst, Labels.getLabel("label_FeeReceiptList_RecAgainst.value"))) {
 				receiptHeader.setRecAgainst(getComboboxValue(this.recAgainst));

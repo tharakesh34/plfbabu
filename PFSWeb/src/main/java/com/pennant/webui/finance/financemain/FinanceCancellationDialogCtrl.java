@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -108,7 +106,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	protected Row row_ManualSchedule;
 	protected Textbox finDivisionName;
 	protected Hbox hbox_PromotionProduct;
-	private Label label_FinanceMainDialog_PromotionProduct;;
+	private Label label_FinanceMainDialog_PromotionProduct;
 	private Label label_FinanceMainDialog_FinType;
 	protected Textbox cancelRemarks;
 	protected Uppercasebox reasons;
@@ -133,9 +131,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceCancellationDialog(Event event) throws Exception {
+	public void onCreate$window_FinanceCancellationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -300,9 +297,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_FinanceCancellationDialog(Event event) throws Exception {
+	public void onClose$window_FinanceCancellationDialog(Event event) {
 		logger.debug("Entering " + event.toString());
 		closeDialog();
 		logger.debug("Leaving " + event.toString());
@@ -312,9 +308,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering " + event.toString());
 		doSave();
 		logger.debug("Leaving " + event.toString());
@@ -347,14 +342,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain financeMain
-	 * @throws ParseException
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
 	 */
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
+	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
@@ -492,10 +481,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceSchData (FinScheduleData)
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData) {
 		logger.debug("Entering");
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
@@ -700,9 +687,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinanceDetail afinanceDetail) throws Exception {
+	public void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -807,11 +793,9 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
@@ -1356,9 +1340,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		this.btnNotes.setSclass("");
@@ -1448,10 +1431,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		buildEvent = false;
@@ -1478,11 +1459,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		if (StringUtils.isNotBlank(this.custCIF.getValue())) {

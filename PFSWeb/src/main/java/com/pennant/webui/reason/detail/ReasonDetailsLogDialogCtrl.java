@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LoanDetailsEnquiryDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LoanDetailsEnquiryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reason.detail;
@@ -113,10 +95,9 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_ReasonDetailsLogDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ReasonDetailsLogDialog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		setPageComponents(window_ReasonDetailsLogDialog);
 
@@ -144,7 +125,7 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 *
 	 */
-	public void doWriteBeanToComponents() throws InterruptedException {
+	public void doWriteBeanToComponents() {
 		logger.debug(Literal.ENTERING);
 		if (customerFinanceDetail != null) {
 			this.custCIF.setValue(customerFinanceDetail.getCustCIF());
@@ -268,9 +249,8 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 		doReadOnly();
 		try {
@@ -286,9 +266,8 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_ReasonDetailsLogDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 

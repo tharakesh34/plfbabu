@@ -52,8 +52,7 @@ import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.AESCipherUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -102,9 +101,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * Creating Dialog window
 	 * 
 	 * @param event (Event)
-	 * @throws Exception
 	 */
-	public void onCreate$win_SecurityUserChangePasswordDialog(Event event) throws Exception {
+	public void onCreate$win_SecurityUserChangePasswordDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -137,9 +135,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * When user clicks on "cancel" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnCancel(Event event) throws Exception {
+	public void onClick$btnCancel(Event event) {
 		doCancel();
 	}
 
@@ -147,9 +144,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * when user clicks "save" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		doValidations();
 		doSave();// update password
 
@@ -159,9 +155,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * when user clicks "close" method
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		closeDialog();
 	}
 
@@ -187,7 +182,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		this.retypeNewPassword1.setValue("");
 		/*
 		 * this.div_PwdStatusMeter.setStyle("background-color:white"); this.label_PwdStatus.setValue("")
-		 */;
+		 */
 	}
 
 	/**
@@ -268,11 +263,9 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	// CRUD operations
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
+	 * Saves the components to table.
 	 */
-	public void doSave() throws InterruptedException {
+	public void doSave() {
 		doValidations();
 		AuditHeader auditHeader = null;
 		try {
@@ -293,9 +286,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 				closeDialog();
 			}
 
-		} catch (DataAccessException e) {
-			logger.debug(Literal.EXCEPTION, e);
-			showMessage(e);
+		} catch (DataAccessException | AppException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}
@@ -334,22 +326,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 
 	// Helpers
 
-	/**
-	 * This method Shows Message Box with error message
-	 * 
-	 * @param error
-	 */
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.win_SecurityUserChangePasswordDialog, auditHeader);
-		} catch (Exception e1) {
-			logger.error(Literal.EXCEPTION, e1);
-		}
-	}
-
-	private void doCancel() throws InterruptedException {
+	private void doCancel() {
 		this.btnCtrl.setBtnStatus_Save();
 	}
 
@@ -364,7 +341,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			logger.debug("Entering ");
 			int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
 			int specialCharCount = SysParamUtil.getValueAsInt("USR_PWD_SPECIAL_CHAR_COUNT");

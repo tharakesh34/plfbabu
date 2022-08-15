@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -29,9 +30,11 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
@@ -42,20 +45,20 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	@Override
 	public CustomerDetails getCustomerDetails(long customerId) {
 		logger.trace(Literal.ENTERING);
-		CustomerDetails customer = new CustomerDetails();
 
 		try {
+			CustomerDetails customer = new CustomerDetails();
 			customer.setCustomer(getCustomer(customerId, PennantConstants.PFF_CUSTCTG_INDIV));
 			customer.setCustomerDocumentsList(getCustomerDocuments(customerId, PennantConstants.PFF_CUSTCTG_INDIV));
 			customer.setCustomerPhoneNumList(getCustomerPhoneNumbers(customerId, PennantConstants.PFF_CUSTCTG_INDIV));
 			customer.setCustomerEMailList(getCustomerEmails(customerId));
 			customer.setAddressList(getCustomerAddres(customerId, PennantConstants.PFF_CUSTCTG_INDIV));
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			customer = null;
-		}
 
-		return customer;
+			return customer;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override
@@ -307,11 +310,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Loan details not availabe for the specified Custome Id {}, FinID {}, segmentType {}",
 					customerId, finID, segmentType);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -387,8 +387,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 				ps.setString(index++, reason);
 				ps.setString(index++, "F");
 			});
-		} catch (Exception e) {
-			//
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -416,11 +416,10 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 				return ds;
 			});
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return new DataEngineStatus();
 		}
-
-		return new DataEngineStatus();
 	}
 
 	public List<DataEngineLog> getExceptions(long id) {
@@ -440,11 +439,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 	@Override
 	public void deleteDetails() {
-		try {
-			jdbcOperations.update("Truncate Table Cibil_Customer_Extract");
-		} catch (Exception e) {
-			//
-		}
+		jdbcOperations.update("Truncate Table Cibil_Customer_Extract");
 	}
 
 	@Override
@@ -475,11 +470,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			}, configName, eventType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Configuration details not available for " + configName);
-		} catch (Exception e) {
-			//
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -506,12 +498,9 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 				return cmd;
 			}, bureauType);
 		} catch (EmptyResultDataAccessException e) {
-			//
-		} catch (Exception e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -542,10 +531,9 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 				return cmd;
 			}, bureauType, type);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -579,8 +567,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 					return ps;
 				}
 			}, keyHolder);
-		} catch (Exception e) {
-			//
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 
 		fileInfo.setId(keyHolder.getKey().longValue());
@@ -644,23 +632,19 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		sql.append(", Success_Records = ?, Failed_Records = ?, Remarks = ?, End_Time = ?");
 		sql.append(" Where ID = ?");
 
-		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-				ps.setString(index++, "S".equals(fileInfo.getStatus()) ? "C" : "F");
-				ps.setLong(index++, fileInfo.getTotalRecords());
-				ps.setLong(index++, fileInfo.getProcessedRecords());
-				ps.setLong(index++, fileInfo.getSuccessCount());
-				ps.setLong(index++, fileInfo.getFailedCount());
-				ps.setString(index++, fileInfo.getRemarks());
-				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+			ps.setString(index++, "S".equals(fileInfo.getStatus()) ? "C" : "F");
+			ps.setLong(index++, fileInfo.getTotalRecords());
+			ps.setLong(index++, fileInfo.getProcessedRecords());
+			ps.setLong(index++, fileInfo.getSuccessCount());
+			ps.setLong(index++, fileInfo.getFailedCount());
+			ps.setString(index++, fileInfo.getRemarks());
+			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 
-				ps.setLong(index++, fileInfo.getId());
-			});
-		} catch (Exception e) {
-			//
-		}
+			ps.setLong(index++, fileInfo.getId());
+		});
 	}
 
 	@Override
@@ -818,11 +802,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			}, configName);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Configuration details not available for " + configName);
-		} catch (Exception e) {
-			//
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -848,12 +829,11 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-
-		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -861,14 +841,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		String sql = "Select sum(GuranteePercentage) From FinGuarantorsDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return BigDecimal.ZERO;
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
 	@Override
@@ -892,10 +865,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		try {
 			return jdbcOperations.queryForObject(sql, String.class, finID, custCIF);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
-
 }

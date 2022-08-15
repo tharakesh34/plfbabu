@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinCreditRevSubCategoryDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  13-11-2013    														*
- *                                                                  						*
- * Modified Date    :  13-11-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinCreditRevSubCategoryDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-11-2013 *
+ * * Modified Date : 13-11-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 13-11-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 13-11-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.customermasters.impl;
 
 import java.util.Collections;
@@ -64,6 +46,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinCreditRevSubCategory model</b> class.<br>
@@ -115,10 +98,8 @@ public class FinCreditRevSubCategoryDAOImpl extends BasicDao<FinCreditRevSubCate
 	/**
 	 * Fetch the Record Finance Credit Review Sub Category details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinCreditRevSubCategory
 	 */
 	@Override
@@ -142,14 +123,11 @@ public class FinCreditRevSubCategoryDAOImpl extends BasicDao<FinCreditRevSubCate
 				.newInstance(FinCreditRevSubCategory.class);
 
 		try {
-			finCreditRevSubCategory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finCreditRevSubCategory = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return finCreditRevSubCategory;
 	}
 
 	/**
@@ -157,10 +135,8 @@ public class FinCreditRevSubCategoryDAOImpl extends BasicDao<FinCreditRevSubCate
 	 * deleted then throws DataAccessException with error 41003. delete Finance Credit Review Sub Category by key
 	 * SubCategoryCode
 	 * 
-	 * @param Finance
-	 *            Credit Review Sub Category (finCreditRevSubCategory)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Credit Review Sub Category (finCreditRevSubCategory)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -192,10 +168,8 @@ public class FinCreditRevSubCategoryDAOImpl extends BasicDao<FinCreditRevSubCate
 	 *
 	 * save Finance Credit Review Sub Category
 	 * 
-	 * @param Finance
-	 *            Credit Review Sub Category (finCreditRevSubCategory)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Credit Review Sub Category (finCreditRevSubCategory)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -273,10 +247,8 @@ public class FinCreditRevSubCategoryDAOImpl extends BasicDao<FinCreditRevSubCate
 	 * then throws DataAccessException with error 41004. update Finance Credit Review Sub Category by key
 	 * SubCategoryCode and Version
 	 * 
-	 * @param Finance
-	 *            Credit Review Sub Category (finCreditRevSubCategory)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Credit Review Sub Category (finCreditRevSubCategory)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

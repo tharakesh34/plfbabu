@@ -133,7 +133,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SelectVASConfiguration(Event event) throws Exception {
+	public void onCreate$window_SelectVASConfiguration(Event event) throws InterruptedException {
 		logger.debug("Entering");
 
 		try {
@@ -290,9 +290,10 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws InterruptedException
+	 * @throws InterfaceException
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) throws InterfaceException, InterruptedException {
 		logger.debug("Entering " + event.toString());
 
 		if (!doFieldValidation()) {
@@ -505,7 +506,6 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 	 * @param event
 	 * @throws InterruptedException
 	 * @throws InterfaceException
-	 * @throws Exception
 	 */
 	public boolean isCustomerExists() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");

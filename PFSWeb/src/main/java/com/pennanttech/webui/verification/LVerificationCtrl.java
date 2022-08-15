@@ -146,7 +146,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_LVerificationDialog(Event event) throws Exception {
+	public void onCreate$window_LVerificationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_LVerificationDialog);
@@ -323,7 +323,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		return null;
 	}
 
-	public void onChangeReason(ForwardEvent event) throws Exception {
+	public void onChangeReason(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reason = (ExtendedCombobox) getComponent(listitem, "Reason");
 		Object dataObject = reason.getObject();
@@ -886,7 +886,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClickReInitiate(ForwardEvent event) throws Exception {
+	public void onClickReInitiate(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 
 		// Get the selected entity.
@@ -902,7 +902,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		doShowDialogPage(vrf, true);
 	}
 
-	public void onClickInitiate(ForwardEvent event) throws Exception {
+	public void onClickInitiate(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 
 		// Get the selected entity.
@@ -966,7 +966,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeInitDecision(ForwardEvent event) throws Exception {
+	public void onChangeInitDecision(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");
 		Textbox textbox = (Textbox) getComponent(listitem, "IReInitRemarks");
@@ -983,7 +983,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeWaiveDecision(ForwardEvent event) throws Exception {
+	public void onChangeWaiveDecision(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		Combobox decisionBox = (Combobox) getComponent(listitem, "WDecision");
 		Textbox textbox = (Textbox) getComponent(listitem, "WReInitRemarks");
@@ -1179,8 +1179,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction)
-			throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) {
 		logger.debug(Literal.ENTERING);
 		this.recSave = recSave;
 		this.userAction = userAction;
@@ -1283,7 +1282,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 		}
-		for (long documentId : requiredCollateralDocs) {
+		for (Long documentId : requiredCollateralDocs) {
 			if (!collateralDocuments.contains(documentId)) {
 				MessageUtil.showError("Required collateral documents should be initiate/Waive");
 				if (tab != null) {
@@ -1389,8 +1388,6 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		try {
 			doSave(financeDetail, null, recSave, lv);
-		} catch (InterruptedException e1) {
-			logger.error(Literal.EXCEPTION, e1);
 		} catch (WrongValueException e) {
 			MessageUtil.showError(e.getMessage());
 			return;

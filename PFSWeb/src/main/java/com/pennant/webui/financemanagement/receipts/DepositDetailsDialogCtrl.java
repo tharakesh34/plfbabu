@@ -143,9 +143,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_DepositDetailsDialog(Event event) throws Exception {
+	public void onCreate$window_DepositDetailsDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -683,9 +682,8 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	 * onSelect event for list item
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheckListItem(ForwardEvent event) throws Exception {
+	public void onCheckListItem(ForwardEvent event) {
 		logger.debug("Entering");
 
 		DepositCheques depositCheques = (DepositCheques) event.getData();

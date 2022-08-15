@@ -159,9 +159,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * selected DashboardDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DashboardConfigurationDialog(Event event) throws Exception {
+	public void onCreate$window_DashboardConfigurationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -640,9 +639,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDashboardDetail
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(DashboardConfiguration aDashboardConfiguration) throws InterruptedException {
+	public void doShowDialog(DashboardConfiguration aDashboardConfiguration) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1097,10 +1095,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.dashboardConfiguration);
 	}
 

@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +21,7 @@ public class ScriptValidationService {
 
 	private List<Object> objectList = null;
 
-	public ScriptErrors setPreValidationDefaults(String script, Map<String, Object> paramMap) throws ScriptException {
+	public ScriptErrors setPreValidationDefaults(String script, Map<String, Object> paramMap) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> bindings = new HashMap<>();

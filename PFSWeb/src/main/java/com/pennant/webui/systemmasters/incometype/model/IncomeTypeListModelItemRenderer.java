@@ -69,7 +69,7 @@ public class IncomeTypeListModelItemRenderer implements ListitemRenderer<IncomeT
 	}
 
 	@Override
-	public void render(Listitem item, IncomeType incomeType, int count) throws Exception {
+	public void render(Listitem item, IncomeType incomeType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(

@@ -166,9 +166,8 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_StepDetailDialog(Event event) throws Exception {
+	public void onCreate$window_StepDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -227,10 +226,8 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
-	 * @throws ParseException
 	 */
-	public void doShowDialog(FinanceDetail afinanceDetail) throws InterruptedException, ParseException {
+	public void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -411,12 +408,8 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 * 
 	 * @param aFinanceSchData (FinScheduleData)
 	 * @param tab
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterruptedException
 	 */
-	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData, Tab tab, String method)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData, Tab tab, String method) {
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 		doClearMessage();
@@ -1779,7 +1772,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	/*
 	 * onClick Event For btnNew_FinStepPolicy Button
 	 */
-	public void onClick$btnNew_FinStepPolicy(Event event) throws Exception {
+	public void onClick$btnNew_FinStepPolicy(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		int stepValue = this.noOfSteps.intValue();
@@ -1806,7 +1799,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnNew_FinStepPolicyGrace(Event event) throws Exception {
+	public void onClick$btnNew_FinStepPolicyGrace(Event event) {
 		logger.debug("Entering");
 
 		int grcSteps = this.grcSteps.intValue();
@@ -1825,8 +1818,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		logger.debug("Leaving");
 	}
 
-	public void openFinStepPolicyDetailDialog(FinanceStepPolicyDetail finStepPolicy, boolean isNewRecord)
-			throws InterruptedException {
+	public void openFinStepPolicyDetailDialog(FinanceStepPolicyDetail finStepPolicy, boolean isNewRecord) {
 		try {
 
 			this.noOfSteps.setErrorMessage("");

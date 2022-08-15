@@ -442,7 +442,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 					currentRateType = StringUtils.trimToEmpty(finSchdDetail.getBaseRate());
 
-					if (finSchdDetail.getBpiOrHoliday().equals("H")) {
+					if ("H".equals(finSchdDetail.getBpiOrHoliday())) {
 						emiHoliday = emiHoliday + 1;
 					}
 

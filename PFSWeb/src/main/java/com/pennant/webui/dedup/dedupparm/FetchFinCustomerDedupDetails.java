@@ -33,7 +33,7 @@ public class FetchFinCustomerDedupDetails {
 
 	@SuppressWarnings("unchecked")
 	public static CustomerDetails getFinCustomerDedup(String userRole, String finType, String ref,
-			CustomerDetails custdetails, Window parentWindow, String curLoginUser) throws Exception {
+			CustomerDetails custdetails, Window parentWindow, String curLoginUser) {
 		logger.debug("Entering");
 		List<CustomerDedup> customerDedupList = null;
 		int userAction = -1;
@@ -67,7 +67,6 @@ public class FetchFinCustomerDedupDetails {
 				if (dataObject != null) {
 					ShowCustomerDedupListBox details = (ShowCustomerDedupListBox) dataObject;
 
-					System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
 					logger.debug("The User Action is " + details.getUserAction());
 					userAction = details.getUserAction();
 					customerDedupList = (List<CustomerDedup>) details.getObject();

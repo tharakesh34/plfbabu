@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityUserListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityUserListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.administration.securityuser;
@@ -88,7 +70,6 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	protected Listheader listheader_UsrMName;
 	protected Listheader listheader_UsrLName;
 	protected Listheader listheader_UsrCanOverrideLimits;
-	protected Listheader listheader_UsrAcExp;
 	protected Listheader listheader_UsrCredentialsExp;
 	protected Listheader listheader_UsrAcLocked;
 	protected Listheader listheader_UsrDftAppCode;
@@ -166,8 +147,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_SecurityUserList(Event event) {
 		// Set the page level components.
@@ -199,8 +179,6 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 				Operators.STRING);
 		registerField("lovDescUsrDeptCodeName");
 		registerField("usrCanOverrideLimits");
-		registerField("usrAcExp", listheader_UsrAcExp, SortOrder.NONE, usrAcExp, sortOperator_UsrAcExp,
-				Operators.SIMPLE);
 		registerField("usrAcLocked", listheader_UsrAcLocked, SortOrder.NONE, usrAcLocked, sortOperator_UsrAcLocked,
 				Operators.SIMPLE);
 
@@ -212,8 +190,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_SecurityUserList_SecurityUserSearch(Event event) {
 		search();
@@ -222,8 +199,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -233,8 +209,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_SecurityUserList_NewSecurityUser(Event event) {
 		logger.debug("Entering " + event.toString());
@@ -253,8 +228,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onSecurityUserItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -301,8 +275,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aSecurityUser
-	 *            The entity that need to be passed to the dialog.
+	 * @param aSecurityUser The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(SecurityUser aSecurityUser) {
 		logger.debug("Entering");
@@ -339,8 +312,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -349,8 +321,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

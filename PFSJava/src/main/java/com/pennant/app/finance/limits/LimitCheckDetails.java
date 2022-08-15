@@ -59,9 +59,7 @@ public class LimitCheckDetails {
 
 		// prepare LimitUtilization object
 		try {
-			LimitUtilization limitUtilReq = new LimitUtilization();
-
-			limitUtilReq = prepareLimitUtilReq(financeMain, FinanceConstants.PREDEAL_CHECK);
+			LimitUtilization limitUtilReq = prepareLimitUtilReq(financeMain, FinanceConstants.PREDEAL_CHECK);
 
 			limitUtilReply = doPredealCheck(aFinanceDetail, limitUtilReq);
 

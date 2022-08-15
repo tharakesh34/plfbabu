@@ -65,7 +65,7 @@ public class TaxDetailListModelItemRenderer implements ListitemRenderer<TaxDetai
 	}
 
 	@Override
-	public void render(Listitem item, TaxDetail taxDetail, int count) throws Exception {
+	public void render(Listitem item, TaxDetail taxDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(taxDetail.getCountryName());

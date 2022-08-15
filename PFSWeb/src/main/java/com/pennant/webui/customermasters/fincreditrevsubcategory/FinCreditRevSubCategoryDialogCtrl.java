@@ -210,10 +210,9 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 	 * selected FinCreditRevSubCategory object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinCreditRevSubCategoryDialog(Event event) throws Exception {
+	public void onCreate$window_FinCreditRevSubCategoryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -701,7 +700,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 	}
 
 	// Getting Sub Category Tabs
-	public void getTabsForBreakDown() throws Exception {
+	public void getTabsForBreakDown() {
 		logger.debug("Entering");
 		int i = 0;
 		// this.tab_BalanceSheet.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px")))
@@ -752,7 +751,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 
 	}
 
-	public void getTabsForCalculated() throws Exception {
+	public void getTabsForCalculated() {
 		logger.debug("Entering");
 		int i = 0;
 		for (FinCreditRevCategory fcrc : listOfFinCreditRevCategory) {
@@ -1256,7 +1255,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finCreditRevSubCategory);
 	}
 

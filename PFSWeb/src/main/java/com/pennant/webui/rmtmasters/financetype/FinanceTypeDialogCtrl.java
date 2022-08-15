@@ -629,9 +629,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * selected FinanceType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceTypeDialog(Event event) throws Exception {
+	public void onCreate$window_FinanceTypeDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -1036,10 +1035,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceType FinanceType
-	 * @throws InterruptedException
 	 */
-
-	public void doWriteBeanToComponents(FinanceType aFinanceType) throws InterruptedException {
+	public void doWriteBeanToComponents(FinanceType aFinanceType) {
 		logger.debug(Literal.ENTERING);
 
 		int format = CurrencyUtil.getFormat(aFinanceType.getFinCcy());
@@ -3646,9 +3643,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * mode accordingly.
 	 * 
 	 * @param aFinanceType
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinanceType aFinanceType) throws Exception {
+	public void doShowDialog(FinanceType aFinanceType) {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -3707,9 +3703,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_FinanceTypeDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -5239,7 +5234,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	private void setEffectiveRate() throws InterruptedException {
+	private void setEffectiveRate() {
 		if (StringUtils.isBlank(this.financeBaserate.getBaseValue())) {
 			this.financeBaserate.setEffRateText(
 					PennantApplicationUtil.formatRate((this.financeBaserate.getMarginValue() == null ? BigDecimal.ZERO
@@ -5324,7 +5319,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	private void setGraceEffectiveRate() throws InterruptedException {
+	private void setGraceEffectiveRate() {
 		if (StringUtils.isBlank(this.financeGrcBaseRate.getBaseValue())) {
 			this.financeGrcBaseRate.setEffRateText(PennantApplicationUtil
 					.formatRate((this.financeGrcBaseRate.getMarginValue() == null ? BigDecimal.ZERO
@@ -5429,10 +5424,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	/**
 	 * Allowed OCR's assignment
-	 * 
-	 * @throws Exceptionon
 	 */
-	public void onClick$btnAlwOcr(Event event) throws Exception {
+	public void onClick$btnAlwOcr(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		List<String> detailsList = null;
 		this.allowedOCRS.setErrorMessage("");
@@ -6515,7 +6508,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/** To get Note Dialog on clicking the button note */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeType);
 	}
 
@@ -6998,7 +6991,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	// ============================================================= Frequencies
 	// ============================================//
 	/* Tab 1 */
-	public void onClick$btnSearchfinAssetType(Event event) throws Exception {
+	public void onClick$btnSearchfinAssetType(Event event) {
 		logger.debug("Entering  " + event.toString());
 		this.finAssetType.setErrorMessage("");
 		String product = this.cbfinProductType.getSelectedItem().getValue().toString();
@@ -7018,7 +7011,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	}
 
-	public void onClick$btnSearchtdsApplicableTo(Event event) throws Exception {
+	public void onClick$btnSearchtdsApplicableTo(Event event) {
 		logger.debug(Literal.ENTERING);
 		this.tdsApplicableTo.setErrorMessage("");
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "CustomerCategory",
@@ -7050,7 +7043,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnSearchCollateralType(Event event) throws Exception {
+	public void onClick$btnSearchCollateralType(Event event) {
 		logger.debug("Entering  " + event.toString());
 		this.collateralType.setErrorMessage("");
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "CollateralStructure",
@@ -7063,7 +7056,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	}
 
-	public void onClick$btnSearchSplitLoanType(Event event) throws Exception {
+	public void onClick$btnSearchSplitLoanType(Event event) {
 		logger.debug("Entering  " + event.toString());
 		this.splitLoanType.setErrorMessage("");
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "FinanceType",
@@ -7076,7 +7069,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	}
 
-	public void onClick$btnAlwElgMthdDetails(Event event) throws Exception {
+	public void onClick$btnAlwElgMthdDetails(Event event) {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "EligibilityMethods",
 				String.valueOf(this.eligibilityMethod.getValue()), null);
@@ -7450,9 +7443,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * Method for selecting Mandatory Vas products for the Loan Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnMandatoryVasProduct(Event event) throws Exception {
+	public void onClick$btnMandatoryVasProduct(Event event) {
 		logger.debug("Entering  " + event.toString());
 		setVasProductDetails(false);
 		logger.debug("Leaving  " + event.toString());
@@ -7463,9 +7455,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * Method for selecting Vas products for the Loan Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnAlwVasProducts(Event event) throws Exception {
+	public void onClick$btnAlwVasProducts(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setVasProductDetails(true);
@@ -7732,9 +7723,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * Method for selecting Receipt Modes for the Loan Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnAlwReceiptModes(Event event) throws Exception {
+	public void onClick$btnAlwReceiptModes(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setReceiptModes();
@@ -7899,7 +7889,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/*
 	 * Cost Of Funds
 	 */
-	private void setCofRate() throws InterruptedException {
+	private void setCofRate() {
 		logger.debug(Literal.ENTERING);
 
 		if (StringUtils.isBlank(this.costOfFunds.getValue())) {
@@ -7945,9 +7935,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * Method for selecting IRRCodes for the IRRFinance Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnAlwIRRDetails(Event event) throws Exception {
+	public void onClick$btnAlwIRRDetails(Event event) {
 		logger.debug("Entering  " + event.toString());
 
 		setIRRCodesDetails(true);
@@ -8184,10 +8173,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	/**
 	 * Specific loan purposes assignment
-	 * 
-	 * @throws Exceptionon
 	 */
-	public void onClick$btnSpcLoanPurposes(Event event) throws Exception {
+	public void onClick$btnSpcLoanPurposes(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		this.specificLoanPurposes.setErrorMessage("");
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "LoanPurpose",

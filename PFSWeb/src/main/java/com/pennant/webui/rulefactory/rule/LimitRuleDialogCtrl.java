@@ -25,6 +25,7 @@
 package com.pennant.webui.rulefactory.rule;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -204,9 +205,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * selected LimitFilterQuery object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LimitRuleDialog(Event event) throws Exception {
+	public void onCreate$window_LimitRuleDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		try {
@@ -430,9 +430,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aLimitRule
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(LimitFilterQuery aLimitRule) throws Exception {
+	public void doWriteComponentsToBean(LimitFilterQuery aLimitRule) {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -494,9 +493,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aLimitRule
-	 * @throws Exception
 	 */
-	public void doShowDialog(LimitFilterQuery aLimitRule) throws Exception {
+	public void doShowDialog(LimitFilterQuery aLimitRule) {
 		logger.debug("Entering");
 
 		// if aLimitRule == null then we opened the Dialog without
@@ -561,18 +559,15 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_LimitRuleDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * This method for clearing tree children and build a new tree
-	 * 
-	 * @throws Exception
 	 */
-	public void clearAndBuildTree(String ctgCode) throws Exception {
+	public void clearAndBuildTree(String ctgCode) {
 		logger.debug("Entering");
 		itemCount = 1;
 		tree.getChildren().clear();
@@ -590,9 +585,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * Method for Build Sibling TreeItem
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAddButtonClicked(Event event) throws Exception {
+	public void onAddButtonClicked(Event event) {
 		logger.debug("Entering");
 
 		this.addBtnClicked = true;
@@ -608,7 +602,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * Build Tree using List of component values or for new tree
 	 */
-	public void buildingTree(List<String> queryValues, LimitFilterQuery aLimitRule) throws Exception {
+	public void buildingTree(List<String> queryValues, LimitFilterQuery aLimitRule) {
 		logger.debug("Entering");
 
 		Component component1 = (Component) tree;
@@ -915,9 +909,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * Logic for creating sibling treeItem
 	 * 
 	 * @param cmp
-	 * @throws InterruptedException
 	 */
-	public void addButtonLogic(Component cmp) throws InterruptedException {
+	public void addButtonLogic(Component cmp) {
 		logger.debug("Entering");
 
 		treeitem.appendChild(treerow);
@@ -958,9 +951,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * Method for adding child treeItem calling Component
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAddSubButtonClicked(Event event) throws Exception {
+	public void onAddSubButtonClicked(Event event) {
 		logger.debug("Entering");
 
 		this.addBtnClicked = false;
@@ -976,9 +968,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * Logic for creating Child treeItem
 	 * 
 	 * @param cmp
-	 * @throws InterruptedException
 	 */
-	public void addSubButtonLogic(Component cmp) throws InterruptedException {
+	public void addSubButtonLogic(Component cmp) {
 		logger.debug("Entering");
 
 		Component nextcomp = null;
@@ -1059,9 +1050,12 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * Method for calling an Event for both Calculated and for DB selection Values
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onValueButtonClicked(Event event) throws Exception {
+	public void onValueButtonClicked(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Button comp = (Button) event.getData();
 		Textbox textbox = ((Textbox) comp.getNextSibling());
 		textbox.setErrorMessage("");
@@ -1118,10 +1112,9 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * 
 	 * @param queryValues
 	 * @param aQuery
-	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
-	public void buildTreeCell(List<String> queryValues, LimitFilterQuery aLimitRule) throws Exception {
+	public void buildTreeCell(List<String> queryValues, LimitFilterQuery aLimitRule) {
 		logger.debug("Entering");
 
 		// Add treeItem to Component itemList
@@ -1413,9 +1406,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		itemCount++;
 		// Continue the process of building if size is not zero
 		if (queryValues.size() > 0 && !aLimitRule.isNewRecord()) {
-
-			System.out.println("THE QUERY VALUES " + queryValues.get(0));
-
 			if (queryValues.get(0).equals(")")) {
 				int size = queryValues.size();
 				for (int i = 0; i < size; i++) {
@@ -1461,7 +1451,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * build a query for values and generate in textBox
 	 */
-	public void onClick$btnReadValues(Event event) throws Exception {
+	public void onClick$btnReadValues(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.tab_queryDesign.setSelected(true);
 		readButtonClicked();// calling read button method for generating query
@@ -1471,7 +1461,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * Method for Validating Builded Query and show result in 'SqlViewResult.zul'
 	 */
-	public void onClick$btnValidation(Event event) throws Exception {
+	public void onClick$btnValidation(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.tab_queryDesign.setSelected(true);
 
@@ -1499,10 +1489,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 
 	/**
 	 * Method for building SQLquery
-	 * 
-	 * @throws Exception
 	 */
-	public void readButtonClicked() throws Exception {
+	public void readButtonClicked() {
 		logger.debug("Entering");
 		sQLQuery.setValue("");
 		queryFieldMap = new LinkedHashMap<String, String[]>();
@@ -1520,9 +1508,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * 
 	 * @param selectionComp
 	 * @param isSimulation
-	 * @throws Exception
 	 */
-	public void doBuildQuery(Component selectionComp) throws Exception {
+	public void doBuildQuery(Component selectionComp) {
 		logger.debug("Entering");
 
 		if (selectionComp.getChildren() != null) {
@@ -1891,11 +1878,9 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Enterring");
 
 		final LimitFilterQuery aLimitRule = new LimitFilterQuery();

@@ -66,7 +66,7 @@ public class AccountingSetListModelItemRenderer implements ListitemRenderer<Acco
 	}
 
 	@Override
-	public void render(Listitem item, AccountingSet accountingSet, int count) throws Exception {
+	public void render(Listitem item, AccountingSet accountingSet, int count) {
 
 		Listcell lc;
 		lc = new Listcell(accountingSet.getEventCode());

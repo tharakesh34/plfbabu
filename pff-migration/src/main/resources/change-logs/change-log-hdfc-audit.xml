@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.maindb" value="PLF.." dbms="mssql"/>
+	<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#75.1" author="saisandeep.b">
+		<dropNotNullConstraint tableName="AdtCOVENANTS" columnName="REMARKS" columnDataType="varchar(500)" />
+    </changeSet>
+
+	<changeSet id="DE#30.1" author="saisandeep.b">
+		<dropNotNullConstraint tableName="AdtBUILDERGROUP" columnName="SEGMENTATION" columnDataType="varchar(50)" />
+    </changeSet>
+	</databaseChangeLog>

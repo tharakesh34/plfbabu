@@ -49,7 +49,7 @@ public class DocumentController extends ExtendedTestClass {
 		detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		detail.setVersion(1);
-		detail.setDocRefId(Long.MIN_VALUE);
+		detail.setDocRefId(null);
 		// set update properties if exists
 		String finReference = detail.getReferenceId();
 		String docCategory = detail.getDocCategory();
@@ -119,8 +119,9 @@ public class DocumentController extends ExtendedTestClass {
 		}
 		// setting byte data.
 		if (StringUtils.isBlank(response.getDocUri()) && response.getDocImage() == null) {
-			if (response.getDocRefId() != Long.MIN_VALUE) {
-				DocumentManager documentManager = documentManagerDAO.getById(response.getDocRefId());
+			Long docRefId = response.getDocRefId();
+			if (docRefId != null) {
+				DocumentManager documentManager = documentManagerDAO.getById(docRefId);
 				if (documentManager != null && documentManager.getDocImage() != null) {
 					response.setDocImage(documentManager.getDocImage());
 				}

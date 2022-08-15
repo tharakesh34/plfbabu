@@ -153,9 +153,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<AccountingSet> {
 	 * selected AccountingSet object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AccountingSetDialog(Event event) throws Exception {
+	public void onCreate$window_AccountingSetDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -446,9 +445,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<AccountingSet> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAccountingSet
-	 * @throws Exception
 	 */
-	public void doShowDialog(AccountingSet aAccountingSet) throws Exception {
+	public void doShowDialog(AccountingSet aAccountingSet) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1062,7 +1060,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<AccountingSet> {
 	/**
 	 * Call the TransactionEntry dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_TransactionEntryList_NewTransactionEntry(Event event) throws Exception {
+	public void onClick$button_TransactionEntryList_NewTransactionEntry(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		String recordStatus = userAction.getSelectedItem().getValue();
@@ -1169,10 +1167,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<AccountingSet> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.accountingSet);
 	}
 

@@ -295,9 +295,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReceiptCancellationDialog(Event event) throws Exception {
+	public void onCreate$window_ReceiptCancellationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -678,15 +677,14 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	 * Method for event of Changing Repayment Amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		// Duplicate Creation of Object
@@ -997,7 +995,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		this.finReference.setValue(header.getReference());
 		this.finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
-		;
 		this.custCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
 		this.nextInstResetDate.setValue(header.getNextRepayRvwDate());
@@ -1710,9 +1707,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws Exception
 	 */
-	protected boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws Exception {
+	protected boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -1832,9 +1828,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws Exception
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -2076,9 +2071,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(getReceiptHeader());
 	}
 

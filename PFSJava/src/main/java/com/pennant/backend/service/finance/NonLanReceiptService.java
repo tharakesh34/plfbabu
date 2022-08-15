@@ -18,9 +18,9 @@ public interface NonLanReceiptService {
 
 	AuditHeader doReversal(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception;
+	AuditHeader doApprove(AuditHeader aAuditHeader);
 
-	void saveMultiReceipt(AuditHeader auditHeader) throws Exception;
+	void saveMultiReceipt(AuditHeader auditHeader);
 
 	FinReceiptData doReceiptValidations(FinanceDetail financeDetail, String method);
 
@@ -48,5 +48,5 @@ public interface NonLanReceiptService {
 
 	List<ReturnDataSet> getPostingsByPostRefAndFinEvent(String postRef, String finEvent);
 
-	public void processCollectionAPILog() throws Exception;
+	public void processCollectionAPILog();
 }

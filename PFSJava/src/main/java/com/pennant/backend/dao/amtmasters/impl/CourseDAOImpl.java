@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CourseDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-09-2011    														*
- *                                                                  						*
- * Modified Date    :  29-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CourseDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-09-2011 * * Modified Date :
+ * 29-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.amtmasters.impl;
@@ -57,6 +39,7 @@ import com.pennant.backend.model.amtmasters.Course;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Course model</b> class.<br>
@@ -72,10 +55,8 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	/**
 	 * Fetch the Record Course Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Course
 	 */
 	@Override
@@ -97,23 +78,19 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 		RowMapper<Course> typeRowMapper = BeanPropertyRowMapper.newInstance(Course.class);
 
 		try {
-			course = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			course = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return course;
 	}
 
 	/**
 	 * This method Deletes the Record from the AMTCourse or AMTCourse_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Course Detail by key CourseName
 	 * 
-	 * @param Course
-	 *            Detail (course)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Course Detail (course)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -145,15 +122,12 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	 *
 	 * save Course Detail
 	 * 
-	 * @param Course
-	 *            Detail (course)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Course Detail (course)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public String save(Course course, String type) {
 		logger.debug("Entering");
@@ -180,10 +154,8 @@ public class CourseDAOImpl extends BasicDao<Course> implements CourseDAO {
 	 * This method updates the Record AMTCourse or AMTCourse_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update Course Detail by key CourseName and Version
 	 * 
-	 * @param Course
-	 *            Detail (course)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Course Detail (course)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

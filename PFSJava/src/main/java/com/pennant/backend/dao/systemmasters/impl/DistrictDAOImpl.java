@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -194,19 +195,17 @@ public class DistrictDAOImpl extends SequenceDao<District> implements DistrictDA
 		RowMapper<District> typeRowMapper = BeanPropertyRowMapper.newInstance(District.class);
 
 		try {
-			district = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			district = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return district;
 	}
 
 	@Override
 	public District getDistrictByCity(String cityCode) {
 		logger.debug("Entering");
-		District district = new District();
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Id, Code, Name, HostReferenceNo, Active, ");
 		selectSql.append(
@@ -219,13 +218,10 @@ public class DistrictDAOImpl extends SequenceDao<District> implements DistrictDA
 		RowMapper<District> typeRowMapper = BeanPropertyRowMapper.newInstance(District.class);
 
 		try {
-			district = this.jdbcTemplate.queryForObject(selectSql.toString(), paramMap, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), paramMap, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			district = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return district;
 	}
-
 }

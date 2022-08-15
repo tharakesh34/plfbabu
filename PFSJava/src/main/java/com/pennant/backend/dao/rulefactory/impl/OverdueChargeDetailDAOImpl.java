@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OverdueChargeDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-05-2012    														*
- *                                                                  						*
- * Modified Date    :  10-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OverdueChargeDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-05-2012 * *
+ * Modified Date : 10-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -62,6 +44,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>OverdueChargeDetail model</b> class.<br>
@@ -112,10 +95,8 @@ public class OverdueChargeDetailDAOImpl extends BasicDao<OverdueChargeDetail> im
 	/**
 	 * Fetch the Record Overdue Charge Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return OverdueChargeDetail
 	 */
 	@Override
@@ -142,23 +123,19 @@ public class OverdueChargeDetailDAOImpl extends BasicDao<OverdueChargeDetail> im
 		RowMapper<OverdueChargeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeDetail.class);
 
 		try {
-			overdueChargeDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			overdueChargeDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return overdueChargeDetail;
 	}
 
 	/**
 	 * This method Deletes the Record from the FinODCDetails or FinODCDetails_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Overdue Charge Detail by key ODCRuleCode
 	 * 
-	 * @param Overdue
-	 *            Charge Detail (overdueChargeDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Overdue Charge Detail (overdueChargeDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -190,15 +167,12 @@ public class OverdueChargeDetailDAOImpl extends BasicDao<OverdueChargeDetail> im
 	 * 
 	 * save Overdue Charge Detail
 	 * 
-	 * @param Overdue
-	 *            Charge Detail (overdueChargeDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Overdue Charge Detail (overdueChargeDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public String save(OverdueChargeDetail overdueChargeDetail, String type) {
 		logger.debug("Entering");
@@ -226,15 +200,12 @@ public class OverdueChargeDetailDAOImpl extends BasicDao<OverdueChargeDetail> im
 	 * This method updates the Record FinODCDetails or FinODCDetails_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Overdue Charge Detail by key ODCRuleCode and Version
 	 * 
-	 * @param Overdue
-	 *            Charge Detail (overdueChargeDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Overdue Charge Detail (overdueChargeDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
-
 	@Override
 	public void update(OverdueChargeDetail overdueChargeDetail, String type) {
 		int recordCount = 0;
@@ -269,10 +240,8 @@ public class OverdueChargeDetailDAOImpl extends BasicDao<OverdueChargeDetail> im
 	/**
 	 * Fetch the Record Overdue Charge List details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return OverdueChargeDetail List
 	 */
 	@Override

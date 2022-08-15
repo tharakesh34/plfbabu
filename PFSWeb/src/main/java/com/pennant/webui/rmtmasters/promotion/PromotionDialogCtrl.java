@@ -232,9 +232,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 * selected Promotion object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PromotionDialog(Event event) throws Exception {
+	public void onCreate$window_PromotionDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -631,7 +630,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	private void setEffectiveRate() throws InterruptedException {
+	private void setEffectiveRate() {
 		logger.debug("Entering");
 
 		if (StringUtils.isBlank(this.finBaseRate.getBaseValue())) {
@@ -782,11 +781,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.finMinRate.setValue(aPromotion.getFinMinRate());
 		this.finMaxRate.setValue(aPromotion.getFinMaxRate());
 
-		try {
-			setEffectiveRate();
-		} catch (InterruptedException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		setEffectiveRate();
 
 		this.recordStatus.setValue(aPromotion.getRecordStatus());
 

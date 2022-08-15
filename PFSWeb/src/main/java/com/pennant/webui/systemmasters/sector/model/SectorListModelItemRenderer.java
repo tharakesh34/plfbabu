@@ -68,7 +68,7 @@ public class SectorListModelItemRenderer implements ListitemRenderer<Sector>, Se
 	}
 
 	@Override
-	public void render(Listitem item, Sector sector, int count) throws Exception {
+	public void render(Listitem item, Sector sector, int count) {
 
 		Listcell lc;
 		lc = new Listcell(sector.getSectorCode());

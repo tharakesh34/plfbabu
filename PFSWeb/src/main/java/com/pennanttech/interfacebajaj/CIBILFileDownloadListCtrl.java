@@ -62,6 +62,7 @@ import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -133,7 +134,7 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 
 	}
 
-	public void onCreate$window_CIBILFileDownloadList(Event event) throws Exception {
+	public void onCreate$window_CIBILFileDownloadList(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -167,14 +168,14 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		refresh();
 	}
 
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnexecute(Event event) throws Exception {
+	public void onClick$btnexecute(Event event) {
 		String segmentType = fileType.getSelectedItem().getValue();
 
 		try {
@@ -202,11 +203,11 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 		search();
 	}
 
-	public void onChange$fileType(Event event) throws Exception {
+	public void onChange$fileType(Event event) {
 		search();
 	}
 
-	public void onClick_Downlaod(ForwardEvent event) throws Exception {
+	public void onClick_Downlaod(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 
@@ -265,11 +266,15 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 		stream.close();
 	}
 
-	private void downloadFromS3Bucket(String prefix, String fileName) throws Exception {
+	private void downloadFromS3Bucket(String prefix, String fileName) {
 		String key = prefix.concat("/").concat(fileName);
 
-		byte[] fileData = bucket.getObject(key);
-		Filedownload.save(fileData, "text/plain", fileName);
+		try {
+			byte[] fileData = bucket.getObject(key);
+			Filedownload.save(fileData, "text/plain", fileName);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage(), e);
+		}
 	}
 
 	private void refresh() {
@@ -285,7 +290,7 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
+		public void render(Listitem item, FileDownlaod fileDownlaod, int count) {
 			Listcell lc;
 			lc = new Listcell(fileDownlaod.getSegmentType());
 			lc.setParent(item);

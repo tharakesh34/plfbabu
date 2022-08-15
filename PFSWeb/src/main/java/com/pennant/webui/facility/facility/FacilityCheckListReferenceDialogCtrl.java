@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceCheckListReferenceDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-12-2011    														*
- *                                                                  						*
- * Modified Date    :  08-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceCheckListReferenceDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date :
+ * 08-12-2011 * * Modified Date : 08-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.facility.facility;
@@ -145,9 +127,8 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	 * selected FinanceCheckListReference object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceCheckListReferenceDialog(Event event) throws Exception {
+	public void onCreate$window_FinanceCheckListReferenceDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -184,15 +165,13 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	}
 
 	/**
+	 * Display the dialog.
 	 * 
-	 * @throws InterruptedException
+	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws IllegalArgumentException
-	 * @throws SecurityException
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering ");
 		try {
 			doWriteBeanToComponents(getFacility());
@@ -204,8 +183,6 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_FinanceCheckListReferenceDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
 		logger.debug("Leaving ");
 	}
@@ -214,18 +191,17 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	 * This method gets
 	 * 
 	 * @param aFacility
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void doWriteBeanToComponents(Facility aFacility) throws Exception {
+	private void doWriteBeanToComponents(Facility aFacility) {
 		logger.debug("Entering ");
 		notAllowedToShowMap = new HashMap<Long, FacilityReferenceDetail>();
 		notInputInStageMap = new HashMap<Long, FacilityReferenceDetail>();
 		ansDescMap = new HashMap<String, String>();
-		//Check List from Facility process editor
+		// Check List from Facility process editor
 		List<FacilityReferenceDetail> checkList = aFacility.getCheckList();
 
-		//Check List To display 
+		// Check List To display
 		List<FacilityReferenceDetail> checkListToDisplay = new ArrayList<FacilityReferenceDetail>();
 
 		Map<String, Object> fieldsandvalues = null;
@@ -262,7 +238,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		checkListDocTypeMap = new HashMap<String, List<Listitem>>();
 		String remarks = "";
 
-		//Create Items to Render in List box
+		// Create Items to Render in List box
 		List<CheckListDetail> checkListToRender = new ArrayList<CheckListDetail>();
 		for (FacilityReferenceDetail finRefDetail : checkListToDisplay) {
 			List<CheckListDetail> checkListAnsDetails = finRefDetail.getLovDescCheckListAnsDetails();
@@ -328,12 +304,12 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		}
 
 		@Override
-		public void render(Listitem item, CheckListDetail checkListDetail, int count) throws Exception {
+		public void render(Listitem item, CheckListDetail checkListDetail, int count) {
 			item.setSelected(false);
 
 			if (item instanceof Listgroup) {
 				StringBuilder builder = new StringBuilder(checkListDetail.getLovDescCheckListDesc());
-				builder.append("  ");//To add Space between sentences
+				builder.append("  ");// To add Space between sentences
 				builder.append(Labels.getLabel("Required_CheckList",
 						new String[] { String.valueOf(checkListDetail.getLovDescCheckMinCount()),
 								String.valueOf(checkListDetail.getLovDescCheckMaxCount()) }));
@@ -592,17 +568,12 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	/**
 	 * Method to validate checklist
 	 * 
-	 * @param auditDetail
-	 *            (AuditDetail)
-	 * @param usrLanguage
-	 *            (String)
-	 * @param method
-	 *            (String)
+	 * @param auditDetail (AuditDetail)
+	 * @param usrLanguage (String)
+	 * @param method      (String)
 	 * @return auditDetail
-	 * @throws InterruptedException
 	 */
-	private ArrayList<WrongValueException> validation_CheckList(Facility facility, String usrLanguage, String method)
-			throws InterruptedException {
+	private ArrayList<WrongValueException> validation_CheckList(Facility facility, String usrLanguage, String method) {
 		logger.debug("Entering ");
 
 		Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>();
@@ -705,10 +676,9 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	 * 
 	 * @param event
 	 * @return
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onChkListValidation(Event event) throws Exception {
+	public void onChkListValidation(Event event) {
 		logger.debug("Entering");
 		Map<String, Object> map = new HashMap<String, Object>();
 		String userAction = "";
@@ -804,9 +774,8 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	 * This event stores the text box value into bean
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onBlurRemarksTextBox(ForwardEvent event) throws Exception {
+	public void onBlurRemarksTextBox(ForwardEvent event) {
 		logger.debug("Entering ");
 		// (Quick fix will be changed later)
 		Textbox textbox = (Textbox) event.getOrigin().getTarget();
@@ -830,9 +799,8 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 	 * onSelect event for listitem
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSelectListItem(ForwardEvent event) throws Exception {
+	public void onSelectListItem(ForwardEvent event) {
 		logger.debug("Entering " + event.toString());
 		Listitem listitem = (Listitem) event.getOrigin().getTarget();
 		if (listitem instanceof Listitem && !(listitem instanceof Listgroup)) {

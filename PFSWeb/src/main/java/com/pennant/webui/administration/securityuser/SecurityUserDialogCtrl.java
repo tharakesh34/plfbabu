@@ -245,9 +245,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * selected SecurityUser object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SecurityUserDialog(Event event) throws Exception {
+	public void onCreate$window_SecurityUserDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -405,24 +404,23 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSave();
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$usrLogin(Event event) throws Exception {
+	public void onChange$usrLogin(Event event) {
 		setUserDetails();
 	}
 
-	public void onChange$ldapDomainName(Event event) throws Exception {
+	public void onChange$ldapDomainName(Event event) {
 		this.ldapDomainName.getSelectedItem().getValue().toString();
 		setUserDetails();
 	}
 
-	private void setUserDetails() throws Exception {
+	private void setUserDetails() {
 		try {
 			doRemoveValidation();
 			doClearMessage();
@@ -632,7 +630,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * List of authentication types, based on the selection visible the password rows. if authentication type is DAO
 	 * then visible the password rows.
 	 */
-	public void onChange$authType(Event event) throws Exception {
+	public void onChange$authType(Event event) {
 		setPasswordRowVisibility(this.authType.getSelectedItem().getValue().toString());
 		setPasswordInstructionsVisibility(this.authType.getSelectedItem().getValue().toString());
 		this.usrLogin.setErrorMessage("");
@@ -640,7 +638,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.txtbox_confirm_Password.setValue("");
 		showLDAPDomainName();
 		setUserDetails();
-
 	}
 
 	/**
@@ -682,9 +679,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aSecurityUser
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(SecurityUser aSecurityUser) throws Exception {
+	public void doWriteComponentsToBean(SecurityUser aSecurityUser) {
 		logger.debug(Literal.ENTERING);
 
 		doSetLOVValidation();
@@ -1019,7 +1015,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSecurityUser
-	 * @throws Exception
 	 */
 	public void doShowDialog(SecurityUser aSecurityUser) {
 		logger.debug(Literal.ENTERING);
@@ -1427,11 +1422,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug(Literal.ENTERING);
 		final SecurityUser aSecurityUser = new SecurityUser();
 		BeanUtils.copyProperties(getSecurityUser(), aSecurityUser);
@@ -1726,7 +1719,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
 			int specialCharCount = SysParamUtil.getValueAsInt("USR_PWD_SPECIAL_CHAR_COUNT");
 
@@ -1858,9 +1851,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * when clicks on button "btnNotes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
 		final Map<String, Serializable> map = new HashMap<String, Serializable>();
 		map.put("notes", getNotes());
@@ -2971,7 +2963,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		row.appendChild(accessCell);
 	}
 
-	public void onChangeParentCluster(ForwardEvent event) throws Exception {
+	public void onChangeParentCluster(ForwardEvent event) {
 		Row row = (Row) event.getData();
 		onChangeParentCluster(row);
 	}
@@ -3011,10 +3003,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private void doRemoveClusterValidation(Component component) {
 		if (component != null && component instanceof Combobox) {
 			((Combobox) component).setConstraint("");
-			;
 		} else if (component != null && component instanceof ExtendedCombobox) {
 			((ExtendedCombobox) component).setConstraint("");
-			;
 		}
 	}
 
@@ -3037,7 +3027,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			((Combobox) component).setValue("");
 		} else if (component != null && component instanceof ExtendedCombobox) {
 			((ExtendedCombobox) component).setValue("");
-			;
 		}
 	}
 
@@ -3122,7 +3111,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 	// For ReportingManagerList
 
-	public void onClick$btnNewReportingManagerList(Event event) throws Exception {
+	public void onClick$btnNewReportingManagerList(Event event) {
 
 		ReportingManager areportingManager = new ReportingManager();
 		areportingManager.setWorkflowId(0);

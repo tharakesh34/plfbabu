@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
@@ -121,7 +122,7 @@ public class CollateralController extends ExtendedTestClass {
 
 			// call collateral create method
 			auditHeader = collateralSetupService.doApprove(auditHeader);
-			if (auditHeader.getErrorMessage() != null) {
+			if (CollectionUtils.isNotEmpty(auditHeader.getErrorMessage())) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CollateralSetup();
 					response.setReturnStatus(
@@ -652,7 +653,7 @@ public class CollateralController extends ExtendedTestClass {
 				if (StringUtils.equals(procType, PROCESS_TYPE_SAVE)) {
 					detail.setNewRecord(true);
 					detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					detail.setDocRefId(Long.MIN_VALUE);
+					detail.setDocRefId(null);
 				} else if (StringUtils.equals(procType, PROCESS_TYPE_UPDATE)) {
 					String category = detail.getDocCategory();
 					String module = CollateralConstants.MODULE_NAME;

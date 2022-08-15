@@ -65,7 +65,7 @@ public class BuilderProjcetListModelItemRenderer implements ListitemRenderer<Bui
 	}
 
 	@Override
-	public void render(Listitem item, BuilderProjcet builderProjcet, int count) throws Exception {
+	public void render(Listitem item, BuilderProjcet builderProjcet, int count) {
 
 		Listcell lc;
 		lc = new Listcell(String.valueOf(builderProjcet.getId()));

@@ -1,45 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  AuditHeaderDAOImpl.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : AuditHeaderDAOImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.audit.impl;
 
 import java.sql.ResultSet;
@@ -53,19 +44,18 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.CoalesceSqlParameterSource;
 
 public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements AuditHeaderDAO {
 	private static Logger logger = LogManager.getLogger(AuditHeaderDAOImpl.class);
@@ -81,23 +71,17 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 	public long addAudit(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
-		long id = Long.MIN_VALUE;
 		auditHeader.setAuditDate(new Timestamp(System.currentTimeMillis()));
 
-		try {
-			id = addAuditHeader(auditHeader);
-			auditHeader.setId(id);
+		long id = addAuditHeader(auditHeader);
+		auditHeader.setId(id);
 
-			if (auditHeader.getAuditDetail() != null) {
-				createAuditDetails(auditHeader, auditHeader.getAuditDetail());
-			}
+		if (auditHeader.getAuditDetail() != null) {
+			createAuditDetails(auditHeader, auditHeader.getAuditDetail());
+		}
 
-			if (auditHeader.getAuditDetails() != null && auditHeader.getAuditDetails().size() > 0) {
-				createAuditDetails(auditHeader);
-			}
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		if (auditHeader.getAuditDetails() != null && auditHeader.getAuditDetails().size() > 0) {
+			createAuditDetails(auditHeader);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -125,17 +109,30 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		return auditHeader.getId();
 	}
 
-	private void addAuditDetails(Object modelData, String insertString, boolean isExtendedModule) {
+	private void addAuditDetails(Object modelData, String sql, boolean isExtendedModule, long auditId,
+			Timestamp auditDate, int auditSeq, String auditImage) {
 		logger.debug(Literal.ENTERING);
+		logger.trace(Literal.SQL + sql);
 
-		logger.debug("SQL Qry" + insertString);
 		if (isExtendedModule) {
 			ExtendedFieldRender fieldRender = (ExtendedFieldRender) modelData;
-			jdbcTemplate.update(insertString, fieldRender.getAuditMapValues());
+			MapSqlParameterSource parameterSource = new MapSqlParameterSource(fieldRender.getAuditMapValues());
+			parameterSource.addValue("AUDIT_HEADER_AUDIT_ID", auditId);
+			parameterSource.addValue("AUDIT_HEADER_AUDIT_DATE", auditDate);
+			parameterSource.addValue("AUDIT_HEADER_AUDIT_SEQ", auditSeq);
+			parameterSource.addValue("AUDIT_HEADER_AUDIT_IMAGE", auditImage);
+
+			jdbcTemplate.update(sql, parameterSource);
 		} else {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(modelData);
-			jdbcTemplate.update(insertString, beanParameters);
+			CoalesceSqlParameterSource parameterSource = new CoalesceSqlParameterSource(modelData);
+			parameterSource.addValue("AUDIT_HEADER_AUDIT_ID", auditId);
+			parameterSource.addValue("AUDIT_HEADER_AUDIT_DATE", auditDate);
+			parameterSource.addValue("AUDIT_HEADER_AUDIT_SEQ", auditSeq);
+			parameterSource.addValue("AUDIT_HEADER_AUDIT_IMAGE", auditImage);
+
+			jdbcTemplate.update(sql, parameterSource);
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -171,24 +168,27 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 			}
 
 			if (before && auditDetail.getBefImage() != null) {
-				addAuditDetails(auditDetail.getBefImage(), getInsertQry(auditDetail.getBefImage(),
-						PennantConstants.TRAN_BEF_IMG, auditHeader, auditDetail), auditDetail.isExtended());
+				addAuditDetails(auditDetail.getBefImage(), getInsertQry(auditDetail.getBefImage(), auditDetail),
+						auditDetail.isExtended(), auditHeader.getId(), auditHeader.getAuditDate(),
+						auditDetail.getAuditSeq(), PennantConstants.TRAN_BEF_IMG);
 			}
 
 			if (after) {
-				addAuditDetails(auditDetail.getModelData(), getInsertQry(auditDetail.getModelData(),
-						PennantConstants.TRAN_AFT_IMG, auditHeader, auditDetail), auditDetail.isExtended());
+				addAuditDetails(auditDetail.getModelData(), getInsertQry(auditDetail.getModelData(), auditDetail),
+						auditDetail.isExtended(), auditHeader.getId(), auditHeader.getAuditDate(),
+						auditDetail.getAuditSeq(), PennantConstants.TRAN_AFT_IMG);
 			}
 
 			if (workFlow) {
-				addAuditDetails(auditDetail.getModelData(), getInsertQry(auditDetail.getModelData(),
-						PennantConstants.TRAN_WF_IMG, auditHeader, auditDetail), auditDetail.isExtended());
+				addAuditDetails(auditDetail.getModelData(), getInsertQry(auditDetail.getModelData(), auditDetail),
+						auditDetail.isExtended(), auditHeader.getId(), auditHeader.getAuditDate(),
+						auditDetail.getAuditSeq(), PennantConstants.TRAN_WF_IMG);
 			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
-	private String getInsertQry(Object dataObject, String imageType, AuditHeader auditHeader, AuditDetail auditDetail) {
+	private String getInsertQry(Object dataObject, AuditDetail auditDetail) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into Adt");
 		if (auditDetail.isExtended()) {
@@ -197,21 +197,11 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 			sql.append(ModuleUtil.getTableName(dataObject.getClass().getSimpleName()));
 		}
 		sql.append(" (");
-		sql.append(" AuditId, AuditDate, AuditSeq, AuditImage, ");
+		sql.append("AuditId, AuditDate, AuditSeq, AuditImage, ");
 		sql.append(auditDetail.getAuditField());
-		sql.append(" ) VALUES (");
-		sql.append(String.valueOf(auditHeader.getId()));
-		sql.append(", '");
-		if (App.DATABASE == Database.SQL_SERVER || App.DATABASE == Database.POSTGRES) {
-			sql.append(auditHeader.getAuditDate());
-		} else {
-			sql.append(DateUtility.format(auditHeader.getAuditDate(), PennantConstants.DBDateTimeFormat));
-		}
-		sql.append("',");
-		sql.append(auditDetail.getAuditSeq());
-		sql.append(",'");
-		sql.append(imageType);
-		sql.append("',");
+		sql.append(") VALUES (");
+		sql.append(":AUDIT_HEADER_AUDIT_ID, :AUDIT_HEADER_AUDIT_DATE, ");
+		sql.append(":AUDIT_HEADER_AUDIT_SEQ, :AUDIT_HEADER_AUDIT_IMAGE, ");
 		sql.append(auditDetail.getAuditValue());
 		sql.append(")");
 		return sql.toString();
@@ -226,27 +216,20 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		sql.append(whereCondition);
 		sql.append(" and Version = ? order by AuditId desc");
 
-		try {
-			return jdbcOperations.query(sql.toString(), arguments, new ResultSetExtractor<Boolean>() {
-
-				@Override
-				public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
-					if (rs.next()) {
-						if (PennantConstants.RCD_STATUS_SAVED.equals(rs.getString(1))) {
-							return true;
-						}
-						if (userId == rs.getLong(2)) {
-							return false;
-						}
+		return jdbcOperations.query(sql.toString(), arguments, new ResultSetExtractor<Boolean>() {
+			@Override
+			public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					if (PennantConstants.RCD_STATUS_SAVED.equals(rs.getString(1))) {
+						return true;
 					}
-					return true;
+					if (userId == rs.getLong(2)) {
+						return false;
+					}
 				}
+				return true;
+			}
 
-			});
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return true;
+		});
 	}
 }

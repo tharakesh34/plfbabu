@@ -1,6 +1,7 @@
 package com.pennant.webui.dedup.dedupparm;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -79,8 +80,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
 	public static Object show(Component parent, List<ReturnedCheques> returnChequeList, String dedupFields,
@@ -192,7 +192,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 		columns.appendChild(column4);
 		grid.appendChild(columns);
 
-		//Rows Preparation
+		// Rows Preparation
 		Rows rows = new Rows();
 		rows.setParent(grid);
 		grid.appendChild(rows);
@@ -272,7 +272,8 @@ public class ShowReturnedCheques extends Window implements Serializable {
 		}
 
 		@Override
-		public void render(Listitem item, Object data, int count) throws Exception {
+		public void render(Listitem item, Object data, int count)
+				throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 			String fieldValue = "";
 			Date dateFieldValue = new Date();
 			ReturnedCheques returnedCheques = (ReturnedCheques) data;
@@ -345,7 +346,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			setUserAction(1);
 			onClose();
 		}
@@ -361,7 +362,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			setUserAction(0);
 			setObject(null);
 			onClose();
@@ -375,7 +376,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			final PagingEvent pe = (PagingEvent) event;
 			final int pageNo = pe.getActivePage();
 			final int start = pageNo * getPageSize();

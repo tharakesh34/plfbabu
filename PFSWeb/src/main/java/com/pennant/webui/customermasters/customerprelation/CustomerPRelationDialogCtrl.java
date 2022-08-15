@@ -178,9 +178,8 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 * selected CustomerPRelation object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerPRelationDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerPRelationDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -675,9 +674,8 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerPRelation
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerPRelation aCustomerPRelation) throws InterruptedException {
+	public void doShowDialog(CustomerPRelation aCustomerPRelation) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1503,11 +1501,8 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 
 	/**
 	 * To load the customerSelect filter dialog
-	 * 
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	private void onload() throws SuspendNotAllowedException, InterruptedException {
+	private void onload() {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
@@ -1577,10 +1572,8 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerPRelation);
 	}
 

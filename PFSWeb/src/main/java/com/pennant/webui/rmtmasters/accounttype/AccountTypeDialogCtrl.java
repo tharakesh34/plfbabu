@@ -142,9 +142,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * selected AccountType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AccountTypeDialog(Event event) throws Exception {
+	public void onCreate$window_AccountTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -275,15 +274,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_AccountTypeDialog(Event event) throws Exception {
+	public void onClose$window_AccountTypeDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		doClose(null);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -661,9 +659,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAccountType
-	 * @throws Exception
 	 */
-	public void doShowDialog(AccountType aAccountType) throws Exception {
+	public void doShowDialog(AccountType aAccountType) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -943,26 +940,19 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.onBalanceSheet.setChecked(false);
 		this.allowOverDraw.setChecked(false);
 		this.acTypeGrpId.setValue("");
-		;
 		this.profitCenter.setValue("");
-		;
 		this.costCenter.setValue("");
-		;
 		this.gSTApplicable.setChecked(false);
 		this.hSNNumber.setValue("");
-		;
 		this.natureService.setValue("");
-		;
 		this.revChargeApplicable.setChecked(false);
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 		final AccountType aAccountType = new AccountType();
 		BeanUtils.copyProperties(getAccountType(), aAccountType);
@@ -1297,10 +1287,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.accountType);
 	}
 

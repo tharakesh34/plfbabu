@@ -20,7 +20,7 @@ public class SysNotificationDialogModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, SysNotificationDetails details, int count) throws Exception {
+	public void render(Listitem item, SysNotificationDetails details, int count) {
 
 		((Listbox) item.getParent()).setMultiple(true);
 		Listcell lc;

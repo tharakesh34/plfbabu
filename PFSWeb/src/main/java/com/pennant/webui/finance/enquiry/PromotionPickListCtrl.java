@@ -157,9 +157,8 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PromotionPickList(ForwardEvent event) throws Exception {
+	public void onCreate$window_PromotionPickList(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -196,10 +195,8 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void appendCustomerDetailTab() throws InterruptedException {
+	public void appendCustomerDetailTab() {
 		logger.debug("Entering");
 		try {
 			Map<String, Object> map = new HashMap<String, Object>();

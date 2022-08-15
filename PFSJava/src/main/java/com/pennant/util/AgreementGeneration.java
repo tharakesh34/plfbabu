@@ -156,7 +156,7 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinOCRCapture;
-import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -2055,16 +2055,13 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 			BigDecimal totalFeeAmount = BigDecimal.ZERO;
 			if (null != detail && null != detail.getFinScheduleData()) {
-				List<FinReceiptDetail> finReceiptDetails = detail.getFinScheduleData().getFinReceiptDetails();
-				if (CollectionUtils.isNotEmpty(finReceiptDetails)) {
-					for (FinReceiptDetail finReceiptDts : finReceiptDetails) {
-						if (null != finReceiptDts) {
-							totalFeeAmount = totalFeeAmount.add(finReceiptDts.getAmount());
-						}
-					}
-					agreement.setTotalReceiptFeeAmount(CurrencyUtil.format(totalFeeAmount, formatter));
+				List<FinReceiptHeader> imdReceipts = detail.getFinScheduleData().getImdReceipts();
+				for (FinReceiptHeader rch : imdReceipts) {
+						totalFeeAmount = totalFeeAmount.add(rch.getReceiptAmount());
 				}
+				agreement.setTotalReceiptFeeAmount(CurrencyUtil.format(totalFeeAmount, formatter));
 			}
+
 			if (CollectionUtils.isNotEmpty(detail.getDueDiligenceDetailsList())) {
 
 				for (DueDiligenceDetails dueDiligenceDetails : detail.getDueDiligenceDetailsList()) {
@@ -4480,7 +4477,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 			BigDecimal emi = BigDecimal.ZERO;
 			if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
-				emi = ScheduleCalculator.getEMIOnFinAssetValue(detail);
+				emi = ScheduleCalculator.getEMIOnFinAssetValue(detail.getFinScheduleData());
 			}
 			agreement.setRepayOnLoanAmt(CurrencyUtil.format(emi, formatter));
 			agreement.setRepayOnLoanAmtInWords(emi == BigDecimal.ZERO ? ""

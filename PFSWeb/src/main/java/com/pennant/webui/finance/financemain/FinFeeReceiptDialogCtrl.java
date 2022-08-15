@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinFeeReceiptDialogCtrl.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-06-2017    														*
- *                                                                  						*
- * Modified Date    :  01-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinFeeReceiptDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-06-2017 * *
+ * Modified Date : 01-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-06-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-06-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -123,10 +105,9 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 	 * selected FinFeeReceipt object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinFeeReceiptDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_FinFeeReceiptDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -191,8 +172,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
@@ -431,7 +411,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 		int formatter = CurrencyUtil.getFormat(finMain.getFinCcy());
 
 		boolean readOnly = isReadOnly("FinFeeReceiptDialog_paidAmount");
-		//As per IMD CHANGES fields should be readonly.
+		// As per IMD CHANGES fields should be readonly.
 		readOnly = true;
 
 		if (finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
@@ -514,8 +494,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -136,7 +137,6 @@ public class FinReceiptData implements Serializable {
 		this.allocationDescMap.entrySet().stream()
 				.forEach(e -> entity.getAllocationDescMap().put(e.getKey(), e.getValue()));
 		entity.setReceiptHeader(this.receiptHeader == null ? null : this.receiptHeader.copyEntity());
-		entity.setFinanceDetail(this.financeDetail);
 		entity.setRepledgeDetail(this.repledgeDetail == null ? null : this.repledgeDetail.copyEntity());
 		entity.setPromotion(this.promotion == null ? null : this.promotion.copyEntity());
 		entity.setCashierTransaction(this.cashierTransaction);
@@ -188,6 +188,23 @@ public class FinReceiptData implements Serializable {
 		entity.getInProcessReceipts().addAll(this.inProcessReceipts);
 		entity.setActualOdPaid(this.actualOdPaid);
 		entity.setRcdIdx(this.rcdIdx);
+
+		FinanceDetail fd = new FinanceDetail();
+
+		FinScheduleData schD = this.getFinanceDetail().getFinScheduleData();
+		fd.setFinScheduleData(schD.copyEntity());
+
+		fd.getFinScheduleData().setFinPftDeatil(schD.getFinPftDeatil().copyEntity());
+		fd.getFinScheduleData().setFinanceMain(schD.getFinanceMain().copyEntity());
+		this.financeDetail.getFinTypeFeesList().stream()
+				.forEach(e -> fd.getFinTypeFeesList().add(e == null ? null : e.copyEntity()));
+
+		ExtendedFieldExtension extendedFieldExtension = this.getFinanceDetail().getExtendedFieldExtension();
+		if (extendedFieldExtension != null) {
+			fd.setExtendedFieldExtension(extendedFieldExtension.copyEntity());
+		}
+
+		entity.setFinanceDetail(fd);
 
 		return entity;
 	}

@@ -114,10 +114,9 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SelectRestructureDialog(Event event) throws Exception {
+	public void onCreate$window_SelectRestructureDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -195,7 +194,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfill$finReference(Event event) throws Exception {
+	public void onFulfill$finReference(Event event) {
 		logger.debug(Literal.ENTERING);
 		Clients.clearWrongValue(this.finReference);
 		Object dataObject = this.finReference.getObject();
@@ -216,9 +215,8 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		if (!doFieldValidation()) {

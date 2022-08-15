@@ -72,9 +72,8 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	 * selected Qualification object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_QualificationDialog(Event event) throws Exception {
+	public void onCreate$window_QualificationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_QualificationDialog);
@@ -300,9 +299,8 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProfession
-	 * @throws Exception
 	 */
-	public void doShowDialog(Qualification aQualification) throws Exception {
+	public void doShowDialog(Qualification aQualification) {
 		logger.debug(Literal.ENTERING);
 
 		// set Read only mode accordingly if the object is new or not.
@@ -737,10 +735,8 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.qualification);
 	}
 

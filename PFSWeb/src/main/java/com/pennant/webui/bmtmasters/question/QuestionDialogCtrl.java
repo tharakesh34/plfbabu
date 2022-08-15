@@ -117,9 +117,8 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * selected Question object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_QuestionDialog(Event event) throws Exception {
+	public void onCreate$window_QuestionDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -388,9 +387,8 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aQuestion
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(Question aQuestion) throws InterruptedException {
+	public void doShowDialog(Question aQuestion) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -876,10 +874,8 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.question);
 	}
 

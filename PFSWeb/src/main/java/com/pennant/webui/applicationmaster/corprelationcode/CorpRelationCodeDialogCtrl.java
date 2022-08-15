@@ -99,9 +99,8 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	 * selected CorpRelationCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CorpRelationCodeDialog(Event event) throws Exception {
+	public void onCreate$window_CorpRelationCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -344,9 +343,8 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCorpRelationCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(CorpRelationCode aCorpRelationCode) throws Exception {
+	public void doShowDialog(CorpRelationCode aCorpRelationCode) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -775,10 +773,8 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.mCorpRelationCode);
 	}
 

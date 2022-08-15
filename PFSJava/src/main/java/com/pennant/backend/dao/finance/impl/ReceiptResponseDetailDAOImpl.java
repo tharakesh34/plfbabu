@@ -1,55 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  UploadHeaderDAOImpl.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-12-2017    														*
- *                                                                  						*
- * Modified Date    :  17-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : UploadHeaderDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-12-2017 * * Modified
+ * Date : 17-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -61,6 +42,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -95,11 +77,11 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-		logger.debug(Literal.LEAVING);
 
+		logger.debug(Literal.LEAVING);
 		return batchId;
 	}
 
@@ -123,18 +105,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptUploadDetail);
 		RowMapper<ReceiptUploadDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ReceiptUploadDetail.class);
 
-		List<ReceiptUploadDetail> detailsList = new ArrayList<>();
-
-		try {
-
-			detailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.error(e);
-			detailsList = new ArrayList<>();
-		}
-
-		logger.debug(Literal.LEAVING);
-		return detailsList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -155,17 +126,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		RowMapper<UploadAlloctionDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadAlloctionDetail.class);
 
-		List<UploadAlloctionDetail> uploadAlloctionDetailsList = new ArrayList<>();
-
-		try {
-			uploadAlloctionDetailsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.error(e);
-			uploadAlloctionDetailsList = new ArrayList<>();
-		}
-
-		logger.debug("Leaving");
-		return uploadAlloctionDetailsList;
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -189,13 +150,9 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		source.addValue("Remarks", remarks);
 		source.addValue("ID", batchId);
 
-		try {
-			this.jdbcTemplate.update(query.toString(), source);
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
+		this.jdbcTemplate.update(query.toString(), source);
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -217,13 +174,9 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		source.addValue("PICKUPDATE", SysParamUtil.getAppDate());
 		source.addValue("Id", receiptresponseDetail.getId());
 
-		try {
-			this.jdbcTemplate.update(query.toString(), source);
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
+		this.jdbcTemplate.update(query.toString(), source);
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -239,13 +192,8 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		source.addValue("RECEIPTID", receiptID);
 		source.addValue("Id", rootId);
 
-		try {
-			this.jdbcTemplate.update(query.toString(), source);
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		this.jdbcTemplate.update(query.toString(), source);
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	/**
@@ -265,13 +213,8 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		source.addValue("PICKUPBATCHID", jobid);
 
-		try {
-			this.jdbcTemplate.update(query.toString(), source);
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		this.jdbcTemplate.update(query.toString(), source);
 		logger.debug(Literal.LEAVING);
-
 	}
 
 }

@@ -64,7 +64,7 @@ public class CustomerPaymentTxnsListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, PaymentTransaction transaction, int count) throws Exception {
+	public void render(Listitem item, PaymentTransaction transaction, int count) {
 
 		Listcell lc;
 

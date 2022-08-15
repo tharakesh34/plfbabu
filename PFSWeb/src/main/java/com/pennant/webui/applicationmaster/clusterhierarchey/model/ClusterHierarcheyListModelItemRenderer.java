@@ -65,7 +65,7 @@ public class ClusterHierarcheyListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, ClusterHierarchy clusterHierarchey, int count) throws Exception {
+	public void render(Listitem item, ClusterHierarchy clusterHierarchey, int count) {
 
 		Listcell lc;
 		lc = new Listcell(clusterHierarchey.getEntity());

@@ -93,7 +93,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		super.pageRightName = "DMSDialog";
 	}
 
-	public void onCreate$window_DocManagementControlDialog(Event event) throws Exception {
+	public void onCreate$window_DocManagementControlDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -292,7 +292,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onDocViewButtonClicked(Event event) throws Exception {
+	public void onDocViewButtonClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		ExternalDocument documentDetail = (ExternalDocument) event.getData();
@@ -350,7 +350,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					String custCIF = financeDetail.getCustomerDetails().getCustomer().getCustCIF();
 					String offerId = financeDetail.getFinScheduleData().getFinanceMain().getOfferId();
 
-					//Finance Documents
+					// Finance Documents
 					if (documentDetailDialogCtrl != null) {
 
 						List<DocumentDetails> documentDetailList = documentDetailDialogCtrl.getDocumentDetailsList();
@@ -404,7 +404,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						}
 					}
 
-					//Customer Documents
+					// Customer Documents
 					List<CustomerDocument> custDocuments = financeDetail.getCustomerDetails()
 							.getCustomerDocumentsList();
 					String applicantCIF = financeDetail.getCustomerDetails().getCustomer().getCustCIF();
@@ -421,7 +421,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						}
 					}
 
-					//CoApplicant Documents
+					// CoApplicant Documents
 					if (CollectionUtils.isNotEmpty(financeDetail.getJointAccountDetailList())) {
 						for (JointAccountDetail coApplicant : financeDetail.getJointAccountDetailList()) {
 							List<CustomerDocument> coApplicantDocs = coApplicant.getCustomerDetails()
@@ -625,7 +625,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							newFinDocumentdetails.add(docDetail);
 						}
 					}
-					//Calling metaData update API to update that doc is received  - Piramal implementation 
+					// Calling metaData update API to update that doc is received - Piramal implementation
 					if (StringUtils.isNotEmpty(App.getProperty("exteranal.interface.dms.leadId.based"))) {
 						documentManagementService.updateExternalDocuments(extDoc,
 								financeDetail.getFinScheduleData().getFinanceMain().getCustID());
@@ -670,8 +670,8 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				custDoc.setApplicationNo(applicationNo);
 				custDoc.setOfferId(leadId);
 				newCustDocumentdetails.add(custDoc);
+			}
 		}
-	}
 
 		if (this.listBoxDMSDocuments.getItemCount() > 0) {
 			for (Listitem listitem : listBoxDMSDocuments.getItems()) {
@@ -717,7 +717,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						docDetail.setCustID(custId);
 						docDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						docDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-						
+
 						boolean rcdFound = false;
 						if (CollectionUtils.isNotEmpty(newCustDocumentdetails)) {
 							for (CustomerDocument custDoc : newCustDocumentdetails) {
@@ -750,7 +750,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							newCustDocumentdetails.add(docDetail);
 						}
 
-						//Calling metaData update API to update CIFs tagged while saving  - Piramal implementation 
+						// Calling metaData update API to update CIFs tagged while saving - Piramal implementation
 						if (StringUtils.isNotEmpty(App.getProperty("exteranal.interface.dms.leadId.based"))) {
 							documentManagementService.updateExternalDocuments(extDoc, custId);
 
@@ -811,7 +811,8 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						CollateralConstants.MODULE_NAME, FinServiceEvent.ORG, "");
 				if (CollectionUtils.isNotEmpty(existingDocList)) {
 					for (DocumentDetails documentDetail : existingDocList) {
-						//Already approved documents need to synch with DMS so if docUri is blank setting the record type as update.
+						// Already approved documents need to synch with DMS so if docUri is blank setting the record
+						// type as update.
 						if (StringUtils.isBlank(documentDetail.getDocUri())) {
 							documentDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 							documentDetail.setNewRecord(false);
@@ -890,7 +891,8 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 										collateralDoc.setDocUri(extDoc.getDocRefId());
 										collateralDoc.setDoctype(extDoc.getDocExtn().toUpperCase());
 										collateralDoc.setDocName(extDoc.getDocName());
-										//Record type setting as EDIT for already approved documents (Collateral created outside)if same category matched.
+										// Record type setting as EDIT for already approved documents (Collateral
+										// created outside)if same category matched.
 										if (StringUtils.isBlank(collateralDoc.getRecordType()) || StringUtils.equals(
 												collateralDoc.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
 											collateralDoc.setRecordType(PennantConstants.RECORD_TYPE_UPD);

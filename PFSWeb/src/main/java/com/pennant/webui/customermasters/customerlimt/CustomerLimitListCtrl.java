@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.customermasters.customerlimt;
 
 import java.util.ArrayList;
@@ -114,10 +96,9 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CustomerLimitList(Event event) throws Exception {
+	public void onCreate$window_CustomerLimitList(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		/* set components visible dependent of the users rights */
@@ -175,9 +156,8 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	 * see: com.pennant.webui.customermasters.customer.model.CustomerListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCustomerItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected Customer object
@@ -192,27 +172,12 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	}
 
 	/**
-	 * Build the Customer Dialog Window with Existing Core banking Data
-	 * 
-	 * @throws Exception
-	 */
-	/*
-	 * public void buildDialogWindow(Customer customer) throws Exception{ logger.debug("Entering"); // create a new
-	 * Customer object, We GET it from the backEnd. CustomerDetails aCustomerDetails =
-	 * getCustomerDetailsService().getNewCustomer(); customer =
-	 * getCustomerDetailsService().fetchCustomerDetails(customer); aCustomerDetails.setCustomer(customer);
-	 * showDetailView(aCustomerDetails); logger.debug("Leaving"); }
-	 */
-
-	/**
 	 * Opens the detail view. <br>
 	 * OverHanded some params in a map if needed. <br>
 	 * 
-	 * @param CustomerDetails
-	 *            (aCustomerDetails)
-	 * @throws Exception
+	 * @param CustomerDetails (aCustomerDetails)
 	 */
-	private void showDetailView(CustomerLimit customerLimit) throws Exception {
+	private void showDetailView(CustomerLimit customerLimit) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
@@ -270,9 +235,8 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	 * Method for call the Customer dialog
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_CustomerList_CustomerSearchDialog(Event event) throws Exception {
+	public void onClick$button_CustomerList_CustomerSearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		/*
 		 * we can call our CustomerDialog zul-file with parameters. So we can call them with a object of the selected
@@ -281,7 +245,7 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 		 */
 		Map<String, Object> map = getDefaultArguments();
 		map.put("customerCtrl", this);
-		//map.put("searchObject", this.searchObj);
+		// map.put("searchObject", this.searchObj);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -300,7 +264,7 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	 */
 	public void onClick$button_CustomerList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		//	PTReportUtils.getReport("Customer", getSearchObj());
+		// PTReportUtils.getReport("Customer", getSearchObj());
 		logger.debug("Leaving" + event.toString());
 	}
 

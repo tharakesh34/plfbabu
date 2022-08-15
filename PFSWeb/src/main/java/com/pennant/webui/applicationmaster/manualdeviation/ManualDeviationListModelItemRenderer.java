@@ -70,7 +70,7 @@ public class ManualDeviationListModelItemRenderer implements ListitemRenderer<Ma
 	}
 
 	@Override
-	public void render(Listitem item, ManualDeviation manualDeviation, int count) throws Exception {
+	public void render(Listitem item, ManualDeviation manualDeviation, int count) {
 
 		Listcell lc;
 		lc = new Listcell(manualDeviation.getCode());

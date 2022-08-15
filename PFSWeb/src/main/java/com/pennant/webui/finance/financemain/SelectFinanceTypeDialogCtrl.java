@@ -30,8 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.FactoryConfigurationError;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -227,10 +225,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SelectFinanceTypeDialog(Event event) throws Exception {
+	public void onCreate$window_SelectFinanceTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -811,9 +808,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (!isPromotionPick) {
@@ -858,8 +854,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer, String primaryIdName)
-			throws InterruptedException, FactoryConfigurationError {
+	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer, String primaryIdName) {
 		FinanceDetail fd = null;
 
 		// Customer Data Fetching
@@ -1182,7 +1177,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	// GUI Process
-	private void showDetailView(FinanceDetail financeDetail) throws InterruptedException {
+	private void showDetailView(FinanceDetail financeDetail) {
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
 		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
@@ -1257,7 +1252,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Opens the SelectFinanceTypeDialog window modal.
 	 */
-	private void showSelectFinanceTypeDialog() throws InterruptedException {
+	private void showSelectFinanceTypeDialog() {
 		logger.debug("Entering");
 		try {
 			// open the dialog in modal mode
@@ -1270,10 +1265,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doFieldValidation() throws InterruptedException {
+	private void doFieldValidation() {
 		logger.debug("Entering ");
 		doClearMessage();
 		doRemoveValidation();
@@ -1393,7 +1386,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Leaving ");
 	}
 
-	private boolean checkDedup() throws Exception {
+	private boolean checkDedup() {
 		if (newCust.isChecked()) {
 			String primaryId = eidNumber.getValue();
 
@@ -1427,7 +1420,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		return false;
 	}
 
-	private boolean checkExternalDedup(String primaryId) throws Exception {
+	private boolean checkExternalDedup(String primaryId) {
 		CustomerDetails customerDetails = new CustomerDetails();
 		CustomerDedup custDedup = new CustomerDedup();
 		String primaryIDType = null;
@@ -1581,11 +1574,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * Call the Customer dialog with a new empty entry. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InterfaceException
-	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData(boolean isRetail) throws InterruptedException, InterfaceException {
+	public CustomerDetails fetchCustomerData(boolean isRetail) {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = new CustomerDetails();

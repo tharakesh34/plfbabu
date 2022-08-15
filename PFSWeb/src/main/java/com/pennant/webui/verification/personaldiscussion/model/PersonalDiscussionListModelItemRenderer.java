@@ -23,7 +23,7 @@ public class PersonalDiscussionListModelItemRenderer implements ListitemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, PersonalDiscussion pd, int count) throws Exception {
+	public void render(Listitem item, PersonalDiscussion pd, int count) {
 		Listcell lc;
 		lc = new Listcell(String.valueOf(pd.getCif()));
 		lc.setParent(item);

@@ -69,7 +69,7 @@ public class AccountsListModelItemRenderer implements ListitemRenderer<Accounts>
 	}
 
 	@Override
-	public void render(Listitem item, Accounts acounts, int count) throws Exception {
+	public void render(Listitem item, Accounts acounts, int count) {
 
 		Listcell lc;
 		lc = new Listcell(acounts.getAccountId());

@@ -81,9 +81,8 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_HoldEMIDialog(Event event) throws Exception {
+	public void onCreate$window_HoldEMIDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -141,7 +140,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doClose(false);
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() {
 		logger.debug("Entering");
 		doSetValidation();
 		doWriteComponentsToBean();
@@ -199,9 +198,8 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws Exception
 	 */
-	private void doShowDialog(FinScheduleData aFinScheduleData) throws Exception {
+	private void doShowDialog(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 		try {
 
@@ -317,7 +315,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param aFinanceMain
 	 */
-	public void doWriteComponentsToBean() throws InterruptedException {
+	public void doWriteComponentsToBean() {
 		logger.debug("Entering");
 		doClearMessage();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -497,7 +495,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnHoldEMI(Event event) throws Exception {
+	public void onClick$btnHoldEMI(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (getFinanceScheduleDetail() != null) {
 			if (isDataChanged()) {

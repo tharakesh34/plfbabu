@@ -20,7 +20,7 @@ public class PinCodeListModelItemRenderer implements ListitemRenderer<PinCode>, 
 	}
 
 	@Override
-	public void render(Listitem item, PinCode pinCode, int count) throws Exception {
+	public void render(Listitem item, PinCode pinCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(pinCode.getPinCode());

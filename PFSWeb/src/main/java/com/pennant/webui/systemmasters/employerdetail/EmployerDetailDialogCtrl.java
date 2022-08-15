@@ -251,9 +251,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	 * selected EmployerDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_EmployerDetailDialog(Event event) throws Exception {
+	public void onCreate$window_EmployerDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -392,10 +391,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 			ScreenCTL.displayNotes(getNotes("EmployerDetail", String.valueOf(getEmployerDetail().getEmployerId()),
@@ -457,9 +454,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aEmployerDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(EmployerDetail aEmployerDetail) throws Exception {
+	public void doShowDialog(EmployerDetail aEmployerDetail) {
 		logger.debug("Entering");
 
 		try {
@@ -490,7 +486,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
 
-		System.out.println();
 		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
 				this.userAction, this.empIndustry, this.empAlocationType));
 

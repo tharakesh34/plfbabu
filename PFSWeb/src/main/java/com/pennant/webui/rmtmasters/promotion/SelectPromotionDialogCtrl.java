@@ -105,9 +105,8 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SelectPromotionDialog(Event event) throws Exception {
+	public void onCreate$window_SelectPromotionDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -193,9 +192,8 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		doSetValidation();

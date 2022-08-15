@@ -67,9 +67,8 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SelectLoanClosureEnquiryList(Event event) throws Exception {
+	public void onCreate$window_SelectLoanClosureEnquiryList(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -139,9 +138,8 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering ");
 		doShowDialogPage(this.finRefValue);
 		logger.debug("Leaving ");
@@ -150,7 +148,7 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		//Close the current window
+		// Close the current window
 		this.window_SelectLoanClosureEnquiryList.onClose();
 		if (!isModelWindow) {
 			// Close the current menu item
@@ -166,8 +164,7 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param financeType
-	 *            The entity that need to be passed to the dialog.
+	 * @param financeType The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(String finReference) {
 		logger.debug("Entering");
@@ -184,7 +181,7 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/LoanClosureEnquiryDialog.zul", null,
 					aruments);
-			//this.window_SelectLoanClosureEnquiryList.onClose();
+			// this.window_SelectLoanClosureEnquiryList.onClose();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

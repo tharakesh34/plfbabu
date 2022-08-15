@@ -27,7 +27,6 @@ package com.pennant.backend.dao.customermasters.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +53,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerBankInfo model</b> class.<br>
@@ -103,13 +103,11 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		RowMapper<CustomerBankInfo> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerBankInfo.class);
 
 		try {
-			customerBankInfo = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerBankInfo = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerBankInfo;
 	}
 
 	public List<CustomerBankInfo> getBankInfoByCustomer(final long id, String type) {
@@ -385,16 +383,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append("BankCode= :BankCode");
 
 		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
 
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -414,16 +404,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append(" WHERE ");
 		selectSql.append("AcType= :AcType");
 		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			recordCount = 0;
-		}
-		logger.debug("Leaving");
 
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
@@ -446,15 +428,12 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		logger.debug("insertSql: " + selectSql.toString());
 
-		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.error(dae);
-			recordCount = 0;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		logger.debug("Leaving");
-		return recordCount;
 	}
 
 	@Override
@@ -476,14 +455,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 
-		try {
-			int bankRcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-			logger.debug("Leaving");
-			return bankRcdCount;
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			throw e;
-		}
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
@@ -575,21 +547,14 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		CustomerBankRowMapper rowMapper = new CustomerBankRowMapper();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, bankId);
-					ps.setDate(index++, JdbcUtil.getDate(monthYear));
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, bankId);
+				ps.setDate(index++, JdbcUtil.getDate(monthYear));
+			}
+		}, rowMapper);
 	}
 
 	@Override
@@ -698,22 +663,16 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		logger.trace(Literal.SQL + sql.toString());
 		BankSubInfoRowMapper rowMapper = new BankSubInfoRowMapper();
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, bankId);
-					ps.setDate(index++, JdbcUtil.getDate(monthYear));
-					ps.setInt(index++, day);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, bankId);
+				ps.setDate(index++, JdbcUtil.getDate(monthYear));
+				ps.setInt(index++, day);
+			}
+		}, rowMapper);
 	}
 
 	@Override
@@ -725,21 +684,15 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		logger.trace(Literal.SQL + sql.toString());
 		BankSubInfoRowMapper rowMapper = new BankSubInfoRowMapper();
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, bankId);
-					ps.setDate(index++, JdbcUtil.getDate(monthYear));
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, bankId);
+				ps.setDate(index++, JdbcUtil.getDate(monthYear));
+			}
+		}, rowMapper);
 	}
 
 	@Override

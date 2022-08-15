@@ -1,43 +1,25 @@
 /**
-Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectFinTypeDialogCtrl.java                                       * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-03-2017    														*
- *                                                                  						*
- * Modified Date    :  21-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectFinTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-03-2017 * *
+ * Modified Date : 21-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-03-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-03-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.financetype;
@@ -114,9 +96,8 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SelectFinTypeDialog(Event event) throws Exception {
+	public void onCreate$window_SelectFinTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -222,9 +203,8 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		doSetValidation();
@@ -237,8 +217,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param financeType
-	 *            The entity that need to be passed to the dialog.
+	 * @param financeType The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(FinanceType financeType) {
 		logger.debug("Entering");
@@ -343,7 +322,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 
-		//Fin Division
+		// Fin Division
 		try {
 			aFinanceType.setLovDescFinDivisionName(this.finDivision.getDescription());
 			aFinanceType.setFinDivision(this.finDivision.getValue());

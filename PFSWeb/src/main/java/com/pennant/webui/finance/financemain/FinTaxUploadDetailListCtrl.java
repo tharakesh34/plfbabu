@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
@@ -136,10 +135,8 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onCreate$window_FinTaxUploadDetailList(Event event) throws Exception {
+	public void onCreate$window_FinTaxUploadDetailList(Event event) {
 		logger.debug("Entering");
 		// Set the page level components.
 		setPageComponents(window_FinTaxUploadDetailList, borderLayout_FinTaxDetailUploadList, listBoxFinTaxUploadDetail,
@@ -182,7 +179,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	/**
 	 * Method for call the FinanceMain dialog
 	 */
-	public void onClick$button_SearchDialog(Event event) throws Exception {
+	public void onClick$button_SearchDialog(Event event) {
 		search();
 	}
 
@@ -217,7 +214,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onFinTaxUploadDetailItemDoubleClicked(Event event) throws Exception {
+	public void onFinTaxUploadDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFinTaxUploadDetail.getSelectedItem();

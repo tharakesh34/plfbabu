@@ -1,7 +1,6 @@
 package com.pennant.webui.reports;
 
 import java.lang.reflect.Method;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -99,9 +98,8 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_InterestCertificateGeneration(Event event) throws Exception {
+	public void onCreate$window_InterestCertificateGeneration(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -124,15 +122,15 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				this.WindowTitle.setValue(Labels.getLabel("menu_Item_CovenantStatusReport.value"));
 			}
 		}
-		
+
 		if (arguments.containsKey("finType")) {
 			this.finType.setValue((String) arguments.get("finType"));
 		}
-		
+
 		if (arguments.containsKey("financeReference")) {
 			this.finReference.setValue((String) arguments.get("financeReference"));
 		}
-		
+
 		// For customer360 Report should be displayed as modal
 		if (arguments.containsKey("customer360")) {
 			isCustomer360 = arguments.containsKey("customer360");
@@ -145,11 +143,9 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 	}
 
 	/**
-	 * Set the properties of the fields, like maxLength.<br>
-	 * 
-	 * @throws ParseException
+	 * Set the properties of the fields, like maxLength.
 	 */
-	private void doSetFieldProperties() throws ParseException {
+	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
 		if (!"covenant".equalsIgnoreCase(getArgument("module"))) {
@@ -600,7 +596,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 					}
 				}
 
-				String templatePath = PathUtil.getPath(PathUtil.CovenantStatusReport);
+				String templatePath = PathUtil.getPath(PathUtil.COVENANT_STATUS_REPORT);
 				TemplateEngine engine = null;
 				try {
 					engine = new TemplateEngine(templatePath, templatePath);
@@ -633,7 +629,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 	}
 
 	public void showDocument(Window window, String reportName, int format, boolean saved, Tabbox tabbox,
-			ByteArrayOutputStream stream) throws Exception {
+			ByteArrayOutputStream stream) {
 		logger.debug("Entering ");
 
 		if ((SaveFormat.DOCX) == format) {

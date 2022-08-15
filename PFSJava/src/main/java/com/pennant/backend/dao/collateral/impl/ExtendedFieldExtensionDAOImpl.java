@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -17,6 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 public class ExtendedFieldExtensionDAOImpl extends SequenceDao<ExtendedFieldExtension>
@@ -46,10 +48,8 @@ public class ExtendedFieldExtensionDAOImpl extends SequenceDao<ExtendedFieldExte
 		try {
 			this.jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (DuplicateKeyException e) {
-			logger.error(Literal.EXCEPTION, e);
 			throw new ConcurrencyException(e);
 		}
-
 	}
 
 	@Override
@@ -69,13 +69,7 @@ public class ExtendedFieldExtensionDAOImpl extends SequenceDao<ExtendedFieldExte
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(extendedFieldExtension);
 
-		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new ConcurrencyException(e);
-		}
-
+		jdbcTemplate.update(sql.toString(), paramSource);
 	}
 
 	@Override
@@ -138,61 +132,37 @@ public class ExtendedFieldExtensionDAOImpl extends SequenceDao<ExtendedFieldExte
 					return extendedFieldExt;
 				}
 			}, externalRef, modeStatus, finEvent);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return extendedFieldExt;
 		}
-
-		return extendedFieldExt;
 	}
 
 	@Override
 	public boolean isDuplicateKey(ExtendedFieldExtension extendedFieldExtension, TableType tableType) {
-		int count = 0;
 		StringBuilder sql = new StringBuilder("Select count(*) From Extended_Field_Ext");
 		sql.append(tableType.getSuffix());
 		sql.append(" Where Id != ? and ExtenrnalRef = ? and ModeStatus = ? and InstructionUID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			count = this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { extendedFieldExtension.getId(), extendedFieldExtension.getExtenrnalRef(),
-							extendedFieldExtension.getModeStatus(), extendedFieldExtension.getInstructionUID() },
-					Integer.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		if (count > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.jdbcOperations.queryForObject(sql.toString(),
+				new Object[] { extendedFieldExtension.getId(), extendedFieldExtension.getExtenrnalRef(),
+						extendedFieldExtension.getModeStatus(), extendedFieldExtension.getInstructionUID() },
+				Integer.class) > 0;
 	}
 
 	@Override
 	public boolean isExtenstionExist(ExtendedFieldExtension extendedFieldExtension, TableType tableType) {
-		int count = 0;
 		StringBuilder sql = new StringBuilder("Select count(*) From Extended_Field_Ext");
 		sql.append(tableType.getSuffix());
 		sql.append(" Where Id = ? and ExtenrnalRef = ? and ModeStatus = ? and InstructionUID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			count = this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { extendedFieldExtension.getId(), extendedFieldExtension.getExtenrnalRef(),
-							extendedFieldExtension.getModeStatus(), extendedFieldExtension.getInstructionUID() },
-					Integer.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		if (count > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.jdbcOperations.queryForObject(sql.toString(),
+				new Object[] { extendedFieldExtension.getId(), extendedFieldExtension.getExtenrnalRef(),
+						extendedFieldExtension.getModeStatus(), extendedFieldExtension.getInstructionUID() },
+				Integer.class) > 0;
 	}
-
 }

@@ -2276,7 +2276,7 @@
 
 	<!-- (FEV) :: Finance Enquiry views handle in single place start -->
 
-	<changeSet id="FEV_1.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FEV_1.1.0_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_tview');
@@ -2284,7 +2284,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FEV_1.1" author="Gopal.p">
+	<changeSet id="FEV_1.1.0" author="Gopal.p">
 		<createView viewName="FINANCEENQUIRY_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -2345,7 +2345,8 @@
 					T1.ESCROW,
 					T1.CUSTBANKID,
 					CB.ACCOUNTNUMBER CUSTACCTNUMBER,
-					CB.ACCOUNTHOLDERNAME CUSTACCTHOLDERNAME
+					CB.ACCOUNTHOLDERNAME CUSTACCTHOLDERNAME,
+					T1.SVAMOUNT
 				FROM FINANCEMAIN_TEMP T1
 				JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
 				JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
@@ -2358,7 +2359,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FEV_1.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FEV_1.1.0_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_tview');
@@ -4648,7 +4649,7 @@
 
 	<!-- (FTDV) :: Fin Tax detail Views handle in single place start -->
 
-	<changeSet id="FTDV_1.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_1.3_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_aview');
@@ -4656,11 +4657,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_1.1" author="Gopal.p">
+	<changeSet id="FTDV_1.3" author="Gopal.p">
 		<createView viewName="FINTAXDETAIL_AVIEW" replaceIfExists="true">
 			<![CDATA[
-				SELECT FM.FINID,
-					FM.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.APPLICABLEFOR,
 					T1.TAXCUSTID,
 					T1.TAXEXEMPTED,
@@ -4694,7 +4695,6 @@
 					T1.ADDRESSDETAIL,
 					T1.PINCODEID
 				FROM FINTAXDETAIL T1
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
 				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
 				LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PROVINCE = T3.CPPROVINCE AND T1.COUNTRY = T3.CPCOUNTRY
 				LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.CITY = T4.PCCITY AND T1.PROVINCE = T4.PCPROVINCE AND T1.COUNTRY = T4.PCCOUNTRY
@@ -4704,7 +4704,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FTDV_1.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_1.3_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxdetail_aview');	
@@ -4712,7 +4712,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_2.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_2.3_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_tview');
@@ -4720,11 +4720,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_2.1" author="Gopal.p">
+	<changeSet id="FTDV_2.3" author="Gopal.p">
 		<createView viewName="FINTAXDETAIL_TVIEW" replaceIfExists="true">
 			<![CDATA[
-				SELECT FM.FINID,
-					FM.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.APPLICABLEFOR,
 					T1.TAXCUSTID,
 					T1.TAXEXEMPTED,
@@ -4758,7 +4758,6 @@
 					T1.ADDRESSDETAIL,
 					T1.PINCODEID
 				FROM FINTAXDETAIL_TEMP T1
-				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
 				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
 				LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PROVINCE = T3.CPPROVINCE AND T1.COUNTRY = T3.CPCOUNTRY
 				LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.CITY = T4.PCCITY AND T1.PROVINCE = T4.PCPROVINCE AND T1.COUNTRY = T4.PCCOUNTRY
@@ -4768,7 +4767,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FTDV_2.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_2.3_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxdetail_tview');	
@@ -4776,7 +4775,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_3.3_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_3.5_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_view');
@@ -4784,11 +4783,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_3.3" author="Gopal.p">
+	<changeSet id="FTDV_3.5" author="Gopal.p">
 		<createView viewName="FINTAXDETAIL_VIEW" replaceIfExists="true">
 			<![CDATA[
-				SELECT FM.FINID,
-					FM.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.APPLICABLEFOR,
 					T1.TAXCUSTID,
 					T1.TAXEXEMPTED,
@@ -4822,19 +4821,14 @@
 					T1.ADDRESSDETAIL,
 					T1.PINCODEID
 				FROM FINTAXDETAIL_TEMP T1
-				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
-					UNION ALL
-					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
-					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
-					) FM ON FM.FINID = T1.FINID
-				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+				LEFT JOIN BMTCOUNTRIES T2 ON T2.COUNTRYCODE = T1.COUNTRY
 				LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PROVINCE = T3.CPPROVINCE AND T1.COUNTRY = T3.CPCOUNTRY
 				LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.CITY = T4.PCCITY AND T1.PROVINCE = T4.PCPROVINCE AND T1.COUNTRY = T4.PCCOUNTRY
 				LEFT JOIN PINCODES T5 ON T1.PINCODEID = T5.PINCODEID AND T1.CITY = T5.CITY
 				JOIN CUSTOMERS T6 ON T1.TAXCUSTID = T6.CUSTID
 				UNION ALL
-				SELECT FM.FINID,
-					FM.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.APPLICABLEFOR,
 					T1.TAXCUSTID,
 					T1.TAXEXEMPTED,
@@ -4868,12 +4862,7 @@
 					T1.ADDRESSDETAIL,
 					T1.PINCODEID
 				FROM FINTAXDETAIL T1
-				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
-					UNION ALL
-					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
-					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
-					) FM ON FM.FINID = T1.FINID
-				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+				LEFT JOIN BMTCOUNTRIES T2 ON T2.COUNTRYCODE = T1.COUNTRY
 				LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PROVINCE = T3.CPPROVINCE AND T1.COUNTRY = T3.CPCOUNTRY
 				LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.CITY = T4.PCCITY AND T1.PROVINCE = T4.PCPROVINCE AND T1.COUNTRY = T4.PCCOUNTRY
 				LEFT JOIN PINCODES T5 ON T1.PINCODEID = T5.PINCODEID AND T1.CITY = T5.CITY
@@ -4884,7 +4873,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FTDV_3.3_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_3.5_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxdetail_view');	
@@ -4896,7 +4885,7 @@
 
 	<!-- (FAPV) :: Fin Advance Payment Views handle in single place start -->
 
-	<changeSet id="FAPV_1.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FAPV_1.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_view');
@@ -4904,11 +4893,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FAPV_1.1" author="Gopal.p">
+	<changeSet id="FAPV_1.2" author="Gopal.p">
 		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
 			<![CDATA[
-				SELECT FM.FINID,
-					FM.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.PAYMENTID,
 					T1.PAYMENTSEQ,
 					T1.PAYMENTDETAIL,
@@ -4971,19 +4960,14 @@
 					T1.VASREFERENCE,
 					T1.LEI
 				FROM FINADVANCEPAYMENTS_TEMP T1
-				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
-					UNION ALL
-					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
-					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
-					) FM ON FM.FINID = T1.FINID
 				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
 				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
 				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
 				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
 				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC AND T6.BANKCODE = T1.BANKCODE
 				UNION ALL
-				SELECT FM.FINID,
-					FM.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.PAYMENTID,
 					T1.PAYMENTSEQ,
 					T1.PAYMENTDETAIL,
@@ -5046,11 +5030,6 @@
 					T1.VASREFERENCE,
 					T1.LEI
 				FROM FINADVANCEPAYMENTS T1
-				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
-					UNION ALL
-					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
-					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
-					) FM ON FM.FINID = T1.FINID
 				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
 				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
 				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
@@ -5062,7 +5041,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FAPV_1.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FAPV_1.2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finadvancepayments_view');	
@@ -5070,7 +5049,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FAPV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FAPV_2.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_tview');
@@ -5078,11 +5057,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FAPV_2" author="Gopal.p">
+	<changeSet id="FAPV_2.1" author="Gopal.p">
 		<createView viewName="FINADVANCEPAYMENTS_TVIEW" replaceIfExists="true">
 			<![CDATA[
-				SELECT FM.FINID,
-					FM.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.PAYMENTID,
 					T1.PAYMENTSEQ,
 					T1.PAYMENTDETAIL,
@@ -5145,7 +5124,6 @@
 					T1.VASREFERENCE,
 					T1.LEI
 				FROM FINADVANCEPAYMENTS_TEMP T1
-				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
 				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
 				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
 				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
@@ -5155,7 +5133,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FAPV_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FAPV_2.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finadvancepayments_tview');	
@@ -5221,7 +5199,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FAPV_4_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FAPV_4.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_aview');
@@ -5229,11 +5207,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FAPV_4" author="Gopal.p">
+	<changeSet id="FAPV_4.1" author="Gopal.p">
 		<createView viewName="FINADVANCEPAYMENTS_AVIEW" replaceIfExists="true">
 			<![CDATA[
-				SELECT FM.FINID,
-					FM.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.PAYMENTID,
 					T1.PAYMENTSEQ,
 					T1.PAYMENTDETAIL,
@@ -5296,7 +5274,6 @@
 					T1.VASREFERENCE,
 					T1.LEI
 				FROM FINADVANCEPAYMENTS T1
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
 				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
 				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
 				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
@@ -5306,7 +5283,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FAPV_4_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FAPV_4.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finadvancepayments_aview');	
@@ -16882,181 +16859,63 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#556.49_pre" author="Mounika.M" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'rpt_portfoliobehavior');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#556.49" author="Mounika.M">
-		<createView viewName="RPT_PORTFOLIOBEHAVIOR" replaceIfExists="true">
-			<![CDATA[
-				SELECT T3.FINDIVISION,
-				    T2.FINTYPE,
-				    T3.FINTYPEDESC,
-				    1 GRADE,
-				    'EXCEPTIONAL-RISK FREE' CLASSIFICATION,
-				    '0' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE= T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS = 0 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-    				T2.FINTYPE,
-    				T3.FINTYPEDESC,
-    				2 GRADE,
-    				'EXCELLENT-LOW RISK' CLASSIFICATION,
-    				'1-15' DPD,
-    				SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-    				SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 1 AND T1.FINCURODDAYS <= 15 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-    				T2.FINTYPE,
-    				T3.FINTYPEDESC,
-    				3 GRADE,
-				    'SUPERIOR-MODEST RISK' CLASSIFICATION,
-				    '16-30' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 16 AND T1.FINCURODDAYS <= 30 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-				    T2.FINTYPE,
-				    T3.FINTYPEDESC,
-				    4 AS GRADE,
-				    'GOOD-ABOVE AVERAGE RISK' CLASSIFICATION,
-				    '31-45' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 31 AND T1.FINCURODDAYS <= 45 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-				    T2.FINTYPE,
-				    T3.FINTYPEDESC,
-				    5 AS GRADE,
-				    'SATISFACTORY-AVERAGE RISK' CLASSIFICATION,
-				    '46-60' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 46 AND T1.FINCURODDAYS <= 60 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-				    T2.FINTYPE,
-				    T3.FINTYPEDESC,
-				    6 GRADE,
-				    'ADEQUATE-BORDERLINE' CLASSIFICATION,
-				    '61-70' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 61 AND T1.FINCURODDAYS <= 70 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-				    T2.FINTYPE,
-				    T3.FINTYPEDESC,
-				    7 GRADE,
-				    'WATCH LIST' CLASSIFICATION,
-				    '71-80' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 71 AND T1.FINCURODDAYS <= 80 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-    				T2.FINTYPE,
-				    T3.FINTYPEDESC,
-				    8 GRADE,
-				    'SPECIAL MENTION'CLASSIFICATION,
-				    '81-90' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 81 AND T1.FINCURODDAYS <= 90 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-				    T2.FINTYPE,
-				    T3.FINTYPEDESC,
-				    9 GRADE,
-				    'SUBSTANDARD' CLASSIFICATION,
-				    '91-180' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 91 AND T1.FINCURODDAYS <= 180 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-				    T2.FINTYPE,
-				    T3.FINTYPEDESC,
-				    10 GRADE,
-				    'DOUBTFUL' CLASSIFICATION,
-				    '181-365' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 181 AND T1.FINCURODDAYS <= 365 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-				UNION
- 				SELECT T3.FINDIVISION,
-				    T2.FINTYPE,
-				    T3.FINTYPEDESC,
-				    11 GRADE,
-				    'LOSS' CLASSIFICATION,
-				    '365>' DPD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
-   				FROM FINODDETAILS T1
-     			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
-     			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
-  				WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS > 365 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C'
-  				GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#556.49_post" author="Mounika.M" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'rpt_portfoliobehavior');
-			]]>
-		</sql>
-	</changeSet>
+	<!-- <changeSet id="ST#556.49_pre" author="Mounika.M" dbms="postgresql"> <sql> <![CDATA[ select deps_save_and_drop_dependencies 
+		('plf', 'rpt_portfoliobehavior'); ]]> </sql> </changeSet> <changeSet id="ST#556.49" author="Mounika.M"> <createView viewName="RPT_PORTFOLIOBEHAVIOR" 
+		replaceIfExists="true"> <![CDATA[ SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 1 GRADE, 'EXCEPTIONAL-RISK FREE' CLASSIFICATION, 
+		'0' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI 
+		+ T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID 
+		JOIN RMTFINANCETYPES T3 ON T2.FINTYPE= T3.FINTYPE WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS = 0 AND COALESCE(T2.CLOSINGSTATUS, 
+		'') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION UNION SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 2 
+		GRADE, 'EXCELLENT-LOW RISK' CLASSIFICATION, '1-15' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, 
+		T2.FINCCY, 'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) 
+		CUROUTSTANDINGUSD FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID JOIN RMTFINANCETYPES T3 ON T2.FINTYPE 
+		= T3.FINTYPE WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 1 AND T1.FINCURODDAYS <= 15 AND COALESCE(T2.CLOSINGSTATUS, 
+		'') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION UNION SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 3 
+		GRADE, 'SUPERIOR-MODEST RISK' CLASSIFICATION, '16-30' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, 
+		T2.FINCCY, 'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) 
+		CUROUTSTANDINGUSD FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID JOIN RMTFINANCETYPES T3 ON T2.FINTYPE 
+		= T3.FINTYPE WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 16 AND T1.FINCURODDAYS <= 30 AND COALESCE(T2.CLOSINGSTATUS, 
+		'') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION UNION SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 4 
+		AS GRADE, 'GOOD-ABOVE AVERAGE RISK' CLASSIFICATION, '31-45' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, 
+		T2.FINCCY, 'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) 
+		CUROUTSTANDINGUSD FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID JOIN RMTFINANCETYPES T3 ON T2.FINTYPE 
+		= T3.FINTYPE WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 31 AND T1.FINCURODDAYS <= 45 AND COALESCE(T2.CLOSINGSTATUS, 
+		'') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION UNION SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 5 
+		AS GRADE, 'SATISFACTORY-AVERAGE RISK' CLASSIFICATION, '46-60' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + 
+		T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, 
+		T2.FINCCY, 'USD')) CUROUTSTANDINGUSD FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID JOIN RMTFINANCETYPES 
+		T3 ON T2.FINTYPE = T3.FINTYPE WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 46 AND T1.FINCURODDAYS <= 60 AND COALESCE(T2.CLOSINGSTATUS, 
+		'') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION UNION SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 6 
+		GRADE, 'ADEQUATE-BORDERLINE' CLASSIFICATION, '61-70' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, 
+		T2.FINCCY, 'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) 
+		CUROUTSTANDINGUSD FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID JOIN RMTFINANCETYPES T3 ON T2.FINTYPE 
+		= T3.FINTYPE WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 61 AND T1.FINCURODDAYS <= 70 AND COALESCE(T2.CLOSINGSTATUS, 
+		'') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION UNION SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 7 
+		GRADE, 'WATCH LIST' CLASSIFICATION, '71-80' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 
+		'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD 
+		FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE WHERE 
+		T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 71 AND T1.FINCURODDAYS <= 80 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C' GROUP BY 
+		T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION UNION SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 8 GRADE, 'SPECIAL MENTION'CLASSIFICATION, 
+		'81-90' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD, 
+		SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD FROM FINODDETAILS 
+		T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE WHERE T1.FINCURODAMT <> 
+		0 AND T1.FINCURODDAYS >= 81 AND T1.FINCURODDAYS <= 90 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, 
+		T3.FINDIVISION UNION SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 9 GRADE, 'SUBSTANDARD' CLASSIFICATION, '91-180' DPD, 
+		SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI 
+		+ T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID 
+		JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 91 AND T1.FINCURODDAYS 
+		<= 180 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION UNION SELECT T3.FINDIVISION, 
+		T2.FINTYPE, T3.FINTYPEDESC, 10 GRADE, 'DOUBTFUL' CLASSIFICATION, '181-365' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI 
+		+ T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, 
+		T2.FINCCY, 'USD')) CUROUTSTANDINGUSD FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID JOIN RMTFINANCETYPES 
+		T3 ON T2.FINTYPE = T3.FINTYPE WHERE T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS >= 181 AND T1.FINCURODDAYS <= 365 AND COALESCE(T2.CLOSINGSTATUS, 
+		'') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, T3.FINDIVISION UNION SELECT T3.FINDIVISION, T2.FINTYPE, T3.FINTYPEDESC, 11 
+		GRADE, 'LOSS' CLASSIFICATION, '365>' DPD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 
+		'INR')) CUROUTSTANDINGBHD, SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD 
+		FROM FINODDETAILS T1 JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE WHERE 
+		T1.FINCURODAMT <> 0 AND T1.FINCURODDAYS > 365 AND COALESCE(T2.CLOSINGSTATUS, '') <> 'C' GROUP BY T2.FINTYPE, T3.FINTYPEDESC, 
+		T3.FINDIVISION ]]> </createView> </changeSet> <changeSet id="ST#556.49_post" author="Mounika.M" dbms="postgresql"> <sql> 
+		<![CDATA[ select deps_restore_dependencies ('plf', 'rpt_portfoliobehavior'); ]]> </sql> </changeSet> -->
 
 	<changeSet id="ST#556.50_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
@@ -17458,7 +17317,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#556.56_pre" author="Mounika.M" dbms="postgresql">
+	<changeSet id="ST#556.56.1_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_view');
@@ -17466,7 +17325,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#556.56" author="Mounika.M">
+	<changeSet id="ST#556.56.1" author="Mounika.M">
 		<createView viewName="FINANCEENQUIRY_HIERARCHY_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -17513,7 +17372,8 @@
 				    T4.BRANCHDESC LOVDESCFINBRANCHNAME,
 				    T5.CUSTTYPECTG,
 				    COALESCE(T9.NOINST, 0) NOINST,
-				    H.REPORTING_TO
+				    H.REPORTING_TO,
+				    T1.RECORDSTATUS
 				FROM FINANCEMAIN T1
      			JOIN USER_HIERARCHY H ON T1.BUSINESSVERTICAL = COALESCE(H.BUSINESS_VERTICAL, T1.BUSINESSVERTICAL) AND T1.FINCATEGORY = COALESCE(H.PRODUCT, T1.FINCATEGORY) AND T1.FINTYPE = COALESCE(H.FIN_TYPE, T1.FINTYPE) AND T1.FINBRANCH = COALESCE(H.BRANCH, T1.FINBRANCH)
      			JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
@@ -17525,7 +17385,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#556.56_post" author="Mounika.M" dbms="postgresql">
+	<changeSet id="ST#556.56.1_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_view');
@@ -18918,7 +18778,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#185424_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18926,9 +18786,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#185424" author="Gopal.p">
-		<createView viewName = "RPT_MANUALPAYMENTSDUE_VIEW" replaceIfExists="true">
+		<createView viewName="RPT_MANUALPAYMENTSDUE_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT BRANCHDESC FINBRANCH,
 					FINBRANCH BRANCHCODE,
@@ -18963,7 +18823,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="PSD#185424_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18971,7 +18831,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#186514_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19025,7 +18885,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#187337_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19033,7 +18893,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#187337" author="Gireesh.G">
 		<createView viewName="FINFLAGSHEADER_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19118,7 +18978,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="PSD#187337_post" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19126,7 +18986,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#187337.1_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19134,7 +18994,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#187337.1" author="Gireesh.G">
 		<createView viewName="FINFLAGSHEADER_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19179,7 +19039,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="PSD#187337.1_post" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19187,7 +19047,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#188161_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19195,7 +19055,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#188161" author="Mounika.M">
 		<createView viewName="FINANCEDEVIATIONS_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19244,7 +19104,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="PSD#188161_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19252,7 +19112,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#187907_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19260,8 +19120,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-    <changeSet id="PSD#187907" author="Gireesh.G">
+
+	<changeSet id="PSD#187907" author="Gireesh.G">
 		<createView viewName="FINANCEDEDUP_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -19318,7 +19178,7 @@
            ]]>
        </createView>
 	</changeSet>
-	
+
 	<changeSet id="PSD#187907_post" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19326,8 +19186,137 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		
+
+	<changeSet id="PVCITY_1_pre" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtprovincevscity_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PVCITY_1" author="saisandeep.b">
+		<createView replaceIfExists="true" viewName="RMTProvinceVsCity_View">
+			<![CDATA[
+				SELECT T1.PCCOUNTRY,
+					T1.PCPROVINCE,
+					T1.PCCITY,
+					T1.PCCITYNAME,
+					T1.PCCITYCLASSIFICATION,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.BANKREFNO,
+					T1.CITYISACTIVE,
+					T2.COUNTRYDESC LOVDESCPCCOUNTRYNAME,
+					T3.CPPROVINCENAME LOVDESCPCPROVINCENAME,
+					T3.TAXSTATECODE,
+					T1.DISTRICTID,
+					T4.CODE DISTRICTCODE,
+					T4.NAME DISTRICTNAME
+				FROM RMTPROVINCEVSCITY_TEMP  T1
+				INNER JOIN BMTCOUNTRIES T2 ON T1.PCCOUNTRY = T2.COUNTRYCODE
+				INNER JOIN RMTCOUNTRYVSPROVINCE  T3 ON T1.PCCOUNTRY = T3.CPCOUNTRY AND T1.PCPROVINCE = T3.CPPROVINCE
+				LEFT JOIN RMTDISTRICTS T4 ON T1.DISTRICTID = T4.ID 
+				UNION ALL
+				SELECT T1.PCCOUNTRY,
+					T1.PCPROVINCE,
+					T1.PCCITY,
+					T1.PCCITYNAME,
+					T1.PCCITYCLASSIFICATION,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.BANKREFNO,
+					T1.CITYISACTIVE,
+					T2.COUNTRYDESC LOVDESCPCCOUNTRYNAME,
+					T3.CPPROVINCENAME LOVDESCPCPROVINCENAME,
+					T3.TAXSTATECODE,
+					T1.DISTRICTID,
+					T4.CODE DISTRICTCODE,
+					T4.NAME DISTRICTNAME
+				FROM RMTPROVINCEVSCITY T1
+				INNER JOIN BMTCOUNTRIES T2 ON T1.PCCOUNTRY = T2.COUNTRYCODE
+				INNER JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PCCOUNTRY = T3.CPCOUNTRY AND T1.PCPROVINCE = T3.CPPROVINCE
+				LEFT JOIN RMTDISTRICTS T4 ON T1.DISTRICTID = T4.ID 	
+				WHERE  NOT EXISTS(SELECT 1 FROM RMTPROVINCEVSCITY_TEMP WHERE PCCOUNTRY = T1.PCCOUNTRY 
+											AND PCPROVINCE = T1.PCPROVINCE AND PCCITY = T1.PCCITY)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PVCITY_1_post" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtprovincevscity_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PVCITY_1.1_pre" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtprovincevscity_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PVCITY_1.1" author="saisandeep.b">
+		<createView replaceIfExists="true" viewName="RMTProvinceVsCity_AView">
+			<![CDATA[
+				SELECT T1.PCCountry,
+					T1.PCProvince,
+					T1.PCCity,
+					T1.PCCityName,
+					T1.PCCityClassification,
+					T1.Version,
+					T1.LastMntBy,
+					T1.LastMntOn,
+					T1.RecordStatus,
+					T1.RoleCode,
+					T1.NextRoleCode,
+					T1.TaskId,
+					T1.NextTaskId,
+					T1.RecordType,
+					T1.WorkflowId,
+					T1.BankRefNo,
+					T1.CityIsActive,
+					T2.CountryDesc LovDescPCCountryName,
+					T3.CPProvinceName LovDescPCProvinceName,
+					T3.TAXSTATECODE,
+					T1.DistrictId,
+					T4.Code DistrictCode,
+					T4.Name DistrictName
+				FROM RMTProvinceVsCity T1
+				INNER JOIN BMTCountries T2 ON T1.PCCountry = T2.CountryCode
+				INNER JOIN RMTCountryVsProvince T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+				LEFT JOIN RMTDistricts T4 ON T1.DistrictId = T4.Id 	
+			 ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PVCITY_1.1_post" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtprovincevscity_aview');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="8_pre" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19335,9 +19324,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8" author="gopal.p">
-		<createView viewName="RMTPROVINCEVSCITY_VIEW"  replaceIfExists="true" >
+		<createView viewName="RMTPROVINCEVSCITY_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.PCCOUNTRY,
 					T1.PCPROVINCE,
@@ -19399,7 +19388,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="8_post" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19407,7 +19396,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="9_pre" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19415,7 +19404,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="9" author="gopal.p">
 		<createView viewName="RMTPROVINCEVSCITY_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19449,7 +19438,7 @@
 			 ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="9_post" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19457,7 +19446,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10_pre" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19465,7 +19454,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10" author="gopal.p">
 		<createView viewName="PINCODES_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19527,13 +19516,13 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="10_post" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'pincodes_view');
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 </databaseChangeLog>

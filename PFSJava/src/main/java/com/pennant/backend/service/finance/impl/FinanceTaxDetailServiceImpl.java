@@ -328,7 +328,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		auditDetail = gstNumbeValidation(auditDetail, ftd);
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.GSTDETAILS.equals(rcdMntnSts)) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = rcdMntnSts;

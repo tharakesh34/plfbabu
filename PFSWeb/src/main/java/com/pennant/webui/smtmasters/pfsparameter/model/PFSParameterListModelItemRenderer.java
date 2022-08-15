@@ -66,7 +66,7 @@ public class PFSParameterListModelItemRenderer implements ListitemRenderer<PFSPa
 	}
 
 	@Override
-	public void render(Listitem item, PFSParameter pFSParameter, int count) throws Exception {
+	public void render(Listitem item, PFSParameter pFSParameter, int count) {
 
 		Listcell lc;
 		lc = new Listcell(pFSParameter.getSysParmCode());

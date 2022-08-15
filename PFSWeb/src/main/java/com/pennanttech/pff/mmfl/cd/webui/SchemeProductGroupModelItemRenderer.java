@@ -18,14 +18,14 @@ public class SchemeProductGroupModelItemRenderer implements ListitemRenderer<Sch
 	}
 
 	@Override
-	public void render(Listitem item, SchemeProductGroup schemeDealerGroup, int count) throws Exception {
+	public void render(Listitem item, SchemeProductGroup schemeDealerGroup, int count) {
 
 		Listcell lc;
 		lc = new Listcell(schemeDealerGroup.getPromotionId());
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(schemeDealerGroup.getProductGroupCode()));
 		lc.setParent(item);
-		lc = new Listcell(schemeDealerGroup.isPOSVendor() ? "1" : "0");
+		lc = new Listcell(schemeDealerGroup.isPosVendor() ? "1" : "0");
 		lc.setParent(item);
 		if (schemeDealerGroup.isActive()) {
 			lc = new Listcell("1");

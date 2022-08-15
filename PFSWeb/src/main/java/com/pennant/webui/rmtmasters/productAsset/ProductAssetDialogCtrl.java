@@ -114,9 +114,8 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * selected ProductAsset object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ProductAssetDialog(Event event) throws Exception {
+	public void onCreate$window_ProductAssetDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -391,9 +390,8 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProductAsset
-	 * @throws Exception
 	 */
-	public void doShowDialog(ProductAsset aProductAsset) throws Exception {
+	public void doShowDialog(ProductAsset aProductAsset) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -811,10 +809,8 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.productAsset);
 	}
 

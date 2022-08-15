@@ -64,9 +64,8 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 	 * On creating Window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_RescheduleMentReportGenerationDialogCtrl(Event event) throws Exception {
+	public void onCreate$window_RescheduleMentReportGenerationDialogCtrl(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.

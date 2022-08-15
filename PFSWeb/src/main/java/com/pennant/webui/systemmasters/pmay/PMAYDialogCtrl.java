@@ -167,9 +167,8 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_PmayDialog(Event event) throws Exception {
+	public void onCreate$window_PmayDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -1535,8 +1534,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	 * @return boolean
 	 * 
 	 */
-
-	public void doSave(FinanceDetail aFinanceDetail, Tab pmayDetailsTab, boolean recSave) throws InterruptedException {
+	public void doSave(FinanceDetail aFinanceDetail, Tab pmayDetailsTab, boolean recSave) {
 		logger.debug(Literal.ENTERING);
 		doClearMessage();
 		if (!recSave) {

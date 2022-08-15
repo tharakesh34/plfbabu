@@ -83,9 +83,8 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	 * selected OCRDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_OCRDetailDialog(Event event) throws Exception {
+	public void onCreate$window_OCRDetailDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -335,10 +334,8 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aOCRDetail
-	 * 
-	 * @throws Exception
 	 */
-	public void doShowDialog(OCRDetail aOCRDetail) throws Exception {
+	public void doShowDialog(OCRDetail aOCRDetail) {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -656,10 +653,8 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.ocrDetail);
 	}
 
@@ -674,7 +669,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	/**
 	 * On Select event for Contributor for setting Conditional Mandatory
 	 */
-	public void onSelect$contributor(Event event) throws Exception {
+	public void onSelect$contributor(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSetContributorProperties();
 		doRemoveValidation();

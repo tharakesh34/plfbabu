@@ -13,7 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -26,9 +26,11 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 
@@ -73,11 +75,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 				ps.setString(index++, "APPROVED");
 			});
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-
-		return 0;
 	}
 
 	@Override
@@ -345,8 +345,8 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				return ps;
 			}, keyHolder);
 
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 
 		return keyHolder.getKey().longValue();
@@ -582,10 +582,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), String.class, detail.getDownload_Referid());
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
 		}
-
-		return "";
 	}
 
 	public List<FinAdvancePayments> getAutoDisbInstructions(Date llDate) {
@@ -886,10 +885,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				return fa;
 			}, disbReqId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -993,10 +991,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				return dr;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

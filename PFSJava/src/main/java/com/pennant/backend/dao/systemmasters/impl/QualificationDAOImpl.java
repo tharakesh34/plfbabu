@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -31,10 +32,8 @@ public class QualificationDAOImpl extends BasicDao<Qualification> implements Qua
 	/**
 	 * Fetch the Record Qualification details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Profession
 	 */
 	@Override
@@ -55,13 +54,11 @@ public class QualificationDAOImpl extends BasicDao<Qualification> implements Qua
 		RowMapper<Qualification> typeRowMapper = BeanPropertyRowMapper.newInstance(Qualification.class);
 
 		try {
-			qualification = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			qualification = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return qualification;
 	}
 
 	@Override

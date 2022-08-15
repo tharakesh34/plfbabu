@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -17,8 +18,10 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennanttech.backend.model.external.control.PushPullControl;
 import com.pennanttech.external.dao.PushPullControlDAO;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements PushPullControlDAO {
 	private static Logger logger = LogManager.getLogger(PushPullControlDAOImpl.class);
@@ -54,12 +57,9 @@ public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements
 			}, keyHolder);
 
 			return keyHolder.getKey().longValue();
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-
-		logger.debug(Literal.LEAVING);
-		return 0;
 	}
 
 	@Override
@@ -119,11 +119,8 @@ public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
-
 }

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FacilityReferenceDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-11-2011    														*
- *                                                                  						*
- * Modified Date    :  26-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FacilityReferenceDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-11-2011 *
+ * * Modified Date : 26-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -65,6 +47,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FacilityReferenceDetail model</b> class.<br>
@@ -116,10 +99,8 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	/**
 	 * Fetch the Record Finance Reference Details details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FacilityReferenceDetail
 	 */
 	@Override
@@ -148,25 +129,19 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 				.newInstance(FacilityReferenceDetail.class);
 
 		try {
-			facilityReferenceDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			facilityReferenceDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return facilityReferenceDetail;
 	}
 
 	/**
 	 * Fetch Records Details by Finance Type, Reference Type and field
 	 * 
-	 * @param finance
-	 *            Type (String)
-	 * @param reference
-	 *            Type (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finance   Type (String)
+	 * @param reference Type (int)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return List<FacilityReferenceDetail>
 	 */
 	@Override
@@ -227,10 +202,8 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	 * This method Deletes the Record from the LMTFinRefDetail or LMTFinRefDetail_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Finance Reference Details by key FinRefDetailId
 	 * 
-	 * @param Finance
-	 *            Reference Details (facilityReferenceDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Reference Details (facilityReferenceDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -263,10 +236,8 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	 * 
 	 * save Finance Reference Details
 	 * 
-	 * @param Finance
-	 *            Reference Details (facilityReferenceDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Reference Details (facilityReferenceDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -303,10 +274,8 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	 * This method updates the Record LMTFinRefDetail or LMTFinRefDetail_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Finance Reference Details by key FinRefDetailId and Version
 	 * 
-	 * @param Finance
-	 *            Reference Details (facilityReferenceDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Reference Details (facilityReferenceDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -342,12 +311,9 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	/**
 	 * Fetch Records Details by Finance Type, Reference Type and field
 	 * 
-	 * @param finance
-	 *            Type (String)
-	 * @param reference
-	 *            Type (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finance   Type (String)
+	 * @param reference Type (int)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return List<FacilityReferenceDetail>
 	 */
 	@Override
@@ -422,10 +388,8 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 	/**
 	 * Fetch the Record Finance Reference Details details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FacilityReferenceDetail
 	 */
 	@Override

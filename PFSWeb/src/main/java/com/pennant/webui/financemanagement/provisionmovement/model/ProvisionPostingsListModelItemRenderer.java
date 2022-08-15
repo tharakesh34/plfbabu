@@ -66,7 +66,7 @@ public class ProvisionPostingsListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, ReturnDataSet returnDataSet, int count) throws Exception {
+	public void render(Listitem item, ReturnDataSet returnDataSet, int count) {
 
 		Listcell lc;
 		lc = new Listcell(returnDataSet.getPostDate().toString());

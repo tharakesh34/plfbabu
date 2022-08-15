@@ -65,7 +65,7 @@ public class AccountMappingListModelItemRenderer implements ListitemRenderer<Acc
 	}
 
 	@Override
-	public void render(Listitem item, AccountMapping accountMapping, int count) throws Exception {
+	public void render(Listitem item, AccountMapping accountMapping, int count) {
 
 		Listcell lc;
 		lc = new Listcell(accountMapping.getAccount());

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountsListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-01-2012    														*
- *                                                                  						*
- * Modified Date    :  02-01-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountsListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-01-2012 * * Modified
+ * Date : 02-01-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-01-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-01-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.accounts.accounts;
@@ -133,7 +115,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 		moduleCode = "Accounts";
 	}
 
-	public void onCreate$window_AccountsList(Event event) throws Exception {
+	public void onCreate$window_AccountsList(Event event) {
 		logger.debug("Entering");
 
 		/* set components visible dependent on the users rights */
@@ -242,10 +224,9 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 	 * see: com.pennant.webui.accounts.acounts.model.AcountsListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 
-	public void onAccountsItemDoubleClicked(Event event) throws Exception {
+	public void onAccountsItemDoubleClicked(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		// get the selected Accounts object
@@ -290,7 +271,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 	/**
 	 * Call the Accounts dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_AccountsList_NewAccounts(Event event) throws Exception {
+	public void onClick$button_AccountsList_NewAccounts(Event event) {
 		logger.debug("Entering " + event.toString());
 		// create a new Accounts object, We GET it from the back end.
 		final Accounts aAccounts = getAccountsService().getNewAccounts();
@@ -302,8 +283,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aAccounts
-	 *            The entity that need to be passed to the dialog.
+	 * @param aAccounts The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Accounts aAccounts) {
 		logger.debug("Entering");
@@ -361,8 +341,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 	/*
 	 * call the Accounts dialog
 	 */
-
-	public void onClick$button_AccountsList_AccountsSearchDialog(Event event) throws Exception {
+	public void onClick$button_AccountsList_AccountsSearchDialog(Event event) {
 		logger.debug("Entering " + event.toString());
 		logger.debug(event.toString());
 		/*

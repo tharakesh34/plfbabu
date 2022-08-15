@@ -143,8 +143,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 				documentDetails.setFinReference(queryDetail.getFinReference());
 				documentDetails.setUserDetails(queryDetail.getUserDetails());
 				documentDetails.setCustId(queryDetail.getCustId());
-				if (documentDetails.isNewRecord()
-						&& (documentDetails.getDocRefId() == null || documentDetails.getDocRefId() <= 0)) {
+				if (documentDetails.isNewRecord() && (documentDetails.getDocRefId() == null)) {
 
 					saveDocument(DMSModule.FINANCE, DMSModule.QUERY_MGMT, documentDetails);
 					documentDetailsDAO.save(documentDetails, tableType.getSuffix());
@@ -470,7 +469,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
 				documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
 				documentDetails.setCustId(queryDetail.getCustId());
-				if (documentDetails.isNewRecord() && documentDetails.getDocRefId() <= 0) {
+				if (documentDetails.isNewRecord() && documentDetails.getDocRefId() == null) {
 					saveDocument(DMSModule.FINANCE, DMSModule.QUERY_MGMT, documentDetails);
 
 					documentDetailsDAO.save(documentDetails, tableType.getSuffix());

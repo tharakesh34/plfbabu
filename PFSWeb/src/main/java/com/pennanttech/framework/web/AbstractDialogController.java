@@ -426,7 +426,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		Filedownload.save(content, contentType, fileName);
 	}
 
-	protected void showDocument(byte[] docData, Window window, String reportName, int format) throws Exception {
+	protected void showDocument(byte[] docData, Window window, String reportName, int format) {
 		logger.debug(Literal.ENTERING);
 		if ((SaveFormat.DOCX) == format) {
 			Filedownload.save(new AMedia(reportName, "msword", "application/msword", docData));

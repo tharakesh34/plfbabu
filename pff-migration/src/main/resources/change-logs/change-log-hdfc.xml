@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -28,7 +28,7 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1.1" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -36,7 +36,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -118,8 +118,8 @@
  			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="3.1" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -150,7 +150,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="4.1" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -184,7 +184,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="6" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -192,7 +192,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="7" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -220,7 +220,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -251,7 +251,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="9" author="gopal.p">
 		<sql>
 			<![CDATA[
@@ -259,7 +259,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10.1" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -289,7 +289,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="11.1" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -320,23 +320,68 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#11864" author="vijaya.a">
-        <sql>
+		<sql>
            <![CDATA[
                 ALTER TABLE PROMOTIONS DROP CONSTRAINT uk_promotions;
                 ALTER TABLE PROMOTIONS_TEMP DROP CONSTRAINT uk_promotions_temp;
             ]]>
-        </sql>
-    </changeSet>
-    
-    <changeSet id="TK#11895" author="vijaya.a">
-        <sql>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#11895" author="vijaya.a">
+		<sql>
            <![CDATA[
                 Delete from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'ADDDBSP' and RBFLDNAME = 'fm_finBranchProvinceCode';
 				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES', 'ADDDBSP', 'fm_finBranchProvinceCode', 'Branch Province Code', 'nvarchar', 8, '0', '1', 'RMTCountryVsProvince', 'dbvalue', 'Province');
             ]]>
-        </sql>
-    </changeSet>
-	
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#3831.3 " author="praveena" dbms="oracle">
+		<sql>
+			<![CDATA[
+               update DATA_ENGINE_COLUMN set ruleforvalue ='if((ACTUALRATE == '''')){Result = 0;  return;}else {Result = ACTUALRATE;  return;}' where name='ACTUALRATE' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'RATE_CHANGE_UPLOAD'));
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#3831.4" author="praveena.v">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set FIELDDBNAME='P.PostDate' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 1;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#3831.5" author="praveena.v">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set FIELDDBNAME='P.FinBranch' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 3;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#3831.6" author="praveena.v">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set FIELDDBNAME='P.FinIsActive' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 4;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#3831.7" author="praveena.v">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set FIELDDBNAME=''P.fintype' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 5;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="01" author="saisandeep.b">
+		<dropNotNullConstraint tableName="COVENANT_TYPES_TEMP" columnName="DOCTYPE"
+			columnDataType="varchar(100)" />
+		<dropNotNullConstraint tableName="COVENANT_TYPES" columnName="DOCTYPE"
+			columnDataType="varchar(100)" />
+	</changeSet>
 </databaseChangeLog>

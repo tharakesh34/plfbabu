@@ -79,7 +79,6 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
 	public void onCreate$window_TransactionMappingDialog(Event event) throws AppException {
 		logger.debug(Literal.ENTERING);

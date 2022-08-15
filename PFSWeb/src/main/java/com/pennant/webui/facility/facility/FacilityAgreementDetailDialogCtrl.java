@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceMainDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceMainDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.facility.facility;
@@ -55,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Html;
@@ -198,9 +179,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AgreementDetailDialog(Event event) throws Exception {
+	public void onCreate$window_AgreementDetailDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -301,22 +281,17 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * Method for Generating Template replaced to Finance Details
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onGenerateReportClicked(ForwardEvent event) throws Exception {
+	public void onGenerateReportClicked(ForwardEvent event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		FacilityReferenceDetail data = (FacilityReferenceDetail) event.getData();
+
 		try {
 			Object object = getCtrlObject().getClass().getMethod("getAgrFacilitty").invoke(ctrlObject);
 			if (object != null) {
 				setFacility((Facility) object);
 			}
-		} catch (Exception e) {
-			if (e.getCause().getClass().equals(WrongValuesException.class)) {
-				throw e;
-			}
-		}
-		try {
+
 			if (getFacility() != null) {
 				custid = getFacility().getCustID();
 				AgreementEngine engine = new AgreementEngine();

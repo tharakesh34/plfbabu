@@ -77,9 +77,8 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_DealerMappingDialog(Event event) throws AppException {
+	public void onCreate$window_DealerMappingDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_DealerMappingDialog);
@@ -295,8 +294,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 
 		Filter[] filters = new Filter[1];
 		String merchantId = this.merchantName.getTextbox().getValue();
-		filters[0] = Filter.in("MerchantId", Long.valueOf(merchantId.equals("") ? "0"
-				: merchantId));
+		filters[0] = Filter.in("MerchantId", Long.valueOf(merchantId.equals("") ? "0" : merchantId));
 		this.storeName.setFilters(filters);
 	}
 

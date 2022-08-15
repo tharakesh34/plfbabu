@@ -1,49 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DedupFieldsDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DedupFieldsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * * Modified
+ * Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.dedup.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -64,6 +45,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>DedupFields model</b> class.<br>
@@ -111,10 +94,8 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	/**
 	 * Fetch the Record Dedup Fields details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DedupFields
 	 */
 	@Override
@@ -135,23 +116,19 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 		RowMapper<DedupFields> typeRowMapper = BeanPropertyRowMapper.newInstance(DedupFields.class);
 
 		try {
-			dedupFields = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			dedupFields = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return dedupFields;
 	}
 
 	/**
 	 * This method Deletes the Record from the DedupFields or DedupFields_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Dedup Fields by key FieldName
 	 * 
-	 * @param Dedup
-	 *            Fields (dedupFields)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Dedup Fields (dedupFields)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -183,10 +160,8 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	 * 
 	 * save Dedup Fields
 	 * 
-	 * @param Dedup
-	 *            Fields (dedupFields)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Dedup Fields (dedupFields)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -215,10 +190,8 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	 * This method updates the Record DedupFields or DedupFields_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Dedup Fields by key FieldName and Version
 	 * 
-	 * @param Dedup
-	 *            Fields (dedupFields)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Dedup Fields (dedupFields)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -262,22 +235,11 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 	public List<BuilderTable> getFieldList(String queryModule) {
 		logger.debug("Entering");
 
-		List<BuilderTable> fieldList = new ArrayList<BuilderTable>();
-
 		String selectListSql = " select fieldName,fieldDesc ,fieldControl from DedupFields where QueryModule='"
 				+ queryModule + "'";
 		RowMapper<BuilderTable> typeRowMapper = BeanPropertyRowMapper.newInstance(BuilderTable.class);
-		logger.debug("selectSql: " + selectListSql.toString());
 
-		try {
-			fieldList = this.jdbcTemplate.getJdbcOperations().query(selectListSql, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			fieldList = null;
-		}
-
-		logger.debug("Leaving");
-		return fieldList;
+		logger.debug(Literal.SQL + selectListSql);
+		return this.jdbcTemplate.getJdbcOperations().query(selectListSql, typeRowMapper);
 	}
-
 }

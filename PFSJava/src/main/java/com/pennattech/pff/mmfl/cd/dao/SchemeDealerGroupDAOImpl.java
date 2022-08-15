@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.SchemeDealerGroup;
@@ -51,9 +52,9 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 		RowMapper<SchemeDealerGroup> rowMapper = BeanPropertyRowMapper.newInstance(SchemeDealerGroup.class);
 
 		try {
-			schemeDealerGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -185,9 +186,8 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 		try {
 
 			this.jdbcTemplate.batchUpdate(getQuery(tableType.getSuffix()), beanParameters);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 

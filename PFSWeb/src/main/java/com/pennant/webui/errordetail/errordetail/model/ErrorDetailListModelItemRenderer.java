@@ -63,7 +63,7 @@ public class ErrorDetailListModelItemRenderer implements ListitemRenderer<ErrorD
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, ErrorDetail errorDetail, int count) throws Exception {
+	public void render(Listitem item, ErrorDetail errorDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(errorDetail.getCode());

@@ -26930,12 +26930,64 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 	
-	
 	<changeSet id="PSD#187420" author="Gireesh.G">
 		<sql>
 			<![CDATA[
 				DELETE from ErrorDetails WHERE code='90599';
 				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('90599', 'EN', 'E', '{0} is not valid for Customer: {1}', null, 'Approved', null, null, null, null, null, 0, null, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="K#10" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTCONFIGURATION SET WHERECONDITION = 0 WHERE MENUITEMCODE = 'menu_Item_NPAReport';
+				UPDATE REPORTCONFIGURATION SET DATASOURCENAME = 'reportsDataSource'  WHERE MENUITEMCODE = 'menu_Item_MiscellaneouspostUploadStsrpt';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="K#10.1" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'c.KeyReference' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_CovenantDetailsReport') AND FIELDID = 1;
+				
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'prh.Id' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report') AND FIELDID = 1;
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'fm.FINREFERENCE' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report') AND FIELDID = 2;
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'pd.STATUS' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report') AND FIELDID = 3;
+				
+				UPDATE REPORTFILTERFIELDS SET  FIELDDBNAME = 't1.entitycode'  WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_MiscellaneouspostUploadStsrpt') AND FIELDID = 1;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#195402" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+			  	UPDATE MASTER_DEF SET KEY_TYPE ='AADHAAR' WHERE  MASTER_TYPE='DOC_TYPE' AND KEY_CODE  = '01';
+              	UPDATE MASTER_DEF SET KEY_TYPE ='PAN' WHERE MASTER_TYPE='DOC_TYPE' AND  KEY_CODE = '03';
+              	UPDATE MASTER_DEF SET KEY_TYPE ='PASSPORT' WHERE MASTER_TYPE='DOC_TYPE' AND  KEY_CODE = '02';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="187420" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'BPI_IMPACT_ON_IRR';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('BPI_IMPACT_ON_IRR', 'Effective Rate Calculation on (XIRR/IRR)', 'String', 1, 'Y', 1, 0, null, null, '', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="187420.1" author="saratkumar.p">
+		<sql>
+			<![CDATA[
+				UPDATE CUSTOMERDOCUMENTS SET DOCREFID = NULL WHERE DOCREFID <= 0;
+				UPDATE DOCUMENTDETAILS SET DOCREFID = NULL WHERE DOCREFID <= 0;
+				UPDATE CUSTOMERDOCUMENTS_TEMP SET DOCREFID = NULL WHERE DOCREFID <= 0;
+				UPDATE DOCUMENTDETAILS_TEMP SET DOCREFID = NULL WHERE DOCREFID <= 0;
 			]]>
 		</sql>
 	</changeSet>
@@ -26973,4 +27025,21 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="DE#3831.1" author="praveena.v">
+		<sql>
+			<![CDATA[
+				Update RMTCountryVsProvince SET TAXEXEMPTED = 0 WHERE TAXEXEMPTED IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#3831.2" author="praveena.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TAXEXEMPTED" tableName="RMTCountryVsProvince" defaultValue="0" />
+	</changeSet>
+	<changeSet id="DE#3831.2" author="praveena.v" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE RMTCountryVsProvince ADD CONSTRAINT DF_RMTCVSP_TAXE DEFAULT 0 FOR TAXEXEMPTED;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

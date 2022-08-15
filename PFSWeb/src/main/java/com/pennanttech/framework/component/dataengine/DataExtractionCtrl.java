@@ -61,8 +61,7 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_DataImportCtrl(Event event) throws Exception {

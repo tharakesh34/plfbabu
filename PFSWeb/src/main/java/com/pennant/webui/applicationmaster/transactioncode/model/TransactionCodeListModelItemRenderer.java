@@ -69,7 +69,7 @@ public class TransactionCodeListModelItemRenderer implements ListitemRenderer<Tr
 	}
 
 	@Override
-	public void render(Listitem item, TransactionCode transactionCode, int count) throws Exception {
+	public void render(Listitem item, TransactionCode transactionCode, int count) {
 
 		Listcell lc;
 		lc = new Listcell(transactionCode.getTranCode());

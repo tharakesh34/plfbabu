@@ -144,7 +144,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		super.pageRightName = "FinanceMainDialog";
 	}
 
-	public void onCreate$window_TVerificationDialog(Event event) throws Exception {
+	public void onCreate$window_TVerificationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -630,7 +630,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return null;
 	}
 
-	public void onChnageTv(ForwardEvent event) throws Exception {
+	public void onChnageTv(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 
 		Combobox cfiv = (Combobox) getComponent(listitem, "RequestType");
@@ -640,7 +640,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		onchangeVerificationType(cfiv, cAgency, cReason);
 	}
 
-	public void onChangeVerificationCategory(ForwardEvent event) throws Exception {
+	public void onChangeVerificationCategory(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox cAgency = null;
 		Combobox verificationCate = (Combobox) getComponent(listitem, "VerificationCategory");
@@ -1142,7 +1142,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClickAgencyButton(ForwardEvent event) throws Exception {
+	public void onClickAgencyButton(ForwardEvent event) {
 
 		int noOfVerification = 0;
 
@@ -1783,8 +1783,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction)
-			throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) {
 		logger.debug(Literal.ENTERING);
 		this.recSave = recSave;
 		this.userAction = userAction;
@@ -1951,11 +1950,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 */
 	public void onClick$btnTVInitiateSave(Event event) {
 		logger.debug(Literal.ENTERING);
-		try {
-			doSave(financeDetail, null, recSave, tv);
-		} catch (InterruptedException e1) {
-			logger.error(Literal.EXCEPTION, e1);
-		}
+		doSave(financeDetail, null, recSave, tv);
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.TV, PennantConstants.TRAN_WF, initType);
 			refreshList();

@@ -23,7 +23,7 @@ public class CreditApplicationReviewListModelItemRenderer
 	}
 
 	@Override
-	public void render(Listitem item, FinCreditReviewDetails creditReviewDetails, int count) throws Exception {
+	public void render(Listitem item, FinCreditReviewDetails creditReviewDetails, int count) {
 
 		Listcell lc;
 		lc = new Listcell(String.valueOf(creditReviewDetails.getDetailId()));

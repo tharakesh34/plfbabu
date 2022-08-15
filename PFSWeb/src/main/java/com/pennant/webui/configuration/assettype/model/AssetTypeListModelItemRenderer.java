@@ -63,7 +63,7 @@ public class AssetTypeListModelItemRenderer implements ListitemRenderer<AssetTyp
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, AssetType assetType, int count) throws Exception {
+	public void render(Listitem item, AssetType assetType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(assetType.getAssetType());

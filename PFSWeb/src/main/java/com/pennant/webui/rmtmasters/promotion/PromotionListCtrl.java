@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PromotionListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-03-2017    														*
- *                                                                  						*
- * Modified Date    :  21-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PromotionListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-03-2017 * * Modified
+ * Date : 21-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-03-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-03-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -157,10 +139,9 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_PromotionList(Event event) throws Exception {
+	public void onCreate$window_PromotionList(Event event) {
 		logger.debug("Entering");
 
 		if (StringUtils.trimToEmpty(finCategory.getValue()).equals(PennantConstants.WORFLOW_MODULE_CD)) {
@@ -218,8 +199,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PromotionList_PromotionSearch(Event event) {
 		search();
@@ -228,8 +208,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -239,8 +218,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PromotionList_NewPromotion(Event event) {
 		logger.debug("Entering");
@@ -290,13 +268,13 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$NewSchemeIdCreation(Event event) throws Exception {
+	public void onClick$NewSchemeIdCreation(Event event) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		createSchemeDialog(event, true);
 		logger.debug("Leaving");
 	}
 
-	public void onClick$CopychemeIdCreation(Event event) throws Exception {
+	public void onClick$CopychemeIdCreation(Event event) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		createSchemeDialog(event, false);
 		logger.debug("Leaving");
@@ -360,10 +338,9 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onPromotionItemDoubleClicked(Event event) throws Exception {
+	public void onPromotionItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.
@@ -404,8 +381,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param promotion
-	 *            The entity that need to be passed to the dialog.
+	 * @param promotion The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Promotion promotion) {
 		logger.debug("Entering");
@@ -436,8 +412,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -446,8 +421,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

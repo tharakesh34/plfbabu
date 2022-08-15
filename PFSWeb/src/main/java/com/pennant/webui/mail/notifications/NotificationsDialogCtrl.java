@@ -138,9 +138,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * selected Notifications object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_NotificationsDialog(Event event) throws Exception {
+	public void onCreate$window_NotificationsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -197,9 +196,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering");
 
 		doSave();
@@ -274,10 +272,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.notifications);
 	}
 
@@ -285,7 +281,6 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * Set the Rule Module
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public void onChange$ruleModule(Event event) {
 		logger.debug("Entering");
@@ -316,7 +311,6 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * Set the Template Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public void onChange$ruleEvent(Event event) {
 		logger.debug("Entering");
@@ -332,7 +326,6 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * Set the Template Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public void onChange$templateType(Event event) {
 		logger.debug("Entering");
@@ -348,9 +341,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * build the rule
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnValidate(Event event) throws Exception {
+	public void onClick$btnValidate(Event event) {
 		logger.debug("Entering");
 
 		if (this.tab_ruleTemplate.isSelected()) {
@@ -368,9 +360,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * Method for Simulation of builded code
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSimulation(Event event) throws Exception {
+	public void onClick$btnSimulation(Event event) {
 		logger.debug("Entering");
 
 		if (this.tab_ruleTemplate.isSelected()) {
@@ -518,9 +509,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aNotifications
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(Notifications aNotifications) throws Exception {
+	public void doWriteComponentsToBean(Notifications aNotifications) {
 		logger.debug("Entering");
 
 		doSetLOVValidation();
@@ -643,9 +633,8 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aNotifications
-	 * @throws Exception
 	 */
-	public void doShowDialog(Notifications aNotifications) throws Exception {
+	public void doShowDialog(Notifications aNotifications) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -905,11 +894,9 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final Notifications aNotifications = new Notifications();
@@ -1177,7 +1164,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	/**
 	 * Validate the SQL Query and then gives SQL Query and Actual Block.
 	 */
-	private void validate(JavaScriptBuilder javaScriptBuilder) throws Exception {
+	private void validate(JavaScriptBuilder javaScriptBuilder) {
 		logger.debug("Entering");
 
 		javaScriptBuilder.getSqlQuery();

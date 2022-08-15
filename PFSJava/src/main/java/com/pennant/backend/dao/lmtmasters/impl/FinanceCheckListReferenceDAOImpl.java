@@ -42,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinanceCheckListReference model</b> class.<br>
@@ -69,9 +70,9 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, reference, questionId, answer);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override

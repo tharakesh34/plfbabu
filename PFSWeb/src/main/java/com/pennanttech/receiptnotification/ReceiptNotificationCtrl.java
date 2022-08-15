@@ -41,8 +41,7 @@ public class ReceiptNotificationCtrl extends GFCBaseListCtrl<String> implements 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ReceiptNotificationCtrl(Event event) {
 
@@ -59,9 +58,8 @@ public class ReceiptNotificationCtrl extends GFCBaseListCtrl<String> implements 
 	 * when the "SendNotification" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSendNotification(Event event) throws Exception {
+	public void onClick$btnSendNotification(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (receiptNotificationService != null) {

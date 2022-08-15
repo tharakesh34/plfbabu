@@ -63,7 +63,7 @@ public class ReleaseLockListModelItemRenderer implements ListitemRenderer<Financ
 	}
 
 	@Override
-	public void render(Listitem item, FinanceMain financeMain, int count) throws Exception {
+	public void render(Listitem item, FinanceMain financeMain, int count) {
 		Listcell listcell;
 
 		listcell = new Listcell(financeMain.getFinReference());

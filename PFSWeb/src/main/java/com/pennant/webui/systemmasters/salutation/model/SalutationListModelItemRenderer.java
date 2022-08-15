@@ -67,7 +67,7 @@ public class SalutationListModelItemRenderer implements ListitemRenderer<Salutat
 	}
 
 	@Override
-	public void render(Listitem item, Salutation salutation, int count) throws Exception {
+	public void render(Listitem item, Salutation salutation, int count) {
 
 		Listcell lc;
 		lc = new Listcell(salutation.getSalutationCode());

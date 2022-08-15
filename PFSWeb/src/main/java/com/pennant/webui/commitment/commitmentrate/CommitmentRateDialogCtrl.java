@@ -128,9 +128,8 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CommitmentRateDialog(Event event) throws Exception {
+	public void onCreate$window_CommitmentRateDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -272,10 +271,8 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.commitmentRate);
 	}
 

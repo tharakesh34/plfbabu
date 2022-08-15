@@ -110,10 +110,9 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	public void onCreate$window_SpreadSheetDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_SpreadSheetDialog(ForwardEvent event) {
 		logger.debug("Entering");
 		// Set the page level components.
 		setPageComponents(window_SpreadSheetDialog);

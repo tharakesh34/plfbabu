@@ -60,7 +60,7 @@ public class SecurityRoleGroupsModelItemRenderer implements ListitemRenderer<Sec
 	}
 
 	@Override
-	public void render(Listitem item, SecurityGroup securityGroup, int count) throws Exception {
+	public void render(Listitem item, SecurityGroup securityGroup, int count) {
 
 		Listcell lc = new Listcell(securityGroup.getGrpCode());
 		lc.setParent(item);

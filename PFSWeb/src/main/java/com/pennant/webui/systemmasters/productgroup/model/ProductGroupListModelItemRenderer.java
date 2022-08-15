@@ -19,7 +19,7 @@ public class ProductGroupListModelItemRenderer implements ListitemRenderer<Produ
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void render(Listitem item, ProductGroup productGroup, int index) throws Exception {
+	public void render(Listitem item, ProductGroup productGroup, int index) {
 		// TODO Auto-generated method stub
 		Listcell lc;
 		lc = new Listcell(productGroup.getModelId());

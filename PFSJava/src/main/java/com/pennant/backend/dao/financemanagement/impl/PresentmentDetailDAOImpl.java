@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -62,10 +63,12 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.presentment.PresentmentResponseRowmapper;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
@@ -138,10 +141,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				return ph;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -822,17 +824,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		source.addValue("ExcludeReason", 0);
 		source.addValue("IMPORTSTATUS", RepayConstants.PEXC_IMPORT);
 		source.addValue("FAILEDSTATUS", RepayConstants.PEXC_FAILURE);
-		try {
-			RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
+
+		RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
+
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -1000,11 +995,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, presentmentRef);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
-
 	}
 
 	@Override
@@ -1152,7 +1145,6 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
 		logger.debug("Entering");
 
-		int assignedCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PartnerBankId", partnerBankId);
 
@@ -1162,15 +1154,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		selectSql.append(" Where PartnerBankId = :PartnerBankId ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			assignedCount = 0;
-		}
-		logger.debug("Leaving");
-		return assignedCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -1189,10 +1173,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return null;
 	}
 
 	@Override
@@ -1241,10 +1224,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, presentmentId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1253,13 +1235,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return jdbcOperations.queryForObject(sql, Integer.class, presentmentId, excludereason) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return jdbcOperations.queryForObject(sql, Integer.class, presentmentId, excludereason) > 0;
 	}
 
 	@Override
@@ -1486,10 +1462,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				return presentment;
 			}, batchId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -1526,9 +1501,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 						return fm;
 					}, parameters);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -1651,9 +1626,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 					return ps;
 				}
 			}, keyHolder);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 
 		return keyHolder.getKey().longValue();
@@ -1673,23 +1647,18 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
-				ps.setLong(index++, deExecutionId);
-				ps.setInt(index++, totalRecords);
-				ps.setInt(index++, successRecords);
-				ps.setInt(index++, failedRecords);
-				ps.setString(index++, status);
-				ps.setString(index++, remarks);
-				ps.setTimestamp(index++, curTimeStamp);
-				ps.setLong(index++, headerId);
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, deExecutionId);
+			ps.setInt(index++, totalRecords);
+			ps.setInt(index++, successRecords);
+			ps.setInt(index++, failedRecords);
+			ps.setString(index++, status);
+			ps.setString(index++, remarks);
+			ps.setTimestamp(index++, curTimeStamp);
+			ps.setLong(index++, headerId);
 
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		}
+		});
 	}
 
 	@Override
@@ -1741,19 +1710,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
-				ps.setInt(index++, thread);
-				ps.setLong(index++, from);
-				ps.setLong(index++, to);
-				ps.setLong(index++, headerId);
+		return jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setInt(index++, thread);
+			ps.setLong(index++, from);
+			ps.setLong(index++, to);
+			ps.setLong(index++, headerId);
 
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		}
+		});
 	}
 
 	@Override
@@ -1790,9 +1754,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 					return ps;
 				}
 			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 	}
 
@@ -1823,8 +1786,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 					return ps;
 				}
 			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		} catch (DuplicateKeyException e) {
+			logger.warn(Message.RECORD_EXISTS);
 			rcdInserted = false;
 		}
 
@@ -1834,19 +1797,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 			logger.debug(Literal.SQL + updSql.toString());
 
-			try {
-				jdbcOperations.update(updSql.toString(), ps -> {
-					int index = 1;
-					ps.setString(index++, errorCode);
-					ps.setString(index++, errorDesc);
-					ps.setLong(index++, id);
-					ps.setString(index++, presentmentRef);
+			jdbcOperations.update(updSql.toString(), ps -> {
+				int index = 1;
+				ps.setString(index++, errorCode);
+				ps.setString(index++, errorDesc);
+				ps.setLong(index++, id);
+				ps.setString(index++, presentmentRef);
 
-				});
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-				throw e;
-			}
+			});
 		}
 	}
 
@@ -2030,15 +1988,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, presentmentId,
-					RepayConstants.PEXC_APPROV);
-
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql.toString(), Long.class, presentmentId,
+				RepayConstants.PEXC_APPROV);
 	}
 
 	@Override
@@ -2058,10 +2009,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				return pd;
 			}, presentmentRef);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -2084,10 +2034,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				return pd;
 			}, presentmentId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public boolean isFileProcessed(String fileName) {
@@ -2111,10 +2060,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		try {
 			return this.jdbcOperations.queryForObject(sql, String.class, id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
-
 	}
 
 	@Override
@@ -2150,10 +2098,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				return pd;
 			}, presentmentRef, PennantConstants.PROCESS_REPRESENTMENT);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
-
 }

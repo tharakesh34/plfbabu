@@ -41,7 +41,7 @@ public class BounceDetailsListCtrl extends GFCBaseCtrl<ReceiptAllocationDetail> 
 	private List<ReceiptAllocationDetail> allocList;
 	private String buttonId;
 
-	public void onCreate$window_BounceDetails(Event event) throws Exception {
+	public void onCreate$window_BounceDetails(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

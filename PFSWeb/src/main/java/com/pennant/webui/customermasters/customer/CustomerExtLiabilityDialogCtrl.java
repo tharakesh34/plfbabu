@@ -208,9 +208,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * selected CustomerExtLiability object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerExtLiabilityDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerExtLiabilityDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -1005,9 +1004,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerExtLiability
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerExtLiability aliability) throws Exception {
+	public void doShowDialog(CustomerExtLiability aliability) {
 		logger.debug("Entering");
 
 		if (isNewRecord()) {
@@ -1817,10 +1815,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.externalLiability);
 	}
 

@@ -1,50 +1,31 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitStructureDetailDAOImpl.java                                     * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitStructureDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * *
+ * Modified Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.limit.impl;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,6 +48,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>LimitStructureDetail model</b> class.<br>
@@ -114,10 +97,8 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 	 * This method Deletes the Record from the LimitStructureDetails or LimitStructureDetails_Temp. if Record not
 	 * deleted then throws DataAccessException with error 41003. delete Limit Structure Detail by key LimitStructureCode
 	 * 
-	 * @param Limit
-	 *            Structure Detail (limitStructureDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Structure Detail (limitStructureDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -199,10 +180,8 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 	 *
 	 * save Limit Structure Detail
 	 * 
-	 * @param Limit
-	 *            Structure Detail (limitStructureDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Structure Detail (limitStructureDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -241,10 +220,8 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 	 * This method updates the Record LimitStructureDetails or LimitStructureDetails_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update Limit Structure Detail by key LimitStructureCode and Version
 	 * 
-	 * @param Limit
-	 *            Structure Detail (limitStructureDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Structure Detail (limitStructureDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -306,10 +283,8 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 	/**
 	 * Fetch the Record Limit Group details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return limitStructureDetails
 	 */
 	@Override
@@ -335,21 +310,12 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		source.addValue("LimitStructureCode", id);
 
 		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-		return null;
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
 	public int validationCheck(String limitGroup, String type) {
-		int recordCount = 0;
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitStructureDetails");
@@ -357,23 +323,12 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		selectSql.append(" Where GroupCode = :GroupCode");
 		source.addValue("GroupCode", limitGroup);
 
-		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-		return recordCount;
+		logger.debug(Literal.SQL + selectSql.toString());
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
 	public int limitItemCheck(String limitItem, String limitcategory, String type) {
-		int recordCount = 0;
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitStructureDetails");
@@ -382,25 +337,14 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		source.addValue("LimitLine", limitItem);
 		source.addValue("LimitCategory", limitcategory);
 
-		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-		return recordCount;
+		logger.debug(Literal.SQL + selectSql.toString());
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	/**
 	 * Fetch Limit Structure details by limit structure Id.
 	 * 
-	 * @param limitStructureId
-	 *            (long)
+	 * @param limitStructureId (long)
 	 * @param type
 	 * @return LimitStructureDetail
 	 */
@@ -429,15 +373,13 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(structureDetail);
 		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
-		try {
-			structureDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			structureDetail = null;
-		}
 
-		logger.debug("Leaving");
-		return structureDetail;
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	/**
@@ -461,16 +403,8 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitStructure);
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitStructure);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
 	}
 
 	@Override
@@ -478,8 +412,6 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 			String type) {
 		logger.debug("Entering");
 
-		MapSqlParameterSource source = null;
-		List<LimitStructureDetail> structureList = null;
 		StringBuilder selectSql = new StringBuilder(
 				"SELECT LimitStructureDetailsID, LimitStructureCode, GroupCode, LimitLine, ");
 		selectSql.append(
@@ -496,25 +428,14 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		}
 
 		logger.debug("selectSql: " + selectSql.toString());
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("GroupCode", code);
 		source.addValue("LimitLine", code);
 		source.addValue("LimitCategory", limitCategory);
 
 		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
-		try {
-			structureList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-		if (structureList == null) {
-			structureList = new ArrayList<LimitStructureDetail>();
-		}
-		return structureList;
+
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	/**
@@ -554,15 +475,12 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(structureDetail);
 		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
+
 		try {
-			structureDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			structureDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return structureDetail;
 	}
-
 }

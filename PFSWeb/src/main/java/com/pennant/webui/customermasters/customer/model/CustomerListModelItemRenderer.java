@@ -67,7 +67,7 @@ public class CustomerListModelItemRenderer implements ListitemRenderer<Customer>
 	}
 
 	@Override
-	public void render(Listitem item, Customer customer, int count) throws Exception {
+	public void render(Listitem item, Customer customer, int count) {
 
 		Listcell lc;
 		lc = new Listcell(customer.getCustCIF().trim());

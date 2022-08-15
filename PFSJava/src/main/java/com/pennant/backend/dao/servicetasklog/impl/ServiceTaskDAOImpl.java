@@ -1,12 +1,10 @@
 package com.pennant.backend.dao.servicetasklog.impl;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -19,6 +17,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.mchange.util.DuplicateElementException;
 import com.pennant.backend.dao.servicetasklog.ServiceTaskDAO;
 import com.pennant.backend.model.servicetask.ServiceTaskDetail;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -59,12 +58,11 @@ public class ServiceTaskDAOImpl extends SequenceDao<ServiceTaskDetail> implement
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(serviceTaskDetail);
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-			//commit
+			// commit
 			transactionManager.commit(txStatus);
-		} catch (DuplicateElementException dee) {
-			logger.error("Exception", dee);
+		} catch (DuplicateElementException e) {
 			transactionManager.rollback(txStatus);
-			throw dee;
+			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -89,13 +87,9 @@ public class ServiceTaskDAOImpl extends SequenceDao<ServiceTaskDetail> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug(Literal.LEAVING);
-		try {
-			RowMapper<ServiceTaskDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(dae);
-			return Collections.emptyList();
-		}
+
+		RowMapper<ServiceTaskDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {

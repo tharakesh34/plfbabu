@@ -46,6 +46,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
@@ -91,10 +92,9 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new GuarantorDetailRowMapper(type), id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -276,10 +276,9 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			return this.jdbcOperations.queryForObject(sql.toString(), new GuarantorDetailRowMapper(type), finID,
 					guarantorId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

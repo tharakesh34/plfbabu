@@ -603,7 +603,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 					int finformatter = CurrencyUtil.getFormat(
 							liabilityRequest.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-					;
+
 					valueParm1[0] = PennantApplicationUtil
 							.formateAmount(liabilityRequest.getInsClaimAmount(), finformatter).toString();
 					errParm1[0] = PennantJavaUtil.getLabel("label_InsCLaim") + ":" + valueParm1[0];

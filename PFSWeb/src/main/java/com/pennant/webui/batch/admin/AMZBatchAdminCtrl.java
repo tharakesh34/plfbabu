@@ -149,9 +149,8 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AMZBatchAdmin(Event event) throws Exception {
+	public void onCreate$window_AMZBatchAdmin(Event event) {
 
 		if (!isInitialise) {
 			setDates();
@@ -275,9 +274,8 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnStartJob(Event event) throws Exception {
+	public void onClick$btnStartJob(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		String msg = "";
@@ -347,7 +345,7 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnStaleJob(Event event) throws Exception {
+	public void onClick$btnStaleJob(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		AMZBatchAdmin.getInstance();
@@ -382,10 +380,9 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * Method for Rendering Step Execution Details List
 	 * 
 	 * @param stepExecution
-	 * @throws Exception
 	 */
 
-	private void doFillStepExecutions(List<StepExecution> stepExecutionList) throws Exception {
+	private void doFillStepExecutions(List<StepExecution> stepExecutionList) {
 		if (this.jobExecution == null || CollectionUtils.isEmpty(stepExecutionList)) {
 			return;
 		}

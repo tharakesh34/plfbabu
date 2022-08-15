@@ -1,49 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceWorkFlowDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-11-2011    														*
- *                                                                  						*
- * Modified Date    :  19-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceWorkFlowDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-11-2011 * *
+ * Modified Date : 19-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.lmtmasters.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -64,6 +45,7 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>FinanceWorkFlow model</b> class.<br>
@@ -79,10 +61,8 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 	/**
 	 * Fetch the Record Finance Work Flow Definition details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceWorkFlow
 	 */
 	@Override
@@ -90,10 +70,7 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 			String type) {
 		logger.debug("Entering");
 
-		StringBuilder selectSql = null;
-		MapSqlParameterSource source = null;
-
-		selectSql = new StringBuilder("Select FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName");
+		StringBuilder selectSql = new StringBuilder("Select FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName");
 		selectSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -107,7 +84,7 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		selectSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent AND ModuleName=:ModuleName ");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 		source.addValue("FinEvent", finEvent);
 		source.addValue("ModuleName", moduleName.toUpperCase());
@@ -116,63 +93,46 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return null;
 	}
 
 	/**
 	 * Fetch the Workflow Type from the Defined prameters
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return WorkflowType
 	 */
 	@Override
 	public String getFinanceWorkFlowType(final String finType, String finEvent, String moduleName, String type) {
 		logger.debug("Entering");
 
-		StringBuilder selectSql = null;
-		MapSqlParameterSource source = null;
-
-		selectSql = new StringBuilder();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select WorkFlowType From LMTFinanceWorkFlowDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent AND ModuleName=:ModuleName ");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 		source.addValue("FinEvent", finEvent);
 		source.addValue("ModuleName", moduleName);
 
-		String workflowType = null;
 		try {
-			workflowType = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			workflowType = null;
-		} finally {
-			source = null;
-			selectSql = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return workflowType;
 	}
 
 	/**
 	 * Fetch the Record Finance Work Flow Definition details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceWorkFlow
 	 */
 	@Override
@@ -198,25 +158,15 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
 		RowMapper<FinanceWorkFlow> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceWorkFlow.class);
 
-		List<FinanceWorkFlow> returnList = null;
-		try {
-			returnList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			returnList = new ArrayList<>();
-		}
-		logger.debug("Leaving");
-		return returnList;
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
 	 * This method Deletes the Record from the LMTFinanceWorkFlowDef or LMTFinanceWorkFlowDef_Temp. if Record not
 	 * deleted then throws DataAccessException with error 41003. delete Finance Work Flow Definition by key FinType
 	 * 
-	 * @param Finance
-	 *            Work Flow Definition (financeWorkFlow)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Work Flow Definition (financeWorkFlow)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -248,10 +198,8 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 	 *
 	 * save Finance Work Flow Definition
 	 * 
-	 * @param Finance
-	 *            Work Flow Definition (financeWorkFlow)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Work Flow Definition (financeWorkFlow)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -305,10 +253,8 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 	 * This method updates the Record LMTFinanceWorkFlowDef or LMTFinanceWorkFlowDef_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update Finance Work Flow Definition by key FinType and Version
 	 * 
-	 * @param Finance
-	 *            Work Flow Definition (financeWorkFlow)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Work Flow Definition (financeWorkFlow)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -375,7 +321,6 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		logger.debug("Entering");
 		VASConfiguration vASProductCode = new VASConfiguration();
 		vASProductCode.setProductCode(finType);
-		int count;
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From VASStructure");
@@ -384,30 +329,20 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductCode);
 
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			return 0;
-		}
-		logger.debug("Leaving");
-		return count;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
 	public FinanceWorkFlow getFinanceWorkFlow(String finType, String finEvent, String moduleName, String type) {
 		logger.debug("Entering");
 
-		StringBuilder selectSql = null;
-		MapSqlParameterSource source = null;
-
-		selectSql = new StringBuilder("Select FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName");
+		StringBuilder selectSql = new StringBuilder("Select FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName");
 		selectSql.append(" From LMTFinanceWorkFlowDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent AND ModuleName=:ModuleName ");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 		source.addValue("FinEvent", finEvent);
 		source.addValue("ModuleName", moduleName.toUpperCase());
@@ -416,13 +351,8 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return null;
 	}
-
 }

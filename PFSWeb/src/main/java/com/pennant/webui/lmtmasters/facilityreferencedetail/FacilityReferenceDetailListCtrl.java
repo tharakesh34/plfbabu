@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FacilityReferenceDetailListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-11-2011    														*
- *                                                                  						*
- * Modified Date    :  26-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FacilityReferenceDetailListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-11-2011 *
+ * * Modified Date : 26-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.lmtmasters.facilityreferencedetail;
 
 import java.util.Map;
@@ -132,9 +114,8 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	 * selected FinanceCheckList object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FacilityReferenceDetailList(Event event) throws Exception {
+	public void onCreate$window_FacilityReferenceDetailList(Event event) {
 		logger.debug("Entering");
 
 		// DropDown ListBox
@@ -181,7 +162,7 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 		this.button_FacilityReferenceDetailList_NewFacilityReferenceDetail.setVisible(false);
 		this.button_FacilityReferenceDetailList_FacilityReferenceDetailSearchDialog.setVisible(
 				getUserWorkspace().isAllowed("button_FacilityReferenceDetailList_FacilityReferenceDetailFindDialog"));
-		this.button_FacilityReferenceDetailList_PrintList.setVisible(false);//getUserWorkspace().isAllowed("button_FacilityReferenceDetailList_PrintList"));
+		this.button_FacilityReferenceDetailList_PrintList.setVisible(false);// getUserWorkspace().isAllowed("button_FacilityReferenceDetailList_PrintList"));
 		logger.debug("Leaving");
 	}
 
@@ -191,9 +172,8 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	 * <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onFacilityReferenceDetailItemDoubleClicked(Event event) throws Exception {
+	public void onFacilityReferenceDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected FacilityReferenceDetail object
@@ -231,7 +211,7 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	/**
 	 * Call the FacilityReferenceDetail dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_FacilityReferenceDetailList_NewFacilityReferenceDetail(Event event) throws Exception {
+	public void onClick$button_FacilityReferenceDetailList_NewFacilityReferenceDetail(Event event) {
 		logger.debug("Entering" + event.toString());
 		// create a new FacilityReferenceDetail object, We GET it from the backEnd.
 		FacilityReference aFacilityReference = new FacilityReference();
@@ -243,11 +223,9 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	 * Opens the detail view. <br>
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
-	 * @param FacilityReferenceDetail
-	 *            (aFacilityReferenceDetail)
-	 * @throws Exception
+	 * @param FacilityReferenceDetail (aFacilityReferenceDetail)
 	 */
-	private void showDetailView(FacilityReference aFacilityReference) throws Exception {
+	private void showDetailView(FacilityReference aFacilityReference) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
@@ -315,10 +293,8 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 	 * Method for Call the FacilityReferenceDetail dialog
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_FacilityReferenceDetailList_FacilityReferenceDetailSearchDialog(Event event)
-			throws Exception {
+	public void onClick$button_FacilityReferenceDetailList_FacilityReferenceDetailSearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSearch();
 		logger.debug("Leaving");
@@ -333,7 +309,7 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 
 		// WorkFlow
 		if (isWorkFlowEnabled()) {
-			this.searchObj.addTabelName("CAFFacilityTypes");//TODO RMTFacilityTypes_View
+			this.searchObj.addTabelName("CAFFacilityTypes");// TODO RMTFacilityTypes_View
 			if (isFirstTask()) {
 				button_FacilityReferenceDetailList_NewFacilityReferenceDetail.setVisible(true);
 			} else {
@@ -342,10 +318,10 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 
 			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		} else {
-			this.searchObj.addTabelName("CAFFacilityTypes");//TODO RMTFacilityTypes_AView
+			this.searchObj.addTabelName("CAFFacilityTypes");// TODO RMTFacilityTypes_AView
 		}
 
-		// Facility Type  
+		// Facility Type
 		if (StringUtils.isNotBlank(this.facilityType.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_facilityType.getSelectedItem(),
 					this.facilityType.getValue(), "facilityType");

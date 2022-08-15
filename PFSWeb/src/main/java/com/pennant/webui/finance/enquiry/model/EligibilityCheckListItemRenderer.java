@@ -26,7 +26,7 @@ public class EligibilityCheckListItemRenderer implements ListitemRenderer<Eligib
 	}
 
 	@Override
-	public void render(Listitem item, EligibilityRule elgRule, int count) throws Exception {
+	public void render(Listitem item, EligibilityRule elgRule, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(elgRule.getFinType() + " - " + elgRule.getFinTypeDesc()));

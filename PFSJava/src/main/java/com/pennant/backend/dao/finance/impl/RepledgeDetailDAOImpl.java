@@ -17,6 +17,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 public class RepledgeDetailDAOImpl extends BasicDao<RepledgeDetail> implements RepledgeDetailDAO {
@@ -29,10 +30,8 @@ public class RepledgeDetailDAOImpl extends BasicDao<RepledgeDetail> implements R
 	/**
 	 * Fetch the Record RepledgeDetail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return RepledgeDetail
 	 */
 	@Override
@@ -56,13 +55,11 @@ public class RepledgeDetailDAOImpl extends BasicDao<RepledgeDetail> implements R
 		RowMapper<RepledgeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(RepledgeDetail.class);
 
 		try {
-			repledgeDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			repledgeDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug(Literal.LEAVING);
-		return repledgeDetail;
 	}
 
 	@Override

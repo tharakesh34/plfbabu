@@ -71,10 +71,8 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onCreate$window_OverdraftScheduleDetailDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_OverdraftScheduleDetailDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -95,7 +93,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		try {
 
@@ -130,8 +128,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 	/**
 	 * Method to fill the Schedule Listbox with provided generated schedule.
 	 * 
-	 * @param FinScheduleData
-	 *            (aFinSchData)
+	 * @param FinScheduleData (aFinSchData)
 	 */
 	public void doFillScheduleList(FinScheduleData aFinSchdData) {
 		logger.debug("Entering");

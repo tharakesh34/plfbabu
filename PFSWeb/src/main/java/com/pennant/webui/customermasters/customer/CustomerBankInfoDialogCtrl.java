@@ -256,10 +256,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	 * selected CustomerBankInfo object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CustomerBankInfoDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerBankInfoDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -3102,9 +3101,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerBankInfo
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerBankInfo aCustomerBankInfo) throws Exception {
+	public void doShowDialog(CustomerBankInfo aCustomerBankInfo) {
 		logger.debug("Entering");
 
 		if (isCustomer360) {
@@ -3881,10 +3879,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerBankInfo);
 	}
 

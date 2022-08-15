@@ -99,9 +99,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	 * On creating Window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SOAReportGenerationDialogCtrl(Event event) throws Exception {
+	public void onCreate$window_SOAReportGenerationDialogCtrl(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

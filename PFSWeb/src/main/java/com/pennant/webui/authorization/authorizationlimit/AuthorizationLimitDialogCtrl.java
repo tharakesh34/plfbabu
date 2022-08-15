@@ -1042,9 +1042,8 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_AuthorizationLimitDialog(Event event) throws Exception {
+	public void onCreate$window_AuthorizationLimitDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -1141,7 +1140,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		}
 	}
 
-	public void onClick$btnAddDetails(Event event) throws Exception {
+	public void onClick$btnAddDetails(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		AuthorizationLimitDetail detail = new AuthorizationLimitDetail();
@@ -1242,7 +1241,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 
 	}
 
-	public void onChangeCode(ForwardEvent event) throws Exception {
+	public void onChangeCode(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		ExtendedCombobox combobox = (ExtendedCombobox) event.getOrigin().getTarget();
@@ -1303,7 +1302,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		}
 	}
 
-	public void onChnageCollateralType(ForwardEvent event) throws Exception {
+	public void onChnageCollateralType(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);

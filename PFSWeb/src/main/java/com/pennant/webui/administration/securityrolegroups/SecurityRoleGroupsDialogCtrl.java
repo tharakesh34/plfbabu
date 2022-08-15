@@ -78,7 +78,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -147,9 +146,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * selected SecurityRole object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$win_SecRoleGroupsDialog(Event event) throws Exception {
+	public void onCreate$win_SecRoleGroupsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -184,9 +182,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * This method calls when user clicks on reset button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		logger.debug("Entering " + event.toString());
 		doSetPanelProperties();
 		doShowUnAssignedGroups();
@@ -220,10 +217,9 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * when clicks on "btnSelectGroups"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void onClick$btnSelectGroups(Event event) throws Exception {
+	public void onClick$btnSelectGroups(Event event) {
 		logger.debug(event.toString());
 
 		if (this.listbox_UnAssignedGroups.getSelectedCount() != 0) {
@@ -257,10 +253,9 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * when clicks on "btnUnSelectGroups"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void onClick$btnUnSelectGroups(Event event) throws Exception {
+	public void onClick$btnUnSelectGroups(Event event) {
 		logger.debug(event.toString());
 
 		if (this.listbox_AssignedGroups.getSelectedCount() != 0) {
@@ -294,10 +289,9 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * when clicks on "btnUnSelectAllGroups"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void onClick$btnUnSelectAllGroups(Event event) throws Exception {
+	public void onClick$btnUnSelectAllGroups(Event event) {
 		logger.debug(event.toString());
 		this.listbox_AssignedGroups.selectAll();
 		if (this.listbox_AssignedGroups.getSelectedCount() != 0) {
@@ -329,8 +323,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	/**
 	 * This method invokes when double clicked on Groups item and calls showGroupRights() method
 	 */
-
-	public void onSecurityGroupItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onSecurityGroupItemDoubleClicked(ForwardEvent event) {
 
 		logger.debug("Entering " + event.toString());
 		this.panel_SecurityGroupRights.setOpen(true);
@@ -342,9 +335,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * when clicks on "onClick$btn_SearchUnAssignedRoles"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btn_SearchGroups(Event event) throws Exception {
+	public void onClick$btn_SearchGroups(Event event) {
 		logger.debug("Entering " + event.toString());
 		doSetPanelProperties();
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -364,9 +356,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * When user clicks on "cancel" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnCancel(Event event) throws Exception {
+	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering " + event.toString());
 		doCancel();
 		logger.debug("Leaving " + event.toString());
@@ -409,10 +400,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 
 	/**
 	 * Opens the Dialog window modal.
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		doSetPanelProperties();
 		for (SecurityGroup secGroup : unAssignedGroupsList) {
 			tempUnAsgnGroupsMap.put(Long.valueOf(secGroup.getGrpID()), secGroup);
@@ -482,10 +471,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 
 	/**
 	 * This Method display All groups for selected Right
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void doShowGroupRights(ForwardEvent event) throws InterruptedException {
+	public void doShowGroupRights(ForwardEvent event) {
 
 		logger.debug("Entering ");
 		Listitem item = (Listitem) event.getOrigin().getTarget();
@@ -567,10 +554,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 
 	/**
 	 * This method cancels the previous operations
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doCancel() throws InterruptedException {
+	private void doCancel() {
 		tempUnAsgnGroupsMap.clear();
 		newAssignedMap.clear();
 		unAssignedGroupsList = tempUnAssignedGroupsList;
@@ -724,23 +709,6 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		logger.debug("Leaving ");
 		return processCompleted;
 
-	}
-
-	/**
-	 * This method shows message box with error message
-	 * 
-	 * @param e
-	 */
-	private void showMessage(Exception e) {
-		logger.debug("Entering ");
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.win_SecRoleGroupsDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving ");
 	}
 
 	/**

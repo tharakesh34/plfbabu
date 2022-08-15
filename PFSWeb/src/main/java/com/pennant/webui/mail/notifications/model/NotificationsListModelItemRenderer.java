@@ -67,7 +67,7 @@ public class NotificationsListModelItemRenderer implements ListitemRenderer<Noti
 	}
 
 	@Override
-	public void render(Listitem item, Notifications notifications, int count) throws Exception {
+	public void render(Listitem item, Notifications notifications, int count) {
 
 		Listcell lc;
 		lc = new Listcell(notifications.getRuleCode());

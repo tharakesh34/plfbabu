@@ -68,7 +68,7 @@ public class AddressTypeListModelItemRenderer implements ListitemRenderer<Addres
 	}
 
 	@Override
-	public void render(Listitem item, AddressType addressType, int count) throws Exception {
+	public void render(Listitem item, AddressType addressType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(addressType.getAddrTypeCode());

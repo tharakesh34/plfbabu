@@ -55,6 +55,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>LimitDetail model</b> class.<br>
@@ -276,43 +277,38 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
-		int recordCount = 0;
-		try {
 
-			recordCount = jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+		int recordCount = jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
 
-					ps.setLong(index++, ld.getLimitHeaderId());
-					ps.setLong(index++, ld.getLimitStructureDetailsID());
-					ps.setDate(index++, JdbcUtil.getDate(ld.getExpiryDate()));
-					ps.setBoolean(index++, ld.isRevolving());
-					ps.setBigDecimal(index++, ld.getLimitSanctioned());
-					ps.setBoolean(index++, ld.isLimitCheck());
-					ps.setString(index++, ld.getLimitChkMethod());
+				ps.setLong(index++, ld.getLimitHeaderId());
+				ps.setLong(index++, ld.getLimitStructureDetailsID());
+				ps.setDate(index++, JdbcUtil.getDate(ld.getExpiryDate()));
+				ps.setBoolean(index++, ld.isRevolving());
+				ps.setBigDecimal(index++, ld.getLimitSanctioned());
+				ps.setBoolean(index++, ld.isLimitCheck());
+				ps.setString(index++, ld.getLimitChkMethod());
+				ps.setInt(index++, ld.getVersion());
+				ps.setLong(index++, ld.getLastMntBy());
+				ps.setTimestamp(index++, ld.getLastMntOn());
+				ps.setString(index++, ld.getRecordStatus());
+				ps.setString(index++, ld.getRoleCode());
+				ps.setString(index++, ld.getNextRoleCode());
+				ps.setString(index++, ld.getTaskId());
+				ps.setString(index++, ld.getNextTaskId());
+				ps.setString(index++, ld.getRecordType());
+				ps.setLong(index++, ld.getWorkflowId());
+				ps.setString(index++, ld.getBankingArrangement());
+				ps.setString(index++, ld.getLimitCondition());
+				ps.setLong(index++, ld.getDetailId());
+				if (!type.endsWith("_Temp")) {
 					ps.setInt(index++, ld.getVersion());
-					ps.setLong(index++, ld.getLastMntBy());
-					ps.setTimestamp(index++, ld.getLastMntOn());
-					ps.setString(index++, ld.getRecordStatus());
-					ps.setString(index++, ld.getRoleCode());
-					ps.setString(index++, ld.getNextRoleCode());
-					ps.setString(index++, ld.getTaskId());
-					ps.setString(index++, ld.getNextTaskId());
-					ps.setString(index++, ld.getRecordType());
-					ps.setLong(index++, ld.getWorkflowId());
-					ps.setString(index++, ld.getBankingArrangement());
-					ps.setString(index++, ld.getLimitCondition());
-					ps.setLong(index++, ld.getDetailId());
-					if (!type.endsWith("_Temp")) {
-						ps.setInt(index++, ld.getVersion());
-					}
 				}
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -342,7 +338,6 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public int validationCheck(String limitGroup, String type) {
-		int recordCount = 0;
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitDetails");
@@ -351,23 +346,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		source.addValue("GroupCode", limitGroup);
 
 		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
 	public int limitItemCheck(String limitItem, String limitcategory, String type) {
-		int recordCount = 0;
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitDetails");
@@ -377,23 +360,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		source.addValue("LimitCategory", limitcategory);
 
 		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
 	public int limitStructureCheck(String structureCode, String type) {
-		int recordCount = 0;
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitHeader");
@@ -402,18 +373,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		source.addValue("LimitStructureCode", structureCode);
 
 		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
-		}
-
-		return recordCount;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
 
 	@Override
@@ -505,16 +465,8 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		int recordCount = 0;
-		try {
-			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitDetails);
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		}
-
-		logger.debug("Leaving");
-		return recordCount;
+		SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitDetails);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParams, Integer.class);
 	}
 
 	/**
@@ -551,14 +503,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
 
 		try {
-			limitDetail = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			limitDetail = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return limitDetail;
 	}
 
 	/**
@@ -737,34 +686,26 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append(" where c.custId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-		try {
-			this.jdbcOperations.query(sql.toString(), new Object[] { "C", id },
-					new ResultSetExtractor<Map<String, BigDecimal>>() {
-						@Override
-						public Map<String, BigDecimal> extractData(ResultSet rs)
-								throws SQLException, DataAccessException {
 
-							while (rs.next()) {
-								hashMap.put(rs.getString("FinReference"), rs.getBigDecimal("TotalPriBal"));
-							}
-							return hashMap;
+		this.jdbcOperations.query(sql.toString(), new Object[] { "C", id },
+				new ResultSetExtractor<Map<String, BigDecimal>>() {
+					@Override
+					public Map<String, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
+
+						while (rs.next()) {
+							hashMap.put(rs.getString("FinReference"), rs.getBigDecimal("TotalPriBal"));
 						}
-					});
-
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
+						return hashMap;
+					}
+				});
 
 		logger.debug(Literal.LEAVING);
 		return hashMap;
-
 	}
 
 	@Override
 	public BigDecimal getOsPriBal(String finReference) {
 		logger.debug(Literal.ENTERING);
-
-		BigDecimal totalPriBal = BigDecimal.ZERO;
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select TotalPriBal");
@@ -773,13 +714,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		logger.debug(Literal.SQL + sql.toString());
 		try {
-			totalPriBal = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, BigDecimal.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
 		}
-		logger.debug(Literal.LEAVING);
-		return totalPriBal;
 	}
 
 	@Override
@@ -794,14 +733,13 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append(" Where CustomerId = :CustomerId");
 
 		logger.debug("selectSql: " + sql.toString());
-		int recordCount = 0;
+
 		try {
 			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitHeader);
-			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), beanParams, Integer.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParams, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		logger.debug("Leaving");
-		return recordCount;
 	}
 }

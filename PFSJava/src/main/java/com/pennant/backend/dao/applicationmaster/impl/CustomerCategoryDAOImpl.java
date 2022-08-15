@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerCategoryDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerCategoryDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
@@ -57,6 +39,7 @@ import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerCategory model</b> class.<br>
@@ -72,10 +55,8 @@ public class CustomerCategoryDAOImpl extends BasicDao<CustomerCategory> implemen
 	/**
 	 * Fetch the Record Customer Categories details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerCategory
 	 */
 	@Override
@@ -97,23 +78,19 @@ public class CustomerCategoryDAOImpl extends BasicDao<CustomerCategory> implemen
 		RowMapper<CustomerCategory> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerCategory.class);
 
 		try {
-			customerCategory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			customerCategory = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return customerCategory;
 	}
 
 	/**
 	 * This method Deletes the Record from the BMTCustCategories or BMTCustCategories_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Customer Categories by key CustCtgCode
 	 * 
-	 * @param Customer
-	 *            Categories (customerCategory)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Categories (customerCategory)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -147,10 +124,8 @@ public class CustomerCategoryDAOImpl extends BasicDao<CustomerCategory> implemen
 	 * 
 	 * save Customer Categories
 	 * 
-	 * @param Customer
-	 *            Categories (customerCategory)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Categories (customerCategory)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -182,10 +157,8 @@ public class CustomerCategoryDAOImpl extends BasicDao<CustomerCategory> implemen
 	 * This method updates the Record BMTCustCategories or BMTCustCategories_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Customer Categories by key CustCtgCode and Version
 	 * 
-	 * @param Customer
-	 *            Categories (customerCategory)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Categories (customerCategory)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -223,7 +196,6 @@ public class CustomerCategoryDAOImpl extends BasicDao<CustomerCategory> implemen
 	public boolean isCustCtgExist(String custCtgCode, String type) {
 		logger.debug("Entering");
 
-		boolean isCustCtgCode = false;
 		CustomerCategory customerCategory = new CustomerCategory();
 		customerCategory.setId(custCtgCode);
 
@@ -236,16 +208,6 @@ public class CustomerCategoryDAOImpl extends BasicDao<CustomerCategory> implemen
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCategory);
 
-		try {
-			int count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-			if (count > 0) {
-				isCustCtgCode = true;
-			}
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			return isCustCtgCode;
-		}
-		logger.debug("Leaving");
-		return isCustCtgCode;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class) > 0;
 	}
 }

@@ -84,7 +84,7 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 		super.pageRightName = "DocumentDetailsDialog";
 	}
 
-	public void onCreate$window_ExtDocumentDetailDialog(Event event) throws Exception {
+	public void onCreate$window_ExtDocumentDetailDialog(Event event) {
 
 		logger.debug(Literal.ENTERING);
 
@@ -210,8 +210,8 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 
 		Date fmDate = aExternalDocument.getFromDate();
 		Date tDate = aExternalDocument.getToDate();
-		//fmDate.setDate(1);
-		//tDate.setDate(1);
+		// fmDate.setDate(1);
+		// tDate.setDate(1);
 		/*
 		 * int noOfMonths = DateUtility.getMonthsBetween(fmDate, tDate, true); if (noOfMonths > 6) {
 		 * MessageUtil.showError(Labels.getLabel("label_ExtDocumentDetailDialog_Perfios_Date_Validation.value"));
@@ -402,7 +402,7 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 
 		try {
 			if (StringUtils.isNotEmpty(this.password.getValue())) {
-				//String pwdEncrypt = EncryptionUtil.encrypt(this.password.getValue());
+				// String pwdEncrypt = EncryptionUtil.encrypt(this.password.getValue());
 				aExternalDocument.setPassword(this.password.getValue());
 			} else {
 				aExternalDocument.setPassword(this.password.getValue());
@@ -516,11 +516,9 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 				return;
 			}
 		}
-		try {
-			browseDoc(media, this.documnetName);
-		} catch (InterruptedException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
+
+		browseDoc(media, this.documnetName);
+
 		doSetDownLoadVisible();
 		logger.debug("Leaving");
 	}
@@ -530,7 +528,7 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 		this.password.setErrorMessage("");
 	}
 
-	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
+	private void browseDoc(Media media, Textbox textbox) {
 		logger.debug("Entering");
 
 		try {

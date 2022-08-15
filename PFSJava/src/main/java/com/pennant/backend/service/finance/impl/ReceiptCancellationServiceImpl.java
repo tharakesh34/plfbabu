@@ -416,7 +416,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
@@ -885,7 +885,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	@Override
-	public PresentmentDetail presentmentCancellation(PresentmentDetail pd, CustEODEvent custEODEvent) throws Exception {
+	public PresentmentDetail presentmentCancellation(PresentmentDetail pd, CustEODEvent custEODEvent) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = custEODEvent.getFinEODEvents().get(0).getFinanceMain();
@@ -1045,7 +1045,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		return manualAdvise;
 	}
 
-	private String procReceiptCancellation(FinReceiptHeader rch, String postBranch, FinanceMain fm) throws Exception {
+	private String procReceiptCancellation(FinReceiptHeader rch, String postBranch, FinanceMain fm) {
 		logger.debug(Literal.ENTERING);
 
 		boolean alwSchdReversalByLog = false;
@@ -1637,8 +1637,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					valueDate = DateUtility.addDays(valueDate, -1);
 				}
 				List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
-				List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(fm.getFinID(), false,
-						"");
+				List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayList(fm.getFinID());
 				schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
 
 				// Check whether Accrual Reversal required for LPP or not
@@ -1670,7 +1669,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						taxHeader.setTaxDetails(new ArrayList<>());
 					}
 
-					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 					Taxes cgstTax = getTaxDetail(RuleConstants.CODE_CGST, taxPercentages.get(RuleConstants.CODE_CGST));
 					Taxes sgstTax = getTaxDetail(RuleConstants.CODE_SGST, taxPercentages.get(RuleConstants.CODE_SGST));
@@ -2134,7 +2133,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	private FinanceProfitDetail postReceiptCanAdjust(FinScheduleData scheduleData, FinanceProfitDetail profitDetail,
-			FinTaxReceivable newTaxRcv, Date appDate, Date valueDate) throws Exception {
+			FinTaxReceivable newTaxRcv, Date appDate, Date valueDate) {
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 
 		// Accrual Difference Postings
@@ -2902,7 +2901,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						documentDetails.setReferenceId(String.valueOf(receiptHeader.getId()));
 					}
 					documentDetails.setFinEvent(FinServiceEvent.RECEIPT);
-					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() == null) {
 						saveDocument(DMSModule.FINANCE, DMSModule.RECEIPT, documentDetails);
 						documentDetailsDAO.save(documentDetails, type);
 					}
@@ -2914,7 +2913,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				if (updateRecord) {
 					// When a document is updated, insert another file into the DocumentManager table's.
 					// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
-					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() == null) {
 						saveDocument(DMSModule.FINANCE, DMSModule.RECEIPT, documentDetails);
 						documentDetailsDAO.update(documentDetails, type);
 					}
@@ -3067,7 +3066,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	@Override
-	public AuditHeader doApproveNonLanReceipt(AuditHeader aAuditHeader) throws Exception {
+	public AuditHeader doApproveNonLanReceipt(AuditHeader aAuditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
@@ -3237,7 +3236,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	@Override
 	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode,
-			String bounceRemarks) throws Exception {
+			String bounceRemarks) {
 		return null;
 	}
 

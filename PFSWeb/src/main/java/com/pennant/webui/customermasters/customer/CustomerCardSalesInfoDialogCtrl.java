@@ -31,7 +31,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbar;
@@ -114,10 +113,9 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 	 * selected CustomerBankInfo object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CustomerCardSalesInfoDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerCardSalesInfoDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -1017,9 +1015,8 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustCardSales
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustCardSales aCustCardSales) throws Exception {
+	public void doShowDialog(CustCardSales aCustCardSales) {
 		logger.debug(Literal.ENTERING);
 
 		if (isNewRecord()) {
@@ -1491,10 +1488,8 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.custCardSales);
 	}
 

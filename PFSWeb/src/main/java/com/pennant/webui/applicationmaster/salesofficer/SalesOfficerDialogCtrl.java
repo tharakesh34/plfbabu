@@ -106,9 +106,8 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	 * selected SalesOfficer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SalesOfficerDialog(Event event) throws Exception {
+	public void onCreate$window_SalesOfficerDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -386,9 +385,8 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSalesOfficer
-	 * @throws Exception
 	 */
-	public void doShowDialog(SalesOfficer aSalesOfficer) throws Exception {
+	public void doShowDialog(SalesOfficer aSalesOfficer) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -857,10 +855,8 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.salesOfficer);
 	}
 

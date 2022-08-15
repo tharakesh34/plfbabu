@@ -52,6 +52,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Commitment model</b> class.<br>
@@ -106,10 +107,8 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	/**
 	 * Fetch the Record Commitment Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Commitment
 	 */
 	@Override
@@ -140,22 +139,18 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		RowMapper<Commitment> typeRowMapper = BeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
-			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			commitment = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return commitment;
 	}
 
 	/**
 	 * Fetch the Record Commitment Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Commitment
 	 */
 	@Override
@@ -175,14 +170,11 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		RowMapper<Commitment> typeRowMapper = BeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
-			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			commitment = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return commitment;
 	}
 
 	@Override
@@ -214,23 +206,18 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		RowMapper<Commitment> typeRowMapper = BeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
-			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			commitment = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return commitment;
 	}
 
 	/**
 	 * Fetch the Record Commitment Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Commitment
 	 */
 	@Override
@@ -265,10 +252,8 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	 * This method Deletes the Record from the Commitments or Commitments_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Commitment Detail by key CmtReference
 	 * 
-	 * @param Commitment
-	 *            Detail (commitment)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Commitment Detail (commitment)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -326,10 +311,8 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	 * 
 	 * save Commitment Detail
 	 * 
-	 * @param Commitment
-	 *            Detail (commitment)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Commitment Detail (commitment)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -369,10 +352,8 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	 * This method updates the Record Commitments or Commitments_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Commitment Detail by key CmtReference and Version
 	 * 
-	 * @param Commitment
-	 *            Detail (commitment)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Commitment Detail (commitment)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -419,36 +400,24 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	/**
 	 * This method get RoleIds count from UserRoles_View
 	 * 
-	 * @param RoleId
-	 *            (long)
+	 * @param RoleId (long)
 	 * @return int
 	 */
 	public int getCmtAmountCount(long custID) {
 		logger.debug("Entering ");
-
-		int status;
 
 		Map<String, Long> namedParamters = Collections.singletonMap("custID", custID);
 		StringBuilder selectSql = new StringBuilder(
 				"SELECT COUNT(*) FROM Commitments where custID=:custID and CmtExpDate >= CURRENT_TIMESTAMP ");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		try {
-			status = this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			status = 0;
-		}
-
-		logger.debug("Leaving ");
-		return status;
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), namedParamters, Integer.class);
 	}
 
 	/**
 	 * This method get Commitment Amount Summary
 	 * 
-	 * @param RoleId
-	 *            (long)
+	 * @param RoleId (long)
 	 */
 	@Override
 	public Map<String, Object> getAmountSummary(long custID) {
@@ -472,8 +441,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 	/**
 	 * This method get Commitment Amount Summary
 	 * 
-	 * @param RoleId
-	 *            (long)
+	 * @param RoleId (long)
 	 */
 	@Override
 	public List<CommitmentSummary> getCommitmentSummary(long custID) {
@@ -507,7 +475,6 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 			cmtExpired = true;
 		}
 
-		int recordCount = 0;
 		Map<String, Object> namedParameters = new HashMap<String, Object>();
 		namedParameters.put("CmtReference", cmtReference);
 		namedParameters.put("CmtUtilizedAmount", postingAmount);
@@ -523,13 +490,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		updateSql.append(" where CmtReference = :CmtReference");
 
 		logger.debug("updateSql:" + updateSql.toString());
-		try {
-			recordCount = this.jdbcTemplate.update(updateSql.toString(), namedParameters);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-		logger.debug("Leaving");
-		return recordCount >= 1 ? true : false;
+		return this.jdbcTemplate.update(updateSql.toString(), namedParameters) >= 1;
 	}
 
 	/**
@@ -552,19 +513,15 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		logger.debug("updateSql:" + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
 
-		try {
-			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * Get approved commitments record count by id.
 	 * 
-	 * @param id
-	 *            (commitment Reference)
+	 * @param id (commitment Reference)
 	 * @return Integer
 	 */
 	@Override
@@ -582,11 +539,6 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
 
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			return 0;
-		}
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 }

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LinkedLoansDialogCtrl.java   										*                        
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-09-2018    														*
- *                                                                  						*
- * Modified Date    :  17-09-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LinkedLoansDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-09-2018 * *
+ * Modified Date : 17-09-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-09-2018       Pennant	                 0.1                                         	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-09-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.receipts;
@@ -81,7 +63,7 @@ public class LinkedLoansDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Borderlayout borderlayout_LinkedLoans;
 
 	protected Listbox listBox_LinkedLoans;
-	//Buttons
+	// Buttons
 	protected Button btn_LinkedLoan;
 
 	private List<FinanceMain> financeMains;
@@ -106,10 +88,9 @@ public class LinkedLoansDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_LinkedLoansDialog(Event event) throws Exception {
+	public void onCreate$window_LinkedLoansDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -151,31 +132,31 @@ public class LinkedLoansDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						item = new Listitem();
 						Listcell lc = null;
 
-						//Loan Date
+						// Loan Date
 						lc = new Listcell(DateUtility.formatToLongDate(finMain.getFinStartDate()));
 						lc.setParent(item);
 
-						//Loan Type
+						// Loan Type
 						lc = new Listcell(finMain.getFinType());
 						lc.setParent(item);
 
-						//FinReference
+						// FinReference
 						lc = new Listcell(finMain.getFinReference());
 						lc.setParent(item);
 
-						//Original Amount
+						// Original Amount
 						BigDecimal finAmount = finMain.getFinCurrAssetValue().add(finMain.getFeeChargeAmt());
 						lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
 						lc.setStyle("text-align:right");
 						lc.setParent(item);
 
-						//Installment Amount
+						// Installment Amount
 						BigDecimal instllmentAmount = finPftDetail.getNSchdPft().add(finPftDetail.getNSchdPri());
 						lc = new Listcell(PennantAppUtil.amountFormate(instllmentAmount, format));
 						lc.setStyle("text-align:right");
 						lc.setParent(item);
 
-						//Outstanding Balance
+						// Outstanding Balance
 						if (finMain.getFinRepaymentAmount() != null) {
 							lc = new Listcell(PennantAppUtil
 									.amountFormate(finAmount.subtract(finMain.getFinRepaymentAmount()), format));
@@ -186,11 +167,11 @@ public class LinkedLoansDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						lc.setStyle("text-align:right");
 						lc.setParent(item);
 
-						//DPD
+						// DPD
 						lc = new Listcell(String.valueOf(finPftDetail.getCurODDays()));
 						lc.setParent(item);
 
-						//Loan Status
+						// Loan Status
 						lc = new Listcell(finMain.getFinStatus());
 						lc.setParent(item);
 

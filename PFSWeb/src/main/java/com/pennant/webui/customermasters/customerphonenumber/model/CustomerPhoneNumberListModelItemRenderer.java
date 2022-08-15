@@ -68,7 +68,7 @@ public class CustomerPhoneNumberListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, CustomerPhoneNumber customerPhoneNumber, int count) throws Exception {
+	public void render(Listitem item, CustomerPhoneNumber customerPhoneNumber, int count) {
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(customerPhoneNumber.getLovDescCustCIF()));
 		} else if (item instanceof Listgroupfoot) {

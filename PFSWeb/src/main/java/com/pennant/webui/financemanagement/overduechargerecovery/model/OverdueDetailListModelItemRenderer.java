@@ -73,7 +73,7 @@ public class OverdueDetailListModelItemRenderer implements ListitemRenderer<FinO
 	}
 
 	@Override
-	public void render(Listitem item, FinODDetails finODDetail, int count) throws Exception {
+	public void render(Listitem item, FinODDetails finODDetail, int count) {
 
 		Listcell lc;
 		lc = new Listcell(DateUtility.formatToLongDate(finODDetail.getFinODSchdDate()));

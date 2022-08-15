@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BuilderCompanyDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-05-2017    														*
- *                                                                  						*
- * Modified Date    :  22-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BuilderCompanyDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-05-2017 * *
+ * Modified Date : 22-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.systemmasters.impl;
 
 import java.sql.ResultSet;
@@ -62,6 +44,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -186,11 +169,9 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 				}
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -346,28 +327,15 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 	@Override
 	public boolean isIdExists(long id) {
 		logger.debug("Entering");
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
 
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select COUNT(*) from BuilderProjcet ");
 		sql.append(" Where BuilderId = :BuilderId ");
 		logger.debug("Sql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BuilderId", id);
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
-		}
-		return false;
-	}
 
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
+	}
 }

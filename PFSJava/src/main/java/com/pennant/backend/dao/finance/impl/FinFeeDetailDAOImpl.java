@@ -47,6 +47,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.constants.AccountingEvent;
 
@@ -81,10 +82,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, feeID);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -567,10 +567,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, vasReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -605,10 +604,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, feeTypeCode, finID,
 					AccountingEvent.VAS_FEE);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return Long.MIN_VALUE;
 		}
-
-		return Long.MIN_VALUE;
 	}
 
 	@Override
@@ -623,10 +621,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, extReference, feeTypeId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -661,10 +658,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		try {
 			return this.jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
 	}
 
 	@Override
@@ -779,13 +775,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		Object[] args = new Object[] { ffd.getFinEvent(), ffd.isOriginationFee(), ffd.getFinID(),
 				ffd.getVasReference() };
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, args) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
 
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, args) > 0;
 	}
 
 	private StringBuilder getSelectQuery(boolean isWIF, String type) {

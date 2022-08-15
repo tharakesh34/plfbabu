@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
@@ -53,7 +54,7 @@ public class SchemeProductGroupDAOImpl extends SequenceDao<SchemeProductGroup> i
 		try {
 			schemeProductGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -181,9 +182,8 @@ public class SchemeProductGroupDAOImpl extends SequenceDao<SchemeProductGroup> i
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(schemeProductGroupList.toArray());
 		try {
 			this.jdbcTemplate.batchUpdate(getQuery(tempTab.getSuffix()), beanParameters);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 		logger.debug(Literal.LEAVING);
 	}

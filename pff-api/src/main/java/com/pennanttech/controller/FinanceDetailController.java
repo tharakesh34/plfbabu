@@ -632,7 +632,7 @@ public class FinanceDetailController extends SummaryDetailService {
 
 			schdData.setPlanEMIHmonths(planEMIHmonths);
 
-			BigDecimal repayAmount = ScheduleCalculator.getEMIOnFinAssetValue(fd);
+			BigDecimal repayAmount = ScheduleCalculator.getEMIOnFinAssetValue(fd.getFinScheduleData());
 
 			if (repayAmount.compareTo(BigDecimal.ZERO) > 0) {
 				response.setRepayAmount(repayAmount);

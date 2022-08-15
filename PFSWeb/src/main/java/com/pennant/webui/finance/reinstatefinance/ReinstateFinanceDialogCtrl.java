@@ -169,9 +169,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * selected ReinstateFinance object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReinstateFinanceDialog(Event event) throws Exception {
+	public void onCreate$window_ReinstateFinanceDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -528,9 +527,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReinstateFinance
-	 * @throws Exception
 	 */
-	public void doShowDialog(ReinstateFinance aReinstateFinance) throws Exception {
+	public void doShowDialog(ReinstateFinance aReinstateFinance) {
 		logger.debug("Entering");
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aReinstateFinance.isNewRecord()) {
@@ -1160,10 +1158,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.reinstateFinance);
 	}
 
@@ -1182,7 +1178,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		return String.valueOf(getReinstateFinance().getFinReference());
 	}
 
-	public void doShowReinstateDialog(FinanceMain details) throws Exception {
+	public void doShowReinstateDialog(FinanceMain details) {
 		logger.debug("Entering");
 
 		if (details != null) {

@@ -20,7 +20,7 @@ public class OCRListModelItemRenderer implements ListitemRenderer<OCRHeader>, Se
 	}
 
 	@Override
-	public void render(Listitem item, OCRHeader ocrHeader, int index) throws Exception {
+	public void render(Listitem item, OCRHeader ocrHeader, int index) {
 		Listcell lc;
 		lc = new Listcell(ocrHeader.getOcrID());
 		lc.setParent(item);

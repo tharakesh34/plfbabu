@@ -124,4 +124,6 @@ public interface FinanceScheduleDetailDAO {
 	Date getSchdDateForDPD(long finID, Date appDate);
 
 	List<Date> getScheduleDates(long finID, Date valueDate);
+
+	List<FinanceScheduleDetail> getSchedulesForLMSEvent(long finID);
 }

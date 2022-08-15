@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QuestionListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-11-2011    														*
- *                                                                  						*
- * Modified Date    :  21-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : QuestionListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-11-2011 * * Modified
+ * Date : 21-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.bmtmasters.question;
 
 import java.util.Map;
@@ -120,7 +102,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 		moduleCode = "Question";
 	}
 
-	public void onCreate$window_QuestionList(Event event) throws Exception {
+	public void onCreate$window_QuestionList(Event event) {
 		logger.debug("Entering");
 
 		/* set components visible dependent on the users rights */
@@ -201,10 +183,8 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	 * see: com.pennant.webui.bmtmasters.question.model.QuestionListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onQuestionItemDoubleClicked(Event event) throws Exception {
+	public void onQuestionItemDoubleClicked(Event event) {
 		logger.debug(event.toString());
 
 		// get the selected Question object
@@ -249,7 +229,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	/**
 	 * Call the Question dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_QuestionList_NewQuestion(Event event) throws Exception {
+	public void onClick$button_QuestionList_NewQuestion(Event event) {
 		logger.debug(event.toString());
 		// create a new Question object, We GET it from the backend.
 		final Question aQuestion = getQuestionService().getNewQuestion();
@@ -261,11 +241,9 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param Question
-	 *            (aQuestion)
-	 * @throws Exception
+	 * @param Question (aQuestion)
 	 */
-	private void showDetailView(Question aQuestion) throws Exception {
+	private void showDetailView(Question aQuestion) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
@@ -325,8 +303,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 	/*
 	 * call the Question dialog
 	 */
-
-	public void onClick$button_QuestionList_QuestionSearchDialog(Event event) throws Exception {
+	public void onClick$button_QuestionList_QuestionSearchDialog(Event event) {
 		logger.debug("Entering");
 		logger.debug(event.toString());
 		/*

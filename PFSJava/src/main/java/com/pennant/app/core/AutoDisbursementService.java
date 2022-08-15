@@ -21,7 +21,7 @@ public class AutoDisbursementService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
 	private Logger logger = LogManager.getLogger(AutoDisbursementService.class);
 
-	public void processDisbursementPostings(CustEODEvent custEODEvent) throws Exception {
+	public void processDisbursementPostings(CustEODEvent custEODEvent) {
 		logger.debug(Literal.ENTERING);
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
@@ -48,7 +48,7 @@ public class AutoDisbursementService extends ServiceHelper {
 	}
 
 	public void postFutureDisbursement(CustEODEvent custEODEvent, FinEODEvent finEODEvent,
-			FinanceDisbursement curDisbursment) throws Exception {
+			FinanceDisbursement curDisbursment) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = finEODEvent.getFinanceMain();

@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -26,6 +27,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements SubventionUploadDAO {
@@ -65,11 +67,9 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 			}, keyHolder);
 
 			return keyHolder.getKey().longValue();
-		} catch (EmptyResultDataAccessException e) {
-			//
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
-
-		return 0;
 	}
 
 	public List<Subvention> getSubventionDetails(long batchId) {
@@ -224,27 +224,24 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
-				ps.setBigDecimal(index++, fee.getPaidAmount());
-				ps.setBigDecimal(index++, fee.getPaidAmountOriginal());
-				ps.setBigDecimal(index++, fee.getPaidAmountGST());
-				ps.setBigDecimal(index++, fee.getRemainingFee());
-				ps.setBigDecimal(index++, fee.getRemainingFeeOriginal());
-				ps.setBigDecimal(index++, fee.getRemainingFeeGST());
-				ps.setBigDecimal(index++, fee.getPaidTDS());
-				ps.setBigDecimal(index++, fee.getRemTDS());
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setBigDecimal(index++, fee.getPaidAmount());
+			ps.setBigDecimal(index++, fee.getPaidAmountOriginal());
+			ps.setBigDecimal(index++, fee.getPaidAmountGST());
+			ps.setBigDecimal(index++, fee.getRemainingFee());
+			ps.setBigDecimal(index++, fee.getRemainingFeeOriginal());
+			ps.setBigDecimal(index++, fee.getRemainingFeeGST());
+			ps.setBigDecimal(index++, fee.getPaidTDS());
+			ps.setBigDecimal(index++, fee.getRemTDS());
 
-				ps.setLong(index++, fee.getFeeID());
-				ps.setLong(index++, finID);
+			ps.setLong(index++, fee.getFeeID());
+			ps.setLong(index++, finID);
 
-			});
-			if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}
-		} catch (Exception e) {
-			//
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
 		}
 	}
 
@@ -257,26 +254,22 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-				ps.setObject(index++, subVention.getLinkedTranId());
-				ps.setString(index++, StringUtils.trimToEmpty(subVention.getRemarks()));
-				ps.setString(index++, subVention.getStatus());
-				ps.setBigDecimal(index++, subVention.getCgstAmt());
-				ps.setBigDecimal(index++, subVention.getSgstAmt());
-				ps.setBigDecimal(index++, subVention.getUgstAmt());
-				ps.setBigDecimal(index++, subVention.getIgstAmt());
-				ps.setBigDecimal(index++, subVention.getCessAmt());
-				ps.setObject(index++, subVention.getProcFeeAmt());
+			ps.setObject(index++, subVention.getLinkedTranId());
+			ps.setString(index++, StringUtils.trimToEmpty(subVention.getRemarks()));
+			ps.setString(index++, subVention.getStatus());
+			ps.setBigDecimal(index++, subVention.getCgstAmt());
+			ps.setBigDecimal(index++, subVention.getSgstAmt());
+			ps.setBigDecimal(index++, subVention.getUgstAmt());
+			ps.setBigDecimal(index++, subVention.getIgstAmt());
+			ps.setBigDecimal(index++, subVention.getCessAmt());
+			ps.setObject(index++, subVention.getProcFeeAmt());
 
-				ps.setObject(index++, subVention.getId());
+			ps.setObject(index++, subVention.getId());
 
-			});
-		} catch (Exception e) {
-			//
-		}
+		});
 	}
 
 	public int getSucessCount(long finID, String status) {
@@ -284,13 +277,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, status);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, status);
 	}
 
 	@Override
@@ -299,13 +286,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, name) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, name) > 0;
 	}
 
 	public int logSubvention(List<ErrorDetail> errDetails, Long id) {
@@ -335,20 +316,16 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setInt(index++, sh.getTotalRecords());
-				ps.setInt(index++, sh.getSucessRecords());
-				ps.setInt(index++, sh.getFailureRecords());
-				ps.setString(index++, sh.getStatus());
-				ps.setObject(index++, sh.getId());
+			ps.setInt(index++, sh.getTotalRecords());
+			ps.setInt(index++, sh.getSucessRecords());
+			ps.setInt(index++, sh.getFailureRecords());
+			ps.setString(index++, sh.getStatus());
+			ps.setObject(index++, sh.getId());
 
-			});
-		} catch (Exception e) {
-			//
-		}
+		});
 	}
 
 	@Override
@@ -401,19 +378,15 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
-				ps.setString(index++, remarks.toString());
-				ps.setString(index++, deStatus.getStatus());
-				ps.setString(index++, header.getBatchRef());
+			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+			ps.setString(index++, remarks.toString());
+			ps.setString(index++, deStatus.getStatus());
+			ps.setString(index++, header.getBatchRef());
 
-			});
-		} catch (Exception e) {
-			//
-		}
+		});
 	}
 
 	@Override
@@ -440,9 +413,8 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 				return sv;
 			}, finID, "S");
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 }

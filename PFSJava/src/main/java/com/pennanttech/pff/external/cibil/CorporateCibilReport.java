@@ -1504,7 +1504,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		if (failedCount > 0) {
 			remarks.append("Completed with exceptions, total Records: ");
 			remarks.append(totalRecords);
-			remarks.append(", Sucess: ");
+			remarks.append(", Success: ");
 			remarks.append(successCount);
 			remarks.append(", Failure: ");
 			remarks.append(failedCount);
@@ -1512,7 +1512,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		} else {
 			remarks.append("Completed successfully, total Records: ");
 			remarks.append(totalRecords);
-			remarks.append(", Sucess: ");
+			remarks.append(", Success: ");
 			remarks.append(successCount);
 		}
 		return remarks.toString();

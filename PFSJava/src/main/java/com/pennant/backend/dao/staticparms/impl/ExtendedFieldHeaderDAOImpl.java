@@ -35,6 +35,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,6 +54,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>ExtendedFieldHeader model</b> class.<br>
@@ -94,13 +96,11 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		RowMapper<ExtendedFieldHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
 		try {
-			extendedFieldHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			extendedFieldHeader = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return extendedFieldHeader;
 	}
 
 	/**
@@ -126,14 +126,11 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		ExtendedFieldRowMapper rowMapper = new ExtendedFieldRowMapper();
 
 		try {
-
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, objects);
-
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	private StringBuilder getSqlQuery(String type) {
@@ -159,13 +156,11 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		ExtendedFieldRowMapper rowMapper = new ExtendedFieldRowMapper();
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper,
-					 moduleName, subModuleName );
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, moduleName, subModuleName);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	/**
@@ -243,9 +238,8 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldHeader);
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			throw e;
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
 		}
 
 		return extendedFieldHeader.getId();
@@ -457,7 +451,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				} else {
 					this.jdbcTemplate.getJdbcOperations().update(syntax.toString());
 				}
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				logger.debug("Exception: ", e);
 			}
 		}
@@ -569,14 +563,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ExtendedFieldHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception :", e);
-		}
-		logger.debug("Leaving");
-		return null;
-
+		return this.jdbcTemplate.query(selectSql.toString(), parameterSource, typeRowMapper);
 	}
 
 	private class ExtendedFieldRowMapper implements RowMapper<ExtendedFieldHeader> {

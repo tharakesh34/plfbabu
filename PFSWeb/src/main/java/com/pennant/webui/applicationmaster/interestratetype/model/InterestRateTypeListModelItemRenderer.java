@@ -69,7 +69,7 @@ public class InterestRateTypeListModelItemRenderer implements ListitemRenderer<I
 	}
 
 	@Override
-	public void render(Listitem item, InterestRateType interestRateType, int count) throws Exception {
+	public void render(Listitem item, InterestRateType interestRateType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(PennantAppUtil.getlabelDesc(interestRateType.getIntRateTypeCode(),

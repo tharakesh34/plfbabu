@@ -209,9 +209,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_ManualAdviseDialog(Event event) throws Exception {
+	public void onCreate$window_ManualAdviseDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -486,7 +485,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			tabpanelBasicdetails.setHeight("100%");
 			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinID(), "", false);
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinID());
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain);
 
 			// For Calculating the GST amount, converting fees as FinFeeDetail
 			// and FinTypeFees and this is for inquiry purpose only, these
@@ -634,7 +633,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		feeType.setTaxApplicable(taxApplicable);
 		feeType.setAmount(adviseAmountVal);
 
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 		finFeeDetailService.convertGSTFinTypeFees(fee, feeType, fd, taxPercentages);
 		finFeeDetailService.calculateFees(fee, financeMain, taxPercentages);
@@ -1490,10 +1489,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	/**
 	 * Method for Executing Accountng Details
-	 * 
-	 * @throws Exception
 	 */
-	public void executeAccounting() throws Exception {
+	public void executeAccounting() {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> accountingSetEntries = this.manualAdviseService.getAccountingSetEntries(this.manualAdvise);
@@ -1578,7 +1575,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 	}
 
-	public void onSelectTab(ForwardEvent event) throws Exception {
+	public void onSelectTab(ForwardEvent event) {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + Literal.ENTERING);
 		String module = getIDbyTab(tab.getId());

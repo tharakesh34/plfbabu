@@ -68,7 +68,7 @@ public class CustomerAddresListModelItemRenderer implements ListitemRenderer<Cus
 	}
 
 	@Override
-	public void render(Listitem item, CustomerAddres customerAddres, int count) throws Exception {
+	public void render(Listitem item, CustomerAddres customerAddres, int count) {
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(String.valueOf(customerAddres.getLovDescCustCIF())));

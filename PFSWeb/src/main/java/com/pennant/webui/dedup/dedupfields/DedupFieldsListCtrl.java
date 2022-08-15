@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DedupFieldsListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DedupFieldsListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * * Modified
+ * Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.dedup.dedupfields;
 
 import java.util.Map;
@@ -116,7 +98,7 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 		moduleCode = "DedupFields";
 	}
 
-	public void onCreate$window_DedupFieldsList(Event event) throws Exception {
+	public void onCreate$window_DedupFieldsList(Event event) {
 		logger.debug("Enterring");
 
 		/* set components visible dependent on the users rights */
@@ -190,10 +172,8 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 	 * see: com.pennant.webui.dedup.dedupfields.model.DedupFieldsListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onDedupFieldsItemDoubleClicked(Event event) throws Exception {
+	public void onDedupFieldsItemDoubleClicked(Event event) {
 		logger.debug(event.toString());
 
 		// get the selected DedupFields object
@@ -237,7 +217,7 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 	/**
 	 * Call the DedupFields dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_DedupFieldsList_NewDedupFields(Event event) throws Exception {
+	public void onClick$button_DedupFieldsList_NewDedupFields(Event event) {
 		logger.debug(event.toString());
 		// create a new DedupFields object, We GET it from the backend.
 		final DedupFields aDedupFields = getDedupFieldsService().getNewDedupFields();
@@ -249,11 +229,9 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param DedupFields
-	 *            (aDedupFields)
-	 * @throws Exception
+	 * @param DedupFields (aDedupFields)
 	 */
-	private void showDetailView(DedupFields aDedupFields) throws Exception {
+	private void showDetailView(DedupFields aDedupFields) {
 		logger.debug("Enterring");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
@@ -313,8 +291,7 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 	/*
 	 * call the DedupFields dialog
 	 */
-
-	public void onClick$button_DedupFieldsList_DedupFieldsSearchDialog(Event event) throws Exception {
+	public void onClick$button_DedupFieldsList_DedupFieldsSearchDialog(Event event) {
 		logger.debug("Enterring");
 		/*
 		 * we can call our DedupFieldsDialog zul-file with parameters. So we can call them with a object of the selected

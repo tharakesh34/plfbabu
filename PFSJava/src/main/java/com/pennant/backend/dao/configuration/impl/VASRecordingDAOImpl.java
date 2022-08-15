@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>VASRecording model</b> class.<br>
@@ -90,10 +91,9 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, vasReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -108,10 +108,9 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, vasReference, vasStatus);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	private String commaJoin(List<String> finReferences) {
@@ -367,11 +366,10 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 				return vc;
 			}, primaryLinkRef);
-		} catch (Exception e) {
-			//
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -484,15 +482,12 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
-
 				return rs.getLong("CustId");
 			}, new Object[] { "Finance", "Finance", "Customer", "Customer", vasReference });
-
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -552,10 +547,9 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, vasReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public String getVasInsStatus(long paymentInsId) {
@@ -566,10 +560,9 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, paymentInsId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	public void updateVasInsStatus(long id) {
@@ -580,20 +573,16 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-				ps.setString(index++, DisbursementConstants.STATUS_APPROVED);
-				ps.setString(index++, DisbursementConstants.STATUS_CANCEL);
-				ps.setString(index++, DisbursementConstants.STATUS_PAID);
-				ps.setString(index++, DisbursementConstants.STATUS_REVERSED);
+			ps.setString(index++, DisbursementConstants.STATUS_APPROVED);
+			ps.setString(index++, DisbursementConstants.STATUS_CANCEL);
+			ps.setString(index++, DisbursementConstants.STATUS_PAID);
+			ps.setString(index++, DisbursementConstants.STATUS_REVERSED);
 
-				ps.setLong(index++, id);
-			});
-		} catch (Exception e) {
-			//
-		}
+			ps.setLong(index++, id);
+		});
 	}
 
 	@Override
@@ -605,10 +594,9 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		try {
 			return jdbcOperations.queryForObject(sql, String.class, primaryLinkRef, vasReference);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	private StringBuilder getSqlQuery(String type) {

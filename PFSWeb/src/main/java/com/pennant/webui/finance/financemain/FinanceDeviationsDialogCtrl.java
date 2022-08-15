@@ -88,9 +88,8 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceDeviationsDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_FinanceDeviationsDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -160,9 +159,8 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		try {
 
@@ -227,7 +225,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 		return arrayList;
 	}
 
-	public void onClickAddNotes(ForwardEvent event) throws Exception {
+	public void onClickAddNotes(ForwardEvent event) {
 		logger.debug(" Entering ");
 
 		FinanceDeviations deviationDetail = (FinanceDeviations) event.getData();
@@ -237,7 +235,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 
 	}
 
-	public void onClickViewNotes(ForwardEvent event) throws Exception {
+	public void onClickViewNotes(ForwardEvent event) {
 		logger.debug(" Entering ");
 
 		FinanceDeviations deviationDetail = (FinanceDeviations) event.getData();
@@ -246,7 +244,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 		logger.debug(" Leaving ");
 	}
 
-	private void showNotes(FinanceDeviations deviationDetail, boolean enquiry) throws InterruptedException {
+	private void showNotes(FinanceDeviations deviationDetail, boolean enquiry) {
 		logger.debug("Entering ");
 
 		Notes notes = new Notes();

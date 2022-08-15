@@ -171,9 +171,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_RuleDialog(Event event) throws Exception {
+	public void onCreate$window_RuleDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -235,9 +234,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		doSave();
@@ -276,9 +274,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * when the "delete" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnDelete(Event event) throws Exception {
+	public void onClick$btnDelete(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (StringUtils.equals(RuleConstants.MODULE_LMTLINE, this.rule.getRuleModule())) {
@@ -321,9 +318,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * build a rule for values and generate in textBox
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnReadValues(Event event) throws Exception {
+	public void onClick$btnReadValues(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		validate();
@@ -335,9 +331,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * Method for Simulation of builded code
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSimulation(Event event) throws Exception {
+	public void onClick$btnSimulation(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		doSetValidation();
@@ -352,9 +347,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * Set the Rule Return Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$returnType(Event event) throws Exception {
+	public void onChange$returnType(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		doSetRuleBuilder();
@@ -366,9 +360,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * Set the Deviation Return Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$deviationType(Event event) throws Exception {
+	public void onChange$deviationType(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		doSetRuleBuilder();
@@ -605,9 +598,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aRule
-	 * @throws Exception
 	 */
-	public void doShowDialog(Rule aRule) throws Exception {
+	public void doShowDialog(Rule aRule) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -724,9 +716,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aRule
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(Rule aRule) throws Exception {
+	public void doWriteComponentsToBean(Rule aRule) {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -941,7 +932,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	/**
 	 * Validate the SQL Query and then gives SQL Query and Actual Block.
 	 */
-	private void validate() throws Exception {
+	private void validate() {
 		logger.debug("Entering");
 
 		this.javaScriptSqlRule.getSqlQuery();
@@ -1076,7 +1067,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		}
 	}
 
-	private void doDelete() throws Exception {
+	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		final Rule aRule = new Rule();
@@ -1225,11 +1216,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final Rule aRule = new Rule();
@@ -1289,9 +1278,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * @param tranType (String)
 	 * 
 	 * @return boolean
-	 * @throws Exception
 	 */
-	protected boolean doProcess(Rule aRule, String tranType) throws Exception {
+	protected boolean doProcess(Rule aRule, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1381,9 +1369,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * @param method      (String)
 	 * 
 	 * @return boolean
-	 * @throws Exception
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1476,10 +1463,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		doShowNotes(this.rule);

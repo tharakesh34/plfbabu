@@ -146,13 +146,13 @@ abstract public class ServiceHelper {
 				FinanceConstants.MODULEID_FINTYPE);
 	}
 
-	public final void postAccountingEOD(AEEvent aeEvent) throws Exception {
+	public final void postAccountingEOD(AEEvent aeEvent) {
 		aeEvent.setPostingUserBranch("EOD");
 		aeEvent.setEOD(true);
 		postingsPreparationUtil.postAccountingEOD(aeEvent);
 	}
 
-	public final void saveAccountingEOD(List<ReturnDataSet> returnDataSets) throws Exception {
+	public final void saveAccountingEOD(List<ReturnDataSet> returnDataSets) {
 		postingsPreparationUtil.saveAccountingEOD(returnDataSets);
 	}
 

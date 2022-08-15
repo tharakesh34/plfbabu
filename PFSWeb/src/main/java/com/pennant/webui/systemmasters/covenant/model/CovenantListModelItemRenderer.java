@@ -20,7 +20,7 @@ public class CovenantListModelItemRenderer implements ListitemRenderer<FinCovena
 	}
 
 	@Override
-	public void render(Listitem item, FinCovenantType finCovenantType, int count) throws Exception {
+	public void render(Listitem item, FinCovenantType finCovenantType, int count) {
 
 		Listcell lc;
 		lc = new Listcell(finCovenantType.getFinReference());

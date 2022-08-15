@@ -20,7 +20,7 @@ public class AutoKnockOffListModelItemRender implements ListitemRenderer<AutoKno
 	}
 
 	@Override
-	public void render(Listitem item, AutoKnockOff knockOff, int index) throws Exception {
+	public void render(Listitem item, AutoKnockOff knockOff, int index) {
 
 		Listcell lc;
 		lc = new Listcell(knockOff.getCode());

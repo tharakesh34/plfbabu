@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceMainDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceMainDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -106,7 +88,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 */
 	protected Window window_AccountingDetailDialog; // autoWired
 
-	//Finance Basic Details for Filling DIV Details Fields
+	// Finance Basic Details for Filling DIV Details Fields
 	protected Label acc_finType; // autoWired
 	protected Label acc_finCcy; // autoWired
 	protected Label acc_scheduleMethod; // autoWired
@@ -114,7 +96,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	protected Label acc_finReference; // autoWired
 	protected Label label_AccountingDetailDialog_GrcEndDate; // autoWired
 	protected Label label_AccountingDetailDialog_FinType; // autoWired
-	protected Label acc_grcEndDate; // autoWired	
+	protected Label acc_grcEndDate; // autoWired
 
 	// Accounting Set Details Tab
 	protected Button btnAccounting; // autoWired
@@ -220,7 +202,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			}
 		}
 
-		// append finance basic details 
+		// append finance basic details
 		if (arguments.containsKey("finHeaderList")) {
 			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 		}
@@ -249,7 +231,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		Exception wvea = null;
 		try {
 
-			//Seeting the visibility of the execute button.
+			// Seeting the visibility of the execute button.
 			this.btnAccounting.setVisible(!enqiryModule);
 
 			if (getDialogCtrl() != null) {
@@ -261,7 +243,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					logger.error("Exception: ", e);
 				}
 
-				// Accounting Posting Details 
+				// Accounting Posting Details
 				List<TransactionEntry> transactionEntries = AccountingConfigCache.getTransactionEntry(acSetID);
 				if (transactionEntries != null && !transactionEntries.isEmpty()) {
 					boolean executed = false;
@@ -292,11 +274,12 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					logger.error("Exception: ", e);
 				}
 
-				//Finance Accounting Posting Details & Commitment Disbursement Posting Details
+				// Finance Accounting Posting Details & Commitment Disbursement Posting Details
 				List<TransactionEntry> transactionEntries = AccountingConfigCache.getTransactionEntry(acSetID);
 				if (transactionEntries != null && !transactionEntries.isEmpty()) {
 					boolean executed = false;
-					if (!main.isNewRecord() && (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0
+					if (!main.isNewRecord() && (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails()
+							.size() > 0
 							|| getFinanceDetail().getFinScheduleData().getOverdraftScheduleDetails().size() > 0)) {
 
 						if (!(main.getCustID() == 0 || main.getCustID() == Long.MIN_VALUE)) {
@@ -350,8 +333,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	/**
 	 * Method to fill list box in Accounting Tab <br>
 	 * 
-	 * @param accountingSetEntries
-	 *            (List)
+	 * @param accountingSetEntries (List)
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
@@ -369,7 +351,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		this.listBoxFinAccountings.getItems().clear();
 		this.listBoxFinAccountings.setSizedByContent(true);
 		if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-			//Remove the ZeroAmount if showZeroCal is not checked
+			// Remove the ZeroAmount if showZeroCal is not checked
 			if (accountingSetEntries.get(0) instanceof ReturnDataSet) {
 				rdSetaccountingSetEntries = doRemovePostAmount((List<ReturnDataSet>) accountingSetEntries);
 				isReturnDatasetList = true;
@@ -382,7 +364,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					if (accountingSetEntries.get(i) instanceof TransactionEntry) {
 						TransactionEntry entry = (TransactionEntry) accountingSetEntries.get(i);
 
-						//Adding List Group to ListBox
+						// Adding List Group to ListBox
 						/*
 						 * if(i == 0){ Listgroup listgroup = new
 						 * Listgroup(entry.getLovDescEventCodeName()+"-"+entry.getLovDescEventCodeDesc());
@@ -418,14 +400,14 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						if (rdSetaccountingSetEntries.get(j) instanceof ReturnDataSet) {
 							ReturnDataSet entry = (ReturnDataSet) rdSetaccountingSetEntries.get(j);
 
-							//Highlighting Failed Posting Details 
+							// Highlighting Failed Posting Details
 							String sClassStyle = "";
 							if (StringUtils.isNotBlank(entry.getErrorId())
 									&& !"0000".equals(StringUtils.trimToEmpty(entry.getErrorId()))) {
 								sClassStyle = "color:#FF0000;";
 							}
 
-							//Adding List Group to ListBox
+							// Adding List Group to ListBox
 							/*
 							 * if(i == 0){ Listgroup listgroup = new Listgroup(entry.getFinEvent() +"-"+
 							 * entry.getLovDescEventCodeName()); this.listBoxFinAccountings.appendChild(listgroup); }
@@ -532,8 +514,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	/**
 	 * Method to fill Post AccountSet in the PostAccounting tab<br>
 	 * 
-	 * @param postingAccountingset
-	 *            (List)
+	 * @param postingAccountingset (List)
 	 * 
 	 */
 	public void doFillPostAccountings(List<ReturnDataSet> postingAccountingset) {
@@ -552,7 +533,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				Listitem item = new Listitem();
 				Listcell lc;
 				ReturnDataSet postAccountSet = (ReturnDataSet) postingAccountingset.get(i);
-				//Highlighting Failed Posting Details 
+				// Highlighting Failed Posting Details
 				String sClassStyle = "";
 				if (StringUtils.isNotBlank(postAccountSet.getErrorId())
 						&& !"0000".equals(StringUtils.trimToEmpty(postAccountSet.getErrorId()))) {
@@ -630,10 +611,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	/**
 	 * Method to fill list box in Commitment Postings Accounting Tab <br>
 	 * 
-	 * @param cmtFinEntries
-	 *            (List)
-	 * @param listbox
-	 *            (Listbox)
+	 * @param cmtFinEntries (List)
+	 * @param listbox       (Listbox)
 	 */
 	public void doFillCmtAccounting(List<?> cmtFinEntries, int formatter) {
 		logger.debug("Entering");
@@ -658,7 +637,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				if (cmtFinEntries.get(i) instanceof TransactionEntry) {
 					TransactionEntry entry = (TransactionEntry) cmtFinEntries.get(i);
 
-					//Adding List Group to ListBox
+					// Adding List Group to ListBox
 					if (i == 0) {
 						Listgroup listgroup = new Listgroup(
 								entry.getLovDescEventCodeName() + "-" + entry.getLovDescEventCodeDesc());
@@ -687,7 +666,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				} else if (cmtFinEntries.get(i) instanceof ReturnDataSet) {
 					ReturnDataSet entry = (ReturnDataSet) cmtFinEntries.get(i);
 
-					//Adding List Group to ListBox
+					// Adding List Group to ListBox
 					if (i == 0) {
 						Listgroup listgroup = new Listgroup(
 								entry.getFinEvent() + "-" + entry.getLovDescEventCodeName());
@@ -761,10 +740,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	/**
 	 * Method to fill list box in GraceEnd Postings Accounting Tab <br>
 	 * 
-	 * @param grcEndFinEntries
-	 *            (List)
-	 * @param listbox
-	 *            (Listbox)
+	 * @param grcEndFinEntries (List)
+	 * @param listbox          (Listbox)
 	 */
 	public void doFillGraceEndAccounting(List<?> grcEndFinEntries) {
 		logger.debug("Entering");
@@ -778,7 +755,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				if (grcEndFinEntries.get(i) instanceof TransactionEntry) {
 					TransactionEntry entry = (TransactionEntry) grcEndFinEntries.get(i);
 
-					//Adding List Group to ListBox
+					// Adding List Group to ListBox
 					if (i == 0) {
 						Listgroup listgroup = new Listgroup(
 								entry.getLovDescEventCodeName() + "-" + entry.getLovDescEventCodeDesc());
@@ -807,7 +784,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				} else if (grcEndFinEntries.get(i) instanceof ReturnDataSet) {
 					ReturnDataSet entry = (ReturnDataSet) grcEndFinEntries.get(i);
 
-					//Adding List Group to ListBox
+					// Adding List Group to ListBox
 					if (i == 0) {
 						Listgroup listgroup = new Listgroup(
 								entry.getFinEvent() + "-" + entry.getLovDescEventCodeName());
@@ -929,9 +906,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * when the "btnPrintAccounting" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPrintAccounting(Event event) throws Exception {
+	public void onClick$btnPrintAccounting(Event event) {
 		logger.debug("Entering" + event.toString());
 		String usrName = getUserWorkspace().getUserDetails().getUsername();
 		List<Object> list = null;

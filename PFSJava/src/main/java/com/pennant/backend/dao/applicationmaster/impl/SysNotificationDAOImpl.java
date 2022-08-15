@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SysNotificationDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-06-2015    														*
- *                                                                  						*
- * Modified Date    :  11-06-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SysNotificationDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-06-2015 * *
+ * Modified Date : 11-06-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-06-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-06-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
@@ -61,6 +43,8 @@ import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>SysNotification model</b> class.<br>
@@ -76,17 +60,15 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 	/**
 	 * Fetch the Record Cheque Purpose details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SysNotification
 	 */
 	@Override
 	public SysNotification getSysNotificationById(final long id, String type) {
-		logger.debug("Entering");
-		SysNotification sysNotification = new SysNotification();
+		logger.debug(Literal.ENTERING);
 
+		SysNotification sysNotification = new SysNotification();
 		sysNotification.setSysNotificationId(id);
 
 		StringBuilder selectSql = new StringBuilder(
@@ -100,28 +82,24 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where SysNotificationId = :SysNotificationId");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sysNotification);
 		RowMapper<SysNotification> typeRowMapper = BeanPropertyRowMapper.newInstance(SysNotification.class);
 
 		try {
-			sysNotification = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			sysNotification = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return sysNotification;
 	}
 
 	/**
 	 * This method Deletes the Record from the SysNotification or SysNotification_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Cheque Purpose by key Code
 	 * 
-	 * @param Cheque
-	 *            Purpose (sysNotification)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Cheque Purpose (sysNotification)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -156,10 +134,8 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 	 *
 	 * save Cheque Purpose
 	 * 
-	 * @param Cheque
-	 *            Purpose (sysNotification)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Cheque Purpose (sysNotification)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -198,10 +174,8 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 	 * This method updates the Record SysNotification or SysNotification_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Cheque Purpose by key Code and Version
 	 * 
-	 * @param Cheque
-	 *            Purpose (sysNotification)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Cheque Purpose (sysNotification)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -259,50 +233,42 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 
 	@Override
 	public long getTemplateId(String templateCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TemplateCode", templateCode);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select TemplateId from Templates Where TemplateCode = :TemplateCode");
 
-		logger.debug("Query: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			logger.debug("Leaving");
-			source = null;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		return 0;
 	}
 
 	@Override
 	public String getCustomerEMail(long custID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				"select CustEMail from (select CustEMail,row_number() over (order by CustEMail) row_num from CustomerEMails where CustID = :CustID AND CustEMailPriority = 1)T where row_num <= 1");
 
-		logger.debug("Query: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			logger.debug("Leaving");
-			source = null;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return "";
 		}
-		return "";
 	}
 }

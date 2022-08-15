@@ -67,7 +67,7 @@ public class CheckListListModelItemRenderer implements ListitemRenderer<CheckLis
 	}
 
 	@Override
-	public void render(Listitem item, CheckList checkList, int count) throws Exception {
+	public void render(Listitem item, CheckList checkList, int count) {
 
 		Listcell lc;
 		lc = new Listcell(checkList.getCheckListDesc());

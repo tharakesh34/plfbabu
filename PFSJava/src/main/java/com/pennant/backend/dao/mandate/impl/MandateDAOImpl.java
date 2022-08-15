@@ -46,6 +46,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Mandate model</b> class.<br>
@@ -88,10 +89,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), id);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -104,10 +104,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), id, status);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -120,10 +119,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), orgReference, status);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -603,10 +601,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				return mndts;
 			}, mandateID, finReference, 1);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -624,12 +621,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, eMandateSource);
-
-		} catch (Exception e) {
-			return 0;
-		}
+		return this.jdbcOperations.queryForObject(sql, Integer.class, eMandateSource);
 	}
 
 	private StringBuilder getSqlQuery(String type) {
@@ -740,22 +732,16 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.update(sql, ps -> {
-				int index = 1;
+		return this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-				ps.setString(index++, mandate.getStatus());
-				ps.setString(index++, mandate.getMandateRef());
-				ps.setString(index++, mandate.getOrgReference());
-				ps.setString(index++, mandate.getReason());
+			ps.setString(index++, mandate.getStatus());
+			ps.setString(index++, mandate.getMandateRef());
+			ps.setString(index++, mandate.getOrgReference());
+			ps.setString(index++, mandate.getReason());
 
-				ps.setLong(index++, mandate.getMandateID());
-			});
-		} catch (DataAccessException e) {
-			//
-		}
-
-		return 0;
+			ps.setLong(index++, mandate.getMandateID());
+		});
 	}
 
 	@Override
@@ -764,10 +750,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, mandateRef);
-		} catch (DataAccessException e) {
-			return 0;
-		}
+		return this.jdbcOperations.queryForObject(sql, Integer.class, mandateRef);
 	}
 }

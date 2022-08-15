@@ -67,7 +67,7 @@ public class GenderListModelItemRenderer implements ListitemRenderer<Gender>, Se
 	}
 
 	@Override
-	public void render(Listitem item, Gender gender, int count) throws Exception {
+	public void render(Listitem item, Gender gender, int count) {
 
 		Listcell lc;
 		lc = new Listcell(gender.getGenderCode());

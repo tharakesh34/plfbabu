@@ -42,7 +42,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 	private String buttonId;
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_BounceDetails(Event event) throws Exception {
+	public void onCreate$window_BounceDetails(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -155,7 +155,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 			lc.setParent(item);
 			netPaidAmt = netPaidAmt.add(allocate.getPaidAmount());
 
-			//Paid GST
+			// Paid GST
 			lc = new Listcell();
 			CurrencyBox allocationPaidGst = new CurrencyBox();
 			allocationPaidGst.setStyle("text-align:right;");
@@ -169,7 +169,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 			lc.setParent(item);
 			curPaidGstAmt = curPaidGstAmt.add(allocate.getPaidGST());
 
-			//Paid TDS
+			// Paid TDS
 			lc = new Listcell();
 			CurrencyBox allocationPaidTDS = new CurrencyBox();
 			allocationPaidTDS.setStyle("text-align:right;");
@@ -189,7 +189,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 			lc.setParent(item);
 			waivedAmt = waivedAmt.add(allocate.getWaivedAmount());
 
-			//BalanceDueAmount
+			// BalanceDueAmount
 			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getBalance(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);

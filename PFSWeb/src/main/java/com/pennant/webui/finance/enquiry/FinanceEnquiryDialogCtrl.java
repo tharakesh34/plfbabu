@@ -565,10 +565,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinanceEnquiryDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_FinanceEnquiryDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -860,10 +859,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain financeMain
-	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("deprecation")
-	public void doWriteBeanToComponents() throws InterruptedException {
+	public void doWriteBeanToComponents() {
 		logger.debug("Entering");
 		FinanceMain aFinanceMain = getFinScheduleData().getFinanceMain();
 		FinanceType aFinanceType = getFinScheduleData().getFinanceType();
@@ -1817,7 +1815,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return map;
 	}
 
-	public void onClick$btnSearchCommitmentRef(Event event) throws Exception {
+	public void onClick$btnSearchCommitmentRef(Event event) {
 		logger.debug(Literal.ENTERING);
 		this.collateralRef.setErrorMessage("");
 
@@ -1991,9 +1989,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		doReadOnly();
 		try {
@@ -2018,9 +2015,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_FinanceEnquiryDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -2069,7 +2065,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.availableAmt.setReadonly(true);
 		// protected
 		this.applyODPenalty.setDisabled(true);
-		;
 		this.oDIncGrcDays.setDisabled(true);
 		this.oDChargeType.setDisabled(true);
 		this.oDGraceDays.setReadonly(true);

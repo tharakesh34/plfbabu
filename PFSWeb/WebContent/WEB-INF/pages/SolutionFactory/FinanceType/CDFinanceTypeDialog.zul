@@ -259,6 +259,14 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
+											<row id="row_sanbsdschd" visible ="false">
+												<label id="label_FinanceTypeDialog_SanBsdSchdle"
+													value="${c:l('label_FinanceTypeDialog_SanBsdSchdle.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="sanBsdSchdle" checked="false" />
+												</hbox>
+											</row>
 											<row id="row_equalRepayment" visible="false">
 
 												<label id="label_FinanceTypeDialog_SchdOnPMTCal"
@@ -381,6 +389,29 @@
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="tDSApplicable" checked="false" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_TDSType"
+													value="${c:l('label_FinanceTypeDialog_TDSType.value')}" />
+												<hbox>
+													<combobox
+														id="cbTdsType" width="180px" readonly="true"
+														visible="false" />
+												</hbox>
+											</row>
+											<row id="row_AllowLoanTypes" visible="false">
+												<label id="label_FinanceTypeDialog_AllowLoanSplit"
+													value="${c:l('label_FinanceTypeDialog_AllowLoanSplit.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="alwLoanSplit" checked="false" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_SplitLoanType"
+													value="${c:l('label_FinanceTypeDialog_SplitLoanType.value')}" />
+												<hbox id="hbox_splitLoanType">
+													<space id="space_splitLoanType" spacing="2px" sclass="mandatory" />
+													<textbox id="splitLoanType" width="175px" readonly="true" />
+													<button id="btnSearchSplitLoanType"
+														image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
 											<row visible="false">
@@ -600,6 +631,12 @@
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="finIsActive" checked="false" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_FInRepayMethod"
+													value="${c:l('label_FinanceTypeDialog_FInRepayMethod.value')}" visible ="false" />
+												<hbox>
+													<space id="space_cbfinRepayMethod" spacing="2px" sclass="mandatory" visible ="false"/>
+													<combobox id="cbfinRepayMethod" width="275px" readonly="true" visible ="false"/>
 												</hbox>
 											</row>
 											<row id="row_Custoffunds" visible="false">

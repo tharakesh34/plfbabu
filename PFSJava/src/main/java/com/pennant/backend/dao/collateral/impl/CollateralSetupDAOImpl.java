@@ -44,6 +44,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CollateralSetup model</b> class.<br>
@@ -165,16 +166,10 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		String sql = "UPDATE  SeqCollateralSetup  SET Seqno = ? Where Seqno = ?";
 
 		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.update(sql, ps -> {
-				ps.setLong(1, newReference);
-				ps.setLong(2, oldReference);
-			}) > 0;
-		} catch (Exception e) {
-			//
-		}
-		return false;
+		return this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, newReference);
+			ps.setLong(2, oldReference);
+		}) > 0;
 	}
 
 	@Override
@@ -205,10 +200,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -223,10 +217,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		try {
 			return this.jdbcOperations.queryForObject(selectSql.toString(), rowMapper, collateralRef, depositorId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -306,9 +299,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collateralRef);
 		} catch (EmptyResultDataAccessException dae) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
-		return 0;
 	}
 
 	@Override
@@ -320,14 +313,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(" Where CollateralRef = ? and Status is null and FinReference is null");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collatrlRef) > 0;
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collatrlRef) > 0;
 	}
 
 	@Override
@@ -339,14 +325,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(" Where CollateralRef = ? and Status is null");
 
 		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collateralRef);
-		} catch (Exception e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, collateralRef);
 	}
 
 	@Override
@@ -439,6 +418,73 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 				cs.setDepositorName(rs.getString("DepositorName"));
 				cs.setCollateralTypeName(rs.getString("CollateralTypeName"));
 			}
+
+			return cs;
+		}
+	}
+
+	@Override
+	public List<CollateralSetup> getCollateralSetupByCustomer(long custID) {
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where DepositorId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), new CollateralSetupRM(), custID);
+	}
+
+	@Override
+	public List<CollateralSetup> getCollateralSetupByReference(long custID) {
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where CollateralRef in (Select CollateralRef From CollateralThirdParty Where CustomerId = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), new CollateralSetupRM(), custID);
+	}
+
+	@Override
+	public boolean isNotAssigned(String collateralRef) {
+		StringBuilder sql = new StringBuilder("");
+		sql.append("Select CollateralRef From CollateralAssignment Where CollateralRef = ?");
+		sql.append(" Union All");
+		sql.append(" Select CollateralRef From CollateralAssignment_Temp Where CollateralRef = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<String> references = jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			return rs.getString(1);
+		}, collateralRef, collateralRef);
+
+		if (references.isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private StringBuilder getSqlQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CollateralRef, CollateralType, CollateralCcy, CollateralValue");
+		sql.append(", BankValuation, MultiLoanAssignment, ExpiryDate");
+		sql.append(" From CollateralSetup");
+
+		return sql;
+	}
+
+	private class CollateralSetupRM implements RowMapper<CollateralSetup> {
+
+		@Override
+		public CollateralSetup mapRow(ResultSet rs, int rowNum) throws SQLException {
+			CollateralSetup cs = new CollateralSetup();
+
+			cs.setCollateralRef(rs.getString("CollateralRef"));
+			cs.setCollateralType(rs.getString("CollateralType"));
+			cs.setCollateralCcy(rs.getString("CollateralCcy"));
+			cs.setCollateralValue(rs.getBigDecimal("CollateralValue"));
+			cs.setBankValuation(rs.getBigDecimal("BankValuation"));
+			cs.setMultiLoanAssignment(rs.getBoolean("MultiLoanAssignment"));
+			cs.setExpiryDate(JdbcUtil.getDate(rs.getDate("ExpiryDate")));
 
 			return cs;
 		}

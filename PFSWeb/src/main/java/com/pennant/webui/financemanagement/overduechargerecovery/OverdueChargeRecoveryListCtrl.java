@@ -182,10 +182,9 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * selected OverdueChargeRecovery object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void onCreate$window_OverdueChargeRecoveryList(ForwardEvent event) throws Exception {
+	public void onCreate$window_OverdueChargeRecoveryList(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		if (event.getTarget().getParent().getParent() != null) {
@@ -400,9 +399,8 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onOverdueChargeRecoveryItemDoubleClicked(Event event) throws Exception {
+	public void onOverdueChargeRecoveryItemDoubleClicked(Event event) {
 		logger.debug(event.toString());
 
 		// get the selected OverdueChargeRecovery object
@@ -449,7 +447,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	/**
 	 * Call the OverdueChargeRecovery dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_OverdueChargeRecoveryList_NewOverdueChargeRecovery(Event event) throws Exception {
+	public void onClick$button_OverdueChargeRecoveryList_NewOverdueChargeRecovery(Event event) {
 		logger.debug(event.toString());
 		// create a new OverdueChargeRecovery object, We GET it from the backend.
 		final OverdueChargeRecovery aOverdueChargeRecovery = getOverdueChargeRecoveryService()
@@ -463,9 +461,8 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * Overhanded some params in a map if needed. <br>
 	 * 
 	 * @param OverdueChargeRecovery (aOverdueChargeRecovery)
-	 * @throws Exception
 	 */
-	private void showDetailView(OverdueChargeRecovery aOverdueChargeRecovery) throws Exception {
+	private void showDetailView(OverdueChargeRecovery aOverdueChargeRecovery) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
@@ -546,10 +543,8 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * Method for call the OverdueChargeRecovery dialog
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog(Event event)
-			throws Exception {
+	public void onClick$button_OverdueChargeRecoveryList_OverdueChargeRecoverySearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSearch();
 		logger.debug("Leaving" + event.toString());

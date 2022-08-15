@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AuthorizationDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-08-2013    														*
- *                                                                  						*
- * Modified Date    :  20-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AuthorizationDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-08-2013 * * Modified
+ * Date : 20-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.amtmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +39,7 @@ import com.pennant.backend.model.amtmasters.Authorization;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>Authorization model</b> class.<br>
@@ -72,10 +55,8 @@ public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements 
 	/**
 	 * Fetch the Record Authorization Details details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Authorization
 	 */
 	@Override
@@ -99,13 +80,11 @@ public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements 
 		RowMapper<Authorization> typeRowMapper = BeanPropertyRowMapper.newInstance(Authorization.class);
 
 		try {
-			authorization = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			authorization = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return authorization;
 	}
 
 	@Override
@@ -128,23 +107,19 @@ public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements 
 		RowMapper<Authorization> typeRowMapper = BeanPropertyRowMapper.newInstance(Authorization.class);
 
 		try {
-			authorization = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			authorization = null;
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		logger.debug("Leaving");
-		return authorization;
 	}
 
 	/**
 	 * This method Deletes the Record from the AMTAuthorization or AMTAuthorization_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Authorization Details by key AuthUserId
 	 * 
-	 * @param Authorization
-	 *            Details (authorization)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Authorization Details (authorization)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -176,10 +151,8 @@ public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements 
 	 *
 	 * save Authorization Details
 	 * 
-	 * @param Authorization
-	 *            Details (authorization)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Authorization Details (authorization)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -214,10 +187,8 @@ public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements 
 	 * This method updates the Record AMTAuthorization or AMTAuthorization_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Authorization Details by key AuthUserId and Version
 	 * 
-	 * @param Authorization
-	 *            Details (authorization)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Authorization Details (authorization)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

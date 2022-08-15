@@ -72,7 +72,7 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 	}
 
 	@Override
-	public void render(Listitem item, FinanceMain financeMain, int count) throws Exception {
+	public void render(Listitem item, FinanceMain financeMain, int count) {
 
 		int format = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
