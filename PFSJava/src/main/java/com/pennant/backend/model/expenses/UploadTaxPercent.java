@@ -58,7 +58,7 @@ public class UploadTaxPercent {
 	public void setFinID(long finID) {
 		this.finID = finID;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}

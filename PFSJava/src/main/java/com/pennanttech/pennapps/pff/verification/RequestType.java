@@ -24,10 +24,8 @@ import com.pennant.backend.model.ValueLabel;
  *
  */
 public enum RequestType {
-	INITIATE(1, Labels.getLabel("label_INITIATE")),
-	WAIVE(2, Labels.getLabel("label_WAIVE")),
-	NOT_REQUIRED(3, Labels.getLabel("label_NOT_REQUIRED")),
-	REQUEST(4, Labels.getLabel("label_REQUEST"));
+	INITIATE(1, Labels.getLabel("label_INITIATE")), WAIVE(2, Labels.getLabel("label_WAIVE")),
+	NOT_REQUIRED(3, Labels.getLabel("label_NOT_REQUIRED")), REQUEST(4, Labels.getLabel("label_REQUEST"));
 
 	private final Integer key;
 	private final String value;

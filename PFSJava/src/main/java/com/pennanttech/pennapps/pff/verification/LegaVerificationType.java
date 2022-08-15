@@ -8,9 +8,8 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.backend.model.ValueLabel;
 
 public enum LegaVerificationType {
-	LV(1, Labels.getLabel("label_LV")),
-	TSR(2, Labels.getLabel("label_TSR"));
-	
+	LV(1, Labels.getLabel("label_LV")), TSR(2, Labels.getLabel("label_TSR"));
+
 	private final String value;
 	private final Integer key;
 

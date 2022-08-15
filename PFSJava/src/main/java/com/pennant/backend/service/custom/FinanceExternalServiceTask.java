@@ -128,7 +128,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					logger.error("Exception in Dedup Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_externalDedup, e.getMessage());
-					//throw new InterfaceException("9999", e.getMessage());
+					// throw new InterfaceException("9999", e.getMessage());
 				}
 				break;
 			case PennantConstants.method_hunter:
@@ -139,7 +139,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					logger.error("Exception in Hunter Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_hunter, e.getMessage());
-					//throw new InterfaceException("9999", e.getMessage());
+					// throw new InterfaceException("9999", e.getMessage());
 				}
 				break;
 			case PennantConstants.method_Experian_Bureau:
@@ -150,7 +150,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					logger.error("Exception in Experian Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_Experian_Bureau, e.getMessage());
-					//throw new InterfaceException("9999", e.getMessage());
+					// throw new InterfaceException("9999", e.getMessage());
 				}
 				break;
 			case PennantConstants.method_Crif_Bureau:
@@ -161,7 +161,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					logger.error("Exception in CRIFF Bureau:", e);
 					taskExecuted = true;
 					setRemarks(auditHeader, PennantConstants.method_Crif_Bureau, e.getMessage());
-					//throw new InterfaceException("9999", e.getMessage());
+					// throw new InterfaceException("9999", e.getMessage());
 				}
 				break;
 			case PennantConstants.method_Cibil_Bureau:
@@ -267,7 +267,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	}
 
 	private void setRateOfInst(AuditHeader auditHeader) {
-		//FIXME: How to get RateUtil for Niyogin project
+		// FIXME: How to get RateUtil for Niyogin project
 		try {
 			FinanceDetail finDeatil = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 			FinanceMain finMain = finDeatil.getFinScheduleData().getFinanceMain();
@@ -296,7 +296,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 	 * @param auditHeader
 	 */
 	private void setInstallmentType(AuditHeader auditHeader) {
-		//FIXME: How to get Installment Type for Niyogin project
+		// FIXME: How to get Installment Type for Niyogin project
 		try {
 			FinanceDetail finDeatil = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 			FinanceMain finMain = finDeatil.getFinScheduleData().getFinanceMain();
@@ -447,17 +447,17 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 		FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		//Check for Exception 
+		// Check for Exception
 		aFinanceMain.setException(false);
 
-		//*** Case 1 : Amount Case Check Exception for 100K BHD ***
+		// *** Case 1 : Amount Case Check Exception for 100K BHD ***
 		String dftCcy = SysParamUtil.getAppCurrency();
 		final BigDecimal finAmount = PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(),
 				CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
 		if (dftCcy.equals(aFinanceMain.getFinCcy())) {
 			aFinanceMain.setAmount(finAmount);
 		} else {
-			//Covert Amount into BHD Format 
+			// Covert Amount into BHD Format
 			Currency fCurrency = CurrencyUtil.getCurrencyObject(aFinanceMain.getFinCcy());
 			aFinanceMain.setAmount(finAmount.multiply(fCurrency.getCcySpotRate()));
 		}

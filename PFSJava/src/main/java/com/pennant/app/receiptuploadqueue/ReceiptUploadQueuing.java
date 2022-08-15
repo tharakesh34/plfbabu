@@ -19,7 +19,7 @@ public class ReceiptUploadQueuing implements Serializable {
 	private boolean eodProcess;
 	private String errorLog;
 
-	//setter and getters
+	// setter and getters
 	public long getUploadHeaderId() {
 		return uploadHeaderId;
 	}

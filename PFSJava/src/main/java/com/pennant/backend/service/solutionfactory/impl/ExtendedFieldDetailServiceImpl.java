@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ExtendedFieldDetailServiceImpl.java                                  * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  28-12-2011    														*
- *                                                                  						*
- * Modified Date    :  28-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ExtendedFieldDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 28-12-2011 *
+ * * Modified Date : 28-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 28-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 08-05-2019		Srinivasa Varma			 0.2			Development Iteam 81            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 28-12-2011 Pennant 0.1 * * 08-05-2019 Srinivasa Varma 0.2 Development Iteam 81 * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.solutionfactory.impl;
@@ -139,8 +121,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * in the table. based on the module workFlow Configuration. by using ExtendedFieldDetailDAO's update method 3)
 	 * Audit the record in to AuditHeader and AdtExtendedFieldDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -387,8 +368,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * ExtendedFieldDetail by using ExtendedFieldDetailDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtExtendedFieldDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -411,10 +391,8 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	/**
 	 * getExtendedFieldDetailById fetch the details by using ExtendedFieldDetailDAO's getExtendedFieldDetailById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ExtendedFieldDetail
 	 */
 	@Override
@@ -427,10 +405,8 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	/**
 	 * getExtendedFieldDetailById fetch the details by using ExtendedFieldDetailDAO's getExtendedFieldDetailById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ExtendedFieldDetail
 	 */
 	@Override
@@ -442,8 +418,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * getApprovedExtendedFieldDetailById fetch the details by using ExtendedFieldDetailDAO's getExtendedFieldDetailById
 	 * method . with parameter id and type as blank. it fetches the approved records from the ExtendedFieldDetail.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return ExtendedFieldDetail
 	 */
 	public ExtendedFieldDetail getApprovedExtendedFieldDetailById(long id, String fieldName, int extendedType) {
@@ -462,8 +437,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * flow 5) Audit the record in to AuditHeader and AdtExtendedFieldDetail by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -555,8 +529,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * the record in to AuditHeader and AdtExtendedFieldDetail by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -588,16 +561,15 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * for any mismatch conditions Fetch the error details from getExtendedFieldDetailDAO().getErrorDetail with Error ID
 	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
-		//AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
-		//auditHeader.setAuditDetail(auditDetail);
-		//auditHeader.setErrorList(auditDetail.getErrorDetails());
+		// AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		// auditHeader.setAuditDetail(auditDetail);
+		// auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -658,14 +630,16 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 
 		if (details.isNewRecord()) { // for New record or new record into work flow
 
-			if (!details.isWorkflow()) {// With out Work flow only new records  
-				if (befExtendedFieldDetail != null) { // Record Already Exists in the table then error  
+			if (!details.isWorkflow()) {// With out Work flow only new records
+				if (befExtendedFieldDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (details.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befExtendedFieldDetail != null || tempExtendedFieldDetail != null) { // if records already exists in the main table
+					if (befExtendedFieldDetail != null || tempExtendedFieldDetail != null) { // if records already
+																								// exists in the main
+																								// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -700,7 +674,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 				}
 			} else {
 
-				if (tempExtendedFieldDetail == null) { // if records not exists in the Work flow table 
+				if (tempExtendedFieldDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -758,7 +732,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 					}
 
 					if (StringUtils.isNotEmpty(transType)) {
-						//check and change below line for Complete code
+						// check and change below line for Complete code
 						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
 								.invoke(object, object.getClass().getClasses());
 						auditDetailsList.add(
@@ -789,7 +763,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	public List<ErrorDetail> doValidations(ExtendedFieldHeader extendedFieldHeader) {
 		logger.debug(Literal.ENTERING);
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		//verify module name is blank or not
+		// verify module name is blank or not
 		if (StringUtils.isBlank(extendedFieldHeader.getModuleName())) {
 			ErrorDetail errorDetail = new ErrorDetail();
 			String[] valueParm = new String[1];
@@ -807,7 +781,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm));
 				errorDetails.add(errorDetail);
 			}
-			//verify subModule name is blank or not
+			// verify subModule name is blank or not
 			if (StringUtils.isBlank(extendedFieldHeader.getSubModuleName())) {
 				ErrorDetail errorDetail = new ErrorDetail();
 				String[] valueParm = new String[1];
@@ -857,12 +831,9 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * getExtendedFieldHeaderByModuleName fetch the details by using ExtendedFieldHeaderDAO's
 	 * getExtendedFieldHeaderByModuleName method
 	 * 
-	 * @param moduleName
-	 *            (String)
-	 * @param subModuleName
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param moduleName    (String)
+	 * @param subModuleName (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return ExtendedFieldHeader
 	 */
 	@Override
@@ -875,10 +846,8 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 * getExtendedFieldDetailByModuleID fetch the details by using ExtendedFieldDetailDAO's getExtendedFieldDetailById
 	 * method
 	 * 
-	 * @param id
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (long)
+	 * @param type (String) ""/_Temp/_View
 	 * @return List<ExtendedFieldDetail>
 	 */
 	@Override
@@ -886,12 +855,11 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 		return extendedFieldDetailDAO.getExtendedFieldDetailById(id, type);
 	}
 
-	//### 08-05-2018 StartDevelopment Iteam 81
+	// ### 08-05-2018 StartDevelopment Iteam 81
 	/**
 	 * isFieldAssignedToRule Return true or false by using RulesDAO isFieldAssignedToRule method. method
 	 * 
-	 * @param fieldName
-	 *            (String)
+	 * @param fieldName (String)
 	 * @return boolean
 	 */
 	@Override
@@ -906,5 +874,5 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 		return extendedFieldDetailDAO.getValueByFieldName(reference, moduleName, subModuleName, event, field, type);
 	}
 
-	//### 08-05-2018 StartDevelopment Iteam 81
+	// ### 08-05-2018 StartDevelopment Iteam 81
 }

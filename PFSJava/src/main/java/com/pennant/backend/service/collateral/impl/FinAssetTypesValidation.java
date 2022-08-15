@@ -59,14 +59,15 @@ public class FinAssetTypesValidation {
 
 		if (finAssetTypes.isNewRecord()) { // for New record or new record into work flow
 
-			if (!finAssetTypes.isWorkflow()) {// With out Work flow only new records  
-				if (befAssignment != null) { // Record Already Exists in the table then error  
+			if (!finAssetTypes.isWorkflow()) {// With out Work flow only new records
+				if (befAssignment != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (finAssetTypes.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befAssignment != null || tempAssignment != null) { // if records already exists in the main table
+					if (befAssignment != null || tempAssignment != null) { // if records already exists in the main
+																			// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -96,7 +97,7 @@ public class FinAssetTypesValidation {
 				}
 			} else {
 
-				if (tempAssignment == null) { // if records not exists in the Work flow table 
+				if (tempAssignment == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

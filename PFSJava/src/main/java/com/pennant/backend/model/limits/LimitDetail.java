@@ -54,7 +54,7 @@ public class LimitDetail implements Serializable {
 	private String returnText;
 	private String timeStamp;
 
-	//CustomerLimitService Required fields
+	// CustomerLimitService Required fields
 	private long headerId;
 	private String ruleCode;
 	private String ruleValue;

@@ -119,8 +119,7 @@ public class PaymentTransaction implements Serializable {
 	}
 
 	/**
-	 * @param paymentId
-	 *            the paymentId to set
+	 * @param paymentId the paymentId to set
 	 */
 	public void setPaymentId(long paymentId) {
 		this.paymentId = paymentId;
@@ -134,8 +133,7 @@ public class PaymentTransaction implements Serializable {
 	}
 
 	/**
-	 * @param messageId
-	 *            the messageId to set
+	 * @param messageId the messageId to set
 	 */
 	public void setMessageId(String messageId) {
 		this.messageId = messageId;
@@ -149,8 +147,7 @@ public class PaymentTransaction implements Serializable {
 	}
 
 	/**
-	 * @param finReference
-	 *            the finReference to set
+	 * @param finReference the finReference to set
 	 */
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
@@ -164,8 +161,7 @@ public class PaymentTransaction implements Serializable {
 	}
 
 	/**
-	 * @param finAdvancePayments
-	 *            the finAdvancePayments to set
+	 * @param finAdvancePayments the finAdvancePayments to set
 	 */
 	public void setFinAdvancePayments(FinAdvancePayments finAdvancePayments) {
 		this.finAdvancePayments = finAdvancePayments;
@@ -179,8 +175,7 @@ public class PaymentTransaction implements Serializable {
 	}
 
 	/**
-	 * @param befImage
-	 *            the befImage to set
+	 * @param befImage the befImage to set
 	 */
 	public void setBefImage(PaymentTransaction befImage) {
 		this.befImage = befImage;

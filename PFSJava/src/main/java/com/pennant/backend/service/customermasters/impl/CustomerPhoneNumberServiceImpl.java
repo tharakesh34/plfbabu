@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPhoneNumberServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPhoneNumberServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 *
+ * * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.customermasters.impl;
@@ -119,8 +101,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	 * in the table. based on the module workFlow Configuration. by using CustomerPhoneNumberDAO's update method 3)
 	 * Audit the record in to AuditHeader and AdtCustomerPhoneNumbers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -159,8 +140,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	 * CustomerPhoneNumbers by using CustomerPhoneNumberDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtCustomerPhoneNumbers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -185,10 +165,8 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	/**
 	 * getCustomerPhoneNumberById fetch the details by using CustomerPhoneNumberDAO's getCustomerPhoneNumberById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerPhoneNumber
 	 */
 	@Override
@@ -200,8 +178,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	 * getApprovedCustomerPhoneNumberById fetch the details by using CustomerPhoneNumberDAO's getCustomerPhoneNumberById
 	 * method . with parameter id and type as blank. it fetches the approved records from the CustomerPhoneNumbers.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return CustomerPhoneNumber
 	 */
 	public CustomerPhoneNumber getApprovedCustomerPhoneNumberById(long id, String typeCode) {
@@ -234,8 +211,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	 * flow 5) Audit the record in to AuditHeader and AdtCustomerPhoneNumbers by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -294,8 +270,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	 * the record in to AuditHeader and AdtCustomerPhoneNumbers by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -335,8 +310,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -360,7 +334,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	public AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber, String method) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();
-		//Validate Phone number
+		// Validate Phone number
 		String mobileNumber = customerPhoneNumber.getPhoneNumber();
 		if (StringUtils.equals(method, "Create")) {
 			List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumberDAO

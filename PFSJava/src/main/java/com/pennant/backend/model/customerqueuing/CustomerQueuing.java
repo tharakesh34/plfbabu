@@ -20,11 +20,11 @@ public class CustomerQueuing implements Serializable {
 
 	private boolean eodProcess;
 
-	//Unused variable for bean parameter. Temporary
+	// Unused variable for bean parameter. Temporary
 	private boolean active;
 
-	//	private String				errorLog;
-	//	private String				status;
+	// private String errorLog;
+	// private String status;
 	public CustomerQueuing() {
 		super();
 	}
@@ -37,21 +37,21 @@ public class CustomerQueuing implements Serializable {
 		this.custID = custID;
 	}
 
-	//	public String getErrorLog() {
-	//		return errorLog;
-	//	}
+	// public String getErrorLog() {
+	// return errorLog;
+	// }
 	//
-	//	public void setErrorLog(String errorLog) {
-	//		this.errorLog = errorLog;
-	//	}
+	// public void setErrorLog(String errorLog) {
+	// this.errorLog = errorLog;
+	// }
 	//
-	//	public String getStatus() {
-	//		return status;
-	//	}
+	// public String getStatus() {
+	// return status;
+	// }
 	//
-	//	public void setStatus(String status) {
-	//		this.status = status;
-	//	}
+	// public void setStatus(String status) {
+	// this.status = status;
+	// }
 	//
 	public Date getStartTime() {
 		return startTime;

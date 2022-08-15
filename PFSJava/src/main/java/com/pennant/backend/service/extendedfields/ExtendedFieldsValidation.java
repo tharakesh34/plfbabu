@@ -37,7 +37,7 @@ public class ExtendedFieldsValidation {
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
 	}
 
-	//using in ExtFieldConfigServiceImpl for Loan and Customer modules
+	// using in ExtFieldConfigServiceImpl for Loan and Customer modules
 	public ExtendedFieldsValidation(ExtendedFieldDetailDAO extendedFieldDetailDAO,
 			ExtendedFieldHeaderDAO extendedFieldHeaderDAO, SecurityRightDAO securityRightDAO) {
 		this.extendedFieldDetailDAO = extendedFieldDetailDAO;
@@ -116,14 +116,17 @@ public class ExtendedFieldsValidation {
 
 		if (extendedFieldHeader.isNewRecord()) { // for New record or new record into work flow
 
-			if (!extendedFieldHeader.isWorkflow()) {// With out Work flow only new records  
-				if (befExtendedFieldHeader != null) { // Record Already Exists in the table then error  
+			if (!extendedFieldHeader.isWorkflow()) {// With out Work flow only new records
+				if (befExtendedFieldHeader != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41015", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (extendedFieldHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befExtendedFieldHeader != null || tempExtendedFieldHeader != null) { // if records already exists in the main table
+				if (extendedFieldHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																									// is new
+					if (befExtendedFieldHeader != null || tempExtendedFieldHeader != null) { // if records already
+																								// exists in the main
+																								// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 					}
@@ -158,7 +161,7 @@ public class ExtendedFieldsValidation {
 				}
 			} else {
 
-				if (tempExtendedFieldHeader == null) { // if records not exists in the Work flow table 
+				if (tempExtendedFieldHeader == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -211,14 +214,16 @@ public class ExtendedFieldsValidation {
 
 		if (details.isNewRecord()) { // for New record or new record into work flow
 
-			if (!details.isWorkflow()) {// With out Work flow only new records  
-				if (befExtendedFieldDetail != null) { // Record Already Exists in the table then error  
+			if (!details.isWorkflow()) {// With out Work flow only new records
+				if (befExtendedFieldDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (details.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befExtendedFieldDetail != null || tempExtendedFieldDetail != null) { // if records already exists in the main table
+					if (befExtendedFieldDetail != null || tempExtendedFieldDetail != null) { // if records already
+																								// exists in the main
+																								// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -253,7 +258,7 @@ public class ExtendedFieldsValidation {
 				}
 			} else {
 
-				if (tempExtendedFieldDetail == null) { // if records not exists in the Work flow table 
+				if (tempExtendedFieldDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -445,7 +450,7 @@ public class ExtendedFieldsValidation {
 				extendedFieldDetail.setRecordType(rcdType);
 				extendedFieldDetail.setRecordStatus(recordStatus);
 
-				//if it is an input element added column in ED table.
+				// if it is an input element added column in ED table.
 				if (extendedFieldDetail.isInputElement()) {
 					if (!deleteRecord) {
 						if (!StringUtils.equals(PennantConstants.RECORD_TYPE_UPD,
@@ -468,14 +473,14 @@ public class ExtendedFieldsValidation {
 						extendedFieldDetailDAO.alter(extendedFieldDetail, "", true, false, true);
 					}
 				}
-				//saving secRight for Loan and CustomerModule while approving.
+				// saving secRight for Loan and CustomerModule while approving.
 				if (securityRightDAO != null
 						&& StringUtils.equals(extendedFieldDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 					String rightName = PennantApplicationUtil.getExtendedFieldRightName(extendedFieldDetail);
 					if (!securityRightDAO.isRightNameExists(rightName)) {
 						SecurityRight securityRight = prepareSecRight(extendedFieldDetail, rightName);
 						if (!isSeqSecRightsUpdated) {
-							//securityRightDAO.updateSeqSecRights();
+							// securityRightDAO.updateSeqSecRights();
 							isSeqSecRightsUpdated = true;
 						}
 						securityRightDAO.save(securityRight);

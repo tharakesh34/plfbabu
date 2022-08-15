@@ -25,9 +25,8 @@ public final class DataTypeUtil {
 	/**
 	 * Private constructor to hide the implicit public one.
 	 * 
-	 * @throws IllegalAccessException
-	 *             If the constructor is used to create and initialize a new instance of the declaring class by
-	 *             suppressing Java language access checking.
+	 * @throws IllegalAccessException If the constructor is used to create and initialize a new instance of the
+	 *                                declaring class by suppressing Java language access checking.
 	 */
 	private DataTypeUtil() throws IllegalAccessException {
 		throw new IllegalAccessException();
@@ -36,10 +35,8 @@ public final class DataTypeUtil {
 	/**
 	 * Get the value with the specified data type.
 	 * 
-	 * @param value
-	 *            The value.
-	 * @param type
-	 *            The required data type.
+	 * @param value The value.
+	 * @param type  The required data type.
 	 * @return The value with the specified data type.
 	 */
 	public static Object getValueAsObject(String value, DataType type) {

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountEngineEventServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-06-2011    														*
- *                                                                  						*
- * Modified Date    :  27-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountEngineEventServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-06-2011 * *
+ * Modified Date : 27-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -115,8 +97,7 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 	 * Configuration. by using AccountEngineEventDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -155,8 +136,7 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 	 * BMTAEEvents by using AccountEngineEventDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -179,10 +159,8 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 	/**
 	 * getAccountEngineEventById fetch the details by using AccountEngineEventDAO's getAccountEngineEventById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return AccountEngineEvent
 	 */
 	@Override
@@ -194,8 +172,7 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 	 * getApprovedAccountEngineEventById fetch the details by using AccountEngineEventDAO's getAccountEngineEventById
 	 * method . with parameter id and type as blank. it fetches the approved records from the BMTAEEvents.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return AccountEngineEvent
 	 */
 	public AccountEngineEvent getApprovedAccountEngineEventById(String id) {
@@ -214,8 +191,7 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 	 * record in to AuditHeader and AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -270,8 +246,7 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 	 * workFlow table by using getAccountEngineEventDAO().delete with parameters accountEngineEvent,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtBMTAEEvents by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -298,8 +273,7 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -349,17 +323,17 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 												// work flow
 
 			if (!accountEngineEvent.isWorkflow()) {// With out Work flow only
-														// new records
+													// new records
 				if (befAccountEngineEvent != null) { // Record Already Exists in
-															// the table then error
+														// the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (accountEngineEvent.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																										// is new
+																									// is new
 					if (befAccountEngineEvent != null || tempAccountEngineEvent != null) { // if records already
-																								// exists in the
+																							// exists in the
 																							// the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
@@ -374,10 +348,10 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!accountEngineEvent.isWorkflow()) { // With out Work flow for
-														// update and delete
+													// update and delete
 
 				if (befAccountEngineEvent == null) { // if records not exists in
-															// the main table
+														// the main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
@@ -395,7 +369,7 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 				}
 			} else {
 				if (tempAccountEngineEvent == null) { // if records not exists
-															// in the Work flow
+														// in the Work flow
 														// table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}

@@ -61,8 +61,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 	 * based on the module workFlow Configuration. by using ChannelDetailsDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -89,7 +88,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 			apiChannelDAO.update(apiChannel, tableType);
 		}
 
-		//Retrieving List of Audit Details For ChannelAuthDetails  related modules
+		// Retrieving List of Audit Details For ChannelAuthDetails related modules
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 			auditHeader.setAuditDetails(
 					processingChannelAuthDetailsList(auditHeader.getAuditDetails(), tableType, apiChannel));
@@ -106,8 +105,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 	 * ChannelDetails by using ChannelDetailsDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -132,10 +130,8 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 	/**
 	 * getChannelDetailsById fetch the details by using ChannelDetailsDAO's getChannelDetailsById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ChannelDetails
 	 */
 
@@ -158,8 +154,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtChannelDetails by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -195,7 +190,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 				apiChannel.setRecordType("");
 				apiChannelDAO.update(apiChannel, "");
 			}
-			//Retrieving List of Audit Details For utilityDetail  related modules
+			// Retrieving List of Audit Details For utilityDetail related modules
 			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 				auditDetails = processingChannelAuthDetailsList(auditHeader.getAuditDetails(), "", apiChannel);
 			}
@@ -222,8 +217,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 	 * workFlow table by using getChannelDetailsDAO().delete with parameters ChannelDetails,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -247,8 +241,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -307,7 +300,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 			} else { // with work flow
 				if (apiChannel.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (befChannelDetails != null || tempChannelDetails != null) { // if records already exists in the
-																						// main table
+																					// main table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, valueParm));
 					}

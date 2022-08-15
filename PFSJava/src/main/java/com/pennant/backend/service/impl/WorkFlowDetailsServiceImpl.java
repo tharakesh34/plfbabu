@@ -1,45 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  WorkFlowDetailsServiceImpl.java										*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : WorkFlowDetailsServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.impl;
 
@@ -111,8 +102,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 	 * by using WorkFlowDAO's update method 3) Audit the record in to AuditHeader and AdtWorkFlowDetails by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -159,8 +149,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -231,7 +220,10 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm), "EN");
 			errDetails.add(errorDetail);
 		}
-		if ((isActive == true) && (workflowId != 0L) && (getWorkFlowDetailsCountByID(workflowId) == 0L)) {// record not found in get or update
+		if ((isActive == true) && (workflowId != 0L) && (getWorkFlowDetailsCountByID(workflowId) == 0L)) {// record not
+																											// found in
+																											// get or
+																											// update
 			String[] valueParm = new String[2];
 			valueParm[0] = "Workflow";
 			valueParm[1] = String.valueOf(workflowId);

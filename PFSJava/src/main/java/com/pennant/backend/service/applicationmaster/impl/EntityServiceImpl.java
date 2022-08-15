@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  EntityServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  15-06-2017    														*
- *                                                                  						*
- * Modified Date    :  15-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : EntityServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-06-2017 * * Modified
+ * Date : 15-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 15-06-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 15-06-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -88,8 +70,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -103,8 +84,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	}
 
 	/**
-	 * @param entityDAO
-	 *            the entityDAO to set
+	 * @param entityDAO the entityDAO to set
 	 */
 	public void setEntityDAO(EntityDAO entityDAO) {
 		this.entityDAO = entityDAO;
@@ -126,8 +106,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	 * EntitiesDAO's update method 3) Audit the record in to AuditHeader and AdtEntities by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -165,8 +144,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	 * Entities by using EntitiesDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtEntities by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -191,8 +169,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	/**
 	 * getEntities fetch the details by using EntitiesDAO's getEntitiesById method.
 	 * 
-	 * @param entityCode
-	 *            entityCode of the Entity.
+	 * @param entityCode entityCode of the Entity.
 	 * @return Entities
 	 */
 	@Override
@@ -204,8 +181,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	 * getApprovedEntitiesById fetch the details by using EntitiesDAO's getEntitiesById method . with parameter id and
 	 * type as blank. it fetches the approved records from the Entities.
 	 * 
-	 * @param entityCode
-	 *            entityCode of the Entity. (String)
+	 * @param entityCode entityCode of the Entity. (String)
 	 * @return Entities
 	 */
 	@Override
@@ -223,8 +199,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	 * AuditHeader and AdtEntities by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and AdtEntities by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -288,8 +263,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	 * workFlow table by using getEntityDAO().delete with parameters entity,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtEntities by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -317,8 +291,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -359,15 +332,15 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 		}
 
 		// Check the unique keys.
-		if (entity.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType()) && entityDAO.count(null,
-				entity.getPANNumber(), entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (entity.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType()) && entityDAO
+				.count(null, entity.getPANNumber(), entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			String[] param = new String[2];
 			param[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + entity.getPANNumber();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", param, null));
 		}
 
-		// Checking Dependency Validation Mandate Level 
+		// Checking Dependency Validation Mandate Level
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(entity.getRecordType())) {
 			// Entity
@@ -379,7 +352,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 		// Checking Dependency Validation
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(entity.getRecordType())) {
-			//Division Details
+			// Division Details
 			boolean isdivisionExists = getDivisionDetailDAO()
 					.isEntityCodeExistsInDivisionDetails(entity.getEntityCode(), "_View");
 
@@ -387,7 +360,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			} else {
 
-				//Partner Bank
+				// Partner Bank
 				boolean isPartnerBankExits = getPartnerBankDAO().isEntityCodeExistsInPartnerBank(entity.getEntityCode(),
 						"_View");
 				if (isPartnerBankExits) {

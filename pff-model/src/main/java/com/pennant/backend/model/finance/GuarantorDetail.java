@@ -189,7 +189,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity {
 	public void setFinID(long finID) {
 		this.finID = finID;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}

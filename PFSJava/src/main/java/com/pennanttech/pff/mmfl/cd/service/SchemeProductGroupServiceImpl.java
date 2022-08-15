@@ -231,7 +231,8 @@ public class SchemeProductGroupServiceImpl extends GenericService<SchemeProductG
 		String id = schemeProductGroup.getPromotionId();
 
 		// Check the unique keys.
-		if (schemeProductGroup.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(schemeProductGroup.getRecordType())
+		if (schemeProductGroup.isNewRecord()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(schemeProductGroup.getRecordType())
 				&& schemeProductGroupDAO.isDuplicateKey(schemeProductGroup,
 						schemeProductGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 

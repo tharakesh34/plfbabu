@@ -165,7 +165,7 @@ public class AgreementEngine {
 				if (customer != null) {
 					String password = ReferenceGenerator.generateAgreementPassword(customer);
 					String ownerPassword = SysParamUtil.getValueAsString(SMTParameterConstants.PDF_OWNER_PASSWORD);
-					//Preparing the PDF options
+					// Preparing the PDF options
 					PdfSaveOptions pdfOptions = new PdfSaveOptions();
 					PdfEncryptionDetails encryption = new PdfEncryptionDetails(password, ownerPassword,
 							PdfEncryptionAlgorithm.RC_4_128);
@@ -179,7 +179,7 @@ public class AgreementEngine {
 					return stream.toByteArray();
 				}
 			}
-			//return byte array with out password
+			// return byte array with out password
 			return getDocumentInByteArray(SaveFormat.PDF);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION + " while doing document encryption");

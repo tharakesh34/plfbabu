@@ -54,7 +54,7 @@ public class CashManagementConstants {
 	public static final String Cancel_Receipt_Amount = "CRA";
 	public static final String Add_Cash_To_Pennant = "CTP";
 
-	// Cash To Pennant Transaction Status 
+	// Cash To Pennant Transaction Status
 	public static final String C2P_STATUS_SUCCESS = "S";
 	public static final String C2P_STATUS_FAILURE = "F";
 	public static final String C2P_STATUS_HOLD = "H";

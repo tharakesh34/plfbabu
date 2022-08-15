@@ -67,7 +67,7 @@ public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<
 	public void setDisbSeq(int disbSeq) {
 		this.disbSeq = disbSeq;
 	}
-	
+
 	public long getFinID() {
 		return finID;
 	}

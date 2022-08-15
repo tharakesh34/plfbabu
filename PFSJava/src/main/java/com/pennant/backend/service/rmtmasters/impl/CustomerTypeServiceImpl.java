@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerTypeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerTypeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.rmtmasters.impl;
 
 import org.apache.logging.log4j.LogManager;
@@ -101,8 +83,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	 * Configuration. by using CustomerTypeDAO's update method 3) Audit the record in to AuditHeader and AdtRMTCustTypes
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -140,8 +121,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	 * RMTCustTypes by using CustomerTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtRMTCustTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -165,10 +145,8 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	/**
 	 * getCustomerTypeById fetch the details by using CustomerTypeDAO's getCustomerTypeById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerType
 	 */
 	@Override
@@ -180,8 +158,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	 * getApprovedCustomerTypeById fetch the details by using CustomerTypeDAO's getCustomerTypeById method . with
 	 * parameter id and type as blank. it fetches the approved records from the RMTCustTypes.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return CustomerType
 	 */
 	public CustomerType getApprovedCustomerTypeById(String id) {
@@ -199,8 +176,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtRMTCustTypes by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -260,8 +236,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	 * workFlow table by using getCustomerTypeDAO().delete with parameters customerType,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtRMTCustTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -286,8 +261,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {

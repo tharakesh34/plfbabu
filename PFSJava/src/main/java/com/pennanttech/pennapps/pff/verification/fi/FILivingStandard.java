@@ -9,12 +9,9 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum FILivingStandard {
 
-	SELECT(0, Labels.getLabel("Combo.Select")),
-	POSH(1, "Posh"),
-	SLUM(2, "Slum"),
-	UPPERCLASS(3, "Upper Class"),
-	MIDDLECLASS(4, "Middle Class"),
-	CDA(5, "Community Dominated Area");
+	SELECT(0, Labels.getLabel("Combo.Select")), POSH(1, "Posh"), SLUM(2, "Slum"), UPPERCLASS(3, "Upper Class"),
+	MIDDLECLASS(4, "Middle Class"), CDA(5, "Community Dominated Area");
+
 	private final Integer key;
 	private final String value;
 

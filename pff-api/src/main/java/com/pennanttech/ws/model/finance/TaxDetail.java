@@ -16,7 +16,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class TaxDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	//NET GST
+	// NET GST
 	@XmlElement
 	private BigDecimal netCGST = BigDecimal.ZERO;
 	@XmlElement
@@ -30,7 +30,7 @@ public class TaxDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private BigDecimal netTGST = BigDecimal.ZERO;
 
-	//API Specific Field
+	// API Specific Field
 	@XmlElement
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	@XmlElement

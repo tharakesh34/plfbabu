@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		: ReferenceUtil.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  5-09-2011    														*
- *                                                                  						*
- * Modified Date    :  6-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReferenceUtil.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 5-09-2011 * * Modified Date :
+ * 6-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -91,17 +73,17 @@ public class ReferenceUtil implements Serializable {
 		logger.debug(Literal.ENTERING);
 		long generatedSeqNo = 0;
 		String referenceNumber = "";
-		//retrieve next seq no from sequence 
+		// retrieve next seq no from sequence
 		long befSeqNumber = sequenceGenetor.getNextValue("SeqCollateralSetup");
 
 		String seqNumString = String.valueOf(befSeqNumber).trim();
 
 		long dateYYJDay = 0;
 		long seqNumber = 1;
-		//Here we will get seqno in the  inform ofYYDAYOFYEAR 
+		// Here we will get seqno in the inform ofYYDAYOFYEAR
 		if (seqNumString.length() <= 5) {
 			try {
-				//get first 5 numbers to get the year and day 
+				// get first 5 numbers to get the year and day
 				dateYYJDay = Long.parseLong(seqNumString);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -109,23 +91,23 @@ public class ReferenceUtil implements Serializable {
 			}
 		} else if (seqNumString.length() > 5) {
 			try {
-				//get first 5 numbers to get the year and day 
+				// get first 5 numbers to get the year and day
 				dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
 				seqNumber = Long.parseLong(seqNumString.substring(5, seqNumString.length()));
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
-		//below condition will restart the collateral seq with 1 on daily basis(YYDAYOFYEAR+SEQNo
+		// below condition will restart the collateral seq with 1 on daily basis(YYDAYOFYEAR+SEQNo
 		if (dateYYJDay != DateUtility.getDateYYJDay()) {
 			dateYYJDay = DateUtility.getDateYYJDay();
-			//preparing new seqno
+			// preparing new seqno
 			String updatedSeq = "00002";
 			String seqString = String.valueOf(dateYYJDay).concat(updatedSeq);
 			long seqNo = Long.valueOf(seqString);
-			//Create a Collateral with Sequence with 1
+			// Create a Collateral with Sequence with 1
 			seqNumber = 1;
-			//call sequence update query
+			// call sequence update query
 			sequenceDAO.updateSequence("SeqCollateralSetup", seqNo);
 		}
 		generatedSeqNo = Long

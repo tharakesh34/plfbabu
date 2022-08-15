@@ -22,14 +22,14 @@ public interface DepositDetailsService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	//Deposit Movements
+	// Deposit Movements
 	DepositMovements getDepositMovementsById(long movementId);
 
 	DepositMovements getApprovedDepositMovementsById(long movementId);
 
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid);
 
-	//Deposit Cheques
+	// Deposit Cheques
 	List<DepositCheques> getDepositChequesList(String branchCode);
 
 }

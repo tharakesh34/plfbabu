@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BuilderProjcetServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-05-2017    														*
- *                                                                  						*
- * Modified Date    :  22-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BuilderProjcetServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-05-2017 * *
+ * Modified Date : 22-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.systemmasters.impl;
@@ -91,8 +73,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	 * based on the module workFlow Configuration. by using BuilderProjectDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBuilderProject by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -127,7 +108,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 			auditDetails.addAll(details);
 		}
 
-		//Document Details
+		// Document Details
 		List<DocumentDetails> documentsList = builderProjcet.getDocumentDetails();
 		if (documentsList != null && documentsList.size() > 0) {
 			List<AuditDetail> details = builderProjcet.getAuditDetailMap().get("DocumentDetails");
@@ -150,8 +131,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	 * BuilderProject by using BuilderProjectDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBuilderProject by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -176,20 +156,19 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	/**
 	 * getBuilderProject fetch the details by using BuilderProjectDAO's getBuilderProjectById method.
 	 * 
-	 * @param id
-	 *            id of the BuilderProjcet.
+	 * @param id id of the BuilderProjcet.
 	 * @return BuilderProject
 	 */
 	@Override
 	public BuilderProjcet getBuilderProjcet(long id) {
 		BuilderProjcet builderProjcet = new BuilderProjcet();
-		//Project Details
+		// Project Details
 		builderProjcet = getBuilderProjcetDAO().getBuilderProjcet(id, "_View");
 
-		//getting the project unit details
+		// getting the project unit details
 		builderProjcet.setProjectUnits(projectUnitsDAO.getProjectUnitsByProjectID(id, "_View"));
 
-		//getting the project document details
+		// getting the project document details
 		// Document Details
 		List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(id),
 				PennantConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
@@ -206,21 +185,20 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	 * getApprovedBuilderProjectById fetch the details by using BuilderProjectDAO's getBuilderProjectById method . with
 	 * parameter id and type as blank. it fetches the approved records from the BuilderProject.
 	 * 
-	 * @param id
-	 *            id of the BuilderProjcet. (String)
+	 * @param id id of the BuilderProjcet. (String)
 	 * @return BuilderProject
 	 */
 	@Override
 	public BuilderProjcet getApprovedBuilderProjcet(long id) {
 
 		BuilderProjcet builderProjcet = new BuilderProjcet();
-		//Project Details
+		// Project Details
 		builderProjcet = getBuilderProjcetDAO().getBuilderProjcet(id, "_AView");
 
-		//getting the project unit details
+		// getting the project unit details
 		builderProjcet.setProjectUnits(projectUnitsDAO.getProjectUnitsByProjectID(id, "_AView"));
 
-		//getting the project document details
+		// getting the project document details
 		// Document Details
 		List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(id),
 				PennantConstants.MODULE_NAME, FinServiceEvent.ORG, "_AView");
@@ -243,8 +221,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBuilderProject by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -293,7 +270,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 				auditDetails.addAll(details);
 			}
 
-			//Document Details
+			// Document Details
 			List<DocumentDetails> documentsList = builderProjcet.getDocumentDetails();
 			if (documentsList != null && documentsList.size() > 0) {
 				List<AuditDetail> details = builderProjcet.getAuditDetailMap().get("DocumentDetails");
@@ -303,7 +280,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 		}
 
 		if (!builderProjcet.isNewRecord()) {
-			//deleting data from _temp tables while Approve
+			// deleting data from _temp tables while Approve
 			auditHeader.setAuditDetails(
 					listDeletion(builderProjcet, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 			builderProjcetDAO.delete(builderProjcet, TableType.TEMP_TAB);
@@ -327,8 +304,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	 * workFlow table by using getBuilderProjcetDAO().delete with parameters builderProjcet,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtBuilderProject by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -363,8 +339,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -399,13 +374,13 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 			}
 		}
 
-		////Project Unit details
+		//// Project Unit details
 		if (builderProjcet.getProjectUnits() != null) {
 			auditDetailMap.put("ProjectUnits", setProjectUnitsAuditData(builderProjcet, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ProjectUnits"));
 		}
 
-		//Project Document Details
+		// Project Document Details
 		if (builderProjcet.getDocumentDetails() != null && builderProjcet.getDocumentDetails().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(builderProjcet, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
@@ -790,7 +765,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 			}
 		}
 
-		// Document Details. 
+		// Document Details.
 		List<AuditDetail> documentDetails = builderProjcet.getAuditDetailMap().get("DocumentDetails");
 		if (documentDetails != null && documentDetails.size() > 0) {
 			DocumentDetails document = new DocumentDetails();
@@ -823,8 +798,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -838,8 +812,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	}
 
 	/**
-	 * @param builderProjcetDAO
-	 *            the builderProjcetDAO to set
+	 * @param builderProjcetDAO the builderProjcetDAO to set
 	 */
 	public void setBuilderProjcetDAO(BuilderProjcetDAO builderProjcetDAO) {
 		this.builderProjcetDAO = builderProjcetDAO;

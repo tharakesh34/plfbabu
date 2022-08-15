@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennanttech.pennapps.pff.verification.service;
@@ -95,8 +94,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 * based on the module workFlow Configuration. by using verification_pdDAO's update method 3) Audit the record in to
 	 * AuditHeader and Adtverification_pd by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -275,8 +273,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 * verification_pd by using verification_pdDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and Adtverification_pd by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -304,8 +301,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	/**
 	 * getverification_pd fetch the details by using verification_pdDAO's getverification_pdById method.
 	 * 
-	 * @param id
-	 *            id of the PersonalDiscussion.
+	 * @param id id of the PersonalDiscussion.
 	 * @return verification_pd
 	 */
 	@Override
@@ -329,8 +325,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 * getApprovedverification_pdById fetch the details by using verification_pdDAO's getverification_pdById method .
 	 * with parameter id and type as blank. it fetches the approved records from the verification_pd.
 	 * 
-	 * @param id
-	 *            id of the PersonalDiscussion. (String)
+	 * @param id id of the PersonalDiscussion. (String)
 	 * @return verification_pd
 	 */
 	@Override
@@ -349,8 +344,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 * Adtverification_pd by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and Adtverification_pd by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -497,8 +491,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 * workFlow table by using personalDiscussionDAO.delete with parameters personalDiscussion,"_Temp" 3) Audit the
 	 * record in to AuditHeader and Adtverification_pd by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -534,8 +527,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

@@ -60,9 +60,10 @@ public class DetailStatisticsServiceImpl implements DetailStatisticsService {
 
 				DetailStatistics statistics = list.get(i);
 				try {
-					// Fetch the Audit Details for the module(e.g if module name is Academic fetch from AdtAcedemics table 
+					// Fetch the Audit Details for the module(e.g if module name is Academic fetch from AdtAcedemics
+					// table
 					DetailStatistics auditStatistics = getDetailStatisticsDAO().getAuditDetail(statistics);
-					//Fetch statistics from DetailStatistics table 
+					// Fetch statistics from DetailStatistics table
 					List<DetailStatistics> activeStatistics = getDetailStatisticsDAO()
 							.getDetailStatisticsList(auditStatistics);
 
@@ -81,7 +82,7 @@ public class DetailStatisticsServiceImpl implements DetailStatisticsService {
 					} else {
 
 						DetailStatistics prevStatistics = activeStatistics.get(0);
-						//if record approved or canceled
+						// if record approved or canceled
 						if (StringUtils.isEmpty(auditStatistics.getNextRoleCode())) {
 
 							saveDetailStatistics(auditStatistics.getModuleName(), auditStatistics.getCurrentRoleCode(),
@@ -102,7 +103,7 @@ public class DetailStatisticsServiceImpl implements DetailStatisticsService {
 									auditStatistics.getLastMntOn().getTime() - prevStatistics.getLastMntOn().getTime(),
 									auditStatistics.getLastMntOn(), true);
 							logger.debug(prevStatistics.getRoleCode() + "--" + auditStatistics.getNextRoleCode());
-							//if RoleCode  and NextRoleCode of record are not same
+							// if RoleCode and NextRoleCode of record are not same
 							if (!prevStatistics.getRoleCode().equalsIgnoreCase(auditStatistics.getNextRoleCode())) {
 								DetailStatisticsHeader detailStatisticsHeader = new DetailStatisticsHeader(
 										auditStatistics.getModuleName(), auditStatistics.getNextRoleCode(), 1);

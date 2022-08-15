@@ -409,7 +409,7 @@ public class FinanceConstants {
 	public static final String FEE_IE_IGST = "FEE_IE_IGST";
 	public static final String FEE_IE_UGST = "FEE_IE_UGST";
 	public static final String FEE_IE_CESS = "FEE_IE_CESS";
-	
+
 	public static final String FEE_WR = "FEE_WR";
 
 }

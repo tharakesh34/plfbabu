@@ -40,7 +40,7 @@ public class FinanceEligibilityDetail implements Serializable {
 	private boolean allowDeviation;
 	private String recordType;
 
-	//Auditing purpose
+	// Auditing purpose
 	private long lastMntBy;
 	private Timestamp lastMntOn;
 	private String roleCode;

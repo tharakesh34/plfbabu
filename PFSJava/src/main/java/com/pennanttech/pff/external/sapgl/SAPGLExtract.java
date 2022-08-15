@@ -281,7 +281,7 @@ public class SAPGLExtract extends DataEngineExport {
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT");
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
 
-		//jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
+		// jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
 		jdbcTemplate.execute("ALTER SEQUENCE seq_transaction_detail_report RESTART WITH 1");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -356,8 +356,8 @@ public class SAPGLExtract extends DataEngineExport {
 					Map<String, Object> parameterMap = new HashMap<>();
 					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 							appDate);
-					//parameterMap.put("ENTITY", entityCode);
-					//filterMap.put("ENTITY", entityCode);
+					// parameterMap.put("ENTITY", entityCode);
+					// filterMap.put("ENTITY", entityCode);
 
 					parameterMap.put("ENTITY_CODE", entityCode + "_"
 							+ SysParamUtil.getValueAsString("SAP_GL_CATGRY_CODE") + "_SAP_GL_REPORT_HDR_PA");
@@ -386,7 +386,7 @@ public class SAPGLExtract extends DataEngineExport {
 					SAP_GL_STATUS.setName("GL_TRANSACTION_EXPORT");
 					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 							appDate);
-					//parameterMap.put("ENTITY", entityCode);
+					// parameterMap.put("ENTITY", entityCode);
 					filterMap.put("ENTITY", entityCode);
 
 					parameterMap.put("ENTITY_CODE", entityCode + "_"

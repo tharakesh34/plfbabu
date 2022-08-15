@@ -25,7 +25,7 @@ public class IAccounts implements java.io.Serializable {
 	private String lovValue;
 	private String division;
 
-	//For Temporary Purpose in Core banking
+	// For Temporary Purpose in Core banking
 	private String tranAc;
 
 	public IAccounts() {

@@ -22,7 +22,7 @@ public class CustomerSalaried implements Serializable {
 	private BigDecimal ao = BigDecimal.ZERO;
 	private BigDecimal renInc = BigDecimal.ZERO;
 	private BigDecimal intInc = BigDecimal.ZERO;
-	//Expenses
+	// Expenses
 	private BigDecimal pf = BigDecimal.ZERO;
 	private BigDecimal ppf = BigDecimal.ZERO;
 	private BigDecimal nps = BigDecimal.ZERO;
@@ -38,7 +38,7 @@ public class CustomerSalaried implements Serializable {
 	private BigDecimal od = BigDecimal.ZERO;
 	private BigDecimal salAdv = BigDecimal.ZERO;
 	private String finRef = "";
-	//Customer Details
+	// Customer Details
 	private String custRelation = "";
 	private String custName = "";
 	private String cibilScore;
@@ -50,7 +50,7 @@ public class CustomerSalaried implements Serializable {
 	private String custType = "";
 	private String custEmpType = "";
 	private int custAge;
-	//Valuation amounts
+	// Valuation amounts
 	private BigDecimal docValue = BigDecimal.ZERO;
 	private BigDecimal valuation1 = BigDecimal.ZERO;
 	private BigDecimal valuation2 = BigDecimal.ZERO;

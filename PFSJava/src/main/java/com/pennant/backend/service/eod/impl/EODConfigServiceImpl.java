@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  EODConfigServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  24-05-2017    														*
- *                                                                  						*
- * Modified Date    :  24-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : EODConfigServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 24-05-2017 * * Modified
+ * Date : 24-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.eod.impl;
 
 import java.util.List;
@@ -80,8 +62,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -95,8 +76,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	}
 
 	/**
-	 * @param eODConfigDAO
-	 *            the eODConfigDAO to set
+	 * @param eODConfigDAO the eODConfigDAO to set
 	 */
 	public void setEODConfigDAO(EODConfigDAO eODConfigDAO) {
 		this.eODConfigDAO = eODConfigDAO;
@@ -110,8 +90,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	 * by using EodConfigDAO's update method 3) Audit the record in to AuditHeader and AdtEodConfig by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -151,8 +130,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	 * EodConfig by using EodConfigDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtEodConfig by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -177,8 +155,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	/**
 	 * getEodConfig fetch the details by using EodConfigDAO's getEodConfigById method.
 	 * 
-	 * @param eodConfigId
-	 *            eodConfigId of the EODConfig.
+	 * @param eodConfigId eodConfigId of the EODConfig.
 	 * @return EodConfig
 	 */
 	@Override
@@ -190,8 +167,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	 * getApprovedEodConfigById fetch the details by using EodConfigDAO's getEodConfigById method . with parameter id
 	 * and type as blank. it fetches the approved records from the EodConfig.
 	 * 
-	 * @param eodConfigId
-	 *            eodConfigId of the EODConfig. (String)
+	 * @param eodConfigId eodConfigId of the EODConfig. (String)
 	 * @return EodConfig
 	 */
 	public EODConfig getApprovedEODConfig(long eodConfigId) {
@@ -214,8 +190,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtEodConfig by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -267,26 +242,19 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(eODConfig);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
-		//FIXME MURTHY
-		/*if (ImplementationConstants.AUTO_EOD_REQUIRED) {
-			DefaultJobSchedular defaultJobSchedular = (DefaultJobSchedular) SpringBeanUtil
-					.getBean("defaultJobSchedular");
-			try {
-				if (eODConfig.isAutoEodRequired()) {
-					defaultJobSchedular.reScheduleJob(AutoEODJob.JOB_KEY, eODConfig.getEODStartJobFrequency());
-				}
-				if (eODConfig.isEmailNotifReqrd()) {
-					defaultJobSchedular.reScheduleJob(EODReminderJob.JOB_KEY, eODConfig.getReminderFrequency());
-				}
-				if (eODConfig.isDelayNotifyReq()) {
-					defaultJobSchedular.reScheduleJob(EODDelayJob.JOB_KEY, eODConfig.getDelayFrequency());
-				}
 
-			} catch (SchedulerException e) {
-				e.printStackTrace();
-			}
-		}*/
+		// FIXME MURTHY
+		/*
+		 * if (ImplementationConstants.AUTO_EOD_REQUIRED) { DefaultJobSchedular defaultJobSchedular =
+		 * (DefaultJobSchedular) SpringBeanUtil .getBean("defaultJobSchedular"); try { if
+		 * (eODConfig.isAutoEodRequired()) { defaultJobSchedular.reScheduleJob(AutoEODJob.JOB_KEY,
+		 * eODConfig.getEODStartJobFrequency()); } if (eODConfig.isEmailNotifReqrd()) {
+		 * defaultJobSchedular.reScheduleJob(EODReminderJob.JOB_KEY, eODConfig.getReminderFrequency()); } if
+		 * (eODConfig.isDelayNotifyReq()) { defaultJobSchedular.reScheduleJob(EODDelayJob.JOB_KEY,
+		 * eODConfig.getDelayFrequency()); }
+		 * 
+		 * } catch (SchedulerException e) { e.printStackTrace(); } }
+		 */
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -299,8 +267,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	 * workFlow table by using getEODConfigDAO().delete with parameters eODConfig,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtEodConfig by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -328,8 +295,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

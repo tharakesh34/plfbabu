@@ -42,7 +42,7 @@ public class InterfaceConstants {
 	public static final String DEFAULT_DIST = "DEFAULT";
 	public static final String DEFAULT_SUBDIST = "DEFAULT";
 
-	public static final String DEFAULT_PAN = "XXXXX0000X"; //FIXME:Satish, It is mandatory for CRIFF
+	public static final String DEFAULT_PAN = "XXXXX0000X"; // FIXME:Satish, It is mandatory for CRIFF
 
 	public static final String InterfaceDateFormatter = "dd-MM-yyyy";
 

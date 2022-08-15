@@ -73,7 +73,7 @@ public class ChartUtil {
 			Map<String, BigDecimal> catogeries = new HashMap<String, BigDecimal>();
 			String prvSer = "";
 			setElement.append("\n");
-			//Form the <categories><category label='2001'/><category label='2002'/>.....</categories> data 
+			// Form the <categories><category label='2001'/><category label='2002'/>.....</categories> data
 			setElement.append("<categories>");
 			setElement.append("\n");
 			for (int i = 0; i < setElements.size(); i++) {
@@ -92,7 +92,7 @@ public class ChartUtil {
 			Collections.sort(setElements, comp);
 			int setElementCount = 0;
 			for (int i = 0; i < setElements.size(); i++) {
-				//If i=0 start  <dataset >tag 
+				// If i=0 start <dataset >tag
 				if (i == 0) {
 					prvSer = setElements.get(0).getSeries();
 					setElement.append("\n");
@@ -107,7 +107,7 @@ public class ChartUtil {
 				} else {
 					prvSer = setElements.get(i - 1).getSeries();
 				}
-				//If previous  series does not match with old close <dataset >tag and start new <dataset > tag 
+				// If previous series does not match with old close <dataset >tag and start new <dataset > tag
 				if (i != 0 && !prvSer.equals(setElements.get(i).getSeries())) {
 					setElement.append("</dataset> ");
 					setElement.append("\n");
@@ -144,8 +144,8 @@ public class ChartUtil {
 	public static String getDrillDownTypeElements(List<ChartSetElement> setElements, String[] remarks) {
 		StringBuffer xmlData = new StringBuffer(getSetElement(setElements));
 		logger.debug("Entering");
-		//Here we are Drilling the information from inside each list element
-		//Second Level chart
+		// Here we are Drilling the information from inside each list element
+		// Second Level chart
 		for (int i = 0; i < setElements.size(); i++) {
 			String id = StringUtils.remove(setElements.get(i).getLink(), "newchart-xml-");
 			xmlData.append("  <linkeddata id='" + id + "' >");
@@ -158,7 +158,7 @@ public class ChartUtil {
 			xmlData.append("<chart " + aRemarks + " >");
 			if (setElements.get(i).getInnerChrtSetElementsList() != null) {
 				xmlData.append(getSetElement(setElements.get(i).getInnerChrtSetElementsList()));
-				//Third Level Chart
+				// Third Level Chart
 				for (int j = 0; j < setElements.get(i).getInnerChrtSetElementsList().size(); j++) {
 					id = StringUtils.remove(setElements.get(i).getInnerChrtSetElementsList().get(j).getLink(),
 							"newchart-xml-");
@@ -172,7 +172,7 @@ public class ChartUtil {
 					if (setElements.get(i).getInnerChrtSetElementsList().get(j).getInnerChrtSetElementsList() != null) {
 						xmlData.append(getSetElement(
 								setElements.get(i).getInnerChrtSetElementsList().get(j).getInnerChrtSetElementsList()));
-						//Fourth Level Chart
+						// Fourth Level Chart
 						for (int k = 0; k < setElements.get(i).getInnerChrtSetElementsList().get(j)
 								.getInnerChrtSetElementsList().size(); k++) {
 							id = StringUtils.remove(setElements.get(i).getInnerChrtSetElementsList().get(j)

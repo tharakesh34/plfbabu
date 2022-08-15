@@ -250,15 +250,16 @@ public class AccountEngineExecution implements Serializable {
 				txnEntries.addAll(AccountingConfigCache.getTransactionEntry(accountSetId));
 			}
 		}
-		
+
 		TransactionEntry singleFeeTxn = getSingleFeeTxn(FinanceConstants.FEE_IE, txnEntries);
-		
+
 		if (singleFeeTxn != null) {
 			List<FeeType> feeTypes = getNotConfigurerFeeTypes(aeEvent.getFeesList(), txnEntries);
-			
+
 			for (FeeType feeType : feeTypes) {
-				if(feeType.getFeeIncomeOrExpense() == null) {
-					throw new AppException("Account Type should configured for the Fee Type: "+feeType.getFeeTypeCode());
+				if (feeType.getFeeIncomeOrExpense() == null) {
+					throw new AppException(
+							"Account Type should configured for the Fee Type: " + feeType.getFeeTypeCode());
 				}
 
 				/*
@@ -266,25 +267,22 @@ public class AccountEngineExecution implements Serializable {
 				 */
 
 			}
-			
+
 			int index = txnEntries.indexOf(singleFeeTxn);
-			
+
 			txnEntries.addAll(index, getTxnEntries(singleFeeTxn, feeTypes));
-			
-			
+
 			int transOrder = 10;
-			
+
 			for (TransactionEntry txn : txnEntries) {
 				txn.setTransOrder(transOrder);
-				transOrder = transOrder+10;
+				transOrder = transOrder + 10;
 			}
-			
+
 		}
-		
-		
-		//txnEntries = expandFeeEntries(aeEvent, txnEntries);
-		
-		
+
+		// txnEntries = expandFeeEntries(aeEvent, txnEntries);
+
 		EventProperties eventProperties = aeEvent.getEventProperties();
 
 		boolean isPostZeroEntries = false;
@@ -447,17 +445,15 @@ public class AccountEngineExecution implements Serializable {
 			 */
 
 			/*
-			 * THIS CODE WAS WRITTEN FOR BANKS WHERE PLF HITS CORE BANKING SYTSEM FOR
-			 * ACCOUNTING if (accountCcyMap.containsKey(acc.getAccountId())) { String acCcy
-			 * = accountCcyMap.get(acc.getAccountId());
+			 * THIS CODE WAS WRITTEN FOR BANKS WHERE PLF HITS CORE BANKING SYTSEM FOR ACCOUNTING if
+			 * (accountCcyMap.containsKey(acc.getAccountId())) { String acCcy = accountCcyMap.get(acc.getAccountId());
 			 * 
-			 * if (!StringUtils.equals(ccy, acCcy)) { postAmount =
-			 * returnDataSet.getPostAmount();
-			 * returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(ccy, acCcy,
-			 * postAmount)); returnDataSet.setEventProperties(eventProperties);
+			 * if (!StringUtils.equals(ccy, acCcy)) { postAmount = returnDataSet.getPostAmount();
+			 * returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(ccy, acCcy, postAmount));
+			 * returnDataSet.setEventProperties(eventProperties);
 			 * 
-			 * //Add Extra Entries For Debit & Credit newEntries =
-			 * createAccOnCCyConversion(returnDataSet, acCcy, postAmount, dataMap);
+			 * //Add Extra Entries For Debit & Credit newEntries = createAccOnCCyConversion(returnDataSet, acCcy,
+			 * postAmount, dataMap);
 			 * 
 			 * returnDataSet.setAcCcy(acCcy); } }
 			 */
@@ -493,16 +489,15 @@ public class AccountEngineExecution implements Serializable {
 
 	private List<TransactionEntry> getTxnEntries(TransactionEntry singleFeeTxn, List<FeeType> feeTypes) {
 		List<TransactionEntry> list = new ArrayList<>();
-		
-		
-		if(singleFeeTxn.isBulking()) {
+
+		if (singleFeeTxn.isBulking()) {
 			list.add(createBulkingTE(singleFeeTxn, feeTypes));
 		} else {
 			for (FeeType feeType : feeTypes) {
 				list.add(createNewTE(singleFeeTxn, feeType));
 			}
 		}
-		
+
 		return list;
 	}
 
@@ -529,7 +524,7 @@ public class AccountEngineExecution implements Serializable {
 	private TransactionEntry getSingleFeeTxn(String feeType, List<TransactionEntry> txnEntries) {
 		for (TransactionEntry transactionEntry : txnEntries) {
 			String accountType = transactionEntry.getAccountType();
-			if(accountType.equals(feeType)) {
+			if (accountType.equals(feeType)) {
 				return transactionEntry;
 			}
 		}
@@ -605,7 +600,7 @@ public class AccountEngineExecution implements Serializable {
 
 		return amount == null ? BigDecimal.ZERO : amount;
 	}
-	
+
 	private List<TransactionEntry> expandFeeEntries(AEEvent aeEvent, List<TransactionEntry> transEntryList) {
 		List<TransactionEntry> newTEList = new ArrayList<>();
 		List<TransactionEntry> tempTEList = new ArrayList<>();
@@ -702,7 +697,7 @@ public class AccountEngineExecution implements Serializable {
 		} else {
 			txnEntry.setAccountType(transactionEntry.getAccountType());
 		}
-		
+
 		String amountRule = txnEntry.getAmountRule();
 		amountRule = amountRule.replaceAll("FEE", feeType.getFeeTypeCode().toUpperCase());
 

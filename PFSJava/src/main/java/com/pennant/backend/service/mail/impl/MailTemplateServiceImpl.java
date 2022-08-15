@@ -1,43 +1,26 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MailTemplateServiceImpl.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-10-2012    														*
- *                                                                  						*
- * Modified Date    :  04-10-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MailTemplateServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-10-2012 * *
+ * Modified Date : 04-10-2012 * * Description : * *
  ********************************************************************************************
- * Date			Author				Version	Comments                                        *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-10-2012   Pennant	            0.1                                                     * 
- *                                                                                          * 
- * 28-05-2018   Sai Krishna         0.2     bugs #389 Skip the external e-Mail and SMS      * 
- *                                          services if the implementation for the same is  * 
- *                                          not available.	                                * 
- *                                                        			                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-10-2012 Pennant 0.1 * * 28-05-2018 Sai Krishna 0.2 bugs #389 Skip the external e-Mail and SMS * services if the
+ * implementation for the same is * not available. * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.mail.impl;
@@ -121,8 +104,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * Configuration. by using MailTemplateDAO's update method 3) Audit the record in to AuditHeader and AdtTemplates by
 	 * using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -160,8 +142,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * Templates by using MailTemplateDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtTemplates by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -185,10 +166,8 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	/**
 	 * getMailTemplateById fetch the details by using MailTemplateDAO's getMailTemplateById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return MailTemplate
 	 */
 	@Override
@@ -199,10 +178,8 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	/**
 	 * getMailTemplateById fetch the details by using MailTemplateDAO's getMailTemplateById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return MailTemplate
 	 */
 	@Override
@@ -214,8 +191,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * getApprovedMailTemplateById fetch the details by using MailTemplateDAO's getMailTemplateById method . with
 	 * parameter id and type as blank. it fetches the approved records from the Templates.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return MailTemplate
 	 */
 	public MailTemplate getApprovedMailTemplateById(long id) {
@@ -226,8 +202,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * getApprovedMailTemplateById fetch the details by using MailTemplateDAO's getMailTemplateById method . with
 	 * parameter id and type as blank. it fetches the approved records from the Templates.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return MailTemplate
 	 */
 	public MailTemplate getApprovedMailTemplateById(String tempCode) {
@@ -255,8 +230,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtTemplates by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -311,8 +285,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * workFlow table by using getMailTemplateDAO().delete with parameters mailTemplate,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtTemplates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -339,8 +312,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	 * for any mismatch conditions Fetch the error details from getMailTemplateDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -372,14 +344,15 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 
 		if (mailTemplate.isNewRecord()) { // for New record or new record into work flow
 
-			if (!mailTemplate.isWorkflow()) {// With out Work flow only new records  
-				if (befMailTemplate != null) { // Record Already Exists in the table then error  
+			if (!mailTemplate.isWorkflow()) {// With out Work flow only new records
+				if (befMailTemplate != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (mailTemplate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befMailTemplate != null || tempMailTemplate != null) { // if records already exists in the main table
+					if (befMailTemplate != null || tempMailTemplate != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -414,7 +387,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 				}
 			} else {
 
-				if (tempMailTemplate == null) { // if records not exists in the Work flow table 
+				if (tempMailTemplate == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

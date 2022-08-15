@@ -22,7 +22,7 @@ public class CashFlowPreperation implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		//Return if CashFlowReport is not required
+		// Return if CashFlowReport is not required
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALW_CASHFLOW_REPORT)) {
 			return RepeatStatus.FINISHED;
 		}

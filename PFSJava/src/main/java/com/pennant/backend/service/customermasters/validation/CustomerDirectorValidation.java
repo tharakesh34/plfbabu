@@ -84,14 +84,15 @@ public class CustomerDirectorValidation {
 
 		if (directorDetail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!directorDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befDirectorDetail != null) { // Record Already Exists in the table then error  
+			if (!directorDetail.isWorkflow()) {// With out Work flow only new records
+				if (befDirectorDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (directorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befDirectorDetail != null || tempDirectorDetail != null) { // if records already exists in the main table
+					if (befDirectorDetail != null || tempDirectorDetail != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -126,7 +127,7 @@ public class CustomerDirectorValidation {
 				}
 			} else {
 
-				if (tempDirectorDetail == null) { // if records not exists in the Work flow table 
+				if (tempDirectorDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

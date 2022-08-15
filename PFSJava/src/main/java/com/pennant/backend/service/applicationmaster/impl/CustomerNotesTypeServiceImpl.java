@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerNotesTypeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerNotesTypeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -106,8 +88,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 	 * table. based on the module workFlow Configuration. by using CustomerNotesTypeDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -145,8 +126,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 	 * BMTCustNotesTypes by using CustomerNotesTypeDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -169,10 +149,8 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 	/**
 	 * getCustomerNotesTypeById fetch the details by using CustomerNotesTypeDAO's getCustomerNotesTypeById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerNotesType
 	 */
 	@Override
@@ -184,8 +162,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 	 * getApprovedCustomerNotesTypeById fetch the details by using CustomerNotesTypeDAO's getCustomerNotesTypeById
 	 * method . with parameter id and type as blank. it fetches the approved records from the BMTCustNotesTypes.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return CustomerNotesType
 	 */
 	public CustomerNotesType getApprovedCustomerNotesTypeById(String id) {
@@ -204,8 +181,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 	 * record in to AuditHeader and AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -259,8 +235,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 	 * workFlow table by using getCustomerNotesTypeDAO().delete with parameters customerNotesType,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtBMTCustNotesTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -285,8 +260,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -335,7 +309,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 												// work flow
 
 			if (!customerNotesType.isWorkflow()) {// With out Work flow only new
-														// records
+													// records
 				if (befCustomerNotesType != null) { // Record Already Exists in
 					// the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
@@ -346,7 +320,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 					// is new
 					if (befCustomerNotesType != null || tempCustomerNotesType != null) { // if records
 						// already exists
-						//in the main table
+						// in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table

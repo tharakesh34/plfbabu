@@ -138,8 +138,8 @@ public class FinanceDedup implements Serializable {
 
 	public void setFinID(long finID) {
 		this.finID = finID;
-	} 
-	
+	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}

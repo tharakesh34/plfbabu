@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityOperationServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-03-2014    														*
- *                                                                  						*
- * Modified Date    :  10-03-2014    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityOperationServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-03-2014 * *
+ * Modified Date : 10-03-2014 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-03-2014       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-03-2014 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.administration.impl;
 
 import java.util.ArrayList;
@@ -84,8 +66,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 	 * Configuration. by using SecurityOperationDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtSecGroups by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -139,8 +120,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -196,8 +176,10 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 				}
 			} else { // with work flow
 
-				if (securityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befSecurityOperation != null || tempSecurityOperation != null) { // if records already exists in the main table
+				if (securityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (befSecurityOperation != null || tempSecurityOperation != null) { // if records already exists in
+																							// the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -262,10 +244,8 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 	/**
 	 * getSecurityOperationById fetch the details by using SecurityOperationDAO's getSecurityOperationById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SecurityOperation
 	 */
 	@Override
@@ -277,8 +257,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 	 * getApprovedSecurityOperationById fetch the details by using SecurityOperationDAO's getSecurityoperationById
 	 * method . with parameter id and type as blank. it fetches the approved records from the SecOperations.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return SecurityOperation
 	 */
 	@Override
@@ -292,8 +271,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 	 * SecOperations by using SecurityOperationDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtSecOperations by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -327,8 +305,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 	 * in to AuditHeader and AdtSecOperations by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
 	 * Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -387,8 +364,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 	 * workFlow table by using getSecurityOperationDAO().delete with parameters securityOperation,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtSecOperations by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -410,7 +386,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 		return auditHeader;
 	}
 
-	//This method is used to get the operation roles  from _view
+	// This method is used to get the operation roles from _view
 
 	@Override
 	public SecurityOperation getSecurityOperationRolesById(long id) {
@@ -418,14 +394,14 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 		return getSecurityOperationRoleById(id, "_View", true);
 	}
 
-	//This method is used to get the Approved operation roles  from _Aview
+	// This method is used to get the Approved operation roles from _Aview
 	@Override
 	public SecurityOperation getApprovedSecurityOperationRolesById(long id) {
 		logger.debug("Entering ");
 		return getSecurityOperationRoleById(id, "_AView", true);
 	}
 
-	//This method is used to get the operation roles  by id from _view
+	// This method is used to get the operation roles by id from _view
 	@Override
 	public SecurityOperation getSecurityOperationRoleById(long id, String type, boolean getRoles) {
 		logger.debug("Entering ");

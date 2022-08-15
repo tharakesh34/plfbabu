@@ -178,8 +178,9 @@ public class TargetDetailServiceImpl extends GenericService<TargetDetail> implem
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				if (targetDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new 
-					if (beftargetDetail != null || tempTargetDetail != null) { // if records already exists in the main table
+				if (targetDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (beftargetDetail != null || tempTargetDetail != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table

@@ -17,7 +17,7 @@ public class CustomerGroupQueuing implements Serializable {
 
 	private boolean eodProcess;
 
-	//Unused variable for bean parameter. Temporary
+	// Unused variable for bean parameter. Temporary
 	private boolean active;
 
 	public CustomerGroupQueuing() {

@@ -28,14 +28,16 @@ public class SheetCopier {
 	 * @param targetSheet
 	 */
 	private static void copyNamedRange(Sheet sourceSheet, Sheet targetSheet) {
-		List<SName> namedRangeList = new ArrayList<SName>(sourceSheet.getBook().getInternalBook().getNames()); //to avoid ConcurrentModificationException
+		List<SName> namedRangeList = new ArrayList<SName>(sourceSheet.getBook().getInternalBook().getNames()); // to
+																												// avoid
+																												// ConcurrentModificationException
 		for (SName definedName : namedRangeList) {
 			SName clonedNamedRange = null;
 			definedName.getApplyToSheetName();
 			if (sourceSheet.getSheetName().equals(definedName.getRefersToSheetName())) {
 				clonedNamedRange = sourceSheet.getBook().getInternalBook().createName(definedName.getName(),
 						targetSheet.getSheetName());
-				//shift formulas to the target sheet
+				// shift formulas to the target sheet
 				String refersToFormula = definedName.getRefersToFormula();
 				refersToFormula = refersToFormula.replace(sourceSheet.getSheetName(), targetSheet.getSheetName());
 				clonedNamedRange.setRefersToFormula(refersToFormula);

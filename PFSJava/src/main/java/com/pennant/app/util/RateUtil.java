@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  RateUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : RateUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -173,8 +164,7 @@ public class RateUtil implements Serializable {
 	/**
 	 * Calculates The Rate and Shows the value in the rateBox
 	 * 
-	 * @param baseRateCode
-	 *            BaseRateCode currency splRateCode SplRateCode Decimalbox rateBox
+	 * @param baseRateCode BaseRateCode currency splRateCode SplRateCode Decimalbox rateBox
 	 */
 	public static RateDetail rates(String baseRateCode, String currency, String splRateCode, BigDecimal margin,
 			BigDecimal minRate, BigDecimal maxRate) {
@@ -194,8 +184,7 @@ public class RateUtil implements Serializable {
 	/**
 	 * Calculates The Rate and Shows the value in the rateBox
 	 * 
-	 * @param baseRateCode
-	 *            BaseRateCode splRateCode SplRateCode Decimalbox rateBox
+	 * @param baseRateCode BaseRateCode splRateCode SplRateCode Decimalbox rateBox
 	 */
 	public static RateDetail rates(String baseRateCode, String currency, String splRateCode, BigDecimal margin,
 			Date valueDate, BigDecimal minRate, BigDecimal maxRate) {
@@ -213,8 +202,7 @@ public class RateUtil implements Serializable {
 	/**
 	 * Calculates The Rate and Shows the value in the rateBox
 	 * 
-	 * @param baseRateCode
-	 *            BaseRateCode splRateCode SplRateCode Decimalbox rateBox
+	 * @param baseRateCode BaseRateCode splRateCode SplRateCode Decimalbox rateBox
 	 */
 	public static BigDecimal ratesFromLoadedData(FinScheduleData finScheduleData, int iSchd) {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -227,7 +215,7 @@ public class RateUtil implements Serializable {
 		BigDecimal baseRateVal = BigDecimal.ZERO;
 		BigDecimal splRateVal = BigDecimal.ZERO;
 
-		//Set Minimum and Maximum Rate
+		// Set Minimum and Maximum Rate
 		if (finSchdDetails.get(iSchd).getSchDate().compareTo(finMain.getGrcPeriodEndDate()) < 0) {
 			minRate = finMain.getGrcMinRate();
 			maxRate = finMain.getGrcMaxRate();
@@ -236,14 +224,14 @@ public class RateUtil implements Serializable {
 			maxRate = finMain.getRpyMaxRate();
 		}
 
-		//Check Reference OR Not
+		// Check Reference OR Not
 		if (StringUtils.isBlank(finSchdDetails.get(iSchd).getBaseRate())) {
 			netRefRate = finSchdDetails.get(iSchd).getActRate();
 			calRate = getEffRate(netRefRate, minRate, maxRate);
 			return calRate;
 		}
 
-		//Get Base Rate
+		// Get Base Rate
 		List<BaseRate> baseRates = finScheduleData.getBaseRates();
 
 		for (int i = 0; i < baseRates.size(); i++) {
@@ -258,7 +246,7 @@ public class RateUtil implements Serializable {
 			baseRateVal = baseRates.get(i).getBRRate();
 		}
 
-		//Get Special Rate
+		// Get Special Rate
 		List<SplRate> splRates = finScheduleData.getSplRates();
 
 		for (int i = 0; i < splRates.size(); i++) {
@@ -273,8 +261,9 @@ public class RateUtil implements Serializable {
 			splRateVal = splRates.get(i).getSRRate();
 		}
 
-		netRefRate = baseRateVal.subtract(splRateVal).add(finSchdDetails.get(iSchd).getMrgRate() == null
-				? BigDecimal.ZERO : finSchdDetails.get(iSchd).getMrgRate());
+		netRefRate = baseRateVal.subtract(splRateVal)
+				.add(finSchdDetails.get(iSchd).getMrgRate() == null ? BigDecimal.ZERO
+						: finSchdDetails.get(iSchd).getMrgRate());
 		calRate = getEffRate(netRefRate, minRate, maxRate);
 
 		return calRate;
@@ -319,8 +308,7 @@ public class RateUtil implements Serializable {
 	/**
 	 * Calculates The Rate and Shows the value in the rateBox
 	 * 
-	 * @param baseRateCode
-	 *            BaseRateCode currency splRateCode SplRateCode Decimalbox rateBox
+	 * @param baseRateCode BaseRateCode currency splRateCode SplRateCode Decimalbox rateBox
 	 */
 	public static RateDetail cofRate(String cofRateCode, String currency) {
 		RateDetail rate = new RateDetail();

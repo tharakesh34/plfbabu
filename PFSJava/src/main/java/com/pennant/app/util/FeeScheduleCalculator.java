@@ -12,23 +12,23 @@
 
 /**
  ******************************************************************************************** 
- * FILE HEADER 																				*
+ * FILE HEADER *
  ******************************************************************************************** 
  * 
- * FileName : ScheduleCalculator.java 														*
+ * FileName : ScheduleCalculator.java *
  * 
- * Author : PENNANT TECHONOLOGIES 															*
+ * Author : PENNANT TECHONOLOGIES *
  * 
- * Creation Date : 26-04-2011 																*
+ * Creation Date : 26-04-2011 *
  * 
- * Modified Date : 30-07-2011 																*
+ * Modified Date : 30-07-2011 *
  * 
- * Description : 																			*
+ * Description : *
  * 
  ******************************************************************************************** 
- * Date Author Version Comments 															*
+ * Date Author Version Comments *
  ******************************************************************************************** 
- * 26-04-2011 Pennant 0.1 																	*
+ * 26-04-2011 Pennant 0.1 *
  ******************************************************************************************** 
  */
 package com.pennant.app.util;
@@ -82,7 +82,8 @@ public class FeeScheduleCalculator {
 		Date evtFromDate = null;
 		boolean isNewLoan = false;
 
-		if (financeMain.isNewRecord() || StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (financeMain.isNewRecord()
+				|| StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			isNewLoan = true;
 		}
 

@@ -5,7 +5,7 @@ public class InsPremiumCalculatorErrorResponseDto {
 	private String error;
 	private String message;
 
-	// Getter Methods 
+	// Getter Methods
 
 	public String getResponseStatus() {
 		return responseStatus;
@@ -19,7 +19,7 @@ public class InsPremiumCalculatorErrorResponseDto {
 		return message;
 	}
 
-	// Setter Methods 
+	// Setter Methods
 
 	public void setResponseStatus(String responseStatus) {
 		this.responseStatus = responseStatus;

@@ -21,7 +21,7 @@ public class FetchBlackListCustomerAdditionalDetails {
 	public static BlackListCustomers doSetCustDataToBlackList(Customer customer, BlackListCustomers blackListCustomer) {
 		logger.debug(Literal.ENTERING);
 		if (customer != null) {
-			//Black list customer dedupe for directors
+			// Black list customer dedupe for directors
 			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customer.getCustCtgCode())) {
 				blackListCustomer.setDirector1FirstName(customer.getCustFName());
 				blackListCustomer.setDirector1LastName(customer.getCustLName());
@@ -50,11 +50,11 @@ public class FetchBlackListCustomerAdditionalDetails {
 				blackListCustomer.setOtherSourceFirstName(customer.getCustFName());
 				blackListCustomer.setOtherSourceLastName(customer.getCustLName());
 
-				//setting the customer F/L Name to Company filed for Retail
+				// setting the customer F/L Name to Company filed for Retail
 				blackListCustomer.setCustCompName(blackListCustomer.getCustFName());
 				blackListCustomer.setCustCompName2(blackListCustomer.getCustLName());
 
-				//Like Operator
+				// Like Operator
 				blackListCustomer.setLikeDirector1FirstName(
 						blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
 				blackListCustomer.setLikeDirector1LastName(
@@ -95,7 +95,7 @@ public class FetchBlackListCustomerAdditionalDetails {
 						blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
 				blackListCustomer.setLikeDirector10LastName(
 						blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
-				//setting the customer F/L Name to Company filed for Retail
+				// setting the customer F/L Name to Company filed for Retail
 				blackListCustomer.setLikeCustCompName(
 						blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
 				blackListCustomer.setLikeCustCompName2(
@@ -114,37 +114,50 @@ public class FetchBlackListCustomerAdditionalDetails {
 				blackListCustomer.setDirector10Name(customer.getCustShrtName());
 				blackListCustomer.setAssOrRelConcern(customer.getCustShrtName());
 				blackListCustomer.setOtherSource(customer.getCustShrtName());
-				//Like Operator
-				blackListCustomer.setLikeDirector1Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeDirector2Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeDirector3Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeDirector4Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeDirector5Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeDirector6Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeDirector7Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeDirector8Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeDirector9Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeDirector10Name(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeAssOrRelConcern(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				blackListCustomer.setLikeOtherSource(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
-				//for CORP Customer Name to Comapny Name
+				// Like Operator
+				blackListCustomer.setLikeDirector1Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeDirector2Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeDirector3Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeDirector4Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeDirector5Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeDirector6Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeDirector7Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeDirector8Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeDirector9Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeDirector10Name(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeAssOrRelConcern(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				blackListCustomer.setLikeOtherSource(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
+				// for CORP Customer Name to Comapny Name
 				blackListCustomer.setCustCompName(customer.getCustShrtName());
-				blackListCustomer.setLikeCustCompName(blackListCustomer.getCustShrtName() != null
-						? "%" + blackListCustomer.getCustShrtName() + "%" : "");
+				blackListCustomer.setLikeCustCompName(
+						blackListCustomer.getCustShrtName() != null ? "%" + blackListCustomer.getCustShrtName() + "%"
+								: "");
 			}
-			//setting customer short name to remarks
+			// setting customer short name to remarks
 			blackListCustomer.setRemarks(customer.getCustShrtName());
 			logger.debug(Literal.LEAVING);
 			return blackListCustomer;

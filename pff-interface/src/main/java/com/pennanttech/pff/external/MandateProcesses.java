@@ -21,7 +21,7 @@ public interface MandateProcesses {
 	public void processResponseFile(long userId, File file, Media media, DataEngineStatus status) throws Exception;
 
 	void receiveResponse(long respBatchId, DataEngineStatus status) throws Exception;
-	
+
 	public void processUploadToDownLoadFile(long userId, File file, Media media, DataEngineStatus status)
 			throws Exception;
 

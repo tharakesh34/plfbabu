@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  GSTRateServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-05-2019    														*
- *                                                                  						*
- * Modified Date    :  20-05-2019    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : GSTRateServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-05-2019 * * Modified
+ * Date : 20-05-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-05-2019       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-05-2019 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.rmtmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -83,8 +65,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -106,8 +87,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 	 * by using GST_RATESDAO's update method 3) Audit the record in to AuditHeader and AdtGST_RATES by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -147,8 +127,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 	 * GST_RATES by using GST_RATESDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtGST_RATES by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -173,8 +152,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 	/**
 	 * getGST_RATES fetch the details by using GST_RATESDAO's getGST_RATESById method.
 	 * 
-	 * @param id
-	 *            id of the GSTRate.
+	 * @param id id of the GSTRate.
 	 * @return GST_RATES
 	 */
 	@Override
@@ -186,8 +164,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 	 * getApprovedGST_RATESById fetch the details by using GST_RATESDAO's getGST_RATESById method . with parameter id
 	 * and type as blank. it fetches the approved records from the GST_RATES.
 	 * 
-	 * @param id
-	 *            id of the GSTRate. (String)
+	 * @param id id of the GSTRate. (String)
 	 * @return GST_RATES
 	 */
 	public GSTRate getApprovedGSTRate(long id) {
@@ -205,8 +182,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 	 * the record in to AuditHeader and AdtGST_RATES by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -270,8 +246,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 	 * workFlow table by using getGSTRateDAO().delete with parameters gSTRate,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtGST_RATES by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -299,8 +274,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -332,8 +306,9 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 		GSTRate gSTRate = (GSTRate) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (gSTRate.isNewRecord() && gstRateDAO.isDuplicateKey(gSTRate.getId(), gSTRate.getFromState(), gSTRate.getToState(),
-				gSTRate.getTaxType(), gSTRate.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (gSTRate.isNewRecord()
+				&& gstRateDAO.isDuplicateKey(gSTRate.getId(), gSTRate.getFromState(), gSTRate.getToState(),
+						gSTRate.getTaxType(), gSTRate.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[3];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_FromState") + ": " + gSTRate.getFromState();

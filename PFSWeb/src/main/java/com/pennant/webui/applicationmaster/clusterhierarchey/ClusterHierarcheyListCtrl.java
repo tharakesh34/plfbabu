@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ClusterHierarcheyListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-11-2018    														*
- *                                                                  						*
- * Modified Date    :  21-11-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ClusterHierarcheyListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-11-2018 * *
+ * Modified Date : 21-11-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-11-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-11-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.applicationmaster.clusterhierarchey;
 
@@ -115,8 +97,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ClusterHierarcheyList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -131,7 +112,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 				"button_ClusterHierarcheyList_NewClusterHierarchey", true);
 
 		registerField("entity", listheader_Entity, SortOrder.ASC, entity, sortOperator_Entity, Operators.STRING);
-		//	registerField("clusterType");
+		// registerField("clusterType");
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -141,8 +122,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ClusterHierarcheyList_ClusterHierarcheySearch(Event event) {
 		search();
@@ -151,8 +131,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -162,8 +141,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ClusterHierarcheyList_NewClusterHierarchey(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -183,8 +161,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.1
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onClusterHierarcheyItemDoubleClicked(Event event) {
@@ -236,8 +213,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param clusterhierarchey
-	 *            The entity that need to be passed to the dialog.
+	 * @param clusterhierarchey The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(ClusterHierarchy clusterhierarchey) {
 		logger.debug(Literal.ENTERING);
@@ -260,8 +236,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -270,8 +245,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

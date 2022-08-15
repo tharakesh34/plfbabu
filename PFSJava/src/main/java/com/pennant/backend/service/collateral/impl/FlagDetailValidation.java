@@ -68,14 +68,15 @@ public class FlagDetailValidation {
 
 		if (finFlagsDetail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!finFlagsDetail.isWorkflow()) {// With out Work flow only new records  
-				if (beffinFlagsDetail != null) { // Record Already Exists in the table then error  
+			if (!finFlagsDetail.isWorkflow()) {// With out Work flow only new records
+				if (beffinFlagsDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (finFlagsDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (beffinFlagsDetail != null || tempfinFlagsDetail != null) { // if records already exists in the main table
+					if (beffinFlagsDetail != null || tempfinFlagsDetail != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -106,7 +107,7 @@ public class FlagDetailValidation {
 				}
 			} else {
 
-				if (tempfinFlagsDetail == null) { // if records not exists in the Work flow table 
+				if (tempfinFlagsDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

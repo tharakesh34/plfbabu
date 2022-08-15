@@ -9,9 +9,7 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum FIOwnerShipStatus {
 
-	SELECT(0, Labels.getLabel("Combo.Select")),
-	OWNED(1, "Owned"),
-	COMPANYPROVIDED(2, "Company Provided"),
+	SELECT(0, Labels.getLabel("Combo.Select")), OWNED(1, "Owned"), COMPANYPROVIDED(2, "Company Provided"),
 	NEIGHBORHOOD(3, "Relative");
 
 	private final Integer key;

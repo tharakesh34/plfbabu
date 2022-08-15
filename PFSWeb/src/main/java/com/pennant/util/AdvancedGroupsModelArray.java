@@ -18,13 +18,13 @@ public class AdvancedGroupsModelArray extends GroupsModelArray {
 		super(data, cmpr, col);
 	}
 
-	// Create GroupFoot Data 
+	// Create GroupFoot Data
 	protected Object createGroupFoot(Object[] groupdata, int index, int col) {
-		// Return the sum number of each group 
+		// Return the sum number of each group
 		return groupdata.length;
 	}
 
-	// Create GroupHead Data - Need Column index 
+	// Create GroupHead Data - Need Column index
 	protected Object createGroupHead(Object[] groupdata, int index, int col) {
 		return new Object[] { groupdata[0], col };
 	}

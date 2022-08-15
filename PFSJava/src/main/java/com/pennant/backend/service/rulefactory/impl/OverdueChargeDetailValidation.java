@@ -75,14 +75,16 @@ public class OverdueChargeDetailValidation {
 
 		if (overdueChargeDetail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!overdueChargeDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befChargeDetail != null) { // Record Already Exists in the table then error  
+			if (!overdueChargeDetail.isWorkflow()) {// With out Work flow only new records
+				if (befChargeDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, null));
 				}
 			} else { // with work flow
 
-				if (overdueChargeDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befChargeDetail != null || tempChargeDetail != null) { // if records already exists in the main table
+				if (overdueChargeDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																									// is new
+					if (befChargeDetail != null || tempChargeDetail != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -114,7 +116,7 @@ public class OverdueChargeDetailValidation {
 
 			} else {
 
-				if (tempChargeDetail == null) { // if records not exists in the Work flow table 
+				if (tempChargeDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

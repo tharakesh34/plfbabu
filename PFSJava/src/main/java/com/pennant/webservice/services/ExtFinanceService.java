@@ -39,7 +39,7 @@ public class ExtFinanceService {
 		Object result = null;
 
 		try {
-			//rqUID = ((PFSLoanCreationRequest) request).getRqUID();			
+			// rqUID = ((PFSLoanCreationRequest) request).getRqUID();
 			logger.debug("Making the process Call");
 			logger.debug("Generting Response");
 			result = processReq(request);
@@ -78,8 +78,8 @@ public class ExtFinanceService {
 			extFinanceData.setFinType(extFinanceDetails.getFinType());
 			extFinanceData.setFinReference(extFinanceDetails.getFinReference());
 			extFinanceData.setFinCcy(extFinanceDetails.getFinCcy());
-			//extFinanceData.setAllowGrcCpz(extFinanceDetails.get(i).isAllowGrcCpz());
-			//extFinanceData.setAllowGrcPeriod(extFinanceDetails.get(i).isAllowGrcPeriod());
+			// extFinanceData.setAllowGrcCpz(extFinanceDetails.get(i).isAllowGrcCpz());
+			// extFinanceData.setAllowGrcPeriod(extFinanceDetails.get(i).isAllowGrcPeriod());
 			extFinanceData.setRepayRateBasis(extFinanceDetails.getRepayRateBasis());
 			extFinanceData.setScheduleMethod(extFinanceDetails.getScheduleMethod());
 			extFinanceData.setGrcSchdMthd(extFinanceDetails.getGrcSchdMthd());
@@ -102,7 +102,7 @@ public class ExtFinanceService {
 			extFinanceData.setDownPayment(extFinanceData.getDpToBank().add(extFinanceData.getDpToSupplier()));
 			extFinanceData.setFinBranch("1010");
 
-			//Status
+			// Status
 			extFinanceData.setRecordStatus("");
 			extFinanceData.setErrDesc("");
 			extFinanceData = extFinanceUploadService.validateExtFinanceDatafromWebservice(extFinanceData,
@@ -115,7 +115,7 @@ public class ExtFinanceService {
 				statusType.setSeverity("Error");
 				statusType.setStatusDesc(extFinanceData.getErrDesc());
 			} else {
-				// Save Finance Data into DataBase						
+				// Save Finance Data into DataBase
 				extFinanceUploadService.processExtFinanceData(userDetails, extFinanceData);
 				statusType.setStatusCode("0000");
 				statusType.setSeverity("Info");

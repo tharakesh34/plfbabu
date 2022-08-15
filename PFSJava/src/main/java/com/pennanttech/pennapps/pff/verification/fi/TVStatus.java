@@ -12,10 +12,8 @@ import com.pennant.backend.util.PennantConstants;
 
 public enum TVStatus {
 
-	SELECT(0, Labels.getLabel("Combo.Select")),
-	POSITIVE(1, Labels.getLabel("label_POSITIVE")),
-	NEGATIVE(2, Labels.getLabel("label_NEGATIVE")),
-	REFERTOCREDIT(3, Labels.getLabel("label_REFERTOCREDIT"));
+	SELECT(0, Labels.getLabel("Combo.Select")), POSITIVE(1, Labels.getLabel("label_POSITIVE")),
+	NEGATIVE(2, Labels.getLabel("label_NEGATIVE")), REFERTOCREDIT(3, Labels.getLabel("label_REFERTOCREDIT"));
 
 	private final Integer key;
 	private final String value;

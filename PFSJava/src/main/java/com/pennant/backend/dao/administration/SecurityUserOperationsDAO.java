@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		: SecurityUserOperationsDAO .java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-06-2011    														*
- *                                                                  						*
- * Modified Date    :  30-07-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityUserOperationsDAO .java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-06-2011 * *
+ * Modified Date : 30-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- 30-07-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-07-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.administration;
@@ -76,8 +58,7 @@ public interface SecurityUserOperationsDAO {
 	/**
 	 * Get the user logins for the specified roles.
 	 * 
-	 * @param roleCodes
-	 *            List of roles.
+	 * @param roleCodes List of roles.
 	 * @return The user logins for the specified roles.
 	 */
 	List<String> getUsersByRoles(String[] roleCodes);
@@ -85,12 +66,9 @@ public interface SecurityUserOperationsDAO {
 	/**
 	 * Get the user logins for the specified roles those have access to the division and branch.
 	 * 
-	 * @param roleCodes
-	 *            List of roles.
-	 * @param division
-	 *            Division code.
-	 * @param branch
-	 *            Branch code.
+	 * @param roleCodes List of roles.
+	 * @param division  Division code.
+	 * @param branch    Branch code.
 	 * @return The user logins for the specified roles those have access to the division and branch.
 	 */
 	List<String> getUsersByRoles(String[] roleCodes, String division, String branch);

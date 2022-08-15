@@ -19,7 +19,7 @@ public interface DMSQueueDAO {
 	public void insertDMSQueueLog(DMSQueue dMSQueue);
 
 	int delete(long queueId);
-	
+
 	public void update(DMSQueue dMSQueue);
 
 }

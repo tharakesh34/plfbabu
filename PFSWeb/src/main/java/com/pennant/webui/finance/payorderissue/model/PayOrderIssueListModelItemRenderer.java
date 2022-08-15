@@ -83,10 +83,10 @@ public class PayOrderIssueListModelItemRenderer implements ListitemRenderer<PayO
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(payOrderIssueHeader.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("finID", payOrderIssueHeader.getFinID());
 		item.setAttribute("finRef", payOrderIssueHeader.getFinReference());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPayOrderIssueItemDoubleClicked");
 	}
 }

@@ -40,7 +40,7 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(enquiry.getFinStartDate()));
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(enquiry.getNOInst()));//PSD# 145740
+		lc = new Listcell(String.valueOf(enquiry.getNOInst()));// PSD# 145740
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(enquiry.getMaturityDate()));
 		lc.setParent(item);
@@ -60,20 +60,19 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		if (enquiry.getFinRepaymentAmount() != null) {
-			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
+			// KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
 			BigDecimal curFinAmountValue = null;
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(enquiry.getClosingStatus())) {
 				curFinAmountValue = BigDecimal.ZERO;
 			} else {
 				if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
 					curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
-							.add(enquiry.getTotalCpz())
-							.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
+							.add(enquiry.getTotalCpz()).subtract(enquiry.getFinRepaymentAmount())
+							.subtract(enquiry.getSvAmount());
 				} else {
 					curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
-							.add(enquiry.getTotalCpz())
-							.subtract(enquiry.getDownPayment()).subtract(enquiry.getFinRepaymentAmount())
-							.subtract(enquiry.getSvAmount());
+							.add(enquiry.getTotalCpz()).subtract(enquiry.getDownPayment())
+							.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
 				}
 			}
 			lc = new Listcell(

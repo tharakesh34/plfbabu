@@ -15,10 +15,8 @@ public class UserAuthServiceImpl implements UserAuthService {
 	/**
 	 * validateSession fetch the details by using WebServiceUserSecurityDAO's validateSession method.
 	 * 
-	 * @param tokenId
-	 *            (String)
-	 * @param expiry
-	 *            (Timestamp)
+	 * @param tokenId (String)
+	 * @param expiry  (Timestamp)
 	 * 
 	 * @return WebServiceUserSecurity
 	 */

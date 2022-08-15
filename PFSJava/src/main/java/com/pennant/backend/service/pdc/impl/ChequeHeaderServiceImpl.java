@@ -1435,7 +1435,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 						return errorDetails;
 					}
 				}
-				
+
 				ch.setNoOfCheques(ch.getNoOfCheques() + dbChequeHeader.getNoOfCheques());
 				ch.setTotalAmount(dbChequeHeader.getTotalAmount());
 			}

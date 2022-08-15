@@ -453,10 +453,8 @@ public class ReceiptResponseProcess {
 	/**
 	 * util method to get Webclient
 	 * 
-	 * @param serviceEndPoint
-	 *            url to hit the api
-	 * @param messageId
-	 *            to pass in input header
+	 * @param serviceEndPoint url to hit the api
+	 * @param messageId       to pass in input header
 	 */
 	private WebClient getClient(String serviceEndPoint, String messageId) {
 		String authorization = SysParamUtil.getValueAsString("URLAuthorization");

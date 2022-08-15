@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringGroupServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-12-2011    														*
- *                                                                  						*
- * Modified Date    :  05-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringGroupServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-12-2011 * *
+ * Modified Date : 05-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.rmtmasters.impl;
@@ -98,8 +80,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -113,8 +94,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 	}
 
 	/**
-	 * @param scoringGroupDAO
-	 *            the scoringGroupDAO to set
+	 * @param scoringGroupDAO the scoringGroupDAO to set
 	 */
 	public void setScoringGroupDAO(ScoringGroupDAO scoringGroupDAO) {
 		this.scoringGroupDAO = scoringGroupDAO;
@@ -136,8 +116,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 	 * based on the module workFlow Configuration. by using ScoringGroupDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtRMTScoringGroup by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -165,7 +144,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 			getScoringGroupDAO().update(scoringGroup, tableType);
 		}
 
-		//Retrieving List of Audit Details
+		// Retrieving List of Audit Details
 		if (scoringGroup.getScoringSlabList() != null && scoringGroup.getScoringSlabList().size() > 0) {
 			List<AuditDetail> details = scoringGroup.getAuditDetailMap().get("ScoringSlab");
 			details = processingScoringSlabList(details, tableType, scoringGroup.getScoreGroupId());
@@ -202,8 +181,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 	 * RMTScoringGroup by using ScoringGroupDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtRMTScoringGroup by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -227,10 +205,8 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 	/**
 	 * getScoringGroupById fetch the details by using ScoringGroupDAO's getScoringGroupById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ScoringGroup
 	 */
 
@@ -241,7 +217,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 		if (PennantConstants.PFF_CUSTCTG_CORP.equals(scoringGroup.getCategoryType())
 				|| PennantConstants.PFF_CUSTCTG_SME.equals(scoringGroup.getCategoryType())) {
 
-			//Financial Scoring Metric Details
+			// Financial Scoring Metric Details
 			scoringGroup
 					.setFinScoringMetricsList(getScoringMetricsDAO().getScoringMetricsByScoreGrpId(id, "F", "_View"));
 			if (scoringGroup.getFinScoringMetricsList() != null && scoringGroup.getFinScoringMetricsList().size() > 0) {
@@ -277,7 +253,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 				}
 			}
 
-			//Non - Financial Scoring Metric Details
+			// Non - Financial Scoring Metric Details
 			scoringGroup.setNonFinScoringMetricsList(
 					getScoringMetricsDAO().getScoringMetricsByScoreGrpId(id, "N", "_View"));
 			if (scoringGroup.getNonFinScoringMetricsList() != null
@@ -311,8 +287,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 	 * getApprovedScoringGroupById fetch the details by using ScoringGroupDAO's getScoringGroupById method . with
 	 * parameter id and type as blank. it fetches the approved records from the RMTScoringGroup.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return ScoringGroup
 	 */
 
@@ -331,8 +306,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtRMTScoringGroup
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -419,8 +393,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 	 * workFlow table by using getScoringGroupDAO().delete with parameters scoringGroup,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtRMTScoringGroup by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -450,8 +423,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 	 * for any mismatch conditions Fetch the error details from getScoringGroupDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -486,14 +458,15 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 
 		if (scoringGroup.isNewRecord()) { // for New record or new record into work flow
 
-			if (!scoringGroup.isWorkflow()) {// With out Work flow only new records  
-				if (befScoringGroup != null) { // Record Already Exists in the table then error  
+			if (!scoringGroup.isWorkflow()) {// With out Work flow only new records
+				if (befScoringGroup != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (scoringGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befScoringGroup != null || tempScoringGroup != null) { // if records already exists in the main table
+					if (befScoringGroup != null || tempScoringGroup != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -528,7 +501,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 				}
 			} else {
 
-				if (tempScoringGroup == null) { // if records not exists in the Work flow table 
+				if (tempScoringGroup == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -628,7 +601,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 				isRcdType = true;
 			} else if (scoringSlab.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				scoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				//isRcdType=true;
+				// isRcdType=true;
 			}
 
 			if ("saveOrUpdate".equals(method) && isRcdType) {
@@ -681,7 +654,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 				isRcdType = true;
 			} else if (scoringMetrics.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				scoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				//isRcdType=true;
+				// isRcdType=true;
 			}
 
 			if ("saveOrUpdate".equals(method) && isRcdType) {

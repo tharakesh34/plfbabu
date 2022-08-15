@@ -35,7 +35,7 @@ public class RelationshipOfficersWebServiceImpl
 		validationUtility.validate(relationshipOfficer, SaveValidationGroup.class);
 		RelationshipOfficer response = null;
 		try {
-			//bussiness validations
+			// bussiness validations
 			AuditDetail auditDetail = relationshipOfficerService.doValidations(relationshipOfficer);
 
 			if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
@@ -55,7 +55,7 @@ public class RelationshipOfficersWebServiceImpl
 			return response;
 		}
 
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[1];
 		if (response != null) {
 			logFields[0] = String.valueOf(response.getROfficerCode());

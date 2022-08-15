@@ -45,14 +45,14 @@ public class PaymentProcessImpl implements PaymentProcess {
 			if (StringUtils.isNotBlank(disbStatus)) {
 				PAID_STATUS = disbStatus;
 			}
-			//In case of IMD or excess amount processing there is a chance of LAN in temp queue.
+			// In case of IMD or excess amount processing there is a chance of LAN in temp queue.
 			if (fm == null) {
 				fm = financeMainDAO.getDisbursmentFinMainById(pi.getFinReference(), TableType.TEMP_TAB);
 			}
 
 			String paymentType = pi.getPaymentType();
 
-			//E -> PAID
+			// E -> PAID
 			String status = pi.getClearingStatus();
 			if (PAID_STATUS.equals(status) || DisbursementConstants.STATUS_PAID.equals(status)) {
 				pi.setStatus(DisbursementConstants.STATUS_PAID);
@@ -115,7 +115,7 @@ public class PaymentProcessImpl implements PaymentProcess {
 			beneficiary.setAccHolderName(instruction.getAcctHolderName());
 			beneficiary.setPhoneCountryCode(instruction.getPhoneCountryCode());
 			beneficiary.setPhoneAreaCode(instruction.getPhoneCountryCode());
-			beneficiary.setPhoneNumber(instruction.getPhoneNumber());//FIXME for 3numbners
+			beneficiary.setPhoneNumber(instruction.getPhoneNumber());// FIXME for 3numbners
 			beneficiaryDAO.save(beneficiary, "");
 		}
 	}

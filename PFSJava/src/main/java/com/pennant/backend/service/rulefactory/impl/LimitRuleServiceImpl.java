@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  RuleServiceImpl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : RuleServiceImpl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 03-06-2011
+ * 
+ * Modified Date : 03-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -108,8 +99,7 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	 * RuleDAO's update method 3) Audit the record in to AuditHeader and AdtRules by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 *
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -146,8 +136,7 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	 * Rules by using RuleDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and AdtRule by
 	 * using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -171,11 +160,9 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	/**
 	 * getRuleById fetch the details by using RuleDAO's getRuleById method.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id   (String)
 	 * 
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param type (String) ""/_Temp/_View
 	 * @return Rule
 	 */
 	@Override
@@ -186,7 +173,7 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	/**
 	 * Method for Fetch SQL Rule based on Parameters
 	 */
-	//@Override
+	// @Override
 	/*
 	 * public String getAmountRule(String id,String module,String event) { return
 	 * getLimitRuleDAO().getAmountRule(id,module,event); }
@@ -196,8 +183,7 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	 * getApprovedRuleById fetch the details by using RuleDAO's getRuleById method . with parameter id and type as
 	 * blank. it fetches the approved records from the Rules.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * 
 	 * @return Rule
 	 */
@@ -211,10 +197,10 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	 * 
 	 * @return List
 	 */
-	//@Override
-	//public List<BMTRBFldDetails> getFieldList(String module,String event) {
-	//	return getLimitRuleDAO().getFieldList(module, event);
-	//}
+	// @Override
+	// public List<BMTRBFldDetails> getFieldList(String module,String event) {
+	// return getLimitRuleDAO().getFieldList(module, event);
+	// }
 
 	/**
 	 * This method return the Operator list
@@ -227,15 +213,15 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	 *//**
 		 * Method for getting List of Rule Modules
 		 *//*
-		 * @Override public List<RuleModule> getRuleModules(String module) { return
-		 * getLimitRuleDAO().getRuleModules(module); }
-		 * 
-		 * @Override public List<Rule> getRulesByGroupId(long groupId,String ruleModule, String ruleEvent) { return
-		 * getLimitRuleDAO().getRulesByGroupId(groupId,ruleModule, ruleEvent,"_AView"); }
-		 * 
-		 * @Override public List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId) { return
-		 * getLimitRuleDAO().getNFRulesByGroupId(groupId , ""); }
-		 */
+			 * @Override public List<RuleModule> getRuleModules(String module) { return
+			 * getLimitRuleDAO().getRuleModules(module); }
+			 * 
+			 * @Override public List<Rule> getRulesByGroupId(long groupId,String ruleModule, String ruleEvent) { return
+			 * getLimitRuleDAO().getRulesByGroupId(groupId,ruleModule, ruleEvent,"_AView"); }
+			 * 
+			 * @Override public List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId) { return
+			 * getLimitRuleDAO().getNFRulesByGroupId(groupId , ""); }
+			 */
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
@@ -248,8 +234,7 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtDedupParams by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -308,8 +293,7 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	 * workFlow table by using getDedupParmDAO().delete with parameters dedupParm,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -338,8 +322,7 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 	 * for any mismatch conditions Fetch the error details from getRuleDAO().getErrorDetail with Error ID and language
 	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */

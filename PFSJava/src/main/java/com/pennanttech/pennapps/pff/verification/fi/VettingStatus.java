@@ -9,8 +9,7 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum VettingStatus {
 
-	SELECT(0, Labels.getLabel("Combo.Select")),
-	POSITIVE(1, Labels.getLabel("label_VETTING_POSITIVE")),
+	SELECT(0, Labels.getLabel("Combo.Select")), POSITIVE(1, Labels.getLabel("label_VETTING_POSITIVE")),
 	NEGATIVE(2, Labels.getLabel("label_VETTING_NEGATIVE"));
 
 	private final Integer key;

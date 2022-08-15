@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VerificationsRestService.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-02-2021    														*
- *                                                                  						*
- * Modified Date    :  08-02-2021    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VerificationsRestService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-02-2021 * *
+ * Modified Date : 08-02-2021 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-02-2021       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-02-2021 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennanttech.pffws;
 
@@ -63,7 +45,7 @@ import com.pennanttech.ws.model.VerificationCustomerAddress.VerificationDetails;
 @Produces(MediaType.APPLICATION_JSON)
 public interface VerificationsRestService {
 
-	//Common API for All the verification Types
+	// Common API for All the verification Types
 	@POST
 	@Path("/verificationsService/getVerificationDetails")
 	public VerificationDetails getVerificationDetails(Verification verification) throws ServiceException;
@@ -72,7 +54,7 @@ public interface VerificationsRestService {
 	@Path("/verificationsService/initiateFIVerification")
 	WSReturnStatus initiateFIVerification(Verification verification);
 
-	//Common API for All the verification Types
+	// Common API for All the verification Types
 	@POST
 	@Path("/verificationsService/getVerificationIds")
 	public List<Verification> getVerificationIds(Verification verification) throws ServiceException;

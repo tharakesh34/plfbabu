@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DedupFieldsServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DedupFieldsServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * *
+ * Modified Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.dedup.impl;
@@ -109,8 +91,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	 * by using DedupFieldsDAO's update method 3) Audit the record in to AuditHeader and AdtDedupFields by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -147,8 +128,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	 * DedupFields by using DedupFieldsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtDedupFields by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -172,10 +152,8 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	/**
 	 * getDedupFieldsById fetch the details by using DedupFieldsDAO's getDedupFieldsById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DedupFields
 	 */
 	@Override
@@ -187,8 +165,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	 * getApprovedDedupFieldsById fetch the details by using DedupFieldsDAO's getDedupFieldsById method . with parameter
 	 * id and type as blank. it fetches the approved records from the DedupFields.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return DedupFields
 	 */
 	public DedupFields getApprovedDedupFieldsById(String id) {
@@ -206,8 +183,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtDedupFields by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -265,8 +241,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	 * workFlow table by using getDedupFieldsDAO().delete with parameters dedupFields,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtDedupFields by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -295,8 +270,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	 * for any mismatch conditions Fetch the error details from getDedupFieldsDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -339,14 +313,14 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 
 			if (!dedupFields.isWorkflow()) {// With out Work flow only new records
 				if (befDedupFields != null) { // Record Already Exists in the
-													// table then error
+												// table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 
 				}
 			} else { // with work flow
 				if (dedupFields.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befDedupFields != null) { // if records already exists
-														// in the main table
+													// in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -355,7 +329,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 					}
 				}
 				if (tempDedupFields != null) { // if records already exists in
-													// the Work flow table
+												// the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
@@ -384,7 +358,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 			} else {
 
 				if (tempDedupFields == null) { // if records not exists in the
-													// Work flow table
+												// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 
 				}
@@ -408,8 +382,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 	 * nextProcess method do the following steps. if errorMessage List or OverideMessage size is more than 0 then return
 	 * False else return true.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return boolean
 	 */
 

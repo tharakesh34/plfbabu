@@ -68,8 +68,7 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 	 * and AdtCustomerBankInfo by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and AdtCustomerBankInfo by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -128,7 +127,7 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 		}
 		if (!StringUtils.equals(customerCardSalesInfo.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
 			customerCardSalesInfoDAO.delete(customerCardSalesInfo, "_Temp");
-			//card month sales
+			// card month sales
 			if (customerCardSalesInfo.getCustCardMonthSales().size() > 0) {
 				for (CustCardSalesDetails custCAdMnthSaleInfoDetail : customerCardSalesInfo.getCustCardMonthSales()) {
 					customerCardSalesInfoDAO.delete(custCAdMnthSaleInfoDetail, "_Temp");

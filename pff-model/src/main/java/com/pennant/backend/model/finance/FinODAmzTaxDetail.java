@@ -36,7 +36,7 @@ public class FinODAmzTaxDetail implements Serializable {
 	public void setTaxSeqId(long taxSeqId) {
 		this.taxSeqId = taxSeqId;
 	}
-	
+
 	public long getFinID() {
 		return finID;
 	}

@@ -46,7 +46,7 @@ public class ODDetailDownload implements Tasklet {
 
 		try {
 
-			//Daily Download of Overdue Details
+			// Daily Download of Overdue Details
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
 			sqlStatement.setString(1, dateAppDate.toString());

@@ -131,8 +131,8 @@ public class PaymentRecoveryService {
 		if (rpyMethod.equals(RepayConstants.REPAY_HIERARCHY_FIPCS)
 				|| rpyMethod.equals(RepayConstants.REPAY_HIERARCHY_FPICS)) {
 
-			totalpaidAmount = getRepayPaid(finRepay.getFinReference(), finRepay.getRpyDate(),
-					AccountingEvent.REPAY, bathRef);
+			totalpaidAmount = getRepayPaid(finRepay.getFinReference(), finRepay.getRpyDate(), AccountingEvent.REPAY,
+					bathRef);
 
 			totalpaidAmount = totalpaidAmount.add(getPenaltyPaidSeparately(finRepay, finRepay.getRpyDate(), bathRef));
 

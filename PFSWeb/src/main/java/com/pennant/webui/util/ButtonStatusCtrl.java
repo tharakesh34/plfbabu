@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ButtonStatusCtl.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ButtonStatusCtl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -92,16 +83,11 @@ public class ButtonStatusCtrl implements Serializable {
 	/**
 	 * Constructor
 	 * 
-	 * @param btnNew
-	 *            (New Button)
-	 * @param btnEdit
-	 *            (Edit Button)
-	 * @param btnDelete
-	 *            (Delete Button)
-	 * @param btnSave
-	 *            (Save Button)
-	 * @param btnClose
-	 *            (Close Button)
+	 * @param btnNew    (New Button)
+	 * @param btnEdit   (Edit Button)
+	 * @param btnDelete (Delete Button)
+	 * @param btnSave   (Save Button)
+	 * @param btnClose  (Close Button)
 	 */
 	public ButtonStatusCtrl(UserWorkspace userWorkspace, String rightPrefix, boolean withCloseBtn, Button btnNew,
 			Button btnEdit, Button btnDelete, Button btnSave, Button btnCancel, Button btnClose, Button btnNotes) {
@@ -140,7 +126,7 @@ public class ButtonStatusCtrl implements Serializable {
 			return;
 		}
 
-		//button.setSclass(Labels.getLabel("CSS_BUTTON_CLASS_NAME"));
+		// button.setSclass(Labels.getLabel("CSS_BUTTON_CLASS_NAME"));
 		button.setLabel(label);
 	}
 
@@ -327,8 +313,7 @@ public class ButtonStatusCtrl implements Serializable {
 	 * Sets the image of a button.<br>
 	 * 
 	 * @param b
-	 * @param imagePath
-	 *            path and image name
+	 * @param imagePath path and image name
 	 */
 	@SuppressWarnings("unused")
 	private void setImage(ButtonEnum b, String imagePath) {
@@ -339,8 +324,7 @@ public class ButtonStatusCtrl implements Serializable {
 	 * Set the button visible.<br>
 	 * 
 	 * @param b
-	 * @param visible
-	 *            True or False
+	 * @param visible True or False
 	 */
 	private void setVisible(ButtonEnum b, boolean visible) {
 		if (buttons.get(b) == null) {
@@ -360,8 +344,7 @@ public class ButtonStatusCtrl implements Serializable {
 	 * Sets the button disabled.<br>
 	 * 
 	 * @param b
-	 * @param disabled
-	 *            True or False
+	 * @param disabled True or False
 	 */
 	private void setDisabled(ButtonEnum b, boolean disabled) {
 		if (buttons.get(b) == null) {

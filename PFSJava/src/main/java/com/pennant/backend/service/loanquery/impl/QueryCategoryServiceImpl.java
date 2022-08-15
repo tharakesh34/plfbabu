@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QueryCategoryServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-05-2018    														*
- *                                                                  						*
- * Modified Date    :  08-05-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : QueryCategoryServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-05-2018 * *
+ * Modified Date : 08-05-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-05-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.loanquery.impl;
 
 import org.apache.logging.log4j.LogManager;
@@ -81,8 +63,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -96,8 +77,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 	}
 
 	/**
-	 * @param queryCategoryDAO
-	 *            the queryCategoryDAO to set
+	 * @param queryCategoryDAO the queryCategoryDAO to set
 	 */
 	public void setQueryCategoryDAO(QueryCategoryDAO queryCategoryDAO) {
 		this.queryCategoryDAO = queryCategoryDAO;
@@ -111,8 +91,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 	 * the table. based on the module workFlow Configuration. by using BMTQueryCategoriesDAO's update method 3) Audit
 	 * the record in to AuditHeader and AdtBMTQueryCategories by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -152,8 +131,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 	 * BMTQueryCategories by using BMTQueryCategoriesDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBMTQueryCategories by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -178,8 +156,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 	/**
 	 * getBMTQueryCategories fetch the details by using BMTQueryCategoriesDAO's getBMTQueryCategoriesById method.
 	 * 
-	 * @param id
-	 *            id of the QueryCategory.
+	 * @param id id of the QueryCategory.
 	 * @return BMTQueryCategories
 	 */
 	@Override
@@ -191,8 +168,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 	 * getApprovedBMTQueryCategoriesById fetch the details by using BMTQueryCategoriesDAO's getBMTQueryCategoriesById
 	 * method . with parameter id and type as blank. it fetches the approved records from the BMTQueryCategories.
 	 * 
-	 * @param id
-	 *            id of the QueryCategory. (String)
+	 * @param id id of the QueryCategory. (String)
 	 * @return BMTQueryCategories
 	 */
 	public QueryCategory getApprovedQueryCategory(long id) {
@@ -210,8 +186,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
 	 * AdtBMTQueryCategories by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -275,8 +250,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 	 * workFlow table by using getQueryCategoryDAO().delete with parameters queryCategory,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtBMTQueryCategories by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -304,8 +278,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -337,8 +310,8 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 		QueryCategory queryCategory = (QueryCategory) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (queryCategory.isNewRecord() && queryCategoryDAO.isDuplicateKey(queryCategory.getId(), queryCategory.getCode(),
-				queryCategory.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (queryCategory.isNewRecord() && queryCategoryDAO.isDuplicateKey(queryCategory.getId(),
+				queryCategory.getCode(), queryCategory.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + queryCategory.getCode();

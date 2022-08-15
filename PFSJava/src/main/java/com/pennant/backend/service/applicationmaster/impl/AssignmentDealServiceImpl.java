@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AssignmentDealServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2018    														*
- *                                                                  						*
- * Modified Date    :  12-09-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AssignmentDealServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2018 * *
+ * Modified Date : 12-09-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.ArrayList;
@@ -87,8 +69,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 	 * based on the module workFlow Configuration. by using AssignmentDealDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtAssignmentDeal by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -206,7 +187,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 				assignmentDealDAO.saveLoanType(assignmentDealLoanType, type);
 			}
 			if (updateRecord) {
-				//assignmentDealDAO.updateLoanType(assignmentDealLoanType, type);
+				// assignmentDealDAO.updateLoanType(assignmentDealLoanType, type);
 			}
 			if (approveRec) {
 				assignmentDealLoanType.setRecordType(rcdType);
@@ -309,8 +290,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 	 * AssignmentDeal by using AssignmentDealDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtAssignmentDeal by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -335,8 +315,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 	/**
 	 * getAssignmentDeal fetch the details by using AssignmentDealDAO's getAssignmentDealById method.
 	 * 
-	 * @param id
-	 *            id of the AssignmentDeal.
+	 * @param id id of the AssignmentDeal.
 	 * @return AssignmentDeal
 	 */
 	@Override
@@ -359,8 +338,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 	 * getApprovedAssignmentDealById fetch the details by using AssignmentDealDAO's getAssignmentDealById method . with
 	 * parameter id and type as blank. it fetches the approved records from the AssignmentDeal.
 	 * 
-	 * @param id
-	 *            id of the AssignmentDeal. (String)
+	 * @param id id of the AssignmentDeal. (String)
 	 * @return AssignmentDeal
 	 */
 	public AssignmentDeal getApprovedAssignmentDeal(long id) {
@@ -378,8 +356,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAssignmentDeal by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader aAuditHeader) {
@@ -397,7 +374,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 		AuditHeader auditHeader = new AuditHeader();
 		BeanUtils.copyProperties(aAuditHeader, auditHeader);
 
-		//delete
+		// delete
 		assignmentDealDAO.deleteLoanTypeList(assignmentDeal.getAssignmentDealLoanType(), "");
 		assignmentDealDAO.deleteExcFeeList(assignmentDeal.getAssignmentDealExcludedFee(), "");
 
@@ -548,8 +525,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 	 * workFlow table by using assignmentDealDAO.delete with parameters assignmentDeal,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtAssignmentDeal by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -579,8 +555,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -781,8 +756,8 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 		parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + assignmentDeal.getCode();
 
 		// Check the unique keys.
-		if (assignmentDeal.isNewRecord() && assignmentDealDAO.isDuplicateKey(assignmentDeal.getId(), assignmentDeal.getCode(),
-				assignmentDeal.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (assignmentDeal.isNewRecord() && assignmentDealDAO.isDuplicateKey(assignmentDeal.getId(),
+				assignmentDeal.getCode(), assignmentDeal.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}

@@ -80,7 +80,7 @@ public class DisbursementConstants {
 	public static final String STATUS_PAID_BUT_CANCELLED = "PAID BUT CANCELLED";
 	public static final String STATUS_PRINT = "PRINT";
 
-	// Payment Channels 
+	// Payment Channels
 	public static final String CHANNEL_PAYMENT = "P";
 	public static final String CHANNEL_FLEXIDISBURSEMENT = "F";
 	public static final String CHANNEL_DISBURSEMENT = "D";

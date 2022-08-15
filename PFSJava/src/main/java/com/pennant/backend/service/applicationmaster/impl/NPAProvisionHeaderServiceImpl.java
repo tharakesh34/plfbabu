@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  NPAProvisionHeaderServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-05-2020    														*
- *                                                                  						*
- * Modified Date    :  04-05-2020    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : NPAProvisionHeaderServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-05-2020 * *
+ * Modified Date : 04-05-2020 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-05-2020       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-05-2020 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.ArrayList;
@@ -99,8 +81,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -114,8 +95,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	}
 
 	/**
-	 * @param nPAProvisionHeaderDAO
-	 *            the nPAProvisionHeaderDAO to set
+	 * @param nPAProvisionHeaderDAO the nPAProvisionHeaderDAO to set
 	 */
 	public void setNPAProvisionHeaderDAO(NPAProvisionHeaderDAO nPAProvisionHeaderDAO) {
 		this.nPAProvisionHeaderDAO = nPAProvisionHeaderDAO;
@@ -137,8 +117,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	 * Record in the table. based on the module workFlow Configuration. by using NPA_PROVISION_HEADERDAO's update method
 	 * 3) Audit the record in to AuditHeader and AdtNPA_PROVISION_HEADER by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -186,8 +165,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	 * NPA_PROVISION_HEADER by using NPA_PROVISION_HEADERDAO's delete method with type as Blank 3) Audit the record in
 	 * to AuditHeader and AdtNPA_PROVISION_HEADER by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -222,8 +200,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	 * Audit the record in to AuditHeader and AdtNPA_PROVISION_HEADER by using auditHeaderDAO.addAudit(auditHeader)
 	 * based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -300,8 +277,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	 * workFlow table by using getNPAProvisionHeaderDAO().delete with parameters nPAProvisionHeader,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtNPA_PROVISION_HEADER by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -330,8 +306,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -392,8 +367,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	/**
 	 * getNPA_PROVISION_HEADER fetch the details by using NPA_PROVISION_HEADERDAO's getNPA_PROVISION_HEADERById method.
 	 * 
-	 * @param id
-	 *            id of the NPAProvisionHeader.
+	 * @param id id of the NPAProvisionHeader.
 	 * @return NPA_PROVISION_HEADER
 	 */
 	@Override
@@ -406,8 +380,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 	 * getNPA_PROVISION_HEADERById method . with parameter id and type as blank. it fetches the approved records from
 	 * the NPA_PROVISION_HEADER.
 	 * 
-	 * @param id
-	 *            id of the NPAProvisionHeader. (String)
+	 * @param id id of the NPAProvisionHeader. (String)
 	 * @return NPA_PROVISION_HEADER
 	 */
 	public NPAProvisionHeader getApprovedNPAProvisionHeader(long id) {
@@ -427,7 +400,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 			return provisionHeader;
 		}
 
-		//provision Details List
+		// provision Details List
 		List<NPAProvisionDetail> provisionDeatilsList = setAstClassificationDeatils(detailsList);
 		provisionHeader.setProvisionDetailsList(provisionDeatilsList);
 
@@ -513,7 +486,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 		return provisionDetailsList;
 	}
 
-	///////////////Provision details Processing Start////////////////////////////
+	/////////////// Provision details Processing Start////////////////////////////
 	/**
 	 * Provision details processing
 	 * 
@@ -589,15 +562,15 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 				npAProvisionDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				//getnPAProvisionDetailDAO().save(npAProvisionDetails, tableType);
+				// getnPAProvisionDetailDAO().save(npAProvisionDetails, tableType);
 			}
 
 			if (updateRecord) {
-				//getnPAProvisionDetailDAO().update(npAProvisionDetails, tableType);
+				// getnPAProvisionDetailDAO().update(npAProvisionDetails, tableType);
 			}
 
 			if (deleteRecord) {
-				//getnPAProvisionDetailDAO().delete(npAProvisionDetails, tableType);
+				// getnPAProvisionDetailDAO().delete(npAProvisionDetails, tableType);
 			}
 
 			if (approveRec) {
@@ -806,7 +779,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 		this.nPAProvisionDetailDAO.saveList(detailsList, tableType);
 	}
 
-	///////////////Provision details Processing End//////////////////////////////
+	/////////////// Provision details Processing End//////////////////////////////
 
 	@Override
 	public List<AssetClassificationDetail> getAssetHeadeiIdList(String finType, TableType type) {

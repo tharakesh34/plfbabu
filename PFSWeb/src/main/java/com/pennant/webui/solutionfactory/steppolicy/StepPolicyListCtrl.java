@@ -1,43 +1,25 @@
 /**
-Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  StepPolicyHeaderListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-06-2011    														*
- *                                                                  						*
- * Modified Date    :  30-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : StepPolicyHeaderListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-06-2011 * *
+ * Modified Date : 30-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 30-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.solutionfactory.steppolicy;
@@ -118,8 +100,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_StepPolicyList(Event event) {
 		// Set the page level components.
@@ -147,8 +128,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_StepPolicyList_StepPolicySearchDialog(Event event) {
 		search();
@@ -157,8 +137,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -168,8 +147,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_StepPolicyList_NewStepPolicy(Event event) {
 		logger.debug("Entering");
@@ -189,8 +167,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onStepPolicyHeaderItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -226,8 +203,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aStepPolicyHeader
-	 *            The entity that need to be passed to the dialog.
+	 * @param aStepPolicyHeader The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(StepPolicyHeader aStepPolicyHeader) {
 		logger.debug("Entering");
@@ -248,8 +224,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -258,8 +233,7 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

@@ -1,19 +1,16 @@
-/* SpringUtil.java
-
-{{IS_NOTE
-	Purpose:
-		
-	Description:
-		
-	History:
-		Thu Jun  1 13:53:53     2006, Created by henrichen
-}}IS_NOTE
-
-Copyright (C) 2006 Potix Corporation. All Rights Reserved.
-
-{{IS_RIGHT
-}}IS_RIGHT
-*/
+/*
+ * SpringUtil.java
+ * 
+ * {{IS_NOTE Purpose:
+ * 
+ * Description:
+ * 
+ * History: Thu Jun 1 13:53:53 2006, Created by henrichen }}IS_NOTE
+ * 
+ * Copyright (C) 2006 Potix Corporation. All Rights Reserved.
+ * 
+ * {{IS_RIGHT }}IS_RIGHT
+ */
 package org.zkoss.spring;
 
 import javax.servlet.ServletContext;

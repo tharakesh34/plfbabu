@@ -60,14 +60,16 @@ public class IRRFinanceValidation {
 
 		if (irrFinanceType.isNewRecord()) { // for New record or new record into work flow
 
-			if (!irrFinanceType.isWorkflow()) {// With out Work flow only new records  
-				if (befirrFinanceTypeDetail != null) { // Record Already Exists in the table then error  
+			if (!irrFinanceType.isWorkflow()) {// With out Work flow only new records
+				if (befirrFinanceTypeDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (irrFinanceType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befirrFinanceTypeDetail != null || tempirrFinanceTypeDetail != null) { // if records already exists in the main table
+					if (befirrFinanceTypeDetail != null || tempirrFinanceTypeDetail != null) { // if records already
+																								// exists in the main
+																								// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -98,7 +100,7 @@ public class IRRFinanceValidation {
 				}
 			} else {
 
-				if (tempirrFinanceTypeDetail == null) { // if records not exists in the Work flow table 
+				if (tempirrFinanceTypeDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

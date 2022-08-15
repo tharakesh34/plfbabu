@@ -60,14 +60,18 @@ public class FinTypeVasDetailValidation {
 
 		if (finTypeVASProducts.isNewRecord()) { // for New record or new record into work flow
 
-			if (!finTypeVASProducts.isWorkflow()) {// With out Work flow only new records  
-				if (beffinTypeVASProductsDetail != null) { // Record Already Exists in the table then error  
+			if (!finTypeVASProducts.isWorkflow()) {// With out Work flow only new records
+				if (beffinTypeVASProductsDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (finTypeVASProducts.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (beffinTypeVASProductsDetail != null || tempfinTypeVASProductsDetail != null) { // if records already exists in the main table
+				if (finTypeVASProducts.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (beffinTypeVASProductsDetail != null || tempfinTypeVASProductsDetail != null) { // if records
+																										// already
+																										// exists in the
+																										// main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -98,7 +102,7 @@ public class FinTypeVasDetailValidation {
 				}
 			} else {
 
-				if (tempfinTypeVASProductsDetail == null) { // if records not exists in the Work flow table 
+				if (tempfinTypeVASProductsDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

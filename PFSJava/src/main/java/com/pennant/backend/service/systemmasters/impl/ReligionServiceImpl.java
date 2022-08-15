@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReligionServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  24-01-2018    														*
- *                                                                  						*
- * Modified Date    :  24-01-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReligionServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 24-01-2018 * * Modified
+ * Date : 24-01-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-01-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-01-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -84,8 +66,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -99,8 +80,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 	}
 
 	/**
-	 * @param religionDAO
-	 *            the religionDAO to set
+	 * @param religionDAO the religionDAO to set
 	 */
 	public void setReligionDAO(ReligionDAO religionDAO) {
 		this.religionDAO = religionDAO;
@@ -114,8 +94,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 	 * ReligionDAO's update method 3) Audit the record in to AuditHeader and AdtReligion by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -155,8 +134,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 	 * Religion by using ReligionDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtReligion by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -181,8 +159,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 	/**
 	 * getReligion fetch the details by using ReligionDAO's getReligionById method.
 	 * 
-	 * @param religionId
-	 *            religionId of the Religion.
+	 * @param religionId religionId of the Religion.
 	 * @return Religion
 	 */
 	@Override
@@ -194,8 +171,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 	 * getApprovedReligionById fetch the details by using ReligionDAO's getReligionById method . with parameter id and
 	 * type as blank. it fetches the approved records from the Religion.
 	 * 
-	 * @param religionId
-	 *            religionId of the Religion. (String)
+	 * @param religionId religionId of the Religion. (String)
 	 * @return Religion
 	 */
 	public Religion getApprovedReligion(long religionId) {
@@ -213,8 +189,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 	 * Audit the record in to AuditHeader and AdtReligion by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -278,8 +253,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 	 * workFlow table by using getReligionDAO().delete with parameters religion,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtReligion by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -307,8 +281,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

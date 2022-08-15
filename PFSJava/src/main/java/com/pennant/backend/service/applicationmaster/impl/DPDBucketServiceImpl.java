@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DPDBucketServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-04-2017    														*
- *                                                                  						*
- * Modified Date    :  21-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DPDBucketServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-04-2017 * * Modified
+ * Date : 21-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -85,8 +67,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -100,8 +81,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	}
 
 	/**
-	 * @param dPDBucketDAO
-	 *            the dPDBucketDAO to set
+	 * @param dPDBucketDAO the dPDBucketDAO to set
 	 */
 	public void setDPDBucketDAO(DPDBucketDAO dPDBucketDAO) {
 		this.dPDBucketDAO = dPDBucketDAO;
@@ -115,8 +95,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	 * by using DPDBUCKETSDAO's update method 3) Audit the record in to AuditHeader and AdtDPDBUCKETS by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -161,8 +140,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	 * DPDBUCKETS by using DPDBUCKETSDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtDPDBUCKETS by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -188,8 +166,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	/**
 	 * getDPDBUCKETS fetch the details by using DPDBUCKETSDAO's getDPDBUCKETSById method.
 	 * 
-	 * @param bucketID
-	 *            bucketID of the DPDBucket.
+	 * @param bucketID bucketID of the DPDBucket.
 	 * @return DPDBUCKETS
 	 */
 	@Override
@@ -200,8 +177,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	/**
 	 * It fetches Approved DPDBucket from DPDBUCKETS
 	 * 
-	 * @param long
-	 *            bucketID
+	 * @param long bucketID
 	 * @return DPDBUCKETS
 	 */
 	public DPDBucket getApprovedDPDBucket(long bucketID) {
@@ -219,8 +195,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtDPDBUCKETS by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -288,8 +263,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	 * workFlow table by using getDPDBucketDAO().delete with parameters dPDBucket,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtDPDBUCKETS by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -317,8 +291,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -360,7 +333,9 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 		}
 
 		if (StringUtils.trimToEmpty(dPDBucket.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			int count = dPDBucketConfigurationDAO.getDPDBucketConfigurationDAOById(dPDBucket.getBucketID(), "");//FIXME for FinanceMain
+			int count = dPDBucketConfigurationDAO.getDPDBucketConfigurationDAOById(dPDBucket.getBucketID(), "");// FIXME
+																												// for
+																												// FinanceMain
 			if (count != 0) {
 
 				String[] errParm = new String[1];

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SalesOfficerServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2011    														*
- *                                                                  						*
- * Modified Date    :  12-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SalesOfficerServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2011 * *
+ * Modified Date : 12-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -105,8 +87,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 	 * Configuration. by using SalesOfficerDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtSalesOfficers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -143,8 +124,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 	 * SalesOfficers by using SalesOfficerDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtSalesOfficers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -168,10 +148,8 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 	/**
 	 * getSalesOfficerById fetch the details by using SalesOfficerDAO's getSalesOfficerById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SalesOfficer
 	 */
 
@@ -184,8 +162,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 	 * getApprovedSalesOfficerById fetch the details by using SalesOfficerDAO's getSalesOfficerById method . with
 	 * parameter id and type as blank. it fetches the approved records from the SalesOfficers.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return SalesOfficer
 	 */
 
@@ -204,8 +181,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtSalesOfficers by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -263,8 +239,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 	 * workFlow table by using getSalesOfficerDAO().delete with parameters salesOfficer,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtSalesOfficers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -293,8 +268,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 	 * for any mismatch conditions Fetch the error details from getSalesOfficerDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -339,20 +313,20 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 		errParm[0] = PennantJavaUtil.getLabel("label_SalesOffCode") + ":" + valueParm[0];
 
 		if (salesOfficer.isNewRecord()) { // for New record or new record into work
-										// flow
+											// flow
 
 			if (!salesOfficer.isWorkflow()) {// With out Work flow only new
-													// records
+												// records
 				if (befSalesOfficer != null) { // Record Already Exists in the
-													// table then error
+												// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (salesOfficer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																									// is new
+																								// is new
 					if (befSalesOfficer != null || tempSalesOfficer != null) { // if records
-																					// already exists
+																				// already exists
 																				// in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -368,10 +342,10 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!salesOfficer.isWorkflow()) { // With out Work flow for update
-													// and delete
+												// and delete
 
 				if (befSalesOfficer == null) { // if records not exists in the
-													// main table
+												// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -392,7 +366,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 			} else {
 
 				if (tempSalesOfficer == null) { // if records not exists in the
-													// Work flow table
+												// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

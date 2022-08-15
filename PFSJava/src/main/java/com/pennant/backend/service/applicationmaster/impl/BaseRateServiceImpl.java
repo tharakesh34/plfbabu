@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BaseRateServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BaseRateServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified
+ * Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.Date;
@@ -106,8 +88,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 * by using BaseRateDAO's update method 3) Audit the record in to AuditHeader and AdtRMTBaseRates by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -148,8 +129,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 * RMTBaseRates by using BaseRateDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtRMTBaseRates by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -173,10 +153,8 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	/**
 	 * getBaseRateById fetch the details by using BaseRateDAO's getBaseRateById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return BaseRate
 	 */
 	@Override
@@ -188,8 +166,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 * getApprovedBaseRateById fetch the details by using BaseRateDAO's getBaseRateById method . with parameter id and
 	 * type as blank. it fetches the approved records from the RMTBaseRates.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return BaseRate
 	 */
 	public BaseRate getApprovedBaseRateById(String bRType, String currency, Date bREffDate) {
@@ -199,10 +176,8 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	/**
 	 * getBaseRateDelById fetch the details by using BaseRateDAO's getBaseRateDelById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) _View
+	 * @param id   (String)
+	 * @param type (String) _View
 	 * @return BaseRate
 	 */
 	@Override
@@ -221,8 +196,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 * flow 5) Audit the record in to AuditHeader and AdtRMTBaseRates by using auditHeaderDAO.addAudit(auditHeader)
 	 * based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -289,8 +263,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 * workFlow table by using getBaseRateDAO().delete with parameters baseRate,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtRMTBaseRates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -315,8 +288,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {

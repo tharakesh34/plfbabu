@@ -30,8 +30,7 @@ public class Uppercasebox extends Textbox {
 	/**
 	 * Returns the value.
 	 * 
-	 * @exception WrongValueException
-	 *                - If user entered a wrong value.
+	 * @exception WrongValueException - If user entered a wrong value.
 	 */
 	@Override
 	public String getValue() {
@@ -41,10 +40,8 @@ public class Uppercasebox extends Textbox {
 	/**
 	 * Sets the value.
 	 * 
-	 * @param value
-	 *            The value; If null, it is considered as empty.
-	 * @exception WrongValueException
-	 *                - If value is wrong.
+	 * @param value The value; If null, it is considered as empty.
+	 * @exception WrongValueException - If value is wrong.
 	 */
 	@Override
 	public void setValue(String value) {
@@ -58,8 +55,7 @@ public class Uppercasebox extends Textbox {
 	/**
 	 * Sets the CSS style.
 	 * 
-	 * @param style
-	 *            The CSS style.
+	 * @param style The CSS style.
 	 */
 	@Override
 	public void setStyle(String style) {

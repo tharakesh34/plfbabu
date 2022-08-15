@@ -207,7 +207,7 @@ public class SubHeadRule implements Serializable {
 		PAIDFEE = pAIDFEE;
 	}
 
-	//Set values into Map
+	// Set values into Map
 	public Map<String, Object> getDeclaredFieldValues() {
 		Map<String, Object> subHeadRuleMap = new HashMap<String, Object>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {

@@ -12,8 +12,9 @@ public class MonthlyAccumulateDetail implements Serializable {
 	private Date monthEndDate;
 	private Date monthStartDate;
 	private BigDecimal pftAccrued = BigDecimal.ZERO;
-	private BigDecimal pftTsfd = BigDecimal.ZERO; // (Present Month Accrued + Total Pft Paid) - Previous Month Transfered
-	//FIXME: PV 14APR17
+	private BigDecimal pftTsfd = BigDecimal.ZERO; // (Present Month Accrued + Total Pft Paid) - Previous Month
+													// Transfered
+	// FIXME: PV 14APR17
 	private BigDecimal accumulatedDepPri = BigDecimal.ZERO;
 	private BigDecimal depreciatePri = BigDecimal.ZERO;
 

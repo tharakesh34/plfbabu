@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennanttech.pennapps.pff.verification.service;
@@ -100,8 +99,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the record in to
 	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -153,7 +151,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
 		}
@@ -284,8 +282,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -313,8 +310,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	/**
 	 * getverification_fi fetch the details by using verification_fiDAO's getverification_fiById method.
 	 * 
-	 * @param id
-	 *            id of the FieldInvestigation.
+	 * @param id id of the FieldInvestigation.
 	 * @return verification_fi
 	 */
 	@Override
@@ -338,8 +334,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * getApprovedverification_fiById fetch the details by using verification_fiDAO's getverification_fiById method .
 	 * with parameter id and type as blank. it fetches the approved records from the verification_fi.
 	 * 
-	 * @param id
-	 *            id of the FieldInvestigation. (String)
+	 * @param id id of the FieldInvestigation. (String)
 	 * @return verification_fi
 	 */
 	@Override
@@ -358,8 +353,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -453,7 +447,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		auditHeader.getAuditDetail().setModelData(fi);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(auditHeader, "doApprove");
 		}
@@ -509,8 +503,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * workFlow table by using fieldInvestigationDAO.delete with parameters fieldInvestigation,"_Temp" 3) Audit the
 	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -546,8 +539,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalDetailDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-06-2018    														*
- *                                                                  						*
- * Modified Date    :  16-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalDetailDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-06-2018 * * Modified Date
+ * : 16-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.legal;
 
 import java.util.List;
@@ -53,10 +35,8 @@ public interface LegalDetailDAO extends BasicCrudDao<LegalDetail> {
 	/**
 	 * Fetch the Record LegalDetail by key field
 	 * 
-	 * @param legalReference
-	 *            legalReference of the LegalDetail.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param legalReference legalReference of the LegalDetail.
+	 * @param tableType      The type of the table.
 	 * @return LegalDetail
 	 */
 	LegalDetail getLegalDetail(long legalReference, String type);
@@ -64,14 +44,10 @@ public interface LegalDetailDAO extends BasicCrudDao<LegalDetail> {
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
-	 * @param legalReference
-	 *            legalReference of the LegalDetail.
-	 * @param loanReference
-	 *            loanReference of the LegalDetail.
-	 * @param collaterialReference
-	 *            collaterialReference of the LegalDetail.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param legalReference       legalReference of the LegalDetail.
+	 * @param loanReference        loanReference of the LegalDetail.
+	 * @param collaterialReference collaterialReference of the LegalDetail.
+	 * @param tableType            The type of the table.
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(long legalReference, String loanReference, String collaterialReference, TableType tableType);
@@ -81,8 +57,7 @@ public interface LegalDetailDAO extends BasicCrudDao<LegalDetail> {
 	/**
 	 * Checks whether all the completed legal details for the loan has the decision as "Positive".
 	 * 
-	 * @param loanReference
-	 *            The loan reference to check.
+	 * @param loanReference The loan reference to check.
 	 * @return True if all the completed legal details for the loan has the decision as "Positive". Otherwise False.
 	 */
 	boolean isDecisionPositive(String loanReference);

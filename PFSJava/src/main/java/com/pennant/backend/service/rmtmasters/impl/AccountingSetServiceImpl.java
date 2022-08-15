@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountingSetServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2011    														*
- *                                                                  						*
- * Modified Date    :  14-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountingSetServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2011 * *
+ * Modified Date : 14-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.rmtmasters.impl;
@@ -153,8 +135,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	 * based on the module workFlow Configuration. by using AccountingSetDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtRMTAccountingSet by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -203,8 +184,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	 * RMTAccountingSet by using AccountingSetDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtRMTAccountingSet by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -230,10 +210,8 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	/**
 	 * getAccountingSetById fetch the details by using AccountingSetDAO's getAccountingSetById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return AccountingSet
 	 */
 
@@ -250,8 +228,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	 * getApprovedAccountingSetById fetch the details by using AccountingSetDAO's getAccountingSetById method . with
 	 * parameter id and type as blank. it fetches the approved records from the RMTAccountingSet.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return AccountingSet
 	 */
 
@@ -281,8 +258,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtRMTAccountingSet
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -352,8 +328,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	 * workFlow table by using getAccountingSetDAO().delete with parameters accountingSet,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtRMTAccountingSet by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -387,8 +362,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	 * for any mismatch conditions Fetch the error details from getAccountingSetDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -466,10 +440,10 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!accountingSet.isWorkflow()) { // With out Work flow for update
-													// and delete
+												// and delete
 
 				if (befAccountingSet == null) { // if records not exists in the
-													// main table
+												// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -490,7 +464,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			} else {
 
 				if (tempAccountingSet == null) { // if records not exists in the
-														// Work flow table
+													// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -503,7 +477,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			}
 		}
 
-		//if we have used in any other depended tables or not?
+		// if we have used in any other depended tables or not?
 		if (PennantConstants.RECORD_TYPE_DEL.equals(StringUtils.trimToEmpty(accountingSet.getRecordType()))) {
 
 			int count = this.finTypeAccountingDAO.getAccountingSetIdCount(accountingSet.getAccountSetid(), "_View");
@@ -674,7 +648,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 				transactionEntry.setNextTaskId("");
 			}
 
-			//Fee Rules Verification for existence Entry usage
+			// Fee Rules Verification for existence Entry usage
 			String[] feeCodeList = transactionEntry.getAmountRule().split("[^a-zA-Z0-9_]+");
 			String feeCode = "";
 			for (int k = 0; k < feeCodeList.length; k++) {

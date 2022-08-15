@@ -38,10 +38,8 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	/**
 	 * getReturnedChequesById fetch the details by using ReturnedChequeDAO's getReturnedChequeByID method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ReturnedCheque
 	 */
 	@Override
@@ -53,8 +51,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	 * getApprovedCityById fetch the details by using ReturnedChequeDAO's getReturnedChequesById method . with parameter
 	 * id and type as blank. it fetches the approved records from the RetunedCheque.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return ReturnedCheque
 	 */
 	@Override
@@ -70,8 +67,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	 * based on the module workFlow Configuration. by using ReturnedChequeDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtReturnedCheque by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -112,8 +108,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	 * ReturnedCheque by using ReturnedChequeDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtReturnedCheque by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -144,8 +139,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtReturnedCheque by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -202,8 +196,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	 * workFlow table by using getReturnedChequeDAO().delete with parameters returnedCheque,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtReturnedCheque by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -229,8 +222,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {

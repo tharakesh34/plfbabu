@@ -122,7 +122,7 @@ public class CustomerIncomeValidation {
 
 				if (customerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCustomerIncome != null || tempCustomerIncome != null) { // if records already exists in the
-																						// main table
+																					// main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table

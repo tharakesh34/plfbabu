@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LovFieldCodeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-10-2011    														*
- *                                                                  						*
- * Modified Date    :  04-10-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LovFieldCodeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-10-2011 * *
+ * Modified Date : 04-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-10-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.staticparms.impl;
@@ -103,8 +85,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	 * based on the module workFlow Configuration. by using LovFieldCodeDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBMTLovFieldCode by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -141,8 +122,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	 * BMTLovFieldCode by using LovFieldCodeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtBMTLovFieldCode by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -166,10 +146,8 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	/**
 	 * getLovFieldCodeById fetch the details by using LovFieldCodeDAO's getLovFieldCodeById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LovFieldCode
 	 */
 
@@ -182,8 +160,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	 * getApprovedLovFieldCodeById fetch the details by using LovFieldCodeDAO's getLovFieldCodeById method . with
 	 * parameter id and type as blank. it fetches the approved records from the BMTLovFieldCode.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return LovFieldCode
 	 */
 
@@ -202,8 +179,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTLovFieldCode
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -260,8 +236,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	 * workFlow table by using getLovFieldCodeDAO().delete with parameters lovFieldCode,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtBMTLovFieldCode by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -290,8 +265,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 	 * for any mismatch conditions Fetch the error details from getLovFieldCodeDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -325,14 +299,15 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 
 		if (lovFieldCode.isNewRecord()) { // for New record or new record into work flow
 
-			if (!lovFieldCode.isWorkflow()) {// With out Work flow only new records  
-				if (befLovFieldCode != null) { // Record Already Exists in the table then error  
+			if (!lovFieldCode.isWorkflow()) {// With out Work flow only new records
+				if (befLovFieldCode != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (lovFieldCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befLovFieldCode != null || tempLovFieldCode != null) { // if records already exists in the main table
+					if (befLovFieldCode != null || tempLovFieldCode != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -367,7 +342,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 				}
 			} else {
 
-				if (tempLovFieldCode == null) { // if records not exists in the Work flow table 
+				if (tempLovFieldCode == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

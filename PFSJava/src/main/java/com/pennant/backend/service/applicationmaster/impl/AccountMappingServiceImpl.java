@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountMappingServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  24-04-2017    														*
- *                                                                  						*
- * Modified Date    :  24-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountMappingServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 24-04-2017 * *
+ * Modified Date : 24-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.ArrayList;
@@ -95,8 +77,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -110,8 +91,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	}
 
 	/**
-	 * @param accountMappingDAO
-	 *            the accountMappingDAO to set
+	 * @param accountMappingDAO the accountMappingDAO to set
 	 */
 	public void setAccountMappingDAO(AccountMappingDAO accountMappingDAO) {
 		this.accountMappingDAO = accountMappingDAO;
@@ -125,8 +105,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 * based on the module workFlow Configuration. by using AccountMappingDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtAccountMapping by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -262,8 +241,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 * AccountMapping by using AccountMappingDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtAccountMapping by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -288,8 +266,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	/**
 	 * getAccountMapping fetch the details by using AccountMappingDAO's getAccountMappingById method.
 	 * 
-	 * @param account
-	 *            account of the AccountMapping.
+	 * @param account account of the AccountMapping.
 	 * @return AccountMapping
 	 */
 	@Override
@@ -301,8 +278,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 * getApprovedAccountMappingById fetch the details by using AccountMappingDAO's getAccountMappingById method . with
 	 * parameter id and type as blank. it fetches the approved records from the AccountMapping.
 	 * 
-	 * @param account
-	 *            account of the AccountMapping. (String)
+	 * @param account account of the AccountMapping. (String)
 	 * @return AccountMapping
 	 */
 	public AccountMapping getApprovedAccountMapping(String account) {
@@ -320,8 +296,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAccountMapping by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -386,8 +361,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 * workFlow table by using getAccountMappingDAO().delete with parameters accountMapping,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtAccountMapping by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -415,8 +389,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -630,8 +603,9 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 				}
 			} else { // with work flow
 				if (accountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-					if (befAccountMapping != null || tempAccountMapping != null) { // if records already exists in the main
-																						// table
+					if (befAccountMapping != null || tempAccountMapping != null) { // if records already exists in the
+																					// main
+																					// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table

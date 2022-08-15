@@ -19,7 +19,7 @@ import com.pennanttech.batchupload.util.BatchProcessorUtil;
 
 public class TemplateMatcher {
 	private static final Logger logger = LogManager.getLogger(TemplateMatcher.class);
-	// Uploaded excel 
+	// Uploaded excel
 	private Workbook targetWorkbook = null; // Uploaded excel
 	// main template, from resources/BatchUpload_Templates directory
 	private Workbook sourceWorkbook = null;

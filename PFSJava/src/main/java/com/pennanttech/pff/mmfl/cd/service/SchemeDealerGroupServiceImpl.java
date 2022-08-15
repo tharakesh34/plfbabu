@@ -214,7 +214,8 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 		String id = schemeDealerGroup.getPromotionId();
 
 		// Check the unique keys.
-		if (schemeDealerGroup.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(schemeDealerGroup.getRecordType())
+		if (schemeDealerGroup.isNewRecord()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(schemeDealerGroup.getRecordType())
 				&& schemeDealerGroupDAO.isDuplicateKey(schemeDealerGroup,
 						schemeDealerGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

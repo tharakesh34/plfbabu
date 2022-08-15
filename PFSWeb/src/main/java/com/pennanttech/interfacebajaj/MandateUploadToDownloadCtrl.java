@@ -82,8 +82,7 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_MandateUploadToDownloadCtrl(Event event) throws Exception {
@@ -293,7 +292,7 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 			media = null;
 			return;
 		}
-		//check the file row count
+		// check the file row count
 		Workbook workbook = null;
 		try (InputStream fis = media.getStreamData()) {
 			if (mediaName.endsWith(".xls")) {
@@ -359,6 +358,7 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 			this.userId = userId;
 			this.status = status;
 		}
+
 		@Override
 		public void run() {
 			try {

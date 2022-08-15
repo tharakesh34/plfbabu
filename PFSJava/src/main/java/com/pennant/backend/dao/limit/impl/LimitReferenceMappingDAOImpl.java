@@ -32,10 +32,8 @@ public class LimitReferenceMappingDAOImpl extends SequenceDao<LimitReferenceMapp
 	 * 
 	 * save Limit Details
 	 * 
-	 * @param Limit
-	 *            Details (limitDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Details (limitDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return long id
 	 * @throws DataAccessException
 	 * 
@@ -90,10 +88,8 @@ public class LimitReferenceMappingDAOImpl extends SequenceDao<LimitReferenceMapp
 	/**
 	 * Fetch the Record Limit items by key field
 	 * 
-	 * @param id
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (long)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LimitReferenceMapping
 	 */
 	@Override
@@ -158,10 +154,8 @@ public class LimitReferenceMappingDAOImpl extends SequenceDao<LimitReferenceMapp
 	 * This method get the List LimitReferenceMapping .
 	 * 
 	 * 
-	 * @param LimitReferenceMapping
-	 *            (limitDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param LimitReferenceMapping (limitDetail)
+	 * @param type                  (String) ""/_Temp/_View
 	 * @return {@link List} of {@link LimitReferenceMapping}
 	 * @throws DataAccessException
 	 * 

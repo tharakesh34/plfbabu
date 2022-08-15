@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QueryServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-07-2013    														*
- *                                                                  						*
- * Modified Date    :  04-07-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : QueryServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-07-2013 * * Modified
+ * Date : 04-07-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-07-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-07-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.ArrayList;
@@ -84,8 +66,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -99,8 +80,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	}
 
 	/**
-	 * @param queryDAO
-	 *            the queryDAO to set
+	 * @param queryDAO the queryDAO to set
 	 */
 	public void setQueryDAO(QueryDAO queryDAO) {
 		this.queryDAO = queryDAO;
@@ -114,8 +94,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	 * QueryDAO's update method 3) Audit the record in to AuditHeader and AdtQueries by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -131,10 +110,8 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	 * QueryDAO's update method 3) Audit the record in to AuditHeader and AdtQueries by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -170,8 +147,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	 * Queries by using QueryDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and AdtQueries
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -195,10 +171,8 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	/**
 	 * getQueryById fetch the details by using QueryDAO's getQueryById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Query
 	 */
 
@@ -211,8 +185,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	 * getApprovedQueryById fetch the details by using QueryDAO's getQueryById method . with parameter id and type as
 	 * blank. it fetches the approved records from the Queries.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return Query
 	 */
 
@@ -230,8 +203,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	 * AuditHeader and AdtQueries by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and AdtQueries by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -288,8 +260,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	 * workFlow table by using getQueryDAO().delete with parameters query,"_Temp" 3) Audit the record in to AuditHeader
 	 * and AdtQueries by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -315,10 +286,8 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -339,10 +308,8 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 	 * mismatch conditions Fetch the error details from getQueryDAO().getErrorDetail with Error ID and language as
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -366,8 +333,8 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 
 		if (query.isNewRecord()) { // for New record or new record into work flow
 
-			if (!query.isWorkflow()) {// With out Work flow only new records  
-				if (befQuery != null) { // Record Already Exists in the table then error  
+			if (!query.isWorkflow()) {// With out Work flow only new records
+				if (befQuery != null) { // Record Already Exists in the table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
@@ -405,7 +372,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 				}
 			} else {
 
-				if (tempQuery == null) { // if records not exists in the Work flow table 
+				if (tempQuery == null) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}

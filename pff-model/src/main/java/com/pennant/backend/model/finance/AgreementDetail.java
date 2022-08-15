@@ -1,43 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  AgreementDetail.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  27-04-2012															*
- *                                                                  
- * Modified Date    :  23-07-2018															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : AgreementDetail.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 27-04-2012 *
+ * 
+ * Modified Date : 23-07-2018 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-05-2018       Pennant	                 1.0          Updated as part of Agreements     * 
- * 23-07-2018       Pennant                  1.1          Adding the Collateral Extended    * 
- *                                                        Details                           * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-05-2018 Pennant 1.0 Updated as part of Agreements * 23-07-2018 Pennant 1.1 Adding the Collateral Extended *
+ * Details * * * * * * *
  ********************************************************************************************
  */
 
@@ -55,7 +47,7 @@ import com.pennanttech.pennapps.pff.sampling.model.SamplingDetail;
 
 public class AgreementDetail {
 
-	//=============== Basic Details=============//
+	// =============== Basic Details=============//
 
 	/**
 	 * To identify the unique Customer using userID.
@@ -77,7 +69,7 @@ public class AgreementDetail {
 	private String userDeptName = ""; // User Department
 
 	/** Provides current User EmailId. */
-	private String usrEmailId = ""; // User EmailId 
+	private String usrEmailId = ""; // User EmailId
 
 	// =========== Customer ====================//
 
@@ -173,7 +165,7 @@ public class AgreementDetail {
 	 */
 	private String custIndustry = ""; // Customer Industry
 
-	private String custIndustryDesc = ""; //Customer Industry Description
+	private String custIndustryDesc = ""; // Customer Industry Description
 
 	/**
 	 * Provides Customer Nationality.
@@ -245,17 +237,17 @@ public class AgreementDetail {
 	/**
 	 * Provides Customer Salutation i.e Mr, Mrs .
 	 */
-	private String custSalutation = ""; //  customer salutation
+	private String custSalutation = ""; // customer salutation
 
 	/**
 	 * Provides Customer Gender.
 	 */
-	private String custGender = ""; //  customer Gender
+	private String custGender = ""; // customer Gender
 
 	/**
 	 * Provides Customer Category i.e retail ,SME or Corporate.
 	 */
-	private String custCtgCode = ""; //  customer Gender
+	private String custCtgCode = ""; // customer Gender
 
 	/**
 	 * Provides Customer Gender.
@@ -264,15 +256,15 @@ public class AgreementDetail {
 	/**
 	 * Provides Customer Qualification.
 	 */
-	private String custQuallification = ""; //  customer Gender
-	private String accountsOfficer = ""; //  customer Gender
+	private String custQuallification = ""; // customer Gender
+	private String accountsOfficer = ""; // customer Gender
 
 	private String otherBankAmt;
 
 	private String custContribution;
 	private String custConInWords;
 
-	//Customer subcategory
+	// Customer subcategory
 	private String custSubCategory = "";
 
 	private String ltvPerc = "";
@@ -1061,7 +1053,7 @@ public class AgreementDetail {
 	// =========== Finance Basic================//
 
 	// Finance Basic Details
-	//===============================
+	// ===============================
 
 	/**
 	 * Provides current Loan Type.
@@ -1200,7 +1192,7 @@ public class AgreementDetail {
 	private String morEndDate = ""; // Moratorium End Date
 
 	private String grcPeriod = "0"; // Number of Grace terms
-	private String grcStartDate = ""; // Grace Period Start Date 
+	private String grcStartDate = ""; // Grace Period Start Date
 	private String grcEndDate = ""; // Grace Period End Date
 
 	private String lpoPrice = ""; // LPO Price
@@ -1231,8 +1223,8 @@ public class AgreementDetail {
 	 */
 	private String finAmtPertg = ""; // Finance Amount * 125%
 
-	private String purchasePrice = ""; // Finance Amount - DownPayment 
-	private String secDeposit = ""; // DownPayment 
+	private String purchasePrice = ""; // Finance Amount - DownPayment
+	private String secDeposit = ""; // DownPayment
 	private String facilityAmt = ""; // Facility Amount in Finance Basic Details
 	private String VehicleCC = "";
 	private String vehicleCategory = ""; // totalExpAmt=(FeeAmount-WaiverAmount-PaidAmount)
@@ -1246,12 +1238,12 @@ public class AgreementDetail {
 	 * Provides loan Payment frequency day.
 	 */
 	private String repayFrqDay = ""; // Payment Frequency Day
-	private String repayFrqCode = ""; // Payment Frequency Day 
+	private String repayFrqCode = ""; // Payment Frequency Day
 
 	private String finEmpCode = ""; // Employee Code
 	private String finEmpName = ""; // Employee Name
 	private String finBranchRegion = ""; // Loan Branch assigned region
-	private String offerId = "";//Lead Id
+	private String offerId = "";// Lead Id
 	private List<com.pennant.backend.model.finance.financialsummary.SanctionConditions> sanctionConditions = new ArrayList<>();
 
 	public String getFinBranchAddrHNbr() {
@@ -1444,8 +1436,8 @@ public class AgreementDetail {
 	 */
 	private String finBranchAddrPhone = "";
 
-	//Repayment Details
-	//===============================
+	// Repayment Details
+	// ===============================
 	/**
 	 * Provides Number of Installments
 	 */
@@ -1509,7 +1501,7 @@ public class AgreementDetail {
 	/**
 	 * Provides Actual repay Rate Base of Repayment.
 	 */
-	private String repayBaseRate = ""; // Actual repay Rate Base  of Repayment
+	private String repayBaseRate = ""; // Actual repay Rate Base of Repayment
 
 	/**
 	 * Provides Effective Rate of Return.
@@ -1561,12 +1553,12 @@ public class AgreementDetail {
 	/**
 	 * Provides Margin.
 	 */
-	private String repayMargin = ""; //  Margin
+	private String repayMargin = ""; // Margin
 
 	/**
 	 * Provides Number Of graceTerms.
 	 */
-	private String numOfPayGrace = ""; //  NumberOfTerms-graceTerms
+	private String numOfPayGrace = ""; // NumberOfTerms-graceTerms
 
 	/**
 	 * Provides Minimum Profit Rate.
@@ -1581,7 +1573,7 @@ public class AgreementDetail {
 	/**
 	 * Provides Loan Profit Rate Type.
 	 */
-	private String profitRateType = ""; //Profit Rate Type
+	private String profitRateType = ""; // Profit Rate Type
 
 	/**
 	 * Provides Total Number Of Terms of a Loan.
@@ -1591,7 +1583,7 @@ public class AgreementDetail {
 	private String netRefRateLoan = "";
 	private String repayBaseRateVal = "";
 
-	//TODO::Added as part of Comments
+	// TODO::Added as part of Comments
 
 	/**
 	 * It is used to Identify graceAvailable or not 1.e Yes or No.
@@ -1610,14 +1602,14 @@ public class AgreementDetail {
 
 	private String repaySplRate = "";
 
-	//Mandate
+	// Mandate
 	/**
 	 * Provides Mandate Account Number.
 	 */
 	private String accNumberMandate = "";
 
-	//External Fields
-	//===============================
+	// External Fields
+	// ===============================
 	private String mMADate = ""; // MMA Agreement Date
 	private String custDSR = ""; // Customer DSR
 
@@ -1652,7 +1644,7 @@ public class AgreementDetail {
 	 * Registration
 	 */
 
-	//=============Gurantee Details==============//
+	// =============Gurantee Details==============//
 
 	/**
 	 * Provides Guarantor id Number.
@@ -1662,7 +1654,7 @@ public class AgreementDetail {
 	/**
 	 * Provides Guarantor percentage of Finance Amount.
 	 */
-	private String guranteeAmt; //Gurantee % of Finance Amount
+	private String guranteeAmt; // Gurantee % of Finance Amount
 	private String guranteeDays; // Days Between the Start Date and Maturity Date
 	private String guranteeEndDate; // maturity Date
 	private String guranteeAmtInWords;
@@ -1788,11 +1780,11 @@ public class AgreementDetail {
 		this.finMinRate = finMinRate;
 	}
 
-	//=============Customer Income==============//
+	// =============Customer Income==============//
 
-	//private List<CustomerIncomeCategory> custincomeCategories;
+	// private List<CustomerIncomeCategory> custincomeCategories;
 
-	//====== Customer Existing Finances ========//
+	// ====== Customer Existing Finances ========//
 
 	private List<CustomerFinance> customerFinances; // Existing Finances Under same Customer
 
@@ -1801,7 +1793,7 @@ public class AgreementDetail {
 	 */
 	private String totCustFin = ""; // Total Outstanding Finance Amount
 
-	//======Mortgage Finance ===================//
+	// ======Mortgage Finance ===================//
 	/**
 	 * Provides Asset Type.
 	 */
@@ -1822,14 +1814,14 @@ public class AgreementDetail {
 	 * private int tenureDays; private String splInstruction; private List<CommidityLoanDetails> commidityLoanDetail;
 	 */
 
-	//======== Credit review====================//
+	// ======== Credit review====================//
 
 	/*
 	 * private String adtYear1 = ""; private String adtYear2 = ""; private String adtYear3 = ""; private
 	 * List<CustomerCreditReview> creditReviewsBalance; private List<CustomerCreditReview> creditReviewsRatio;
 	 */
 
-	//=============== Scoring Details===========//
+	// =============== Scoring Details===========//
 
 	/*
 	 * private List<ScoringHeader> finScoringHeaderDetails; private List<ScoringHeader> nonFinScoringHeaderDetails;
@@ -1837,38 +1829,38 @@ public class AgreementDetail {
 	 * String overrideScore = ""; private String isOverrideScore = "";
 	 */
 
-	//========== Schedule Details ==========//
+	// ========== Schedule Details ==========//
 	/**
 	 * Provides loan Outstanding principle amount.
 	 */
-	private String osPri = ""; //Outstanding AHB Share Amount (AED)
-	private String comName = ""; //Company Name 
-	private String sharePerc = ""; //AHB Share (finAmount-downpayment)/finAmount
-	private String perofPri = ""; //Perc of Pri in Schd on Total Pri
+	private String osPri = ""; // Outstanding AHB Share Amount (AED)
+	private String comName = ""; // Company Name
+	private String sharePerc = ""; // AHB Share (finAmount-downpayment)/finAmount
+	private String perofPri = ""; // Perc of Pri in Schd on Total Pri
 	private String fIDate = ""; // First Installment Date
-	private String schdInst = ""; //Schd Installment
+	private String schdInst = ""; // Schd Installment
 	private String osPriAmount = "";
-	private String SchPriAmtPerBank = ""; //Schd Pri Amount % for bank
-	private String SchPriAmtPerMContr = ""; //Schd Pri Amount % for many contributors
-	private String SchPriAmtPerSContr = ""; //Schd Pri Amount % for single contributors
-	private String actualInstlpft = ""; //Schd Pri Amount % for many contributors
-	private String PftDiffRates = ""; //Pft Diff b/w twp rates
-	private String perPriPaidCustinstl = ""; //Percentage of pri paid by Cust on this instl
-	private String priAmtCurtInst = ""; //Pri amount of cur Instl
-	private String schPriFirstInstl = ""; //Schd Pri Amount on First Instl
-	private String schdPftFirstInstl = ""; //Schd Pft Amount on First Instl
+	private String SchPriAmtPerBank = ""; // Schd Pri Amount % for bank
+	private String SchPriAmtPerMContr = ""; // Schd Pri Amount % for many contributors
+	private String SchPriAmtPerSContr = ""; // Schd Pri Amount % for single contributors
+	private String actualInstlpft = ""; // Schd Pri Amount % for many contributors
+	private String PftDiffRates = ""; // Pft Diff b/w twp rates
+	private String perPriPaidCustinstl = ""; // Percentage of pri paid by Cust on this instl
+	private String priAmtCurtInst = ""; // Pri amount of cur Instl
+	private String schPriFirstInstl = ""; // Schd Pri Amount on First Instl
+	private String schdPftFirstInstl = ""; // Schd Pft Amount on First Instl
 
-	private String oDInsDate = ""; //OD Instl Date
-	private String emiRate = ""; //EMI DATE 
-	private String prvInstDate = ""; //PRV INSTL Date
-	private String defPayDate = ""; //Deferred Payment Date
-	private String earlySettleAmt = ""; //Early Settlement Amount
-	private String earlySettleDate = ""; //Early Settlement Date
-	private String firstInstDays = ""; //first Inst Days 
-	private String secondInstDays = ""; //second Inst Days
-	private String reviewDate = ""; //First EIBOR Revision Date
+	private String oDInsDate = ""; // OD Instl Date
+	private String emiRate = ""; // EMI DATE
+	private String prvInstDate = ""; // PRV INSTL Date
+	private String defPayDate = ""; // Deferred Payment Date
+	private String earlySettleAmt = ""; // Early Settlement Amount
+	private String earlySettleDate = ""; // Early Settlement Date
+	private String firstInstDays = ""; // first Inst Days
+	private String secondInstDays = ""; // second Inst Days
+	private String reviewDate = ""; // First EIBOR Revision Date
 
-	//========== Master Agreement ==========//
+	// ========== Master Agreement ==========//
 
 	private String facilityDate = "";
 	private String mMAFacilityLimit = "";
@@ -1909,14 +1901,14 @@ public class AgreementDetail {
 	private String finOcrRequired = "";
 	private String addProdFeatures = ""; // Additional product features
 
-	//==========Equipment Loan Detail==========//
+	// ==========Equipment Loan Detail==========//
 
 	private String machineName = "";
 	private String machinePurpose = "";
 	private String machineAge = "";
 	private String manufacturer = "";
 	private String eqpmentLocation = "";
-	private String actualProcessFeeValueInWords = ""; // Actual  ProcessingFees
+	private String actualProcessFeeValueInWords = ""; // Actual ProcessingFees
 
 	public String getActualProcessFeeValueInWords() {
 		return actualProcessFeeValueInWords;
@@ -2684,7 +2676,7 @@ public class AgreementDetail {
 	private String leasePerInDays = "";
 	private String leaseTermsWords = "";
 
-	// extra fields added by me 
+	// extra fields added by me
 	private String officePOBox = "";
 	private String OfficeEmirate = "";
 	private String lovDescModelDesc = "";
@@ -2693,7 +2685,7 @@ public class AgreementDetail {
 	private String assetDesc = "";
 	private String miaDate = "";
 	private String AssetDetail = "";
-	private String bankAddr = ""; //Bank Address
+	private String bankAddr = ""; // Bank Address
 	private String DD = "";
 	private String MM = "";
 	private String YY = "";
@@ -2702,16 +2694,16 @@ public class AgreementDetail {
 	private String fiFinalDecision;
 	private String rcuFinalDecision;
 
-	//Text
+	// Text
 	private String avlPeriodText = "";
 
-	// new Tabel creation 
+	// new Tabel creation
 	private String goodsquanity = "";
 	private String goodsType = "";
 	private String goodsSpec = "";
 	private String unitPrice = "";
 
-	//=============Check List Details===========//
+	// =============Check List Details===========//
 
 	private List<CheckListDetails> checkListDetails;
 
@@ -2798,7 +2790,7 @@ public class AgreementDetail {
 		}
 	}
 
-	//======== Take over details====================//
+	// ======== Take over details====================//
 
 	private String takeOverBankName = "";
 	private String takeOverProduct = "";
@@ -2808,7 +2800,7 @@ public class AgreementDetail {
 	private String takeOverStartDate = "";
 	private String takeOverMaturityDate = "";
 
-	//============== Guarantor Details =============//
+	// ============== Guarantor Details =============//
 
 	private String guarantName = "";
 	private String guarantHouseNo = "";
@@ -2817,7 +2809,7 @@ public class AgreementDetail {
 	private String guarantCountry = "";
 	private String guarantProvince = "";
 
-	//=============== End ======================//
+	// =============== End ======================//
 
 	/*
 	 * // Unused
@@ -2835,7 +2827,7 @@ public class AgreementDetail {
 	 * agentCity = ""; private String agentCountry = ""; private String disbursementAmt; private String
 	 * financeStartDate; private String disbursementAccount;
 	 */
-	//============== Finance Collaterals Details =============//
+	// ============== Finance Collaterals Details =============//
 	private List<FinCollaterals> collateralData;
 	private String collateralAvail = "No";
 
@@ -3021,9 +3013,9 @@ public class AgreementDetail {
 		private String schdPft = "";
 		private String curSchPriAmount = "";
 		private String schDate = "";
-		private String schTotalPriAmt = ""; //Payment Amount (AED)
+		private String schTotalPriAmt = ""; // Payment Amount (AED)
 		private String schdSeqNo = "";
-		private String closingBalance = ""; //closing Balance(AED)
+		private String closingBalance = ""; // closing Balance(AED)
 		private String advPayment = ""; // Advance Payment
 		private String openingPrincipal = ""; // Advance Payment
 		private String rateOfInterst = ""; // Advance Payment
@@ -5711,7 +5703,7 @@ public class AgreementDetail {
 
 	}
 
-	//----- New Details Added ---------//
+	// ----- New Details Added ---------//
 
 	private String effDateFltRate = "";
 
@@ -5723,7 +5715,7 @@ public class AgreementDetail {
 		this.effDateFltRate = effDateFltRate;
 	}
 
-	//----- Loan Details ---------//
+	// ----- Loan Details ---------//
 	private String gstNo = "";
 
 	public String getGstNo() {
@@ -5734,7 +5726,7 @@ public class AgreementDetail {
 		this.gstNo = gstNo;
 	}
 
-	//-------- CAM DEtails Added -----------//
+	// -------- CAM DEtails Added -----------//
 	private String custCategory = "";
 
 	private String applicationNo = "";
@@ -5815,7 +5807,7 @@ public class AgreementDetail {
 		this.applicationNo = applicationNo;
 	}
 
-	//----- Customer Repayment Bank Details ---------//
+	// ----- Customer Repayment Bank Details ---------//
 	private String branchName = "";
 	private String repayAcct = "";
 	private String repayCustName = "";
@@ -5871,7 +5863,7 @@ public class AgreementDetail {
 		this.repayAcctIfscCode = repayAcctIfscCode;
 	}
 
-	//------- Customer Charges -------//
+	// ------- Customer Charges -------//
 	private List<CusCharge> cusCharges;
 
 	public List<CusCharge> getCusCharges() {
@@ -5951,7 +5943,7 @@ public class AgreementDetail {
 		}
 	}
 
-	//------------- Disbursement Details ------------// 
+	// ------------- Disbursement Details ------------//
 	private List<Disbursement> disbursements;
 
 	public List<Disbursement> getDisbursements() {
@@ -6428,7 +6420,7 @@ public class AgreementDetail {
 		}
 	}
 
-	//---------- Dcument details ---------//
+	// ---------- Dcument details ---------//
 	private List<Document> documents;
 
 	public List<Document> getDocuments() {
@@ -6814,7 +6806,7 @@ public class AgreementDetail {
 
 	}
 
-	//--------- Legal Document Details ---------//
+	// --------- Legal Document Details ---------//
 
 	List<LegalDocument> legalDocuments;
 
@@ -7177,7 +7169,7 @@ public class AgreementDetail {
 		}
 	}
 
-	//---------- Convenant details ---------//
+	// ---------- Convenant details ---------//
 	private List<Covenant> covenants;
 
 	public List<Covenant> getCovenants() {
@@ -8684,16 +8676,16 @@ public class AgreementDetail {
 
 	}
 
-	//Required Fields
+	// Required Fields
 	private String carDealer = ""; // Vendor/Seller ID
 	private String assetValue = ""; // Asset Value
 	private String dealerCity = ""; // Vendor/Seller City
 	private String dealerCountry = ""; // Vendor/Seller Country
 	private String dealerName = ""; // Vendor/Seller Name
-	private String lpoDate = ""; //LOP Date
+	private String lpoDate = ""; // LOP Date
 	private String marketValue = "";
 	private String marketValueInWords = "";
-	private String totalPrice = ""; //total Price
+	private String totalPrice = ""; // total Price
 
 	public String getCarDealer() {
 		return carDealer;
@@ -8949,7 +8941,7 @@ public class AgreementDetail {
 		private String finalDecision = "";
 		private String valuationAmount = "0.00";
 		private String marketValue = "0.00";
-		//PSD # 148958[new merge field added for the CAM_MEMO Purpose.]
+		// PSD # 148958[new merge field added for the CAM_MEMO Purpose.]
 		private String verifiedDate = "";
 		private String finalValAmt = "0.00";
 
@@ -9674,7 +9666,7 @@ public class AgreementDetail {
 		this.customerExtMap = customerExtMap;
 	}
 
-	//----------------------------- PSL Details
+	// ----------------------------- PSL Details
 	private String pslCategoryCodeName = "";
 	private String pslWeakerSectionName = "";
 	private String pslLandHoldingName = "";
@@ -10602,8 +10594,7 @@ public class AgreementDetail {
 	}
 
 	/**
-	 * @param setFinAssetValueInWords
-	 *            the setFinAssetValueInWords to set
+	 * @param setFinAssetValueInWords the setFinAssetValueInWords to set
 	 */
 	public void setFinAssetValueInWords(String setFinAssetValueInWords) {
 		this.finAssetValueInWords = setFinAssetValueInWords;
@@ -10671,9 +10662,9 @@ public class AgreementDetail {
 
 	private List<List<ExtendedDetail>> custExtendedDetails = new ArrayList<>();
 
-	//Builder Demand Amount
+	// Builder Demand Amount
 	private String builderDemandAmount = "0.00";
-	//Own Contribution Amount
+	// Own Contribution Amount
 	private String ocrAmount = "0.00";
 
 	public List<List<ExtendedDetail>> getVasExtendedDetails() {
@@ -10684,7 +10675,7 @@ public class AgreementDetail {
 		this.vasExtendedDetails = vasExtendedDetails;
 	}
 
-	//Vas Extended map
+	// Vas Extended map
 	private List<Map<String, String>> vasExtMap = new ArrayList<>();
 
 	public List<Map<String, String>> getVasExtMap() {

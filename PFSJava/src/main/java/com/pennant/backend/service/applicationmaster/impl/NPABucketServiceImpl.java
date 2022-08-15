@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  NPABucketServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-04-2017    														*
- *                                                                  						*
- * Modified Date    :  21-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : NPABucketServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-04-2017 * * Modified
+ * Date : 21-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -85,8 +67,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -100,8 +81,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	}
 
 	/**
-	 * @param nPABucketDAO
-	 *            the nPABucketDAO to set
+	 * @param nPABucketDAO the nPABucketDAO to set
 	 */
 	public void setNPABucketDAO(NPABucketDAO nPABucketDAO) {
 		this.nPABucketDAO = nPABucketDAO;
@@ -115,8 +95,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	 * by using NPABUCKETSDAO's update method 3) Audit the record in to AuditHeader and AdtNPABUCKETS by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -159,8 +138,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	 * NPABUCKETS by using NPABUCKETSDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtNPABUCKETS by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -185,8 +163,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	/**
 	 * getNPABUCKETS fetch the details by using NPABUCKETSDAO's getNPABUCKETSById method.
 	 * 
-	 * @param bucketID
-	 *            bucketID of the NPABucket.
+	 * @param bucketID bucketID of the NPABucket.
 	 * @return NPABUCKETS
 	 */
 	@Override
@@ -197,8 +174,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	/**
 	 * It fetches Approved NPABucket from NPABUCKETS
 	 * 
-	 * @param long
-	 *            bucketID
+	 * @param long bucketID
 	 * @return NPABUCKETS
 	 */
 	public NPABucket getApprovedNPABucket(long bucketID) {
@@ -216,8 +192,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtNPABUCKETS by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -283,8 +258,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	 * workFlow table by using getNPABucketDAO().delete with parameters nPABucket,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtNPABUCKETS by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -312,8 +286,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -355,7 +328,9 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 		}
 
 		if (StringUtils.trimToEmpty(nPABucket.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			int count = nPABucketConfigurationDAO.getNPABucketConfigurationById(nPABucket.getBucketID(), "");//FIXME for FinanceMain
+			int count = nPABucketConfigurationDAO.getNPABucketConfigurationById(nPABucket.getBucketID(), "");// FIXME
+																												// for
+																												// FinanceMain
 			if (count != 0) {
 				String[] parameters = new String[2];
 

@@ -42,12 +42,11 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 
 		List<String> finReferences = new ArrayList<>();
 		finReferences.add(finReference);
-		
-		
+
 		if (CollectionUtils.isEmpty(finReferences)) {
 			return customerFinanceDetail;
 		}
-		
+
 		customerFinanceDetail.setAuditTransactionsList(
 				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReferences, true, false, moduleDefiner));
 		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(finReferences, MODULE_FINANCEMAIN));
@@ -67,11 +66,11 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 
 		List<String> finReferences = new ArrayList<>();
 		finReferences.add(finReference);
-		
+
 		if (CollectionUtils.isEmpty(finReferences)) {
 			return customerFinanceDetail;
 		}
-		
+
 		customerFinanceDetail.setAuditTransactionsList(
 				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReferences, false, false, moduleDefiner));
 		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(finReferences, MODULE_FINANCEMAIN));
@@ -89,7 +88,7 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 
 		List<String> finReferences = new ArrayList<>();
 		finReferences.add(facilityReference);
-		
+
 		if (CollectionUtils.isEmpty(finReferences)) {
 			return customerFinanceDetail;
 		}
@@ -111,7 +110,7 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 
 		List<String> finReferences = new ArrayList<>();
 		finReferences.add(facilityReference);
-		
+
 		if (CollectionUtils.isEmpty(finReferences)) {
 			return customerFinanceDetail;
 		}

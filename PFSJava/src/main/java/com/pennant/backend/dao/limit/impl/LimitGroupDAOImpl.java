@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitGroupDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitGroupDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * * Modified
+ * Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.limit.impl;
 
@@ -100,10 +82,8 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	/**
 	 * Fetch the Record Limit Group details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LimitGroup
 	 */
 	@Override
@@ -141,10 +121,8 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	 * This method Deletes the Record from the LimitGroup or LimitGroup_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Limit Group by key GroupCode
 	 * 
-	 * @param Limit
-	 *            Group (limitGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Group (limitGroup)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -176,10 +154,8 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	 *
 	 * save Limit Group
 	 * 
-	 * @param Limit
-	 *            Group (limitGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Group (limitGroup)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -210,10 +186,8 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	 * This method updates the Record LimitGroup or LimitGroup_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Limit Group by key GroupCode and Version
 	 * 
-	 * @param Limit
-	 *            Group (limitGroup)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Group (limitGroup)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

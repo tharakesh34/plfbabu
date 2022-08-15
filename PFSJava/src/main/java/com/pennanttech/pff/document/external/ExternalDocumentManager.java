@@ -162,7 +162,7 @@ public class ExternalDocumentManager {
 		int wt = getMaxwidthValue(images);
 		// Create the output image.
 		// It is the same size as the first
-		// input image.  I had to specify the type
+		// input image. I had to specify the type
 		// so it would keep it's transparency.
 		BufferedImage output = new BufferedImage(wt, ht * images.length, BufferedImage.TYPE_INT_ARGB);
 
@@ -186,7 +186,7 @@ public class ExternalDocumentManager {
 			URL u = new URL(docUri);
 			URLConnection uc = u.openConnection();
 
-			//String password = StringUtils.trimToEmpty(details.getPassword());
+			// String password = StringUtils.trimToEmpty(details.getPassword());
 			pdfMerge.addSource(uc.getInputStream());
 		}
 

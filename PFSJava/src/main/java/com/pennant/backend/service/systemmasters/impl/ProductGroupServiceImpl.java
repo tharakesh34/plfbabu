@@ -207,8 +207,8 @@ public class ProductGroupServiceImpl extends GenericService<ProductGroup> implem
 		parameters[1] = PennantJavaUtil.getLabel("label_groupId") + ": " + productGroup.getProductCategoryId();
 
 		// Check the unique keys.
-		if (productGroup.isNewRecord() && getProductGroupDAO().isDuplicateKey(productGroup.getId(), productGroup.getModelId(),
-				productGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (productGroup.isNewRecord() && getProductGroupDAO().isDuplicateKey(productGroup.getId(),
+				productGroup.getModelId(), productGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}

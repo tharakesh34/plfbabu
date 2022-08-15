@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AuthorizationServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-08-2013    														*
- *                                                                  						*
- * Modified Date    :  20-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AuthorizationServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-08-2013 * *
+ * Modified Date : 20-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.amtmasters.impl;
 
 import java.util.ArrayList;
@@ -84,8 +66,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -99,8 +80,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	}
 
 	/**
-	 * @param authorizationDAO
-	 *            the authorizationDAO to set
+	 * @param authorizationDAO the authorizationDAO to set
 	 */
 	public void setAuthorizationDAO(AuthorizationDAO authorizationDAO) {
 		this.authorizationDAO = authorizationDAO;
@@ -114,8 +94,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	 * based on the module workFlow Configuration. by using AuthorizationDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtAMTAuthorization by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -131,10 +110,8 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	 * based on the module workFlow Configuration. by using AuthorizationDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtAMTAuthorization by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -172,8 +149,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	 * AMTAuthorization by using AuthorizationDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtAMTAuthorization by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -197,10 +173,8 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	/**
 	 * getAuthorizationById fetch the details by using AuthorizationDAO's getAuthorizationById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Authorization
 	 */
 
@@ -213,8 +187,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	 * getApprovedAuthorizationById fetch the details by using AuthorizationDAO's getAuthorizationById method . with
 	 * parameter id and type as blank. it fetches the approved records from the AMTAuthorization.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return Authorization
 	 */
 
@@ -233,8 +206,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAMTAuthorization
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -292,8 +264,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	 * workFlow table by using getAuthorizationDAO().delete with parameters authorization,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtAMTAuthorization by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -319,10 +290,8 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -343,10 +312,8 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 	 * mismatch conditions Fetch the error details from getAuthorizationDAO().getErrorDetail with Error ID and language
 	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -373,14 +340,15 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 
 		if (authorization.isNewRecord()) { // for New record or new record into work flow
 
-			if (!authorization.isWorkflow()) {// With out Work flow only new records  
-				if (befAuthorization != null) { // Record Already Exists in the table then error  
+			if (!authorization.isWorkflow()) {// With out Work flow only new records
+				if (befAuthorization != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (authorization.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befAuthorization != null || tempAuthorization != null) { // if records already exists in the main table
+					if (befAuthorization != null || tempAuthorization != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -415,7 +383,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 				}
 			} else {
 
-				if (tempAuthorization == null) { // if records not exists in the Work flow table 
+				if (tempAuthorization == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

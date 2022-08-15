@@ -45,8 +45,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 	 * by using OCRHEADERDAO's update method 3) Audit the record in to AuditHeader and AdtOCRHEADER by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -191,7 +190,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		//ocrHeader details
+		// ocrHeader details
 		if (ocrHeader.getOcrDetailList() != null && ocrHeader.getOcrDetailList().size() > 0) {
 			auditDetailMap.put("OCRDetail", setOCRDetailAuditData(ocrHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("OCRDetail"));
@@ -267,8 +266,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 	 * OCRHEADER by using OCRHeaderDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtOCRHEADER by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -293,10 +291,8 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 	/**
 	 * getOCRHeader fetch the details by using OCRHEADERDAO getOCRHeader method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ocrHeader
 	 */
 
@@ -313,8 +309,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 	 * getApprovedOCRHeader fetch the details by using ocrHeaderDAO's getApprovedOCRHeader method . with parameter id
 	 * and type as blank. it fetches the approved records from the OCRHEADER.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return Academic
 	 */
 	@Override
@@ -337,8 +332,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 	 * record in to AuditHeader and Adtocrheader by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
 	 * Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -413,8 +407,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 	 * workFlow table by using ocrHeaderDAO.delete with parameters ocrheader,"_Temp" 3) Audit the record in to
 	 * AuditHeader and Adtocrheader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -442,8 +435,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -492,14 +484,14 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 			if (StringUtils.equals(PennantConstants.SEGMENTED_VALUE, ocrHeader.getOcrType())) {
 				custPortionHeader = ocrHeader.getCustomerPortion();
 				finPortionHeader = new BigDecimal(100).subtract(custPortionHeader);
-				//checking ocr step details are available or not
+				// checking ocr step details are available or not
 				if (CollectionUtils.isEmpty(ocrHeader.getOcrDetailList())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = Labels.getLabel("window_OCRStep_Details.title");
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
 					return auditDetail;
 				} else {
-					//checking weather customer, OCR portions are equal with header 
+					// checking weather customer, OCR portions are equal with header
 					for (OCRDetail ocrDetail : ocrHeader.getOcrDetailList()) {
 						if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(ocrDetail.getRecordType())
 								|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(ocrDetail.getRecordType())) {
@@ -511,20 +503,23 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 
 					String[] valueParm = new String[2];
 					String message = "Total ";
-					//check header customer portion value is equal with total payable by customer step's value
+					// check header customer portion value is equal with total payable by customer step's value
 					if (!(custPortionHeader.compareTo(totalCustPortion) == 0)) {
 						valueParm[0] = message.concat(Labels.getLabel("listheader_OCRSteps_PayableByCustomer.label"));
 						valueParm[1] = String.valueOf(custPortionHeader);
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 						return auditDetail;
-					} else if (!(finPortionHeader.compareTo(totalFinPortion) == 0)) { //check header customer portion value is equal with total payable by customer step's value
+					} else if (!(finPortionHeader.compareTo(totalFinPortion) == 0)) { // check header customer portion
+																						// value is equal with total
+																						// payable by customer step's
+																						// value
 						valueParm[0] = message.concat(Labels.getLabel("listheader_OCRSteps_PayableByFinancier.label"));
 						valueParm[1] = String.valueOf(finPortionHeader);
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 						return auditDetail;
 					}
 
-					//both cust and financer contributions should equal to 100
+					// both cust and financer contributions should equal to 100
 					BigDecimal total = totalCustPortion.add(totalFinPortion);
 					if (total.compareTo(new BigDecimal(100)) != 0) {
 						valueParm[0] = message.concat(Labels.getLabel("listheader_OCRSteps_PayableByCustomer.label")
@@ -563,9 +558,9 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 
 	@Override
 	public OCRHeader getOCRHeaderByOCRId(String ocrID, String type) {
-		//getting OCR Header
+		// getting OCR Header
 		OCRHeader ocrHeader = ocrHeaderDAO.getOCRHeaderByOCRId(ocrID, type);
-		//getting OCR Details
+		// getting OCR Details
 		if (ocrHeader != null) {
 			ocrHeader.setOcrDetailList(ocrDetailDAO.getOCRDetailList(ocrHeader.getHeaderID(), type));
 		}

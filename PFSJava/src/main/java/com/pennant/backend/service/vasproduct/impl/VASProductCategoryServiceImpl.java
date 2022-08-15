@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VASProductCategoryServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-01-2017    														*
- *                                                                  						*
- * Modified Date    :  09-01-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VASProductCategoryServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-01-2017 * *
+ * Modified Date : 09-01-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-01-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-01-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -114,10 +96,8 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	 * the table. based on the module workFlow Configuration. by using VASProductCategoryDAO's update method 3) Audit
 	 * the record in to AuditHeader and AdtVasProductCategory by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 	@Override
@@ -153,8 +133,7 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	 * VasProductCategory by using VASProductCategoryDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtVasProductCategory by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -177,10 +156,8 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	/**
 	 * getVASProductCategoryById fetch the details by using VASProductCategoryDAO's getVASProductCategoryById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return VASProductCategory
 	 */
 	@Override
@@ -192,10 +169,8 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	 * getVASProductCategoryById fetch the details by using VASProductCategoryDAO's getVASProductCategoryByActive
 	 * method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return int
 	 */
 	@Override
@@ -207,8 +182,7 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	 * getApprovedVASProductCategoryById fetch the details by using VASProductCategoryDAO's getVASProductCategoryById
 	 * method . with parameter id and type as blank. it fetches the approved records from the VasProductCategory.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return VASProductCategory
 	 */
 	public VASProductCategory getApprovedVASProductCategoryById(String id) {
@@ -227,8 +201,7 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	 * the record in to AuditHeader and AdtVasProductCategory by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -284,8 +257,7 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	 * workFlow table by using getVASProductCategoryDAO().delete with parameters vASProductCategory,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtVasProductCategory by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -310,10 +282,8 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -332,10 +302,8 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 	 * mismatch conditions Fetch the error details from getVASProductCategoryDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
@@ -360,14 +328,16 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 
 		if (vASProductCategory.isNewRecord()) { // for New record or new record into work flow
 
-			if (!vASProductCategory.isWorkflow()) {// With out Work flow only new records  
-				if (befVASProductCategory != null) { // Record Already Exists in the table then error  
+			if (!vASProductCategory.isWorkflow()) {// With out Work flow only new records
+				if (befVASProductCategory != null) { // Record Already Exists in the table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
-				if (vASProductCategory.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befVASProductCategory != null || tempVASProductCategory != null) { // if records already exists in the main table
+				if (vASProductCategory.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (befVASProductCategory != null || tempVASProductCategory != null) { // if records already exists
+																							// in the main table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -400,7 +370,7 @@ public class VASProductCategoryServiceImpl extends GenericService<VASProductCate
 				}
 			} else {
 
-				if (tempVASProductCategory == null) { // if records not exists in the Work flow table 
+				if (tempVASProductCategory == null) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}

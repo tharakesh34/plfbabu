@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CommitmentListCtrl.java                                              * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  25-03-2013    														*
- *                                                                  						*
- * Modified Date    :  25-03-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CommitmentListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 25-03-2013 * * Modified
+ * Date : 25-03-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 25-03-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 25-03-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.commitment.commitment;
@@ -271,8 +253,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_CommitmentList(Event event) {
 
@@ -309,7 +290,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 				Operators.STRING);
 		registerField("NonPerforming", nonPerforming, SortOrder.NONE, sortOperator_NonPerforming, Operators.BOOLEAN);
 
-		//registerField("CcyEditField");
+		// registerField("CcyEditField");
 		registerField("nextRoleCode");
 
 		// Render the page and display the data.
@@ -322,8 +303,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_CommitmentList_CommitmentSearch(Event event) {
 		search();
@@ -332,8 +312,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -343,8 +322,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_CommitmentList_NewCommitment(Event event) {
 		logger.debug("Entering");
@@ -402,8 +380,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onCommitmentItemDoubleClicked(Event event) throws InterruptedException {
@@ -436,7 +413,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 			return;
 		}
 
-		//Role Code State Checking
+		// Role Code State Checking
 		String nextroleCode = aCommitment.getNextRoleCode();
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 			String[] errParm = new String[1];
@@ -476,8 +453,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aCommitment
-	 *            The entity that need to be passed to the dialog.
+	 * @param aCommitment The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Commitment aCommitment) {
 		logger.debug("Entering");
@@ -507,7 +483,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 		logger.debug("Entering  " + event.toString());
 
 		doSearchCustomerCIF();
-		//setSearchValue(sortOperator_CustCIF, this.custCIF, "Customer");
+		// setSearchValue(sortOperator_CustCIF, this.custCIF, "Customer");
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -580,8 +556,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -590,8 +565,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

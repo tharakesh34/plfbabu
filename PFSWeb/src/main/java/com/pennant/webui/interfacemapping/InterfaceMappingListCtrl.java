@@ -79,8 +79,7 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_InterfaceMappingList(Event event) {
 		// Set the page level components.
@@ -109,8 +108,7 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_InterfaceMappingList_InterfaceMappingSearchDialog(Event event) {
 		search();
@@ -119,8 +117,7 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -130,8 +127,7 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_InterfaceMappingList_NewInterfaceMapping(Event event) {
 		logger.debug("Entering");
@@ -151,18 +147,17 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onInterfaceMappingItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
-		// Get the selected record. 
+		// Get the selected record.
 
 		Listitem selectedItem = this.listBoxInterfaceMapping.getSelectedItem();
 
-		// Get the selected entity. 
+		// Get the selected entity.
 		long id = (long) selectedItem.getAttribute("id");
 		InterfaceMapping interfaceMapping = interfaceMappingService.getInterfaceMappingById(id);
 
@@ -171,10 +166,19 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 			return;
 		}
 
-		// Check whether the user has authority to change/view the record. 
+		// Check whether the user has authority to change/view the record.
 		String whereCond = " where InterfaceMappingID=?";
 
-		if (doCheckAuthority(interfaceMapping, whereCond, new Object[] { interfaceMapping.getInterfaceMappingId() })) { // Set the latest work-flow id for the new maintenance request.
+		if (doCheckAuthority(interfaceMapping, whereCond, new Object[] { interfaceMapping.getInterfaceMappingId() })) { // Set
+																														// the
+																														// latest
+																														// work-flow
+																														// id
+																														// for
+																														// the
+																														// new
+																														// maintenance
+																														// request.
 			if (isWorkFlowEnabled() && interfaceMapping.getWorkflowId() == 0) {
 				interfaceMapping.setWorkflowId(getWorkFlowId());
 			}
@@ -189,8 +193,7 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param interfaceMapping
-	 *            The entity that need to be passed to the dialog.
+	 * @param interfaceMapping The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(InterfaceMapping interfaceMapping) {
 		logger.debug("Entering");
@@ -211,8 +214,7 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -221,8 +223,7 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

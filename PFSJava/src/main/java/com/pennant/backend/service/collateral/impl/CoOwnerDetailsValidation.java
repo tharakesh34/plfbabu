@@ -61,14 +61,15 @@ public class CoOwnerDetailsValidation {
 
 		if (coOwnerDetail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!coOwnerDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befCoOwnerDetail != null) { // Record Already Exists in the table then error  
+			if (!coOwnerDetail.isWorkflow()) {// With out Work flow only new records
+				if (befCoOwnerDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (coOwnerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCoOwnerDetail != null || tempCoOwnerDetail != null) { // if records already exists in the main table
+					if (befCoOwnerDetail != null || tempCoOwnerDetail != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -99,7 +100,7 @@ public class CoOwnerDetailsValidation {
 				}
 			} else {
 
-				if (tempCoOwnerDetail == null) { // if records not exists in the Work flow table 
+				if (tempCoOwnerDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

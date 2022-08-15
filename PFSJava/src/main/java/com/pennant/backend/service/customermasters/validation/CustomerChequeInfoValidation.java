@@ -77,14 +77,16 @@ public class CustomerChequeInfoValidation {
 
 		if (customerChequeInfo.isNewRecord()) { // for New record or new record into work flow
 
-			if (!customerChequeInfo.isWorkflow()) {// With out Work flow only new records  
-				if (befCustomerChequeInfo != null) { // Record Already Exists in the table then error  
+			if (!customerChequeInfo.isWorkflow()) {// With out Work flow only new records
+				if (befCustomerChequeInfo != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (customerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCustomerChequeInfo != null || tempCustomerChequeInfo != null) { // if records already exists in the main table
+				if (customerChequeInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (befCustomerChequeInfo != null || tempCustomerChequeInfo != null) { // if records already exists
+																							// in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -115,7 +117,7 @@ public class CustomerChequeInfoValidation {
 				}
 			} else {
 
-				if (tempCustomerChequeInfo == null) { // if records not exists in the Work flow table 
+				if (tempCustomerChequeInfo == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

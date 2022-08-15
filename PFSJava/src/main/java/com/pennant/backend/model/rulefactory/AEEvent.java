@@ -444,7 +444,7 @@ public class AEEvent implements Serializable {
 	public void setPaymentId(long paymentId) {
 		this.paymentId = paymentId;
 	}
-	
+
 	public List<FeeType> getFeesList() {
 		return FeesList;
 	}

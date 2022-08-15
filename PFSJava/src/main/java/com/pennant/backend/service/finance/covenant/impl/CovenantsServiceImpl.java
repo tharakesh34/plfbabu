@@ -809,11 +809,11 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			boolean isAllowedMethod = false;
 			boolean isDocumentReceived = false;
 			boolean otcCovenant = false;
-			
+
 			for (Covenant covenant : covenants) {
 				otcCovenant = covenant.isOtc();
 				String repaymethods = StringUtils.trimToEmpty(covenant.getAllowedPaymentModes());
-			
+
 				if (otcCovenant && StringUtils.isEmpty(repaymethods)) {
 					continue;
 				} else if (otcCovenant) {

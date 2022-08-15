@@ -77,14 +77,17 @@ public class CustomerBalanceSheetValidation {
 
 		if (customerBalanceSheet.isNewRecord()) { // for New record or new record into work flow
 
-			if (!customerBalanceSheet.isWorkflow()) {// With out Work flow only new records  
-				if (befCustomerBalanceSheet != null) { // Record Already Exists in the table then error  
+			if (!customerBalanceSheet.isWorkflow()) {// With out Work flow only new records
+				if (befCustomerBalanceSheet != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (customerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCustomerBalanceSheet != null || tempCustomerBalanceSheet != null) { // if records already exists in the main table
+				if (customerBalanceSheet.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																										// is new
+					if (befCustomerBalanceSheet != null || tempCustomerBalanceSheet != null) { // if records already
+																								// exists in the main
+																								// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -119,7 +122,7 @@ public class CustomerBalanceSheetValidation {
 				}
 			} else {
 
-				if (tempCustomerBalanceSheet == null) { // if records not exists in the Work flow table 
+				if (tempCustomerBalanceSheet == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

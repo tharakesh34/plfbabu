@@ -138,8 +138,7 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_OrganizationList_OrganizationSearch(Event event) {
 		search();
@@ -148,8 +147,7 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -174,8 +172,7 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onOrganizationItemDoubleClicked(Event event) {
@@ -210,8 +207,7 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param fieldinvestigation
-	 *            The entity that need to be passed to the dialog.
+	 * @param fieldinvestigation The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Organization organization) {
 		logger.debug(Literal.ENTERING);
@@ -239,8 +235,7 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -249,8 +244,7 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

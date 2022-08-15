@@ -71,8 +71,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	 * table. based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the
 	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -131,7 +130,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
 		}
@@ -175,8 +174,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -297,7 +295,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
 
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(aAuditHeader, "doApprove");
 		}

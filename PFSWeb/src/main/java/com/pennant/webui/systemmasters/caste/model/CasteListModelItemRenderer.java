@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CasteListModelItemRenderer.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CasteListModelItemRenderer.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -70,23 +52,23 @@ public class CasteListModelItemRenderer implements ListitemRenderer<Caste>, Seri
 	public void render(Listitem item, Caste caste, int count) {
 
 		Listcell lc;
-		//caste code
+		// caste code
 		lc = new Listcell(caste.getCasteCode());
 		lc.setParent(item);
-		//caste description
+		// caste description
 		lc = new Listcell(caste.getCasteDesc());
 		lc.setParent(item);
-		//active
+		// active
 		lc = new Listcell();
 		final Checkbox cbCasteIsActive = new Checkbox();
 		cbCasteIsActive.setDisabled(true);
 		cbCasteIsActive.setChecked(caste.isCasteIsActive());
 		lc.appendChild(cbCasteIsActive);
 		lc.setParent(item);
-		//record status
+		// record status
 		lc = new Listcell(caste.getRecordStatus());
 		lc.setParent(item);
-		//record type
+		// record type
 		lc = new Listcell(PennantJavaUtil.getLabel(caste.getRecordType()));
 		lc.setParent(item);
 

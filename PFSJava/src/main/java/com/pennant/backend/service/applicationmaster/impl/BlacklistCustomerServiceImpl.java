@@ -299,7 +299,8 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		// Get the model object.
 		BlackListCustomers blackListCustomers = (BlackListCustomers) auditDetail.getModelData();
 		// Check the unique keys.
-		if (blackListCustomers.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(blackListCustomers.getRecordType())
+		if (blackListCustomers.isNewRecord()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(blackListCustomers.getRecordType())
 				&& blacklistCustomerDAO.isDuplicateKey(blackListCustomers.getId(),
 						blackListCustomers.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

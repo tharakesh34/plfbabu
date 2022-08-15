@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CovenantTypeServiceImpl.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-02-2019    														*
- *                                                                  						*
- * Modified Date    :  06-02-2019    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CovenantTypeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 06-02-2019 * *
+ * Modified Date : 06-02-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-02-2019       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-02-2019 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.finance.covenant.impl;
 
 import org.apache.logging.log4j.LogManager;
@@ -54,12 +36,12 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.covenant.CovenantTypeService;
-//import com.pennanttech.pennapps.core.model.ErrorDetails;
+// import com.pennanttech.pennapps.core.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-//import com.pennanttech.pfs.core.TableType;
+// import com.pennanttech.pfs.core.TableType;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -79,8 +61,7 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 	 * based on the module workFlow Configuration. by using COVENANT_TYPESDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtCOVENANT_TYPES by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -120,8 +101,7 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 	 * COVENANT_TYPES by using COVENANT_TYPESDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtCOVENANT_TYPES by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -146,8 +126,7 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 	/**
 	 * getCOVENANT_TYPES fetch the details by using COVENANT_TYPESDAO's getCOVENANT_TYPESById method.
 	 * 
-	 * @param id
-	 *            id of the CovenantType.
+	 * @param id id of the CovenantType.
 	 * @return COVENANT_TYPES
 	 */
 	@Override
@@ -159,8 +138,7 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 	 * getApprovedCOVENANT_TYPESById fetch the details by using COVENANT_TYPESDAO's getCOVENANT_TYPESById method . with
 	 * parameter id and type as blank. it fetches the approved records from the COVENANT_TYPES.
 	 * 
-	 * @param id
-	 *            id of the CovenantType. (String)
+	 * @param id id of the CovenantType. (String)
 	 * @return COVENANT_TYPES
 	 */
 	public CovenantType getApprovedCovenantType(long id) {
@@ -178,8 +156,7 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtCOVENANT_TYPES by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -243,8 +220,7 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 	 * workFlow table by using covenantTypeDAO.delete with parameters covenantType,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtCOVENANT_TYPES by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -272,8 +248,7 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -324,16 +299,14 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
 	/**
-	 * @param covenantTypeDAO
-	 *            the covenantTypeDAO to set
+	 * @param covenantTypeDAO the covenantTypeDAO to set
 	 */
 	public void setCovenantTypeDAO(CovenantTypeDAO covenantTypeDAO) {
 		this.covenantTypeDAO = covenantTypeDAO;

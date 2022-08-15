@@ -9,7 +9,7 @@ public class InsPremiumCalculatorResponse {
 	private String totalPremiumInclTaxes;
 	InsPremiumCalculatorErrorResponseDto ErrorResponseDtoObject;
 
-	// Getter Methods 
+	// Getter Methods
 
 	public String getSuccess() {
 		return success;
@@ -39,7 +39,7 @@ public class InsPremiumCalculatorResponse {
 	 * public PLErrorResponseDto getErrorResponseDto() { return ErrorResponseDtoObject; }
 	 */
 
-	// Setter Methods 
+	// Setter Methods
 
 	public void setSuccess(String success) {
 		this.success = success;

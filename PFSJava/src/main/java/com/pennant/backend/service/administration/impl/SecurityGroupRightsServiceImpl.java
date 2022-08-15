@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		: SecurityGroupRightsServiceImpl.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-07-2011															*
- *                                                                  
- * Modified Date    :  26-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SecurityGroupRightsServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-07-2011 *
+ * 
+ * Modified Date : 26-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.administration.impl;
@@ -98,7 +89,7 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 
 			SecurityGroupRights aSecGroupRights = (SecurityGroupRights) auditHeader.getAuditDetails().get(i)
 					.getModelData();
-			//for save	
+			// for save
 			AuditDetail auditDetail = auditHeader.getAuditDetails().get(i);
 
 			if (StringUtils.equals(auditDetail.getAuditTranType(), PennantConstants.TRAN_ADD)) {
@@ -115,7 +106,7 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 				auditDetails.add(auditDetail);
 			}
 
-			//for delete
+			// for delete
 			if (StringUtils.equals(auditDetail.getAuditTranType(), PennantConstants.TRAN_DEL)) {
 				SecurityGroupRights tempSecGroupRights = getGroupRightsByGrpAndRightIds(aSecGroupRights.getGrpID(),
 						aSecGroupRights.getRightID());
@@ -166,7 +157,7 @@ public class SecurityGroupRightsServiceImpl extends GenericService<SecurityGroup
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		SecurityGroupRights asecGrouprights = (SecurityGroupRights) auditDetail.getModelData();
 		errPrmRecordExisted[0] = asecGrouprights.getLovDescGrpCode();
-		//check if record exist with same GrpID and RightId 
+		// check if record exist with same GrpID and RightId
 		if (StringUtils.equals(auditDetail.getAuditTranType(), PennantConstants.TRAN_ADD)) {
 			{
 

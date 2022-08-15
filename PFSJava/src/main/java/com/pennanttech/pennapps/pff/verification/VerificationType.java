@@ -22,12 +22,8 @@ import com.pennant.backend.model.ValueLabel;
  *
  */
 public enum VerificationType {
-	FI(1, "FI", "FI_VER"),
-	TV(2, "TV", "TECHNICAL_VER"),
-	LV(3, "LV", "LEGAL_VER"),
-	RCU(4, "RCU", "RISK_CREDIT_UNIT_VER"),
-	PD(5, "PD", "PD_VER"),
-	VETTING(6, "VETTING", "VETTING_VER");
+	FI(1, "FI", "FI_VER"), TV(2, "TV", "TECHNICAL_VER"), LV(3, "LV", "LEGAL_VER"),
+	RCU(4, "RCU", "RISK_CREDIT_UNIT_VER"), PD(5, "PD", "PD_VER"), VETTING(6, "VETTING", "VETTING_VER");
 
 	private final Integer key;
 	private final String value;

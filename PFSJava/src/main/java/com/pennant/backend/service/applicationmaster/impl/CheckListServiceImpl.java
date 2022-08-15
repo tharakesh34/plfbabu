@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CheckListServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-12-2011    														*
- *                                                                  						*
- * Modified Date    :  12-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CheckListServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-12-2011 * * Modified
+ * Date : 12-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.applicationmaster.impl;
@@ -118,8 +100,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 	 * Configuration. by using CheckListDAO's update method 3) Audit the record in to AuditHeader and AdtBMTCheckList by
 	 * using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -146,7 +127,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 			getCheckListDAO().update(checkList, tableType);
 		}
 
-		//Retrieving List of Audit Details For check list detail  related modules
+		// Retrieving List of Audit Details For check list detail related modules
 		if (checkList.getChkListList() != null && checkList.getChkListList().size() > 0) {
 			List<AuditDetail> details = checkList.getLovDescAuditDetailMap().get("CheckListDetail");
 			details = processingChkListDetailList(details, tableType, checkList.getCheckListId());
@@ -166,8 +147,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 	 * BMTCheckList by using CheckListDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtBMTCheckList by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -190,10 +170,8 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 	/**
 	 * getCheckListById fetch the details by using CheckListDAO's getCheckListById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CheckList
 	 */
 	@Override
@@ -207,8 +185,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 	 * getApprovedCheckListById fetch the details by using CheckListDAO's getCheckListById method . with parameter id
 	 * and type as blank. it fetches the approved records from the BMTCheckList.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return CheckList
 	 */
 	public CheckList getApprovedCheckListById(long id) {
@@ -226,8 +203,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTCheckList by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -270,7 +246,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		//Retrieving List of Audit Details For checkList details modules
+		// Retrieving List of Audit Details For checkList details modules
 		if (checkList.getChkListList() != null && checkList.getChkListList().size() > 0) {
 			List<AuditDetail> details = checkList.getLovDescAuditDetailMap().get("CheckListDetail");
 			details = processingChkListDetailList(details, "", checkList.getCheckListId());
@@ -294,8 +270,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 	 * workFlow table by using getCheckListDAO().delete with parameters checkList,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTCheckList by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -324,8 +299,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 	 * for any mismatch conditions Fetch the error details from getCheckListDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -369,8 +343,8 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 
 		if (checkList.isNewRecord()) { // for New record or new record into work flow
 
-			if (!checkList.isWorkflow()) {// With out Work flow only new records  
-				if (befCheckList != null) { // Record Already Exists in the table then error  
+			if (!checkList.isWorkflow()) {// With out Work flow only new records
+				if (befCheckList != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
@@ -410,7 +384,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 				}
 			} else {
 
-				if (tempCheckList == null) { // if records not exists in the Work flow table 
+				if (tempCheckList == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -688,7 +662,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 				}
 
 				if (StringUtils.isNotEmpty(transType)) {
-					//check and change below line for Complete code
+					// check and change below line for Complete code
 					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
 							checkListDetail.getBefImage(), checkListDetail));
 				}

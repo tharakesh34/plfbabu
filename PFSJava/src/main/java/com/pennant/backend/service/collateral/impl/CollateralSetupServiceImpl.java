@@ -3334,7 +3334,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		List<String> collateralRefs = new ArrayList<>();
 
 		tempCSList.stream().forEach(ca -> collateralRefs.add(ca.getCollateralType()));
-		
+
 		tempCSList.addAll(thirdParyCSList.stream().filter(ca -> !collateralRefs.contains(ca.getCollateralRef()))
 				.collect(Collectors.toList()));
 

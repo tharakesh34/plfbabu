@@ -2057,7 +2057,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (null != detail && null != detail.getFinScheduleData()) {
 				List<FinReceiptHeader> imdReceipts = detail.getFinScheduleData().getImdReceipts();
 				for (FinReceiptHeader rch : imdReceipts) {
-						totalFeeAmount = totalFeeAmount.add(rch.getReceiptAmount());
+					totalFeeAmount = totalFeeAmount.add(rch.getReceiptAmount());
 				}
 				agreement.setTotalReceiptFeeAmount(CurrencyUtil.format(totalFeeAmount, formatter));
 			}

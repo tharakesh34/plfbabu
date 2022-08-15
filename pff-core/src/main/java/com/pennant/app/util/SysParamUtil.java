@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  SysParamUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SysParamUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -97,8 +88,7 @@ public class SysParamUtil {
 	/**
 	 * Returns the string representation with the specified date format pattern of the application date.
 	 * 
-	 * @param dateFormat
-	 *            The format describing the date and time pattern.
+	 * @param dateFormat The format describing the date and time pattern.
 	 * @return The formatted date string of the application date.
 	 */
 	public static String getAppDate(DateFormat dateFormat) {
@@ -108,8 +98,7 @@ public class SysParamUtil {
 	/**
 	 * Returns the string representation with the specified date format pattern of the application date.
 	 * 
-	 * @param dateFormat
-	 *            The format describing the date and time pattern.
+	 * @param dateFormat The format describing the date and time pattern.
 	 * @return The formatted date string of the application date.
 	 */
 	public static String getAppDate(String dateFormat) {
@@ -146,11 +135,9 @@ public class SysParamUtil {
 	/**
 	 * Convenience method for getting the value of a system parameter.
 	 * 
-	 * @param code
-	 *            The code of the parameter to access.
+	 * @param code The code of the parameter to access.
 	 * @return The value of the parameter.
-	 * @throws IllegalArgumentException
-	 *             - If the given code is <code>null</code>.
+	 * @throws IllegalArgumentException - If the given code is <code>null</code>.
 	 */
 	public static Object getValue(String code) {
 		if (code == null) {
@@ -163,11 +150,9 @@ public class SysParamUtil {
 	/**
 	 * Convenience method for getting the value of a system parameter as a String.
 	 * 
-	 * @param code
-	 *            The code of the parameter to access.
+	 * @param code The code of the parameter to access.
 	 * @return The value of the parameter as a String. If the parameter is empty, an empty String "" is returned.
-	 * @throws IllegalArgumentException
-	 *             - If the given code is <code>null</code>.
+	 * @throws IllegalArgumentException - If the given code is <code>null</code>.
 	 */
 	public static String getValueAsString(String code) {
 		if (code == null) {
@@ -212,11 +197,9 @@ public class SysParamUtil {
 	/**
 	 * Convenience method for getting the value of a system parameter as a Date.
 	 * 
-	 * @param code
-	 *            The code of the parameter to access.
+	 * @param code The code of the parameter to access.
 	 * @return The value of the parameter as a Date. If the parameter is empty, <code>null</code> is returned.
-	 * @throws IllegalArgumentException
-	 *             - If the given code is <code>null</code>.
+	 * @throws IllegalArgumentException - If the given code is <code>null</code>.
 	 */
 	public static Date getValueAsDate(String code) {
 		if (code == null) {
@@ -229,8 +212,7 @@ public class SysParamUtil {
 	/**
 	 * Returns the string representation with the specified pattern of the value date.
 	 * 
-	 * @param pattern
-	 *            The pattern describing the date and time format.
+	 * @param pattern The pattern describing the date and time format.
 	 * @return The formatted date string of the value date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the Next business date.
@@ -260,13 +242,10 @@ public class SysParamUtil {
 	/**
 	 * Convenience method for getting the value of a system parameter as an integer value.
 	 * 
-	 * @param code
-	 *            The code of the parameter to access.
+	 * @param code The code of the parameter to access.
 	 * @return The value of the parameter as an integer value.
-	 * @throws IllegalArgumentException
-	 *             - If the given code is <code>null</code>.
-	 * @throws NumberFormatException
-	 *             - If the parameter does not contain a parsable integer.
+	 * @throws IllegalArgumentException - If the given code is <code>null</code>.
+	 * @throws NumberFormatException    - If the parameter does not contain a parsable integer.
 	 */
 	public static int getValueAsInt(String code) {
 		if (code == null) {
@@ -340,8 +319,7 @@ public class SysParamUtil {
 	/**
 	 * Get the System Parameter Value
 	 * 
-	 * @param ParmCode
-	 *            (PFSParameter)
+	 * @param ParmCode (PFSParameter)
 	 * 
 	 * @return object
 	 */

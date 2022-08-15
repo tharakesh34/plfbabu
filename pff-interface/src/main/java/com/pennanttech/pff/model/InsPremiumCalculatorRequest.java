@@ -12,7 +12,7 @@ public class InsPremiumCalculatorRequest {
 	private String coverageTerm;
 	private String source;
 
-	// Getter Methods 
+	// Getter Methods
 
 	public String getApplicationId() {
 		return applicationId;
@@ -46,7 +46,7 @@ public class InsPremiumCalculatorRequest {
 		return source;
 	}
 
-	// Setter Methods 
+	// Setter Methods
 
 	public void setApplicationId(String applicationId) {
 		this.applicationId = applicationId;

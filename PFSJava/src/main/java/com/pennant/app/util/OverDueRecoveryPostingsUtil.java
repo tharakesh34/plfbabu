@@ -660,7 +660,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			if (!isEnqPurpose && odDetails.getFinODSchdDate().compareTo(curBussDate) <= 0) {
 				List<FinODDetails> odDList = new ArrayList<>();
 				odDList.add(odDetails);
-			
+
 				finODDetailsDAO.saveList(odDList);
 			}
 		}

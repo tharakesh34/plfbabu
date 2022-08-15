@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DeviationParamServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-06-2015    														*
- *                                                                  						*
- * Modified Date    :  22-06-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DeviationParamServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-06-2015 * *
+ * Modified Date : 22-06-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-06-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-06-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.solutionfactory.impl;
 
 import java.util.ArrayList;
@@ -84,8 +66,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -99,8 +80,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	}
 
 	/**
-	 * @param deviationParamDAO
-	 *            the deviationParamDAO to set
+	 * @param deviationParamDAO the deviationParamDAO to set
 	 */
 	public void setDeviationParamDAO(DeviationParamDAO deviationParamDAO) {
 		this.deviationParamDAO = deviationParamDAO;
@@ -114,8 +94,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	 * based on the module workFlow Configuration. by using DeviationParamDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtDeviationParams by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -131,10 +110,8 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	 * based on the module workFlow Configuration. by using DeviationParamDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtDeviationParams by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -170,8 +147,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	 * DeviationParams by using DeviationParamDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtDeviationParams by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -195,10 +171,8 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	/**
 	 * getDeviationParamById fetch the details by using DeviationParamDAO's getDeviationParamById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DeviationParam
 	 */
 
@@ -211,8 +185,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	 * getApprovedDeviationParamById fetch the details by using DeviationParamDAO's getDeviationParamById method . with
 	 * parameter id and type as blank. it fetches the approved records from the DeviationParams.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return DeviationParam
 	 */
 
@@ -231,8 +204,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtDeviationParams
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -289,8 +261,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	 * workFlow table by using getDeviationParamDAO().delete with parameters deviationParam,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtDeviationParams by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -316,10 +287,8 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -340,10 +309,8 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 	 * mismatch conditions Fetch the error details from getDeviationParamDAO().getErrorDetail with Error ID and language
 	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -367,14 +334,15 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 
 		if (deviationParam.isNewRecord()) { // for New record or new record into work flow
 
-			if (!deviationParam.isWorkflow()) {// With out Work flow only new records  
-				if (befDeviationParam != null) { // Record Already Exists in the table then error  
+			if (!deviationParam.isWorkflow()) {// With out Work flow only new records
+				if (befDeviationParam != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (deviationParam.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befDeviationParam != null || tempDeviationParam != null) { // if records already exists in the main table
+					if (befDeviationParam != null || tempDeviationParam != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -409,7 +377,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 				}
 			} else {
 
-				if (tempDeviationParam == null) { // if records not exists in the Work flow table 
+				if (tempDeviationParam == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

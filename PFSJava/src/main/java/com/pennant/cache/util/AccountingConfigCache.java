@@ -82,19 +82,18 @@ public class AccountingConfigCache {
 	}
 
 	/**
-	 * @param String
-	 *            acType
+	 * @param String acType
 	 * @return AccountType
 	 */
 	public static AccountType getAccountType(String acType) {
-		//		AccountType accountType;
+		// AccountType accountType;
 		//
-		//		try {
-		//			accountType = accountTypeCache.get(acType);
-		//		} catch (ExecutionException e) {
-		//			logger.warn("Unable to load data from  Finance Type Accounting cache: ",e);
-		//			accountType = getAccountTypeById(acType);
-		//		}
+		// try {
+		// accountType = accountTypeCache.get(acType);
+		// } catch (ExecutionException e) {
+		// logger.warn("Unable to load data from Finance Type Accounting cache: ",e);
+		// accountType = getAccountTypeById(acType);
+		// }
 		return getAccountTypeById(acType);
 	}
 
@@ -243,8 +242,7 @@ public class AccountingConfigCache {
 	}
 
 	/**
-	 * @param finTypeAccountingDAO
-	 *            the finTypeAccountingDAO to set
+	 * @param finTypeAccountingDAO the finTypeAccountingDAO to set
 	 */
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
 		AccountingConfigCache.finTypeAccountingDAO = finTypeAccountingDAO;

@@ -179,38 +179,38 @@
 	 * @param rawPass
 	 * @return
 	 *//*
-	 * private boolean isPasswordValid(String userPassword, String loginPassword) throws WebServiceException {
-	 * PasswordEncoder encoderImpl = null;
-	 * 
-	 * if (passwordEncoder instanceof BCryptPasswordEncoder) { encoderImpl = (BCryptPasswordEncoder) passwordEncoder; }
-	 * else { encoderImpl = (NoOpPasswordEncoder) passwordEncoder; }
-	 * 
-	 * if (StringUtils.equals(userPassword, loginPassword)) { return true; }
-	 * 
-	 * if (encoderImpl.matches(userPassword, loginPassword)) { return true; } return false; }
-	 * 
-	 * public UserService getUserService() { return userService; }
-	 * 
-	 * public void setUserService(UserService userService) { this.userService = userService; }
-	 * 
-	 * public ErrorDetailService getErrorDetailService() { return errorDetailService; }
-	 * 
-	 * public void setErrorDetailService(ErrorDetailService errorDetailService) { this.errorDetailService =
-	 * errorDetailService; }
-	 * 
-	 * public UserAuthService getUserAuthService() { return userAuthService; }
-	 * 
-	 * public void setUserAuthService(UserAuthService userAuthService) { this.userAuthService = userAuthService; }
-	 * 
-	 * public ServerAuthService getServerAuthService() { return serverAuthService; }
-	 * 
-	 * public void setServerAuthService(ServerAuthService serverAuthService) { this.serverAuthService =
-	 * serverAuthService; }
-	 * 
-	 * public PFSParameterService getpFSParameterService() { return pFSParameterService; }
-	 * 
-	 * public void setpFSParameterService(PFSParameterService pFSParameterService) { this.pFSParameterService =
-	 * pFSParameterService; }
-	 * 
-	 * }
-	 */
+		 * private boolean isPasswordValid(String userPassword, String loginPassword) throws WebServiceException {
+		 * PasswordEncoder encoderImpl = null;
+		 * 
+		 * if (passwordEncoder instanceof BCryptPasswordEncoder) { encoderImpl = (BCryptPasswordEncoder)
+		 * passwordEncoder; } else { encoderImpl = (NoOpPasswordEncoder) passwordEncoder; }
+		 * 
+		 * if (StringUtils.equals(userPassword, loginPassword)) { return true; }
+		 * 
+		 * if (encoderImpl.matches(userPassword, loginPassword)) { return true; } return false; }
+		 * 
+		 * public UserService getUserService() { return userService; }
+		 * 
+		 * public void setUserService(UserService userService) { this.userService = userService; }
+		 * 
+		 * public ErrorDetailService getErrorDetailService() { return errorDetailService; }
+		 * 
+		 * public void setErrorDetailService(ErrorDetailService errorDetailService) { this.errorDetailService =
+		 * errorDetailService; }
+		 * 
+		 * public UserAuthService getUserAuthService() { return userAuthService; }
+		 * 
+		 * public void setUserAuthService(UserAuthService userAuthService) { this.userAuthService = userAuthService; }
+		 * 
+		 * public ServerAuthService getServerAuthService() { return serverAuthService; }
+		 * 
+		 * public void setServerAuthService(ServerAuthService serverAuthService) { this.serverAuthService =
+		 * serverAuthService; }
+		 * 
+		 * public PFSParameterService getpFSParameterService() { return pFSParameterService; }
+		 * 
+		 * public void setpFSParameterService(PFSParameterService pFSParameterService) { this.pFSParameterService =
+		 * pFSParameterService; }
+		 * 
+		 * }
+		 */

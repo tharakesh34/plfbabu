@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CityServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CityServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified Date
+ * : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -104,8 +86,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 * on the module workFlow Configuration. by using CityDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtRMTProvinceVsCity by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -146,8 +127,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 * RMTProvinceVsCity by using CityDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtRMTProvinceVsCity by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -171,10 +151,8 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	/**
 	 * getCityById fetch the details by using CityDAO's getCityById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return City
 	 */
 	@Override
@@ -186,8 +164,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 * getApprovedCityById fetch the details by using CityDAO's getCityById method . with parameter id and type as
 	 * blank. it fetches the approved records from the RMTProvinceVsCity.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return City
 	 */
 	public City getApprovedCityById(String pCCountry, String pCProvince, String pCCity) {
@@ -204,8 +181,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 * and AdtRMTProvinceVsCity by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and AdtRMTProvinceVsCity by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -267,8 +243,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 * workFlow table by using getCityDAO().delete with parameters city,"_Temp" 3) Audit the record in to AuditHeader
 	 * and AdtRMTProvinceVsCity by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -293,8 +268,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
@@ -335,7 +309,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
 		}
 
-		// If City Code is already utilized in PinCode 
+		// If City Code is already utilized in PinCode
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, city.getRecordType())) {
 			boolean workflowExists = getPinCodeDAO().isCityCodeExists(city.getPCCity());
 			if (workflowExists) {

@@ -71,7 +71,8 @@ public class CollateralSetupFetchingService {
 			// Checking Collateral Setup created from loan
 			if (CollectionUtils.isNotEmpty(collateralSetupList)) {
 				boolean addedRcd = false;
-				// Checking if the Collateral Setup created from loan we will take it from memory,other wise we will take it from DB.
+				// Checking if the Collateral Setup created from loan we will take it from memory,other wise we will
+				// take it from DB.
 				for (CollateralSetup detail : collateralSetupList) {
 					if (detail.getCollateralRef().equals(collateralAssignment.getCollateralRef())) {
 						collateralSetupResultList.add(detail);
@@ -197,7 +198,7 @@ public class CollateralSetupFetchingService {
 				|| PennantConstants.RECORD_TYPE_CAN.equals(recordType));
 	}
 
-	//Getters and setters
+	// Getters and setters
 	public DocumentDetailsDAO getDocumentDetailsDAO() {
 		return documentDetailsDAO;
 	}

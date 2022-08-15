@@ -19,8 +19,8 @@ public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<Unre
 	@Override
 	public Response toResponse(UnrecognizedPropertyException exception) {
 		return Response.status(Response.Status.BAD_REQUEST)
-				.entity("'" + exception.getUnrecognizedPropertyName() + "' is an unrecognized field.").type(MediaType.TEXT_PLAIN)
-				.build();
+				.entity("'" + exception.getUnrecognizedPropertyName() + "' is an unrecognized field.")
+				.type(MediaType.TEXT_PLAIN).build();
 	}
 
 }

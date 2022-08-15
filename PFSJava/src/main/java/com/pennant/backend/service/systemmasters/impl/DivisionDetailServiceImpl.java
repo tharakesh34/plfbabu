@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DivisionDetailServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-08-2013    														*
- *                                                                  						*
- * Modified Date    :  02-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DivisionDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-08-2013 * *
+ * Modified Date : 02-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -86,8 +68,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -101,8 +82,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	}
 
 	/**
-	 * @param divisionDetailDAO
-	 *            the divisionDetailDAO to set
+	 * @param divisionDetailDAO the divisionDetailDAO to set
 	 */
 	public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
 		this.divisionDetailDAO = divisionDetailDAO;
@@ -116,8 +96,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	 * table. based on the module workFlow Configuration. by using DivisionDetailDAO's update method 3) Audit the record
 	 * in to AuditHeader and AdtSMTDivisionDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -133,10 +112,8 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	 * table. based on the module workFlow Configuration. by using DivisionDetailDAO's update method 3) Audit the record
 	 * in to AuditHeader and AdtSMTDivisionDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -173,8 +150,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	 * SMTDivisionDetail by using DivisionDetailDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtSMTDivisionDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -198,10 +174,8 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	/**
 	 * getDivisionDetailById fetch the details by using DivisionDetailDAO's getDivisionDetailById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DivisionDetail
 	 */
 
@@ -214,8 +188,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	 * getApprovedDivisionDetailById fetch the details by using DivisionDetailDAO's getDivisionDetailById method . with
 	 * parameter id and type as blank. it fetches the approved records from the SMTDivisionDetail.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return DivisionDetail
 	 */
 
@@ -234,8 +207,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtSMTDivisionDetail
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -298,8 +270,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	 * workFlow table by using getDivisionDetailDAO().delete with parameters divisionDetail,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtSMTDivisionDetail by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -325,10 +296,8 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -372,7 +341,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(divisionDetail.getRecordType())) {
-			//FinanceType Details
+			// FinanceType Details
 			boolean isdivisionExists = getFinanceTypeDAO()
 					.isDivisionCodeExistsInFinanceTypes(divisionDetail.getDivisionCode(), "_View");
 

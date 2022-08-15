@@ -13,8 +13,7 @@ public interface PostDeviationHook {
 	/**
 	 * Gets the custom auto deviations.
 	 * 
-	 * @param financeDetail
-	 *            The finance detail object.
+	 * @param financeDetail     The finance detail object.
 	 * @param deviationFilePath
 	 * @param elgMethodVisible
 	 * @return The custom auto deviations.

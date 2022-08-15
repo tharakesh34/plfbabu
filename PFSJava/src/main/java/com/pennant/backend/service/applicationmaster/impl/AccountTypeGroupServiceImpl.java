@@ -56,8 +56,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 	 * table. based on the module workFlow Configuration. by using AccountTypeGroupDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtBMTAggrementDef by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -93,8 +92,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 	 * BMTAggrementDef by using AccountTypeGroupDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBMTAggrementDef by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -117,10 +115,8 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 	/**
 	 * getAccountTypeGroupById fetch the details by using AccountTypeGroupDAO's getAccountTypeGroupById method.
 	 * 
-	 * @param id
-	 *            (long)
-	 * @param type
-	 *            (long) ""/_Temp/_View
+	 * @param id   (long)
+	 * @param type (long) ""/_Temp/_View
 	 * @return AccountTypeGroup
 	 */
 	@Override
@@ -132,8 +128,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 	 * getApprovedAccountTypeGroupById fetch the details by using AccountTypeGroupDAO's getAccountTypeGroupById method .
 	 * with parameter id and type as blank. it fetches the approved records from the BMTAggrementDef.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return AccountTypeGroup
 	 */
 	public AccountTypeGroup getApprovedAccountTypeGroupById(long id) {
@@ -151,8 +146,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 	 * and AdtBMTAggrementDef by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and AdtBMTAggrementDef by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -214,8 +208,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 	 * workFlow table by using getAccountTypeGroupDAO().delete with parameters accountTypeGroup,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtBMTAggrementDef by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -243,8 +236,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 	 * for any mismatch conditions Fetch the error details from getAccountTypeGroupDAO().getErrorDetail with Error ID
 	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {

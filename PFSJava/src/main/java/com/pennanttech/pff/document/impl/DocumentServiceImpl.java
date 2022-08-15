@@ -100,8 +100,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -153,7 +152,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			} else { // with work flow
 				if (documentDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befCustomerDocument != null || tempDocumentDetail != null) {
-						//if records already exists in the main table
+						// if records already exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -231,7 +230,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 					}
 				}
 
-				//validate Dates
+				// validate Dates
 				if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
 					if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 						String[] valueParm = new String[2];
@@ -244,7 +243,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 					}
 				}
 
-				//docType is mandatory in XML Level
+				// docType is mandatory in XML Level
 				if (StringUtils.isNotBlank(detail.getDoctype())) {
 					String documentType = detail.getDoctype();
 					if (!(PennantConstants.DOC_TYPE_PDF.equals(documentType)
@@ -262,7 +261,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 					}
 				}
 
-				//docName is mandatory in XML Level
+				// docName is mandatory in XML Level
 				if (StringUtils.isNotBlank(detail.getDocName()) && StringUtils.isNotBlank(detail.getDoctype())) {
 					String docName = detail.getDocName().toLowerCase();
 					boolean isImage = false;
@@ -276,7 +275,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 						}
 					}
 
-					//if docName has no extension.
+					// if docName has no extension.
 					if (!docName.contains(".")) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "docName: " + docName;
@@ -293,7 +292,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 						}
 					}
 					String docExtension = docName.substring(docName.lastIndexOf(".") + 1);
-					//if doc type and doc Extension are invalid
+					// if doc type and doc Extension are invalid
 					if (!isImage) {
 						if (StringUtils.equalsIgnoreCase(detail.getDoctype(), PennantConstants.DOC_TYPE_EXCEL)) {
 							String docExtention = detail.getDocName().toLowerCase();
@@ -340,7 +339,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 					}
 
-					//TODO: Need to add password protected field in documentdetails
+					// TODO: Need to add password protected field in documentdetails
 				}
 			}
 		}
@@ -365,7 +364,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			return auditDetail;
 		}
 
-		//validate Dates
+		// validate Dates
 		if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
 			if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 				String[] valueParm = new String[2];
@@ -378,7 +377,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			}
 		}
 
-		//docType is mandatory in XML Level
+		// docType is mandatory in XML Level
 		if (StringUtils.isNotBlank(detail.getDoctype())) {
 			if (!(StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_PDF)
 					|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOC)
@@ -396,7 +395,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			}
 		}
 
-		//docName is mandatory in XML Level
+		// docName is mandatory in XML Level
 		if (StringUtils.isNotBlank(detail.getDocName()) && StringUtils.isNotBlank(detail.getDoctype())) {
 			String docName = detail.getDocName().toLowerCase();
 			boolean isImage = false;
@@ -411,7 +410,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 				}
 			}
 
-			//if docName has no extension.
+			// if docName has no extension.
 			if (!docName.contains(".")) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "docName: " + docName;
@@ -429,7 +428,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 				}
 			}
 			String docExtension = docName.substring(docName.lastIndexOf(".") + 1);
-			//if doc type and doc Extension are invalid
+			// if doc type and doc Extension are invalid
 			if (!isImage) {
 				if (!StringUtils.equalsIgnoreCase(detail.getDoctype(), docExtension)) {
 					String[] valueParm = new String[2];

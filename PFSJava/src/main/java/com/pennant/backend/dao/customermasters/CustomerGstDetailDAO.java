@@ -29,7 +29,7 @@ public interface CustomerGstDetailDAO {
 	void save(CustomerGSTDetails customerGSTDetails, String type);
 
 	List<CustomerGSTDetails> getCustomerGSTDetailsByCustomer(long headerId, String type);
-	
+
 	List<CustomerGSTDetails> getCustomerGSTDetailsByCustomer(List<Long> headerIdList, String type);
 
 	void update(CustomerGSTDetails customerGSTDetails, String type);

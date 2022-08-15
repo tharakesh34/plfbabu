@@ -77,14 +77,15 @@ public class CustomerEMailValidation {
 
 		if (customerEMail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!customerEMail.isWorkflow()) {// With out Work flow only new records  
-				if (befCustomerEMail != null) { // Record Already Exists in the table then error  
+			if (!customerEMail.isWorkflow()) {// With out Work flow only new records
+				if (befCustomerEMail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (customerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCustomerEMail != null || tempCustomerEMail != null) { // if records already exists in the main table
+					if (befCustomerEMail != null || tempCustomerEMail != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -115,7 +116,7 @@ public class CustomerEMailValidation {
 				}
 			} else {
 
-				if (tempCustomerEMail == null) { // if records not exists in the Work flow table 
+				if (tempCustomerEMail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

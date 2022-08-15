@@ -62,7 +62,7 @@ public interface CustomerDetailsService {
 
 	List<CustomerRating> getCustomerRatingByCustId(long id, String type);
 
-	//Finance Customer Details
+	// Finance Customer Details
 	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType) throws InterfaceException;
 
 	CustomerDetails getCustomerDetailsById(long id, boolean reqChildDetails, String type);

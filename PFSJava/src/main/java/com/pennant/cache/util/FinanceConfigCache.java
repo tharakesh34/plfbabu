@@ -113,8 +113,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches FinanceType Data from Cache
 	 * 
-	 * @param String
-	 *            finType
+	 * @param String finType
 	 * @return FinanceType
 	 */
 	public static FinanceType getFinanceType(String finType) {
@@ -124,8 +123,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches FinanceType Data from Cache
 	 * 
-	 * @param String
-	 *            finType
+	 * @param String finType
 	 * @return FinanceType
 	 */
 	public static FinanceType getCacheFinanceType(String finType) {
@@ -141,8 +139,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Clear FinanceType data from cache .
 	 * 
-	 * @param String
-	 *            finType
+	 * @param String finType
 	 */
 	public static void clearFinanceTypeCache(String finType) {
 		try {
@@ -155,8 +152,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches DPDBucket Data from Cache
 	 * 
-	 * @param long
-	 *            bucketID
+	 * @param long bucketID
 	 * @return DPDBucket
 	 */
 	public static DPDBucket getDPDBucket(long bucketID) {
@@ -166,8 +162,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches DPDBucket Data from Cache
 	 * 
-	 * @param long
-	 *            bucketID
+	 * @param long bucketID
 	 * @return DPDBucket
 	 */
 	public static DPDBucket getCacheDPDBucket(long bucketID) {
@@ -186,8 +181,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Clear DPDBucket data from cache .
 	 * 
-	 * @param long
-	 *            bucketID
+	 * @param long bucketID
 	 */
 	public static void clearDPDBucketCache(long bucketID) {
 		try {
@@ -200,8 +194,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches DPDBucket Data from Cache
 	 * 
-	 * @param long
-	 *            bucketID
+	 * @param long bucketID
 	 * @return DPDBucket
 	 */
 	public static DPDBucket getDPDBucketCode(String bucketCode) {
@@ -211,8 +204,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches DPDBucket Data from Cache
 	 * 
-	 * @param long
-	 *            bucketID
+	 * @param long bucketID
 	 * @return DPDBucket
 	 */
 	public static DPDBucket getCacheDPDBucketCode(String bucketCode) {
@@ -231,8 +223,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Clear DPDBucket data from cache .
 	 * 
-	 * @param long
-	 *            bucketID
+	 * @param long bucketID
 	 */
 	public static void clearDPDBucketCodeCache(String bucketCode) {
 		try {
@@ -245,8 +236,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches DPDBucketConfiguration Data from Cache
 	 * 
-	 * @param long
-	 *            configID
+	 * @param long configID
 	 * @return DPDBucketConfiguration
 	 */
 	public static List<DPDBucketConfiguration> getDPDBucketConfiguration(String productCode) {
@@ -257,8 +247,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches DPDBucketConfiguration Data from Cache
 	 * 
-	 * @param long
-	 *            configID
+	 * @param long configID
 	 * @return DPDBucketConfiguration
 	 */
 	public static List<DPDBucketConfiguration> getCacheDPDBucketConfiguration(String productCode) {
@@ -275,8 +264,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Clear DPDBucket Configuration data from cache.
 	 * 
-	 * @param long
-	 *            configID
+	 * @param long configID
 	 */
 	public static void clearDPDBucketConfigurationCache(String productCode) {
 		try {
@@ -289,19 +277,18 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches NPABucket Data from Cache
 	 * 
-	 * @param long
-	 *            bucketID
+	 * @param long bucketID
 	 * @return NPABucket
 	 */
 	public static NPABucket getNPABucket(long bucketID) {
-		//		NPABucket npaBucket=null;
-		//		
-		//		try {
-		//			npaBucket =  nPABucketCache.get(bucketID);
-		//		} catch (ExecutionException e) {
-		//			logger.warn("Unable to load data from NPABucket cache: ", e);
-		//			npaBucket =  getNPABucketByID(bucketID);
-		//		}
+		// NPABucket npaBucket=null;
+		//
+		// try {
+		// npaBucket = nPABucketCache.get(bucketID);
+		// } catch (ExecutionException e) {
+		// logger.warn("Unable to load data from NPABucket cache: ", e);
+		// npaBucket = getNPABucketByID(bucketID);
+		// }
 
 		return getNPABucketByID(bucketID);
 	}
@@ -322,8 +309,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches DPDBucketConfiguration Data from Cache
 	 * 
-	 * @param long
-	 *            configID
+	 * @param long configID
 	 * @return DPDBucketConfiguration
 	 */
 	public static List<NPABucketConfiguration> getNPABucketConfiguration(String productCode) {
@@ -333,8 +319,7 @@ public class FinanceConfigCache {
 	/**
 	 * It Fetches DPDBucketConfiguration Data from Cache
 	 * 
-	 * @param long
-	 *            configID
+	 * @param long configID
 	 * @return DPDBucketConfiguration
 	 */
 	public static List<NPABucketConfiguration> getCacheNPABucketConfiguration(String productCode) {

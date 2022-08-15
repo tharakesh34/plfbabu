@@ -31,8 +31,7 @@ public class ProjectUnitsServiceImpl extends GenericService<ProjectUnits> implem
 	 * by using ProjectUnitDAO's update method 3) Audit the record in to AuditHeader and AdtProjectUnit by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -74,8 +73,7 @@ public class ProjectUnitsServiceImpl extends GenericService<ProjectUnits> implem
 	 * ProjectUnit by using ProjectUnitDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtProjectUnit by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -108,8 +106,7 @@ public class ProjectUnitsServiceImpl extends GenericService<ProjectUnits> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtProjectUnit by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -172,8 +169,7 @@ public class ProjectUnitsServiceImpl extends GenericService<ProjectUnits> implem
 	 * workFlow table by using projectUnitsDAO.delete with parameters ProjectUnit,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtProjectUnit by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -185,8 +181,7 @@ public class ProjectUnitsServiceImpl extends GenericService<ProjectUnits> implem
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

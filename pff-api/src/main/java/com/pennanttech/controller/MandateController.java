@@ -518,8 +518,7 @@ public class MandateController extends ExtendedTestClass {
 					}
 
 					String mandateType = mandate.getMandateType();
-					financeMainService.loanMandateSwapping(finID, mandateID, mandateType,
-							type);
+					financeMainService.loanMandateSwapping(finID, mandateID, mandateType, type);
 				}
 				response = APIErrorHandlerService.getSuccessStatus();
 			} else {

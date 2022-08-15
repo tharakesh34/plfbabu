@@ -263,10 +263,10 @@ public class DisbursementController extends ExtendedTestClass {
 				FinAdvancePayments fa = null;
 				FinanceMain fm = null;
 				PaymentInstruction pi = null;
-				
+
 				switch (channel) {
 				case DisbursementConstants.CHANNEL_DISBURSEMENT:
-					 fa = disbursementDAO.getDisbursementInstruction(disbReqId);
+					fa = disbursementDAO.getDisbursementInstruction(disbReqId);
 
 					if (fa == null) {
 						String valueParm[] = new String[4];
@@ -302,12 +302,12 @@ public class DisbursementController extends ExtendedTestClass {
 
 					Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
 
-					 fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.MAIN_TAB);
+					fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.MAIN_TAB);
 
 					if (fm == null) {
 						fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.TEMP_TAB);
 					}
-					
+
 					break;
 				case DisbursementConstants.CHANNEL_PAYMENT:
 					pi = disbursementDAO.getPaymentInstruction(disbReqId);
@@ -354,7 +354,7 @@ public class DisbursementController extends ExtendedTestClass {
 			return APIErrorHandlerService.getFailedStatus("41004", valueParm);
 
 		}
-		
+
 		logger.info(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 
@@ -364,21 +364,21 @@ public class DisbursementController extends ExtendedTestClass {
 			FinanceMain fm) {
 		TransactionStatus txStatus = null;
 		int count = 0;
-		
+
 		try {
 			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
 			txStatus = transactionManager.getTransaction(txDef);
 
-			if(fa != null) {
+			if (fa != null) {
 				count = disbursementProcess.processDisbursement(fm, fa);
 			}
-			
-			if(pi != null) {
+
+			if (pi != null) {
 				count = paymentProcess.processPayment(pi);
 			}
-			
+
 			if (count == 1) {
 				count = updateRequest(request);
 				if (count == 0 || count > 1) {

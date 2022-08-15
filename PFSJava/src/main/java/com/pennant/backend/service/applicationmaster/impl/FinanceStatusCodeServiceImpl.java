@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceStatusCodeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-04-2017    														*
- *                                                                  						*
- * Modified Date    :  18-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceStatusCodeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-04-2017 * *
+ * Modified Date : 18-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.applicationmaster.impl;
@@ -82,8 +64,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -97,8 +78,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 	}
 
 	/**
-	 * @param financeStatusCodeDAO
-	 *            the financeStatusCodeDAO to set
+	 * @param financeStatusCodeDAO the financeStatusCodeDAO to set
 	 */
 	public void setFinanceStatusCodeDAO(FinanceStatusCodeDAO financeStatusCodeDAO) {
 		this.financeStatusCodeDAO = financeStatusCodeDAO;
@@ -112,8 +92,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 	 * the table. based on the module workFlow Configuration. by using FINANCESTATUSCODESDAO's update method 3) Audit
 	 * the record in to AuditHeader and AdtFINANCESTATUSCODES by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -154,8 +133,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 	 * FINANCESTATUSCODES by using FINANCESTATUSCODESDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtFINANCESTATUSCODES by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -180,8 +158,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 	/**
 	 * getFINANCESTATUSCODES fetch the details by using FINANCESTATUSCODESDAO's getFINANCESTATUSCODESById method.
 	 * 
-	 * @param statusID
-	 *            statusID of the FinanceStatusCode.
+	 * @param statusID statusID of the FinanceStatusCode.
 	 * @return FINANCESTATUSCODES
 	 */
 	public FinanceStatusCode getFinanceStatusCode(long statusID) {
@@ -192,8 +169,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 	 * getApprovedFINANCESTATUSCODESById fetch the details by using FINANCESTATUSCODESDAO's getFINANCESTATUSCODESById
 	 * method . with parameter id and type as blank. it fetches the approved records from the FINANCESTATUSCODES.
 	 * 
-	 * @param statusID
-	 *            statusID of the FinanceStatusCode. (String)
+	 * @param statusID statusID of the FinanceStatusCode. (String)
 	 * @return FINANCESTATUSCODES
 	 */
 	public FinanceStatusCode getApprovedFinanceStatusCode(long statusID) {
@@ -212,8 +188,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 	 * record in to AuditHeader and AdtFINANCESTATUSCODES by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -278,8 +253,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 	 * workFlow table by using getFinanceStatusCodeDAO().delete with parameters financeStatusCode,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtFINANCESTATUSCODES by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -307,8 +281,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

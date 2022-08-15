@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  RatingTypeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : RatingTypeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -105,8 +87,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	 * on the module workFlow Configuration. by using RatingTypeDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBMTRatingTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -142,8 +123,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	 * BMTRatingTypes by using RatingTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtBMTRatingTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -164,10 +144,8 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	/**
 	 * getRatingTypeById fetch the details by using RatingTypeDAO's getRatingTypeById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return RatingType
 	 */
 	@Override
@@ -179,8 +157,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	 * getApprovedRatingTypeById fetch the details by using RatingTypeDAO's getRatingTypeById method . with parameter id
 	 * and type as blank. it fetches the approved records from the BMTRatingTypes.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return RatingType
 	 */
 	public RatingType getApprovedRatingTypeById(String id) {
@@ -198,8 +175,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTRatingTypes by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -251,8 +227,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	 * workFlow table by using getRatingTypeDAO().delete with parameters ratingType,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTRatingTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -275,8 +250,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -327,7 +301,8 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 				}
 			} else { // with work flow
 				if (ratingType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befRatingType != null || tempRatingType != null) { // if records already exists in the main table
+					if (befRatingType != null || tempRatingType != null) { // if records already exists in the main
+																			// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table

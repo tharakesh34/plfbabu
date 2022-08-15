@@ -15,9 +15,8 @@ public class AppUtil {
 	/**
 	 * Private constructor to hide the implicit public one.
 	 * 
-	 * @throws IllegalAccessException
-	 *             If the constructor is used to create and initialize a new instance of the declaring class by
-	 *             suppressing Java language access checking.
+	 * @throws IllegalAccessException If the constructor is used to create and initialize a new instance of the
+	 *                                declaring class by suppressing Java language access checking.
 	 */
 	private AppUtil() {
 		super();
@@ -26,12 +25,10 @@ public class AppUtil {
 	/**
 	 * Translates the {@link String} representation of a {@link BigDecimal} into a {@link BigDecimal}
 	 * 
-	 * @param value
-	 *            The {@link String} representation value which needs to be Translate into {@link BigDecimal}.
+	 * @param value The {@link String} representation value which needs to be Translate into {@link BigDecimal}.
 	 * @return A {@link BigDecimal} or <code>BigDecimal.ZEOR</code> if input value is <code>null</code>.
 	 * 
-	 * @throws NumberFormatException
-	 *             if value is not a valid representation of a {@link BigDecimal}
+	 * @throws NumberFormatException if value is not a valid representation of a {@link BigDecimal}
 	 * 
 	 */
 	public static BigDecimal getBigDecimal(String value) {
@@ -42,8 +39,7 @@ public class AppUtil {
 	/**
 	 * Translates the {@link BigDecimal} representation of a {@link String} into a {@link String}
 	 * 
-	 * @param value
-	 *            The {@link BigDecimal} representation value which needs to be Translate to {@link String} .
+	 * @param value The {@link BigDecimal} representation value which needs to be Translate to {@link String} .
 	 * @return A corresponding {@link String} value or <code>0</code> if input value is <code>null</code>.
 	 * 
 	 */
@@ -54,7 +50,7 @@ public class AppUtil {
 	public static String formatAmount(String value, int decPos) {
 		return formatAmount(getBigDecimal(value), decPos);
 	}
-	
+
 	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
 		BigDecimal bigDecimal = BigDecimal.ZERO;
 
@@ -117,7 +113,7 @@ public class AppUtil {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
 		if (amount == null) {
 			return BigDecimal.ZERO;
@@ -133,7 +129,7 @@ public class AppUtil {
 		}
 		return new BigDecimal(amount.replace(",", "")).multiply(BigDecimal.valueOf(Math.pow(10, dec)));
 	}
-	
+
 	public static String getAmountInText(BigDecimal amount) {
 		if (amount == null || amount == BigDecimal.ZERO) {
 			return "";
@@ -147,12 +143,12 @@ public class AppUtil {
 		return "";
 
 	}
-	
+
 	public static String getAmountInText(BigDecimal amount, int format) {
 		if (amount == null || amount == BigDecimal.ZERO) {
 			return "";
 		}
-		
+
 		amount = formateAmount(amount, format);
 
 		try {
@@ -163,5 +159,5 @@ public class AppUtil {
 		return "";
 
 	}
-	
+
 }

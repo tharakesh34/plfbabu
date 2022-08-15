@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ExtendedFieldDetailService.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  28-12-2011    														*
- *                                                                  						*
- * Modified Date    :  28-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ExtendedFieldDetailService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 28-12-2011 * *
+ * Modified Date : 28-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 28-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- * 08-05-2019		Srinivasa Varma			 0.2			Development Iteam 81            *  
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 28-12-2011 Pennant 0.1 * * * 08-05-2019 Srinivasa Varma 0.2 Development Iteam 81 * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.solutionfactory;
@@ -74,7 +56,7 @@ public interface ExtendedFieldDetailService {
 
 	List<ExtendedFieldDetail> getExtendedFieldDetailByModuleID(long id, String type);
 
-	//### 08-05-2018 Development Iteam 81
+	// ### 08-05-2018 Development Iteam 81
 	boolean isFieldAssignedToRule(String fieldName);
 
 	Map<String, Object> getValueByFieldName(String reference, String moduleName, String subModuleName, String event,

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinTypeExpenseServiceImpl.java                                       * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-12-2017    														*
- *                                                                  						*
- * Modified Date    :  			    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinTypeExpenseServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-12-2017 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-12-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-12-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.rmtmasters.impl;
 
@@ -85,8 +67,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -108,8 +89,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 	 * based on the module workFlow Configuration. by using FinTypeExpenseDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtFinTypeExpense by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -148,10 +128,8 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 	/**
 	 * getFinTypeExpenseById fetch the details by using FinTypeExpenseDAO's getFinTypeExpenseById method.
 	 * 
-	 * @param finType
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finType (String)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return FinTypeExpense
 	 */
 	@Override
@@ -164,8 +142,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 	 * getApprovedFinTypeExpenseById fetch the details by using FinTypeExpenseDAO's getFinTypeExpenseById method . with
 	 * parameter id and type as blank. it fetches the approved records from the FinTypeExpense.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return FinTypeExpense
 	 */
 	@Override
@@ -185,8 +162,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinTypeExpense by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -194,7 +170,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 		logger.debug("Entering");
 
 		String tranType = "";
-		//auditHeader = businessValidation(auditHeader, "doApprove");
+		// auditHeader = businessValidation(auditHeader, "doApprove");
 
 		/*
 		 * if (!auditHeader.isNextProcess()) { return auditHeader; }
@@ -246,8 +222,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 	 * workFlow table by using getFinTypeFeesDAO().delete with parameters promotionFee,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtFinTypeExpense by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -275,8 +250,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -330,7 +304,8 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 				}
 			} else { // with work flow
 				if (finTypeExpense.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinTypeExpense != null || tempFinTypeExpense != null) { // if records already exists in the main table
+					if (befFinTypeExpense != null || tempFinTypeExpense != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -398,8 +373,8 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 				continue;
 			}
 
-			//finTypeFees.setFinType(financeType.getFinType());
-			//finTypeFees.setWorkflowId(financeType.getWorkflowId());
+			// finTypeFees.setFinType(financeType.getFinType());
+			// finTypeFees.setWorkflowId(financeType.getWorkflowId());
 			boolean isRcdType = false;
 			if (finTypeExpense.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				finTypeExpense.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -423,9 +398,9 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
-			//finTypeFees.setRecordStatus(financeType.getRecordStatus());
-			//finTypeFees.setUserDetails(financeType.getUserDetails());
-			//finTypeFees.setLastMntOn(financeType.getLastMntOn());
+			// finTypeFees.setRecordStatus(financeType.getRecordStatus());
+			// finTypeFees.setUserDetails(financeType.getUserDetails());
+			// finTypeFees.setLastMntOn(financeType.getLastMntOn());
 
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeExpense.getBefImage(),
 					finTypeExpense));
@@ -458,7 +433,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 				finTypeExpense.setNextTaskId("");
 				finTypeExpense.setWorkflowId(0);
 			}
-			//finTypeFees.setFinType(financeType.getFinType());
+			// finTypeFees.setFinType(financeType.getFinType());
 			if (finTypeExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (finTypeExpense.isNewRecord()) {

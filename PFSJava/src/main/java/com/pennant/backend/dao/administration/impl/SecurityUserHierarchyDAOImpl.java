@@ -166,7 +166,7 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 	@Override
 	public List<SecurityUserHierarchy> getUpLevelUsers(SecurityUserHierarchy userHierarchy) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("UserId", userHierarchy.getUserId());
 		parameterSource.addValue("Depth", 1);

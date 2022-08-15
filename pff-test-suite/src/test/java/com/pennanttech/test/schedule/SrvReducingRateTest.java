@@ -110,14 +110,14 @@ public class SrvReducingRateTest {
 			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		FinScheduleData schedule = (FinScheduleData) BeanUtils.cloneBean(model);
 
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
 		// Setting to be moved to actual test class
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
 		schedule.getFinanceMain().setRepayRateBasis(CalculationConstants.RATE_BASIS_R);
 		schedule = ScheduleGenerator.getNewSchd(schedule);
 		schedule = ScheduleCalculator.getCalSchd(schedule, BigDecimal.ZERO);
 
-		//Execute Services
+		// Execute Services
 		schedule = executeServiceCases(schedule);
 
 		return schedule;
@@ -127,7 +127,7 @@ public class SrvReducingRateTest {
 		FinanceMain fm = schedule.getFinanceMain();
 		String schdMethod = fm.getScheduleMethod();
 
-		//First Service Case
+		// First Service Case
 		String srvTestCase = Dataset.getString(data, 3);
 		String recalType = Dataset.getString(data, 4);
 		if (srvTestCase.equals("")) {
@@ -144,7 +144,7 @@ public class SrvReducingRateTest {
 			schedule = executeService(schedule, srvTestCase, recalType, schdMethod);
 		}
 
-		//Second Service Case
+		// Second Service Case
 		srvTestCase = Dataset.getString(data, 5);
 		recalType = Dataset.getString(data, 6);
 
@@ -162,7 +162,7 @@ public class SrvReducingRateTest {
 			schedule = executeService(schedule, srvTestCase, recalType, schdMethod);
 		}
 
-		//Third Service Case
+		// Third Service Case
 		srvTestCase = Dataset.getString(data, 7);
 		recalType = Dataset.getString(data, 8);
 
@@ -180,7 +180,7 @@ public class SrvReducingRateTest {
 			schedule = executeService(schedule, srvTestCase, recalType, schdMethod);
 		}
 
-		//Fourth Service Case
+		// Fourth Service Case
 		srvTestCase = Dataset.getString(data, 9);
 		recalType = Dataset.getString(data, 10);
 
@@ -198,7 +198,7 @@ public class SrvReducingRateTest {
 			schedule = executeService(schedule, srvTestCase, recalType, schdMethod);
 		}
 
-		//Fifth Service Case
+		// Fifth Service Case
 		srvTestCase = Dataset.getString(data, 11);
 		recalType = Dataset.getString(data, 12);
 
@@ -216,7 +216,7 @@ public class SrvReducingRateTest {
 			schedule = executeService(schedule, srvTestCase, recalType, schdMethod);
 		}
 
-		//Sixth Service Case
+		// Sixth Service Case
 		srvTestCase = Dataset.getString(data, 13);
 		recalType = Dataset.getString(data, 14);
 
@@ -234,7 +234,7 @@ public class SrvReducingRateTest {
 			schedule = executeService(schedule, srvTestCase, recalType, schdMethod);
 		}
 
-		//Seventh Service Case
+		// Seventh Service Case
 		srvTestCase = Dataset.getString(data, 15);
 		recalType = Dataset.getString(data, 16);
 
@@ -289,7 +289,7 @@ public class SrvReducingRateTest {
 					} else if (recalType.equals(CalculationConstants.RPYCHG_ADDTERM)) {
 						fm.setAdjTerms(3);
 					} else if (recalType.equals(CalculationConstants.RPYCHG_ADJMDT)) {
-						//Do nothing
+						// Do nothing
 					} else if (recalType.equals(CalculationConstants.RPYCHG_TILLDATE)) {
 						fm.setRecalFromDate(fsdList.get(i + 2).getSchDate());
 						fm.setRecalToDate(fsdList.get(i + 5).getSchDate());
@@ -343,7 +343,7 @@ public class SrvReducingRateTest {
 				fm.setEventFromDate(evtFromDate);
 				fm.setEventToDate(evtToDate);
 				fm.setRepayMargin(MARGIN_RATE3);
-				//CURPRDD is for period goes till END
+				// CURPRDD is for period goes till END
 			} else if (recalType.equals("CURPRDD")) {
 				iRecord = 3;
 				evtFromDate = schedule.getFinanceScheduleDetails().get(iRecord).getSchDate();
@@ -409,7 +409,7 @@ public class SrvReducingRateTest {
 					fm.getRepayMargin(), BigDecimal.ZERO, true);
 		}
 
-		//RATE CHANGE HAPPENS IN BETWEEN THE SAME INSTALLMENT
+		// RATE CHANGE HAPPENS IN BETWEEN THE SAME INSTALLMENT
 		if (srvTestCase.equals("RATCHGI")) {
 			int iRecord = 0;
 			BigDecimal MARGIN_RATE1 = new BigDecimal(1.5);

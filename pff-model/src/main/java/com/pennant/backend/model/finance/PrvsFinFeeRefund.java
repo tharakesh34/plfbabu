@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 
 public class PrvsFinFeeRefund {
 	private long feeId;
-	//With GST
+	// With GST
 	private BigDecimal totRefundAmount = BigDecimal.ZERO;
-	//GST
+	// GST
 	private BigDecimal totRefundAmtGST = BigDecimal.ZERO;
-	//Without GST
+	// Without GST
 	private BigDecimal totRefundAmtOriginal = BigDecimal.ZERO;
-	//TDS
+	// TDS
 	private BigDecimal totRefundAmtTDS = BigDecimal.ZERO;
 
 	public long getFeeId() {

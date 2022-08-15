@@ -122,7 +122,6 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-
 	public long getFinID() {
 		return finID;
 	}
@@ -130,7 +129,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	public void setFinID(long finID) {
 		this.finID = finID;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}

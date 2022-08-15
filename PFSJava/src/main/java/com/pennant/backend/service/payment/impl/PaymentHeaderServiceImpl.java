@@ -659,7 +659,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		aeEvent.setCcy(fm.getFinCcy());
 		aeEvent.setFinID(fm.getFinID());
 		aeEvent.setFinReference(fm.getFinReference());
-		
+
 		List<PaymentDetail> paymentDetailsList = ph.getPaymentDetailList();
 		List<String> feeTypeCodes = new ArrayList<>();
 		List<FeeType> feeTypesList = new ArrayList<>();

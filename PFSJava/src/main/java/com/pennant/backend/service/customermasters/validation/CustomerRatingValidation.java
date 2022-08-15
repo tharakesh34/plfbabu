@@ -75,14 +75,15 @@ public class CustomerRatingValidation {
 
 		if (customerRating.isNewRecord()) { // for New record or new record into work flow
 
-			if (!customerRating.isWorkflow()) {// With out Work flow only new records  
-				if (befCustomerRating != null) { // Record Already Exists in the table then error  
+			if (!customerRating.isWorkflow()) {// With out Work flow only new records
+				if (befCustomerRating != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (customerRating.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCustomerRating != null || tempCustomerRating != null) { // if records already exists in the main table
+					if (befCustomerRating != null || tempCustomerRating != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -113,7 +114,7 @@ public class CustomerRatingValidation {
 				}
 			} else {
 
-				if (tempCustomerRating == null) { // if records not exists in the Work flow table 
+				if (tempCustomerRating == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

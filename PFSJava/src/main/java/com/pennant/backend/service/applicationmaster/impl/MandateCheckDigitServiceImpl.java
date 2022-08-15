@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MandateCheckDigitServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-12-2017    														*
- *                                                                  						*
- * Modified Date    :  11-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MandateCheckDigitServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-12-2017 * *
+ * Modified Date : 11-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-12-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-12-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -83,8 +65,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -98,8 +79,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	}
 
 	/**
-	 * @param mandateCheckDigitDAO
-	 *            the mandateCheckDigitDAO to set
+	 * @param mandateCheckDigitDAO the mandateCheckDigitDAO to set
 	 */
 	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
 		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
@@ -113,8 +93,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	 * the table. based on the module workFlow Configuration. by using MandateCheckDigitsDAO's update method 3) Audit
 	 * the record in to AuditHeader and AdtMandateCheckDigits by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -152,8 +131,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	 * MandateCheckDigits by using MandateCheckDigitsDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtMandateCheckDigits by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -178,8 +156,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	/**
 	 * getMandateCheckDigits fetch the details by using MandateCheckDigitsDAO's getMandateCheckDigitsById method.
 	 * 
-	 * @param checkDigitValue
-	 *            checkDigitValue of the MandateCheckDigit.
+	 * @param checkDigitValue checkDigitValue of the MandateCheckDigit.
 	 * @return MandateCheckDigits
 	 */
 	@Override
@@ -191,8 +168,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	 * getApprovedMandateCheckDigitsById fetch the details by using MandateCheckDigitsDAO's getMandateCheckDigitsById
 	 * method . with parameter id and type as blank. it fetches the approved records from the MandateCheckDigits.
 	 * 
-	 * @param checkDigitValue
-	 *            checkDigitValue of the MandateCheckDigit. (String)
+	 * @param checkDigitValue checkDigitValue of the MandateCheckDigit. (String)
 	 * @return MandateCheckDigits
 	 */
 	public MandateCheckDigit getApprovedMandateCheckDigit(int checkDigitValue) {
@@ -211,8 +187,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	 * record in to AuditHeader and AdtMandateCheckDigits by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -277,8 +252,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	 * workFlow table by using getMandateCheckDigitDAO().delete with parameters mandateCheckDigit,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtMandateCheckDigits by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -306,8 +280,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

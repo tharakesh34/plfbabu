@@ -1,40 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DeviationConfigCtrl.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DeviationConfigCtrl.java * * Author : PENNANT TECHONOLOGIES * * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Satish.k	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Satish.k 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -119,7 +103,7 @@ public class DeviationConfigCtrl {
 
 	}
 
-	//	Setters & Getters
+	// Setters & Getters
 
 	public FinTypeAccountingDAO getFinTypeAccountingDAO() {
 		return finTypeAccountingDAO;
@@ -428,8 +412,8 @@ public class DeviationConfigCtrl {
 		for (ValueLabel valueLabel : delgationRoles) {
 			Listheader listheader = new Listheader(valueLabel.getLabel());
 			listheader.setStyle(styleCenter);
-			//			listheader.setHflex("min");
-			//ID
+			// listheader.setHflex("min");
+			// ID
 			listheader.setId(valueLabel.getValue());
 
 			listhead.appendChild(listheader);
@@ -454,7 +438,7 @@ public class DeviationConfigCtrl {
 		addListGroup(module, listbox);
 
 		Listitem listitem = new Listitem();
-		//ID
+		// ID
 		listitem.setId(code);
 		listitem.setAttribute(ATT_DATA_TYPE, dataType);
 		listitem.setAttribute(ATT_Module, module);

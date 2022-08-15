@@ -44,18 +44,14 @@ public class EventManager implements ServletContextListener {
 	/**
 	 * Publishes the message on behalf of the sender
 	 * 
-	 * @param message
-	 *            The message that need to be published and will be formatted to include sender information
-	 * @param from
-	 *            The login name of the sender, if not provided defaulted to "SYSTEM"
-	 * @param notify
-	 *            Type of recipients
-	 * @param to
-	 *            List of recipients in the distribution list
-	 *            <ul>
-	 *            <li>Notify.USER: Login user names of the users
-	 *            <li>Notify.ROLE: Codes of the roles
-	 *            </ul>
+	 * @param message The message that need to be published and will be formatted to include sender information
+	 * @param from    The login name of the sender, if not provided defaulted to "SYSTEM"
+	 * @param notify  Type of recipients
+	 * @param to      List of recipients in the distribution list
+	 *                <ul>
+	 *                <li>Notify.USER: Login user names of the users
+	 *                <li>Notify.ROLE: Codes of the roles
+	 *                </ul>
 	 */
 	public void publish(String message, String from, Notify notify, String[] to) {
 		if (to.length == 0) {
@@ -147,16 +143,13 @@ public class EventManager implements ServletContextListener {
 	/**
 	 * Publishes the message on behalf of the System.
 	 * 
-	 * @param message
-	 *            The message that need to be published and will be formatted to include sender information.
-	 * @param notify
-	 *            Type of recipients.
-	 * @param to
-	 *            List of recipients in the distribution list.
-	 *            <ul>
-	 *            <li>Notify.USER: Login user names of the users
-	 *            <li>Notify.ROLE: Codes of the roles
-	 *            </ul>
+	 * @param message The message that need to be published and will be formatted to include sender information.
+	 * @param notify  Type of recipients.
+	 * @param to      List of recipients in the distribution list.
+	 *                <ul>
+	 *                <li>Notify.USER: Login user names of the users
+	 *                <li>Notify.ROLE: Codes of the roles
+	 *                </ul>
 	 */
 	public void publish(String message, Notify notify, String[] to) {
 		publish(message, DEFAULT_FROM, notify, to);
@@ -165,16 +158,13 @@ public class EventManager implements ServletContextListener {
 	/**
 	 * Publishes the message on behalf of the System.
 	 * 
-	 * @param message
-	 *            The message that need to be published and will be formatted to include sender information.
-	 * @param notify
-	 *            Type of recipients.
-	 * @param to
-	 *            List of recipients in the distribution list.
-	 *            <ul>
-	 *            <li>Notify.USER: Login user names of the users
-	 *            <li>Notify.ROLE: Codes of the roles
-	 *            </ul>
+	 * @param message The message that need to be published and will be formatted to include sender information.
+	 * @param notify  Type of recipients.
+	 * @param to      List of recipients in the distribution list.
+	 *                <ul>
+	 *                <li>Notify.USER: Login user names of the users
+	 *                <li>Notify.ROLE: Codes of the roles
+	 *                </ul>
 	 */
 	public void publish(String message, Notify notify, String from, String[] to) {
 		publish(message, from, notify, to);
@@ -183,14 +173,10 @@ public class EventManager implements ServletContextListener {
 	/**
 	 * Publishes the message on behalf of the System.
 	 * 
-	 * @param message
-	 *            The message that need to be published and will be formatted to include sender information.
-	 * @param toRoles
-	 *            List of role codes of the recipients.
-	 * @param division
-	 *            Division of the recipients.
-	 * @param branch
-	 *            Branch of the recipients.
+	 * @param message  The message that need to be published and will be formatted to include sender information.
+	 * @param toRoles  List of role codes of the recipients.
+	 * @param division Division of the recipients.
+	 * @param branch   Branch of the recipients.
 	 */
 	public void publish(String message, String[] toRoles, String division, String branch) {
 		List<String> userLogins = securityUserOperationsService.getUsersByRoles(toRoles, division, branch);
@@ -216,12 +202,9 @@ public class EventManager implements ServletContextListener {
 	/**
 	 * Returns whether the the user is the recipient of the message
 	 * 
-	 * @param data
-	 *            Event data
-	 * @param user
-	 *            User name
-	 * @param roles
-	 *            Roles of the user
+	 * @param data  Event data
+	 * @param user  User name
+	 * @param roles Roles of the user
 	 * @return Whether the the user is the recipient of the message
 	 */
 	public static boolean isRecipient(Object[] data, String user, List<SecurityRole> roles) {

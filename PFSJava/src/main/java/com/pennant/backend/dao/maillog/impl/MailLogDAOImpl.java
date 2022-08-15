@@ -37,7 +37,7 @@ public class MailLogDAOImpl extends BasicDao<Notifications> implements MailLogDA
 		int mailSent = this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		if (mailSent == 1) {
-			//update SeqMailLog table
+			// update SeqMailLog table
 			String updateSql = "Update SeqMailLog set SeqNo = (Select MAX(:MailReference) from MailLog)";
 			this.jdbcTemplate.update(updateSql, beanParameters);
 		}

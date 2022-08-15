@@ -29,12 +29,9 @@ public final class CollectionUtil {
 	/**
 	 * Answers true if a predicate is true for at least one element of a collection (delimited string).
 	 * 
-	 * @param delimtedString
-	 *            The collection to get the input from, may be null.
-	 * @param delimiter
-	 *            The delimiter used to define the collection.
-	 * @param predicate
-	 *            The predicate to use, may be null
+	 * @param delimtedString The collection to get the input from, may be null.
+	 * @param delimiter      The delimiter used to define the collection.
+	 * @param predicate      The predicate to use, may be null
 	 * @return <code>true</code> if at least one element of the collection matches the predicate.
 	 */
 	public static boolean exists(String delimtedString, String delimiter, String predicate) {

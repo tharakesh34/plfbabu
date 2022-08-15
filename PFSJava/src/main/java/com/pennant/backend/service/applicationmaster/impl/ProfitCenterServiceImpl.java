@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProfitCenterServiceImpl.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-04-2017    														*
- *                                                                  						*
- * Modified Date    :  22-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProfitCenterServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-04-2017 * *
+ * Modified Date : 22-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -84,8 +66,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -99,8 +80,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	}
 
 	/**
-	 * @param profitCenterDAO
-	 *            the profitCenterDAO to set
+	 * @param profitCenterDAO the profitCenterDAO to set
 	 */
 	public void setProfitCenterDAO(ProfitCenterDAO profitCenterDAO) {
 		this.profitCenterDAO = profitCenterDAO;
@@ -114,8 +94,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	 * Configuration. by using ProfitCentersDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtProfitCenters by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -155,8 +134,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	 * ProfitCenters by using ProfitCentersDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtProfitCenters by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -181,8 +159,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	/**
 	 * getProfitCenters fetch the details by using ProfitCentersDAO's getProfitCentersById method.
 	 * 
-	 * @param profitCenterID
-	 *            profitCenterID of the ProfitCenter.
+	 * @param profitCenterID profitCenterID of the ProfitCenter.
 	 * @return ProfitCenters
 	 */
 	@Override
@@ -194,8 +171,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	 * getApprovedProfitCentersById fetch the details by using ProfitCentersDAO's getProfitCentersById method . with
 	 * parameter id and type as blank. it fetches the approved records from the ProfitCenters.
 	 * 
-	 * @param profitCenterID
-	 *            profitCenterID of the ProfitCenter. (String)
+	 * @param profitCenterID profitCenterID of the ProfitCenter. (String)
 	 * @return ProfitCenters
 	 */
 	public ProfitCenter getApprovedProfitCenter(long profitCenterID) {
@@ -213,8 +189,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtProfitCenters by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -279,8 +254,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	 * workFlow table by using getProfitCenterDAO().delete with parameters profitCenter,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtProfitCenters by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -308,8 +282,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -353,7 +326,8 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 		}
 
 		if (StringUtils.trimToEmpty(profitCenter.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			int count = accountTypeDAO.getgetAccountTypeByProfit(profitCenter.getProfitCenterID(), "");//FIXME for FinanceMain
+			int count = accountTypeDAO.getgetAccountTypeByProfit(profitCenter.getProfitCenterID(), "");// FIXME for
+																										// FinanceMain
 			if (count != 0) {
 				String[] parameters = new String[2];
 

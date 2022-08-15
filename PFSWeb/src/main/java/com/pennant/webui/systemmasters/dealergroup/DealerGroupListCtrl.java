@@ -81,8 +81,7 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_DealerGroupList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -102,8 +101,8 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 				sortOperator_dealerCategoryId, Operators.STRING);
 		registerField("channel", listheader_channel, SortOrder.NONE, channel, sortOperator_channel, Operators.STRING);
 		registerField("active", listheader_active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
-		//	registerField("groupIdName");
-		//	doSetFieldProperties();
+		// registerField("groupIdName");
+		// doSetFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -116,8 +115,7 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_DealerGroupList_NewDealerGroup(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -151,8 +149,7 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -163,8 +160,7 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onBuilderCompanyItemDoubleClicked(Event event) {
@@ -199,8 +195,7 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -210,8 +205,7 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onDealerGroupItemDoubleClicked(Event event) {
@@ -246,8 +240,7 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

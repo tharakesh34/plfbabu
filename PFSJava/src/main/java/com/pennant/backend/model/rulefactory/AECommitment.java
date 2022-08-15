@@ -6,13 +6,13 @@ import java.util.Map;
 
 public class AECommitment {
 
-	//Amount Code Details
+	// Amount Code Details
 	private BigDecimal CMTAMT = BigDecimal.ZERO;
 	private BigDecimal CHGAMT = BigDecimal.ZERO;
 	private BigDecimal DISBURSE = BigDecimal.ZERO;
 	private BigDecimal RPPRI = BigDecimal.ZERO;
 
-	//Commitment Details
+	// Commitment Details
 	private BigDecimal cmtAmount;
 	private BigDecimal cmtAmountOther;
 	private BigDecimal cmtUtilized;

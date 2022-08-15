@@ -532,7 +532,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 								rowNo++;
 							}
 						}
-						
+
 						bw.flush();
 						fos.flush();
 					} catch (Exception e) {

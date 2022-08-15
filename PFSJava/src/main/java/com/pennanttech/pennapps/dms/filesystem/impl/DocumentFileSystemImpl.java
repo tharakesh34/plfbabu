@@ -72,7 +72,7 @@ public class DocumentFileSystemImpl implements DocumentFileSystem {
 		logger.debug(Literal.LEAVING);
 		return dmsQueue.getDocUri();
 	}
-	
+
 	@Override
 	public byte[] retrive(String docURI) {
 		logger.debug(Literal.ENTERING);

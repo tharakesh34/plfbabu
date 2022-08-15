@@ -291,6 +291,7 @@ public class ExternalDocument implements Serializable {
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
+
 	public String getSource() {
 		return source;
 	}

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CorporateCustomerDetailServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-12-2011    														*
- *                                                                  						*
- * Modified Date    :  01-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CorporateCustomerDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date :
+ * 01-12-2011 * * Modified Date : 01-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.customermasters.impl;
@@ -108,8 +90,7 @@ public class CorporateCustomerDetailServiceImpl extends GenericService<Corporate
 	 * method 3) Audit the record in to AuditHeader and AdtCustomerCorporateDetail by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -148,8 +129,7 @@ public class CorporateCustomerDetailServiceImpl extends GenericService<Corporate
 	 * CustomerCorporateDetail by using CorporateCustomerDetailDAO's delete method with type as Blank 3) Audit the
 	 * record in to AuditHeader and AdtCustomerCorporateDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -174,10 +154,8 @@ public class CorporateCustomerDetailServiceImpl extends GenericService<Corporate
 	 * getCorporateCustomerDetailById fetch the details by using CorporateCustomerDetailDAO's
 	 * getCorporateCustomerDetailById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CorporateCustomerDetail
 	 */
 
@@ -191,8 +169,7 @@ public class CorporateCustomerDetailServiceImpl extends GenericService<Corporate
 	 * getCorporateCustomerDetailById method . with parameter id and type as blank. it fetches the approved records from
 	 * the CustomerCorporateDetail.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return CorporateCustomerDetail
 	 */
 	public CorporateCustomerDetail getApprovedCorporateCustomerDetailById(long id) {
@@ -211,8 +188,7 @@ public class CorporateCustomerDetailServiceImpl extends GenericService<Corporate
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
 	 * AdtCustomerCorporateDetail by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -272,8 +248,7 @@ public class CorporateCustomerDetailServiceImpl extends GenericService<Corporate
 	 * Audit the record in to AuditHeader and AdtCustomerCorporateDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -302,8 +277,7 @@ public class CorporateCustomerDetailServiceImpl extends GenericService<Corporate
 	 * for any mismatch conditions Fetch the error details from getCorporateCustomerDetailDAO().getErrorDetail with
 	 * Error ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

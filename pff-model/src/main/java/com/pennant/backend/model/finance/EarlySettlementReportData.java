@@ -14,8 +14,8 @@
  ******************************************************************************************** 
  * FILE HEADER *
  ******************************************************************************************** 
- * * FileName : EarlySettlement.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * * Modified Date :
- * 15-11-2011 * * Description : * *
+ * * FileName : EarlySettlement.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * * Modified Date
+ * : 15-11-2011 * * Description : * *
  ******************************************************************************************** 
  * Date Author Version Comments *
  ******************************************************************************************** 

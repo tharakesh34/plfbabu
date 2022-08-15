@@ -1,45 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  SearchOperators.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SearchOperators.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.util.searching;
 
 import java.io.Serializable;
@@ -339,10 +330,8 @@ public class SearchOperators implements Serializable {
 	 * Restore the all operators sign in the operators listbox by comparing the <br>
 	 * value of the filter. <br>
 	 * 
-	 * @param listbox
-	 *            Listbox that shows the operator signs.
-	 * @param filter
-	 *            Filter that corresponds to the operator listbox.
+	 * @param listbox Listbox that shows the operator signs.
+	 * @param filter  Filter that corresponds to the operator listbox.
 	 */
 	public static void restoreOperator(Listbox listbox, Filter filter) {
 		if (filter.getOperator() == Filter.OP_EQUAL) {
@@ -369,10 +358,8 @@ public class SearchOperators implements Serializable {
 	 * Restore the string operators sign in the operators listbox by comparing the <br>
 	 * value of the filter. <br>
 	 * 
-	 * @param listbox
-	 *            Listbox that shows the operator signs.
-	 * @param filter
-	 *            Filter that corresponds to the operator listbox.
+	 * @param listbox Listbox that shows the operator signs.
+	 * @param filter  Filter that corresponds to the operator listbox.
 	 */
 	public static void restoreStringOperator(Listbox listbox, Filter filter) {
 		if (filter.getOperator() == Filter.OP_EQUAL) {
@@ -391,10 +378,8 @@ public class SearchOperators implements Serializable {
 	 * Restore the AlphaNumeric operators sign in the operators listbox by comparing the <br>
 	 * value of the filter. <br>
 	 * 
-	 * @param listbox
-	 *            Listbox that shows the operator signs.
-	 * @param filter
-	 *            Filter that corresponds to the operator listbox.
+	 * @param listbox Listbox that shows the operator signs.
+	 * @param filter  Filter that corresponds to the operator listbox.
 	 */
 	public static void restoreAlphaNumOperator(Listbox listbox, Filter filter) {
 		if (filter.getOperator() == Filter.OP_EQUAL) {
@@ -420,10 +405,8 @@ public class SearchOperators implements Serializable {
 	/**
 	 * Restore the string operators sign in the operators listbox
 	 * 
-	 * @param listbox
-	 *            Listbox that shows the operator signs.
-	 * @param filter
-	 *            Filter that corresponds to the operator listbox.
+	 * @param listbox Listbox that shows the operator signs.
+	 * @param filter  Filter that corresponds to the operator listbox.
 	 */
 	public static void resetOperator(Listbox listbox, Filter filter) {
 		if (filter.getOperator() == Filter.OP_EQUAL) {
@@ -442,10 +425,8 @@ public class SearchOperators implements Serializable {
 	 * Restore the numeric operator sign in the numeric operators listbox by comparing the <br>
 	 * value of the filter. <br>
 	 * 
-	 * @param listbox
-	 *            Listbox that shows the operator signs.
-	 * @param filter
-	 *            Filter that corresponds to the operator listbox.
+	 * @param listbox Listbox that shows the operator signs.
+	 * @param filter  Filter that corresponds to the operator listbox.
 	 */
 	public static void restoreNumericOperator(Listbox listbox, Filter filter) {
 		if (filter.getOperator() == Filter.OP_EQUAL) {
@@ -467,10 +448,8 @@ public class SearchOperators implements Serializable {
 	 * Restore the boolean operator sign in the boolean operators listbox by comparing the <br>
 	 * value of the filter. <br>
 	 * 
-	 * @param listbox
-	 *            Listbox that shows the operator signs.
-	 * @param filter
-	 *            Filter that corresponds to the operator listbox.
+	 * @param listbox Listbox that shows the operator signs.
+	 * @param filter  Filter that corresponds to the operator listbox.
 	 */
 	public static void restoreBooleanOperators(Listbox listbox, Filter filter) {
 

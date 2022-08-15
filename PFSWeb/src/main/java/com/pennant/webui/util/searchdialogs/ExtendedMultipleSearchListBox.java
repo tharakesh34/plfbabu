@@ -1,43 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  ExtendedMultipleSearchListBox.java                           
- *                                                                    
- * Author      		:  Chaitanya Varma              			
- *                                                                  
- * Creation Date    :  15-12-2011    
- *                                                                  
- * Modified Date    :  15-12-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : ExtendedMultipleSearchListBox.java
+ * 
+ * Author : Chaitanya Varma
+ * 
+ * Creation Date : 15-12-2011
+ * 
+ * Modified Date : 15-12-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 15-12-2011       Pennant	                 0.1                                         	* 
- * 21-12-2011		Chaitanya				 0.2		  Changed the Listbox checkmark     *                                                                                * 
- *                                                        property to True.Changed the      * 
- *                                                        Event Listeners to Forward Events * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 15-12-2011 Pennant 0.1 * 21-12-2011 Chaitanya 0.2 Changed the Listbox checkmark * * property to True.Changed the *
+ * Event Listeners to Forward Events * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.util.searchdialogs;
@@ -125,8 +117,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
 
@@ -137,8 +128,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * 
 	 * @return a BeanObject from the listBox or null.
 	 */
@@ -388,10 +378,8 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	/**
 	 * Refreshes the list by calling the DAO methode with the modified search object. <br>
 	 * 
-	 * @param so
-	 *            SearchObject, holds the entity and properties to search. <br>
-	 * @param start
-	 *            Row to start. <br>
+	 * @param so    SearchObject, holds the entity and properties to search. <br>
+	 * @param start Row to start. <br>
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void refreshModel(String searchText, int start) {

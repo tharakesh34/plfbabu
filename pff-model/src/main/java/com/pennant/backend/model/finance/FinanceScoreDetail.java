@@ -21,7 +21,7 @@ public class FinanceScoreDetail implements Serializable {
 	private long lastMntBy;
 	private String roleCode;
 	private String recordStatus;
-	private String recordType = "NEW";//FIXME:How to use constant-PennantConstants.RECORD_TYPE_NEW;
+	private String recordType = "NEW";// FIXME:How to use constant-PennantConstants.RECORD_TYPE_NEW;
 	private FinanceScoreDetail befImage;
 
 	public FinanceScoreDetail() {

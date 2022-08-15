@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringTypeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-11-2011    														*
- *                                                                  						*
- * Modified Date    :  08-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringTypeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-11-2011 * *
+ * Modified Date : 08-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.bmtmasters.impl;
@@ -113,8 +95,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	 * on the module workFlow Configuration. by using ScoringTypeDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -150,8 +131,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	 * BMTScoringType by using ScoringTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -174,10 +154,8 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	/**
 	 * getScoringTypeById fetch the details by using ScoringTypeDAO's getScoringTypeById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ScoringType
 	 */
 	@Override
@@ -189,8 +167,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	 * getApprovedScoringTypeById fetch the details by using ScoringTypeDAO's getScoringTypeById method . with parameter
 	 * id and type as blank. it fetches the approved records from the BMTScoringType.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return ScoringType
 	 */
 
@@ -209,8 +186,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTScoringType by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -267,8 +243,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	 * workFlow table by using getScoringTypeDAO().delete with parameters scoringType,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTScoringType by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -296,8 +271,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 	 * for any mismatch conditions Fetch the error details from getScoringTypeDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -340,14 +314,15 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 
 		if (scoringType.isNewRecord()) { // for New record or new record into work flow
 
-			if (!scoringType.isWorkflow()) {// With out Work flow only new records  
-				if (befScoringType != null) { // Record Already Exists in the table then error  
+			if (!scoringType.isWorkflow()) {// With out Work flow only new records
+				if (befScoringType != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (scoringType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befScoringType != null || tempScoringType != null) { // if records already exists in the main table
+					if (befScoringType != null || tempScoringType != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -382,7 +357,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 				}
 			} else {
 
-				if (tempScoringType == null) { // if records not exists in the Work flow table 
+				if (tempScoringType == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

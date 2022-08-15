@@ -29,9 +29,8 @@ public final class ExtFieldStaticList {
 	/**
 	 * Private constructor to hide the implicit public one.
 	 * 
-	 * @throws IllegalAccessException
-	 *             If the constructor is used to create and initialize a new instance of the declaring class by
-	 *             suppressing Java language access checking.
+	 * @throws IllegalAccessException If the constructor is used to create and initialize a new instance of the
+	 *                                declaring class by suppressing Java language access checking.
 	 */
 	private ExtFieldStaticList() throws IllegalAccessException {
 		throw new IllegalAccessException();
@@ -133,8 +132,7 @@ public final class ExtFieldStaticList {
 	/**
 	 * Adds the custom master.
 	 * 
-	 * @param code
-	 *            The master code.
+	 * @param code The master code.
 	 */
 	public static void addMaster(String code) {
 		if (code == null || masters.contains(code) || customMasters.contains(code)) {

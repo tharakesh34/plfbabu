@@ -74,7 +74,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	private String lovDescAccSetCodeName;
 	private String lovDescAccSetCodeDesc;
 	private String lovDescSysInAcTypeName;
-	
+
 	// ### START SFA_20210405 -->
 	private boolean feeRepeat = false;
 	private int receivableOrPayable;
@@ -447,6 +447,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	public void setDerivedTranOrder(int derivedTranOrder) {
 		this.derivedTranOrder = derivedTranOrder;
 	}
+
 	public boolean isFeeRepeat() {
 		return feeRepeat;
 	}

@@ -93,14 +93,17 @@ public class ExtendedFieldDetailsValidation {
 
 		if (extendedFieldRender.isNewRecord()) { // for New record or new record into work flow
 
-			if (!extendedFieldRender.isWorkflow()) {// With out Work flow only new records  
-				if (befExtendedFieldRender != null) { // Record Already Exists in the table then error  
+			if (!extendedFieldRender.isWorkflow()) {// With out Work flow only new records
+				if (befExtendedFieldRender != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (extendedFieldRender.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befExtendedFieldRender != null || tempExtendedFieldRender != null) { // if records already exists in the main table
+				if (extendedFieldRender.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																									// is new
+					if (befExtendedFieldRender != null || tempExtendedFieldRender != null) { // if records already
+																								// exists in the main
+																								// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -131,7 +134,7 @@ public class ExtendedFieldDetailsValidation {
 				}
 			} else {
 
-				if (tempExtendedFieldRender == null) { // if records not exists in the Work flow table 
+				if (tempExtendedFieldRender == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
@@ -195,7 +198,7 @@ public class ExtendedFieldDetailsValidation {
 		case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
 			BigDecimal decimalValue = BigDecimal.ZERO;
 			try {
-				//PSD: 147032 amount is getting changed after for 16 character value.
+				// PSD: 147032 amount is getting changed after for 16 character value.
 				if (fieldValue != null) {
 					String value = StringUtils.trimToNull(fieldValue);
 					decimalValue = new BigDecimal(value);
@@ -337,7 +340,7 @@ public class ExtendedFieldDetailsValidation {
 			if (decValue.contains(".")) {
 				String bfrPression = decValue.substring(0, decValue.indexOf("."));
 				String aftrPression = decValue.substring(decValue.indexOf(".") + 1, decValue.length());
-				//checking the before and after pression values
+				// checking the before and after pression values
 				if (bfrPression.length() > exdConfigDetail.getFieldLength()
 						|| aftrPression.length() > exdConfigDetail.getFieldPrec()) {
 					String[] valueParm = new String[2];

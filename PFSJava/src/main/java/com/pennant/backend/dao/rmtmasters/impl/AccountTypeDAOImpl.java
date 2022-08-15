@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * * Modified
+ * Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.rmtmasters.impl;
@@ -77,10 +59,8 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	/**
 	 * Fetch the Record Account Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return AccountType
 	 */
 	@Override
@@ -122,10 +102,8 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	 * This method Deletes the Record from the RMTAccountTypes or RMTAccountTypes_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Account Types by key AcType
 	 * 
-	 * @param Account
-	 *            Types (accountType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Types (accountType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -159,10 +137,8 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	 * 
 	 * save Account Types
 	 * 
-	 * @param Account
-	 *            Types (accountType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Types (accountType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -198,10 +174,8 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	 * This method updates the Record RMTAccountTypes or RMTAccountTypes_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Account Types by key AcType and Version
 	 * 
-	 * @param Account
-	 *            Types (accountType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Account Types (accountType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -241,10 +215,8 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 	/**
 	 * Fetch the Record Account Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return AccountType
 	 */
 	@Override

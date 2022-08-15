@@ -85,8 +85,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_DisbursementDataImportCtrl(Event event) throws Exception {
@@ -95,9 +94,9 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		// Set the page level components.
 		setPageComponents(window);
 
-		allowPaymentType = "Y"
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE))
-						? true : false;
+		allowPaymentType = "Y".equals(
+				SysParamUtil.getValueAsString(SMTParameterConstants.DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE)) ? true
+						: false;
 
 		ValueLabel valueLabel = null;
 		List<ValueLabel> menuList = new ArrayList<ValueLabel>();
@@ -153,7 +152,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			}
 			if (allowPaymentType) {
 				DISBURSEMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(fileConfig);
-				//FIXME overriding the DISB_IMPORT_STATUS by selected file configuration
+				// FIXME overriding the DISB_IMPORT_STATUS by selected file configuration
 				DISB_IMPORT_STATUS = DISBURSEMENT_FILE_IMPORT_STATUS;
 				doFillPanel(config, DISBURSEMENT_FILE_IMPORT_STATUS);
 			}
@@ -223,8 +222,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		try {
 			DISB_IMPORT_STATUS.setUserId(userId);
 			DISB_IMPORT_STATUS.setFileName(media.getName());
-			
-			
+
 			ProcessData t1 = new ProcessData(userId, DISB_IMPORT_STATUS);
 			t1.start();
 
@@ -350,7 +348,6 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			}
 		}
 	}
-
 
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;

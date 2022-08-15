@@ -47,14 +47,15 @@ public class FinanceWorkflowRoleUtil {
 
 		for (String module : moduleNames) {
 			String financeRoleKey = module + "@" + finEvent;
-			// FIXME: Cache disabled as found issue of not getting refreshed in QC. Also observed no invalidate method usage.
-			//			try {
-			//finRolesSet.addAll(financeRoleCache.get(financeRoleKey));
+			// FIXME: Cache disabled as found issue of not getting refreshed in QC. Also observed no invalidate method
+			// usage.
+			// try {
+			// finRolesSet.addAll(financeRoleCache.get(financeRoleKey));
 			finRolesSet.addAll(getfinanceRoles(financeRoleKey));
-			//			} catch (ExecutionException e) {
-			//				logger.warn("Unable to load data from cache: ", e);
-			//				finRolesSet.addAll(getfinanceRoles(financeRoleKey));
-			//			}
+			// } catch (ExecutionException e) {
+			// logger.warn("Unable to load data from cache: ", e);
+			// finRolesSet.addAll(getfinanceRoles(financeRoleKey));
+			// }
 		}
 
 		return finRolesSet;

@@ -65,7 +65,7 @@ public class ControlDumpStoredProcedure extends StoredProcedure implements Taskl
 		copyDataFromMainToLogTable(appDate);
 
 		Map<String, Object> results;
-		//results = execute(new HashMap<>());
+		// results = execute(new HashMap<>());
 		results = execute(inputParameters);
 
 		if (((long) results.get("ERROR_CODE")) != 0) {
@@ -145,8 +145,7 @@ public class ControlDumpStoredProcedure extends StoredProcedure implements Taskl
 	}
 
 	/**
-	 * @param dataSource
-	 *            the dataSource to set
+	 * @param dataSource the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

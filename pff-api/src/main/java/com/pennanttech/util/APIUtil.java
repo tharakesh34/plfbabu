@@ -37,9 +37,9 @@
 	 * 
 	 * @return WSReturnStatus
 	 *//*
-	 * public static WSReturnStatus getFailedStatus(String errorCode, String errorDesc) { WSReturnStatus status = new
-	 * WSReturnStatus(); status.setReturnCode(errorCode); status.setReturnText(errorDesc); return status; }
-	 * 
-	 * public static WSReturnStatus getFailedStatus(String errorCode) { WSReturnStatus status = new WSReturnStatus();
-	 * status.setReturnCode(errorCode); status.setReturnText(""); return status; } }
-	 */
+		 * public static WSReturnStatus getFailedStatus(String errorCode, String errorDesc) { WSReturnStatus status =
+		 * new WSReturnStatus(); status.setReturnCode(errorCode); status.setReturnText(errorDesc); return status; }
+		 * 
+		 * public static WSReturnStatus getFailedStatus(String errorCode) { WSReturnStatus status = new
+		 * WSReturnStatus(); status.setReturnCode(errorCode); status.setReturnText(""); return status; } }
+		 */

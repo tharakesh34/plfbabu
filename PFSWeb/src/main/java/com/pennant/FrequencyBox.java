@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FrequencyBox.java		                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-11-2016    														*
- *                                                                  						*
- * Modified Date    :  02-11-2016    														*
- *                                                                  						*
- * Description 		:  Frequency box                                            		*
- *                                                                                          *
+ * * FileName : FrequencyBox.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-11-2016 * * Modified Date :
+ * 02-11-2016 * * Description : Frequency box * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-11-2016       Manoj	      0.1       		                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-11-2016 Manoj 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant;
@@ -137,8 +119,7 @@ public class FrequencyBox extends Hbox {
 	/**
 	 * The controller calls this event handler when user select the frequency Month.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onSelectFrqCode(Event event) {
 		setFrqCodeDetails();
@@ -148,8 +129,7 @@ public class FrequencyBox extends Hbox {
 	/**
 	 * The controller calls this event handler when user select the frequency Month.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onSelectFrqMonth(Event event) {
 		setFrqMonthDetails();
@@ -159,8 +139,7 @@ public class FrequencyBox extends Hbox {
 	/**
 	 * The controller calls this event handler when user select the frequency Day.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onSelectFrqDay(Event event) {
 		setFrqDayDetails();

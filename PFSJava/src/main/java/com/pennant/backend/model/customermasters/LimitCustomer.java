@@ -3,7 +3,7 @@ package com.pennant.backend.model.customermasters;
 public class LimitCustomer {
 
 	private long custID;
-	//LimitRule
+	// LimitRule
 	private String ruleCode;
 
 	public long getCustID() {

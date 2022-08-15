@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PRelationCodeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PRelationCodeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -105,8 +87,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	 * table. based on the module workFlow Configuration. by using PRelationCodeDAO's update method 3) Audit the record
 	 * in to AuditHeader and AdtBMTPRelationCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -144,8 +125,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	 * BMTPRelationCodes by using PRelationCodeDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBMTPRelationCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -166,10 +146,8 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	/**
 	 * getPRelationCodeById fetch the details by using PRelationCodeDAO's getPRelationCodeById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return PRelationCode
 	 */
 	@Override
@@ -181,8 +159,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	 * getApprovedPRelationCodeById fetch the details by using PRelationCodeDAO's getPRelationCodeById method . with
 	 * parameter id and type as blank. it fetches the approved records from the BMTPRelationCodes.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return PRelationCode
 	 */
 	public PRelationCode getApprovedPRelationCodeById(String id) {
@@ -200,8 +177,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTPRelationCodes
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -253,8 +229,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	 * workFlow table by using getPRelationCodeDAO().delete with parameters pRelationCode,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtBMTPRelationCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -277,8 +252,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -330,7 +304,8 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 			} else { // with work flow
 
 				if (pRelationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befPRelationCode != null || tempPRelationCode != null) { //if records already exists in the main table
+					if (befPRelationCode != null || tempPRelationCode != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table

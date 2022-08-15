@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ExtFieldConfigServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-11-2016    														*
- *                                                                  						*
- * Modified Date    :  29-11-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ExtFieldConfigServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-11-2016 * *
+ * Modified Date : 29-11-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-11-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-11-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.staticparms.impl;
@@ -132,8 +114,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * based on the module workFlow Configuration. by using ExtFieldConfigDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtExtFieldConfig by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -153,7 +134,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 			tableType = "_Temp";
 		}
 
-		//ExtendedFieldHeader processing
+		// ExtendedFieldHeader processing
 		List<AuditDetail> headerDetail = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldHeader");
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
 
@@ -161,7 +142,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 		if (extFieldHeader.isNewRecord()) {
 			moduleId = getExtendedFieldHeaderDAO().save(extFieldHeader, tableType);
 
-			//Setting Module ID to List
+			// Setting Module ID to List
 			List<ExtendedFieldDetail> list = extFieldHeader.getExtendedFieldDetails();
 			if (list != null && list.size() > 0) {
 				for (ExtendedFieldDetail ext : list) {
@@ -192,8 +173,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * ExtFieldConfig by using ExtFieldConfigDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtExtFieldConfig by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -208,7 +188,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 
 		ExtendedFieldHeader extendedFieldHeader = (ExtendedFieldHeader) auditHeader.getAuditDetail().getModelData();
 
-		//ExtendedFieldHeader
+		// ExtendedFieldHeader
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
 		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, extendedFieldHeader.getBefImage(),
@@ -230,10 +210,8 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	/**
 	 * getExtFieldConfigById fetch the details by using ExtFieldConfigDAO's getExtFieldConfigById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ExtFieldConfig
 	 */
 	@Override
@@ -257,8 +235,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * getApprovedExtFieldConfigById fetch the details by using ExtFieldConfigDAO's getExtFieldConfigById method . with
 	 * parameter id and type as blank. it fetches the approved records from the ExtFieldConfig.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return ExtFieldConfig
 	 */
 	@Override
@@ -284,8 +261,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * getApprovedExtFieldConfigById fetch the details by using ExtFieldConfigDAO's getExtFieldConfigById method . with
 	 * parameter id and type as blank. it fetches the approved records from the ExtFieldConfig.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return ExtFieldConfig
 	 */
 	@Override
@@ -318,8 +294,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtExtFieldConfig by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -385,11 +360,11 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
-		//Extended filed header
+		// Extended filed header
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
 		auditDetailList.add(new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader));
 
-		//Extended Field Detail List
+		// Extended Field Detail List
 		auditDetailList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -428,8 +403,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * workFlow table by using getExtFieldConfigDAO().delete with parameters ExtFieldConfig,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtExtFieldConfig by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -445,7 +419,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-		//ExtendedFieldHeader
+		// ExtendedFieldHeader
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
 		auditDetailsList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
 
@@ -460,8 +434,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -469,13 +442,13 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		//Extended field details
+		// Extended field details
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		ExtendedFieldHeader extendedFieldHeader = (ExtendedFieldHeader) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = extendedFieldHeader.getUserDetails().getLanguage();
 
-		//Extended field details
+		// Extended field details
 		if (extendedFieldHeader != null) {
 			List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldHeader");
 			AuditDetail detail = getExtendedFieldsValidation().extendedFieldsHeaderValidation(details.get(0), method,
@@ -522,14 +495,14 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 			}
 		}
 
-		//Audit Detail Preparation for Extended Field Header
+		// Audit Detail Preparation for Extended Field Header
 		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(),
 				extendedFieldHeader);
 		List<AuditDetail> auditDetailHeaderList = new ArrayList<AuditDetail>();
 		auditDetailHeaderList.add(auditDetail);
 		auditDetailMap.put("ExtendedFieldHeader", auditDetailHeaderList);
 
-		//Audit Detail Preparation for Extended Field Detail
+		// Audit Detail Preparation for Extended Field Detail
 		if (extendedFieldHeader.getExtendedFieldDetails() != null
 				&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 			auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation()

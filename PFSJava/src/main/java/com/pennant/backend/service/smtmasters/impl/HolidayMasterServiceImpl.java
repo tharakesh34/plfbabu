@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  HolidayMasterServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-07-2011    														*
- *                                                                  						*
- * Modified Date    :  11-07-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : HolidayMasterServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-07-2011 * *
+ * Modified Date : 11-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-07-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-07-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.smtmasters.impl;
@@ -105,8 +87,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	 * based on the module workFlow Configuration. by using HolidayMasterDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtSMTHolidayMaster by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -150,8 +131,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	 * SMTHolidayMaster by using HolidayMasterDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtSMTHolidayMaster by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -174,10 +154,8 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	/**
 	 * getHolidayMasterById fetch the details by using HolidayMasterDAO's getHolidayMasterById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return HolidayMaster
 	 */
 	@Override
@@ -189,8 +167,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	 * getApprovedHolidayMasterCodeYear fetch the details by using HolidayMasterDAO's getHolidayMasterById method . with
 	 * parameter code and Year. it fetches the approved records from the SMTHolidayMaster.
 	 * 
-	 * @param code
-	 *            (String)
+	 * @param code (String)
 	 * @return List
 	 */
 	@Override
@@ -202,8 +179,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	 * getApprovedHolidayMasterById fetch the details by using HolidayMasterDAO's getHolidayMasterById method . with
 	 * parameter id and type. it fetches the approved records from the SMTHolidayMaster.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return HolidayMaster
 	 */
 	public HolidayMaster getApprovedHolidayMasterById(String id, BigDecimal year) {
@@ -221,8 +197,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	 * the record in to AuditHeader and AdtBMTCountries by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -276,8 +251,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -339,11 +313,11 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 				// with work flow
 
 				if (holidayMaster.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																									// records
+																								// records
 																								// type
 																								// is new
 					if (befHolidayMaster != null || tempHolidayMaster != null) { // if
-																						// records
+																					// records
 																					// already exists
 																					// in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
@@ -406,8 +380,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 	 * workFlow table by using getCountryDAO().delete with parameters country,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTCountries by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {

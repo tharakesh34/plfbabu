@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerBalanceSheetServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  07-12-2011    														*
- *                                                                  						*
- * Modified Date    :  07-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerBalanceSheetServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 07-12-2011 *
+ * * Modified Date : 07-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 07-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 07-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.customermasters.impl;
 
@@ -108,8 +90,7 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	 * Record in the table. based on the module workFlow Configuration. by using CustomerBalanceSheetDAO's update method
 	 * 3) Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -145,8 +126,7 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	 * CustomerBalanceSheet by using CustomerBalanceSheetDAO's delete method with type as Blank 3) Audit the record in
 	 * to AuditHeader and AdtCustomerBalanceSheet by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -170,10 +150,8 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	 * getCustomerBalanceSheetById fetch the details by using CustomerBalanceSheetDAO's getCustomerBalanceSheetById
 	 * method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerBalanceSheet
 	 */
 	public CustomerBalanceSheet getCustomerBalanceSheetById(String id, long custId) {
@@ -185,8 +163,7 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	 * getCustomerBalanceSheetById method . with parameter id and type as blank. it fetches the approved records from
 	 * the CustomerBalanceSheet.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return CustomerBalanceSheet
 	 */
 	public CustomerBalanceSheet getApprovedCustomerBalanceSheetById(String id, long custId) {
@@ -205,8 +182,7 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	 * Work flow 5) Audit the record in to AuditHeader and AdtCustomerBalanceSheet by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -266,8 +242,7 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	 * the record in to AuditHeader and AdtCustomerBalanceSheet by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -294,8 +269,7 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 	 * for any mismatch conditions Fetch the error details from getCustomerBalanceSheetDAO().getErrorDetail with Error
 	 * ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

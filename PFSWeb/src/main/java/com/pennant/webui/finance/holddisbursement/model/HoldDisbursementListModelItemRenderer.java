@@ -74,7 +74,7 @@ public class HoldDisbursementListModelItemRenderer implements ListitemRenderer<H
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(holdDisbursement.getRecordType()));
 		lc.setParent(item);
-		
+
 		item.setAttribute("finID", holdDisbursement.getFinID());
 		item.setAttribute("finReference", holdDisbursement.getFinReference());
 

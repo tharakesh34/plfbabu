@@ -46,11 +46,11 @@ public class RelationShipOfficersController {
 			relationshipOfficer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			relationshipOfficer.setNewRecord(true);
 			relationshipOfficer.setVersion(1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(relationshipOfficer, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			auditHeader = relationshipOfficerService.doApprove(auditHeader);

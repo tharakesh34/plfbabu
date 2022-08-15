@@ -105,14 +105,15 @@ public class CreditReviewSummaryData {
 		// Load extended points to script engine.
 		// This data is expected to come from Finance Main Dialog (Mainly Loan Details, banking details and obligations)
 		// If there is no external data, no need to load the data to Map
-		// If this screen is not loaded from Finance Main tabs data will be empty and if any ratios/cells using these variables will not work
+		// If this screen is not loaded from Finance Main tabs data will be empty and if any ratios/cells using these
+		// variables will not work
 		// Changes done to use eligibility tab without the facility for Profectus
 
 		if (externalDataMap != null && externalDataMap.size() > 0) {
 			for (Entry<String, String> entry : externalDataMap.entrySet()) {
 				if (entry.getKey().startsWith("EXT_")) {
 					engine.put(entry.getKey(), externalDataMap.get(entry.getKey()));
-					//dataMap.put(entry.getKey(),externalDataMap.get(entry.getKey()));
+					// dataMap.put(entry.getKey(),externalDataMap.get(entry.getKey()));
 				}
 			}
 			dataMap.putAll(externalDataMap);
@@ -121,7 +122,7 @@ public class CreditReviewSummaryData {
 
 		Set<String> set = detailedMap.keySet();
 
-		//put the values in the map
+		// put the values in the map
 		for (String key : set) {
 			this.detailsMap.put(key, detailedMap.get(key));
 		}
@@ -149,7 +150,8 @@ public class CreditReviewSummaryData {
 					for (FinCreditReviewSummary finCreditReviewSummary : listOfCreditReviewSummary) {
 						engine.put("YM" + finCreditReviewSummary.getSubCategoryCode(),
 								finCreditReviewSummary.getItemValue() != null
-										? formateAmount(finCreditReviewSummary.getItemValue(), 2) : BigDecimal.ZERO);
+										? formateAmount(finCreditReviewSummary.getItemValue(), 2)
+										: BigDecimal.ZERO);
 					}
 				} else {
 					for (FinCreditRevSubCategory finCreditRevSubCategory : listOfFinCreditRevSubCategory) {
@@ -199,8 +201,9 @@ public class CreditReviewSummaryData {
 									value = "--";
 									logger.error("Exception: ", e);
 								}
-								engine.put("Y" + (years) + subCategoryCode, !("--").equals(value)
-										? formateAmount(new BigDecimal(value), 2) : BigDecimal.ZERO);
+								engine.put("Y" + (years) + subCategoryCode,
+										!("--").equals(value) ? formateAmount(new BigDecimal(value), 2)
+												: BigDecimal.ZERO);
 								dataMap.put("Y" + (years) + "_" + subCategoryCode, value);
 								if (noOfYears == j) {
 									engine.put("Y" + (years) + "DIVCOUNT", BigDecimal.ONE);
@@ -221,7 +224,7 @@ public class CreditReviewSummaryData {
 					}
 				}
 
-				//Total Calculations
+				// Total Calculations
 				for (int m = noOfYears; m >= 1; m--) {
 					for (int q = 0; q < listOfFinCreditRevSubCategoryRatio.size(); q++) {
 						int years = noOfYears - m;
@@ -255,8 +258,8 @@ public class CreditReviewSummaryData {
 					}
 				}
 
-				//break down
-				//entries
+				// break down
+				// entries
 				for (int l = noOfYears; l >= 1; l--) {
 					int years = noOfYears - l;
 					for (int p = 0; p < listOfFinCreditRevSubCategoryRatio.size(); p++) {
@@ -398,7 +401,7 @@ public class CreditReviewSummaryData {
 				for (Entry<String, String> entry : externalDataMap.entrySet()) {
 					if (entry.getKey().startsWith("EXT_")) {
 						engine.put(entry.getKey(), externalDataMap.get(entry.getKey()));
-						//dataMap.put(entry.getKey(),externalDataMap.get(entry.getKey()));
+						// dataMap.put(entry.getKey(),externalDataMap.get(entry.getKey()));
 					}
 				}
 				dataMap.putAll(externalDataMap);
@@ -407,7 +410,7 @@ public class CreditReviewSummaryData {
 
 			Set<String> set = detailedMap.keySet();
 
-			//put the values in the map
+			// put the values in the map
 			for (String key : set) {
 				this.detailsMap.put(key, detailedMap.get(key));
 			}
@@ -481,8 +484,9 @@ public class CreditReviewSummaryData {
 										value = "--";
 										logger.error("Exception: ", e);
 									}
-									engine.put("Y" + (years) + subCategoryCode, !("--").equals(value)
-											? formateAmount(new BigDecimal(value), 2) : BigDecimal.ZERO);
+									engine.put("Y" + (years) + subCategoryCode,
+											!("--").equals(value) ? formateAmount(new BigDecimal(value), 2)
+													: BigDecimal.ZERO);
 									dataMap.put("Y" + (years) + "_" + subCategoryCode, value);
 									if (noOfYears == j) {
 										engine.put("Y" + (years) + "DIVCOUNT", BigDecimal.ONE);
@@ -503,7 +507,7 @@ public class CreditReviewSummaryData {
 						}
 					}
 
-					//Total Calculations
+					// Total Calculations
 					for (int m = noOfYears; m >= 1; m--) {
 						for (int q = 0; q < listOfFinCreditRevSubCategoryRatio.size(); q++) {
 							int years = noOfYears - m;
@@ -528,8 +532,8 @@ public class CreditReviewSummaryData {
 						}
 					}
 
-					//break down
-					//entries
+					// break down
+					// entries
 					for (int l = noOfYears; l >= 1; l--) {
 						int years = noOfYears - l;
 						for (int p = 0; p < listOfFinCreditRevSubCategoryRatio.size(); p++) {

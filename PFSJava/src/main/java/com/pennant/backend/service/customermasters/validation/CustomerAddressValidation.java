@@ -156,7 +156,7 @@ public class CustomerAddressValidation {
 					new String[] {});
 		}
 
-		//FIXME MUR the below is commented in HL
+		// FIXME MUR the below is commented in HL
 		if (!ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
 			if (StringUtils.isBlank(customerAddres.getCustAddrStreet())) {
 				return new ErrorDetail(PennantConstants.KEY_FIELD, "30535",

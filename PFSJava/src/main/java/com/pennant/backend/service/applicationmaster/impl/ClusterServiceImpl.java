@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ClusterServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-11-2018    														*
- *                                                                  						*
- * Modified Date    :  21-11-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ClusterServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-11-2018 * * Modified
+ * Date : 21-11-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-11-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-11-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.List;
@@ -84,8 +66,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -99,8 +80,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	}
 
 	/**
-	 * @param clusterDAO
-	 *            the clusterDAO to set
+	 * @param clusterDAO the clusterDAO to set
 	 */
 	public void setClusterDAO(ClusterDAO clusterDAO) {
 		this.clusterDAO = clusterDAO;
@@ -114,8 +94,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	 * ClustersDAO's update method 3) Audit the record in to AuditHeader and AdtClusters by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -155,8 +134,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	 * Clusters by using ClustersDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtClusters by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -181,8 +159,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	/**
 	 * getClusters fetch the details by using ClustersDAO's getClustersById method.
 	 * 
-	 * @param clusterId
-	 *            clusterId of the Cluster.
+	 * @param clusterId clusterId of the Cluster.
 	 * @return Clusters
 	 */
 	@Override
@@ -194,8 +171,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	 * getApprovedClustersById fetch the details by using ClustersDAO's getClustersById method . with parameter id and
 	 * type as blank. it fetches the approved records from the Clusters.
 	 * 
-	 * @param clusterId
-	 *            clusterId of the Cluster. (String)
+	 * @param clusterId clusterId of the Cluster. (String)
 	 * @return Clusters
 	 */
 	public Cluster getApprovedCluster(long clusterId) {
@@ -213,8 +189,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	 * record in to AuditHeader and AdtClusters by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
 	 * Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -278,8 +253,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	 * workFlow table by using getClusterDAO().delete with parameters cluster,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtClusters by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -312,8 +286,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

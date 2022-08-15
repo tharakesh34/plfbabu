@@ -43,8 +43,10 @@ public class ReferenceConstants {
 		super();
 	}
 
-	public static final int BRANCH_PRODUCT_SEQUENCE = 1; //Sequence generated with Branch and product combination  EX: HYD CON 000000000001  
-	public static final int DIVISION_SEQUENCE = 2; //Sequence generated with division and sequence number EX:  PB 1600200523
+	public static final int BRANCH_PRODUCT_SEQUENCE = 1; // Sequence generated with Branch and product combination EX:
+															// HYD CON 000000000001
+	public static final int DIVISION_SEQUENCE = 2; // Sequence generated with division and sequence number EX: PB
+													// 1600200523
 	public static final String DIVISION_IDENTIFIER = "P"; //
 
 }

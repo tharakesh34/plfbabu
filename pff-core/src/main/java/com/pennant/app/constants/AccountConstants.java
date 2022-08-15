@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  CalculationConstants.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : CalculationConstants.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.constants;
@@ -129,7 +120,10 @@ public class AccountConstants {
 	public static final String ACCOUNT_EVENT_POSTINGTYPE_LOAN = "LOAN";
 	public static final String ACCOUNT_EVENT_POSTINGTYPE_BRANCH = "BRANCH";
 
-	//Assignment Constants
-	public static final String POSTINGS_EXCLUDE_FEES = "POSTINGS_EXCLUDE_FEES"; //Fees which are excluding the Assignment Accounting
-	public static final String ASSIGNMENT_PECENTAGE_KEY = "ae_assignmentPerc"; // Assignment Percentage which is configured in Assignments(This is used in Postings dataMap)
+	// Assignment Constants
+	public static final String POSTINGS_EXCLUDE_FEES = "POSTINGS_EXCLUDE_FEES"; // Fees which are excluding the
+																				// Assignment Accounting
+	public static final String ASSIGNMENT_PECENTAGE_KEY = "ae_assignmentPerc"; // Assignment Percentage which is
+																				// configured in Assignments(This is
+																				// used in Postings dataMap)
 }

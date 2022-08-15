@@ -64,9 +64,9 @@ public class CrtReducingRateHighTest {
 			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		FinScheduleData schedule = (FinScheduleData) BeanUtils.cloneBean(model);
 
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
 		// Setting to be moved to actual test class
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
 
 		schedule.getFinanceMain().setGrcRateBasis(CalculationConstants.RATE_BASIS_R);
 		schedule.getFinanceMain().setRepayRateBasis(CalculationConstants.RATE_BASIS_R);

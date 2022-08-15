@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceWorkFlowServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-11-2011    														*
- *                                                                  						*
- * Modified Date    :  19-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceWorkFlowServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-11-2011 * *
+ * Modified Date : 19-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -125,8 +107,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	 * in the table. based on the module workFlow Configuration. by using FinanceWorkFlowDAO's update method 3) Audit
 	 * the record in to AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -162,8 +143,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	 * LMTFinanceWorkFlowDef by using FinanceWorkFlowDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -186,10 +166,8 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	/**
 	 * getFinanceWorkFlowById fetch the details by using FinanceWorkFlowDAO's getFinanceWorkFlowById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceWorkFlow
 	 */
 	@Override
@@ -201,8 +179,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	 * getApprovedFinanceWorkFlowById fetch the details by using FinanceWorkFlowDAO's getFinanceWorkFlowById method .
 	 * with parameter id and type as blank. it fetches the approved records from the LMTFinanceWorkFlowDef.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return FinanceWorkFlow
 	 */
 
@@ -229,8 +206,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	 * AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
 	 * Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -264,7 +240,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 				tranType = PennantConstants.TRAN_UPD;
 				financeWorkFlow.setRecordType("");
 
-				//Remove Finance Process Editor Details If Workflow Modified from Previous Version
+				// Remove Finance Process Editor Details If Workflow Modified from Previous Version
 				FinanceWorkFlow apprvFinWorkflow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(
 						financeWorkFlow.getId(), financeWorkFlow.getFinEvent(), financeWorkFlow.getModuleName(), "");
 				if (apprvFinWorkflow != null) {
@@ -303,8 +279,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	 * workFlow table by using getFinanceWorkFlowDAO().delete with parameters financeWorkFlow,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtLMTFinanceWorkFlowDef by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -332,8 +307,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 	 * for any mismatch conditions Fetch the error details from getFinanceWorkFlowDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -379,14 +353,16 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 
 		if (financeWorkFlow.isNewRecord()) { // for New record or new record into work flow
 
-			if (!financeWorkFlow.isWorkflow()) {// With out Work flow only new records  
-				if (befFinanceWorkFlow != null) { // Record Already Exists in the table then error  
+			if (!financeWorkFlow.isWorkflow()) {// With out Work flow only new records
+				if (befFinanceWorkFlow != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (financeWorkFlow.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinanceWorkFlow != null || tempFinanceWorkFlow != null) { // if records already exists in the main table
+				if (financeWorkFlow.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																								// new
+					if (befFinanceWorkFlow != null || tempFinanceWorkFlow != null) { // if records already exists in the
+																						// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -421,7 +397,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 				}
 			} else {
 
-				if (tempFinanceWorkFlow == null) { // if records not exists in the Work flow table 
+				if (tempFinanceWorkFlow == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

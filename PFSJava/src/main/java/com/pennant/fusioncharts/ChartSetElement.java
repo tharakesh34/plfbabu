@@ -23,7 +23,7 @@ public class ChartSetElement extends ChartUtil implements Serializable {
 	private String label;
 	@XmlElement
 	private BigDecimal value;
-	private String reference;//It is used for drill down charts to refer parent label 
+	private String reference;// It is used for drill down charts to refer parent label
 	private String displayValue;
 	private String color;
 	private String link;
@@ -34,7 +34,7 @@ public class ChartSetElement extends ChartUtil implements Serializable {
 	private int alpha;
 	private List<String> catogeryList;
 	private List<String> seriesList;
-	//command design pattern
+	// command design pattern
 	private List<ChartSetElement> innerChrtSetElementsList;
 	private String finSourceId;
 

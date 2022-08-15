@@ -141,11 +141,11 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		userDetails = user;
-		//get previous details
+		// get previous details
 		List<DeviationHeader> prevHeaderList = getDeviationsByFinType(finType);
 
 		for (DeviationHeader newHeader : newHeaderList) {
-			//check is it already there in database
+			// check is it already there in database
 
 			DeviationHeader prvHeader = isFoundinList(prevHeaderList, newHeader);
 
@@ -158,17 +158,17 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 					}
 				}
 
-				//No configuration specified
+				// No configuration specified
 				if (newHeader.getDeviationDetails() == null || newHeader.getDeviationDetails().isEmpty()) {
 					continue;
 				}
-				//add new records to database
+				// add new records to database
 				List<AuditDetail> newaudit = processDeviationHeader(newHeader);
 				auditDetails.addAll(newaudit);
 				continue;
 			}
 
-			// Update the Header 
+			// Update the Header
 			if (!StringUtils.equals(prvHeader.getValueType(), newHeader.getValueType())) {
 
 				DeviationHeader befImageHeader = new DeviationHeader();
@@ -192,7 +192,7 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 					continue;
 				}
 
-				//update the previous deviation details if changed 
+				// update the previous deviation details if changed
 				if (!StringUtils.equals(prvDetails.getDeviatedValue(), newdeviationDetail.getDeviatedValue())) {
 					DeviationDetail befImage = new DeviationDetail();
 					BeanUtils.copyProperties(prvDetails, befImage);
@@ -209,11 +209,11 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 			}
 
 			boolean emptyHeader = true;
-			//TO delete Previous deviation details
+			// TO delete Previous deviation details
 			for (DeviationDetail prvdeviationDetail : prvdetails) {
 				DeviationDetail recordtodelete = isFoundinList(newDetailList, prvdeviationDetail);
 				if (recordtodelete == null) {
-					//Not found on the new List should be deleted
+					// Not found on the new List should be deleted
 					prvdeviationDetail.setRecordType(PennantConstants.RCD_DEL);
 					listToProcess.add(prvdeviationDetail);
 				}
@@ -223,7 +223,7 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 				}
 			}
 
-			//update or delete the records
+			// update or delete the records
 			prvHeader.setDeviationDetails(listToProcess);
 			if (emptyHeader) {
 				prvHeader.setRecordType(PennantConstants.RCD_DEL);
@@ -232,18 +232,18 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 			auditDetails.addAll(updateaudit);
 		}
 
-		//TO delete Previous deviation Headers
+		// TO delete Previous deviation Headers
 		for (DeviationHeader prvdeviationHeader : prevHeaderList) {
 			DeviationHeader header = isFoundinList(newHeaderList, prvdeviationHeader);
 			if (header == null) {
-				//Not found on the new List should be deleted
+				// Not found on the new List should be deleted
 				prvdeviationHeader.setRecordType(PennantConstants.RCD_DEL);
 				if (prvdeviationHeader.getDeviationDetails() != null) {
 					for (DeviationDetail deviationDetail : prvdeviationHeader.getDeviationDetails()) {
 						deviationDetail.setRecordType(PennantConstants.RCD_DEL);
 					}
 				}
-				//delete the records
+				// delete the records
 				List<AuditDetail> deleteaudit = processDeviationHeader(prvdeviationHeader);
 				auditDetails.addAll(deleteaudit);
 				continue;

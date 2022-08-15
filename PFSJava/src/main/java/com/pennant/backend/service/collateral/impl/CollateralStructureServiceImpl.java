@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollateralStructureServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-11-2016    														*
- *                                                                  						*
- * Modified Date    :  29-11-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollateralStructureServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-11-2016 *
+ * * Modified Date : 29-11-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-11-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-11-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.collateral.impl;
@@ -143,8 +125,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	 * in the table. based on the module workFlow Configuration. by using CollateralStructureDAO's update method 3)
 	 * Audit the record in to AuditHeader and AdtCollateralStructure by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -170,7 +151,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			getCollateralStructureDAO().update(collateralStructure, tableType);
 		}
 
-		//ExtendedFieldHeader processing
+		// ExtendedFieldHeader processing
 		List<AuditDetail> headerDetail = collateralStructure.getExtendedFieldHeader().getAuditDetailMap()
 				.get("ExtendedFieldHeader");
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
@@ -225,8 +206,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	 * CollateralStructure by using CollateralStructureDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtCollateralStructure by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -240,7 +220,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 
 		CollateralStructure collateralStructure = (CollateralStructure) auditHeader.getAuditDetail().getModelData();
 
-		//ExtendedFieldHeader
+		// ExtendedFieldHeader
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
@@ -270,10 +250,8 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	/**
 	 * getCollateralStructureById fetch the details by using CollateralStructureDAO's getCollateralStructureById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CollateralStructure
 	 */
 	@Override
@@ -304,8 +282,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	 * getApprovedCollateralStructureById fetch the details by using CollateralStructureDAO's getCollateralStructureById
 	 * method . with parameter id and type as blank. it fetches the approved records from the CollateralStructure.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return CollateralStructure
 	 */
 	@Override
@@ -343,8 +320,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	 * flow 5) Audit the record in to AuditHeader and AdtCollateralStructure by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -429,14 +405,14 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
-		//Extended filed header
+		// Extended filed header
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
 		auditDetailList.add(new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader));
 
-		//Extended Field Detail List
+		// Extended Field Detail List
 		auditDetailList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
 
-		//Collateral Detail
+		// Collateral Detail
 		getCollateralStructureDAO().delete(collateralStructure, "_Temp");
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new CollateralStructure(),
@@ -482,8 +458,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	 * the record in to AuditHeader and AdtCollateralStructure by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -499,7 +474,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-		//ExtendedFieldHeader
+		// ExtendedFieldHeader
 		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
 		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, extendedFieldHeader.getBefImage(),
@@ -511,7 +486,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				collateralStructure.getBefImage(), collateralStructure));
 
-		//Collateral Structure Deletion
+		// Collateral Structure Deletion
 		getCollateralStructureDAO().delete(collateralStructure, "_Temp");
 
 		auditHeader.setAuditDetails(auditDetailsList);
@@ -525,8 +500,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -541,10 +515,10 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
-		//Extended field details
+		// Extended field details
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		//Extended field details
+		// Extended field details
 		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 		if (extendedFieldHeader != null) {
 			List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldHeader");
@@ -593,14 +567,14 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			}
 		}
 
-		//Audit Detail Preparation for Extended Field Header
+		// Audit Detail Preparation for Extended Field Header
 		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(),
 				extendedFieldHeader);
 		List<AuditDetail> auditDetailHeaderList = new ArrayList<AuditDetail>();
 		auditDetailHeaderList.add(auditDetail);
 		auditDetailMap.put("ExtendedFieldHeader", auditDetailHeaderList);
 
-		//Audit Detail Preparation for Extended Field Detail
+		// Audit Detail Preparation for Extended Field Detail
 
 		int count = 0;
 		if (extendedFieldHeader.getExtendedFieldDetails() != null
@@ -611,7 +585,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			count = extendedFieldHeader.getExtendedFieldDetails().size();
 		}
 
-		//Audit Detail Preparation for Extended Field Detail
+		// Audit Detail Preparation for Extended Field Detail
 		if (extendedFieldHeader.getTechnicalValuationDetailList() != null
 				&& extendedFieldHeader.getTechnicalValuationDetailList().size() > 0) {
 			auditDetailMap.put("TechValuationFieldDetails", getExtendedFieldsValidation()
@@ -661,14 +635,17 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 
 		if (collateralStructure.isNewRecord()) { // for New record or new record into work flow
 
-			if (!collateralStructure.isWorkflow()) {// With out Work flow only new records  
-				if (befCollateralStructure != null) { // Record Already Exists in the table then error  
+			if (!collateralStructure.isWorkflow()) {// With out Work flow only new records
+				if (befCollateralStructure != null) { // Record Already Exists in the table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
-				if (collateralStructure.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCollateralStructure != null || tempCollateralStructure != null) { // if records already exists in the main table
+				if (collateralStructure.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																									// is new
+					if (befCollateralStructure != null || tempCollateralStructure != null) { // if records already
+																								// exists in the main
+																								// table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -701,7 +678,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 				}
 			} else {
 
-				if (tempCollateralStructure == null) { // if records not exists in the Work flow table 
+				if (tempCollateralStructure == null) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -714,7 +691,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			}
 		}
 
-		// If Collateral Structure Product Code is already utilized in Workflow 
+		// If Collateral Structure Product Code is already utilized in Workflow
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, collateralStructure.getRecordType())) {
 			boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(collateralStructure.getCollateralType(),
 					PennantConstants.WORFLOW_MODULE_COLLATERAL);

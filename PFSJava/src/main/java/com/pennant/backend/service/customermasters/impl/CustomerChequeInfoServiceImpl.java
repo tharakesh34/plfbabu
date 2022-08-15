@@ -44,8 +44,7 @@ public class CustomerChequeInfoServiceImpl implements CustomerChequeInfoService 
 	 * the record in to AuditHeader and AdtCustomerChequeInfo by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override

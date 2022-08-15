@@ -98,7 +98,7 @@ public class LegalExpenses extends AbstractWorkflowEntity {
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
-	
+
 	public long getFinID() {
 		return finID;
 	}

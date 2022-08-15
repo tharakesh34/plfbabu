@@ -66,14 +66,17 @@ public class CreditReviewSummaryEntryValidation {
 
 		if (creditReviewSummary.isNewRecord()) { // for New record or new record into work flow
 
-			if (!creditReviewSummary.isWorkflow()) {// With out Work flow only new records  
-				if (befcreditReviewSummary != null) { // Record Already Exists in the table then error  
+			if (!creditReviewSummary.isWorkflow()) {// With out Work flow only new records
+				if (befcreditReviewSummary != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, null));
 				}
 			} else { // with work flow
 
-				if (creditReviewSummary.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befcreditReviewSummary != null || tempCreditReviewSummary != null) { // if records already exists in the main table
+				if (creditReviewSummary.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																									// is new
+					if (befcreditReviewSummary != null || tempCreditReviewSummary != null) { // if records already
+																								// exists in the main
+																								// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -106,7 +109,8 @@ public class CreditReviewSummaryEntryValidation {
 
 			} else {
 
-				if (tempCreditReviewSummary == null && befcreditReviewSummary != null) { // if records not exists in the Work flow table 
+				if (tempCreditReviewSummary == null && befcreditReviewSummary != null) { // if records not exists in the
+																							// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

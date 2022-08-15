@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  StepPolicyHeaderServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-06-2011    														*
- *                                                                  						*
- * Modified Date    :  30-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : StepPolicyHeaderServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-06-2011 * *
+ * Modified Date : 30-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 30-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.solutionfactory.impl;
@@ -136,8 +118,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	 * table. based on the module workFlow Configuration. by using StepPolicyHeaderDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -162,7 +143,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 			getStepPolicyHeaderDAO().update(stepPolicyHeader, tableType);
 		}
 
-		//StepPolicyDetail
+		// StepPolicyDetail
 		if (stepPolicyHeader.getStepPolicyDetails() != null && stepPolicyHeader.getStepPolicyDetails().size() > 0) {
 			List<AuditDetail> details = stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail");
 			details = processStepPolicyDetailDetails(stepPolicyHeader, details, tableType);
@@ -182,8 +163,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	 * RMTStepPolicyHeaders by using StepPolicyHeaderDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -209,10 +189,8 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	/**
 	 * getStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's getStepPolicyHeaderById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return StepPolicyHeader
 	 */
 	@Override
@@ -227,10 +205,8 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	/**
 	 * getStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's getStepPolicyHeaderById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return StepPolicyHeader
 	 */
 	@Override
@@ -242,8 +218,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	 * getApprovedStepPolicyHeaderById fetch the details by using StepPolicyHeaderDAO's getStepPolicyHeaderById method .
 	 * with parameter id and type as blank. it fetches the approved records from the RMTStepPolicyHeaders.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return StepPolicyHeader
 	 */
 	public StepPolicyHeader getApprovedStepPolicyHeaderById(String id) {
@@ -262,8 +237,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	 * AuditHeader and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
 	 * Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -281,7 +255,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 
 		if (stepPolicyHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			//List
+			// List
 			auditDetails.addAll(deleteChilds(stepPolicyHeader, "", tranType));
 			getStepPolicyHeaderDAO().delete(stepPolicyHeader, "");
 
@@ -310,7 +284,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 
 		getStepPolicyHeaderDAO().delete(stepPolicyHeader, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		//List
+		// List
 		auditHeader.setAuditDetails(deleteChilds(stepPolicyHeader, "_Temp", auditHeader.getAuditTranType()));
 		String[] fields = PennantJavaUtil.getFieldDetails(new StepPolicyHeader(), stepPolicyHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -321,7 +295,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(stepPolicyHeader);
 
-		//List
+		// List
 		auditHeader.setAuditDetails(processChildsAudit(auditDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -335,8 +309,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	 * workFlow table by using getStepPolicyHeaderDAO().delete with parameters stepPolicyHeader,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtRMTStepPolicyHeaders by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -351,7 +324,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getStepPolicyHeaderDAO().delete(stepPolicyHeader, "_Temp");
 
-		//List
+		// List
 		auditHeader.setAuditDetails(
 				processChildsAudit(deleteChilds(stepPolicyHeader, "_Temp", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -363,8 +336,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -374,7 +346,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		//List
+		// List
 		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
@@ -542,7 +514,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		return auditHeader;
 	}
 
-	//=================================== List maintain
+	// =================================== List maintain
 
 	private List<AuditDetail> processChildsAudit(List<AuditDetail> list) {
 		logger.debug("Entering");
@@ -606,7 +578,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		StepPolicyHeader stepPolicyHeader = (StepPolicyHeader) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
-		//StepPolicyDetail
+		// StepPolicyDetail
 		if (stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail") != null) {
 			auditDetails = stepPolicyHeader.getAuditDetailMap().get("StepPolicyDetail");
 			for (AuditDetail auditDetail : auditDetails) {
@@ -770,10 +742,8 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -799,14 +769,16 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 
 		if (stepPolicyDetail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!stepPolicyDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befStepPolicyDetail != null) { // Record Already Exists in the table then error  
+			if (!stepPolicyDetail.isWorkflow()) {// With out Work flow only new records
+				if (befStepPolicyDetail != null) { // Record Already Exists in the table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
-				if (stepPolicyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befStepPolicyDetail != null || tempStepPolicyDetail != null) { // if records already exists in the main table
+				if (stepPolicyDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (befStepPolicyDetail != null || tempStepPolicyDetail != null) { // if records already exists in
+																						// the main table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -839,7 +811,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 				}
 			} else {
 
-				if (tempStepPolicyDetail == null) { // if records not exists in the Work flow table 
+				if (tempStepPolicyDetail == null) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}

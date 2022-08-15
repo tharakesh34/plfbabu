@@ -54,8 +54,8 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	protected Textbox custEID;
 	protected Textbox passport;
 	protected Textbox mobileNum;
-	//protected Textbox phoneCountryCode;
-	//protected Textbox phoneAreaCode;
+	// protected Textbox phoneCountryCode;
+	// protected Textbox phoneAreaCode;
 	protected Textbox nationality;
 
 	protected Listbox sortOperator_customerCIF;
@@ -120,8 +120,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_blacklistCustomerList(Event event) {
 
@@ -171,8 +170,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_BlacklistCustomerList_SearchDialog(Event event) {
 		search();
@@ -181,8 +179,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -192,8 +189,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_BlacklistCustomerList_NewBlacklistCustomer(Event event) {
 		logger.debug("Entering");
@@ -213,8 +209,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onBlacklistCustomerItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -251,8 +246,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aBlacklistCustomer
-	 *            The entity that need to be passed to the dialog.
+	 * @param aBlacklistCustomer The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(BlackListCustomers aBlacklistCustomer) {
 		logger.debug("Entering");
@@ -274,8 +268,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -284,8 +277,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

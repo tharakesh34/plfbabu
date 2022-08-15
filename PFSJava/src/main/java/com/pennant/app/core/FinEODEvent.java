@@ -34,7 +34,7 @@ public class FinEODEvent implements Serializable {
 	private List<RepayInstruction> RepayInstructions = new ArrayList<>(1);
 	private FinanceProfitDetail finProfitDetail = new FinanceProfitDetail();
 	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(1);
-	//this is used to store the date which is in database, this should not be modified
+	// this is used to store the date which is in database, this should not be modified
 	private List<FinODDetails> finODDetailsLBD = new ArrayList<FinODDetails>(1);
 	private List<OverdueChargeRecovery> odcRecoveries = new ArrayList<>(1);
 	private FinODPenaltyRate penaltyrate;
@@ -74,7 +74,7 @@ public class FinEODEvent implements Serializable {
 	private boolean updMonthEndPostings = false;
 	private List<String> finMainUpdateFields = new ArrayList<>(1);
 
-	// IND AS : Income / Expense Amortization 
+	// IND AS : Income / Expense Amortization
 	private List<ProjectedAccrual> projectedAccrualList = new ArrayList<>(1);
 	private List<ProjectedAmortization> incomeAMZList = new ArrayList<>(1);
 	private Date appDate;
@@ -148,7 +148,6 @@ public class FinEODEvent implements Serializable {
 		entity.setSubventionDetail(this.subventionDetail == null ? null : this.subventionDetail.copyEntity());
 		return entity;
 	}
-
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;

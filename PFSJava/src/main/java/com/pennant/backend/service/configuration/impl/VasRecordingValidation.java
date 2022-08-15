@@ -43,10 +43,8 @@ public class VasRecordingValidation {
 	 * mismatch conditions Fetch the error details from getVASRecordingDAO().getErrorDetail with Error ID and language
 	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -70,14 +68,15 @@ public class VasRecordingValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_VASReference") + ":" + valueParm[0];
 
 		if (vASRecording.isNewRecord()) { // for New record or new record into work flow
-			if (!vASRecording.isWorkflow()) {// With out Work flow only new records  
-				if (befVASRecording != null) { // Record Already Exists in the table then error  
+			if (!vASRecording.isWorkflow()) {// With out Work flow only new records
+				if (befVASRecording != null) { // Record Already Exists in the table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befVASRecording != null || tempVASRecording != null) { // if records already exists in the main table
+					if (befVASRecording != null || tempVASRecording != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -108,7 +107,7 @@ public class VasRecordingValidation {
 					}
 				}
 			} else {
-				if (tempVASRecording == null) { // if records not exists in the Work flow table 
+				if (tempVASRecording == null) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}

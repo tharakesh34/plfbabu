@@ -18,7 +18,7 @@ public class FinMainReportData implements Serializable {
 
 	private static final long serialVersionUID = -1716545536082000070L;
 
-	//Basic Details
+	// Basic Details
 	private String finReference;
 	private String finType;
 	private String finStatus;
@@ -39,7 +39,7 @@ public class FinMainReportData implements Serializable {
 	private String overdueDays;
 	private String finSuspense;
 
-	//Grace period Details
+	// Grace period Details
 	private String allowGrace;
 	private String grcPeriodEndDate;
 	private String grcRateBasis;
@@ -57,7 +57,7 @@ public class FinMainReportData implements Serializable {
 	private String grcSchdMethod;
 	private String graceTerms;
 
-	//Repay Period Details
+	// Repay Period Details
 	private String numberOfTerms;
 	private String reqRepayAmount;
 	private String repayRateBasis;
@@ -77,7 +77,7 @@ public class FinMainReportData implements Serializable {
 	private String maturityDate;
 	private String repayPftOnPftFrq;
 
-	//Over Due Penalty Rate Details
+	// Over Due Penalty Rate Details
 	private String applyOverdue = "False";
 	private String incGrcDays = "False";
 	private String penaltyCalOn = "";
@@ -87,7 +87,7 @@ public class FinMainReportData implements Serializable {
 	private String alwWaiver = "";
 	private String maxWaiver = "";
 
-	//Finance Summary Details
+	// Finance Summary Details
 	private String totalDisb = "";
 	private String totalDownPayment = "";
 
@@ -123,7 +123,7 @@ public class FinMainReportData implements Serializable {
 	private String payOffProfit = "";
 	private String totalPayOff = "";
 
-	//Totals
+	// Totals
 	private String totalFees = "";
 	private String totalWaivers = "";
 	private String finODTotPenaltyAmt = "";
@@ -132,7 +132,7 @@ public class FinMainReportData implements Serializable {
 	private String finODTotWaived = "";
 	private String finODTotPenaltyBal = "";
 
-	//Finance Installment Details
+	// Finance Installment Details
 	private String overDueInstlments = "";
 	private String overDueInstlementPft = "";
 	private String finProfitrate = "";
@@ -955,7 +955,7 @@ public class FinMainReportData implements Serializable {
 		this.custShrtName = custShrtName;
 	}
 
-	//Method for Preparing Finance Main Object for Report purpose
+	// Method for Preparing Finance Main Object for Report purpose
 	public FinMainReportData getFinMainReportData(FinScheduleData finSchData, FinanceSummary finSummary) {
 		FinMainReportData reportData = new FinMainReportData();
 		FinanceMain financeMain = finSchData.getFinanceMain();
@@ -980,7 +980,7 @@ public class FinMainReportData implements Serializable {
 
 		reportData.setFinCcy(financeMain.getFinCcy());
 		reportData.setProfitDaysBasis(financeMain.getProfitDaysBasis());
-		//###Release PFFV1.0.6 - Changed the customer short name to Full Name
+		// ###Release PFFV1.0.6 - Changed the customer short name to Full Name
 		reportData.setCustCIF(financeMain.getLovDescCustCIF());
 		reportData.setCustShrtName(financeMain.getLovDescCustShrtName());
 		reportData.setFinBranch(financeMain.getFinBranch() + "-" + financeMain.getLovDescFinBranchName());
@@ -990,7 +990,7 @@ public class FinMainReportData implements Serializable {
 		reportData.setFinRepaymentAmount(PennantApplicationUtil
 				.amountFormate(financeMain.getFinAmount().subtract(financeMain.getFinRepaymentAmount()), ccyFormatter));
 		reportData.setDownPayBank(PennantApplicationUtil.amountFormate(financeMain.getDownPayBank(), ccyFormatter));
-		if (financeMain.getDownPayBank().compareTo(BigDecimal.ZERO)>0) {
+		if (financeMain.getDownPayBank().compareTo(BigDecimal.ZERO) > 0) {
 			reportData.setApplyDownPay("TRUE");
 		}
 		reportData.setDownPaySupl(PennantApplicationUtil.amountFormate(financeMain.getDownPaySupl(), ccyFormatter));
@@ -1015,8 +1015,9 @@ public class FinMainReportData implements Serializable {
 		if (financeMain.isAllowGrcPeriod()) {
 			reportData.setGraceTerms(String.valueOf(financeMain.getGraceTerms()));
 			reportData.setGrcPeriodEndDate(DateUtility.formatToLongDate(financeMain.getGrcPeriodEndDate()));
-			reportData.setGrcRateBasis("#".equals(StringUtils.trimToEmpty(financeMain.getGrcRateBasis()))
-					? financeMain.getGrcRateBasis() : "");
+			reportData.setGrcRateBasis(
+					"#".equals(StringUtils.trimToEmpty(financeMain.getGrcRateBasis())) ? financeMain.getGrcRateBasis()
+							: "");
 			reportData.setGrcPftRate(
 					PennantApplicationUtil.formatRate(financeMain.getGrcPftRate().doubleValue(), 2) + " %");
 			reportData.setGraceBaseRate(StringUtils.trimToEmpty(financeMain.getGraceBaseRate()));
@@ -1033,11 +1034,12 @@ public class FinMainReportData implements Serializable {
 					FrequencyUtil.getFrequencyDetail(financeMain.getGrcCpzFrq()).getFrequencyDescription());
 			reportData.setNextGrcCpzDate(DateUtility.formatToLongDate(financeMain.getNextGrcCpzDate()));
 			reportData.setAllowGrcRepay(financeMain.isAllowGrcRepay() ? "True" : "False");
-			reportData.setGrcSchdMethod("#".equals(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd()))
-					? financeMain.getGrcSchdMthd() : "");
+			reportData.setGrcSchdMethod(
+					"#".equals(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd())) ? financeMain.getGrcSchdMthd()
+							: "");
 		}
 
-		//  Repay Details 
+		// Repay Details
 		if (financeMain.getNOInst() > 0) {
 			reportData.setNumberOfTerms(String.valueOf(financeMain.getNOInst()));
 		} else {
@@ -1048,7 +1050,8 @@ public class FinMainReportData implements Serializable {
 		reportData.setRepayRateBasis("#".equals(financeMain.getRepayRateBasis()) ? ""
 				: getlabelDesc(financeMain.getRepayRateBasis(), PennantStaticListUtil.getInterestRateType(false)));
 		reportData.setRepayProfitRate(financeMain.getRepayProfitRate() != null
-				? PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 2) + " %" : "");
+				? PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 2) + " %"
+				: "");
 		reportData.setRepayBaseRate(StringUtils.trimToEmpty(financeMain.getRepayBaseRate()));
 		if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(financeMain.getRepayBaseRate()))) {
 			reportData.setApplyRepayAccntId("TRUE");
@@ -1071,7 +1074,7 @@ public class FinMainReportData implements Serializable {
 		reportData.setMaturityDate(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
 		reportData.setRepayPftOnPftFrq(financeMain.isFinRepayPftOnFrq() ? "True" : "False");
 
-		//  OverDue Charges Details
+		// OverDue Charges Details
 		if (finSchData.getFinODPenaltyRate() != null) {
 			reportData.setApplyOverdue(finSchData.getFinODPenaltyRate().isApplyODPenalty() ? "True" : "False");
 			reportData.setIncGrcDays(finSchData.getFinODPenaltyRate().isODIncGrcDays() ? "True" : "False");
@@ -1083,14 +1086,14 @@ public class FinMainReportData implements Serializable {
 			reportData.setMaxWaiver(String.valueOf(finSchData.getFinODPenaltyRate().getODMaxWaiverPerc()) + " %");
 		}
 
-		//Profit Details
+		// Profit Details
 
 		reportData.setTotalDisb(
 				PennantApplicationUtil.amountFormate(financeSummary.getTotalDisbursement(), ccyFormatter));
 		reportData.setTotalDownPayment(
 				PennantApplicationUtil.amountFormate(financeSummary.getTotalDownPayment(), ccyFormatter));
 
-		//Totals
+		// Totals
 		reportData.setTotalFees(PennantApplicationUtil.amountFormate(financeSummary.getTotalFees(), ccyFormatter));
 		reportData.setTotalWaivers(
 				PennantApplicationUtil.amountFormate(financeSummary.getTotalWaiverFee(), ccyFormatter));
@@ -1105,7 +1108,7 @@ public class FinMainReportData implements Serializable {
 		reportData.setFinODTotPenaltyBal(
 				PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyBal(), ccyFormatter));
 
-		//Profit Schedule Details
+		// Profit Schedule Details
 		reportData.setTotalPriSchd(PennantApplicationUtil.amountFormate(finSummary.getTotalPriSchd(), ccyFormatter));
 		reportData.setTotalPftSchd(PennantApplicationUtil.amountFormate(finSummary.getTotalPftSchd(), ccyFormatter));
 		reportData.setTotalOriginal(PennantApplicationUtil.amountFormate(finSummary.getTotalOriginal(), ccyFormatter));
@@ -1147,7 +1150,7 @@ public class FinMainReportData implements Serializable {
 		reportData.setPayOffProfit(PennantApplicationUtil.amountFormate(finSummary.getPayOffProfit(), ccyFormatter));
 		reportData.setTotalPayOff(PennantApplicationUtil.amountFormate(finSummary.getTotalPayOff(), ccyFormatter));
 
-		//Finance Installment Details
+		// Finance Installment Details
 		reportData.setOverDueInstlments(String.valueOf(finSummary.getOverDueInstlments()));
 		reportData.setOverDueInstlementPft(
 				PennantApplicationUtil.amountFormate(finSummary.getOverDueInstlementPft(), ccyFormatter));

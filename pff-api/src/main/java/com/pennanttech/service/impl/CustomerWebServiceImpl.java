@@ -1595,7 +1595,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	@Override
 	public WSReturnStatus addCustomerIncome(CustomerIncomeDetail customerIncomeDetail) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		
+
 		// bean validations
 		validationUtility.validate(customerIncomeDetail, SaveValidationGroup.class);
 		if (customerIncomeDetail.getCustomerIncome() == null) {
@@ -1603,14 +1603,14 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 			valueParm[0] = "customerIncome";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		
-		if(!ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
+
+		if (!ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Customerincome";
 			valueParm[1] = customerIncomeDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90599", valueParm);
 		}
-		
+
 		Customer customer = null;
 		if (StringUtils.isNotBlank(customerIncomeDetail.getCif())) {
 			customer = customerDetailsService.getCustomerByCIF(customerIncomeDetail.getCif());
@@ -1623,9 +1623,9 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		}
 		// for logging purpose
 		APIErrorHandlerService.logReference(customerIncomeDetail.getCif());
-		
+
 		boolean corpFinReq = SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_CORP_FINANCE_TAB_REQ);
-		
+
 		if (!corpFinReq && PennantConstants.PFF_CUSTCTG_CORP.equals(customer.getCustCtgCode())) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Customerincome";
@@ -1661,7 +1661,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	@Override
 	public WSReturnStatus updateCustomerIncome(CustomerIncomeDetail customerIncomeDetail) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		
+
 		// bean validations
 		validationUtility.validate(customerIncomeDetail, UpdateValidationGroup.class);
 		if (customerIncomeDetail.getCustomerIncome() == null) {
@@ -1669,14 +1669,14 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 			valueParm[0] = "customerIncome";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		
-		if(!ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
+
+		if (!ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Customerincome";
 			valueParm[1] = customerIncomeDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90599", valueParm);
 		}
-		
+
 		// customer validations
 		Customer customer = null;
 		if (StringUtils.isNotBlank(customerIncomeDetail.getCif())) {
@@ -1691,7 +1691,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		}
 		// for logging purpose
 		APIErrorHandlerService.logReference(customerIncomeDetail.getCif());
-		
+
 		boolean corpFinReq = SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_CORP_FINANCE_TAB_REQ);
 		if (!corpFinReq && PennantConstants.PFF_CUSTCTG_CORP.equals(customer.getCustCtgCode())) {
 			String[] valueParm = new String[2];
@@ -1772,7 +1772,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 
 		// bean validations
 		validationUtility.validate(customerIncomeDetail, DeleteValidationGroup.class);
-		
+
 		// customer validations
 		CustomerIncome customerIncome = null;
 		if (StringUtils.isNotBlank(customerIncomeDetail.getCif())) {

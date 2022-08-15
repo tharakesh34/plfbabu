@@ -11,10 +11,8 @@ public interface AccountTypeGroupDAO extends BasicCrudDao<AccountTypeGroup> {
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
-	 * @param groupCode
-	 *            of AccountTypeGroup
-	 * @param tableType
-	 *            of PhoneType
+	 * @param groupCode of AccountTypeGroup
+	 * @param tableType of PhoneType
 	 * @return
 	 */
 	boolean isDuplicateKey(String groupCode, TableType tableType);

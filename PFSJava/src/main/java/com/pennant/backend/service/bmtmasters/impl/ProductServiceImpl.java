@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProductServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-08-2011    														*
- *                                                                  						*
- * Modified Date    :  12-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProductServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-08-2011 * * Modified
+ * Date : 12-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.bmtmasters.impl;
@@ -149,8 +131,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	 * using ProductDAO's update method 3) Audit the record in to AuditHeader and AdtBMTProduct by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -182,7 +163,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			details = processingProductAssetList(details, tableType);
 			auditDetails.addAll(details);
 		}
-		//Product Deviation Details
+		// Product Deviation Details
 		if (CollectionUtils.isNotEmpty(product.getProductDeviationDetails())) {
 			List<AuditDetail> details = product.getAuditDetailMap().get("ProductDeviation");
 			details = processingProductDeviationList(details, tableType);
@@ -204,8 +185,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	 * BMTProduct by using ProductDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtBMTProduct by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -231,10 +211,8 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	/**
 	 * getProductById fetch the details by using ProductDAO's getProductById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Product
 	 */
 
@@ -258,8 +236,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	 * getApprovedProductById fetch the details by using ProductDAO's getProductById method . with parameter id and type
 	 * as blank. it fetches the approved records from the BMTProduct.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return Product
 	 */
 
@@ -286,8 +263,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	 * the record in to AuditHeader and AdtBMTProduct by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -325,13 +301,13 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 				getProductDAO().update(product, "");
 			}
 
-			//Retrieving List of Audit Details For Product Asset related modules
+			// Retrieving List of Audit Details For Product Asset related modules
 			if (product.getProductAssetList() != null && product.getProductAssetList().size() > 0) {
 				List<AuditDetail> details = product.getAuditDetailMap().get("ProductAsset");
 				details = processingProductAssetList(details, "");
 				auditDetails.addAll(details);
 			}
-			//Product Deviation
+			// Product Deviation
 			if (product.getProductDeviationDetails() != null && product.getProductDeviationDetails().size() > 0) {
 				List<AuditDetail> details = product.getAuditDetailMap().get("ProductDeviation");
 				details = processingProductDeviationList(details, "");
@@ -361,8 +337,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	 * workFlow table by using getProductDAO().delete with parameters product,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTProduct by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -392,8 +367,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -549,7 +523,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			auditDetailMap.put("ProductAsset", setPAssetAuditData(product, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ProductAsset"));
 		}
-		//Product Deviations
+		// Product Deviations
 		if (product.getProductDeviationDetails() != null && product.getProductDeviationDetails().size() > 0) {
 			auditDetailMap.put("ProductDeviation", setPDeviationAuditData(product, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ProductDeviation"));
@@ -769,7 +743,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 				}
 
 				if (StringUtils.isNotEmpty(transType)) {
-					//check and change below line for Complete code
+					// check and change below line for Complete code
 					auditDetailsList
 							.add(new AuditDetail(transType, detail.getAuditSeq(), detail.getBefImage(), object));
 				}
@@ -796,7 +770,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 
 		for (int i = 0; i < product.getProductDeviationDetails().size(); i++) {
 			ProductDeviation deviationDetail = product.getProductDeviationDetails().get(i);
-			//Get the DeviationId from ManualDeviations by deviationCode
+			// Get the DeviationId from ManualDeviations by deviationCode
 			if (deviationDetail.getDeviationID() < 0 && StringUtils.isNotBlank(deviationDetail.getDeviationCode())) {
 				deviationDetail.setDeviationID(
 						getManualDeviationDAO().getDeviationIdByCode(deviationDetail.getDeviationCode()));

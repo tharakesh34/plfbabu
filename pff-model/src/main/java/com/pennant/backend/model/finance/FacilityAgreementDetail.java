@@ -34,21 +34,21 @@ public class FacilityAgreementDetail {
 	private String custGroupCode;
 	private String custGroupName;
 
-	private String customerBackGround;//HTML
-	private String strength;//HTML
-	private String weaknesses;//HTML
-	private String sourceOfRepayment;//HTML
-	private String adequacyOfCashFlows;//HTML
-	private String typesOfSecurities;//HTML
-	private String guaranteeDescription;//HTML
-	private String financialSummary;//HTML
-	private String mitigants;//HTML
+	private String customerBackGround;// HTML
+	private String strength;// HTML
+	private String weaknesses;// HTML
+	private String sourceOfRepayment;// HTML
+	private String adequacyOfCashFlows;// HTML
+	private String typesOfSecurities;// HTML
+	private String guaranteeDescription;// HTML
+	private String financialSummary;// HTML
+	private String mitigants;// HTML
 
-	private String purpose;//HTML
-	private String accountRelation;//HTML
+	private String purpose;// HTML
+	private String accountRelation;// HTML
 	private String antiMoneyLaunderClear;
-	private String limitAndAncillary;//HTML
-	private String antiMoneyLaunderSection;//HTML
+	private String limitAndAncillary;// HTML
+	private String antiMoneyLaunderSection;// HTML
 	private String interim;
 	private String customerType;
 
@@ -69,7 +69,7 @@ public class FacilityAgreementDetail {
 	private String annualFeesCommission;
 	private String otherFees;
 
-	//Risk rating
+	// Risk rating
 	private String totalScoring;
 	private String proposedGrade;
 	private String proposedDesc;
@@ -95,10 +95,10 @@ public class FacilityAgreementDetail {
 	private String purposeOfSubmission;
 
 	private String totSharePerc;
-	//Collateral
+	// Collateral
 	private String totValue;
 	private String totCover;
-	//===
+	// ===
 	private String applicationDate;
 	private String totCustFin;
 	private String adtYear1 = "";
@@ -819,7 +819,7 @@ public class FacilityAgreementDetail {
 		return StringUtils.trimToEmpty(antiMoneyLaunderSection);
 	}
 
-	//These Classes  Are Declared as Inner Class	
+	// These Classes Are Declared as Inner Class
 	private List<CheckListDetails> checkListDetails;
 	private List<CustomerFinance> customerFinances;
 
@@ -922,9 +922,9 @@ public class FacilityAgreementDetail {
 		this.groupRecommendations = groupRecommendations;
 	}
 
-	//=================================================///
-	//============== Inner Classes====================///
-	//=================================================///
+	// =================================================///
+	// ============== Inner Classes====================///
+	// =================================================///
 	public class CheckListDetails {
 		private long questionId;
 		private String question;
@@ -1115,7 +1115,7 @@ public class FacilityAgreementDetail {
 
 	}
 
-	// Scoring Details 
+	// Scoring Details
 
 	public class ScoringHeader {
 
@@ -1331,7 +1331,7 @@ public class FacilityAgreementDetail {
 		private String underWritingAmountUSD;
 		private String propFinalTakeAmountUSD;
 
-		//NONC
+		// NONC
 		private String date;
 		private String cafRef;
 		private String customerType;
@@ -1609,7 +1609,7 @@ public class FacilityAgreementDetail {
 			this.propFinalTakeAmountUSD = propFinalTakeAmountUSD;
 		}
 
-		//NONC
+		// NONC
 		public String getDate() {
 			return StringUtils.trimToEmpty(date);
 		}

@@ -93,7 +93,7 @@ public class DeviationRenderer {
 				"Y") ? true : false;
 
 		for (FinanceDeviations deviationDetail : renderList) {
-			//to show other deviation which in pending queue but should not be editable
+			// to show other deviation which in pending queue but should not be editable
 			boolean readOnly = true;
 			boolean approved = false;
 
@@ -240,7 +240,7 @@ public class DeviationRenderer {
 		logger.debug("Entering");
 
 		listbox.getItems().clear();
-		//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+		// ### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
 
 		// Address soft delete of approved / deleted manual deviations.
 		for (FinanceDeviations deviation : finDeviations) {
@@ -253,7 +253,7 @@ public class DeviationRenderer {
 				}
 			}
 		}
-		//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
+		// ### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
 		List<FinanceDeviations> renderList = deviationHelper.mergeList(finDeviations, aprvdDeviations);
 
@@ -262,7 +262,7 @@ public class DeviationRenderer {
 		}
 
 		for (FinanceDeviations deviation : renderList) {
-			//to show other deviation which in pending queue but should not be editable
+			// to show other deviation which in pending queue but should not be editable
 			boolean pending = false;
 			boolean approved = false;
 

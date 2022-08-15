@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  GeneralDepartmentServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : GeneralDepartmentServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -105,8 +87,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	 * table. based on the module workFlow Configuration. by using GeneralDepartmentDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -145,8 +126,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	 * RMTGenDepartments by using GeneralDepartmentDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -170,10 +150,8 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	/**
 	 * getGeneralDepartmentById fetch the details by using GeneralDepartmentDAO's getGeneralDepartmentById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return GeneralDepartment
 	 */
 	@Override
@@ -185,8 +163,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	 * getApprovedGeneralDepartmentById fetch the details by using GeneralDepartmentDAO's getGeneralDepartmentById
 	 * method . with parameter id and type as blank. it fetches the approved records from the RMTGenDepartments.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return GeneralDepartment
 	 */
 	public GeneralDepartment getApprovedGeneralDepartmentById(String id) {
@@ -205,8 +182,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	 * record in to AuditHeader and AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -269,8 +245,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	 * workFlow table by using getGeneralDepartmentDAO().delete with parameters generalDepartment,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtRMTGenDepartments by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -295,8 +270,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
@@ -324,7 +298,8 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		// Get the model object.
 		GeneralDepartment generalDepartment = (GeneralDepartment) auditDetail.getModelData();
 		// Check the unique keys.
-		if (generalDepartment.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(generalDepartment.getRecordType())
+		if (generalDepartment.isNewRecord()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(generalDepartment.getRecordType())
 				&& generalDepartmentDAO.isDuplicateKey(generalDepartment.getGenDepartment(),
 						generalDepartment.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

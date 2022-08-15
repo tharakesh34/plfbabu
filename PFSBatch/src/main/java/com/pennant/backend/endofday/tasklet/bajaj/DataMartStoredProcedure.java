@@ -54,7 +54,7 @@ public class DataMartStoredProcedure extends StoredProcedure implements Tasklet 
 
 		inputParameters.put("BATCH_ID", getBatchID());
 
-		//	try {
+		// try {
 		Map<String, Object> results;
 		results = execute(inputParameters);
 		long errorCode = (long) results.get("ERROR_CODE");
@@ -96,8 +96,7 @@ public class DataMartStoredProcedure extends StoredProcedure implements Tasklet 
 	}
 
 	/**
-	 * @param dataSource
-	 *            the dataSource to set
+	 * @param dataSource the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

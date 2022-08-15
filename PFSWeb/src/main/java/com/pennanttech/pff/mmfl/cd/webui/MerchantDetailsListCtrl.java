@@ -75,8 +75,7 @@ public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_merchantDetails(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -101,8 +100,7 @@ public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_MerchantDetailsList_MerchantDetailsListSearch(Event event) {
 		search();
@@ -111,8 +109,7 @@ public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -122,8 +119,7 @@ public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_MerchantDetailsList_NewMerchantDetails(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -165,8 +161,7 @@ public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param Consumer
-	 *            Product The entity that need to be passed to the dialog.
+	 * @param Consumer Product The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(MerchantDetails merchantDetails) {
 		logger.debug(Literal.ENTERING);

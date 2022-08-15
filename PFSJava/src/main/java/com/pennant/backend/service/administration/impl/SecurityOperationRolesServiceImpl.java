@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		: SecurityOperationRolesServiceImpl.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  11-03-2014															*
- *                                                                  
- * Modified Date    :  11-03-2014															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SecurityOperationRolesServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 11-03-2014 *
+ * 
+ * Modified Date : 11-03-2014 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-03-2014       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-03-2014 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.administration.impl;
@@ -194,14 +185,15 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 
 		if (secOperation.isNewRecord()) { // for New record or new record into work flow
 
-			if (!secOperation.isWorkflow()) { // With out Work flow only new records  
-				if (befSecurityOperation != null) { // Record Already Exists in the table then error  
+			if (!secOperation.isWorkflow()) { // With out Work flow only new records
+				if (befSecurityOperation != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (secOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befSecurityOperation != null || tempSecurityUser != null) { // if records already exists in the main table
+					if (befSecurityOperation != null || tempSecurityUser != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -236,7 +228,7 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 				}
 			} else {
 
-				if (tempSecurityUser == null) { // if records not exists in the Work flow table 
+				if (tempSecurityUser == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -432,8 +424,7 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtSecurityOperation
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -451,7 +442,7 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 		BeanUtils.copyProperties((SecurityOperation) auditHeader.getAuditDetail().getModelData(), securityOperation);
 		tranType = PennantConstants.TRAN_UPD;
 
-		//Retrieving List of Audit Details For Security user roles details modules
+		// Retrieving List of Audit Details For Security user roles details modules
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 			auditDetails = processingAuditDetailList(auditHeader.getAuditDetails(), "", securityOperation);
 		}
@@ -544,8 +535,7 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 	 * workFlow table by using getSecurityUserDAO().delete with parameters securityOperation,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -582,8 +572,7 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 	 * This method fetches List< SecurityGroupRights > with "GrpId" condition by calling SecurityGroupRightsDAO's
 	 * getSecurityGroupRightsByGrpId()
 	 * 
-	 * @param securityGroup
-	 *            (SecurityGroup)
+	 * @param securityGroup (SecurityGroup)
 	 * @return List<SecurityGroupRights>
 	 */
 	@Override
@@ -642,7 +631,7 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 	}
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//	//getters and setters 
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++// //getters and setters
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;

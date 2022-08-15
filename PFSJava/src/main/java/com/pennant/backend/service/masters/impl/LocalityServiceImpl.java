@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LocalityServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-05-2017    														*
- *                                                                  						*
- * Modified Date    :  22-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LocalityServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-05-2017 * * Modified
+ * Date : 22-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.masters.impl;
 
 import org.apache.logging.log4j.LogManager;
@@ -74,8 +56,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -89,8 +70,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 	}
 
 	/**
-	 * @param localityDAO
-	 *            the localityDAO to set
+	 * @param localityDAO the localityDAO to set
 	 */
 	public void setLocalityDAO(LocalityDAO localityDAO) {
 		this.localityDAO = localityDAO;
@@ -104,8 +84,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 	 * LocalityDAO's update method 3) Audit the record in to AuditHeader and AdtLocality by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -145,8 +124,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 	 * Locality by using LocalityDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtLocality by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -171,8 +149,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 	/**
 	 * getLocality fetch the details by using LocalityDAO's getLocalityById method.
 	 * 
-	 * @param id
-	 *            id of the Locality.
+	 * @param id id of the Locality.
 	 * @return Locality
 	 */
 	@Override
@@ -184,8 +161,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 	 * getApprovedLocalityById fetch the details by using LocalityDAO's getLocalityById method . with parameter id and
 	 * type as blank. it fetches the approved records from the Locality.
 	 * 
-	 * @param id
-	 *            id of the Locality. (String)
+	 * @param id id of the Locality. (String)
 	 * @return Locality
 	 */
 	public Locality getApprovedLocality(long id) {
@@ -203,8 +179,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 	 * Audit the record in to AuditHeader and AdtLocality by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -268,8 +243,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 	 * workFlow table by using getLocalityDAO().delete with parameters locality,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtLocality by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -297,8 +271,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

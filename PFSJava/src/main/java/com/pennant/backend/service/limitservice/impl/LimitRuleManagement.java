@@ -50,7 +50,7 @@ public class LimitRuleManagement {
 		logger.debug("Entering");
 
 		List<Customer> customerList = new ArrayList<Customer>();
-		// Send the details to Limitparms table  and get all the Limitparm rules (Execute the rule)
+		// Send the details to Limitparms table and get all the Limitparm rules (Execute the rule)
 		limitparamsList = getLimitRuleDAO().getLimitRuleByModule(RuleConstants.MODULE_LMTLINE, ruleBasedOn, "_View");
 		if (limitparamsList != null) {
 			StringBuffer selectSql = new StringBuffer();
@@ -96,8 +96,8 @@ public class LimitRuleManagement {
 		if (!StringUtils.trimToEmpty(selectSql.toString()).equals("")) {
 			selectSql.append(" UNION ALL ");
 		}
-		selectSql
-				.append("SELECT CustID ,custDftBranch ,custCtgCode ,custTypeCode ,custGenderCode ,custIsStaff ,custIndustry ,custSector ,custSubSector ,custEmpSts ,custMaritalSts ,custSegment ,custSubSegment ,custParentCountry ,custRiskCountry ,custNationality ,custAddrProvince,'"
+		selectSql.append(
+				"SELECT CustID ,custDftBranch ,custCtgCode ,custTypeCode ,custGenderCode ,custIsStaff ,custIndustry ,custSector ,custSubSector ,custEmpSts ,custMaritalSts ,custSegment ,custSubSegment ,custParentCountry ,custRiskCountry ,custNationality ,custAddrProvince,'"
 						+ queryCode + "' AS ");
 		selectSql.append(" RuleCode  From FINANCEMAIN_LIMIT_CHECK_AVIEW  ");
 		selectSql.append(sqlQuery);

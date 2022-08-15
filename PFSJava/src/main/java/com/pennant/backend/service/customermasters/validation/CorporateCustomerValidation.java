@@ -73,14 +73,18 @@ public class CorporateCustomerValidation {
 
 		if (corporateCustomerDetail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!corporateCustomerDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befCorporateCustomerDetail != null) { // Record Already Exists in the table then error  
+			if (!corporateCustomerDetail.isWorkflow()) {// With out Work flow only new records
+				if (befCorporateCustomerDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (corporateCustomerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCorporateCustomerDetail != null || tempCorporateCustomerDetail != null) { // if records already exists in the main table
+				if (corporateCustomerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records
+																										// type is new
+					if (befCorporateCustomerDetail != null || tempCorporateCustomerDetail != null) { // if records
+																										// already
+																										// exists in the
+																										// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -115,7 +119,7 @@ public class CorporateCustomerValidation {
 				}
 			} else {
 
-				if (tempCorporateCustomerDetail == null) { // if records not exists in the Work flow table 
+				if (tempCorporateCustomerDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

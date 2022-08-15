@@ -76,8 +76,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_schemeProductGroup(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -103,8 +102,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_SchemeProductGroupList_SchemeProductGroupListSearch(Event event) {
 		search();
@@ -113,8 +111,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -124,8 +121,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_SchemeProductGroupList_NewSchemeProductGroup(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -169,8 +165,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param covenanttype
-	 *            The entity that need to be passed to the dialog.
+	 * @param covenanttype The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(SchemeProductGroup schemeProductGroup) {
 		logger.debug(Literal.ENTERING);

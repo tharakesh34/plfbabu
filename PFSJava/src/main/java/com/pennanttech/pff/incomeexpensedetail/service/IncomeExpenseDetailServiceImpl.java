@@ -407,7 +407,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 				auditDetails.addAll(details);
 			}
 
-			//Expense Details
+			// Expense Details
 			if (CollectionUtils.isNotEmpty(incomeExpenseHeader.getExpenseList())) {
 				List<AuditDetail> details = incomeExpenseHeader.getAuditDetailMap().get("Expense");
 				details = processingCoreIncomeDetails(details, incomeExpenseHeader, "");

@@ -624,14 +624,14 @@ public class DSRCalculationReportData implements Serializable {
 		FinanceMain financeMain = detail.getFinScheduleData().getFinanceMain();
 		int format = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-		//Customer Details
+		// Customer Details
 		reportData.setCustName(detail.getCustomer().getCustShrtName());
 		reportData.setCustCRCPR(detail.getCustomer().getCustCRCPR());
 		reportData.setAppDate(DateUtility.getAppDate(DateFormat.LONG_DATE));
 		reportData.setEmpStatus(detail.getCustomer().getLovDescCustEmpStsName());
 		reportData.setJointCust(detail.getCustomer().isJointCust() ? "True" : "False");
 
-		//Finance Details		
+		// Finance Details
 		reportData.setFinType(financeMain.getLovDescFinTypeName());
 		reportData.setFinReference(financeMain.getFinReference());
 		reportData.setFinStartDate(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
@@ -663,10 +663,12 @@ public class DSRCalculationReportData implements Serializable {
 		reportData.setTotalRepayPft(PennantApplicationUtil
 				.amountFormate(financeMain.getTotalProfit().subtract(financeMain.getTotalGracePft()), format));
 		reportData.setTotalProfit(PennantApplicationUtil.amountFormate(financeMain.getTotalProfit(), format));
-		reportData.setTotRepayAmount(PennantApplicationUtil.amountFormate(financeMain.getTotalProfit()
-				.add(financeMain.getFinAmount()
-						.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt())
-						.subtract(financeMain.getDownPayment())),
+		reportData.setTotRepayAmount(PennantApplicationUtil.amountFormate(
+				financeMain.getTotalProfit()
+						.add(financeMain.getFinAmount()
+								.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO
+										: financeMain.getFeeChargeAmt())
+								.subtract(financeMain.getDownPayment())),
 				format));
 		reportData.setNumberOfTerms((financeMain.getNumberOfTerms() + financeMain.getGraceTerms()) + " Payments");
 
@@ -703,7 +705,7 @@ public class DSRCalculationReportData implements Serializable {
 		reportData.setRepayFrq(FrequencyUtil.getFrequencyDetail(financeMain.getRepayFrq()).getFrequencyDescription());
 		reportData.setNextrepayDate(DateUtility.formatToLongDate(financeMain.getNextRepayDate()));
 
-		//Prepare Fee Details 
+		// Prepare Fee Details
 		List<FeeRule> feeRules = detail.getFinScheduleData().getFeeRules();
 		List<Fee> fees = new ArrayList<DSRCalculationReportData.Fee>();
 		if (feeRules != null && !feeRules.isEmpty()) {
@@ -719,7 +721,7 @@ public class DSRCalculationReportData implements Serializable {
 		}
 		reportData.setFeeList(fees);
 
-		//Prepare Fee Details 
+		// Prepare Fee Details
 		BigDecimal totalInc = BigDecimal.ZERO;
 		List<CustomerIncome> incomes = detail.getCustomer().getCustomerIncomeList();
 		Map<String, Income> incMap = new HashMap<String, Income>();
@@ -776,7 +778,7 @@ public class DSRCalculationReportData implements Serializable {
 		expMap = null;
 		list = null;
 
-		//Eligibility Details Preparation
+		// Eligibility Details Preparation
 		if (detail.getElgRuleList() != null && !detail.getElgRuleList().isEmpty()) {
 			for (FinanceEligibilityDetail eligibility : detail.getElgRuleList()) {
 				Eligibility elg = new Eligibility();
@@ -815,7 +817,7 @@ public class DSRCalculationReportData implements Serializable {
 			reportData.setEligibilityList(eligibilityList);
 		}
 
-		//Scoring Details Preparation
+		// Scoring Details Preparation
 		if (detail.getFinScoreHeaderList() != null && !detail.getFinScoreHeaderList().isEmpty()) {
 			for (FinanceScoreHeader header : detail.getFinScoreHeaderList()) {
 

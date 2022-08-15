@@ -10,7 +10,7 @@ public class CaseResponse {
 		super();
 	}
 
-	// Getter Methods 
+	// Getter Methods
 
 	public String getCaseNumber() {
 		return caseNumber;
@@ -24,7 +24,7 @@ public class CaseResponse {
 		return message;
 	}
 
-	// Setter Methods 
+	// Setter Methods
 
 	public void setCaseNumber(String caseNumber) {
 		this.caseNumber = caseNumber;

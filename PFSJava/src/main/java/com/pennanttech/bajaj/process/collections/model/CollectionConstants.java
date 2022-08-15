@@ -6,14 +6,14 @@ public class CollectionConstants {
 		super();
 	}
 
-	public static final int COLLECTION_WAIT = 0; //wait
-	public static final int COLLECTION_INPROGRESS = 1; //in-progress
-	public static final int COLLECTION_SUCCESS = 2; //Success
-	public static final int COLLECTION_FAILED = 3; //failed
+	public static final int COLLECTION_WAIT = 0; // wait
+	public static final int COLLECTION_INPROGRESS = 1; // in-progress
+	public static final int COLLECTION_SUCCESS = 2; // Success
+	public static final int COLLECTION_FAILED = 3; // failed
 
 	public static final String INTERFACE_COLLECTION = "C";
 
-	//Collection Procedures
+	// Collection Procedures
 	public static final String SP_CUST_PERS_INFO_V = "SP_CUST_PERS_INFO_V";
 	public static final String SP_CUST_ADDRESS_INFO_V = "SP_CUST_ADDRESS_INFO_V";
 
@@ -27,7 +27,7 @@ public class CollectionConstants {
 	public static final String SP_NON_DELINQ_ACCT_V = "SP_NON_DELINQ_ACCT_V";
 	public static final String SP_PRODUCT_MASTER = "SP_PRODUCT_MASTER";
 
-	//Collection Tables
+	// Collection Tables
 	public static final String TN_CUST_PERS_INFO_V_TMP = "CUST_PERS_INFO_V_TMP";
 	public static final String TN_CUST_ADDRESS_INFO_V_TMP = "CUST_ADDRESS_INFO_V_TMP";
 

@@ -121,15 +121,15 @@ public class CrtReducingRateTest {
 			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		FinScheduleData schedule = (FinScheduleData) BeanUtils.cloneBean(model);
 
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
 		// Setting to be moved to actual test class
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
 
 		schedule.getFinanceMain().setGrcRateBasis(CalculationConstants.RATE_BASIS_R);
 		schedule.getFinanceMain().setRepayRateBasis(CalculationConstants.RATE_BASIS_R);
 		schedule = ScheduleGenerator.getNewSchd(schedule);
 
-		//FIXME: Temorary
+		// FIXME: Temorary
 		String feeSchdMethod = schedule.getFinFeeDetailList().get(0).getFeeScheduleMethod();
 		BigDecimal feeAmount = schedule.getFinFeeDetailList().get(0).getRemainingFee();
 

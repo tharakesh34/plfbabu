@@ -9,7 +9,7 @@ import org.zkoss.zul.ListModelList;
 public class BuilderUtilListbox {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static ListModel getLogicModelLabel() {//Using
+	public static ListModel getLogicModelLabel() {// Using
 
 		List data = new ArrayList();
 		data.add("--select--");
@@ -20,7 +20,7 @@ public class BuilderUtilListbox {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static ListModel getLogicModelValue() {//Using
+	public static ListModel getLogicModelValue() {// Using
 
 		List data = new ArrayList();
 		data.add("#");
@@ -31,7 +31,7 @@ public class BuilderUtilListbox {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static ListModel getBooleanOperators() {//Using
+	public static ListModel getBooleanOperators() {// Using
 
 		List data = new ArrayList();
 		data.add("true");

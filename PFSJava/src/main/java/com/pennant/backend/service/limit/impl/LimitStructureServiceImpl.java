@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitStructureServiceImpl.java                                       * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitStructureServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * *
+ * Modified Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.limit.impl;
@@ -94,8 +76,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -109,8 +90,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	}
 
 	/**
-	 * @param limitStructureDAO
-	 *            the limitStructureDAO to set
+	 * @param limitStructureDAO the limitStructureDAO to set
 	 */
 	public void setLimitStructureDAO(LimitStructureDAO limitStructureDAO) {
 		this.limitStructureDAO = limitStructureDAO;
@@ -140,8 +120,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	 * based on the module workFlow Configuration. by using LimitStructureDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtLIMIT_STRUCTURE by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -157,10 +136,8 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	 * based on the module workFlow Configuration. by using LimitStructureDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtLIMIT_STRUCTURE by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -184,7 +161,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 			getLimitStructureDAO().update(limitStructure, tableType);
 		}
 
-		//Retrieving List of Audit Details For libraryArtefact  related modules
+		// Retrieving List of Audit Details For libraryArtefact related modules
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 			auditHeader.setAuditDetails(
 					processingLimitStructureDetailList(auditHeader.getAuditDetails(), tableType, limitStructure));
@@ -202,8 +179,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	 * LIMIT_STRUCTURE by using LimitStructureDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtLIMIT_STRUCTURE by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -227,10 +203,8 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	/**
 	 * getLimitStructureById fetch the details by using LimitStructureDAO's getLimitStructureById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LimitStructure
 	 */
 
@@ -250,8 +224,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	 * getApprovedLimitStructureById fetch the details by using LimitStructureDAO's getLimitStructureById method . with
 	 * parameter id and type as blank. it fetches the approved records from the LIMIT_STRUCTURE.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return LimitStructure
 	 */
 
@@ -277,8 +250,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLIMIT_STRUCTURE
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -319,7 +291,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 				getLimitStructureDAO().update(limitStructure, tableType);
 			}
 
-			//Retrieving List of Audit Details For LimitStructure  related modules
+			// Retrieving List of Audit Details For LimitStructure related modules
 			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 				auditHeader.setAuditDetails(
 						processingLimitStructureDetailList(auditHeader.getAuditDetails(), tableType, limitStructure));
@@ -347,8 +319,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	 * workFlow table by using getLimitStructureDAO().delete with parameters limitStructure,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtLIMIT_STRUCTURE by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -374,10 +345,8 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -407,10 +376,8 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 	 * mismatch conditions Fetch the error details from getLimitStructureDAO().getErrorDetail with Error ID and language
 	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -436,14 +403,15 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 		errParm[0] = PennantJavaUtil.getLabel("label_StructureCode") + ":" + valueParm[0];
 
 		if (limitStructure.isNewRecord()) { // for New record or new record into work flow
-			if (!limitStructure.isWorkflow()) {// With out Work flow only new records  
-				if (befLimitStructure != null) { // Record Already Exists in the table then error  
+			if (!limitStructure.isWorkflow()) {// With out Work flow only new records
+				if (befLimitStructure != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (limitStructure.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befLimitStructure != null || tempLimitStructure != null) { // if records already exists in the main table
+					if (befLimitStructure != null || tempLimitStructure != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -476,7 +444,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 					}
 				}
 			} else {
-				if (tempLimitStructure == null) { // if records not exists in the Work flow table 
+				if (tempLimitStructure == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				} else if (oldLimitStructure != null
@@ -565,7 +533,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 				}
 			}
 			if ("saveOrUpdate".equals(method) && (isRcdType && limitStructureDetails.isWorkflow())) {
-				//limitStructureDetails.setNewRecord(true);
+				// limitStructureDetails.setNewRecord(true);
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
@@ -710,7 +678,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 		return getLimitStructureDetailDAO().limitItemCheck(lmtItem, limitCategory, type);
 	}
 
-	//	@Override
+	// @Override
 	public int limitStructureCheck(String structureCode) {
 		return getLimitDetailDAO().limitStructureCheck(structureCode, "_View");
 	}

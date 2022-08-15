@@ -38,7 +38,7 @@ public class RateValidator implements Constraint {
 		double maxRate = Math.pow(10, len - decPos);
 
 		if (value != null) {
-			//rateValue= (Double) value;
+			// rateValue= (Double) value;
 			rateValue = new BigDecimal(value.toString()).doubleValue();
 
 		} else {

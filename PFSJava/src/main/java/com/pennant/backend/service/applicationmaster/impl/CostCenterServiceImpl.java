@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CostCenterServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-04-2017    														*
- *                                                                  						*
- * Modified Date    :  22-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CostCenterServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-04-2017 * *
+ * Modified Date : 22-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -92,8 +74,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -107,8 +88,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	}
 
 	/**
-	 * @param costCenterDAO
-	 *            the costCenterDAO to set
+	 * @param costCenterDAO the costCenterDAO to set
 	 */
 	public void setCostCenterDAO(CostCenterDAO costCenterDAO) {
 		this.costCenterDAO = costCenterDAO;
@@ -122,8 +102,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	 * by using CostCentersDAO's update method 3) Audit the record in to AuditHeader and AdtCostCenters by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -163,8 +142,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	 * CostCenters by using CostCentersDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtCostCenters by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -189,8 +167,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	/**
 	 * getCostCenters fetch the details by using CostCentersDAO's getCostCentersById method.
 	 * 
-	 * @param costCenterID
-	 *            costCenterID of the CostCenter.
+	 * @param costCenterID costCenterID of the CostCenter.
 	 * @return CostCenters
 	 */
 	@Override
@@ -202,8 +179,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	 * getApprovedCostCentersById fetch the details by using CostCentersDAO's getCostCentersById method . with parameter
 	 * id and type as blank. it fetches the approved records from the CostCenters.
 	 * 
-	 * @param costCenterID
-	 *            costCenterID of the CostCenter. (String)
+	 * @param costCenterID costCenterID of the CostCenter. (String)
 	 * @return CostCenters
 	 */
 	public CostCenter getApprovedCostCenter(long costCenterID) {
@@ -221,8 +197,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtCostCenters by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -286,8 +261,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	 * workFlow table by using getCostCenterDAO().delete with parameters costCenter,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtCostCenters by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -315,8 +289,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -358,7 +331,8 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 		}
 
 		if (StringUtils.trimToEmpty(costCenter.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			int count = accountTypeDAO.getgetAccountTypeByCost(costCenter.getCostCenterID(), "");//FIXME for FinanceMain
+			int count = accountTypeDAO.getgetAccountTypeByCost(costCenter.getCostCenterID(), "");// FIXME for
+																									// FinanceMain
 			if (count != 0) {
 				String[] parameters = new String[2];
 

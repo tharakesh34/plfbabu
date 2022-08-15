@@ -79,18 +79,18 @@ public class CustomerGstInfoValidation {
 		errParm[1] = PennantJavaUtil.getLabel("label_CustomerDialog_GSTNumber.value") + "-" + valueParm[1];
 
 		if (customerGST.isNewRecord()) { // for New record or new record into work
-										// flow
+											// flow
 
 			if (customerGST.isWorkflow()) {// With out Work flow only new
-												// records
+											// records
 											// with work flow
 				if (customerGST.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
+																							// records
 																							// type
 																							// is
 																							// new
 					if (befCustomerGST != null || tempcustomerGST != null) { // if
-																					// records
+																				// records
 																				// already
 																				// exists
 																				// in
@@ -109,16 +109,16 @@ public class CustomerGstInfoValidation {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!customerGST.isWorkflow()) { // With out Work flow for update
-													// and delete
+												// and delete
 
 				if (befCustomerGST == null) { // if records not exists in the
-													// main table
+												// main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}
 			} else {
 
 				if (tempcustomerGST == null) { // if records not exists in the
-													// Work flow table
+												// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

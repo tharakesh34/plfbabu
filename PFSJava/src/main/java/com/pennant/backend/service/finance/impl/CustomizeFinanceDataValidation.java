@@ -78,7 +78,7 @@ public class CustomizeFinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 			finScheduleData.setErrorDetails(errorDetails);
 		}
-		//Net Loan Amount
+		// Net Loan Amount
 		BigDecimal netLoanAmount = finMain.getFinAmount().subtract(finMain.getDownPayment());
 		if (netLoanAmount.compareTo(financeType.getFinMinAmount()) < 0) {
 			String[] valueParm = new String[1];
@@ -97,7 +97,7 @@ public class CustomizeFinanceDataValidation {
 				return finScheduleData;
 			}
 		}
-		//mandate details Validation
+		// mandate details Validation
 		errorDetails = mandateValidation(financeDetail);
 
 		if (!errorDetails.isEmpty()) {
@@ -105,19 +105,19 @@ public class CustomizeFinanceDataValidation {
 			return finScheduleData;
 		}
 
-		//Co-Applicant details Validation
+		// Co-Applicant details Validation
 		errorDetails = jointAccountDetailsValidation(financeDetail);
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
 		}
 
-		//ExtendedFieldDetails Validation
+		// ExtendedFieldDetails Validation
 		String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
-		//### 02-05-2018-Start- story #334 Extended fields for loan servicing
+		// ### 02-05-2018-Start- story #334 Extended fields for loan servicing
 		errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
 				ExtendedFieldConstants.MODULE_LOAN, subModule, FinServiceEvent.ORG);
-		//### 02-05-2018-End
+		// ### 02-05-2018-End
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
@@ -330,7 +330,7 @@ public class CustomizeFinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90333", valueParm)));
 					return errorDetails;
 				}
-				//validate AccNumber length
+				// validate AccNumber length
 				if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
 					BankDetail bankDetail = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
 					if (bankDetail != null) {
@@ -347,14 +347,14 @@ public class CustomizeFinanceDataValidation {
 						}
 					}
 				}
-				//validate Phone number
+				// validate Phone number
 				String mobileNumber = mandate.getPhoneNumber();
 				if (StringUtils.isNotBlank(mobileNumber)) {
 					if (!(mobileNumber.matches("\\d{10}"))) {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90278", null)));
 					}
 				}
-				//validate names
+				// validate names
 				String accHolderName = mandate.getAccHolderName();
 				if (StringUtils.isNotBlank(accHolderName)) {
 					if (!(accHolderName.matches("^$|^[A-Za-z]+[A-Za-z.\\s]*"))) {
@@ -406,7 +406,7 @@ public class CustomizeFinanceDataValidation {
 					}
 				}
 
-				//validate periodicity
+				// validate periodicity
 				if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
 					ErrorDetail errorDetail = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
 					if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
@@ -418,7 +418,7 @@ public class CustomizeFinanceDataValidation {
 					mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
 				}
 
-				//validate status
+				// validate status
 				if (StringUtils.isNotBlank(mandate.getStatus())) {
 					List<ValueLabel> status = PennantStaticListUtil
 							.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
@@ -473,7 +473,7 @@ public class CustomizeFinanceDataValidation {
 					valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
 				} else if (!docName.contains(".")) {
-					//Uploaded document {0} extension should be required.
+					// Uploaded document {0} extension should be required.
 					String[] valueParm = new String[1];
 					valueParm[0] = mandate.getDocumentName();
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", valueParm)));
@@ -543,11 +543,11 @@ public class CustomizeFinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90102", valueParm)));
 				}
 
-				//for authoritySignatory and sequence		
+				// for authoritySignatory and sequence
 				if (jointAccDetail.isAuthoritySignatory()) {
 
 					if (jointAccDetail.getSequence() <= 0 || jointAccDetail.getSequence() >= 10) {
-						//{0} should between or including {1} and {2}.
+						// {0} should between or including {1} and {2}.
 						String[] valueParm = new String[3];
 						valueParm[0] = "sequence";
 						valueParm[1] = "1";
@@ -556,7 +556,7 @@ public class CustomizeFinanceDataValidation {
 
 					}
 				} else if (jointAccDetail.getSequence() != 0) {
-					//{0} is only applicable for {1}.
+					// {0} is only applicable for {1}.
 					String[] valueParm = new String[2];
 					valueParm[0] = "sequence";
 					valueParm[1] = "authoritySignatory";
@@ -573,13 +573,13 @@ public class CustomizeFinanceDataValidation {
 						duplicateCifCount++;
 					}
 				}
-				//Duplicate {0} are not allowed.
+				// Duplicate {0} are not allowed.
 				if (duplicateSeqCount >= 2) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "sequence id";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
 				}
-				//Duplicate {0} are not allowed.
+				// Duplicate {0} are not allowed.
 				if (duplicateCifCount >= 2) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "CIF";

@@ -55,14 +55,15 @@ public class IRRFeeTypeValidation {
 
 		if (irrFeeType.isNewRecord()) { // for New record or new record into work flow
 
-			if (!irrFeeType.isWorkflow()) {// With out Work flow only new records  
-				if (befIRRFeeType != null) { // Record Already Exists in the table then error  
+			if (!irrFeeType.isWorkflow()) {// With out Work flow only new records
+				if (befIRRFeeType != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (irrFeeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befIRRFeeType != null || tempIRRFeeType != null) { // if records already exists in the main table
+					if (befIRRFeeType != null || tempIRRFeeType != null) { // if records already exists in the main
+																			// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -92,7 +93,7 @@ public class IRRFeeTypeValidation {
 				}
 			} else {
 
-				if (tempIRRFeeType == null) { // if records not exists in the Work flow table 
+				if (tempIRRFeeType == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

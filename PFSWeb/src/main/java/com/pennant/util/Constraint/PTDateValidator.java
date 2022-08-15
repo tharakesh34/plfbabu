@@ -84,7 +84,7 @@ public class PTDateValidator implements Constraint {
 		}
 
 		if (compValue == null) {
-			//Mandatory Validation
+			// Mandatory Validation
 			if (mandatory) {
 				return Labels.getLabel("FIELD_IS_MAND", new String[] { fieldParm });
 			} else {
@@ -94,7 +94,7 @@ public class PTDateValidator implements Constraint {
 
 		}
 
-		//Date Range
+		// Date Range
 		if (fromValid && toValid) {
 			if (equal) {
 				if (compValue.before(fromDate) || compValue.after(toDate)) {
@@ -111,7 +111,7 @@ public class PTDateValidator implements Constraint {
 			}
 		}
 
-		//From Date Validation 
+		// From Date Validation
 		if (fromValid) {
 			int comp = compValue.compareTo(fromDate);
 			if (equal) {
@@ -127,7 +127,7 @@ public class PTDateValidator implements Constraint {
 			}
 		}
 
-		//To Date Validation 
+		// To Date Validation
 		if (toValid) {
 			int comp = compValue.compareTo(toDate);
 

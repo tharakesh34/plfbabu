@@ -155,7 +155,7 @@ public class ChartsConfig extends ChartUtil {
 		others.append("<definition>");
 		others.append("<style name=\"RectShadow\" type=\"shadow\" strength=\"3\"/>");
 		others.append("</definition>");
-		//others.append("<style name=\"trendvaluefont\" type=\"font\" bold=\"1\" borderColor=\"FFFFDD\">");
+		// others.append("<style name=\"trendvaluefont\" type=\"font\" bold=\"1\" borderColor=\"FFFFDD\">");
 		others.append("<application>");
 		others.append("apply toObject=\"Grp1\" styles=\"RectShadow\">");
 		others.append("</application>");
@@ -179,11 +179,11 @@ public class ChartsConfig extends ChartUtil {
 		chartXML = getIntElement("plotBorderAlpha", this.plotBorderAlpha, chartXML);
 		chartXML = getIntElement("plotFillAlpha", this.plotFillAlpha, chartXML);
 		chartXML = getIntElement("overlapColumns", this.overlapColumns, chartXML);
-		//	chartXML.append(" "+ Labels.getLabel("label_Chart_CommanAttributes"));
+		// chartXML.append(" "+ Labels.getLabel("label_Chart_CommanAttributes"));
 		return chartXML;
 	}
 
-	//Getters and setters 
+	// Getters and setters
 	public List<ChartSetElement> getSetElements() {
 		return setElements;
 	}

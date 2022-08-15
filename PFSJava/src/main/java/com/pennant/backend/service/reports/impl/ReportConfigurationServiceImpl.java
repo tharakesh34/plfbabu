@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		: ReportConfigurationServiceImpl.java								        *                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  5-09-2012															*
- *                                                                  
- * Modified Date    :  5-09-2012														    *
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ReportConfigurationServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 5-09-2012 *
+ * 
+ * Modified Date : 5-09-2012 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 5-09-2012	       Pennant	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 5-09-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.reports.impl;
@@ -93,8 +84,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	 * in the table. based on the module workFlow Configuration. by using ReportConfigurationDAO's update method 3)
 	 * Audit the record in to AuditHeader and AdtReportConfiguration by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -121,7 +111,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 			getReportConfigurationDAO().update(reportConfiguration, tableType);
 		}
 
-		//Retrieving List of Audit Details For reportFilterFields  related modules
+		// Retrieving List of Audit Details For reportFilterFields related modules
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 			auditHeader.setAuditDetails(
 					processingReportFilterFieldsList(auditHeader.getAuditDetails(), tableType, reportConfiguration));
@@ -138,8 +128,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	 * ReportConfiguration by using ReportConfigurationDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtReportConfiguration by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -165,10 +154,8 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	/**
 	 * getReportConfigurationById fetch the details by using ReportConfigurationDAO's getReportConfigurationById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ReportConfiguration
 	 */
 	@Override
@@ -185,8 +172,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	 * getApprovedReportConfigurationById fetch the details by using ReportConfigurationDAO's getReportConfigurationById
 	 * method . with parameter id and type as blank. it fetches the approved records from the ReportConfiguration.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return ReportConfiguration
 	 */
 	public ReportConfiguration getApprovedReportConfigurationById(long id) {
@@ -210,8 +196,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	 * flow 5) Audit the record in to AuditHeader and AdtReportConfiguration by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -250,7 +235,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 				reportConfiguration.setRecordType("");
 				getReportConfigurationDAO().update(reportConfiguration, "");
 			}
-			//Retrieving List of Audit Details For utilityDetail  related modules
+			// Retrieving List of Audit Details For utilityDetail related modules
 			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 				auditDetails = processingReportFilterFieldsList(auditHeader.getAuditDetails(), "", reportConfiguration);
 			}
@@ -277,8 +262,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	 * the record in to AuditHeader and AdtReportConfiguration by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -303,8 +287,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -313,11 +296,12 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		//	ReportConfiguration aReportConfiguration = (ReportConfiguration) auditHeader.getAuditDetail().getModelData();
-		//String usrLanguage = aReportConfiguration.getUserDetails().getUsrLanguage();
+		// ReportConfiguration aReportConfiguration = (ReportConfiguration) auditHeader.getAuditDetail().getModelData();
+		// String usrLanguage = aReportConfiguration.getUserDetails().getUsrLanguage();
 
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
-			//auditHeader.setAuditDetails(getDetailValidation().detailListValidation(auditHeader.getAuditDetails(), method,usrLanguage));
+			// auditHeader.setAuditDetails(getDetailValidation().detailListValidation(auditHeader.getAuditDetails(),
+			// method,usrLanguage));
 			for (AuditDetail detail : auditHeader.getAuditDetails()) {
 				auditHeader.setErrorList(detail.getErrorDetails());
 			}
@@ -364,7 +348,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 			} else { // with work flow
 				if (reportConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					if (befReportConfiguration != null || tempReportConfiguration != null) { // if records already
-																									// exists in the main
+																								// exists in the main
 																								// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, null));
 					}
@@ -690,7 +674,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 		return getReportSearchTemplateDAO().delete(reportId, usrId, templateName);
 	}
 
-	//GETTERS and Setters 
+	// GETTERS and Setters
 	public void setReportSearchTemplateDAO(ReportSearchTemplateDAO reportSearchTemplateDAO) {
 		this.reportSearchTemplateDAO = reportSearchTemplateDAO;
 	}
@@ -736,7 +720,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 		return getReportConfigurationDAO().getNewReportConfiguration();
 	}
 
-	//Month End Report Data Fetching
+	// Month End Report Data Fetching
 
 	@Override
 	public List<ValueLabel> getMonthEndReportGrpCodes() {
@@ -748,7 +732,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 		return getReportConfigurationDAO().getReportListByGrpCode(grpCode);
 	}
 
-	//GST Invoice
+	// GST Invoice
 	@Override
 	public boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate,
 			Date toDate) {

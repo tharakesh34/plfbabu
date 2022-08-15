@@ -14,10 +14,8 @@ public class ServerAuthServiceImpl implements ServerAuthService {
 	/**
 	 * validateServer fetch the details by using WebServiceServerSecurityDAO's validateServer method.
 	 * 
-	 * @param tokenId
-	 *            (String)
-	 * @param IPAddress
-	 *            (String)
+	 * @param tokenId   (String)
+	 * @param IPAddress (String)
 	 * 
 	 * @return WebServiceServerSecurity
 	 */

@@ -91,8 +91,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	 * and AdtCustomerBankInfo by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and AdtCustomerBankInfo by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -123,7 +122,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 				customerBankInfo.setRecordType("");
 				long id = getCustomerBankInfoDAO().save(customerBankInfo, "");
 				customerBankInfo.setBankId(id);
-				//BankInfoDetails
+				// BankInfoDetails
 				if (customerBankInfo.getBankInfoDetails().size() > 0) {
 					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
 						bankInfoDetail.setBankId(customerBankInfo.getBankId());
@@ -139,7 +138,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 				tranType = PennantConstants.TRAN_UPD;
 				customerBankInfo.setRecordType("");
 				getCustomerBankInfoDAO().update(customerBankInfo, "");
-				//BankInfoDetails
+				// BankInfoDetails
 				if (customerBankInfo.getBankInfoDetails().size() > 0) {
 					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
 						bankInfoDetail.setBankId(customerBankInfo.getBankId());
@@ -168,7 +167,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 		}
 		if (!StringUtils.equals(customerBankInfo.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
 			getCustomerBankInfoDAO().delete(customerBankInfo, "_Temp");
-			//BankInfoDetails
+			// BankInfoDetails
 			if (customerBankInfo.getBankInfoDetails().size() > 0) {
 				for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
 					customerBankInfoDAO.delete(bankInfoDetail, "_Temp");

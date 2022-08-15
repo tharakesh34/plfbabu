@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  BusinessCalendar.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : BusinessCalendar.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -124,8 +115,7 @@ public class BusinessCalendar implements Serializable {
 	/**
 	 * Get Weekend Master details
 	 * 
-	 * @param weekendCode
-	 *            (String)
+	 * @param weekendCode (String)
 	 * 
 	 * @return WeekendMaster
 	 */
@@ -136,11 +126,9 @@ public class BusinessCalendar implements Serializable {
 	/**
 	 * Get List of holidays from <b>WeekendMaster</b> class for specific weekends
 	 * 
-	 * @param holidayCode
-	 *            (String)
+	 * @param holidayCode (String)
 	 * 
-	 * @param holidayYear
-	 *            (int)
+	 * @param holidayYear (int)
 	 * 
 	 * @return list
 	 * 
@@ -173,8 +161,7 @@ public class BusinessCalendar implements Serializable {
 	/**
 	 * Get Date From Holiday Calendar
 	 * 
-	 * @param holidayCode
-	 *            (String)
+	 * @param holidayCode (String)
 	 * 
 	 * @return calendar
 	 * 
@@ -236,11 +223,9 @@ public class BusinessCalendar implements Serializable {
 	/**
 	 * Get collection of holidays Map
 	 * 
-	 * @param holidayList
-	 *            (List)
+	 * @param holidayList    (List)
 	 * 
-	 * @param pHolidayMaster
-	 *            (HolidayMaster)
+	 * @param pHolidayMaster (HolidayMaster)
 	 * 
 	 * @return calendar
 	 * 
@@ -272,11 +257,9 @@ public class BusinessCalendar implements Serializable {
 	/**
 	 * Get Date from Calender
 	 * 
-	 * @param holidayCode
-	 *            (String)
+	 * @param holidayCode (String)
 	 * 
-	 * @param date
-	 *            (Calendar)
+	 * @param date        (Calendar)
 	 * 
 	 * @return calendar
 	 * 
@@ -340,11 +323,9 @@ public class BusinessCalendar implements Serializable {
 	/**
 	 * Check the Date is in Range of Holidays
 	 * 
-	 * @param date
-	 *            (Calendar)
+	 * @param date            (Calendar)
 	 * 
-	 * @param holidayCalendar
-	 *            (HolidayCalendar)
+	 * @param holidayCalendar (HolidayCalendar)
 	 * 
 	 * @return boolean
 	 * 

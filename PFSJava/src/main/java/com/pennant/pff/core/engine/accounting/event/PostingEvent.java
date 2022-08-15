@@ -21,16 +21,16 @@ public abstract class PostingEvent {
 	public abstract List<AEEvent> prepareAEEvents(FinanceDetail fd, String userBranch);
 
 	public void setEventDetails(List<AEEvent> aeEvents, FinanceDetail fd) {
-		
+
 	}
 
 	protected Long getAccountingSetId(String finType, String accEvent, int module) {
 		Long accountSetId = AccountingConfigCache.getAccountSetID(finType, accEvent, module);
 
-		if (accountSetId == null || accountSetId==Long.MIN_VALUE) {
+		if (accountSetId == null || accountSetId == Long.MIN_VALUE) {
 			throw new AppException(String.format(LITERAL2, finType, accEvent, module));
 		}
-		
+
 		logger.info(LITERAL1, accountSetId, finType, accEvent, module);
 
 		return accountSetId;

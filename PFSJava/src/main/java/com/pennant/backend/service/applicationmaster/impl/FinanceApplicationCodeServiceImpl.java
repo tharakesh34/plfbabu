@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceApplicationCodeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceApplicationCodeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011
+ * * * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -107,8 +89,7 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 	 * table. based on the module workFlow Configuration. by using FinanceApplicationCodeDAO's update method 3) Audit
 	 * the record in to AuditHeader and AdtBMTFinAppCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -148,8 +129,7 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 	 * BMTFinAppCodes by using FinanceApplicationCodeDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBMTFinAppCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -176,10 +156,8 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 	 * getFinanceApplicationCodeById fetch the details by using FinanceApplicationCodeDAO's
 	 * getFinanceApplicationCodeById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceApplicationCode
 	 */
 	@Override
@@ -192,8 +170,7 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 	 * getFinanceApplicationCodeById method . with parameter id and type as blank. it fetches the approved records from
 	 * the BMTFinAppCodes.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return FinanceApplicationCode
 	 */
 
@@ -213,8 +190,7 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTFinAppCodes by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -275,8 +251,7 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 	 * Audit the record in to AuditHeader and AdtBMTFinAppCodes by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -305,8 +280,7 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 	 * for any mismatch conditions Fetch the error details from getFinanceApplicationCodeDAO().getErrorDetail with Error
 	 * ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -363,7 +337,8 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 				}
 			} else { // with work flow
 
-				if (financeApplicationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (financeApplicationCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records
+																										// type
 					// is new
 					if (befFinanceApplicationCode != null || tempFinanceApplicationCode != null) { // if
 						// records already exists

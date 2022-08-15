@@ -159,7 +159,7 @@ public class FinCovenantController {
 				finCovenantType.setUserDetails(userDetails);
 				finCovenantType.setVersion(fm.getVersion() + 1);
 			}
-			
+
 			finMaintainInstruction.setFinID(financeDetail.getFinID());
 			finMaintainInstruction.setFinReference(financeDetail.getFinReference());
 			finMaintainInstruction.setEvent(FinServiceEvent.COVENANTS);
@@ -219,7 +219,7 @@ public class FinCovenantController {
 				finCovenantType.setNewRecord(false);
 				finCovenantType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
-			
+
 			finMaintainInstruction.setFinID(financeDetail.getFinID());
 			finMaintainInstruction.setFinReference(financeDetail.getFinReference());
 			finMaintainInstruction.setNewRecord(true);

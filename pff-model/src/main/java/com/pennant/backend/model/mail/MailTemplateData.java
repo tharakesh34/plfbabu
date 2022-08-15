@@ -180,7 +180,7 @@ public class MailTemplateData {
 	private String receiptPurpose;
 	private String drawingPower;
 	private String currentDate;
-	//Including grace and installments
+	// Including grace and installments
 	private String totalTenor;
 
 	private String qryDesc;

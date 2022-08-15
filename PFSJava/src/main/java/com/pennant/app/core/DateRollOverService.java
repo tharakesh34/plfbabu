@@ -23,37 +23,37 @@ public class DateRollOverService extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
-			//Set Next Grace Capitalization Date
+			// Set Next Grace Capitalization Date
 			if (finEODEvent.getIdxGrcCpz() >= 0) {
 				setNextGraceCpzDate(finEODEvent);
 			}
 
-			//Set Next Grace Profit Date
+			// Set Next Grace Profit Date
 			if (finEODEvent.getIdxGrcPft() >= 0) {
 				setNextGrcPftDate(finEODEvent);
 			}
 
-			//Set Next Grace Profit Review Date
+			// Set Next Grace Profit Review Date
 			if (finEODEvent.getIdxGrcPftRvw() >= 0) {
 				setNextGrcPftRvwDate(finEODEvent, custEODEvent.getEodValueDate());
 			}
 
-			//Set Next Repay Capitalization Date
+			// Set Next Repay Capitalization Date
 			if (finEODEvent.getIdxRpyCpz() >= 0) {
 				setNextRepayCpzDate(finEODEvent);
 			}
 
-			//Set Next Repayment Date
+			// Set Next Repayment Date
 			if (finEODEvent.getIdxRpy() >= 0) {
 				setNextRepayDate(finEODEvent);
 			}
 
-			//Set Next Repayment Profit Date
+			// Set Next Repayment Profit Date
 			if (finEODEvent.getIdxRpyPft() >= 0) {
 				setNextRepayPftDate(finEODEvent);
 			}
 
-			//Set Next Repayment Profit Review Date
+			// Set Next Repayment Profit Review Date
 			if (finEODEvent.getIdxRpyPftRvw() >= 0) {
 				setNextRepayRvwDate(finEODEvent, custEODEvent.getEodValueDate());
 			}
@@ -66,9 +66,9 @@ public class DateRollOverService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
-	//--------------------------------------------------------------------------------------------------------------------------
-	//Next Grace Capitalization Date
-	//--------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------
+	// Next Grace Capitalization Date
+	// --------------------------------------------------------------------------------------------------------------------------
 	private void setNextGraceCpzDate(FinEODEvent finEODEvent) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
@@ -97,9 +97,9 @@ public class DateRollOverService extends ServiceHelper {
 		return;
 	}
 
-	//--------------------------------------------------------------------------------------------------------------------------
-	//Next Grace Profit Date
-	//--------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------
+	// Next Grace Profit Date
+	// --------------------------------------------------------------------------------------------------------------------------
 	private void setNextGrcPftDate(FinEODEvent finEODEvent) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
@@ -130,9 +130,9 @@ public class DateRollOverService extends ServiceHelper {
 		return;
 	}
 
-	//--------------------------------------------------------------------------------------------------------------------------
-	//Next Grace Profit Review Date
-	//--------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------
+	// Next Grace Profit Review Date
+	// --------------------------------------------------------------------------------------------------------------------------
 	private void setNextGrcPftRvwDate(FinEODEvent finEODEvent, Date valueDate) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
@@ -168,9 +168,9 @@ public class DateRollOverService extends ServiceHelper {
 		return;
 	}
 
-	//--------------------------------------------------------------------------------------------------------------------------
-	//Next Repay Capitalization Date
-	//--------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------
+	// Next Repay Capitalization Date
+	// --------------------------------------------------------------------------------------------------------------------------
 	private void setNextRepayCpzDate(FinEODEvent finEODEvent) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
@@ -197,9 +197,9 @@ public class DateRollOverService extends ServiceHelper {
 		return;
 	}
 
-	//--------------------------------------------------------------------------------------------------------------------------
-	//Next Repayment Date
-	//--------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------
+	// Next Repayment Date
+	// --------------------------------------------------------------------------------------------------------------------------
 	private void setNextRepayDate(FinEODEvent finEODEvent) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
@@ -227,9 +227,9 @@ public class DateRollOverService extends ServiceHelper {
 		return;
 	}
 
-	//--------------------------------------------------------------------------------------------------------------------------
-	//Next Repay Profit Date
-	//--------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------
+	// Next Repay Profit Date
+	// --------------------------------------------------------------------------------------------------------------------------
 	private void setNextRepayPftDate(FinEODEvent finEODEvent) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
@@ -256,9 +256,9 @@ public class DateRollOverService extends ServiceHelper {
 		return;
 	}
 
-	//--------------------------------------------------------------------------------------------------------------------------
-	//Next Repay Review Date
-	//--------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------
+	// Next Repay Review Date
+	// --------------------------------------------------------------------------------------------------------------------------
 	private void setNextRepayRvwDate(FinEODEvent finEODEvent, Date valueDate) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();

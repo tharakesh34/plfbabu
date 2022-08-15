@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AuthorizationLimitServiceImpl.java                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-04-2018    														*
- *                                                                  						*
- * Modified Date    :  06-04-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AuthorizationLimitServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 06-04-2018 * *
+ * Modified Date : 06-04-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-04-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-04-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.authorization.impl;
 
 import java.util.ArrayList;
@@ -93,8 +75,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -108,8 +89,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	}
 
 	/**
-	 * @param authorizationLimitDAO
-	 *            the authorizationLimitDAO to set
+	 * @param authorizationLimitDAO the authorizationLimitDAO to set
 	 */
 	public void setAuthorizationLimitDAO(AuthorizationLimitDAO authorizationLimitDAO) {
 		this.authorizationLimitDAO = authorizationLimitDAO;
@@ -123,8 +103,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	}
 
 	/**
-	 * @param authorizationLimitDetailDAO
-	 *            the authorizationLimitDetailDAO to set
+	 * @param authorizationLimitDetailDAO the authorizationLimitDetailDAO to set
 	 */
 	public void setAuthorizationLimitDetailDAO(AuthorizationLimitDetailDAO authorizationLimitDetailDAO) {
 		this.authorizationLimitDetailDAO = authorizationLimitDetailDAO;
@@ -138,8 +117,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	 * by using Auth_LimitsDAO's update method 3) Audit the record in to AuditHeader and AdtAuth_Limits by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean hold) {
@@ -193,8 +171,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	 * Auth_Limits by using Auth_LimitsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtAuth_Limits by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -220,8 +197,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	/**
 	 * getAuth_Limits fetch the details by using Auth_LimitsDAO's getAuth_LimitsById method.
 	 * 
-	 * @param id
-	 *            id of the AuthorizationLimit.
+	 * @param id id of the AuthorizationLimit.
 	 * @return Auth_Limits
 	 */
 	@Override
@@ -233,8 +209,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	 * getApprovedAuth_LimitsById fetch the details by using Auth_LimitsDAO's getAuth_LimitsById method . with parameter
 	 * id and type as blank. it fetches the approved records from the Auth_Limits.
 	 * 
-	 * @param id
-	 *            id of the AuthorizationLimit. (String)
+	 * @param id id of the AuthorizationLimit. (String)
 	 * @return Auth_Limits
 	 */
 	public AuthorizationLimit getApprovedAuthorizationLimit(long id) {
@@ -264,8 +239,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	 * record in to AuditHeader and AdtAuth_Limits by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -342,8 +316,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	 * workFlow table by using getAuthorizationLimitDAO().delete with parameters authorizationLimit,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtAuth_Limits by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -372,8 +345,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -548,7 +520,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 	@Override
 	public AuditHeader validateFinanceAuthorizationLimit(AuditHeader auditHeader) {
 
-		//AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		// AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();

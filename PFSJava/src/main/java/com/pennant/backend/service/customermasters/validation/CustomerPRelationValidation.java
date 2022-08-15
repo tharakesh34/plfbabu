@@ -75,14 +75,16 @@ public class CustomerPRelationValidation {
 
 		if (customerPRelation.isNewRecord()) { // for New record or new record into work flow
 
-			if (!customerPRelation.isWorkflow()) {// With out Work flow only new records  
-				if (befCustomerPRelation != null) { // Record Already Exists in the table then error  
+			if (!customerPRelation.isWorkflow()) {// With out Work flow only new records
+				if (befCustomerPRelation != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (customerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCustomerPRelation != null || tempCustomerPRelation != null) { // if records already exists in the main table
+				if (customerPRelation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (befCustomerPRelation != null || tempCustomerPRelation != null) { // if records already exists in
+																							// the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -114,7 +116,7 @@ public class CustomerPRelationValidation {
 
 			} else {
 
-				if (tempCustomerPRelation == null) { // if records not exists in the Work flow table 
+				if (tempCustomerPRelation == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

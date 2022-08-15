@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VASProviderAccDetailServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  24-09-2018    														*
- *                                                                  						*
- * Modified Date    :  24-09-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VASProviderAccDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 24-09-2018 *
+ * * Modified Date : 24-09-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-09-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-09-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.systemmasters.impl;
 
 import org.apache.logging.log4j.LogManager;
@@ -82,8 +64,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -97,8 +78,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	}
 
 	/**
-	 * @param vASProviderAccDetailDAO
-	 *            the vASProviderAccDetailDAO to set
+	 * @param vASProviderAccDetailDAO the vASProviderAccDetailDAO to set
 	 */
 	public void setVASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
 		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
@@ -113,8 +93,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	 * VASManufacturerAccDetailDAO's update method 3) Audit the record in to AuditHeader and AdtVASManufacturerAccDetail
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -155,8 +134,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	 * VASManufacturerAccDetail by using VASManufacturerAccDetailDAO's delete method with type as Blank 3) Audit the
 	 * record in to AuditHeader and AdtVASManufacturerAccDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -182,8 +160,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	 * getVASManufacturerAccDetail fetch the details by using VASManufacturerAccDetailDAO's
 	 * getVASManufacturerAccDetailById method.
 	 * 
-	 * @param id
-	 *            id of the VASProviderAccDetail.
+	 * @param id id of the VASProviderAccDetail.
 	 * @return VASManufacturerAccDetail
 	 */
 	@Override
@@ -196,8 +173,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	 * getVASManufacturerAccDetailById method . with parameter id and type as blank. it fetches the approved records
 	 * from the VASManufacturerAccDetail.
 	 * 
-	 * @param id
-	 *            id of the VASProviderAccDetail. (String)
+	 * @param id id of the VASProviderAccDetail. (String)
 	 * @return VASManufacturerAccDetail
 	 */
 	public VASProviderAccDetail getApprovedVASProviderAccDetail(long id) {
@@ -226,8 +202,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	 * for Work flow 5) Audit the record in to AuditHeader and AdtVASManufacturerAccDetail by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -294,8 +269,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	 * the record in to AuditHeader and AdtVASManufacturerAccDetail by using auditHeaderDAO.addAudit(auditHeader) for
 	 * Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -323,8 +297,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

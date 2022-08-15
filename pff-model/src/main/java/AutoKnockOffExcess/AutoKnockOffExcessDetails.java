@@ -23,7 +23,7 @@ public class AutoKnockOffExcessDetails implements Serializable {
 	private String reason;
 	private String finCcy;
 
-	//Exclude Fields.
+	// Exclude Fields.
 	private int frhCount;
 	private int fmtCount;
 

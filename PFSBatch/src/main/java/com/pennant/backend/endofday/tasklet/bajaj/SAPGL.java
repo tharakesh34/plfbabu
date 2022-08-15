@@ -95,7 +95,7 @@ public class SAPGL implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("SAP-GL Process initiated...");
-				//new SAPGLExtract(dataSource, userId, valueDate, appDate).extractReport();
+				// new SAPGLExtract(dataSource, userId, valueDate, appDate).extractReport();
 				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

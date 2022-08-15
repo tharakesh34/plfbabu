@@ -215,7 +215,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 
 	}
 
-	//config name getting empty show message
+	// config name getting empty show message
 	public boolean isConfigExists(String configName) {
 		try {
 			String sql = "select Name from data_engine_config  where Name= :Name";
@@ -376,8 +376,8 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("PAYMENTID", Arrays.asList(disbursments));
 
-		// It should come from Data engine default value 
-		//final String DISB_FI_EMAIL = (String) getSMTParameter("DISB_FI_EMAIL", String.class);
+		// It should come from Data engine default value
+		// final String DISB_FI_EMAIL = (String) getSMTParameter("DISB_FI_EMAIL", String.class);
 		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
 		try {
 			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<Long>() {
@@ -385,10 +385,10 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
 					rowMap.put("BATCH_ID", 0);
-					//rowMap.put("PAYMENT_DETAIL1", DISB_FI_EMAIL);
+					// rowMap.put("PAYMENT_DETAIL1", DISB_FI_EMAIL);
 					rowMap.put("RESP_BATCH_ID", 0);
 					rowMap.put("TRANSACTIONREF", null);
-					//rowMap.put("CHEQUE_NUMBER", null);
+					// rowMap.put("CHEQUE_NUMBER", null);
 					rowMap.put("DD_CHEQUE_CHARGE", null);
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);

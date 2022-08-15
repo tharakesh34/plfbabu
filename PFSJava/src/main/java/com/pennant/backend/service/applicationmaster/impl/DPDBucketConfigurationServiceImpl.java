@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DPDBucketConfigurationServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-04-2017    														*
- *                                                                  						*
- * Modified Date    :  21-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DPDBucketConfigurationServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-04-2017
+ * * * Modified Date : 21-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.applicationmaster.impl;
@@ -84,8 +66,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -99,8 +80,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	}
 
 	/**
-	 * @param dPDBucketConfigurationDAO
-	 *            the dPDBucketConfigurationDAO to set
+	 * @param dPDBucketConfigurationDAO the dPDBucketConfigurationDAO to set
 	 */
 	public void setDPDBucketConfigurationDAO(DPDBucketConfigurationDAO dPDBucketConfigurationDAO) {
 		this.dPDBucketConfigurationDAO = dPDBucketConfigurationDAO;
@@ -114,8 +94,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	 * table. based on the module workFlow Configuration. by using DPDBUCKETSCONFIGDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtDPDBUCKETSCONFIG by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -161,8 +140,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	 * DPDBUCKETSCONFIG by using DPDBUCKETSCONFIGDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtDPDBUCKETSCONFIG by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -188,8 +166,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	/**
 	 * getDPDBUCKETSCONFIG fetch the details by using DPDBUCKETSCONFIGDAO's getDPDBUCKETSCONFIGById method.
 	 * 
-	 * @param configID
-	 *            configID of the DPDBucketConfiguration.
+	 * @param configID configID of the DPDBucketConfiguration.
 	 * @return DPDBUCKETSCONFIG
 	 */
 	@Override
@@ -201,8 +178,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	 * getApprovedDPDBUCKETSCONFIGById fetch the details by using DPDBUCKETSCONFIGDAO's getDPDBUCKETSCONFIGById method .
 	 * with parameter id and type as blank. it fetches the approved records from the DPDBUCKETSCONFIG.
 	 * 
-	 * @param configID
-	 *            configID of the DPDBucketConfiguration. (String)
+	 * @param configID configID of the DPDBucketConfiguration. (String)
 	 * @return DPDBUCKETSCONFIG
 	 */
 	public DPDBucketConfiguration getApprovedDPDBucketConfiguration(long configID) {
@@ -221,8 +197,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtDPDBUCKETSCONFIG
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -291,8 +266,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	 * Audit the record in to AuditHeader and AdtDPDBUCKETSCONFIG by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -321,8 +295,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

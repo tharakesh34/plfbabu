@@ -63,7 +63,7 @@ public class FinanceExposure implements Serializable {
 	public void setFinID(long finID) {
 		this.finID = finID;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}

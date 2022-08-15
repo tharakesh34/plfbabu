@@ -69,7 +69,7 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 			valueParm[2] = DateUtility.formatToLongDate(datehldEMIAlwd);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30567", "", valueParm), lang));
 		}
-		//validation for Todate to check whether it is greater than next Schedule if yes then throw the validation
+		// validation for Todate to check whether it is greater than next Schedule if yes then throw the validation
 		if (isValidCheck) {
 			List<FinanceScheduleDetail> schedules = finscheduleData.getFinanceScheduleDetails();
 			Date nextSchdDate = null;

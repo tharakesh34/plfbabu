@@ -146,7 +146,7 @@ public class FinanceValidationService {
 				}
 			}
 
-			//finAssetValue
+			// finAssetValue
 			if (financeMain.getFinAssetValue().compareTo(BigDecimal.ZERO) > 0)
 				if (financeMain.getFinAmount().compareTo(financeMain.getFinAssetValue()) > 0) {
 					{

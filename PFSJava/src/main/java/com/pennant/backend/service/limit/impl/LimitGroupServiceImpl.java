@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitGroupServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitGroupServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * *
+ * Modified Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.limit.impl;
@@ -101,8 +83,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -116,8 +97,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	}
 
 	/**
-	 * @param limitGroupDAO
-	 *            the limitGroupDAO to set
+	 * @param limitGroupDAO the limitGroupDAO to set
 	 */
 	public void setLimitGroupDAO(LimitGroupDAO limitGroupDAO) {
 		this.limitGroupDAO = limitGroupDAO;
@@ -147,10 +127,8 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 * by using LimitGroupDAO's update method 3) Audit the record in to AuditHeader and AdtLIMIT_GROUP by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -175,7 +153,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			getLimitGroupDAO().update(limitGroup, tableType);
 		}
 
-		//Retrieving List of Audit Details For libraryArtefact  related modules
+		// Retrieving List of Audit Details For libraryArtefact related modules
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 			auditHeader.setAuditDetails(processingLimitGroupList(auditHeader.getAuditDetails(), tableType, limitGroup));
 		}
@@ -195,8 +173,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 * LIMIT_GROUP by using LimitGroupDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtLIMIT_GROUP by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -222,10 +199,8 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	/**
 	 * getLimitGroupById fetch the details by using LimitGroupDAO's getLimitGroupById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LimitGroup
 	 */
 
@@ -244,8 +219,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 * getApprovedLimitGroupById fetch the details by using LimitGroupDAO's getLimitGroupById method . with parameter id
 	 * and type as blank. it fetches the approved records from the LIMIT_GROUP.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return LimitGroup
 	 */
 
@@ -271,8 +245,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLIMIT_GROUP by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -313,7 +286,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 				getLimitGroupDAO().update(limitGroup, "");
 			}
 
-			//Retrieving List of Audit Details For LimitGroup  related modules
+			// Retrieving List of Audit Details For LimitGroup related modules
 			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 				auditDetails = processingLimitGroupList(auditHeader.getAuditDetails(), "", limitGroup);
 			}
@@ -343,8 +316,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 * workFlow table by using getLimitGroupDAO().delete with parameters limitGroup,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtLIMIT_GROUP by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -372,17 +344,15 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the next process
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
-		//auditDetail=validateLimitGroups(auditDetail,auditHeader.getUsrLanguage());
+		// auditDetail=validateLimitGroups(auditDetail,auditHeader.getUsrLanguage());
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
@@ -406,10 +376,8 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 * mismatch conditions Fetch the error details from getLimitGroupDAO().getErrorDetail with Error ID and language as
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -433,14 +401,15 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 
 		if (limitGroup.isNewRecord()) { // for New record or new record into work flow
 
-			if (!limitGroup.isWorkflow()) {// With out Work flow only new records  
-				if (befLimitGroup != null) { // Record Already Exists in the table then error  
+			if (!limitGroup.isWorkflow()) {// With out Work flow only new records
+				if (befLimitGroup != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (limitGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befLimitGroup != null || tempLimitGroup != null) { // if records already exists in the main table
+					if (befLimitGroup != null || tempLimitGroup != null) { // if records already exists in the main
+																			// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -474,7 +443,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 				}
 			} else {
 
-				if (tempLimitGroup == null) { // if records not exists in the Work flow table 
+				if (tempLimitGroup == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -566,7 +535,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 					}
 				}
 				if ("saveOrUpdate".equals(method) && (isRcdType && limitGroupItems.isWorkflow())) {
-					//limitGroupItems.setNewRecord(true);
+					// limitGroupItems.setNewRecord(true);
 				}
 
 				if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
@@ -845,7 +814,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 
 		String pg = ngl.getLimitGroupCode();
 
-		//get the sub groups of group code
+		// get the sub groups of group code
 		List<LimitGroupLines> groupLines = limitGroupLinesDAO.getGroupCodesByLimitGroup(pg, false, "");
 		for (LimitGroupLines groupLine : groupLines) {
 			String lines = groupLine.getLimitLines();
@@ -864,13 +833,14 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			limitGroupLinesDAO.update(groupLine, "");
 		}
 
-		// get the Structure's  which are used by the parent group 
+		// get the Structure's which are used by the parent group
 		List<LimitStructureDetail> lmtStrDetList = getStructuredetailsByLimitGroup(category, pg, false, "");
 
 		if (delete) {
 			processDelete(ngl, lmtStrDetList);
 		}
-		// we will continue the process to update the sequences even the records are delete we need to update the sequence.
+		// we will continue the process to update the sequences even the records are delete we need to update the
+		// sequence.
 		processAdd(ngl, lmtStrDetList);
 
 		logger.debug(" Leaving ");
@@ -881,9 +851,9 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 * @param lmtStrDetList
 	 */
 	private void processAdd(LimitGroupLines ngl, List<LimitStructureDetail> lmtStrDetList) {
-		//get all the limit line or groups of the parent group
+		// get all the limit line or groups of the parent group
 		List<LimitGroupLines> grouplines = limitGroupLinesDAO.getAllLimitLinesByGroup(ngl.getLimitGroupCode(), "");
-		//loop through the structures
+		// loop through the structures
 		for (LimitStructureDetail limitStDet : lmtStrDetList) {
 
 			int level = limitStDet.getItemLevel() + 1;
@@ -904,7 +874,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 					value = limitGroupLines.getLimitLine();
 				}
 
-				//check line the record in the group is there or not if found update sequence else add new
+				// check line the record in the group is there or not if found update sequence else add new
 				LimitStructureDetail lstd = limitStructureDetailDAO
 						.getStructureByLine(limitStDet.getLimitStructureCode(), value, isgroup);
 				if (lstd != null) {
@@ -954,7 +924,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 */
 	private void processDelete(LimitGroupLines ngl, List<LimitStructureDetail> lmtStrDetList) {
 
-		//check is it group or line should be delete. get all the lines needs be deleted
+		// check is it group or line should be delete. get all the lines needs be deleted
 		List<LimitGroupLines> list = new ArrayList<LimitGroupLines>();
 		list.add(ngl);
 		if (ngl.getGroupCode() != null) {
@@ -963,7 +933,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 
 		for (LimitStructureDetail lsdd : lmtStrDetList) {
 
-			//loop through the delete list
+			// loop through the delete list
 			for (LimitGroupLines limitGroupLines : list) {
 
 				boolean isgroup = false;
@@ -977,7 +947,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 					value = limitGroupLines.getLimitLine();
 				}
 
-				//get all the Structure whose using this line or group 
+				// get all the Structure whose using this line or group
 				LimitStructureDetail deleteRecord = limitStructureDetailDAO
 						.getStructureByLine(lsdd.getLimitStructureCode(), value, isgroup);
 				// remove from the maintains as well if it is maintained

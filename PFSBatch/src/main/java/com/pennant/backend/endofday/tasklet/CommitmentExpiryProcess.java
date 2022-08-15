@@ -45,14 +45,14 @@ public class CommitmentExpiryProcess implements Tasklet {
 
 		try {
 
-			//Update of Commitment Details as per Expiry Date
+			// Update of Commitment Details as per Expiry Date
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(prepareUpdateQuery());
 			sqlStatement.setString(1, DateUtil.addDays(dateValueDate, -1).toString());
 			sqlStatement.executeUpdate();
 			sqlStatement.close();
 
-			//Update Non-Performing Status of Commitment
+			// Update Non-Performing Status of Commitment
 			try {
 				sqlStatement = connection.prepareStatement(resetCmtNonPerformStatus());
 				sqlStatement.executeUpdate();

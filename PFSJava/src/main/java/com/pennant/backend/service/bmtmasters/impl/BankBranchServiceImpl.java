@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BankBranchServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-10-2016    														*
- *                                                                  						*
- * Modified Date    :  17-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BankBranchServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-10-2016 * *
+ * Modified Date : 17-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.bmtmasters.impl;
 
 import java.util.List;
@@ -94,8 +76,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -109,8 +90,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	}
 
 	/**
-	 * @param bankBranchDAO
-	 *            the bankBranchDAO to set
+	 * @param bankBranchDAO the bankBranchDAO to set
 	 */
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
@@ -140,10 +120,8 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * Configuration. by using BankBranchDAO's update method 3) Audit the record in to AuditHeader and AdtBankBranches
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -182,8 +160,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * BankBranches by using BankBranchDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtBankBranches by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -207,10 +184,8 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	/**
 	 * getBankBranchById fetch the details by using BankBranchDAO's getBankBranchById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return BankBranch
 	 */
 
@@ -223,8 +198,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * getApprovedBankBranchById fetch the details by using BankBranchDAO's getBankBranchById method . with parameter id
 	 * and type as blank. it fetches the approved records from the BankBranches.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return BankBranch
 	 */
 
@@ -244,8 +218,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBankBranches by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -304,8 +277,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * workFlow table by using getBankBranchDAO().delete with parameters bankBranch,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBankBranches by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -332,10 +304,8 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -367,10 +337,8 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * mismatch conditions Fetch the error details from getBankBranchDAO().getErrorDetail with Error ID and language as
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 

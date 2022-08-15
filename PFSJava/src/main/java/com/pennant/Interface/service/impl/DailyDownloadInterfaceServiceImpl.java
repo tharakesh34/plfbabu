@@ -179,7 +179,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 		return false;
 	}
 
-	// ****************** Month End Downloads  *******************//
+	// ****************** Month End Downloads *******************//
 
 	@Override
 	public boolean processIncomeAccTransactions(Date prvMnthStartDate) {

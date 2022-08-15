@@ -62,10 +62,10 @@ public interface ProjectedAmortizationDAO {
 	void deleteAllProjAccruals();
 
 	// ProjectedIncomeAMZ
-	
+
 	void saveBatchProjIncomeAMZ(List<ProjectedAmortization> projIncomeAMZ);
 
-	//One Time Activity
+	// One Time Activity
 	Date getPrvAMZMonthLog();
 
 	long saveAmortizationLog(ProjectedAmortization proAmortization);

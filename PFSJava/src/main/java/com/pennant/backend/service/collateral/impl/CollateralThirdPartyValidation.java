@@ -61,14 +61,17 @@ public class CollateralThirdPartyValidation {
 
 		if (collateralThirdParty.isNewRecord()) { // for New record or new record into work flow
 
-			if (!collateralThirdParty.isWorkflow()) {// With out Work flow only new records  
-				if (befCollateralThirdParty != null) { // Record Already Exists in the table then error  
+			if (!collateralThirdParty.isWorkflow()) {// With out Work flow only new records
+				if (befCollateralThirdParty != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (collateralThirdParty.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCollateralThirdParty != null || tempCollateralThirdParty != null) { // if records already exists in the main table
+				if (collateralThirdParty.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																										// is new
+					if (befCollateralThirdParty != null || tempCollateralThirdParty != null) { // if records already
+																								// exists in the main
+																								// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -99,7 +102,7 @@ public class CollateralThirdPartyValidation {
 				}
 			} else {
 
-				if (tempCollateralThirdParty == null) { // if records not exists in the Work flow table 
+				if (tempCollateralThirdParty == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BankDetailServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BankDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -125,8 +107,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	 * Configuration. by using BankDetailDAO's update method 3) Audit the record in to AuditHeader and AdtBMTBankDetail
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -165,8 +146,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	 * BMTBankDetail by using BankDetailDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtBMTBankDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -189,10 +169,8 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	/**
 	 * getBankDetailById fetch the details by using BankDetailDAO's getBankDetailById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return BankDetail
 	 */
 	@Override
@@ -204,8 +182,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	 * getApprovedBankDetailById fetch the details by using BankDetailDAO's getBankDetailById method . with parameter id
 	 * and type as blank. it fetches the approved records from the BMTBankDetail.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return BankDetail
 	 */
 
@@ -235,8 +212,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTBankDetail by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -298,8 +274,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	 * workFlow table by using getBankDetailDAO().delete with parameters bankDetail,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTBankDetail by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -327,8 +302,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	 * for any mismatch conditions Fetch the error details from getBankDetailDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
@@ -358,8 +332,9 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 		String code = bankDetail.getBankCode();
 
 		// Check the unique keys.
-		if (bankDetail.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(bankDetail.getRecordType()) && bankDetailDAO
-				.isDuplicateKey(code, bankDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (bankDetail.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(bankDetail.getRecordType())
+				&& bankDetailDAO.isDuplicateKey(code,
+						bankDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BankCode") + ": " + code;
 

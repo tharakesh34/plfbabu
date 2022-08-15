@@ -63,8 +63,7 @@ public class FinScheduleReportGenerator {
 	/**
 	 * Method to generate schedule report data
 	 * 
-	 * @param FinanceDetail
-	 *            (aFinanceDetail)
+	 * @param FinanceDetail (aFinanceDetail)
 	 */
 	public List<FinanceScheduleReportData> getPrintScheduleData(FinScheduleData aFinScheduleData,
 			Map<Date, ArrayList<FinanceRepayments>> paymentDetailsMap,
@@ -332,8 +331,7 @@ public class FinScheduleReportGenerator {
 				data.setTdsAmount(formatAmt(curSchd.getTDSAmount(), false, false));
 				data.setSchdFee(formatAmt(curSchd.getFeeSchd(), false, false));
 				data.setSchdPri(formatAmt(curSchd.getPrincipalSchd(), false, false));
-				data.setTotalAmount(formatAmt(
-						curSchd.getRepayAmount().add(curSchd.getFeeSchd()), false, false));
+				data.setTotalAmount(formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()), false, false));
 				data.setEndBal(formatAmt(curSchd.getClosingBalance(), false, false));
 				data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 				data.setTotalLimit(formatAmt(odAvailAmt, false, false));
@@ -426,11 +424,9 @@ public class FinScheduleReportGenerator {
 						if (!reportGeneration) {
 							data.setTotalAmount(formatAmt(curDisb.getDisbAmount(), false, false));
 						}
-						data.setEndBal(formatAmt(
-								curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt())
-										.subtract(curSchd.getDisbAmount())
-										.add(curTotDisbAmt).add(curSchd.getDownPaymentAmount()).add(advEMi),
-								false, false));
+						data.setEndBal(formatAmt(curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt())
+								.subtract(curSchd.getDisbAmount()).add(curTotDisbAmt)
+								.add(curSchd.getDownPaymentAmount()).add(advEMi), false, false));
 						data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 						data.setTotalLimit(formatAmt(odAvailAmt, false, false));
 						BigDecimal availLimit = odAvailAmt.subtract(
@@ -516,9 +512,8 @@ public class FinScheduleReportGenerator {
 									fee.getActualAmount().subtract(fee.getWaivedAmount()).subtract(fee.getPaidAmount()),
 									false, true));
 							data.setEndBal(formatAmt(
-									curSchd.getClosingBalance()
-											.subtract(feeChargeAmt).add(fee.getActualAmount()
-													.subtract(fee.getWaivedAmount()).subtract(fee.getPaidAmount())),
+									curSchd.getClosingBalance().subtract(feeChargeAmt).add(fee.getActualAmount()
+											.subtract(fee.getWaivedAmount()).subtract(fee.getPaidAmount())),
 									false, false));
 							BigDecimal availLimit = odAvailAmt.subtract(curSchd.getClosingBalance());
 							data.setAvailLimit(formatAmt(availLimit, false, false));
@@ -606,9 +601,7 @@ public class FinScheduleReportGenerator {
 					data.setTdsAmount(formatAmt(curSchd.getTDSAmount(), false, false));
 					data.setSchdFee(formatAmt(curSchd.getFeeSchd(), false, false));
 					data.setSchdPri(formatAmt(curSchd.getPrincipalSchd(), false, false));
-					data.setTotalAmount(
-							formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()),
-									false, false));
+					data.setTotalAmount(formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()), false, false));
 					data.setEndBal(formatAmt(closingBal, false, false));
 					data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 					data.setTotalLimit(formatAmt(odAvailAmt, false, false));
@@ -1339,8 +1332,7 @@ public class FinScheduleReportGenerator {
 	/**
 	 * Method to generate schedule report data
 	 * 
-	 * @param FinanceDetail
-	 *            (aFinanceDetail)
+	 * @param FinanceDetail (aFinanceDetail)
 	 */
 	public List<FinanceGraphReportData> getScheduleGraphData(FinScheduleData aFinScheduleData) {
 		logger.debug(Literal.ENTERING);
@@ -1387,8 +1379,7 @@ public class FinScheduleReportGenerator {
 	/**
 	 * Method to set format for rate and amount values
 	 * 
-	 * @param BigDecimal
-	 *            (amount), Boolean (isRate), boolean (showZeroEndbal)
+	 * @param BigDecimal (amount), Boolean (isRate), boolean (showZeroEndbal)
 	 * 
 	 * @return String
 	 */
@@ -1414,8 +1405,7 @@ public class FinScheduleReportGenerator {
 	/**
 	 * Method to Set Installment Number
 	 * 
-	 * @param int
-	 *            (installment Number), int (count)
+	 * @param int (installment Number), int (count)
 	 * @return String
 	 */
 	private String getInstNumber(int instNumber, int count) {

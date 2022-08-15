@@ -74,8 +74,7 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_CollectionDialog(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -156,7 +155,7 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 				Listitem item = new Listitem();
 				Listcell lc;
 
-				//Table Name
+				// Table Name
 				lc = new Listcell(collection.getTableName());
 				lc.setParent(item);
 
@@ -174,7 +173,7 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 				}
 				lc.setParent(item);
 
-				//Inserted count
+				// Inserted count
 				if (StringUtils.isBlank(collection.getStatus())) {
 					lc = new Listcell("");
 				} else {

@@ -8,7 +8,7 @@ import com.pennanttech.pff.core.TableType;
 
 public interface DepositDetailsDAO {
 
-	//Deposit Details
+	// Deposit Details
 	DepositDetails getDepositDetailsById(long depositId, String type);
 
 	DepositDetails getDepositDetails(String depositType, String branchCode, String type);
@@ -23,7 +23,7 @@ public interface DepositDetailsDAO {
 
 	void delete(DepositDetails depositDetails, TableType type);
 
-	//Deposit Movements
+	// Deposit Movements
 	DepositMovements getDepositMovementsByDepositId(long depositId, String type);
 
 	DepositMovements getDepositMovementsById(long movementId, String type);

@@ -9,12 +9,9 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum RCUStatus {
 
-	SELECT(0, Labels.getLabel("Combo.Select")),
-	POSITIVE(1, Labels.getLabel("label_POSITIVE")),
-	NEGATIVE(2, Labels.getLabel("label_NEGATIVE")),
-	REFERTOCREDIT(3, Labels.getLabel("label_REFERTOCREDIT")),
-	SCREENED(4, Labels.getLabel("label_SCREENED")),
-	SAMPLED(5, Labels.getLabel("label_SAMPLED")),
+	SELECT(0, Labels.getLabel("Combo.Select")), POSITIVE(1, Labels.getLabel("label_POSITIVE")),
+	NEGATIVE(2, Labels.getLabel("label_NEGATIVE")), REFERTOCREDIT(3, Labels.getLabel("label_REFERTOCREDIT")),
+	SCREENED(4, Labels.getLabel("label_SCREENED")), SAMPLED(5, Labels.getLabel("label_SAMPLED")),
 	HOLD(6, Labels.getLabel("label_HOLD"));
 
 	private final Integer key;

@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  CalculationUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : CalculationUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -478,7 +469,7 @@ public class CalculationUtil implements Serializable {
 			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
 
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_ISDA)) {
-			//return getIDB_ACT_ISDA(startCalendar, endCalendar);
+			// return getIDB_ACT_ISDA(startCalendar, endCalendar);
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365FIXED)
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_360)
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAP)
@@ -737,16 +728,11 @@ public class CalculationUtil implements Serializable {
 	/**
 	 * calculate average profit rate [avgProfitRate = (profitAmt * 100)/(Days Factor * principalAmt )]
 	 * 
-	 * @param (Date)
-	 *            startDate
-	 * @param (Date)
-	 *            maturityDate
-	 * @param (String)
-	 *            profitDaysBasis
-	 * @param (BigDecimal)
-	 *            principalAmt
-	 * @param (BigDecimal)
-	 *            maturityAmount
+	 * @param (Date)       startDate
+	 * @param (Date)       maturityDate
+	 * @param (String)     profitDaysBasis
+	 * @param (BigDecimal) principalAmt
+	 * @param (BigDecimal) maturityAmount
 	 * @return(BigDecimal) avgProfitRate
 	 */
 	public static BigDecimal calcAvgProfitRate(Date startDate, Date maturityDate, String profitDaysBasis,
@@ -823,16 +809,11 @@ public class CalculationUtil implements Serializable {
 	/**
 	 * This method returns the anualizedPercRate using the below values:
 	 * 
-	 * @param finAmount
-	 *            The Finance Amount
-	 * @param downPayment
-	 *            The Down Payment Amount
-	 * @param repayPftFrq
-	 *            The Repay Profit Frequency
-	 * @param numberOfTerms
-	 *            No of Terms
-	 * @param totalProfit
-	 *            Total Profit Amount
+	 * @param finAmount     The Finance Amount
+	 * @param downPayment   The Down Payment Amount
+	 * @param repayPftFrq   The Repay Profit Frequency
+	 * @param numberOfTerms No of Terms
+	 * @param totalProfit   Total Profit Amount
 	 * @return The anualizedPercRate value for the above parameters
 	 */
 	public static BigDecimal calulateAunalizedPercRate(BigDecimal finAmount, BigDecimal downPayment, String repayPftFrq,
@@ -847,8 +828,13 @@ public class CalculationUtil implements Serializable {
 						.multiply(totalProfit).multiply(new BigDecimal(100)))
 				.divide((new BigDecimal("12").multiply(new BigDecimal(numberOfTerms))
 						.multiply(new BigDecimal(numberOfTerms).add(new BigDecimal("1"))))
-								.multiply(new BigDecimal("4").multiply(finAmount.subtract(downPayment) // downPayment is subtracted (### 28-11-2016 - PSD Ticket ID 124367)
-		).add(totalProfit)), 2, BigDecimal.ROUND_HALF_DOWN);
+								.multiply(new BigDecimal("4").multiply(finAmount.subtract(downPayment) // downPayment is
+																										// subtracted
+																										// (###
+																										// 28-11-2016 -
+																										// PSD Ticket ID
+																										// 124367)
+								).add(totalProfit)), 2, BigDecimal.ROUND_HALF_DOWN);
 		return anualizedPercRate;
 	}
 
@@ -930,17 +916,17 @@ public class CalculationUtil implements Serializable {
 		return amount;
 	}
 
-	//This formula applicable only for 30/360 with Fixed periods only
+	// This formula applicable only for 30/360 with Fixed periods only
 	public static BigDecimal calDepositPV(BigDecimal fv, BigDecimal intRate, int terms, String frq, String roundingMode,
 			int roundingTarget) {
 		BigDecimal pv = BigDecimal.ZERO;
 
-		//Future Value is ZERO
+		// Future Value is ZERO
 		if (fv.compareTo(BigDecimal.ZERO) == 0) {
 			return pv;
 		}
 
-		//Interest Rate = 0
+		// Interest Rate = 0
 		if (intRate.compareTo(BigDecimal.ZERO) == 0) {
 			pv = roundAmount(fv, roundingMode, roundingTarget);
 			return pv;
@@ -958,7 +944,7 @@ public class CalculationUtil implements Serializable {
 		return pv;
 	}
 
-	//This formula applicable only for 30/360 with Fixed periods only
+	// This formula applicable only for 30/360 with Fixed periods only
 	public static BigDecimal calLoanPVAdvance(BigDecimal intRate, int terms, BigDecimal pmt, BigDecimal fv, int type,
 			String frq, String roundingMode, int roundingTarget) {
 		BigDecimal pv = BigDecimal.ZERO;

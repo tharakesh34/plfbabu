@@ -68,7 +68,7 @@ public class DocumentDetailValidation {
 
 		DocumentDetails documentDetails = (DocumentDetails) auditDetail.getModelData();
 
-		// Validate Customer  Document seperatly.
+		// Validate Customer Document seperatly.
 		if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 			return null;
 		}
@@ -106,7 +106,8 @@ public class DocumentDetailValidation {
 				}
 			} else { // with work flow
 
-				if (documentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+				if (documentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																								// new
 					if (befDocument != null || tempDocument != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}

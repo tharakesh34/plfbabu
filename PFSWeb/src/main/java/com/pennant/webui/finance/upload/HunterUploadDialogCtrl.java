@@ -253,7 +253,7 @@ public class HunterUploadDialogCtrl extends GFCBaseCtrl<HunterUpload> {
 		for (int i = 1; i < rowCount; i++) {
 			Row row1 = myExcelSheet.getRow(i);
 			HunterUpload hunterUpload = new HunterUpload();
-			//read the columns
+			// read the columns
 			String leadId = this.objDefaultFormat.formatCellValue(row1.getCell(0), this.formulaEvaluator);
 			hunterUpload.setLeadId(StringUtils.trim(leadId));
 			String category = this.objDefaultFormat.formatCellValue(row1.getCell(1), this.formulaEvaluator);

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SubSegmentServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SubSegmentServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -105,8 +87,7 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 	 * on the module workFlow Configuration. by using SubSegmentDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBMTSubSegments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -147,8 +128,7 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 	 * BMTSubSegments by using SubSegmentDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtBMTSubSegments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -169,10 +149,8 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 	/**
 	 * getSubSegmentById fetch the details by using SubSegmentDAO's getSubSegmentById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SubSegment
 	 */
 	@Override
@@ -184,8 +162,7 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 	 * getApprovedSubSegmentById fetch the details by using SubSegmentDAO's getSubSegmentById method . with parameter id
 	 * and type as blank. it fetches the approved records from the BMTSubSegments.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return SubSegment
 	 */
 	public SubSegment getApprovedSubSegmentById(String id, String subSegmentCode) {
@@ -203,8 +180,7 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTSubSegments by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -261,8 +237,7 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 	 * workFlow table by using getSubSegmentDAO().delete with parameters subSegment,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTSubSegments by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -287,8 +262,7 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -345,7 +319,8 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 				}
 			} else { // with work flow
 				if (subSegment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befSubSegment != null || tempSubSegment != null) { // if records already exists in the main table
+					if (befSubSegment != null || tempSubSegment != null) { // if records already exists in the main
+																			// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table

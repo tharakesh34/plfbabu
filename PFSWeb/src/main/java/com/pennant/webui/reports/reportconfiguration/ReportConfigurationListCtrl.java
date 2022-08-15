@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReportConfigurationListCtrl.java                                     * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReportConfigurationListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reports.reportconfiguration;
@@ -122,8 +104,7 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ReportConfigurationList(Event event) {
 		// Set the page level components.
@@ -132,7 +113,8 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		setItemRender(new ReportConfigurationListModelItemRenderer());
 
 		// Register buttons and fields.
-		//registerButton(button_ReportConfigurationList_NewReportConfiguration, "button_ReportConfigurationList_NewReportConfiguration", true);
+		// registerButton(button_ReportConfigurationList_NewReportConfiguration,
+		// "button_ReportConfigurationList_NewReportConfiguration", true);
 		registerButton(button_ReportConfigurationList_ReportConfigurationSearch);
 
 		registerField("REPORTID", SortOrder.ASC);
@@ -154,8 +136,7 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ReportConfigurationList_ReportConfigurationSearch(Event event) {
 		search();
@@ -164,8 +145,7 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -175,8 +155,7 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ReportConfigurationList_NewReportConfiguration(Event event) {
 		logger.debug("Entering");
@@ -196,8 +175,7 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onReportConfigurationItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -233,8 +211,7 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param academic
-	 *            The entity that need to be passed to the dialog.
+	 * @param academic The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(ReportConfiguration aReportConfiguration) {
 		logger.debug("Entering");

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SalutationServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SalutationServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -104,8 +86,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 * on the module workFlow Configuration. by using SalutationDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBMTSalutations by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -142,8 +123,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 * BMTSalutations by using SalutationDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtBMTSalutations by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -164,10 +144,8 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	/**
 	 * getSalutationById fetch the details by using SalutationDAO's getSalutationById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Salutation
 	 */
 	@Override
@@ -179,8 +157,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 * getApprovedSalutationById fetch the details by using SalutationDAO's getSalutationById method . with parameter id
 	 * and type as blank. it fetches the approved records from the BMTSalutations.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return Salutation
 	 */
 	public Salutation getApprovedSalutationById(String id, String gender) {
@@ -198,8 +175,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTSalutations by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -260,8 +236,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 * workFlow table by using getSalutationDAO().delete with parameters salutation,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTSalutations by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -282,8 +257,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
@@ -314,8 +288,9 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 		String gender = salutation.getSalutationGenderCode();
 
 		// Check the unique keys.
-		if (salutation.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType()) && salutationDAO
-				.isDuplicateKey(code, gender, salutation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (salutation.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType())
+				&& salutationDAO.isDuplicateKey(code, gender,
+						salutation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_SalutationCode") + ": " + code;
 

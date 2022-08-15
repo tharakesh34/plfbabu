@@ -25,7 +25,7 @@ public class CrtReducingRateTestFactory {
 
 		long t1 = DateUtility.getSysDate().getTime();
 
-		//int testCount = dataset.getColumns() - DATA_OFFSET;
+		// int testCount = dataset.getColumns() - DATA_OFFSET;
 		int testCount = 27;
 		Object[] result = new Object[testCount];
 

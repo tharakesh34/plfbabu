@@ -1,45 +1,27 @@
 /**
-\ * Copyright 2011 - Pennant Technologies
+ * \ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AssetClassificationHeaderServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-05-2020    														*
- *                                                                  						*
- * Modified Date    :  04-05-2020    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AssetClassificationHeaderServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date :
+ * 04-05-2020 * * Modified Date : 04-05-2020 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-05-2020       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-05-2020 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.ArrayList;
@@ -90,8 +72,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -105,8 +86,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 	}
 
 	/**
-	 * @param assetClassificationHeaderDAO
-	 *            the assetClassificationHeaderDAO to set
+	 * @param assetClassificationHeaderDAO the assetClassificationHeaderDAO to set
 	 */
 	public void setAssetClassificationHeaderDAO(AssetClassificationHeaderDAO assetClassificationHeaderDAO) {
 		this.assetClassificationHeaderDAO = assetClassificationHeaderDAO;
@@ -121,8 +101,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 	 * ASSET_CLASSIFICATION_HDRDAO's update method 3) Audit the record in to AuditHeader and AdtASSET_CLASSIFICATION_HDR
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -192,8 +171,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 	 * getASSET_CLASSIFICATION_HDR fetch the details by using ASSET_CLASSIFICATION_HDRDAO's
 	 * getASSET_CLASSIFICATION_HDRById method.
 	 * 
-	 * @param id
-	 *            id of the AssetClassificationHeader.
+	 * @param id id of the AssetClassificationHeader.
 	 * @return ASSET_CLASSIFICATION_HDR
 	 */
 	@Override
@@ -212,8 +190,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 	 * getASSET_CLASSIFICATION_HDRById method . with parameter id and type as blank. it fetches the approved records
 	 * from the ASSET_CLASSIFICATION_HDR.
 	 * 
-	 * @param id
-	 *            id of the AssetClassificationHeader. (String)
+	 * @param id id of the AssetClassificationHeader. (String)
 	 * @return ASSET_CLASSIFICATION_HDR
 	 */
 	public AssetClassificationHeader getApprovedAssetClassificationHeader(long id) {
@@ -239,8 +216,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 	 * Audit the record in to AuditHeader and AdtASSET_CLASSIFICATION_HDR by using auditHeaderDAO.addAudit(auditHeader)
 	 * based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -309,8 +285,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 	 * assetClassificationHeader,"_Temp" 3) Audit the record in to AuditHeader and AdtASSET_CLASSIFICATION_HDR by using
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -340,8 +315,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -463,8 +437,8 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 		// Check the unique keys.
 		Long templateId = header.getNpaTemplateId();
 		int stageOrder = header.getStageOrder();
-		if (header.isNewRecord() && assetClassificationHeaderDAO.isDuplicateKey(header.getId(), header.getCode(), stageOrder,
-				templateId, header.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (header.isNewRecord() && assetClassificationHeaderDAO.isDuplicateKey(header.getId(), header.getCode(),
+				stageOrder, templateId, header.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + header.getCode();
@@ -473,7 +447,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		//Stage Order Unique Key Checking
+		// Stage Order Unique Key Checking
 		if (header.isNewRecord() && header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			if (header.isNewRecord()
 					&& assetClassificationHeaderDAO.isStageOrderExists(stageOrder, templateId, TableType.VIEW)) {
@@ -483,9 +457,10 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 			}
 		}
 
-		//Asset Code Unique Key Checking
+		// Asset Code Unique Key Checking
 		if (header.isNewRecord() && header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-			if (header.isNewRecord() && assetClassificationHeaderDAO.isAssetCodeExists(header.getCode(), TableType.VIEW)) {
+			if (header.isNewRecord()
+					&& assetClassificationHeaderDAO.isAssetCodeExists(header.getCode(), TableType.VIEW)) {
 				String[] parameters = new String[1];
 				parameters[0] = PennantJavaUtil.getLabel("label_AssetCode") + ": " + header.getCode();
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
@@ -606,8 +581,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 	 * ASSET_CLASSIFICATION_HDR by using ASSET_CLASSIFICATION_HDRDAO's delete method with type as Blank 3) Audit the
 	 * record in to AuditHeader and AdtASSET_CLASSIFICATION_HDR by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 

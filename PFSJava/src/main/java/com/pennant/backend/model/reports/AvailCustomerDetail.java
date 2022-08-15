@@ -28,7 +28,7 @@ public class AvailCustomerDetail {
 
 	private AvailLimit availLimit = null;
 
-	//Account Type List
+	// Account Type List
 	private List<String> accTypeList = new ArrayList<String>();
 
 	public AvailCustomerDetail() {

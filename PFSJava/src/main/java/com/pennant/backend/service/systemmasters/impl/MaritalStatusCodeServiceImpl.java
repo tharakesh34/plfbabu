@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MaritalStatusCodeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MaritalStatusCodeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -105,8 +87,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	 * in the table. based on the module workFlow Configuration. by using MaritalStatusCodeDAO's update method 3) Audit
 	 * the record in to AuditHeader and AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -145,8 +126,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	 * BMTMaritalStatusCodes by using MaritalStatusCodeDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -171,10 +151,8 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	/**
 	 * getMaritalStatusCodeById fetch the details by using MaritalStatusCodeDAO's getMaritalStatusCodeById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return MaritalStatusCode
 	 */
 	@Override
@@ -186,8 +164,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	 * getApprovedMaritalStatusCodeById fetch the details by using MaritalStatusCodeDAO's getMaritalStatusCodeById
 	 * method . with parameter id and type as blank. it fetches the approved records from the BMTMaritalStatusCodes.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return MaritalStatusCode
 	 */
 	public MaritalStatusCode getApprovedMaritalStatusCodeById(String id) {
@@ -206,8 +183,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	 * the record in to AuditHeader and AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader) based on
 	 * the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -272,8 +248,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	 * workFlow table by using getMaritalStatusCodeDAO().delete with parameters maritalStatusCode,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtBMTMaritalStatusCodes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -300,8 +275,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
@@ -331,7 +305,8 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 		// Get the model object.
 		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditDetail.getModelData();
 		// Check the unique keys.
-		if (maritalStatusCode.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(maritalStatusCode.getRecordType())
+		if (maritalStatusCode.isNewRecord()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(maritalStatusCode.getRecordType())
 				&& maritalStatusCodeDAO.isDuplicateKey(maritalStatusCode.getMaritalStsCode(),
 						maritalStatusCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

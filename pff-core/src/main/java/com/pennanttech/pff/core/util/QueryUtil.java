@@ -30,10 +30,8 @@ public final class QueryUtil {
 	/**
 	 * Returns the SQL query to check the number of records exist in the tables with the specified criteria.
 	 * 
-	 * @param tables
-	 *            The array of tables that need to be looked.
-	 * @param whereClause
-	 *            The criteria that need to be checked.
+	 * @param tables      The array of tables that need to be looked.
+	 * @param whereClause The criteria that need to be checked.
 	 * @return The SQL query.
 	 */
 	public static String getCountQuery(String table, String whereClause) {
@@ -48,10 +46,8 @@ public final class QueryUtil {
 	/**
 	 * Returns the SQL query to check the number of records exist in the tables with the specified criteria.
 	 * 
-	 * @param tables
-	 *            The array of tables that need to be looked.
-	 * @param whereClause
-	 *            The criteria that need to be checked.
+	 * @param tables      The array of tables that need to be looked.
+	 * @param whereClause The criteria that need to be checked.
 	 * @return The SQL query.
 	 */
 	public static String getCountQuery(String[] tables, String whereClause) {

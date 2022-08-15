@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerCategoryServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerCategoryServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -105,8 +87,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 	 * table. based on the module workFlow Configuration. by using CustomerCategoryDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtBMTCustCategories by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -146,8 +127,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 	 * BMTCustCategories by using CustomerCategoryDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBMTCustCategories by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -172,10 +152,8 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 	/**
 	 * getCustomerCategoryById fetch the details by using CustomerCategoryDAO's getCustomerCategoryById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerCategory
 	 */
 	@Override
@@ -187,8 +165,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 	 * getApprovedCustomerCategoryById fetch the details by using CustomerCategoryDAO's getCustomerCategoryById method .
 	 * with parameter id and type as blank. it fetches the approved records from the BMTCustCategories.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return CustomerCategory
 	 */
 	public CustomerCategory getApprovedCustomerCategoryById(String id) {
@@ -206,8 +183,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 	 * and AdtBMTCustCategories by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and AdtBMTCustCategories by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -265,8 +241,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 	 * workFlow table by using getCustomerCategoryDAO().delete with parameters customerCategory,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtBMTCustCategories by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -292,8 +267,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -338,12 +312,12 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 		errParm[0] = PennantJavaUtil.getLabel("label_CustCtg_Code") + ":" + valueParm[0];
 
 		if (customerCategory.isNewRecord()) { // for New record or new record into
-											// work flow
+												// work flow
 
 			if (!customerCategory.isWorkflow()) {// With out Work flow only new
-														// records
+													// records
 				if (befCustomerCategory != null) { // Record Already Exists in
-														// the table then error
+													// the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
@@ -351,8 +325,8 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 				if (customerCategory.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befCustomerCategory != null || tempCustomerCategory != null) { // if records
-																							// already exists
-																						//in the main table
+																						// already exists
+																						// in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -365,10 +339,10 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!customerCategory.isWorkflow()) { // With out Work flow for
-														// update and delete
+													// update and delete
 
 				if (befCustomerCategory == null) { // if records not exists in
-														// the main table
+													// the main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldCustomerCategory != null
@@ -387,7 +361,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 			} else {
 
 				if (tempCustomerCategory == null) { // if records not exists in
-														// the Work flow table
+													// the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

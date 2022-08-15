@@ -20,7 +20,7 @@ public interface APIChannelDAO {
 
 	APIChannel getNewChannelDetails();
 
-	//ChannelAuthDetails
+	// ChannelAuthDetails
 	long save(APIChannelIP aPIChannelIP, String tableType);
 
 	void update(APIChannelIP aPIChannelIP, String tableType);

@@ -51,9 +51,8 @@ public class AES {
 	/**
 	 * Private constructor to hide the implicit public one.
 	 * 
-	 * @throws IllegalAccessException.
-	 *             If the constructor is used to create and initialize a new instance of the declaring class by
-	 *             suppressing Java language access checking.
+	 * @throws IllegalAccessException. If the constructor is used to create and initialize a new instance of the
+	 *                                 declaring class by suppressing Java language access checking.
 	 */
 	private AES() throws IllegalAccessException {
 		throw new IllegalAccessException();
@@ -62,8 +61,7 @@ public class AES {
 	/**
 	 * Encrypt the given string.
 	 * 
-	 * @param toCrypt
-	 *            The data to be encrypt.
+	 * @param toCrypt The data to be encrypt.
 	 * @return Encrypted string
 	 */
 	public static String encrypt(final String toCrypt) {
@@ -77,8 +75,7 @@ public class AES {
 	/**
 	 * Encrypt the given bytes data.
 	 * 
-	 * @param toCrypt
-	 *            The data to be encrypt.
+	 * @param toCrypt The data to be encrypt.
 	 * @return Encrypted bytes data
 	 */
 	public static byte[] encrypt(final byte[] toCrypt) {
@@ -101,8 +98,7 @@ public class AES {
 	/**
 	 * Decrypt the given string.
 	 * 
-	 * @param toDeCrypt
-	 *            The data to be decrypt.
+	 * @param toDeCrypt The data to be decrypt.
 	 * @return Decrypted string
 	 */
 	public static String decrypt(final String toDeCrypt) {
@@ -116,8 +112,7 @@ public class AES {
 	/**
 	 * Decrypt the given bytes data.
 	 * 
-	 * @param toDeCrypt
-	 *            The data to be decrypt.
+	 * @param toDeCrypt The data to be decrypt.
 	 * @return Decrypted bytes data
 	 */
 	public static String decrypt(final byte[] toDeCrypt) {
@@ -141,8 +136,7 @@ public class AES {
 	/**
 	 * Converts the given string into hash
 	 * 
-	 * @param data
-	 *            The data to be hashed
+	 * @param data The data to be hashed
 	 * @return The hashed data.
 	 */
 	public static String getHash(String data) {

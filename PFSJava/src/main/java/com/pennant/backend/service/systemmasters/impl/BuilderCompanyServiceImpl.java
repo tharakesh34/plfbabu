@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BuilderCompanyServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-05-2017    														*
- *                                                                  						*
- * Modified Date    :  22-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BuilderCompanyServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-05-2017 * *
+ * Modified Date : 22-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.systemmasters.impl;
 
 import java.util.List;
@@ -90,8 +72,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -105,8 +86,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 	}
 
 	/**
-	 * @param builderCompanyDAO
-	 *            the builderCompanyDAO to set
+	 * @param builderCompanyDAO the builderCompanyDAO to set
 	 */
 	public void setBuilderCompanyDAO(BuilderCompanyDAO builderCompanyDAO) {
 		this.builderCompanyDAO = builderCompanyDAO;
@@ -120,8 +100,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 	 * based on the module workFlow Configuration. by using BuilderCompanyDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBuilderCompany by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -161,8 +140,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 	 * BuilderCompany by using BuilderCompanyDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBuilderCompany by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -187,8 +165,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 	/**
 	 * getBuilderCompany fetch the details by using BuilderCompanyDAO's getBuilderCompanyById method.
 	 * 
-	 * @param id
-	 *            id of the BuilderCompany.
+	 * @param id id of the BuilderCompany.
 	 * @return BuilderCompany
 	 */
 	@Override
@@ -200,8 +177,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 	 * getApprovedBuilderCompanyById fetch the details by using BuilderCompanyDAO's getBuilderCompanyById method . with
 	 * parameter id and type as blank. it fetches the approved records from the BuilderCompany.
 	 * 
-	 * @param id
-	 *            id of the BuilderCompany. (String)
+	 * @param id id of the BuilderCompany. (String)
 	 * @return BuilderCompany
 	 */
 	public BuilderCompany getApprovedBuilderCompany(long id) {
@@ -219,8 +195,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBuilderCompany by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -284,8 +259,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 	 * workFlow table by using getBuilderCompanyDAO().delete with parameters builderCompany,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtBuilderCompany by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -313,8 +287,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -351,12 +324,12 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 		parameters[1] = PennantJavaUtil.getLabel("label_name") + ": " + builderCompany.getName();
 
 		// Check the unique keys.
-		if (builderCompany.isNewRecord() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(), builderCompany.getName(),
-				builderCompany.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (builderCompany.isNewRecord() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(),
+				builderCompany.getName(), builderCompany.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		// If Builder Group is already utilized in Builder Company 
+		// If Builder Group is already utilized in Builder Company
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, builderCompany.getRecordType())) {
 			boolean workflowExists = getBuilderCompanyDAO().isIdExists(builderCompany.getId());
 			if (workflowExists) {
@@ -369,7 +342,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	// ### 28-11-2018 BuilderCompanySegmentation Rule 
+	// ### 28-11-2018 BuilderCompanySegmentation Rule
 
 	private void doPostHookValidation(AuditHeader auditHeader) {
 		if (builderCompanyPostValidationHook != null) {

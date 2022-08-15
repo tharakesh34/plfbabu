@@ -73,7 +73,7 @@ public class RuleResult {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				Object result = this.getClass().getDeclaredFields()[i].get(this);
-				if (result != null) { //FIXME Code should be defined in Rule Constants 
+				if (result != null) { // FIXME Code should be defined in Rule Constants
 					ruleResultMap.put(
 							Labels.getLabel("label_RuleResult_" + this.getClass().getDeclaredFields()[i].getName()),
 							this.getClass().getDeclaredFields()[i].get(this));

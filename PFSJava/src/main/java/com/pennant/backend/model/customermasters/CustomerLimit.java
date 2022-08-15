@@ -18,7 +18,7 @@ public class CustomerLimit implements Serializable {
 	private boolean checkLimit;
 	private String seqNum;
 
-	//Customer limits
+	// Customer limits
 	private String customerReference;
 	private String limitRef;
 	private String securityMstId;

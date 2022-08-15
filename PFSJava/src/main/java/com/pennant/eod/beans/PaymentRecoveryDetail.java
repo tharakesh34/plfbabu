@@ -26,7 +26,7 @@ public class PaymentRecoveryDetail {
 	private String secondaryAcDebitAmt;
 	private String paymentStatus;
 	private int priority;
-	//others
+	// others
 	private String finEvent;
 	private String finRpyFor;
 

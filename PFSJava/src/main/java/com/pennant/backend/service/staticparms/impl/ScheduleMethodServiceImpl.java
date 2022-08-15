@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScheduleMethodServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2011    														*
- *                                                                  						*
- * Modified Date    :  12-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScheduleMethodServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2011 * *
+ * Modified Date : 12-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -105,8 +87,7 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 	 * Configuration. by using ScheduleMethodDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtBMTSchdMethod by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -143,8 +124,7 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 	 * BMTSchdMethod by using ScheduleMethodDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtBMTSchdMethod by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -168,10 +148,8 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 	/**
 	 * getScheduleMethodById fetch the details by using ScheduleMethodDAO's getScheduleMethodById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ScheduleMethod
 	 */
 
@@ -184,8 +162,7 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 	 * getApprovedScheduleMethodById fetch the details by using ScheduleMethodDAO's getScheduleMethodById method . with
 	 * parameter id and type as blank. it fetches the approved records from the BMTSchdMethod.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return ScheduleMethod
 	 */
 
@@ -204,8 +181,7 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTSchdMethod by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -263,8 +239,7 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 	 * workFlow table by using getScheduleMethodDAO().delete with parameters scheduleMethod,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtBMTSchdMethod by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -293,8 +268,7 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 	 * for any mismatch conditions Fetch the error details from getScheduleMethodDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -346,7 +320,8 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 				}
 			} else { // with work flow
 				if (scheduleMethod.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befScheduleMethod != null || tempScheduleMethod != null) { // if records already exists in the main table
+					if (befScheduleMethod != null || tempScheduleMethod != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}

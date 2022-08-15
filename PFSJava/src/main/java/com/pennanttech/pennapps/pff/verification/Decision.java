@@ -24,10 +24,8 @@ import com.pennant.backend.model.ValueLabel;
  *
  */
 public enum Decision {
-	SELECT(0, Labels.getLabel("Combo.Select")),
-	APPROVE(1, Labels.getLabel("label_APPROVE")),
-	RE_INITIATE(2, Labels.getLabel("label_RE_INITIATE")),
-	OVERRIDE(3, Labels.getLabel("label_OVERRIDE"));
+	SELECT(0, Labels.getLabel("Combo.Select")), APPROVE(1, Labels.getLabel("label_APPROVE")),
+	RE_INITIATE(2, Labels.getLabel("label_RE_INITIATE")), OVERRIDE(3, Labels.getLabel("label_OVERRIDE"));
 
 	private final Integer key;
 	private final String value;

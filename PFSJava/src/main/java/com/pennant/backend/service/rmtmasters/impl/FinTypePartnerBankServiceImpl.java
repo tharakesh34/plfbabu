@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinTypePartnerBankServiceImpl.java                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  24-04-2017    														*
- *                                                                  						*
- * Modified Date    :  24-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinTypePartnerBankServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 24-04-2017 * *
+ * Modified Date : 24-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.rmtmasters.impl;
@@ -82,8 +64,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	 * in the table. based on the module workFlow Configuration. by using FinTypePartnerBanksDAO's update method 3)
 	 * Audit the record in to AuditHeader and AdtFinTypePartnerBanks by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -124,8 +105,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	 * FinTypePartnerBanks by using FinTypePartnerBanksDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtFinTypePartnerBanks by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -172,8 +152,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	/**
 	 * getFinTypePartnerBanks fetch the details by using FinTypePartnerBanksDAO's getFinTypePartnerBanksById method.
 	 * 
-	 * @param iD
-	 *            iD of the FinTypePartnerBank.
+	 * @param iD iD of the FinTypePartnerBank.
 	 * @return FinTypePartnerBanks
 	 */
 	@Override
@@ -185,8 +164,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	 * getApprovedFinTypePartnerBanksById fetch the details by using FinTypePartnerBanksDAO's getFinTypePartnerBanksById
 	 * method . with parameter id and type as blank. it fetches the approved records from the FinTypePartnerBanks.
 	 * 
-	 * @param iD
-	 *            iD of the FinTypePartnerBank. (String)
+	 * @param iD iD of the FinTypePartnerBank. (String)
 	 * @return FinTypePartnerBanks
 	 */
 	public FinTypePartnerBank getApprovedFinTypePartnerBank(String finType, long iD) {
@@ -210,8 +188,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	 * the record in to AuditHeader and AdtFinTypePartnerBanks by using auditHeaderDAO.addAudit(auditHeader) based on
 	 * the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -276,8 +253,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	 * workFlow table by using getFinTypePartnerBankDAO().delete with parameters finTypePartnerBank,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtFinTypePartnerBanks by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -305,8 +281,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -359,7 +334,8 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 				}
 			} else { // with work flow
 				if (finTypePartnerBank.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
-					if (befFinTypePartnerBank != null || tempFinTypePartnerBank != null) { // if records already exists in the main table
+					if (befFinTypePartnerBank != null || tempFinTypePartnerBank != null) { // if records already exists
+																							// in the main table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -560,8 +536,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -575,8 +550,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	}
 
 	/**
-	 * @param finTypePartnerBankDAO
-	 *            the finTypePartnerBankDAO to set
+	 * @param finTypePartnerBankDAO the finTypePartnerBankDAO to set
 	 */
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;

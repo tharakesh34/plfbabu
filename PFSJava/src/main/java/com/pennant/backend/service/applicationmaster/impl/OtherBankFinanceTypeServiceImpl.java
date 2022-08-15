@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OtherBankFinanceTypeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-04-2015    														*
- *                                                                  						*
- * Modified Date    :  03-04-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OtherBankFinanceTypeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-04-2015 *
+ * * Modified Date : 03-04-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-04-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-04-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.logging.log4j.LogManager;
@@ -82,8 +64,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -97,8 +78,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 	}
 
 	/**
-	 * @param otherBankFinanceTypeDAO
-	 *            the otherBankFinanceTypeDAO to set
+	 * @param otherBankFinanceTypeDAO the otherBankFinanceTypeDAO to set
 	 */
 	public void setOtherBankFinanceTypeDAO(OtherBankFinanceTypeDAO otherBankFinanceTypeDAO) {
 		this.otherBankFinanceTypeDAO = otherBankFinanceTypeDAO;
@@ -112,8 +92,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 	 * Record in the table. based on the module workFlow Configuration. by using OtherBankFinanceTypeDAO's update method
 	 * 3) Audit the record in to AuditHeader and AdtOtherBankFinanceTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -150,8 +129,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 	 * OtherBankFinanceTypes by using OtherBankFinanceTypeDAO's delete method with type as Blank 3) Audit the record in
 	 * to AuditHeader and AdtOtherBankFinanceTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -176,10 +154,8 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 	 * getOtherBankFinanceTypeById fetch the details by using OtherBankFinanceTypeDAO's getOtherBankFinanceTypeById
 	 * method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return OtherBankFinanceType
 	 */
 
@@ -193,8 +169,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 	 * getOtherBankFinanceTypeById method . with parameter id and type as blank. it fetches the approved records from
 	 * the OtherBankFinanceTypes.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return OtherBankFinanceType
 	 */
 
@@ -214,8 +189,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 	 * Work flow 5) Audit the record in to AuditHeader and AdtOtherBankFinanceTypes by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -277,8 +251,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 	 * the record in to AuditHeader and AdtOtherBankFinanceTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -307,8 +280,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 	 * for any mismatch conditions Fetch the error details from getOtherBankFinanceTypeDAO().getErrorDetail with Error
 	 * ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 

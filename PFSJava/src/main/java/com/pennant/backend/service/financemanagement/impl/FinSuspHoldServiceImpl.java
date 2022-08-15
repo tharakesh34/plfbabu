@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinSuspHoldServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinSuspHoldServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -113,8 +95,7 @@ public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implemen
 	 * on the module workFlow Configuration. by using FinSuspHoldDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBMTFinSuspHold by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -153,8 +134,7 @@ public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implemen
 	 * BMTFinSuspHold by using FinSuspHoldDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtBMTFinSuspHold by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -177,10 +157,8 @@ public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implemen
 	/**
 	 * getFinSuspHoldById fetch the details by using FinSuspHoldDAO's getFinSuspHoldById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinSuspHold
 	 */
 	@Override
@@ -192,8 +170,7 @@ public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implemen
 	 * getApprovedFinSuspHoldById fetch the details by using FinSuspHoldDAO's getFinSuspHoldById method . with parameter
 	 * id and type as blank. it fetches the approved records from the BMTFinSuspHold.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return FinSuspHold
 	 */
 
@@ -212,8 +189,7 @@ public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implemen
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTFinSuspHold by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -270,8 +246,7 @@ public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implemen
 	 * workFlow table by using getFinSuspHoldDAO().delete with parameters finSuspHold,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTFinSuspHold by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -299,8 +274,7 @@ public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implemen
 	 * for any mismatch conditions Fetch the error details from getFinSuspHoldDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

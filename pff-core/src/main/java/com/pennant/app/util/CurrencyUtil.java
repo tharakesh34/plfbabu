@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  SysParamUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SysParamUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -172,12 +163,10 @@ public class CurrencyUtil {
 	/**
 	 * Translates the {@link String} representation of a {@link BigDecimal} into a {@link BigDecimal}
 	 * 
-	 * @param value
-	 *            The {@link String} representation value which needs to be Translate into {@link BigDecimal}.
+	 * @param value The {@link String} representation value which needs to be Translate into {@link BigDecimal}.
 	 * @return A {@link BigDecimal} or <code>BigDecimal.ZEOR</code> if input value is <code>null</code>.
 	 * 
-	 * @throws NumberFormatException
-	 *             if value is not a valid representation of a {@link BigDecimal}
+	 * @throws NumberFormatException if value is not a valid representation of a {@link BigDecimal}
 	 * 
 	 */
 	public static BigDecimal getBigDecimal(String value) {
@@ -188,8 +177,7 @@ public class CurrencyUtil {
 	/**
 	 * Translates the {@link BigDecimal} representation of a {@link String} into a {@link String}
 	 * 
-	 * @param value
-	 *            The {@link BigDecimal} representation value which needs to be Translate to {@link String} .
+	 * @param value The {@link BigDecimal} representation value which needs to be Translate to {@link String} .
 	 * @return A corresponding {@link String} value or <code>0</code> if input value is <code>null</code>.
 	 * 
 	 */
@@ -206,10 +194,8 @@ public class CurrencyUtil {
 	 * 
 	 * <li>10000050 to 100,000.50
 	 * 
-	 * @param amount
-	 *            The amount which needs to be format from major to minor
-	 * @param decimals
-	 *            The number of decimal positions.
+	 * @param amount   The amount which needs to be format from major to minor
+	 * @param decimals The number of decimal positions.
 	 * @return The formated amount in {@link String} representation
 	 */
 	public static String format(BigDecimal amount, int decimals) {
@@ -225,10 +211,8 @@ public class CurrencyUtil {
 	 * 
 	 * <li>10000050 to 100000.50
 	 * 
-	 * @param amount
-	 *            The amount which needs to be format from major to minor
-	 * @param decimals
-	 *            The number of decimal positions.
+	 * @param amount   The amount which needs to be format from major to minor
+	 * @param decimals The number of decimal positions.
 	 * @return The formated amount in {@link BigDecimal} representation
 	 */
 	public static BigDecimal parse(BigDecimal amount, int decimals) {

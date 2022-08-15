@@ -380,7 +380,7 @@ public class StaticListUtil {
 		segment.put("PN", "Name Segment");
 		segment.put("PT", "Telephone Segment");
 		segment.put("PA", "Address Segment");
-		//segment.put("ES", "End Segment");
+		// segment.put("ES", "End Segment");
 		segment.put("PI", "Account Number Segment");
 		segment.put("DR", "Dispute Remarks Segment");
 		segment.put("IQ", "Enquiry Segment");

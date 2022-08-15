@@ -18,7 +18,7 @@ public class CustomerPRComparater implements Comparator<Object>, Serializable {
 		// Auto-generated method stub
 		CustomerPRelation data1 = (CustomerPRelation) o1;
 		CustomerPRelation data2 = (CustomerPRelation) o2;
-		//return data1.getPRRelationCode().compareTo(data2.getPRRelationCode());
+		// return data1.getPRRelationCode().compareTo(data2.getPRRelationCode());
 		if (data1.getPRCustID() > data2.getPRCustID()) {
 			return 1;
 		} else if (data1.getPRCustID() < data2.getPRCustID()) {

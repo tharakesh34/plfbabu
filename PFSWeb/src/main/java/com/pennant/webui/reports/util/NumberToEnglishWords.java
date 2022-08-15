@@ -137,7 +137,7 @@ public class NumberToEnglishWords extends JRDefaultScriptlet implements Serializ
 			ch = str.charAt(i);
 		}
 
-		// Return the string with trimming 
+		// Return the string with trimming
 		return s.toString().trim();
 	}
 
@@ -221,11 +221,11 @@ public class NumberToEnglishWords extends JRDefaultScriptlet implements Serializ
 	private static String formatInLakhs(String snumber, String oldresult) throws Exception {
 		logger.debug("Entering ");
 		String result = "";
-		//XXnnnnn
+		// XXnnnnn
 		int lakhs = Integer.parseInt(snumber.substring(0, 2));
-		//nnXXnnn
+		// nnXXnnn
 		int thousands = Integer.parseInt(snumber.substring(2, 4));
-		//nnnnXXX
+		// nnnnXXX
 		int hundreds = Integer.parseInt(snumber.substring(4, 7));
 
 		String tradLakhs;
@@ -339,7 +339,7 @@ public class NumberToEnglishWords extends JRDefaultScriptlet implements Serializ
 		List<T> aGroupedObjectsList = new ArrayList<T>();
 		int size = childRecordsList.size();
 		try {
-			//Sorting the list with sortField
+			// Sorting the list with sortField
 			Collections.sort(childRecordsList, comp);
 			for (int i = 0; i < size; i++) {
 				Object objectOne = childRecordsList.get(i).getClass().getMethod(compareMethod)
@@ -349,25 +349,25 @@ public class NumberToEnglishWords extends JRDefaultScriptlet implements Serializ
 					objectTwo = childRecordsList.get(i + 1).getClass().getMethod(compareMethod)
 							.invoke(childRecordsList.get(i + 1));
 				}
-				//if not last Element and field is Equal to next field
+				// if not last Element and field is Equal to next field
 				if (i != size - 1 && objectOne.equals(objectTwo)) {
-					//If object is already in Map 
+					// If object is already in Map
 					if (groupRecordsMap.containsKey(objectOne)) {
 						aGroupedObjectsList.add(childRecordsList.get(i));
 					} else {
-						//If object is  new Entry
+						// If object is new Entry
 						aGroupedObjectsList = new ArrayList<T>();
 						aGroupedObjectsList.add(childRecordsList.get(i));
 					}
 					groupRecordsMap.put(objectOne, aGroupedObjectsList);
 				} else {
 					if (groupRecordsMap.containsKey(objectOne)) {
-						//If object is already in Map (in case last element is already in map)
+						// If object is already in Map (in case last element is already in map)
 						List<T> tempList = (List<T>) groupRecordsMap.get(objectOne);
 						tempList.add(childRecordsList.get(i));
 						groupRecordsMap.put(objectOne, tempList);
 					} else {
-						//If object is  new Entry
+						// If object is new Entry
 						aGroupedObjectsList = new ArrayList<T>();
 						aGroupedObjectsList.add(childRecordsList.get(i));
 						groupRecordsMap.put(objectOne, aGroupedObjectsList);
@@ -381,7 +381,7 @@ public class NumberToEnglishWords extends JRDefaultScriptlet implements Serializ
 		return groupRecordsMap;
 	}
 
-	//GETTERS AND SETTERS
+	// GETTERS AND SETTERS
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		NumberToEnglishWords.currencyDAO = currencyDAO;
 	}

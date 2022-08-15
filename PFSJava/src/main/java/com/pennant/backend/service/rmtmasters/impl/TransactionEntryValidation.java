@@ -79,14 +79,16 @@ public class TransactionEntryValidation {
 
 		if (transactionEntry.isNewRecord()) { // for New record or new record into work flow
 
-			if (!transactionEntry.isWorkflow()) {// With out Work flow only new records  
-				if (beftransactionEntry != null) { // Record Already Exists in the table then error  
+			if (!transactionEntry.isWorkflow()) {// With out Work flow only new records
+				if (beftransactionEntry != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, null));
 				}
 			} else { // with work flow
 
-				if (transactionEntry.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (beftransactionEntry != null || tempFeeTier != null) { // if records already exists in the main table
+				if (transactionEntry.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (beftransactionEntry != null || tempFeeTier != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -118,7 +120,7 @@ public class TransactionEntryValidation {
 
 			} else {
 
-				if (tempFeeTier == null) { // if records not exists in the Work flow table 
+				if (tempFeeTier == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 

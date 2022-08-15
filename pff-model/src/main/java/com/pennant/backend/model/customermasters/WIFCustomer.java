@@ -38,7 +38,7 @@ public class WIFCustomer implements Serializable {
 	private BigDecimal totalIncome;
 	private BigDecimal totalExpense;
 
-	private String lovDescCustCtgType = "RETAIL";//FIXME:How to use constants-PennantConstants.PFF_CUSTCTG_INDIV;
+	private String lovDescCustCtgType = "RETAIL";// FIXME:How to use constants-PennantConstants.PFF_CUSTCTG_INDIV;
 	private String lovDescCustGenderCodeName;
 	private String lovDescCustNationalityName;
 	private String lovDescCustEmpStsName;

@@ -86,7 +86,7 @@ public class CibilResponseDetails {
 			int indexPT = details.indexOf("PT03T01");
 			int indexPA = details.indexOf("PA03A01");
 			int indexIQ = details.indexOf("IQ04I");
-			//int indexSC = details.indexOf("SC10CIBILTUSCR");
+			// int indexSC = details.indexOf("SC10CIBILTUSCR");
 
 			int indexSC = details.indexOf(getCibilScoreVersion());
 
@@ -492,13 +492,13 @@ public class CibilResponseDetails {
 			scoreVersion = ""; // Not requesting a score
 			break;
 		case "01":
-			scoreVersion = "SC10CIBILTUSCR"; // Requesting the CIBIL TransUnion Score  Version 1.0 (CIBILTUSCR) only.
+			scoreVersion = "SC10CIBILTUSCR"; // Requesting the CIBIL TransUnion Score Version 1.0 (CIBILTUSCR) only.
 			break;
 		case "02":
-			scoreVersion = "SC07PLSCORE"; // Requesting the Personal Loan Score (PLSCORE) only. 
+			scoreVersion = "SC07PLSCORE"; // Requesting the Personal Loan Score (PLSCORE) only.
 			break;
 		case "03":
-			scoreVersion = "SC10CIBILTUSCR"; //Requesting both the CIBILTUSCR and PLSCORE scores. 
+			scoreVersion = "SC10CIBILTUSCR"; // Requesting both the CIBILTUSCR and PLSCORE scores.
 			break;
 		case "04":
 			scoreVersion = "SC10CIBILTUSC2"; // Requesting the CIBIL TransUnion Score Version 2.0 (CIBILTUSC2) only
@@ -508,10 +508,10 @@ public class CibilResponseDetails {
 		 * break;
 		 */
 		case "08":
-			scoreVersion = "SC10CIBILTUSC3"; //Requesting the CreditVision© Score (CIBILTUSC3) only.
+			scoreVersion = "SC10CIBILTUSC3"; // Requesting the CreditVision© Score (CIBILTUSC3) only.
 			break;
 		case "12":
-			scoreVersion = "SC10CIBILTUIE1";//Requesting both Income Estimator Score (CIBILTUIE1) and CIBILTUSCR.
+			scoreVersion = "SC10CIBILTUIE1";// Requesting both Income Estimator Score (CIBILTUIE1) and CIBILTUSCR.
 			break;
 
 		/*

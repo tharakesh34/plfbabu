@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  TaxDetailServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-06-2017    														*
- *                                                                  						*
- * Modified Date    :  14-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : TaxDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-06-2017 * * Modified
+ * Date : 14-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-06-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-06-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.List;
@@ -90,8 +72,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -105,8 +86,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	}
 
 	/**
-	 * @param taxDetailDAO
-	 *            the taxDetailDAO to set
+	 * @param taxDetailDAO the taxDetailDAO to set
 	 */
 	public void setTaxDetailDAO(TaxDetailDAO taxDetailDAO) {
 		this.taxDetailDAO = taxDetailDAO;
@@ -120,8 +100,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	 * by using TAXDETAILDAO's update method 3) Audit the record in to AuditHeader and AdtTAXDETAIL by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -161,8 +140,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	 * TAXDETAIL by using TAXDETAILDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtTAXDETAIL by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -187,8 +165,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	/**
 	 * getTAXDETAIL fetch the details by using TAXDETAILDAO's getTAXDETAILById method.
 	 * 
-	 * @param id
-	 *            id of the TaxDetail.
+	 * @param id id of the TaxDetail.
 	 * @return TAXDETAIL
 	 */
 	@Override
@@ -200,8 +177,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	 * getApprovedTAXDETAILById fetch the details by using TAXDETAILDAO's getTAXDETAILById method . with parameter id
 	 * and type as blank. it fetches the approved records from the TAXDETAIL.
 	 * 
-	 * @param id
-	 *            id of the TaxDetail. (String)
+	 * @param id id of the TaxDetail. (String)
 	 * @return TAXDETAIL
 	 */
 	public TaxDetail getApprovedTaxDetail(long id) {
@@ -219,8 +195,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtTAXDETAIL by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -284,8 +259,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	 * workFlow table by using getTaxDetailDAO().delete with parameters taxDetail,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtTAXDETAIL by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -313,8 +287,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

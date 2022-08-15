@@ -44,8 +44,7 @@ public class VASWebServiceImpl extends ExtendedTestClass implements VASSoapServi
 	/**
 	 * it fetches the approved records from the VasStructure.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return VASConfiguration
 	 */
 	@Override

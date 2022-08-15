@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  RuleServiceImpl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : RuleServiceImpl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 03-06-2011
+ * 
+ * Modified Date : 03-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -117,8 +108,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	 * RuleDAO's update method 3) Audit the record in to AuditHeader and AdtRules by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 *
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -163,8 +153,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	 * Rules by using RuleDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and AdtRule by
 	 * using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -193,11 +182,9 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	/**
 	 * getRuleById fetch the details by using RuleDAO's getRuleById method.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id   (String)
 	 * 
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param type (String) ""/_Temp/_View
 	 * @return Rule
 	 */
 	@Override
@@ -227,8 +214,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	 * getApprovedRuleById fetch the details by using RuleDAO's getRuleById method . with parameter id and type as
 	 * blank. it fetches the approved records from the Rules.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * 
 	 * @return Rule
 	 */
@@ -239,12 +225,9 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	/**
 	 * Fetch Approved Rule.
 	 * 
-	 * @param String
-	 *            ruleCode
-	 * @param String
-	 *            ruleModule
-	 * @param String
-	 *            ruleEvent
+	 * @param String ruleCode
+	 * @param String ruleModule
+	 * @param String ruleEvent
 	 * @return Rule
 	 */
 	@Override
@@ -300,8 +283,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	 * and AdtRules by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader
 	 * and AdtRules by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -380,8 +362,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	 * workFlow table by using getRuleDAO().delete with parameters Rule,"_Temp" 3) Audit the record in to AuditHeader
 	 * and AdtRules by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 *
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -408,8 +389,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	 * for any mismatch conditions Fetch the error details from getRuleDAO().getErrorDetail with Error ID and language
 	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -479,7 +459,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 			} else { // with work flow
 				if (rule.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
-					if (befRule != null || tempRule != null) { //if records 
+					if (befRule != null || tempRule != null) { // if records
 						// already exists
 						// in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));

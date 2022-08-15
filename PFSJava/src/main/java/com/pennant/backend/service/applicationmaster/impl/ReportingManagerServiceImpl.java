@@ -37,8 +37,7 @@ public class ReportingManagerServiceImpl extends GenericService<ReportingManager
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -60,8 +59,7 @@ public class ReportingManagerServiceImpl extends GenericService<ReportingManager
 	 * ClustersDAO's update method 3) Audit the record in to AuditHeader and AdtClusters by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -101,8 +99,7 @@ public class ReportingManagerServiceImpl extends GenericService<ReportingManager
 	 * Clusters by using ClustersDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtClusters by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -127,8 +124,7 @@ public class ReportingManagerServiceImpl extends GenericService<ReportingManager
 	/**
 	 * getClusters fetch the details by using ClustersDAO's getClustersById method.
 	 * 
-	 * @param clusterId
-	 *            clusterId of the ReportingManager.
+	 * @param clusterId clusterId of the ReportingManager.
 	 * @return Clusters
 	 */
 	@Override
@@ -140,8 +136,7 @@ public class ReportingManagerServiceImpl extends GenericService<ReportingManager
 	 * getApprovedClustersById fetch the details by using ClustersDAO's getClustersById method . with parameter id and
 	 * type as blank. it fetches the approved records from the Clusters.
 	 * 
-	 * @param clusterId
-	 *            clusterId of the ReportingManager. (String)
+	 * @param clusterId clusterId of the ReportingManager. (String)
 	 * @return Clusters
 	 */
 	public ReportingManager getApprovedReportingManager(long Id) {
@@ -159,8 +154,7 @@ public class ReportingManagerServiceImpl extends GenericService<ReportingManager
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtClusters by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -225,8 +219,7 @@ public class ReportingManagerServiceImpl extends GenericService<ReportingManager
 	 * workFlow table by using reportingManagerDAO.delete with parameters reportingManager,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtClusters by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -254,8 +247,7 @@ public class ReportingManagerServiceImpl extends GenericService<ReportingManager
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader businessValidation(AuditHeader auditHeader, String method) {

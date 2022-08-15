@@ -104,7 +104,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
 		}
@@ -457,7 +457,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		auditHeader.getAuditDetail().setModelData(rcu);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(auditHeader, "doApprove");
 		}

@@ -20,12 +20,9 @@ public interface ReturnedChequeDAO extends BasicCrudDao<ReturnedChequeDetails> {
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
-	 * @param chequeNo
-	 *            ChequeNo of the returnedChequeDetails.
-	 * @param custCIF
-	 *            CustCIF of the returnedChequeDetails.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param chequeNo  ChequeNo of the returnedChequeDetails.
+	 * @param custCIF   CustCIF of the returnedChequeDetails.
+	 * @param tableType The type of the table.
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String chequeNo, String custCIF, TableType tableType);

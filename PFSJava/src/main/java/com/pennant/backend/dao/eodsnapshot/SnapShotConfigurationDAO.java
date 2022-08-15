@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SnapShotConfigurationDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-02-2018    														*
- *                                                                  						*
- * Modified Date    :  16-02-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SnapShotConfigurationDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-02-2018 * *
+ * Modified Date : 16-02-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-02-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-02-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.eodsnapshot;
 
 import java.sql.Timestamp;
@@ -54,10 +36,8 @@ public interface SnapShotConfigurationDAO extends BasicCrudDao<SnapShotConfigura
 	/**
 	 * Fetch the Record SnapShotConfigurationdetails by key field
 	 * 
-	 * @param id
-	 *            id of the SnapShotConfiguration.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param id        id of the SnapShotConfiguration.
+	 * @param tableType The type of the table.
 	 * @return SnapShotConfiguration
 	 */
 	SnapShotConfiguration getSnapShotConfiguration(long id, String type);
@@ -65,12 +45,9 @@ public interface SnapShotConfigurationDAO extends BasicCrudDao<SnapShotConfigura
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
-	 * @param id
-	 *            id of the SnapShotConfiguration.
-	 * @param fromTable
-	 *            fromTable of the SnapShotConfiguration.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param id        id of the SnapShotConfiguration.
+	 * @param fromTable fromTable of the SnapShotConfiguration.
+	 * @param tableType The type of the table.
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(long id, String fromTable, TableType tableType);
@@ -78,10 +55,8 @@ public interface SnapShotConfigurationDAO extends BasicCrudDao<SnapShotConfigura
 	/**
 	 * Fetch All Record SnapShotConfiguration Details
 	 * 
-	 * @param id
-	 *            id of the SnapShotConfiguration.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param id        id of the SnapShotConfiguration.
+	 * @param tableType The type of the table.
 	 * @return SnapShotConfiguration
 	 */
 	List<SnapShotConfiguration> getActiveConfigurationList();
@@ -89,10 +64,8 @@ public interface SnapShotConfigurationDAO extends BasicCrudDao<SnapShotConfigura
 	/**
 	 * Update Last run time Stamp for the SnapShotConfiguration Details
 	 * 
-	 * @param id
-	 *            id of the SnapShotConfiguration.
-	 * @param lastRunDate
-	 *            lastRunDate for the Configuration.
+	 * @param id          id of the SnapShotConfiguration.
+	 * @param lastRunDate lastRunDate for the Configuration.
 	 * 
 	 */
 	void updateLastRunDate(long id, Timestamp lastRunDate);

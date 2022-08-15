@@ -26,14 +26,10 @@ public interface AcademicDAO extends BasicCrudDao<Academic> {
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
-	 * @param id
-	 *            Id of the academic.
-	 * @param level
-	 *            Level of the academic.
-	 * @param discipline
-	 *            Discipline of the academic.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param id         Id of the academic.
+	 * @param level      Level of the academic.
+	 * @param discipline Discipline of the academic.
+	 * @param tableType  The type of the table.
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(long id, String level, String discipline, TableType tableType);

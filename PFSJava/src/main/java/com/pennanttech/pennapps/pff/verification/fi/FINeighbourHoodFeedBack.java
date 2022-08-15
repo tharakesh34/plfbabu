@@ -9,6 +9,7 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum FINeighbourHoodFeedBack {
 	SELECT(0, Labels.getLabel("Combo.Select")), POSITIVE(1, "Positive"), NEGATIVE(2, "Negative"), REFER(3, "Refer");
+
 	private final Integer key;
 	private final String value;
 

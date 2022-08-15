@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  DesiredProfitCalculation.java										*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-03-2015															*
- *                                                                  
- * Modified Date    :  26-03-2015															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : DesiredProfitCalculation.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-03-2015 *
+ * 
+ * Modified Date : 26-03-2015 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -89,26 +80,19 @@ public class DesiredProfitCalculation {
 	 * calculation as same
 	 * </p>
 	 * 
-	 * @param orgFinSchdData
-	 *            : Actual Schedule Data Object before creating Schedule
+	 * @param orgFinSchdData   : Actual Schedule Data Object before creating Schedule
 	 * 
-	 * @param finRepayPftOnFrq
-	 *            : Payment allowed for different pft & repay frequencies
+	 * @param finRepayPftOnFrq : Payment allowed for different pft & repay frequencies
 	 * 
-	 * @param repayPftFrq
-	 *            : Repayment's period profit frequency
+	 * @param repayPftFrq      : Repayment's period profit frequency
 	 * 
-	 * @param repayFrq
-	 *            : Repayment's period frequency
+	 * @param repayFrq         : Repayment's period frequency
 	 * 
-	 * @param nextRepayPftDate
-	 *            : Next Repayment's Profit date entered manually by user
+	 * @param nextRepayPftDate : Next Repayment's Profit date entered manually by user
 	 * 
-	 * @param gpEndDate
-	 *            : Grace period end date
+	 * @param gpEndDate        : Grace period end date
 	 * 
-	 * @param nextRepayDate
-	 *            : Next Repayment's date entered manually by user
+	 * @param nextRepayDate    : Next Repayment's date entered manually by user
 	 * 
 	 */
 	public static BigDecimal getDesiredProfit(FinScheduleData orgFinSchdData, boolean finRepayPftOnFrq,
@@ -148,7 +132,7 @@ public class DesiredProfitCalculation {
 		nextRepayDate = DateUtility.parse(DateUtility.format(nextRepayDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
-		//Calculation process based on Repay period rate type
+		// Calculation process based on Repay period rate type
 		String repayRateType = orgFinSchdData.getFinanceMain().getRepayRateBasis();
 
 		if (repayRateType.equals(CalculationConstants.RATE_BASIS_F)
@@ -190,12 +174,12 @@ public class DesiredProfitCalculation {
 		Date finStartDate = financeMain.getFinStartDate();
 		Date maturityDate = financeMain.getMaturityDate();
 
-		//Check Planned deferment Program Setup
+		// Check Planned deferment Program Setup
 		int minCheckDays = orgFinSchdData.getFinanceType().getFddLockPeriod();
 		if (orgFinSchdData.getFinanceMain().getPlanDeferCount() > 0) {
 			repayTerms = financeMain.getNumberOfTerms() + financeMain.getDefferments();
 
-			//Maturity Date Recalculation using Number of Terms
+			// Maturity Date Recalculation using Number of Terms
 			List<Calendar> scheduleDateList = null;
 			if (finRepayPftOnFrq) {
 
@@ -229,12 +213,12 @@ public class DesiredProfitCalculation {
 			}
 		}
 
-		//Grace Period desired profit calculation
+		// Grace Period desired profit calculation
 		BigDecimal gracePft = CalculationUtil.calInterest(finStartDate, gpEndDate,
 				finAmount.add(feeAmount).subtract(downpayment), financeMain.getGrcProfitDaysBasis(),
 				financeMain.getGrcPftRate());
 
-		//Repay Period desired profit calculation
+		// Repay Period desired profit calculation
 		BigDecimal rpyPft = CalculationUtil.calInterest(gpEndDate, maturityDate,
 				finAmount.add(feeAmount).subtract(downpayment), financeMain.getProfitDaysBasis(),
 				financeMain.getRepayProfitRate());
@@ -272,7 +256,7 @@ public class DesiredProfitCalculation {
 		FinScheduleData planDeferSchdData = cloner.deepClone(orgFinSchdData);
 		FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
 
-		//Maturity Date Recalculation using Number of Terms
+		// Maturity Date Recalculation using Number of Terms
 		int minCheckDays = planDeferSchdData.getFinanceType().getFddLockPeriod();
 		if (planFinMain.getPlanDeferCount() > 0) {
 

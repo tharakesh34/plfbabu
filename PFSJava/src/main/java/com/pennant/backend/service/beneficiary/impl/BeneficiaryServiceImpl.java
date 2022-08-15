@@ -1,43 +1,26 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BeneficiaryServiceImpl.java                                         	* 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-12-2016    														*
- *                                                                  						*
- * Modified Date    :  01-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BeneficiaryServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-12-2016 * *
+ * Modified Date : 01-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-12-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- * 31-10-2017       Sriram	                 0.2          PSD Ticket ID : 124632            *                                                                           * 
- *                                                        Dependency validation on Account  * 
- *                                                        Number And Branch changed to      * 
- *                                                        Account Number And CustCIF        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-12-2016 PENNANT 0.1 * * 31-10-2017 Sriram 0.2 PSD Ticket ID : 124632 * * Dependency validation on Account * Number
+ * And Branch changed to * Account Number And CustCIF * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.beneficiary.impl;
@@ -80,8 +63,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -95,8 +77,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	}
 
 	/**
-	 * @param beneficiaryDAO
-	 *            the beneficiaryDAO to set
+	 * @param beneficiaryDAO the beneficiaryDAO to set
 	 */
 	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
 		this.beneficiaryDAO = beneficiaryDAO;
@@ -110,8 +91,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 * by using AcademicDAO's update method 3) Audit the record in to AuditHeader and AdtBMTAcademics by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -149,8 +129,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 * Beneficiary by using BeneficiaryDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtBeneficiary by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -174,10 +153,8 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	/**
 	 * getBeneficiaryById fetch the details by using BeneficiaryDAO's getBeneficiaryById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Beneficiary
 	 */
 
@@ -190,8 +167,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 * getApprovedBeneficiaryById fetch the details by using BeneficiaryDAO's getBeneficiaryById method . with parameter
 	 * id and type as blank. it fetches the approved records from the Beneficiary.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return Beneficiary
 	 */
 
@@ -210,8 +186,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBeneficiary by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -269,8 +244,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 * workFlow table by using getBeneficiaryDAO().delete with parameters beneficiary,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBeneficiary by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -307,10 +281,8 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -330,10 +302,8 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 	 * mismatch conditions Fetch the error details from getBeneficiaryDAO().getErrorDetail with Error ID and language as
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -367,7 +337,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 			} else { // with work flow
 				if (beneficiary.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befBeneficiary != null || tempBeneficiary != null) { // if records already exists in the main
-																					// table
+																				// table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -413,7 +383,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 			}
 		}
 
-		//### 31-10-2017 -Ticket ID: 124632 - Start
+		// ### 31-10-2017 -Ticket ID: 124632 - Start
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(beneficiary.getRecordType())) {
 
@@ -434,7 +404,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41021", errParm1, valueParm1));
 			}
 		}
-		//### 31-10-2017 -END
+		// ### 31-10-2017 -END
 
 		if (beneficiary.isDefaultBeneficiary() && !StringUtils.equals(method, PennantConstants.method_doReject)
 				&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(beneficiary.getRecordType())) {

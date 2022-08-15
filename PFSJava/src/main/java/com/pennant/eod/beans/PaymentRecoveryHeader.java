@@ -17,7 +17,7 @@ public class PaymentRecoveryHeader {
 	private String hRecordIdentifier;
 	// trailer
 	private String tRecordIdentifier;
-	//details
+	// details
 	private List<PaymentRecoveryDetail> paymentRecoveryDetails;
 
 	public String gethRecordIdentifier() {

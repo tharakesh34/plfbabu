@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MasterMappingDAOImpl.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-11-2017    														*
- *                                                                  						*
- * Modified Date    :     																	*	
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MasterMappingDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-11-2017 * * Modified
+ * Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-11-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-11-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.interfacemapping.impl;
@@ -70,10 +52,8 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 	/**
 	 * Fetch the Record MasterMapping details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return MasterMapping
 	 */
 	@Override
@@ -105,10 +85,8 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 	 * This method updates the Record MasterMapping or MasterMapping_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update MasterMapping by key MasterMappingId and Version
 	 * 
-	 * @param MasterMapping
-	 *            (MasterMapping)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param MasterMapping (MasterMapping)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -147,10 +125,8 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 	 * This method Deletes the Record from the MasterMapping or MasterMapping_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete MasterMapping by key MasterMappingId
 	 * 
-	 * @param MasterMapping
-	 *            (MasterMapping)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param MasterMapping (MasterMapping)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -183,10 +159,8 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 	 * 
 	 * save MasterMapping
 	 * 
-	 * @param MasterMapping
-	 *            (MasterMapping)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param MasterMapping (MasterMapping)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

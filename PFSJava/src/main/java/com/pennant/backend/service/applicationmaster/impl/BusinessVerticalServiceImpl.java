@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BusinessVerticalServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2018    														*
- *                                                                  						*
- * Modified Date    :  14-12-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BusinessVerticalServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2018 * *
+ * Modified Date : 14-12-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.logging.log4j.LogManager;
@@ -81,8 +63,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -96,8 +77,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	}
 
 	/**
-	 * @param businessVerticalDAO
-	 *            the businessVerticalDAO to set
+	 * @param businessVerticalDAO the businessVerticalDAO to set
 	 */
 	public void setBusinessVerticalDAO(BusinessVerticalDAO businessVerticalDAO) {
 		this.businessVerticalDAO = businessVerticalDAO;
@@ -111,8 +91,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	 * table. based on the module workFlow Configuration. by using business_verticalDAO's update method 3) Audit the
 	 * record in to AuditHeader and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -152,8 +131,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	 * business_vertical by using business_verticalDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -178,8 +156,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	/**
 	 * getbusiness_vertical fetch the details by using business_verticalDAO's getbusiness_verticalById method.
 	 * 
-	 * @param id
-	 *            id of the BusinessVertical.
+	 * @param id id of the BusinessVertical.
 	 * @return business_vertical
 	 */
 	@Override
@@ -191,8 +168,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	 * getApprovedbusiness_verticalById fetch the details by using business_verticalDAO's getbusiness_verticalById
 	 * method . with parameter id and type as blank. it fetches the approved records from the business_vertical.
 	 * 
-	 * @param id
-	 *            id of the BusinessVertical. (String)
+	 * @param id id of the BusinessVertical. (String)
 	 * @return business_vertical
 	 */
 	public BusinessVertical getApprovedBusinessVertical(long id) {
@@ -210,8 +186,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	 * and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -276,8 +251,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	 * workFlow table by using getBusinessVerticalDAO().delete with parameters businessVertical,"_Temp" 3) Audit the
 	 * record in to AuditHeader and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -305,8 +279,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

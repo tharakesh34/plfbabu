@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinTypeAccountingServiceImpl.java                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-03-2017    														*
- *                                                                  						*
- * Modified Date    :  21-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinTypeAccountingServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-03-2017 * *
+ * Modified Date : 21-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-03-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-03-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.rmtmasters.impl;
 
@@ -84,8 +66,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	 * the table. based on the module workFlow Configuration. by using FinTypeAccountingsDAO's update method 3) Audit
 	 * the record in to AuditHeader and AdtFinTypeAccountings by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -128,10 +109,8 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	/**
 	 * getFinTypeAccountingsById fetch the details by using FinTypeAccountingsDAO's getFinTypeAccountingsById method.
 	 * 
-	 * @param finType
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finType (String)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return FinTypeAccountings
 	 */
 	@Override
@@ -143,8 +122,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	 * getApprovedFinTypeAccountingsById fetch the details by using FinTypeAccountingsDAO's getFinTypeAccountingsById
 	 * method . with parameter id and type as blank. it fetches the approved records from the FinTypeAccountings.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return FinTypeAccountings
 	 */
 	@Override
@@ -163,8 +141,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
 	 * AdtFinTypeAccountings by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -223,8 +200,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	 * workFlow table by using getFinTypeAccountingDAO().delete with parameters promotionFee,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtFinTypeAccountings by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -252,8 +228,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -304,14 +279,16 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 
 		if (finTypeAccounting.isNewRecord()) { // for New record or new record into work flow
 
-			if (!finTypeAccounting.isWorkflow()) {// With out Work flow only new records  
-				if (befFinTypeAccounting != null) { // Record Already Exists in the table then error  
+			if (!finTypeAccounting.isWorkflow()) {// With out Work flow only new records
+				if (befFinTypeAccounting != null) { // Record Already Exists in the table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
-				if (finTypeAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinTypeAccounting != null || tempFinTypeAccounting != null) { // if records already exists in the main table
+				if (finTypeAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (befFinTypeAccounting != null || tempFinTypeAccounting != null) { // if records already exists in
+																							// the main table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -344,7 +321,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 				}
 			} else {
 
-				if (tempFinTypeAccounting == null) { // if records not exists in the Work flow table 
+				if (tempFinTypeAccounting == null) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -381,8 +358,8 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 				continue;
 			}
 
-			//finTypeAccounting.setFinType(financeType.getFinType());
-			//finTypeAccounting.setWorkflowId(financeType.getWorkflowId());
+			// finTypeAccounting.setFinType(financeType.getFinType());
+			// finTypeAccounting.setWorkflowId(financeType.getWorkflowId());
 			boolean isRcdType = false;
 			if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				finTypeAccounting.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -406,9 +383,9 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
-			//finTypeAccounting.setRecordStatus(financeType.getRecordStatus());
-			//finTypeAccounting.setUserDetails(financeType.getUserDetails());
-			//finTypeAccounting.setLastMntOn(financeType.getLastMntOn());
+			// finTypeAccounting.setRecordStatus(financeType.getRecordStatus());
+			// finTypeAccounting.setUserDetails(financeType.getUserDetails());
+			// finTypeAccounting.setLastMntOn(financeType.getLastMntOn());
 
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 					finTypeAccounting.getBefImage(), finTypeAccounting));
@@ -442,7 +419,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 				finTypeAccounting.setNextTaskId("");
 				finTypeAccounting.setWorkflowId(0);
 			}
-			//finTypeAccounting.setFinType(financeType.getFinType());
+			// finTypeAccounting.setFinType(financeType.getFinType());
 			if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (finTypeAccounting.isNewRecord()) {
@@ -545,8 +522,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -579,14 +555,16 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_Event.value") + ":" + valueParm[0] + ","
 				+ PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_AccountSetCode.value") + ":" + valueParm[1];
 		if (finTypeAccounting.isNewRecord()) { // for New record or new record into work flow
-			if (!finTypeAccounting.isWorkflow()) {// With out Work flow only new records  
-				if (befFinTypeAccounting != null) { // Record Already Exists in the table then error  
+			if (!finTypeAccounting.isWorkflow()) {// With out Work flow only new records
+				if (befFinTypeAccounting != null) { // Record Already Exists in the table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
-				if (finTypeAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinTypeAccounting != null || tempFinTypeAccounting != null) { // if records already exists in the main table
+				if (finTypeAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (befFinTypeAccounting != null || tempFinTypeAccounting != null) { // if records already exists in
+																							// the main table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -617,7 +595,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 					}
 				}
 			} else {
-				if (tempFinTypeAccounting == null) { // if records not exists in the Work flow table 
+				if (tempFinTypeAccounting == null) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}

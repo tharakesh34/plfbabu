@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AssignmentPartnerServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2018    														*
- *                                                                  						*
- * Modified Date    :  12-09-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AssignmentPartnerServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2018 * *
+ * Modified Date : 12-09-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -85,8 +67,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -100,8 +81,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 	}
 
 	/**
-	 * @param assignmentPartnerDAO
-	 *            the assignmentPartnerDAO to set
+	 * @param assignmentPartnerDAO the assignmentPartnerDAO to set
 	 */
 	public void setAssignmentPartnerDAO(AssignmentPartnerDAO assignmentPartnerDAO) {
 		this.assignmentPartnerDAO = assignmentPartnerDAO;
@@ -123,8 +103,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 	 * table. based on the module workFlow Configuration. by using AssignmentPartnerDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtAssignmentPartner by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -164,8 +143,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 	 * AssignmentPartner by using AssignmentPartnerDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtAssignmentPartner by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -190,8 +168,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 	/**
 	 * getAssignmentPartner fetch the details by using AssignmentPartnerDAO's getAssignmentPartnerById method.
 	 * 
-	 * @param id
-	 *            id of the AssignmentPartner.
+	 * @param id id of the AssignmentPartner.
 	 * @return AssignmentPartner
 	 */
 	@Override
@@ -203,8 +180,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 	 * getApprovedAssignmentPartnerById fetch the details by using AssignmentPartnerDAO's getAssignmentPartnerById
 	 * method . with parameter id and type as blank. it fetches the approved records from the AssignmentPartner.
 	 * 
-	 * @param id
-	 *            id of the AssignmentPartner. (String)
+	 * @param id id of the AssignmentPartner. (String)
 	 * @return AssignmentPartner
 	 */
 	public AssignmentPartner getApprovedAssignmentPartner(long id) {
@@ -223,8 +199,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 	 * record in to AuditHeader and AdtAssignmentPartner by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -289,8 +264,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 	 * workFlow table by using getAssignmentPartnerDAO().delete with parameters assignmentPartner,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtAssignmentPartner by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -318,8 +292,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AssetTypeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2016    														*
- *                                                                  						*
- * Modified Date    :  14-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AssetTypeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2016 * * Modified
+ * Date : 14-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.configuration.impl;
@@ -97,8 +79,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -112,8 +93,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	}
 
 	/**
-	 * @param assetTypeDAO
-	 *            the assetTypeDAO to set
+	 * @param assetTypeDAO the assetTypeDAO to set
 	 */
 	public void setAssetTypeDAO(AssetTypeDAO assetTypeDAO) {
 		this.assetTypeDAO = assetTypeDAO;
@@ -143,8 +123,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 * Configuration. by using VASConfigurationDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -160,8 +139,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 * by using AssetTypesDAO's update method 3) Audit the record in to AuditHeader and AdtAssetTypes by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online) {
@@ -185,7 +163,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 			getAssetTypeDAO().update(aAssetType, tableType);
 		}
 
-		//ExtendedFieldHeader processing
+		// ExtendedFieldHeader processing
 		List<AuditDetail> headerDetail = aAssetType.getExtendedFieldHeader().getAuditDetailMap()
 				.get("ExtendedFieldHeader");
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
@@ -194,7 +172,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		if (extFieldHeader.isNewRecord()) {
 			moduleId = getExtendedFieldHeaderDAO().save(extFieldHeader, tableType);
 
-			//Setting Module ID to List
+			// Setting Module ID to List
 			List<ExtendedFieldDetail> list = extFieldHeader.getExtendedFieldDetails();
 			if (list != null && list.size() > 0) {
 				for (ExtendedFieldDetail ext : list) {
@@ -228,8 +206,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 * AssetTypes by using AssetTypesDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtAssetTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -252,10 +229,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	/**
 	 * getAssetTypesById fetch the details by using AssetTypesDAO's getAssetTypesById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return AssetTypes
 	 */
 	@Override
@@ -277,8 +252,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 * getApprovedAssetTypesById fetch the details by using AssetTypesDAO's getAssetTypesById method . with parameter id
 	 * and type as blank. it fetches the approved records from the AssetTypes.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return AssetTypes
 	 */
 	public AssetType getApprovedAssetTypeById(String id) {
@@ -304,8 +278,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAssetTypes by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -383,11 +356,11 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
-		//Extended filed header
+		// Extended filed header
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
 		auditDetailList.add(new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader));
 
-		//Extended Field Detail List
+		// Extended Field Detail List
 		auditDetailList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
 
 		getAssetTypeDAO().delete(assetType, "_Temp");
@@ -410,8 +383,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 * workFlow table by using getAssetTypeDAO().delete with parameters assetType,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtAssetTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -427,7 +399,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAssetTypeDAO().delete(assetType, "_Temp");
 
-		//ExtendedFieldHeader
+		// ExtendedFieldHeader
 		ExtendedFieldHeader extendedFieldHeader = assetType.getExtendedFieldHeader();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -468,8 +440,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -482,10 +453,10 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
-		//Extended field details
+		// Extended field details
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		//Extended field details
+		// Extended field details
 		ExtendedFieldHeader extendedFieldHeader = assetType.getExtendedFieldHeader();
 		if (extendedFieldHeader != null) {
 			List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldHeader");
@@ -532,14 +503,14 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 			}
 		}
 
-		//Audit Detail Preparation for Extended Field Header
+		// Audit Detail Preparation for Extended Field Header
 		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(),
 				extendedFieldHeader);
 		List<AuditDetail> auditDetailHeaderList = new ArrayList<AuditDetail>();
 		auditDetailHeaderList.add(auditDetail);
 		auditDetailMap.put("ExtendedFieldHeader", auditDetailHeaderList);
 
-		//Audit Detail Preparation for Extended Field Detail
+		// Audit Detail Preparation for Extended Field Detail
 		if (extendedFieldHeader.getExtendedFieldDetails() != null
 				&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 			auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation()
@@ -585,8 +556,8 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 
 		if (aAssetType.isNewRecord()) { // for New record or new record into work flow
 
-			if (!aAssetType.isWorkflow()) {// With out Work flow only new records  
-				if (befAssetType != null) { // Record Already Exists in the table then error  
+			if (!aAssetType.isWorkflow()) {// With out Work flow only new records
+				if (befAssetType != null) { // Record Already Exists in the table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
@@ -624,7 +595,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 				}
 			} else {
 
-				if (tempAssetType == null) { // if records not exists in the Work flow table 
+				if (tempAssetType == null) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -637,7 +608,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 			}
 		}
 
-		//Checking the Asset type is used in loan origination while deletion. If used throws error message like 
+		// Checking the Asset type is used in loan origination while deletion. If used throws error message like
 		// Asset type is in used.
 		if (PennantConstants.RECORD_TYPE_DEL.equals(aAssetType.getRecordType())) {
 			if (getAssetTypeDAO().getAssignedAssets(aAssetType.getAssetType()) > 0) {
