@@ -29,7 +29,6 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.MandateConstants;
@@ -48,6 +47,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.AbstractInterface;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public class PresentmentJobService extends AbstractInterface {
 	protected final Logger logger = LogManager.getLogger(getClass());
@@ -198,6 +198,7 @@ public class PresentmentJobService extends AbstractInterface {
 			String localLocation, DataEngineStatus status) {
 		logger.debug(Literal.ENTERING);
 		List<String> fileNames = null;
+		FtpClient ftpClient = null;
 		try {
 			String hostName = eventProperty.getHostName();
 			String port = eventProperty.getPort();
@@ -205,7 +206,6 @@ public class PresentmentJobService extends AbstractInterface {
 			String secretKey = eventProperty.getSecretKey();
 			String bucketName = eventProperty.getBucketName();
 
-			FtpClient ftpClient = null;
 			if ("FTP".equals(protocol)) {
 				ftpClient = new FtpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
 				fileNames = ftpClient.getFileNameList(bucketName);
@@ -253,6 +253,11 @@ public class PresentmentJobService extends AbstractInterface {
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			// FIXME:: Gopal.p
+			/*
+			 * if (ftpClient != null) { ftpClient.disconnect(); }
+			 */
 		}
 		return null;
 	}

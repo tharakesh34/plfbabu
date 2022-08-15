@@ -9,24 +9,31 @@ import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
+import com.pennant.backend.dao.apicollecetiondetails.CollectionAPIDetailDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
@@ -34,6 +41,7 @@ import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
@@ -66,6 +74,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -86,6 +95,7 @@ import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -93,7 +103,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.core.schd.service.PartCancellationService;
 import com.pennant.pff.dao.subvention.SubventionUploadDAO;
@@ -135,16 +144,23 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.ProductUtil;
+import com.pennanttech.pff.model.external.collection.CollectionAPIDetail;
+import com.pennanttech.pff.overdraft.dao.OverdraftLoanDAO;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.collection.CollectionAccountDetails;
+import com.pennanttech.ws.model.collection.CollectionAccountReq;
 import com.pennanttech.ws.model.covenantStatus.CovenantStatus;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.model.finance.DisbResponse;
 import com.pennanttech.ws.model.finance.FinAdvPaymentDetail;
+import com.pennanttech.ws.model.finance.ReceiptTransaction;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.pennanttech.ws.service.FinanceValidationService;
 
@@ -197,6 +213,12 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private FinanceDetailService financeDetailService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
 	private RestructureService restructureService;
+	private FeeTypeDAO feeTypeDAO;
+	private FinODPenaltyRateDAO finODPenaltyRateDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private CollectionAPIDetailDAO collectionAPIDetailDAO;
+	private OverdraftLoanDAO overdraftLoanDAO;
+	private FinTypePartnerBankService finTypePartnerBankService;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -569,6 +591,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return errorDetails("90129", valueParm);
 			}
 
+			Branch toBranch = branchDAO.getBranchById(fsi.getToBranch(), "");
+			if (toBranch == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = fsi.getToBranch();
+				return errorDetails("90129", valueParm);
+			}
+
 			Customer customer = customerDetailsService.checkCustomerByCIF(fsi.getCustCIF(),
 					TableType.MAIN_TAB.getSuffix());
 			if (customer == null) {
@@ -602,7 +631,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		boolean dedupFound = checkUpFrontDuplicateRequest(fsi, moduleDefiner);
 		if (dedupFound) {
 			String valueParm[] = new String[1];
-			valueParm[0] = "transaction";
+			valueParm[0] = "Transaction";
 			return errorDetails("41014", valueParm);
 		}
 
@@ -621,26 +650,23 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	private boolean checkUpFrontDuplicateRequest(FinServiceInstruction fsi, String moduleDefiner) {
+		List<FinReceiptDetail> rcdList = new ArrayList<>();
 
-		List<FinReceiptDetail> receiptDetails = null;
 		if (StringUtils.isNotBlank(fsi.getFinReference())) {
-			receiptDetails = finReceiptDetailDAO.getFinReceiptDetailByReference(fsi.getFinReference());
+			rcdList = finReceiptDetailDAO.getFinReceiptDetailByReference(fsi.getFinReference());
 		} else {
-			receiptDetails = finReceiptDetailDAO.getFinReceiptDetailByReference(Objects.toString(fsi.getCustID(), ""));
+			rcdList = finReceiptDetailDAO.getFinReceiptDetailByReference(Objects.toString(fsi.getCustID(), ""));
 		}
 
 		String paymentMode = fsi.getPaymentMode();
 
-		if (paymentMode.equals(RepayConstants.RECEIPTMODE_RTGS) || paymentMode.equals(RepayConstants.RECEIPTMODE_NEFT)
-				|| paymentMode.equals(RepayConstants.RECEIPTMODE_IMPS)
-				|| paymentMode.equals(RepayConstants.RECEIPTMODE_ESCROW)) {
+		if (ReceiptMode.RTGS.equals(paymentMode) || ReceiptMode.NEFT.equals(paymentMode)
+				|| ReceiptMode.IMPS.equals(paymentMode) || ReceiptMode.ESCROW.equals(paymentMode)) {
 			if (fsi.getReceiptDetail() != null) {
-				if (receiptDetails != null && !receiptDetails.isEmpty()) {
-					for (FinReceiptDetail finReceiptDetail : receiptDetails) {
-						if (finReceiptDetail.getAmount().compareTo(fsi.getAmount()) == 0 && StringUtils.equals(
-								finReceiptDetail.getTransactionRef(), fsi.getReceiptDetail().getTransactionRef())) {
-							return true;
-						}
+				for (FinReceiptDetail rcd : rcdList) {
+					if (rcd.getAmount().compareTo(fsi.getAmount()) == 0 && StringUtils.equals(rcd.getTransactionRef(),
+							fsi.getReceiptDetail().getTransactionRef())) {
+						return true;
 					}
 				}
 			}
@@ -1101,55 +1127,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		APIErrorHandlerService.logReference(finReference);
 
-		FinODPenaltyRate odPenaltyRate = fsi.getFinODPenaltyRate();
-		if (odPenaltyRate != null) {
-			if (odPenaltyRate.isApplyODPenalty()) {
-				if (odPenaltyRate.getODChargeAmtOrPerc() == null) {
-					odPenaltyRate.setODChargeAmtOrPerc(BigDecimal.ZERO);
-				}
-				if (odPenaltyRate.getODMaxWaiverPerc() == null) {
-					odPenaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
-				}
-				if (odPenaltyRate.getODGraceDays() <= 0) {
-					return beanValidation("odGraceDays");
-				}
-				if (StringUtils.isBlank(odPenaltyRate.getODChargeType())) {
-					return beanValidation("odChargeType");
-				}
-				if (StringUtils.isBlank(odPenaltyRate.getODChargeCalOn())
-						&& StringUtils.equals(odPenaltyRate.getODChargeType(),
-								FinanceConstants.PENALTYTYPE_PERC_ONETIME)
-						|| StringUtils.equals(odPenaltyRate.getODChargeType(),
-								FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
-						|| StringUtils.equals(odPenaltyRate.getODChargeType(),
-								FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
-					return beanValidation("odChargeCalOn");
-				}
-				if (odPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) < 0) {
-					return beanValidation("odChargeAmtOrPerc");
-				}
-				if (odPenaltyRate.isODAllowWaiver()) {
-					if (odPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) < 0) {
-						return beanValidation("odMaxWaiverPerc");
-					}
-				}
-			} else {
-				if (odPenaltyRate.isODIncGrcDays() || StringUtils.isNotBlank(odPenaltyRate.getODChargeType())
-						|| StringUtils.isNotBlank(odPenaltyRate.getODChargeCalOn())
-						|| odPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) > 0
-						|| odPenaltyRate.isODAllowWaiver()) {
-					String[] valueParm = new String[1];
-					return APIErrorHandlerService.getFailedStatus("90315", valueParm);
-				}
-			}
-			if (StringUtils.equals(odPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_FLAT) || StringUtils
-					.equals(odPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
-				odPenaltyRate.setODChargeCalOn("");
-			}
-		} else {
-			return beanValidation("overdue");
-		}
-
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
 		if (finID != null) {
@@ -1167,6 +1144,106 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
+		}
+
+		FinanceMain fm = financeMainDAO.getFinBasicDetails(fsi.getFinID(), "");
+		FinODPenaltyRate finOd = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fsi.getFinID(), "");
+
+		FinODPenaltyRate odPenaltyRate = new FinODPenaltyRate();
+
+		FinODPenaltyRate pr = fsi.getFinODPenaltyRate();
+
+		if (pr == null) {
+			return beanValidation("overdue");
+		}
+
+		if (pr.isApplyODPenalty()) {
+			if (pr.getODChargeAmtOrPerc() == null) {
+				pr.setODChargeAmtOrPerc(BigDecimal.ZERO);
+			}
+
+			if (pr.getODMaxWaiverPerc() == null) {
+				pr.setODMaxWaiverPerc(BigDecimal.ZERO);
+			}
+
+			if (pr.getODGraceDays() <= 0) {
+				return beanValidation("odGraceDays");
+			}
+
+			if (StringUtils.isBlank(pr.getODChargeType())) {
+				return beanValidation("odChargeType");
+			}
+
+			if (StringUtils.isBlank(pr.getODChargeCalOn())
+					&& FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(pr.getODChargeType())
+					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(pr.getODChargeType())
+					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(pr.getODChargeType())) {
+				return beanValidation("odChargeCalOn");
+			}
+
+			if (pr.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) < 0) {
+				return beanValidation("odChargeAmtOrPerc");
+			}
+
+			if (pr.isODAllowWaiver()) {
+				if (pr.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) < 0) {
+					return beanValidation("odMaxWaiverPerc");
+				}
+			}
+
+			if (ProductUtil.isOverDraft(fm)) {
+				if (pr.getOverDraftExtGraceDays() < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "ExtnsnODGraceDays";
+					valueParm[1] = "or equal to Zero";
+					return getErrorDetails("91121", valueParm);
+				} else if (pr.getOverDraftExtGraceDays() > 0) {
+					odPenaltyRate.setOverDraftExtGraceDays(pr.getOverDraftExtGraceDays());
+				} else {
+					odPenaltyRate.setOverDraftExtGraceDays(finOd.getOverDraftExtGraceDays());
+				}
+
+				if (pr.getOverDraftColChrgFeeType() > 0) {
+					long id = feeTypeDAO.getManualAdviseFeeTypeById(pr.getOverDraftColChrgFeeType());
+					if (id > 0) {
+						odPenaltyRate.setOverDraftColChrgFeeType(pr.getOverDraftColChrgFeeType());
+					} else {
+						String[] valueParm = new String[2];
+						valueParm[0] = "CollecChrgCodeId: " + pr.getOverDraftColChrgFeeType();
+						valueParm[1] = "Receivable AdviseType";
+						return getErrorDetails("90329", valueParm);
+					}
+				} else {
+					odPenaltyRate.setOverDraftColChrgFeeType(finOd.getOverDraftColChrgFeeType());
+				}
+
+				if (pr.getOverDraftColAmt() == null) {
+					pr.setOverDraftColAmt(BigDecimal.ZERO);
+				}
+
+				if (pr.getOverDraftColAmt().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "CollectionAmt";
+					valueParm[1] = "Zero";
+					return getErrorDetails("91121", valueParm);
+				} else if (pr.getOverDraftColAmt().compareTo(BigDecimal.ZERO) > 0) {
+					odPenaltyRate.setOverDraftColAmt(pr.getOverDraftColAmt());
+
+				} else {
+					odPenaltyRate.setOverDraftColAmt(finOd.getOverDraftColAmt());
+				}
+			}
+		} else {
+			if (pr.isODIncGrcDays() || StringUtils.isNotBlank(pr.getODChargeType())
+					|| StringUtils.isNotBlank(pr.getODChargeCalOn())
+					|| pr.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) > 0 || pr.isODAllowWaiver()) {
+				String[] valueParm = new String[1];
+				return APIErrorHandlerService.getFailedStatus("90315", valueParm);
+			}
+		}
+		if (FinanceConstants.PENALTYTYPE_FLAT.equals(pr.getODChargeType())
+				|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(pr.getODChargeType())) {
+			pr.setODChargeCalOn("");
 		}
 
 		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
@@ -1192,25 +1269,24 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		// call service level validations which include business validations
-		FinODPenaltyRate finODPenaltyRate = new FinODPenaltyRate();
-		finODPenaltyRate.setFinID(finID);
-		finODPenaltyRate.setFinReference(finReference);
-		finODPenaltyRate.setApplyODPenalty(odPenaltyRate.isApplyODPenalty());
-		finODPenaltyRate.setODIncGrcDays(odPenaltyRate.isODIncGrcDays());
-		finODPenaltyRate.setODGraceDays(odPenaltyRate.getODGraceDays());
-		finODPenaltyRate.setODChargeType(odPenaltyRate.getODChargeType());
-		finODPenaltyRate.setODChargeCalOn(odPenaltyRate.getODChargeCalOn());
-		finODPenaltyRate.setODChargeAmtOrPerc(odPenaltyRate.getODChargeAmtOrPerc());
-		finODPenaltyRate.setODAllowWaiver(odPenaltyRate.isODAllowWaiver());
-		finODPenaltyRate.setODMaxWaiverPerc(odPenaltyRate.getODMaxWaiverPerc());
-		finODPenaltyRate.setFinEffectDate(SysParamUtil.getAppDate());
+		odPenaltyRate.setFinID(finID);
+		odPenaltyRate.setFinReference(finReference);
+		odPenaltyRate.setApplyODPenalty(pr.isApplyODPenalty());
+		odPenaltyRate.setODIncGrcDays(pr.isODIncGrcDays());
+		odPenaltyRate.setODGraceDays(pr.getODGraceDays());
+		odPenaltyRate.setODChargeType(pr.getODChargeType());
+		odPenaltyRate.setODChargeCalOn(pr.getODChargeCalOn());
+		odPenaltyRate.setODChargeAmtOrPerc(pr.getODChargeAmtOrPerc());
+		odPenaltyRate.setODAllowWaiver(pr.isODAllowWaiver());
+		odPenaltyRate.setODMaxWaiverPerc(pr.getODMaxWaiverPerc());
+		odPenaltyRate.setFinEffectDate(SysParamUtil.getAppDate());
 
-		returnStatus = validatefinODPenaltyRate(finODPenaltyRate);
+		returnStatus = validatefinODPenaltyRate(odPenaltyRate);
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
 
-		returnStatus = finServiceInstController.updateLoanPenaltyDetails(finODPenaltyRate);
+		returnStatus = finServiceInstController.updateLoanPenaltyDetails(odPenaltyRate);
 
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
@@ -1327,8 +1403,22 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			rd.setValueDate(rd.getReceivedDate());
 		}
 
+		if (fsi.getReceiptDetail().getReceivedDate() == null) {
+			fsi.getReceiptDetail().setReceivedDate(SysParamUtil.getAppDate());
+		}
+
 		fsi.setFinID(finID);
 		fsi.setReceivedDate(rd.getReceivedDate());
+		fsi.setNewReceipt(true);
+		
+		String paymentMode = fsi.getPaymentMode();
+		if (FinServiceEvent.SCHDRPY.equals(fsi.getModuleDefiner()) && fsi.getRealizationDate() == null
+				&& ReceiptMode.CHEQUE.equals(paymentMode) || ReceiptMode.DD.equals(paymentMode)) {
+			fsi.setRealizationDate(SysParamUtil.getAppDate());
+		} else {
+			fsi.setRealizationDate(fsi.getRealizationDate());
+		}
+
 		schdData.setFinServiceInstruction(fsi);
 
 		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
@@ -3035,6 +3125,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	@Override
 	public WSReturnStatus processFeeWaiver(FeeWaiverHeader feeWaiverHeader) throws ServiceException {
+		WSReturnStatus returnStatus = new WSReturnStatus();
+
 		FeeWaiverHeader feeWaiver = new FeeWaiverHeader();
 		List<FeeWaiverDetail> actaulfeeWaiverDetails = new ArrayList<>();
 
@@ -3105,38 +3197,37 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 		}
 
-		for (FeeWaiverDetail fwd : feeWaiver.getFeeWaiverDetails()) {
+		List<FeeWaiverDetail> feeWaiverDetails = feeWaiverHeader.getFeeWaiverDetails();
+		for (FeeWaiverDetail fwd : feeWaiverDetails) {
+			if (fwd.getBalanceAmount() != null && fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0) {
+				actaulfeeWaiverDetails.add(fwd);
+			}
+		}
+
+		feeWaiver.setFeeWaiverDetails(actaulfeeWaiverDetails);
+
+		if (feeWaiver.getFeeWaiverDetails().size() != feeWaiverDetails.size()) {
+			String valueParm[] = new String[4];
+			valueParm[0] = "FeeType Codes";
+			valueParm[1] = "Should";
+			valueParm[2] = "be Matched With Existing: ";
+			valueParm[3] = finReference;
+			returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+			return returnStatus;
+		}
+
+		for (FeeWaiverDetail fwd : feeWaiverDetails) {
 			if (StringUtils.isBlank(fwd.getFeeTypeCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FeeType Code";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
-			if (fwd.getCurrWaiverAmount() == null || fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) < 0) {
+			if (fwd.getCurrWaiverAmount() == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "WaiverAmount";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
-
-			if (fwd.getBalanceAmount() != null && fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0) {
-				actaulfeeWaiverDetails.add(fwd);
-			}
 		}
-		// Setting the actual feewaiver values to the feewaiver
-		feeWaiver.setFeeWaiverDetails(actaulfeeWaiverDetails);
-
-		int actualFeeTypeCode = feeWaiver.getFeeWaiverDetails().size();
-		int feeTypeCode = feeWaiverHeader.getFeeWaiverDetails().size();
-		if (actualFeeTypeCode != feeTypeCode) {
-			String[] valueParm = new String[4];
-			valueParm[0] = "FeeType Codes";
-			valueParm[1] = "Should";
-			valueParm[2] = "be Matched With Existing: ";
-			valueParm[3] = finReference;
-			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-		}
-
-		List<FeeWaiverDetail> feeWaiverDetails = feeWaiverHeader.getFeeWaiverDetails();
-
 		// Validating The Waiver amount with the Balance
 
 		BigDecimal totCurWaivedAmt = BigDecimal.ZERO;
@@ -3255,6 +3346,318 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		logger.info(Literal.LEAVING);
 		return financeDetail;
+	}
+
+	@Override
+	public WSReturnStatus reqCashierEntry(CollectionAccountReq car) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
+		return doCollectionProcess(car.getCollectionAccountDetailList(), AccountingEvent.COL2CSH);
+	}
+
+	@Override
+	public WSReturnStatus reqCashDeposit(CollectionAccountReq car) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
+		return doCollectionProcess(car.getCollectionAccountDetailList(), AccountingEvent.CSH2BANK);
+	}
+
+	private WSReturnStatus doCollectionProcess(List<CollectionAccountDetails> collDetails, String type) {
+		if (CollectionUtils.isEmpty(collDetails)) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "CollectionAccountDetailList";
+
+			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+		}
+
+		for (CollectionAccountDetails detail : collDetails) {
+			String finReference = detail.getFinReference();
+			if (StringUtils.isBlank(finReference)) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "Finreference";
+
+				return APIErrorHandlerService.getFailedStatus("90502", new String[] { "Finreference" });
+			}
+
+			long receiptId = detail.getReceiptId();
+			if (receiptId <= 0) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "receipt Id";
+
+				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+			}
+
+			if ((detail.getPartnerBankId() == null || detail.getPartnerBankId() <= 0)
+					&& AccountingEvent.CSH2BANK.equals(type)) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "PartnerBankId";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+			}
+
+			if (!finReceiptHeaderDAO.isReceiptExistsByOnlineAndMob(finReference, receiptId)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "FinReference" + finReference;
+				valueParm[1] = "ReceiptId" + receiptId + "Combination";
+
+				return APIErrorHandlerService.getFailedStatus("41002", valueParm);
+			}
+
+			if (detail.getPartnerBankId() != null && detail.getPartnerBankId() > 0) {
+				String finType = financeMainDAO.getFinanceType(detail.getFinID(), TableType.MAIN_TAB);
+
+				FinReceiptHeader rh = finReceiptHeaderDAO.getReceiptHeader(detail.getReceiptId());
+
+				int count = finTypePartnerBankService.getPartnerBankCount(finType, rh.getReceiptMode(),
+						AccountConstants.PARTNERSBANK_RECEIPTS, detail.getPartnerBankId());
+				if (count <= 0) {
+					return APIErrorHandlerService.getFailedStatus("90263");
+				}
+			}
+
+			if (collectionAPIDetailDAO.isEntryExists(receiptId, type)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "This Event entry is";
+				valueParm[1] = "ReceiptId : " + receiptId;
+
+				return APIErrorHandlerService.getFailedStatus("41018", valueParm);
+			}
+
+			if (StringUtils.isNotBlank(detail.getModuleType()) && detail.getModuleType().length() > 10) {
+				String[] valueParm = new String[2];
+				valueParm[0] = " moduleType";
+				valueParm[1] = " 10";
+
+				return APIErrorHandlerService.getFailedStatus("90300", valueParm);
+			}
+
+			return finServiceInstController.reqCashierEntry(detail, type);
+		}
+
+		return APIErrorHandlerService.getFailedStatus();
+	}
+
+	@Override
+	public WSReturnStatus saveCollectionDetais(CollectionAccountDetails cad) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		String finReference = cad.getFinReference();
+
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "Finreference";
+
+			return APIErrorHandlerService.getFailedStatus("90502", new String[] { "Finreference" });
+		}
+
+		long receiptId = cad.getReceiptId();
+		if (receiptId <= 0) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "receipt Id";
+
+			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+		}
+
+		if (!finReceiptHeaderDAO.isReceiptExistsByOnlineAndMob(finReference, receiptId)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "FinReference : " + finReference;
+			valueParm[1] = "ReceiptId : " + receiptId + "Combination";
+
+			return APIErrorHandlerService.getFailedStatus("41002", valueParm);
+		}
+
+		FinReceiptHeader frh = finReceiptHeaderDAO.getReceiptHeader(receiptId);
+		if (frh.getReceiptAmount().compareTo(cad.getAmount()) != 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "ReceiptId : " + receiptId;
+			valueParm[1] = "Amount : " + cad.getAmount() + "Combination";
+
+			return APIErrorHandlerService.getFailedStatus("41002", valueParm);
+		}
+
+		CollectionAPIDetail cpd = new CollectionAPIDetail();
+		cpd.setFinReference(finReference);
+		cpd.setReceiptID(receiptId);
+		cpd.setServiceName("Collection");
+		APIHeader hdr = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_HEADER_KEY);
+		cpd.setApiID(hdr.getSeqId());
+
+		try {
+			collectionAPIDetailDAO.save(cpd);
+		} catch (Exception e) {
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		return APIErrorHandlerService.getSuccessStatus();
+	}
+
+	private WSReturnStatus setOverdraftDetails(FinServiceInstruction fsi, FinanceMain fm) {
+		FinanceMain overDraft = overdraftLoanDAO.getLoanBasicDetails(fsi.getFinID());
+
+		if (overDraft == null) {
+			return null;
+		}
+
+		fm.setProductCategory(overDraft.getProductCategory());
+
+		if (fsi.isOverdraftTxnChrgReq()) {
+			WSReturnStatus status = setOverdrafTxnCharges(fsi, fm, overDraft);
+
+			if (status != null) {
+				return status;
+			}
+		} else {
+			if ((StringUtils.isNotBlank(fsi.getOverdraftCalcChrg())) || (fsi.getOverdraftChrgAmtOrPerc()) == null
+					|| (StringUtils.isNotBlank(fsi.getOverdraftChrCalOn()))) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Transaction Charge is not selected,ChargeDetails";
+
+				return getErrorDetails("RU0039", valueParm);
+			}
+		}
+
+		if ((fsi.getFinAssetValue() == null) || (fsi.getFinAssetValue()).compareTo(BigDecimal.ZERO) <= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "FinAssetValue";
+			valueParm[1] = "Zero";
+
+			return getErrorDetails("91121", valueParm);
+		} else {
+			fm.setFinAssetValue(fsi.getFinAssetValue());
+		}
+
+		if (fsi.getNumberOfTerms() <= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "NumberOfTerms";
+			valueParm[1] = "Zero";
+
+			return getErrorDetails("91121", valueParm);
+		} else {
+			fm.setNumberOfTerms(fsi.getNumberOfTerms());
+		}
+
+		if (StringUtils.isNotBlank(fsi.getRepayFrq())) {
+			ErrorDetail errorDetail = FrequencyUtil.validateFrequency(fsi.getRepayFrq());
+			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = fsi.getRepayFrq();
+
+				return getErrorDetails("91123", valueParm);
+			} else {
+				fm.setRepayFrq(fsi.getRepayFrq());
+			}
+		} else {
+			fm.setRepayFrq(overDraft.getRepayFrq());
+		}
+
+		return null;
+	}
+
+	private WSReturnStatus setOverdrafTxnCharges(FinServiceInstruction fsi, FinanceMain fm, FinanceMain overDraft) {
+		fm.setOverdraftTxnChrgReq(true);
+
+		if (StringUtils.isNotBlank(fsi.getOverdraftCalcChrg())) {
+			String odCalCharge = fsi.getOverdraftCalcChrg();
+			List<ValueLabel> odCalChargeFor = PennantStaticListUtil.getOverdraftCalcChrg();
+			boolean isodCalChargeForfor = false;
+
+			for (ValueLabel value : odCalChargeFor) {
+				if (StringUtils.equals(value.getValue(), odCalCharge)) {
+					isodCalChargeForfor = true;
+					break;
+				}
+			}
+
+			if (!isodCalChargeForfor) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "oDCalculatedCharge";
+				valueParm[1] = FinanceConstants.FIXED_AMOUNT + "," + FinanceConstants.PERCENTAGE;
+				return getErrorDetails("90281", valueParm);
+			}
+
+			fm.setOverdraftCalcChrg(fsi.getOverdraftCalcChrg());
+		} else {
+			fm.setOverdraftCalcChrg(overDraft.getOverdraftCalcChrg());
+		}
+
+		if (fsi.getOverdraftChrgAmtOrPerc() == null) {
+			fsi.setOverdraftChrgAmtOrPerc(BigDecimal.ZERO);
+		}
+
+		if (StringUtils.isNotBlank(fsi.getOverdraftCalcChrg())
+				&& ((fsi.getOverdraftChrgAmtOrPerc()).compareTo(BigDecimal.ZERO) <= 0)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "oDChargeAmtOrPerc";
+			valueParm[1] = "Zero";
+			return getErrorDetails("91121", valueParm);
+		} else if ((fsi.getOverdraftChrgAmtOrPerc()).compareTo(BigDecimal.ZERO) > 0) {
+			fm.setOverdraftChrgAmtOrPerc(fsi.getOverdraftChrgAmtOrPerc());
+		} else {
+			fm.setOverdraftChrgAmtOrPerc(overDraft.getOverdraftChrgAmtOrPerc());
+		}
+
+		if (StringUtils.isNotBlank(fsi.getOverdraftChrCalOn())) {
+			String oDChargeCalOn = fsi.getOverdraftChrCalOn();
+			List<ValueLabel> oDChargeCalOnList = PennantStaticListUtil.getODChargeCalculatedOn();
+			boolean isoDChargeCalOn = false;
+			for (ValueLabel value : oDChargeCalOnList) {
+				if (StringUtils.equals(value.getValue(), oDChargeCalOn)) {
+					isoDChargeCalOn = true;
+					break;
+				}
+			}
+			if (!isoDChargeCalOn) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "oDChargeCalOn";
+				valueParm[1] = FinanceConstants.OD_TRANCHE_AMOUNT;
+				return getErrorDetails("90281", valueParm);
+			}
+
+			fm.setOverdraftChrCalOn(fsi.getOverdraftChrCalOn());
+		} else {
+			fm.setOverdraftChrCalOn(overDraft.getOverdraftChrCalOn());
+		}
+
+		return null;
+	}
+
+	@Override
+	public WSReturnStatus updateUTRNum(ReceiptTransaction transaction) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		String finReference = transaction.getFinReference();
+		long receiptId = transaction.getReceiptId();
+
+		if (StringUtils.isBlank(finReference)) {
+			return APIErrorHandlerService.getFailedStatus("90502", "FinReference");
+		}
+
+		if (transaction.getReceiptId() <= 0) {
+			return APIErrorHandlerService.getFailedStatus("90502", "ReceiptId");
+		}
+
+		String utrNumber = transaction.getUtrNumber();
+		if ((StringUtils.isBlank(utrNumber)) && utrNumber.length() > 50) {
+			return APIErrorHandlerService.getFailedStatus("90502", "UTRNumber length should be less than 50");
+		}
+
+		if (finReceiptHeaderDAO.isReceiptExists(finReference, receiptId) <= 0) {
+			String errorDesc = "Receipt ID is not matching with the loan reference";
+			return APIErrorHandlerService.getFailedStatus("90502", errorDesc);
+		}
+
+		String receiptMode = finReceiptHeaderDAO.getReceiptMode(receiptId);
+		transaction.setReceiptMode(receiptMode);
+		int recordCount = finReceiptHeaderDAO.updateUTRNum(receiptId, utrNumber, receiptMode);
+
+		finReceiptHeaderDAO.updateReceiptHeader(receiptId, utrNumber);
+
+		if (recordCount <= 0) {
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		logger.debug(Literal.LEAVING);
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 	@Autowired
@@ -3476,4 +3879,35 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public void setRestructureService(RestructureService restructureService) {
 		this.restructureService = restructureService;
 	}
+
+	@Autowired
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	@Autowired
+	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
+		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	@Autowired
+	public void setCollectionAPIDetailDAO(CollectionAPIDetailDAO collectionAPIDetailDAO) {
+		this.collectionAPIDetailDAO = collectionAPIDetailDAO;
+	}
+
+	@Autowired
+	public void setOverdraftLoanDAO(OverdraftLoanDAO overdraftLoanDAO) {
+		this.overdraftLoanDAO = overdraftLoanDAO;
+	}
+
+	@Autowired
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+
 }

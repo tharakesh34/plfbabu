@@ -130,6 +130,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private String policyNumber;
 	private boolean medicalApplicable;
 	private String medicalStatus;
+	private BigDecimal calFeeAmt = BigDecimal.ZERO;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -275,6 +276,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 		entity.setManualAdviseId(this.manualAdviseId);
 		entity.setPaymentInsId(this.paymentInsId);
 		entity.setReceivableAdviseId(this.receivableAdviseId);
+		entity.setCalFeeAmt(this.calFeeAmt);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -334,6 +336,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 		excludeFields.add("medicalApplicable");
 		excludeFields.add("medicalStatus");
 		excludeFields.add("insStatus");
+		excludeFields.add("calFeeAmt");
 		return excludeFields;
 	}
 
@@ -1004,4 +1007,11 @@ public class VASRecording extends AbstractWorkflowEntity {
 		this.insStatus = insStatus;
 	}
 
+	public BigDecimal getCalFeeAmt() {
+		return calFeeAmt;
+	}
+
+	public void setCalFeeAmt(BigDecimal calFeeAmt) {
+		this.calFeeAmt = calFeeAmt;
+	}
 }

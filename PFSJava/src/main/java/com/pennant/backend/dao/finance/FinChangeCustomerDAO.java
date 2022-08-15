@@ -38,4 +38,5 @@ public interface FinChangeCustomerDAO extends BasicCrudDao<FinChangeCustomer> {
 
 	void deleteByReference(long finID);
 
+	void deleteByReference(String finReference);
 }

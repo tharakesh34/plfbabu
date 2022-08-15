@@ -134,10 +134,11 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 			FinanceProfitDetail pfd = this.rescheduleReportGenerationDAO.getProfitDetail(instruction.getFinID());
 
 			for (FinanceScheduleDetail curSchd : schdDetails) {
+				String BpiorHoliday = curSchd.getBpiOrHoliday() == null ? "" : curSchd.getBpiOrHoliday();
 				if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
-					if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))
+					if ((curSchd.isFrqDate() && !isHoliday(StringUtils.trimToEmpty(BpiorHoliday)))
 							|| curSchd.getSchDate().compareTo(pfd.getMaturityDate()) == 0) {
-						if (!FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())) {
+						if (!FinanceConstants.FLAG_BPI.equals(BpiorHoliday)) {
 							count++;
 						}
 					}
@@ -174,9 +175,10 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 
 		for (FinanceScheduleDetail curSchd : schdDetails) {
 			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
-				if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))
+				String BpiorHoliday = curSchd.getBpiOrHoliday() == null ? "" : curSchd.getBpiOrHoliday();
+				if ((curSchd.isFrqDate() && !isHoliday(StringUtils.trimToEmpty(BpiorHoliday)))
 						|| curSchd.getSchDate().compareTo(pfd.getMaturityDate()) == 0) {
-					if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+					if (!StringUtils.equals(BpiorHoliday, FinanceConstants.FLAG_BPI)) {
 						count++;
 					}
 				}

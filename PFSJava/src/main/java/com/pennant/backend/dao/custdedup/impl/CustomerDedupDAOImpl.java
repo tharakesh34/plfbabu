@@ -2,6 +2,7 @@ package com.pennant.backend.dao.custdedup.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.model.customermasters.CustomerDedup;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -153,15 +155,38 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		});
 	}
 
+	public List<String> getExtendedField(String subModuleName) {
+		if (subModuleName == null) {
+			return new ArrayList<>();
+		}
+
+		String sql = "Select Count(ModuleName) from ExtendedFieldHeader where ModuleName = ? and SubModuleName = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		if (this.jdbcOperations.queryForObject(sql, Integer.class, "CUSTOMER", subModuleName) > 0) {
+			sql = "Select FieldName From ExtendedFieldDetail Where ModuleId In (Select moduleId From ExtendedFieldHeader where ModuleName = ?  and SubModuleName = ?) and InputElement = ?";
+
+			logger.debug(Literal.SQL + sql);
+
+			return this.jdbcOperations.query(sql, ps -> {
+				ps.setString(1, "CUSTOMER");
+				ps.setString(2, subModuleName);
+				ps.setInt(3, 1);
+			}, (rs, rowNum) -> {
+				return rs.getString(1);
+			});
+		}
+
+		return new ArrayList<>();
+	}
+
+	/**
+	 * Fetched the Dedup Fields if Dedup Exist for a Customer
+	 *
+	 */
 	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup, String sqlQuery) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustId, CustCIF, CustFName, CustLName, CustCRCPR, CustPassportNo, CustShrtName");
-		sql.append(", CustDOB, CustNationality, MobileNumber, CustCtgCode, CustDftBranch, CustSector");
-		sql.append(", CustSubSector, AadharNumber, PanNumber, CustEMail");
-		/* Below columns are not available in Bean */
-		sql.append(", CustTypeCode, SubCategory, CasteId, ReligionId, CasteCode");
-		sql.append(", CasteDesc, ReligionCode, ReligionDesc, lovdescCustCtgType");
-		sql.append(" from CustomersDedup_View ");
+		StringBuilder sql = getSelectQuery(dedup, false);
 
 		if (!StringUtils.isBlank(sqlQuery)) {
 			sql.append(StringUtils.trimToEmpty(sqlQuery));
@@ -171,33 +196,12 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		}
 		sql.append(" CustId != :CustId");
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
+		BeanPropertyRowMapper<CustomerDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDedup.class);
 
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, (rs, rowNum) -> {
-			CustomerDedup cd = new CustomerDedup();
-
-			cd.setCustId(rs.getLong("CustId"));
-			cd.setCustCIF(rs.getString("CustCIF"));
-			cd.setCustFName(rs.getString("CustFName"));
-			cd.setCustLName(rs.getString("CustLName"));
-			cd.setCustCRCPR(rs.getString("CustCRCPR"));
-			cd.setCustPassportNo(rs.getString("CustPassportNo"));
-			cd.setCustShrtName(rs.getString("CustShrtName"));
-			cd.setCustDOB(rs.getTimestamp("CustDOB"));
-			cd.setCustNationality(rs.getString("CustNationality"));
-			cd.setMobileNumber(rs.getString("MobileNumber"));
-			cd.setCustCtgCode(rs.getString("CustCtgCode"));
-			cd.setCustDftBranch(rs.getString("CustDftBranch"));
-			cd.setCustSector(rs.getString("CustSector"));
-			cd.setCustSubSector(rs.getString("CustSubSector"));
-			cd.setAadharNumber(rs.getString("AadharNumber"));
-			cd.setPanNumber(rs.getString("PanNumber"));
-			cd.setCustEMail(rs.getString("CustEMail"));
-
-			return cd;
-		});
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -225,5 +229,97 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
+	}
+
+	@Override
+	public StringBuilder getSelectQuery(CustomerDedup dedup, boolean blackList) {
+		StringBuilder sql = new StringBuilder();
+
+		String table = "CUSTOMER_" + dedup.getCustCtgCode() + "_ED";
+
+		List<String> extFields = getExtendedField(dedup.getCustCtgCode());
+
+		sql.append("Select ");
+		if (blackList) {
+			sql.append(PennantConstants.CUST_DEDUP_LIST_FIELDS);
+		} else {
+			sql.append(" * ");
+		}
+
+		sql.append(" From (");
+		sql.append(getQuery(extFields, table, "_Temp"));
+		sql.append(" Union All ");
+		sql.append(getQuery(extFields, table, ""));
+		sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = t1.CustID )) T ");
+		return sql;
+	}
+
+	private String getQuery(List<String> extFields, String table, String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select Distinct t1.CustId, t1.CustCIF, t1.CustFName, t1.CustLName, t1.CustCRCPR");
+		sql.append(", cdpp.CustDocTitle CustPassportNo, t1.CustShrtName, t1.CustDOB, t1.CustNationality");
+		sql.append(", coalesce (case when t1.PhoneNumber = ' ' then null else t1.PhoneNumber end");
+		sql.append(", t7.PhoneNumber) MobileNumber, t1.CustCtgCode, t1.CustDftBranch, t1.CustTypeCode");
+		sql.append(", t1.CustSector, t1.CustSubSector, t1.SubCategory, t1.CasteID, t1.ReligionID, t3.CasteCode");
+		sql.append(", t3.CasteDesc, t4.ReligionCode, t4.ReligionDesc, t2.CustTypeCtg LovDescCustCtgType");
+		sql.append(", cda.CustDocTitle AadharNumber, cdp.CustDocTitle PanNumber, t6.CustEmail");
+		sql.append(", cdv.CustDocTitle VoterID, cdd.CustDocTitle DrivingLicenceNo, t1.CustShrtName CustCompName");
+
+		StringBuilder extendedFields = filterSqlColumns(extFields, sql);
+		sql.append(extendedFields.toString());
+
+		sql.append(" From Customers");
+		sql.append(type);
+		sql.append(" t1 Left Join RMTCustTypes t2 on t1.CustTypeCode = t2.CustTypeCode");
+		sql.append(" Left Join Caste t3 on t1.CasteID = t3.CasteID");
+		sql.append(" Left Join Religion t4 on t1.ReligionID = t4.ReligionID");
+		sql.append(" Left Join CustomerDocuments cda on cda.CustID = t1.CustID and (cda.custdoccategory = ANY");
+		sql.append(getMasterDefQuery("AADHAAR"));
+		sql.append(" LEFT JOIN CustomerDocuments cdp ON cdp.custid = t1.custid and (cdp.custdoccategory = ANY");
+		sql.append(getMasterDefQuery("PAN"));
+		sql.append(" LEFT JOIN CustomerDocuments cdpp ON cdpp.custid = t1.custid and (cdpp.custdoccategory = ANY");
+		sql.append(getMasterDefQuery("PASSPORT"));
+		sql.append(" LEFT JOIN CustomerDocuments cdv ON cdv.custid = t1.custid and (cdv.custdoccategory = ANY");
+		sql.append(getMasterDefQuery("VOTERID"));
+		sql.append(" LEFT JOIN CustomerDocuments cdd ON cdd.custid = t1.custid and (cdd.custdoccategory = ANY");
+		sql.append(getMasterDefQuery("DLNO"));
+		sql.append(" LEFT JOIN  CustomerEmails t6 ON t1.custid = t6.custid AND t6.custemailpriority = 5");
+		sql.append(" LEFT JOIN  CustomerPhonenumbers t7 ON t1.custid = t7.phonecustid");
+
+		if (extendedFields.length() > 0) {
+			sql.append(" INNER JOIN ");
+			sql.append(table);
+			sql.append(type);
+			sql.append(" t8 ON t1.custCif = t8.reference");
+		}
+
+		return sql.toString();
+	}
+
+	private StringBuilder filterSqlColumns(List<String> extendedFields, StringBuilder sql) {
+		List<String> extFields = new ArrayList<>();
+
+		if (!extendedFields.isEmpty()) {
+			for (String column : extendedFields) {
+				if (!sql.toString().toUpperCase().contains(column)) {
+					extFields.add(column);
+				}
+			}
+		}
+
+		StringBuilder extendedField = new StringBuilder();
+		extFields.forEach(field -> extendedField.append(", t8.").append(field));
+
+		return extendedField;
+	}
+
+	private String getMasterDefQuery(String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" (Select master_def.key_code FROM master_def");
+		sql.append(" Where master_def.master_type = 'DOC_TYPE' and master_def.key_type = '");
+		sql.append(type);
+		sql.append("'))");
+
+		return sql.toString();
 	}
 }

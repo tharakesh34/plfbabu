@@ -3,6 +3,7 @@ package com.pennant.webui.finance.additional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -47,6 +49,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.LoanDownSizingService;
@@ -99,6 +102,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Textbox maturityDate;
 	protected Textbox currency;
 	protected Button btnValidate;
+	protected Row row_cpzIntAmt;
+	protected CurrencyBox cpzIntAmt;
 
 	protected transient BigDecimal oldVar_DownSizingAmt;
 
@@ -222,7 +227,32 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (financeMain != null) {
 			finAssetValue = PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(), formatter);
 			finCurrAssetValue = PennantApplicationUtil.formateAmount(financeMain.getFinCurrAssetValue(), formatter);
-			finAvailableAmt = finAssetValue.subtract(finCurrAssetValue);
+			if (financeMain.isStepFinance()
+					&& StringUtils.equals(financeMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
+				this.row_cpzIntAmt.setVisible(true);
+				this.cpzIntAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+				this.cpzIntAmt.setScale(formatter);
+				BigDecimal tdCPZAmount = BigDecimal.ZERO;
+				if (getFinanceDetail() != null) {
+					List<FinanceScheduleDetail> fsdList = getFinanceDetail().getFinScheduleData()
+							.getFinanceScheduleDetails();
+					Date maturityDate = financeMain.getMaturityDate();
+					for (FinanceScheduleDetail fsd : fsdList) {
+						if (fsd.isCpzOnSchDate() && fsd.getSchDate().compareTo(maturityDate) <= 0) {
+							tdCPZAmount = tdCPZAmount.add(fsd.getCpzAmount());
+						} else if (fsd.isCpzOnSchDate()
+								&& (StringUtils.equals(fsd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)
+										|| StringUtils.equals(fsd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI))) {
+							tdCPZAmount = tdCPZAmount.add(fsd.getCpzAmount());
+						}
+					}
+				}
+				tdCPZAmount = PennantApplicationUtil.formateAmount(tdCPZAmount, formatter);
+				finAvailableAmt = finAssetValue.subtract(finCurrAssetValue).subtract(tdCPZAmount);
+				this.cpzIntAmt.setValue(tdCPZAmount);
+			} else {
+				finAvailableAmt = finAssetValue.subtract(finCurrAssetValue);
+			}
 		}
 
 		this.totSanctionedAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
@@ -531,7 +561,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		if (financeMain.isAllowGrcPeriod()) {
+		if (financeMain.isAllowGrcPeriod()
+				|| (!financeMain.isStepFinance() && financeMain.isEndGrcPeriodAftrFullDisb())) {
 			if ((prvAvlAmt.compareTo(BigDecimal.ZERO) == 0 && curAvlAmt.compareTo(BigDecimal.ZERO) > 0)
 					|| (prvAvlAmt.compareTo(BigDecimal.ZERO) > 0 && curAvlAmt.compareTo(BigDecimal.ZERO) == 0)) {
 
@@ -1003,7 +1034,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		isDownsizeError = false;
 		if (!recSave && finAvailableAmt.compareTo(this.downSizingAmt.getActualValue()) == 0
-				&& aFinanceMain.isAllowGrcPeriod()) {
+				&& aFinanceMain.isAllowGrcPeriod()
+				|| (!financeMain.isStepFinance() && aFinanceMain.isEndGrcPeriodAftrFullDisb())) {
 
 			// For Under Construction, End Grace / PRE EMI Period After Full Disbursement
 			aFinScheduleData = getLoanDownSizingService().changeGraceEndAfterFullDisb(aFinScheduleData);

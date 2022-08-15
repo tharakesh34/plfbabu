@@ -102,15 +102,9 @@
 										maxlength="2" />
 								</hbox>
 								
-								<label value="${c:l('label_AssetClassificationHeaderDialog_FinType.value')}" />
+								<label value="${c:l('label_AssetClassificationHeaderDialog_NPAType.value')}" />
 								<hbox>
-									<space id="space_FinType"
-										spacing="2px" sclass="mandatory" />
-									<textbox id="finType" width="275px"
-										readonly="true" />
-									<button id="btnFinType"
-										image="/images/icons/LOVSearch.png" />
-									<label id="lable_TempleteCode"/>
+									<extendedcombobox id="npaTemplateType" />
 								</hbox>
 							</row>
 							

@@ -45,7 +45,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.model.finance.ChequeDetail;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -56,6 +55,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 /**
  * Data access layer implementation for <code>ChequeDetail</code> with set of CRUD operations.
@@ -200,7 +200,12 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 
 		boolean exists = false;
 		if (count > 0) {
-			exists = true;
+			if (isActiveChequeDetails(chequeDetailsID, bankBranchID, accountNo, chequeSerialNo)) {
+				exists = true;
+			}
+			if (isNonActiveChequeDetails(chequeDetailsID, bankBranchID, accountNo, chequeSerialNo)) {
+				exists = true;
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -430,5 +435,45 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.queryForObject(sql, Integer.class, headerID, JdbcUtil.getDate(chequeDate)) > 0;
+	}
+
+	private boolean isActiveChequeDetails(long chequeDetailsID, long bankBranchID, String accountNo,
+			int chequeSerialNo) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Count(*) from CHEQUEHEADER ch");
+		sql.append(" Inner join CHEQUEDETAIL cd on cd.HeaderID = ch.HeaderID");
+		sql.append(" Inner join FinanceMain fm on fm.FinReference = ch.FinReference");
+		sql.append(" Where cd.BankBranchID = ? and cd.AccountNo = ? and cd.ChequeSerialNo = ?");
+		sql.append(" and cd.ChequeDetailsID != ?");
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(),
+					Integer.class, bankBranchID, accountNo, String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
+		} catch (Exception e) {
+			//
+		}
+
+		return false;
+	}
+
+	private boolean isNonActiveChequeDetails(long chequeDetailsID, long bankBranchID, String accountNo,
+			int chequeSerialNo) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Count(*) from CHEQUEHEADER_TEMP ch");
+		sql.append(" Inner join CHEQUEDETAIL_TEMP cd on cd.HeaderID = ch.HeaderID");
+		sql.append(" Inner join FinanceMain_TEMP fm on fm.FinReference = ch.FinReference");
+		sql.append(" Where cd.BankBranchID = ? and cd.AccountNo = ? and cd.ChequeSerialNo = ?");
+		sql.append(" and cd.ChequeDetailsID != ?");
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(),
+					Integer.class, bankBranchID, accountNo, String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
+		} catch (Exception e) {
+			//
+		}
+
+		return false;
 	}
 }

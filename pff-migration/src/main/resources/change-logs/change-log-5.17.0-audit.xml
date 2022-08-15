@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<!-- ST#3546 :: NPA & Provision Enhancements changes start -->
+	
+	<changeSet id="ST#3546.1" author="nagavamsi.p">
+		<createTable tableName="ADTASSET_CLASS_CODES">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.2" author="nagavamsi.p">
+		<createTable tableName="ADTASSET_SUB_CLASS_CODES">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AssetClassID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.3" author="nagavamsi.p">
+		<createTable tableName="ADTASSET_CLASS_SETUP_HEADER">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RepayHierarchy" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#3546.3.1" author="nagavamsi.p">
+		<addPrimaryKey tableName="ADTASSET_CLASS_SETUP_HEADER" columnNames="AuditID, AuditDate, AuditSeq, AuditImage" constraintName="pk_adt_acsh" />
+	</changeSet>
+
+	<changeSet id="ST#3546.3.2" author="nagavamsi.p">
+		<createTable tableName="ADTASSET_CLASS_SETUP_DETAILS">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SetupID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DPDMin" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DPDMax" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ClassID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SubClassID" type="bigint">
+			</column>
+			<column name="NPAStage" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="NPAAge" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.3.3" author="nagavamsi.p">
+		<addPrimaryKey tableName="ADTASSET_CLASS_SETUP_DETAILS" columnNames="AuditID, AuditDate, AuditSeq, AuditImage" constraintName="pk_adt_acsd" />
+	</changeSet>
+
+	<changeSet id="ST#3546.4" author="nagavamsi.p">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="RegProvRule" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3546.5" author="nagavamsi.p">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="IntProvRule" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3546.6.1" author="Gopal.p">
+		<createTable tableName="ADTLOAN_PROVISIONS">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProvisionDate" type="datetime" />
+			<column name="ManualProvision" type="smallint" />
+			<column name="RegProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegUnSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegUnSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotRegProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntUnSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntUnSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotIntProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ManProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ManProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDays" type="int" />
+			<column name="NpaPastDueDays" type="int" />
+			<column name="EffNpaPastDueDays" type="int" />
+			<column name="NpaAging" type="int" />
+			<column name="EffNpaAging" type="int" />
+			<column name="NpaClassID" type="bigint" />
+			<column name="EffNpaClassID" type="bigint" />
+			<column name="OsPrincipal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OSProfit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OdPrincipal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OdProfit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProfitAccruedAndDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProfitAccruedAndNotDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CollateralAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="InsuranceAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LinkedTranId" type="bigint" />
+			<column name="ChgLinkedTranId" type="bigint" />
+			<column name="ManualClassification" type="boolean" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.6.2" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_REGPROVSNAMT DEFAULT 0 FOR REGPROVSNAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_REGSECPROVSNAMT DEFAULT 0 FOR REGSECPROVSNAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_REGUNSECPROVSNAMT DEFAULT 0 FOR REGUNSECPROVSNAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_TOTREGPROVSNAMT DEFAULT 0 FOR TOTREGPROVSNAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_INTPROVSNAMT DEFAULT 0 FOR INTPROVSNAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_INTSECPROVSNAMT DEFAULT 0 FOR INTSECPROVSNAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_INTUNSECPROVSNAMT DEFAULT 0 FOR INTUNSECPROVSNAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_TOTINTPROVSNAMT DEFAULT 0 FOR TOTINTPROVSNAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_MANPROVSNAMT DEFAULT 0 FOR MANPROVSNAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_OSPRINCIPAL DEFAULT 0 FOR OSPRINCIPAL;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_OSPROFIT DEFAULT 0 FOR OSPROFIT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_ODPRINCIPAL DEFAULT 0 FOR ODPRINCIPAL;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_ODPROFIT DEFAULT 0 FOR ODPROFIT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_PROFITACCRUEDANDDUE DEFAULT 0 FOR PROFITACCRUEDANDDUE;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_PROFITACCRUEDANDNOTDUE DEFAULT 0 FOR PROFITACCRUEDANDNOTDUE;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_COLLATERALAMT DEFAULT 0 FOR COLLATERALAMT;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_INSURANCEAMT DEFAULT 0 FOR INSURANCEAMT;
+				
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_PASTDUEDAYS DEFAULT 0 FOR PASTDUEDAYS;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_NPAAGING DEFAULT 0 FOR NPAAGING;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_EFFNPAAGING DEFAULT 0 FOR EFFNPAAGING;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_NPAPASTDUEDAYS DEFAULT 0 FOR NPAPASTDUEDAYS;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_EFFNPAPASTDUEDAYS DEFAULT 0 FOR EFFNPAPASTDUEDAYS;
+				
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_REGPROVSNPER DEFAULT 0 FOR REGPROVSNPER;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_REGSECPROVSNPER DEFAULT 0 FOR REGSECPROVSNPER;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_REGUNSECPROVSNPER DEFAULT 0 FOR REGUNSECPROVSNPER;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_INTPROVSNPER DEFAULT 0 FOR INTPROVSNPER;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_INTSECPROVSNPER DEFAULT 0 FOR INTSECPROVSNPER;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_INTUNSECPROVSNPER DEFAULT 0 FOR INTUNSECPROVSNPER;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_MANPROVSNPER DEFAULT 0 FOR MANPROVSNPER;
+				ALTER TABLE ADTLOAN_PROVISIONS ADD CONSTRAINT DF_ALP_MANUALCLASSIFICATION DEFAULT 0 FOR MANUALCLASSIFICATION;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.6.2" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="RegProvsnAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="RegSecProvsnAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="RegUnSecProvsnAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="TotRegProvsnAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntProvsnAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntSecProvsnAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntUnSecProvsnAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="TotIntProvsnAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ManProvsnAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="OsPrincipal" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="OSProfit" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ODPrincipal" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ODProfit" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ProfitAccruedAndDue" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ProfitAccruedAndNotDue" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="CollateralAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="InsuranceAmt" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+
+		<addDefaultValue columnName="PastDueDays" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="NpaAging" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="NpaPastDueDays" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+
+		<addDefaultValue columnName="RegProvsnPer" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="RegSecProvsnPer" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="RegUnSecProvsnPer" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntProvsnPer" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntSecProvsnPer" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntUnSecProvsnPer" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ManProvsnPer" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ManualClassification" tableName="ADTLOAN_PROVISIONS" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#3546.7.1" author="nagavamsi.p">
+		<createTable tableName="ADTNPA_LOAN_INFO">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EffFinID" type="bigint" />
+			<column name="EffFinReference" type="varchar(20)" />
+			<column name="BusinessDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDate" type="datetime" />
+			<column name="NpaPastDueDays" type="int" />
+			<column name="NpaPastDueDate" type="datetime" />
+			<column name="NpaClassID" type="bigint" />
+			<column name="NpaStage" type="smallint" />
+			<column name="EffPastDueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="EffPastDueDate" type="datetime" />
+			<column name="EffNpaPastDueDays" type="int" />
+			<column name="EffNpaPastDueDate" type="datetime" />
+			<column name="EffNpaClassID" type="bigint" />
+			<column name="EffNpaStage" type="smallint" />
+			<column name="FinIsActive" type="boolean" />
+			<column name="LinkedTranID" type="bigint" />
+			<column name="ManualClassification" type="boolean" />
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="ST#3546.7.2" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTNPA_LOAN_INFO ADD CONSTRAINT DF_ANPA_LI_EFFNPASTAGE DEFAULT 0 FOR EFFNPASTAGE;
+				ALTER TABLE ADTNPA_LOAN_INFO ADD CONSTRAINT DF_ANPA_LI_FINISACTIVE DEFAULT 0 FOR FINISACTIVE;
+				ALTER TABLE ADTNPA_LOAN_INFO ADD CONSTRAINT DF_ANPA_LI_MANUALCLASS DEFAULT 0 FOR MANUALCLASSIFICATION;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3546.7.2" author="nagavamsi.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="EffNpaStage" tableName="ADTNPA_LOAN_INFO" defaultValue="0" />
+		<addDefaultValue columnName="FinIsActive" tableName="ADTNPA_LOAN_INFO" defaultValue="0" />
+		<addDefaultValue columnName="ManualClassification" tableName="ADTNPA_LOAN_INFO" defaultValue="0" />
+	</changeSet>
+	
+	<!-- ST#3546 :: NPA & Provision Enhancements changes end -->
+</databaseChangeLog>

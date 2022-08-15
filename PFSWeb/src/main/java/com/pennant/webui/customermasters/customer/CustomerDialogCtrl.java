@@ -130,6 +130,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.customermasters.GSTDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -350,6 +351,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Tab tabbankDetails;
 	protected Tab tabCardSaleDetails;
 	protected Tab tabGstDetails;
+	protected Tab tabCustGstDetails;
 
 	protected Button btnNew_CustomerDocuments;
 	protected Listbox listBoxCustomerDocuments;
@@ -422,6 +424,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listbox listBoxCustomerGst;
 	private List<CustomerGST> customerGstList = new ArrayList<CustomerGST>();
 
+	// GST details for customer
+	protected Button btnNew_GSTDetails;
+	protected Listbox listBoxCustomerGstDetails;
+	private List<GSTDetail> gstDetailsList = new ArrayList<>();
+
 	private transient String oldVar_empStatus;
 	private CustomerDetails customerDetails; // overhanded per param
 	private transient CustomerListCtrl customerListCtrl; // overhanded per param
@@ -441,6 +448,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Tabpanel tp_CardSales;
 
 	protected Tabpanel tp_gstDetails;
+	protected Tabpanel tp_custGstDetails;
 
 	protected Groupbox gb_Action;
 	protected Groupbox gb_statusDetails;
@@ -549,6 +557,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private PrimaryAccountService primaryAccountService;
 	private DMSService dMSService;
+	private String usrAction = null;
+
+	boolean isPanMandatory = ImplementationConstants.RETAIL_CUST_PAN_MANDATORY;
 
 	protected Textbox otherReligion; // autowired
 	protected Textbox otherCaste;
@@ -676,6 +687,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				isNotFinanceProcess = (Boolean) arguments.get("isNotFinanceProcess");
 			}
 
+			if (arguments.containsKey("usrAction")) {
+				usrAction = (String) arguments.get("usrAction");
+			}
+
 			if (arguments.containsKey("moduleName")) {
 				this.moduleName = (String) arguments.get("moduleName");
 			}
@@ -778,7 +793,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					if (this.tp_CardSales.isVisible()) {
 						this.tp_CardSales.setHeight(borderLayoutHeight - 195 + "px");
 					}
-					this.tp_gstDetails.setHeight(borderLayoutHeight - 195 + "px");
 					this.listBoxCustomerGst.setHeight(semiBorderlayoutHeights - 90 + "px");
 				} else {
 					this.divKeyDetails.setHeight(borderLayoutHeight - 240 + "px");
@@ -809,6 +823,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.listBoxCustomerRating.setHeight(this.borderLayoutHeight - 330 + "px");
 				}
 
+				this.tp_gstDetails.setHeight(borderLayoutHeight - 90 + "px");
 				this.tp_KYCDetails.setHeight(borderLayoutHeight - 90 + "px");
 				this.tp_Financials.setHeight(borderLayoutHeight - 90 + "px");
 				this.tp_BankDetails.setHeight(borderLayoutHeight - 90 + "px");
@@ -1126,6 +1141,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.tabGstDetails.setVisible(true);
 		}
 
+		if (ImplementationConstants.ALLOW_GST_DETAILS) {
+			this.tabCustGstDetails.setVisible(true);
+			this.tp_custGstDetails.setVisible(true);
+		}
+
 		if (isWorkFlowEnabled()) {
 			this.gb_Action.setVisible(true);
 		} else {
@@ -1205,6 +1225,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				.setVisible(getUserWorkspace().isAllowed("CustomerCardSalesInfo_NewCardDetails"));
 		this.btnNew_CustomerGSTDetails
 				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_NewCustomerGstDetails"));
+		this.btnNew_GSTDetails.setVisible(getUserWorkspace().isAllowed("btnNew_CustomerDialog_GSTDetails"));
 		validateCustDocs = getUserWorkspace().isAllowed("button_CustomerDialog_NewCustomerDocuments");
 		this.btnUploadExternalLiability
 				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnUploadExternalLiability"));
@@ -1226,6 +1247,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			doSave();
 		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
+		} catch (AppException e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1498,11 +1521,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.empDesg.setDescription(custEmployeeDetail.getLovDescEmpDesg());
 		this.empDept.setValue(custEmployeeDetail.getEmpDept());
 		this.empDept.setDescription(custEmployeeDetail.getLovDescEmpDept());
-		this.monthlyIncome.setValue(PennantAppUtil.formateAmount(custEmployeeDetail.getMonthlyIncome(), ccyFormatter));
+		this.monthlyIncome
+				.setValue(PennantApplicationUtil.formateAmount(custEmployeeDetail.getMonthlyIncome(), ccyFormatter));
 		this.otherIncome.setValue(custEmployeeDetail.getOtherIncome());
 		this.otherIncome.setDescription(custEmployeeDetail.getLovDescOtherIncome());
 		this.additionalIncome
-				.setValue(PennantAppUtil.formateAmount(custEmployeeDetail.getAdditionalIncome(), ccyFormatter));
+				.setValue(PennantApplicationUtil.formateAmount(custEmployeeDetail.getAdditionalIncome(), ccyFormatter));
 		setMandatoryIDNumber(aCustomer.getCustCRCPR());
 		doSetEmpStatusProperties(custEmployeeDetail.getEmpStatus());
 		if (StringUtils.trimToEmpty(this.empName.getDescription())
@@ -1554,6 +1578,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		// customer gst details
 		doFillCustomerGstDetails(aCustomerDetails.getCustomerGstList());
+		// multiple gst numbers added for one customer with different state codes
+		doFillGstDetails(aCustomerDetails.getGstDetailsList());
 		// Extended Field Details
 		appendExtendedFieldDetails(aCustomerDetails);
 		// Set Income values only for GHF
@@ -2178,7 +2204,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				try {
 					custEmployeeDetail.setMonthlyIncome(
-							PennantAppUtil.unFormateAmount(this.monthlyIncome.getActualValue(), ccyFormatter));
+							PennantApplicationUtil.unFormateAmount(this.monthlyIncome.getActualValue(), ccyFormatter));
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
@@ -2191,8 +2217,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 
 				try {
-					custEmployeeDetail.setAdditionalIncome(
-							PennantAppUtil.unFormateAmount(this.additionalIncome.getActualValue(), ccyFormatter));
+					custEmployeeDetail.setAdditionalIncome(PennantApplicationUtil
+							.unFormateAmount(this.additionalIncome.getActualValue(), ccyFormatter));
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
@@ -2266,6 +2292,26 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			@SuppressWarnings("unchecked")
 			List<CustomerIncome> customerIncomeList = customerIncomes.get("customerIncomes");
 			setIncomeList(customerIncomeList);
+			if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+				Map<String, Object> mapValues = customerDetails.getExtendedFieldRender().getMapValues();
+				if (isFromCustomer) {
+					usrAction = userAction.getSelectedItem().getValue().toString();
+				}
+				if (!usrAction.equals(PennantConstants.RCD_STATUS_CANCELLED)
+						&& !usrAction.equals(PennantConstants.RCD_STATUS_REJECTED)
+						&& !usrAction.equals(PennantConstants.RCD_STATUS_RESUBMITTED)) {
+					if (mapValues.get("UCIC") != null && !mapValues.get("UCIC").equals("")) {
+						String reference = extendedFieldDetailsService.getUCICNumber(
+								aCustomerDetails.getExtendedFieldHeader().getSubModuleName(), mapValues.get("UCIC"));
+						if (reference != null
+								&& (!(aCustomerDetails.getCustomer().getCustCIF().equalsIgnoreCase(reference)))) {
+							throw new AppException(
+									"UCIC : " + mapValues.get("UCIC") + " already exists for CustCIF : " + reference);
+						}
+					}
+				}
+
+			}
 		}
 
 		// Set KYC details
@@ -2286,6 +2332,23 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomerDetails.setCustCardSales(cloner.deepClone(this.customerCardSales));
 		// Custome Gst Details list
 		aCustomerDetails.setCustomerGstList(cloner.deepClone(this.customerGstList));
+
+		if (CollectionUtils.isNotEmpty(getGstDetailsList())) {
+			for (GSTDetail detail : getGstDetailsList()) {
+				Checkbox gstDefault = (Checkbox) this.listBoxCustomerGstDetails
+						.getFellowIfAny("GstState_" + detail.getStateCode());
+				if (gstDefault != null) {
+					detail.setDefaultGST(gstDefault.isChecked());
+					if (StringUtils.isEmpty(detail.getRecordType())) {
+						detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						detail.setVersion(detail.getVersion() + 1);
+						detail.setNewRecord(true);
+					}
+				}
+			}
+		}
+		aCustomerDetails.setGstDetailsList(getGstDetailsList());
+
 		if (this.directorDetails.isVisible()) {
 			aCustomerDetails.setCustomerDirectorList(this.directorList);
 		}
@@ -2709,7 +2772,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		int maxLength = Integer.valueOf(attributes.get("LENGTH"));
 
 		label_CustomerDialog_EIDNumber.setValue(Labels.getLabel(primaryIdLabel));
-		space_EidNumber.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
+		if (!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+			space_EidNumber.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
+			if (isRetailCustomer && !isPanMandatory) {
+				space_EidNumber.setSclass(primaryIdMandatory ? PennantConstants.NONE : "");
+			}
+		}
 		eidNumber.setSclass(PennantConstants.mandateSclass);
 		eidNumber.setMaxlength(maxLength);
 
@@ -2869,8 +2937,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		if (!this.eidNumber.isReadonly()) {
 			// ### 01-05-2018 ToolApp ID : #360
-			this.eidNumber.setConstraint(
-					new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+			if (!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+				this.eidNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+			}
+			if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP
+					&& StringUtils.isNotEmpty(this.eidNumber.getText())) {
+				this.eidNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+			}
+			if (isRetailCustomer && !isPanMandatory) {
+				this.eidNumber
+						.setConstraint(new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, false));
+			}
 		}
 
 		if (!this.applicationNo.isReadonly()) {
@@ -3933,6 +4012,22 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				return;
 			}
 		}
+
+		// GST Detail validation
+		int defaultCount = 0;
+		if (CollectionUtils.isNotEmpty(aCustomerDetails.getGstDetailsList())) {
+			for (GSTDetail detail : aCustomerDetails.getGstDetailsList()) {
+				if (detail.isDefaultGST()) {
+					defaultCount++;
+				}
+			}
+		}
+		if (defaultCount > 1) {
+			String msg = Labels.getLabel("CustomerGST_Default");
+			MessageUtil.showError(msg);
+			return;
+		}
+
 		CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
@@ -4573,6 +4668,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.tabkYCDetails.setSelected(true);
 					return false;
 				}
+				// To throw validations at Loan level Retail Customer based on ImplementationConstant
+				if ("Save".equalsIgnoreCase(aFinanceDetail.getUserAction()) && isRetailCustomer && !isPanMandatory
+						&& StringUtils.isBlank(this.eidNumber.getValue()) && validateCustDocs
+						&& !validateCustomerDocuments(aCustomer, tab)) {
+					return false;
+				}
 				if (validateCustDocs && validateAllDetails && !validateCustomerDocuments(aCustomer, tab)) {
 					return false;
 				}
@@ -4859,6 +4960,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		boolean isMandateIDDocExist = false;
 		if (this.customerDocumentDetailList != null && !this.customerDocumentDetailList.isEmpty()) {
 			for (CustomerDocument custDocument : this.customerDocumentDetailList) {
+				if (isRetailCustomer && !isPanMandatory && StringUtils.isBlank(this.eidNumber.getValue())
+						&& (PennantConstants.FORM60.equals(custDocument.getCustDocCategory())
+								&& (PennantConstants.RECORD_TYPE_DEL.equals(custDocument.getRecordType())
+										|| PennantConstants.RECORD_TYPE_CAN.equals(custDocument.getRecordType())))) {
+					MessageUtil.showError(Labels.getLabel("Cannot_Delete_Form60_UnlessPAN_Captured"));
+					return false;
+				}
 				if (custDocument.isDocIssueDateMand() && custDocument.getCustDocIssuedOn() == null) {
 					doShowValidationMessage(custTab, 3, custDocument.getLovDescCustDocCategory());
 					return false;
@@ -4891,7 +4999,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							return false;
 						}
 					} else {
-						aCustomer.setCustCRCPR(custDocument.getCustDocTitle());
+						// PAN number should not display when PAN number is not captured and pan card document is
+						// deleted and saved
+						if (!isPanMandatory && StringUtils.isBlank(aCustomer.getCustCRCPR()) && isRetailCustomer
+								&& !PennantConstants.RECORD_TYPE_CAN.equals(custDocument.getRecordType())
+								&& !PennantConstants.RECORD_TYPE_DEL.equals(custDocument.getRecordType())) {
+							aCustomer.setCustCRCPR(custDocument.getCustDocTitle());
+						}
 					}
 				}
 				if (!isRetailCustomer
@@ -4906,6 +5020,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			}
 		}
+
+		if (CollectionUtils.isNotEmpty(customerDocumentDetailList) && !isPanMandatory) {
+			boolean anyMatch = customerDocumentDetailList.stream()
+					.anyMatch(docType -> docType.getCustDocCategory().equals(PennantConstants.FORM60));
+			if (isRetailCustomer && StringUtils.isBlank(this.eidNumber.getValue()) && !anyMatch) {
+				MessageUtil.showError(Labels.getLabel("Either_PAN_FORM60_Mandatory"));
+				return false;
+			}
+		}
+
 		if (!StringUtils.isBlank(aCustomer.getCustCRCPR()) && !isMandateIDDocExist && validateAllDetails) {
 			/*
 			 * doShowValidationMessage(custTab, 4, isRetailCustomer ? PennantConstants.PANNUMBER :
@@ -4945,7 +5069,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			break;
 		case 4:
 			msg = Labels.getLabel("CustomerDocuments_NoEmpty",
-					new String[] { PennantAppUtil.getlabelDesc(value, PennantAppUtil.getDocumentTypes()) });
+					new String[] { PennantApplicationUtil.getLabelDesc(value, PennantAppUtil.getDocumentTypes()) });
 			break;
 		case 5:
 			msg = Labels.getLabel("DATE_NO_EMPTY",
@@ -5616,14 +5740,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					customerChequeInfo.setVersion(customerChequeInfo.getVersion() + 1);
 					customerChequeInfo.setRecordType(PennantConstants.RCD_UPD);
 				}
-				customerChequeInfo.setSalary(PennantAppUtil.unFormateAmount(
-						PennantAppUtil.formateAmount(customerChequeInfo.getSalary(), old_ccyFormatter), ccyFormatter));
-				customerChequeInfo.setReturnChequeAmt(PennantAppUtil.unFormateAmount(
-						PennantAppUtil.formateAmount(customerChequeInfo.getReturnChequeAmt(), old_ccyFormatter),
+				customerChequeInfo.setSalary(PennantApplicationUtil.unFormateAmount(
+						PennantApplicationUtil.formateAmount(customerChequeInfo.getSalary(), old_ccyFormatter),
 						ccyFormatter));
-				customerChequeInfo.setTotChequePayment(PennantAppUtil.unFormateAmount(
-						PennantAppUtil.formateAmount(customerChequeInfo.getTotChequePayment(), old_ccyFormatter),
+				customerChequeInfo.setReturnChequeAmt(PennantApplicationUtil.unFormateAmount(
+						PennantApplicationUtil.formateAmount(customerChequeInfo.getReturnChequeAmt(), old_ccyFormatter),
 						ccyFormatter));
+				customerChequeInfo.setTotChequePayment(PennantApplicationUtil.unFormateAmount(PennantApplicationUtil
+						.formateAmount(customerChequeInfo.getTotChequePayment(), old_ccyFormatter), ccyFormatter));
 			}
 			doFillCustomerChequeInfoDetails(getCustomerChequeInfoDetailList());
 		}
@@ -5633,12 +5757,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					liability.setVersion(liability.getVersion() + 1);
 					liability.setRecordType(PennantConstants.RCD_UPD);
 				}
-				liability.setOriginalAmount(PennantAppUtil.unFormateAmount(
-						PennantAppUtil.formateAmount(liability.getOriginalAmount(), old_ccyFormatter), ccyFormatter));
-				liability.setInstalmentAmount(PennantAppUtil.unFormateAmount(
-						PennantAppUtil.formateAmount(liability.getInstalmentAmount(), old_ccyFormatter), ccyFormatter));
-				liability.setOutstandingBalance(PennantAppUtil.unFormateAmount(
-						PennantAppUtil.formateAmount(liability.getOutstandingBalance(), old_ccyFormatter),
+				liability.setOriginalAmount(PennantApplicationUtil.unFormateAmount(
+						PennantApplicationUtil.formateAmount(liability.getOriginalAmount(), old_ccyFormatter),
+						ccyFormatter));
+				liability.setInstalmentAmount(PennantApplicationUtil.unFormateAmount(
+						PennantApplicationUtil.formateAmount(liability.getInstalmentAmount(), old_ccyFormatter),
+						ccyFormatter));
+				liability.setOutstandingBalance(PennantApplicationUtil.unFormateAmount(
+						PennantApplicationUtil.formateAmount(liability.getOutstandingBalance(), old_ccyFormatter),
 						ccyFormatter));
 			}
 			doFillCustomerExtLiabilityDetails(getCustomerExtLiabilityDetailList());
@@ -6253,7 +6379,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						if (docTypeList == null) {
 							docTypeList = PennantAppUtil.getCustomerDocumentTypesList();
 						}
-						String desc = PennantAppUtil.getlabelDesc(customerDocument.getCustDocCategory(), docTypeList);
+						String desc = PennantApplicationUtil.getLabelDesc(customerDocument.getCustDocCategory(),
+								docTypeList);
 						customerDocument.setLovDescCustDocCategory(desc);
 						lc = new Listcell(desc);
 					} else {
@@ -6744,13 +6871,15 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				Listcell lc;
 				lc = new Listcell(DateUtility.format(custChequeInfo.getMonthYear(), PennantConstants.monthYearFormat));
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(custChequeInfo.getTotChequePayment(), ccyFormatter));
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(custChequeInfo.getTotChequePayment(), ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(custChequeInfo.getSalary(), ccyFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(custChequeInfo.getSalary(), ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(custChequeInfo.getReturnChequeAmt(), ccyFormatter));
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(custChequeInfo.getReturnChequeAmt(), ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(String.valueOf(custChequeInfo.getReturnChequeCount()));
@@ -6861,7 +6990,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					originalAmount = BigDecimal.ZERO;
 				}
 				tolatOriginalAmount = tolatOriginalAmount.add(originalAmount);
-				lc = new Listcell(PennantAppUtil.amountFormate(originalAmount, ccyFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(originalAmount, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -6871,7 +7000,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					instalmentAmount = BigDecimal.ZERO;
 				}
 				totalInstalmentAmount = totalInstalmentAmount.add(instalmentAmount);
-				lc = new Listcell(PennantAppUtil.amountFormate(instalmentAmount, ccyFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(instalmentAmount, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -6881,7 +7010,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					outstandingBalance = BigDecimal.ZERO;
 				}
 				totalOutstandingBalance = totalOutstandingBalance.add(outstandingBalance);
-				lc = new Listcell(PennantAppUtil.amountFormate(outstandingBalance, ccyFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(outstandingBalance, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -6907,13 +7036,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc.setParent(item);
 				lc = new Listcell("");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(tolatOriginalAmount, ccyFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(tolatOriginalAmount, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(totalInstalmentAmount, ccyFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(totalInstalmentAmount, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(totalOutstandingBalance, ccyFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(totalOutstandingBalance, ccyFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell("");
@@ -7004,18 +7133,22 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc.setParent(item);
 
 				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue().add(finEnquiry.getFeeChargeAmt());
-				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, format));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(totAmt, format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(
-						PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()), format));
+				lc = new Listcell(PennantApplicationUtil
+						.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getLoanStsDesc());
+				lc.setParent(item);
+				lc = new Listcell(
+						finEnquiry.getCustomerType() == null ? "Main Applicant" : finEnquiry.getCustomerType());
+				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				this.listBoxCustomerFinExposure.appendChild(item);
 
@@ -7268,6 +7401,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	public void onOpen$custGenderCode(Event event) {
 		logger.debug("Entering" + event.toString());
+		custGenderCode.clearErrorMessage();
 		fillComboBox(this.custGenderCode, getComboboxValue(this.custGenderCode), PennantAppUtil.getGenderCodes(), "");
 		logger.debug("Leaving" + event.toString());
 	}
@@ -7279,6 +7413,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	public void onOpen$custSalutationCode(Event event) {
 		logger.debug("Entering" + event.toString());
+		this.custSalutationCode.clearErrorMessage();
 		fillComboBox(this.custSalutationCode, getComboboxValue(this.custSalutationCode),
 				PennantAppUtil.getSalutationCodes(getComboboxValue(this.custGenderCode)), "");
 		logger.debug("Leaving" + event.toString());
@@ -7291,6 +7426,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	public void onOpen$custMaritalSts(Event event) {
 		logger.debug("Entering" + event.toString());
+		this.custMaritalSts.clearErrorMessage();
 		fillComboBox(this.custMaritalSts, getComboboxValue(this.custMaritalSts),
 				PennantAppUtil.getMaritalStsTypes(getComboboxValue(this.custGenderCode)), "");
 		logger.debug("Leaving" + event.toString());
@@ -7568,6 +7704,132 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			dedupCheckReq = false;
 			MessageUtil.showError(e);
 		}
+	}
+
+	public void doFillGstDetails(List<GSTDetail> detailsList) {
+		gstDetailsList = detailsList;
+
+		logger.debug(Literal.ENTERING);
+		this.listBoxCustomerGstDetails.getItems().clear();
+
+		if (detailsList != null) {
+			for (GSTDetail gstDetail : detailsList) {
+				Listitem item = new Listitem();
+				Listcell lc;
+				lc = new Listcell(StringUtils.trimToEmpty(gstDetail.getGstNumber()));
+				lc.setParent(item);
+				lc = new Listcell(gstDetail.getAddress());
+				lc.setParent(item);
+				lc = new Listcell(gstDetail.getCityCode());
+				lc.setParent(item);
+				lc = new Listcell(gstDetail.getStateCode());
+				lc.setParent(item);
+				lc = new Listcell(gstDetail.getPinCode());
+				lc.setParent(item);
+				lc = new Listcell();
+				final Checkbox cbDefault = new Checkbox();
+				cbDefault.setId("GstState_" + gstDetail.getStateCode());
+				cbDefault.setParent(lc);
+				cbDefault.setChecked(gstDetail.isDefaultGST());
+				cbDefault.setDisabled(!getUserWorkspace().isAllowed("btnNew_CustomerDialog_GSTDetails"));
+				if (!cbDefault.isDisabled()) {
+					cbDefault.addForward("onCheckGstDefault", this.window_CustomerDialog, "onCheckDefault", gstDetail);
+				}
+
+				lc.appendChild(cbDefault);
+				lc.setParent(item);
+				lc = new Listcell();
+				final Checkbox cbGSTIN = new Checkbox();
+				cbGSTIN.setDisabled(true);
+				cbGSTIN.setChecked(gstDetail.isTin());
+				lc.appendChild(cbGSTIN);
+				lc.setParent(item);
+				lc = new Listcell();
+				final Checkbox cbGSTInName = new Checkbox();
+				cbGSTInName.setDisabled(true);
+				cbGSTInName.setChecked(gstDetail.isTinName());
+				lc.appendChild(cbGSTInName);
+				lc.setParent(item);
+				lc = new Listcell();
+				final Checkbox cbGSTInAddress = new Checkbox();
+				cbGSTInAddress.setDisabled(true);
+				cbGSTInAddress.setChecked(gstDetail.isTinAddress());
+				lc.appendChild(cbGSTInAddress);
+				lc.setParent(item);
+				item.setAttribute("data", gstDetail);
+
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onGstDetailsItemDoubleClicked");
+				this.listBoxCustomerGstDetails.appendChild(item);
+			}
+			setGstDetailsList(detailsList);
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	public void onClick$btnNew_GSTDetails(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		GSTDetail gstDetails = new GSTDetail();
+		gstDetails.setNewRecord(true);
+		gstDetails.setWorkflowId(0);
+		gstDetails.setCustID(getCustomerDetails().getCustID());
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("gstDetails", gstDetails);
+		map.put("customerDialogCtrl", this);
+		map.put("newRecord", "true");
+		map.put("finFormatter", ccyFormatter);
+		map.put("isFinanceProcess", isFinanceProcess);
+		map.put("gstDetailsList", gstDetailsList);
+		map.put("roleCode", getRole());
+		try {
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/GSTDetailDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onGstDetailsItemDoubleClicked(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerGstDetails.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final GSTDetail gstDetail = (GSTDetail) item.getAttribute("data");
+			if (isDeleteRecord(gstDetail.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final Map<String, Object> map = new HashMap<>();
+				map.put("gstDetails", gstDetail);
+				map.put("customerDialogCtrl", this);
+				map.put("roleCode", getRole());
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("moduleType", this.moduleType);
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/GSTDetailDialog.zul",
+							window_CustomerDialog, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onCheckGstDefault(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		GSTDetail detail = (GSTDetail) event.getData();
+		this.listBoxCustomerGstDetails.getFellowIfAny("GstState_" + detail.getStateCode());
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public String getCustcrcpr() {
+		return this.eidNumber.getValue().toString();
 	}
 
 	public String getCustomerShortName() {
@@ -8168,6 +8430,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void setCustomerExtLiabilityUploadDialogCtrl(
 			CustomerExtLiabilityUploadDialogCtrl customerExtLiabilityUploadDialogCtrl) {
 		this.customerExtLiabilityUploadDialogCtrl = customerExtLiabilityUploadDialogCtrl;
+	}
+
+	public void setGstDetailsList(List<GSTDetail> gstDetailsList) {
+		this.gstDetailsList = gstDetailsList;
+	}
+
+	public List<GSTDetail> getGstDetailsList() {
+		return gstDetailsList;
 	}
 
 }

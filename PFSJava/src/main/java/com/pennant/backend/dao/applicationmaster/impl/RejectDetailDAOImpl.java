@@ -38,6 +38,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.applicationmaster.RejectDetailDAO;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -210,5 +211,15 @@ public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements Rejec
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public boolean isExistsRejectCode(String rejectCode) {
+		String sql = "Select Count(RejectCode) From BMTRejectCodes Where RejectCode = ? And RejectType = ?";
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.queryForObject(sql.toString(), Boolean.class, rejectCode,
+				PennantConstants.Reject_Payment);
 	}
 }

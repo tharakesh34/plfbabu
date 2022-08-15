@@ -108,6 +108,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private boolean accessToAllBranches;
 	private Collection<SecurityRight> menuRights = new ArrayList<>();
 	private List<SecurityRole> roles = new ArrayList<>();
+	private boolean deleted;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -593,4 +594,11 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		this.roles = roles;
 	}
 
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 }

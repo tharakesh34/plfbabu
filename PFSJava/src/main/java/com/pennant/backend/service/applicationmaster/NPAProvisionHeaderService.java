@@ -60,9 +60,10 @@ public interface NPAProvisionHeaderService {
 
 	NPAProvisionHeader getNewNPAProvisionHeader(NPAProvisionHeader nPAProvisionHeader, TableType view);
 
-	NPAProvisionHeader getNewNPAProvisionHeaderByTemplate(NPAProvisionHeader provisionHeader, TableType tableType);
-
 	List<Rule> getRuleByModuleAndEvent(String module, String event, String tableType);
 
+	NPAProvisionHeader getNewNPAProvisionHeaderByTemplate(NPAProvisionHeader provisionHeader, TableType tableType);
+
 	List<NPAProvisionHeader> getNPAProvisionsListByFintype(String finType, TableType tableType);
+
 }

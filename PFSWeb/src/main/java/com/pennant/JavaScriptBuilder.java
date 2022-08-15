@@ -2086,11 +2086,9 @@ public class JavaScriptBuilder extends Groupbox {
 
 		Treecell treeCell;
 		Treeitem treeItem;
-		List<Component> treeItems = null;
 		String uUID = "";
 		if (treeChildren != null) {
-			treeItems = treeChildren.getChildren();
-
+			List<Component> treeItems = treeChildren.getChildren();
 			List<String> objectResultList = null;
 			List<String> queryResultList = null;
 

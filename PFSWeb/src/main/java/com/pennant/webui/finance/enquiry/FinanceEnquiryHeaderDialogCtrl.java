@@ -101,9 +101,10 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.model.tds.receivables.TdsReceivablesTxn;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.DPDEnquiryService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
@@ -122,6 +123,7 @@ import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
+import com.pennant.backend.service.tds.receivables.TdsReceivablesTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -139,6 +141,11 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.npa.service.AssetClassificationService;
+import com.pennanttech.pff.overdraft.model.OverdraftLimitTransation;
+import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
+import com.pennanttech.pff.provision.model.Provision;
+import com.pennanttech.pff.provision.service.ProvisionService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Reports/FinanceEnquiryHeaderDialogCtrl.zul.
@@ -191,6 +198,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinCovenantTypeService finCovenantTypeService;
 	private CollateralSetupService collateralSetupService;
 	private FinOptionService finOptionService;
+	private OverdrafLoanService overdrafLoanService;
 
 	private ManualPaymentService manualPaymentService;
 	private OverdueChargeRecoveryService overdueChargeRecoveryService;
@@ -209,6 +217,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinanceEnquiry financeEnquiry;
 	private FinanceSummary financeSummary;
 	private DPDEnquiryService dpdEnquiryService;
+	private AssetClassificationService assetClassificationService;
+	private ProvisionService provisionService;
+	private TdsReceivablesTxnService tdsReceivablesTxnService;
 	protected boolean customer360;
 	private boolean isModelWindow = false;
 	private VASRecordingDAO vASRecordingDAO;
@@ -219,7 +230,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean fromApproved;
 	private boolean childDialog;
 	@Autowired
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 
@@ -265,7 +276,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		setPageComponents(window_FinEnqHeaderDialog);
 
 		try {
-
+			if (arguments.containsKey("isModelWindow")) {
+				isModelWindow = (Boolean) arguments.get("isModelWindow");
+			}
 			if (arguments.containsKey("enquiryType")) {
 				this.enquiryType = (String) arguments.get("enquiryType");
 			}
@@ -413,6 +426,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("finScheduleData", finScheduleData);
 				map.put("financeDetail", financeDetail);
 				map.put("fromApproved", fromApproved);
+				map.put("enquiryType", this.enquiryType);
 				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul";
 			}
 		} else if ("SCHENQ".equals(this.enquiryType)) {
@@ -598,7 +612,20 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			map.put("list", list);
+			map.put("FinReference", this.finReference);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/OverdueEnquiryDialog.zul";
+
+		} else if ("TDSCERENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_TdsCertificateEnquiry"));
+
+			List<TdsReceivablesTxn> tdsReceivablesTxnsList = tdsReceivablesTxnService
+					.getTdsReceivablesTxnsByFinRef(this.finReference, TableType.MAIN_TAB);
+
+			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
+			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
+			map.put("finReference", this.finReference);
+			map.put("list", tdsReceivablesTxnsList);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/TdsCertificateEnquiryDialog.zul";
 
 		} else if ("LTPPENQ".equals(this.enquiryType)) {
 
@@ -702,8 +729,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			fd.getFinScheduleData().setFinReference(this.finReference);
 			fd.getFinScheduleData().setFinanceMain(fm);
 			if (enquiry.getCustID() != 0 && enquiry.getCustID() != Long.MIN_VALUE) {
-				fd.setCustomerDetails(
-						customerDetailsService.getCustomerDetailsById(enquiry.getCustID(), true, "_AView"));
+				fd.setCustomerDetails(customerDataService.getCustomerDetailsbyID(enquiry.getCustID(), true, "_AView"));
 			}
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(this.finReference,
 					FinanceConstants.MODULE_NAME, FinServiceEvent.ORG, "_TView");
@@ -745,7 +771,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DPDEnquiry.value"));
 			List<FinStatusDetail> finStatusDetails;
 
-			finStatusDetails = getDpdEnquiryService().getFinStatusDetailByRefId(this.finID);
+			finStatusDetails = dpdEnquiryService.getFinStatusDetailByRefId(this.finID);
 
 			map.put("finStatusDetails", finStatusDetails);
 			map.put("finID", this.finID);
@@ -784,7 +810,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			if (enquiry.getCustID() != 0 && enquiry.getCustID() != Long.MIN_VALUE) {
 				financeDetail.setCustomerDetails(
-						customerDetailsService.getCustomerDetailsById(enquiry.getCustID(), true, "_View"));
+						customerDataService.getCustomerDetailsbyID(enquiry.getCustID(), true, "_View"));
 			}
 			CreditReviewData creditReviewData = null;
 
@@ -835,6 +861,36 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("enquirymode", true);
 			map.put("financeDetail", financeDetail);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/RestructureEnquiryDialog.zul";
+		} else if ("NPAENQ".equals(this.enquiryType)) {
+			this.btnPrint.setVisible(false);
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_NPAEnquiry.value"));
+
+			map.put("finReference", this.finReference);
+			map.put("assetClassification", assetClassificationService.getAssetClassification(this.finID));
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/npa/NPAEnquiryDialog.zul";
+		} else if ("PROVSNENQ".equals(this.enquiryType)) {
+			this.btnPrint.setVisible(false);
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ProvisionEnquiry"));
+
+			map.put("enquiry", true);
+			map.put("finReference", this.finReference);
+
+			Provision provision = provisionService.getProvisionDetail(this.finReference);
+			map.put("provision", provision);
+			if (provision == null) {
+				MessageUtil.showMessage("Provision Details are not available.");
+				provision = new Provision();
+			}
+
+			path = "/WEB-INF/pages/FinanceManagement/Provision/ManualProvisioningDialog.zul";
+		} else if ("LMTENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OverDraftLimitEnquiry.value"));
+			List<OverdraftLimitTransation> trnactions = overdrafLoanService.getTransactions(this.finID);
+
+			map.put("trsnsactions", trnactions);
+			map.put("finReference", this.finReference);
+			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
+			path = "/WEB-INF/pages/Finance/Overdraft/OverdraftTransactionsDialog.zul";
 		}
 
 		if (StringUtils.isNotEmpty(path)) {
@@ -1368,4 +1424,24 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
 		this.vASRecordingDAO = vASRecordingDAO;
 	}
+
+	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
+		this.overdrafLoanService = overdrafLoanService;
+	}
+
+	@Autowired
+	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
+		this.assetClassificationService = assetClassificationService;
+	}
+
+	@Autowired
+	public void setProvisionService(ProvisionService provisionService) {
+		this.provisionService = provisionService;
+	}
+
+	@Autowired
+	public void setTdsReceivablesTxnService(TdsReceivablesTxnService tdsReceivablesTxnService) {
+		this.tdsReceivablesTxnService = tdsReceivablesTxnService;
+	}
+
 }

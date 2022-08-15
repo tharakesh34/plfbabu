@@ -140,9 +140,9 @@
 									sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptAllocattionType" label="${c:l('listheader_ReceiptAllocattionType.label')}"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptFinType" label="${c:l('listheader_ReceiptFinType.label')}" sort="auto"
+								<listheader id="listheader_ReceiptFinType" visible="false" label="${c:l('listheader_ReceiptFinType.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_ReceiptFinBranch" label="${c:l('listheader_ReceiptFinBranch.label')}"
+								<listheader id="listheader_ReceiptFinBranch" visible="false" label="${c:l('listheader_ReceiptFinBranch.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptCusomer" label="${c:l('listheader_ReceiptCusomer.label')}" sort="auto"
 									hflex="min" />
@@ -150,7 +150,7 @@
 									sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptStatus" label="${c:l('listheader_ReceiptModeStatus.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_ReceiptExtReference" label="${c:l('listheader_ReceiptExternalReference.label')}" sort="auto"
+								<listheader id="listheader_ReceiptExtReference" visible="false" label="${c:l('listheader_ReceiptExternalReference.label')}" sort="auto"
 									hflex="min" />	
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />

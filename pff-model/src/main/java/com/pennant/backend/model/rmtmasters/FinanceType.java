@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -245,6 +246,12 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean alwSanctionAmtOverride;
 	private boolean finIsRateRvwAtGrcEnd;
 	private boolean schdOnPMTCal;
+	private Long regProvRule;
+	private Long intProvRule;
+
+	private boolean overdraftTxnChrgReq;
+	private long overdraftTxnChrgFeeType = Long.MIN_VALUE;
+	private FeeType feetype;
 
 	// OCR Check
 	private boolean ocrRequired;
@@ -329,6 +336,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String tdsType;
 	private String calcOfSteps;
 	private String stepsAppliedFor;
+	private int overDraftExtGraceDays;
+	private long overDraftColChrgFeeType;
+	private BigDecimal overDraftColAmt = BigDecimal.ZERO;
 
 	public FinanceType() {
 		super();
@@ -592,6 +602,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setTdsType(this.tdsType);
 		entity.setCalcOfSteps(this.calcOfSteps);
 		entity.setStepsAppliedFor(this.stepsAppliedFor);
+		entity.setOverdraftTxnChrgReq(this.overdraftTxnChrgReq);
+		entity.setOverdraftTxnChrgFeeType(this.overdraftTxnChrgFeeType);
+		entity.setOverDraftExtGraceDays(this.overDraftExtGraceDays);
+		entity.setOverDraftColChrgFeeType(this.overDraftColChrgFeeType);
+		entity.setOverDraftColAmt(this.overDraftColAmt);
+		entity.setRegProvRule(this.regProvRule);
+		entity.setIntProvRule(this.intProvRule);
+		entity.setFeetype(this.feetype);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -648,7 +666,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("allowPftBal");
 		excludeFields.add("alwVan");
 		excludeFields.add("vanAllocationMethod");
-
+		excludeFields.add("feetype");
 		return excludeFields;
 	}
 
@@ -2591,4 +2609,69 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setStepsAppliedFor(String stepsAppliedFor) {
 		this.stepsAppliedFor = stepsAppliedFor;
 	}
+
+	public boolean isOverdraftTxnChrgReq() {
+		return overdraftTxnChrgReq;
+	}
+
+	public void setOverdraftTxnChrgReq(boolean overdraftTxnChrgReq) {
+		this.overdraftTxnChrgReq = overdraftTxnChrgReq;
+	}
+
+	public long getOverdraftTxnChrgFeeType() {
+		return overdraftTxnChrgFeeType;
+	}
+
+	public void setOverdraftTxnChrgFeeType(long overdraftTxnChrgFeeType) {
+		this.overdraftTxnChrgFeeType = overdraftTxnChrgFeeType;
+	}
+
+	public FeeType getFeetype() {
+		return feetype;
+	}
+
+	public void setFeetype(FeeType feetype) {
+		this.feetype = feetype;
+	}
+
+	public BigDecimal getOverDraftColAmt() {
+		return overDraftColAmt;
+	}
+
+	public void setOverDraftColAmt(BigDecimal overDraftColAmt) {
+		this.overDraftColAmt = overDraftColAmt;
+	}
+
+	public int getOverDraftExtGraceDays() {
+		return overDraftExtGraceDays;
+	}
+
+	public void setOverDraftExtGraceDays(int overDraftExtGraceDays) {
+		this.overDraftExtGraceDays = overDraftExtGraceDays;
+	}
+
+	public long getOverDraftColChrgFeeType() {
+		return overDraftColChrgFeeType;
+	}
+
+	public void setOverDraftColChrgFeeType(long overDraftColChrgFeeType) {
+		this.overDraftColChrgFeeType = overDraftColChrgFeeType;
+	}
+
+	public Long getRegProvRule() {
+		return regProvRule;
+	}
+
+	public void setRegProvRule(Long regProvRule) {
+		this.regProvRule = regProvRule;
+	}
+
+	public Long getIntProvRule() {
+		return intProvRule;
+	}
+
+	public void setIntProvRule(Long intProvRule) {
+		this.intProvRule = intProvRule;
+	}
+
 }

@@ -50,4 +50,6 @@ public interface ExtendedFieldRenderDAO {
 	Map<String, Object> getExtendedField(String reference, long instructionUID, String tableName, String type);
 
 	void deleteList(String reference, int seqNo, String tableName, String tableType);
+
+	String getUCICNumber(String tablename, Object ucic);
 }

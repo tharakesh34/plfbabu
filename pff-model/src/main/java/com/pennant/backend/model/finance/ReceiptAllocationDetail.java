@@ -3,6 +3,7 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -90,6 +91,8 @@ public class ReceiptAllocationDetail implements Serializable {
 	private boolean isTdsReq = false;
 	private BigDecimal percTds = BigDecimal.ZERO;
 
+	private Date valueDate;
+
 	public ReceiptAllocationDetail() {
 		super();
 	}
@@ -154,6 +157,7 @@ public class ReceiptAllocationDetail implements Serializable {
 		entity.setTdsWaived(this.tdsWaived);
 		entity.setTdsReq(this.isTdsReq);
 		entity.setPercTds(this.percTds);
+		entity.setValueDate(this.valueDate);
 		return entity;
 	}
 
@@ -619,6 +623,14 @@ public class ReceiptAllocationDetail implements Serializable {
 
 	public void setDueCESS(BigDecimal dueCESS) {
 		this.dueCESS = dueCESS;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
 	}
 
 }

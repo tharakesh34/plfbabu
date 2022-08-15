@@ -188,7 +188,10 @@ public class CustomizeFinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 				}
 
-				if (StringUtils.isBlank(mandate.getIFSC())) {
+				String ifsc = mandate.getIFSC();
+				String micr = mandate.getMICR();
+
+				if (StringUtils.isBlank(ifsc)) {
 					if ((StringUtils.isBlank(mandate.getBankCode()) || StringUtils.isBlank(mandate.getBranchCode()))) {
 						String[] valueParm = new String[1];
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90313", valueParm)));
@@ -277,54 +280,20 @@ public class CustomizeFinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", valueParm)));
 					}
 				}
-				boolean isValidBranch = true;
-				if (StringUtils.isNotBlank(mandate.getIFSC())) {
-					BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
-					if (bankBranch == null) {
-						String[] valueParm = new String[1];
-						valueParm[0] = mandate.getIFSC();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90301", valueParm)));
-					} else {
-						isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
-						mandate.setBankCode(bankBranch.getBankCode());
-						if (StringUtils.isBlank(mandate.getMICR())) {
-							mandate.setMICR(bankBranch.getMICR());
-						} else {
-							if (!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())) {
-								String[] valueParm = new String[2];
-								valueParm[0] = "MICR";
-								valueParm[1] = mandate.getMICR();
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-							}
-						}
-					}
-				} else if (StringUtils.isNotBlank(mandate.getBankCode())
-						&& StringUtils.isNotBlank(mandate.getBranchCode())) {
-					BankBranch bankBranch = bankBranchService.getBankBrachByCode(mandate.getBankCode(),
-							mandate.getBranchCode());
-					if (bankBranch == null) {
-						String[] valueParm = new String[2];
-						valueParm[0] = mandate.getBankCode();
-						valueParm[1] = mandate.getBranchCode();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90302", valueParm)));
-					} else {
-						isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
-						mandate.setBankCode(bankBranch.getBankCode());
-						if (StringUtils.isBlank(mandate.getMICR())) {
-							mandate.setMICR(bankBranch.getMICR());
-						} else {
-							if (!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())) {
-								String[] valueParm = new String[2];
-								valueParm[0] = "MICR";
-								valueParm[1] = mandate.getMICR();
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-								return errorDetails;
-							}
-						}
 
-					}
+				String bankCode = mandate.getBranchCode();
+				String branchCode = mandate.getBankCode();
+
+				BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+				if (bankBranch.getError() != null) {
+					errorDetails.add(bankBranch.getError());
 				}
-				if (!isValidBranch) {
+
+				mandate.setBankCode(bankBranch.getBankCode());
+				mandate.setMICR(bankBranch.getMICR());
+
+				if (!bankBranchService.validateBranchCode(bankBranch, mandate.getMandateType())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = mandate.getMandateType();
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90333", valueParm)));
@@ -485,23 +454,6 @@ public class CustomizeFinanceDataValidation {
 			}
 		}
 		return errorDetails;
-	}
-
-	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
-		if (StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())) {
-			if (!bankBranch.isEcs()) {
-				isValidBranch = false;
-			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())) {
-			if (!bankBranch.isDda()) {
-				isValidBranch = false;
-			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())) {
-			if (!bankBranch.isNach()) {
-				isValidBranch = false;
-			}
-		}
-		return isValidBranch;
 	}
 
 	/**

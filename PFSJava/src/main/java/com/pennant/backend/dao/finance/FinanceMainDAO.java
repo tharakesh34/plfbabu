@@ -385,4 +385,23 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceMainForLMSEvent(long finID);
 
 	String getLovDescFinDivisionByReference(String finReference);
+
+	Map<String, Object> getExtendedFields(String reference, String tableName);
+
+	// FIXME the below method should be moved to corresponding DAO classes of CD/OverDraft
+	FinanceMain getFinanceMainByReference(String FinReference, boolean active);
+
+	boolean isOverDraft(String finReference);
+
+	String getEntityCodeByRef(String finReference);
+
+	Long getCustomerIdByFinRef(String finReference);
+
+	Long getCustomerIdByFinID(long finID);
+
+	void updateFinanceForGraceEndInEOD(FinanceMain financeMain);
+
+	List<FinanceMain> getForFinanceExposer(long custId);
+
+	int getBucketByFinStatus(long finID);
 }

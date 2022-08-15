@@ -134,10 +134,10 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(", ReceivedDate, ReceiptMode, FundingAc, PaymentRef, FavourNumber, BankCode, ChequeAcNo");
 		sql.append(", TransactionRef, Status, DepositDate, RealizationDate, InstrumentDate, ExtReference");
 		sql.append(", SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId, TdsAmount");
+		sql.append(", BckdtdWthOldDues, BounceReason, CancelReason, BounceDate, ReceiptId");
 		sql.append(") Values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?");
-		sql.append(")");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -176,7 +176,11 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			ps.setString(index++, rud.getPanNumber());
 			ps.setObject(index++, rud.getCollectionAgentId());
 			ps.setBigDecimal(index++, rud.getTdsAmount());
-
+			ps.setBoolean(index++, rud.isBckdtdWthOldDues());
+			ps.setString(index++, rud.getBounceReason());
+			ps.setString(index++, rud.getCancelReason());
+			ps.setDate(index++, JdbcUtil.getDate(rud.getBounceDate()));
+			ps.setObject(index++, rud.getReceiptId());
 		});
 
 		return rud.getUploadDetailId();
@@ -244,22 +248,27 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 	}
 
 	@Override
-	public String getLoanReferenc(String finReference, String receiptFileName) {
-		StringBuilder sql = new StringBuilder("Select");
+	public String getLoanReferenc(String finReference, String fileName) {
+		StringBuilder sql = new StringBuilder("Select ");
 		sql.append(" Distinct Reference");
-		sql.append(" From ReceiptUploadDetails");
-		sql.append(" Where UploadHeaderId in");
-		sql.append(" (Select UploadHeaderId From ReceiptUploadHeader_View");
-		sql.append(" Where FileName not in (?) and uploadprogress in ( ?,? ))");
-		sql.append(" and Reference = ? and ProcessingStatus in (?)");
+		sql.append(" From ReceiptUploadDetails ");
+		sql.append(" Where UploadHeaderId in (");
+		sql.append(" Select UploadHeaderId From ReceiptUploadHeader_Temp");
+		sql.append(" Where FileName not in (?) and uploadprogress in ( ?,? ) ");
+		sql.append(" Union All");
+		sql.append(" Select UploadHeaderId From ReceiptUploadHeader");
+		sql.append(" Where FileName not in (?) and uploadprogress in ( ?,? ) ");
+		sql.append(") and Reference = ? and ProcessingStatus in (?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
+		int deflt = ReceiptUploadConstants.RECEIPT_DEFAULT;
+		int download = ReceiptUploadConstants.RECEIPT_DOWNLOADED;
+		int status = ReceiptDetailStatus.SUCCESS.getValue();
+
+		Object[] args = new Object[] { fileName, deflt, download, fileName, deflt, download, finReference, status };
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), String.class,
-					new Object[] { receiptFileName, ReceiptUploadConstants.RECEIPT_DEFAULT,
-							ReceiptUploadConstants.RECEIPT_DOWNLOADED, finReference,
-							ReceiptDetailStatus.SUCCESS.getValue() });
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getString(1), args);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -429,7 +438,8 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(" Set ProcessingStatus = ?");
 		sql.append(" Where UploadHeaderid in ( ");
 		sql.append(commaJoin(uploadHeaderIdList));
-		sql.append(") and ProcessingStatus = ?  and ReceiptId is null");
+		sql.append(") and ProcessingStatus = ? and ((ReceiptId = 0 or ReceiptId is null) or (status in ('B','C')))");
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
@@ -460,7 +470,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		}
 		sql.append(")");
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -498,6 +508,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(", ChequeAcNo ChequeNo, TransactionRef, Status, DepositDate, RealizationDate, InstrumentDate");
 		sql.append(", ExtReference, SubReceiptMode, ReceiptChannel, ReceivedFrom");
 		sql.append(", PanNumber, CollectionAgentId, TdsAmount");
+		sql.append(", BckdtdWthOldDues, ReceiptId, BounceDate, BounceReason, CancelReason");
 		sql.append(" From ReceiptUploadDetails");
 		return sql;
 	}
@@ -544,6 +555,11 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			ca.setPanNumber(rs.getString("PanNumber"));
 			ca.setCollectionAgentId(JdbcUtil.getLong(rs.getObject("CollectionAgentId")));
 			ca.setTdsAmount(rs.getBigDecimal("TdsAmount"));
+			ca.setBckdtdWthOldDues(rs.getBoolean("BckdtdWthOldDues"));
+			ca.setReceiptId(rs.getLong("ReceiptId"));
+			ca.setBounceDate(rs.getDate("BounceDate"));
+			ca.setBounceReason(rs.getString("BounceReason"));
+			ca.setCancelReason(rs.getString("CancelReason"));
 
 			return ca;
 

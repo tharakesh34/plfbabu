@@ -62,7 +62,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -146,7 +146,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	@Autowired
 	private transient CollateralSetupService collateralSetupService;
 	@Autowired
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 
 	private Map<String, ExtendedFieldRender> extFieldRenderList;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
@@ -558,7 +558,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	public void onClickCustomerId(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		Customer collSetup = (Customer) event.getData();
-		CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(collSetup.getCustID(), true,
+		CustomerDetails customerDetails = customerDataService.getCustomerDetailsbyID(collSetup.getCustID(), true,
 				"_AView");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		String pageName = PennantAppUtil.getCustomerPageName();

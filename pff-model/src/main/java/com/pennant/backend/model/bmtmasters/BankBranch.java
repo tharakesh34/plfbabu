@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
@@ -62,6 +63,8 @@ public class BankBranch extends AbstractWorkflowEntity {
 	private String parentBranchDesc;
 	private boolean emandate;
 	private String allowedSources;
+	private boolean allowMultipleIFSC;
+	private ErrorDetail error;
 
 	public BankBranch() {
 		super();
@@ -77,6 +80,9 @@ public class BankBranch extends AbstractWorkflowEntity {
 		excludeFields.add("bankName");
 		excludeFields.add("PCCityName");
 		excludeFields.add("accNoLength");
+		excludeFields.add("allowMultipleIFSC");
+		excludeFields.add("error");
+
 		return excludeFields;
 	}
 
@@ -278,6 +284,22 @@ public class BankBranch extends AbstractWorkflowEntity {
 
 	public void setAllowedSources(String allowedSources) {
 		this.allowedSources = allowedSources;
+	}
+
+	public boolean isAllowMultipleIFSC() {
+		return allowMultipleIFSC;
+	}
+
+	public void setAllowMultipleIFSC(boolean allowMultipleIFSC) {
+		this.allowMultipleIFSC = allowMultipleIFSC;
+	}
+
+	public ErrorDetail getError() {
+		return error;
+	}
+
+	public void setError(ErrorDetail error) {
+		this.error = error;
 	}
 
 }

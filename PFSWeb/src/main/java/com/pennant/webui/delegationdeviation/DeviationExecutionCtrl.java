@@ -45,7 +45,7 @@ import com.pennant.backend.model.solutionfactory.DeviationDetail;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -74,7 +74,7 @@ public class DeviationExecutionCtrl {
 	private DeviationConfigService deviationConfigService;
 	private CheckListDetailService checkListDetailService;
 	@Autowired
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 	@Autowired
 	private CollateralAssignmentDAO collateralAssignmentDAO;
 	@Autowired
@@ -179,7 +179,7 @@ public class DeviationExecutionCtrl {
 					CustomerDetails custdet = setCoappExtendedfields(custDeatils);
 					coApplicant.setCustomerDetails(custdet);
 				} else {
-					customer = customerDetailsService.getCustomerDetailsById(coApplicant.getCustID(), true, "_AView");
+					customer = customerDataService.getCustomerDetailsbyID(coApplicant.getCustID(), true, "_AView");
 					CustomerDetails custdet = setCoappExtendedfields(customer);
 					coApplicant.setCustomerDetails(custdet);
 				}
@@ -193,8 +193,7 @@ public class DeviationExecutionCtrl {
 					continue;
 				}
 				if (guarantorDetail.isBankCustomer()) {
-					customer = customerDetailsService.getCustomerDetailsById(guarantorDetail.getCustID(), true,
-							"_AView");
+					customer = customerDataService.getCustomerDetailsbyID(guarantorDetail.getCustID(), true, "_AView");
 					guarantorDetail.setCustomerDetails(customer);
 				}
 			}

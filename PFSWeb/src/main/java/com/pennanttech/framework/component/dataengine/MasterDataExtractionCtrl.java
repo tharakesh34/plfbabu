@@ -109,7 +109,7 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 		} else {
 			logger.error(status.getRemarks());
 			MessageUtil.showError(String.format("%s master download failed, please contact the system administrator.",
-					status.getName()));
+					status.getRemarks()));
 		}
 	}
 

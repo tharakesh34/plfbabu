@@ -350,32 +350,61 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 	 */
 	@Override
 	public LimitStructureDetail getLimitStructureDetail(long limitStructureId, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LimitStructureDetailsID, LimitStructureCode, GroupCode, LimitLine");
+		sql.append(", ItemSeq, Editable, DisplayStyle, LimitCategory, ItemPriority, LimitCheck");
+		sql.append(", Revolving, ItemLevel, Version, CreatedBy, CreatedOn, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		LimitStructureDetail structureDetail = new LimitStructureDetail();
-		structureDetail.setLimitStructureDetailsID(limitStructureId);
-
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT LimitStructureDetailsID, LimitStructureCode, GroupCode, LimitLine, ");
-		selectSql.append(
-				" ItemSeq, Editable, DisplayStyle,LimitCategory, ItemPriority ,LimitCheck,Revolving,ItemLevel, Version, CreatedBy,");
-		selectSql.append(
-				" CreatedOn, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",StructureName, GroupName, LimitLineDesc");
+			sql.append(", StructureName, GroupName, LimitLineDesc");
 		}
-		selectSql.append(" From LimitStructureDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where LimitStructureDetailsID =:LimitStructureDetailsID ");
-		selectSql.append(" order by ItemSeq");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		sql.append(" From LimitStructureDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where LimitStructureDetailsID = ?");
+		sql.append(" order by ItemSeq");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(structureDetail);
-		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
+
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				LimitStructureDetail lsd = new LimitStructureDetail();
+
+				lsd.setLimitStructureDetailsID(rs.getLong("LimitStructureDetailsID"));
+				lsd.setLimitStructureCode(rs.getString("LimitStructureCode"));
+				lsd.setGroupCode(rs.getString("GroupCode"));
+				lsd.setLimitLine(rs.getString("LimitLine"));
+				lsd.setItemSeq(rs.getInt("ItemSeq"));
+				lsd.setEditable(rs.getBoolean("Editable"));
+				lsd.setDisplayStyle(rs.getString("DisplayStyle"));
+				lsd.setLimitCategory(rs.getString("LimitCategory"));
+				lsd.setItemPriority(rs.getInt("ItemPriority"));
+				lsd.setLimitCheck(rs.getBoolean("LimitCheck"));
+				lsd.setRevolving(rs.getBoolean("Revolving"));
+				lsd.setItemLevel(rs.getInt("ItemLevel"));
+				lsd.setVersion(rs.getInt("Version"));
+				lsd.setCreatedBy(rs.getLong("CreatedBy"));
+				lsd.setCreatedOn(rs.getTimestamp("CreatedOn"));
+				lsd.setLastMntBy(rs.getLong("LastMntBy"));
+				lsd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				lsd.setRecordStatus(rs.getString("RecordStatus"));
+				lsd.setRoleCode(rs.getString("RoleCode"));
+				lsd.setNextRoleCode(rs.getString("NextRoleCode"));
+				lsd.setTaskId(rs.getString("TaskId"));
+				lsd.setNextTaskId(rs.getString("NextTaskId"));
+				lsd.setRecordType(rs.getString("RecordType"));
+				lsd.setWorkflowId(rs.getLong("WorkflowId"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					lsd.setStructureName(rs.getString("StructureName"));
+					lsd.setGroupName(rs.getString("GroupName"));
+					lsd.setLimitLineDesc(rs.getString("LimitLineDesc"));
+				}
+
+				return lsd;
+			}, limitStructureId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

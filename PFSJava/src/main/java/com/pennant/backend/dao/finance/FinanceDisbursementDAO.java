@@ -63,4 +63,5 @@ public interface FinanceDisbursementDAO {
 
 	List<FinanceDisbursement> getFinanceDisbursementForLMSEvent(long finID);
 
+	FinanceDisbursement getFinanceDisbursementByInstId(long instructionUID);
 }

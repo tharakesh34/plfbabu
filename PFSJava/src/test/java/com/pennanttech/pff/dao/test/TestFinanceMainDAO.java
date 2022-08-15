@@ -379,9 +379,6 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getFinanceType("1500BUS0003280", TableType.MAIN_TAB);
 		financeMainDAO.getFinanceType("1500BUS00032", TableType.MAIN_TAB);
 
-		financeMainDAO.getCustomerIdByFin("1500BUS0003280");
-		financeMainDAO.getCustomerIdByFin("1500BUS0003");
-
 		// financeMainDAO.getFinID("1500BUS0003280");
 		// financeMainDAO.getActiveFinID("1500BUS0003280");
 

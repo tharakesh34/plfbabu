@@ -47,6 +47,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -90,9 +91,11 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
+import com.pennant.backend.service.finance.ISRADetailService;
 import com.pennant.backend.service.finance.validation.FinGuarantorDetailValidation;
 import com.pennant.backend.service.finance.validation.FinJointAccountDetailValidation;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -102,6 +105,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -126,6 +130,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private VehicleDealerService vehicleDealerService;
+	private ISRADetailService israDetailService;
+	private CustomerDataService customerDataService;
 
 	public FinanceMaintenanceServiceImpl() {
 		super();
@@ -184,7 +190,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		if (custID != 0 && custID != Long.MIN_VALUE) {
-			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
+			fd.setCustomerDetails(customerDataService.getCustomerDetailsbyID(custID, true, "_View"));
 		}
 
 		checkListDetailService.setFinanceCheckListDetails(fd, finType, procEdtEvent, userRole);
@@ -225,11 +231,16 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// Mandate
 		fd.setMandate(mandateDAO.getMandateById(fm.getMandateID(), ""));
 
+		// ISRA Details
+		fd.setIsraDetail(this.israDetailService.getIsraDetailsByRef(finReference, "_View"));
+
 		// Finance Overdue Penalty Rate Details
 		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, type));
 
 		fd.setDocumentDetailsList(documentDetailsDAO.getDocumentDetailsByRef(finReference, FinanceConstants.MODULE_NAME,
 				procEdtEvent, "_View"));
+
+		fd.setTanAssignments(tanAssignmentService.getTanDetailsByFinReference(fm.getCustID(), finReference));
 
 		if (FinServiceEvent.WRITEOFFPAY.equals(procEdtEvent)) {
 			if (StringUtils.isNotBlank(fm.getRecordType())) {
@@ -406,6 +417,12 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			details = processingDocumentDetailsList(details, tableType.getSuffix(), fm, fd.getModuleDefiner(),
 					serviceUID);
 			auditDetails.addAll(details);
+		}
+
+		// ISRA Details
+		if (fd.getIsraDetail() != null) {
+			auditDetails
+					.addAll(israDetailService.saveOrUpdate(fd, tableType.getSuffix(), auditHeader.getAuditTranType()));
 		}
 
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
@@ -687,6 +704,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			auditDetailList.addAll(details);
 		}
 
+		// ISRA Details
+		if (fd.getIsraDetail() != null) {
+			auditDetailList.addAll(israDetailService.doReject(fd, "_Temp", auditHeader.getAuditTranType()));
+		}
 		// set Guarantor Details Audit
 		// =======================================
 		if (fd.getGurantorsDetailList() != null && !fd.getGurantorsDetailList().isEmpty()) {
@@ -740,8 +761,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			auditDetailList.addAll(details);
 		}
 
-		FinScheduleData finScheduleData = fd.getFinScheduleData();
-
 		finServiceInstructionDAO.deleteList(finID, fd.getModuleDefiner(), "_Temp");
 
 		// Extended field Render Details.
@@ -758,6 +777,15 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			financeWriteoffDAO.deletefinWriteoffPayment(finID, fd.getFinwriteoffPayment().getSeqNo(), "_Temp");
 		}
 		financeMainDAO.delete(fm, TableType.TEMP_TAB, false, false);
+		// Process Tan Assignment -doReject
+		List<TanAssignment> tanAssignments = fd.getTanAssignments();
+		if (CollectionUtils.isNotEmpty(tanAssignments)) {
+			List<AuditDetail> details = fd.getAuditDetailMap().get("TanAssignments");
+			tanAssignmentService.delete(tanAssignments, TableType.TEMP_TAB);
+			if (details != null) {
+				auditDetailList.addAll(details);
+			}
+		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
@@ -910,6 +938,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// =======================================
 		saveFeeChargeList(schdData, fd.getModuleDefiner(), false, "");
 
+		// ISRA Details
+		if (fd.getIsraDetail() != null) {
+			auditDetails.addAll(israDetailService.doApprove(fd, "", tranType));
+		}
+
 		// set Check list details Audit
 		// =======================================
 		if (fd.getFinanceCheckList() != null && !fd.getFinanceCheckList().isEmpty()) {
@@ -1040,6 +1073,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		finServiceInstructionDAO.deleteList(finID, fd.getModuleDefiner(), "_Temp");
 
+		// Delete Tan Assignment on doApprove in temp
+		if (CollectionUtils.isNotEmpty(fd.getTanAssignments())) {
+			tanAssignmentService.delete(fd.getTanAssignments(), TableType.TEMP_TAB);
+		}
+
 		// Cheque detail maintaince Inserting the entry in the cheque details
 		// if the repayment mode changed to pdc
 		if (fm.getBefImage() != null) {
@@ -1163,6 +1201,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
 			ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
 			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		// TAN Assignments Validation
+		if (financeMain.isTDSApplicable() && financeDetail.getTanAssignments() != null) {
+			List<AuditDetail> details = tanAssignmentService.validate(financeDetail, financeMain.getWorkflowId(),
+					method, auditHeader.getAuditTranType(), usrLanguage);
+			financeDetail.getAuditDetailMap().put("TanAssignments", details);
 			auditDetails.addAll(details);
 		}
 
@@ -1328,6 +1374,13 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
+		// ISRA Details
+		if (financeDetail.getIsraDetail() != null) {
+			auditDetailMap.put("ISRALiquidDeatils",
+					this.israDetailService.getISRALiquidDeatils(financeDetail.getIsraDetail(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("ISRALiquidDeatils"));
+		}
+
 		// Finance Checklist Details
 		// =======================================
 		List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
@@ -1388,9 +1441,17 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			financeDetail.getExtendedFieldRender().setTableName(
 					extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName() + "_ED");
 			auditDetailMap.put("ExtendedFieldDetails",
-					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
-							extendedFieldRender, auditTranType, method, ExtendedFieldConstants.MODULE_LOAN));
+					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(),
+							auditTranType, method, financeDetail.getExtendedFieldHeader().getModuleName()));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+		}
+
+		// set Tan Assignments Audit
+		// =======================================
+		if (financeDetail.getTanAssignments() != null && financeDetail.getTanAssignments().size() > 0) {
+			auditDetailMap.put("TanAssignment", tanAssignmentService.setTanAssignmentAuditData(financeDetail,
+					auditTranType, method, financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId()));
+			auditDetails.addAll(auditDetailMap.get("TanAssignment"));
 		}
 
 		financeDetail.setAuditDetailMap(auditDetailMap);
@@ -2000,6 +2061,15 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
+	}
+
+	public void setIsraDetailService(ISRADetailService israDetailService) {
+		this.israDetailService = israDetailService;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

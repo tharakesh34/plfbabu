@@ -98,6 +98,9 @@ public class CustomerDedup implements Serializable {
 	@XmlElement(name = "drivingLicense")
 	private String drivingLicenceNo;
 	private String finType;
+	@XmlElement(name = "UCIC")
+	private String ucic;
+	private String custCompName;
 
 	public CustomerDedup() {
 		super();
@@ -150,6 +153,8 @@ public class CustomerDedup implements Serializable {
 		excludeFields.add("drivingLicenceNo");
 		excludeFields.add("address");
 		excludeFields.add("finType");
+		excludeFields.add("ucic");
+		excludeFields.add("custCompName");
 		return excludeFields;
 	}
 
@@ -678,4 +683,21 @@ public class CustomerDedup implements Serializable {
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
+
+	public String getUcic() {
+		return ucic;
+	}
+
+	public void setUcic(String uCIC) {
+		this.ucic = uCIC;
+	}
+
+	public String getCustCompName() {
+		return custCompName;
+	}
+
+	public void setCustCompName(String custCompName) {
+		this.custCompName = custCompName;
+	}
+
 }

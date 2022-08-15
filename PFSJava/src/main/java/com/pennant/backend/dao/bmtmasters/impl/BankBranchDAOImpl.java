@@ -389,7 +389,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", BankName, PCCityName");
+			sql.append(", BankName, PCCityName, AllowMultipleIFSC");
 		}
 		sql.append(" from BankBranches");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -439,9 +439,112 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				bb.setBankName(rs.getString("BankName"));
 				bb.setPCCityName(rs.getString("PCCityName"));
+				bb.setAllowMultipleIFSC(rs.getBoolean("AllowMultipleIFSC"));
 			}
 
 			return bb;
+		}
+	}
+
+	@Override
+	public BankBranch getBankBranchByIFSC(String ifsc, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR");
+		sql.append(", IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", BankName");
+		}
+		sql.append(" From BankBranches");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where IFSC = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BankBranch bb = new BankBranch();
+
+				bb.setBankBranchID(rs.getLong("BankBranchID"));
+				bb.setBankCode(rs.getString("BankCode"));
+				bb.setBranchCode(rs.getString("BranchCode"));
+				bb.setBranchDesc(rs.getString("BranchDesc"));
+				bb.setCity(rs.getString("City"));
+				bb.setMICR(rs.getString("MICR"));
+				bb.setIFSC(rs.getString("IFSC"));
+				bb.setAddOfBranch(rs.getString("AddOfBranch"));
+				bb.setNach(rs.getBoolean("Nach"));
+				bb.setDd(rs.getBoolean("Dd"));
+				bb.setDda(rs.getBoolean("Dda"));
+				bb.setEcs(rs.getBoolean("Ecs"));
+				bb.setCheque(rs.getBoolean("Cheque"));
+				bb.setActive(rs.getBoolean("Active"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					bb.setBankName(rs.getString("BankName"));
+				}
+
+				return bb;
+			}, ifsc);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public int getBankBranchCountByIFSC(final String iFSC, String type) {
+		StringBuilder sql = new StringBuilder("Select count(Ifsc) From BankBranches");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Ifsc = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+		
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				return rs.getInt("Count");
+			}, iFSC);
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return 0;
+	}
+
+	@Override
+	public BankBranch getBankBranchByIFSCMICR(String iFSC, String micr) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC");
+		sql.append(", AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		sql.append(" From BankBranches");
+		sql.append(" Where IFSC = ? and Micr = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BankBranch bb = new BankBranch();
+
+				bb.setBankBranchID(rs.getLong("BankBranchID"));
+				bb.setBankCode(rs.getString("BankCode"));
+				bb.setBranchCode(rs.getString("BranchCode"));
+				bb.setBranchDesc(rs.getString("BranchDesc"));
+				bb.setCity(rs.getString("City"));
+				bb.setMICR(rs.getString("MICR"));
+				bb.setIFSC(rs.getString("IFSC"));
+				bb.setAddOfBranch(rs.getString("AddOfBranch"));
+				bb.setNach(rs.getBoolean("Nach"));
+				bb.setDd(rs.getBoolean("Dd"));
+				bb.setDda(rs.getBoolean("Dda"));
+				bb.setEcs(rs.getBoolean("Ecs"));
+				bb.setCheque(rs.getBoolean("Cheque"));
+				bb.setActive(rs.getBoolean("Active"));
+
+				return bb;
+			}, iFSC, micr);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
 	}
 }

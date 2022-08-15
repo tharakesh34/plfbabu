@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -65,22 +66,24 @@
 	<bean id="pennantJavaUtil" class="com.pennant.backend.util.PennantJavaUtil" init-method="init"></bean>
 
 	<!-- Customer -->
-	<bean id="customerController" class="com.pennanttech.controller.CustomerController" autowire="byName" scope="prototype">
+	<bean id="customerController" class="com.pennanttech.controller.CustomerController" autowire="byName"
+		scope="prototype">
 	</bean>
 
-	<bean id="customerDetailsController" class="com.pennanttech.controller.CustomerDetailsController" autowire="byName"
-		scope="prototype">
+	<bean id="customerDetailsController" class="com.pennanttech.controller.CustomerDetailsController"
+		autowire="byName" scope="prototype">
 	</bean>
 	<!-- WIF Loan Calculator -->
 	<bean id="financeDetailController" class="com.pennanttech.controller.FinanceDetailController" autowire="byName"
-		scope="prototype" parent="summaryDetailService"/>
+		scope="prototype" parent="summaryDetailService" />
 
 	<!-- Finance/Loan Services -->
 	<bean id="finServiceInstController" class="com.pennanttech.controller.FinServiceInstController" autowire="byName"
-		scope="prototype" parent="summaryDetailService"/>
+		scope="prototype" parent="summaryDetailService" />
 
 	<!-- FinanceType/LoanType controller -->
-	<bean id="financeTypeController" class="com.pennanttech.controller.FinanceTypeController" autowire="byName" scope="prototype"/>
+	<bean id="financeTypeController" class="com.pennanttech.controller.FinanceTypeController" autowire="byName"
+		scope="prototype" />
 
 	<bean id="createFinanceController" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -95,16 +98,17 @@
 			</props>
 		</property>
 	</bean>
-	
+
 	<!-- CreateFinance/Loan controller -->
-	<bean id="createFinanceControllerTarget" class="com.pennanttech.controller.CreateFinanceController" autowire="byName"
-		scope="prototype" parent="summaryDetailService">
+	<bean id="createFinanceControllerTarget" class="com.pennanttech.controller.CreateFinanceController"
+		autowire="byName" scope="prototype" parent="summaryDetailService">
 	</bean>
 
-	<bean id="summaryDetailService" class="com.pennanttech.controller.SummaryDetailService" autowire="byName"/>
+	<bean id="summaryDetailService" class="com.pennanttech.controller.SummaryDetailService" autowire="byName" />
 
 	<!-- Mandate controller -->
-	<bean id="mandateController" class="com.pennanttech.controller.MandateController" autowire="byName" scope="prototype">
+	<bean id="mandateController" class="com.pennanttech.controller.MandateController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<!-- Limit service controller -->
@@ -113,11 +117,13 @@
 	</bean>
 
 	<!-- Beneficiary controller -->
-	<bean id="beneficiaryController" class="com.pennanttech.controller.BeneficiaryController" autowire="byName" scope="prototype">
+	<bean id="beneficiaryController" class="com.pennanttech.controller.BeneficiaryController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<!-- Collateral controller -->
-	<bean id="collateralController" class="com.pennanttech.controller.CollateralController" autowire="byName" scope="prototype">
+	<bean id="collateralController" class="com.pennanttech.controller.CollateralController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<!-- Login controller -->
@@ -130,47 +136,53 @@
 	</bean>
 
 	<!-- SecRoles controller -->
-	<bean id="SecRolesController" class="com.pennanttech.controller.SecRolesController" autowire="byName" scope="prototype">
+	<bean id="SecRolesController" class="com.pennanttech.controller.SecRolesController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<!-- Statement controller -->
 	<bean id="finStatementController" class="com.pennanttech.controller.FinStatementController" autowire="byName"
-		scope="prototype" parent="summaryDetailService"/>
-		
+		scope="prototype" parent="summaryDetailService" />
+
 	<!-- VAS controller -->
 	<bean id="vasController" class="com.pennanttech.controller.VASController" autowire="byName" scope="prototype">
 	</bean>
-	<bean id="feePostingController" class="com.pennanttech.controller.FeePostingController" autowire="byName" scope="prototype">
+	<bean id="feePostingController" class="com.pennanttech.controller.FeePostingController" autowire="byName"
+		scope="prototype">
 	</bean>
-	<bean id="queryModuleController" class="com.pennanttech.controller.QueryModuleController" autowire="byName" scope="prototype">
+	<bean id="queryModuleController" class="com.pennanttech.controller.QueryModuleController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<bean id="aPILogDetailDAO" class="com.pennanttech.util.APILogDetailDAOImpl" parent="secBasicDao" />
 
 	<!-- Remarks Controller -->
-	<bean id="remarksController" class="com.pennanttech.controller.RemarksController" autowire="byName" scope="prototype"></bean>
+	<bean id="remarksController" class="com.pennanttech.controller.RemarksController" autowire="byName"
+		scope="prototype"></bean>
 
 	<!-- Miscellaneous Controller -->
-	<bean id="miscellaneousController" class="com.pennanttech.controller.MiscellaneousServiceController" autowire="byName"
-		scope="prototype">
+	<bean id="miscellaneousController" class="com.pennanttech.controller.MiscellaneousServiceController"
+		autowire="byName" scope="prototype">
 	</bean>
 
 	<!-- Document Controller -->
-	<bean id="documentController" class="com.pennanttech.controller.DocumentController" autowire="byName" scope="prototype" />
+	<bean id="documentController" class="com.pennanttech.controller.DocumentController" autowire="byName"
+		scope="prototype" />
 
 	<bean id="refundUploadController" class="com.pennanttech.controller.RefundUploadController" autowire="byName"
 		scope="prototype">
 	</bean>
 
 	<!-- Dealer Controller -->
-	<bean id="dealerController" class="com.pennanttech.controller.DealerController" autowire="byName" scope="prototype">
+	<bean id="dealerController" class="com.pennanttech.controller.DealerController" autowire="byName"
+		scope="prototype">
 	</bean>
 	<!-- Disbursement Controller -->
-	<bean id="disbursementController" class="com.pennanttech.pff.api.controller.DisbursementController" autowire="byName"
-		scope="prototype">
+	<bean id="disbursementController" class="com.pennanttech.pff.api.controller.DisbursementController"
+		autowire="byName" scope="prototype">
 	</bean>
-	<bean id="presentmentServiceController" class="com.pennanttech.controller.PresentmentServiceController" autowire="byName"
-		scope="prototype">
+	<bean id="presentmentServiceController" class="com.pennanttech.controller.PresentmentServiceController"
+		autowire="byName" scope="prototype">
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
 		<property name="dataSource" ref="dataSource" />
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
@@ -184,7 +196,8 @@
 		autowire="byName" scope="prototype">
 	</bean>
 
-	<bean id="relationshipOfficerService" class="com.pennant.backend.service.applicationmaster.impl.RelationshipOfficerServiceImpl" />
+	<bean id="relationshipOfficerService"
+		class="com.pennant.backend.service.applicationmaster.impl.RelationshipOfficerServiceImpl" />
 
 	<!-- Verification Controller -->
 	<bean id="verificationController" class="com.pennanttech.controller.VerificationController" autowire="byName"
@@ -192,5 +205,27 @@
 	</bean>
 
 	<!-- FinCovenant Controller -->
-	<bean id="finCovenantController" class="com.pennanttech.controller.FinCovenantController" autowire="byName" scope="prototype" />
+	<bean id="finCovenantController" class="com.pennanttech.controller.FinCovenantController" autowire="byName"
+		scope="prototype" />
+
+	<bean id="foreClosureService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="foreClosureServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="changePassword*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="foreClosureServiceTarget" class="com.pennanttech.pff.foreclosure.service.impl.ForeClosureServiceImpl" />
 </beans>

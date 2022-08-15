@@ -27,7 +27,7 @@ package com.pennant.webui.financemanagement.receipts.model;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -57,7 +57,14 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 	public void render(Listitem item, FinReceiptHeader header, int count) {
 
 		Listcell lc;
-		lc = new Listcell(header.getReference());
+
+		String extReference = header.getExtReference();
+		if (StringUtils.isNotEmpty(extReference)) {
+			lc = new Listcell(extReference);
+		} else {
+			lc = new Listcell(header.getReference());
+		}
+
 		lc.setParent(item);
 		lc = new Listcell(header.getPromotionCode());
 		lc.setParent(item);

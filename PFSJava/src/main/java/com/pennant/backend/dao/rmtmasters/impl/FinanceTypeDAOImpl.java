@@ -46,6 +46,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 
@@ -108,6 +109,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes");
 		sql.append(" , GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths");
 		sql.append(", MaxAutoIncrAllowed, AlwLoanSplit, SplitLoanType, TdsType, CalcOfSteps, StepsAppliedFor");
+		sql.append(", IntProvRule, RegProvRule, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType, OverDraftExtGraceDays");
+		sql.append(", OverDraftColChrgFeeType, OverDraftColAmt");
+		
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc ");
 			sql.append(", LovDescFinDivisionName");
@@ -124,7 +128,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinanceType ft = new FinanceType();
 
 				ft.setFinType(rs.getString("FinType"));
@@ -317,6 +321,13 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setTdsType(rs.getString("TdsType"));
 				ft.setCalcOfSteps(rs.getString("CalcOfSteps"));
 				ft.setStepsAppliedFor(rs.getString("StepsAppliedFor"));
+				ft.setIntProvRule(JdbcUtil.getLong(rs.getObject("IntProvRule")));
+				ft.setRegProvRule(JdbcUtil.getLong(rs.getObject("RegProvRule")));
+				ft.setOverdraftTxnChrgReq(rs.getBoolean("OverdraftTxnChrgReq"));
+				ft.setOverdraftTxnChrgFeeType(rs.getLong("OverdraftTxnChrgFeeType"));
+				ft.setOverDraftExtGraceDays(rs.getInt("OverDraftExtGraceDays"));
+				ft.setOverDraftColChrgFeeType(rs.getLong("OverDraftColChrgFeeType"));
+				ft.setOverDraftColAmt(rs.getBigDecimal("OverDraftColAmt"));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
@@ -341,12 +352,11 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return ft;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in RMTFinanceTypes{} for the specified FinType >> {}", type, id);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -387,7 +397,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes"); // HL- merging
 		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed");
 		sql.append(", ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType");
-		sql.append(", InstBasedSchd, TdsType, SubventionReq");
+		sql.append(", InstBasedSchd, TdsType, SubventionReq, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType");
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 			sql.append(", DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName, LovDescPromoFinTypeDesc");
 			sql.append(", LovDescDftStepPolicyName, GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType");
@@ -581,6 +591,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 					ft.setCalcOfSteps(rs.getString("CalcOfSteps"));
 					ft.setStepsAppliedFor(rs.getString("StepsAppliedFor"));
 					ft.setSubventionReq(rs.getBoolean("SubventionReq"));
+					ft.setOverdraftTxnChrgReq(rs.getBoolean("OverdraftTxnChrgReq"));
+					ft.setOverdraftTxnChrgFeeType(rs.getLong("OverdraftTxnChrgFeeType"));
 
 					if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 						ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
@@ -606,35 +618,61 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		}
 	}
 
-	/**
-	 * Fetch the Record Finance Types details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return FinanceType
-	 */
 	@Override
 	public FinanceType getFinanceTypeByFinType(final String finType) {
 		logger.debug(Literal.ENTERING);
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinCategory, FinDivision, ");
-		selectSql.append(" FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
-		selectSql.append(
-				" PastduePftCalMthd, PastduePftMargin,alwMultiPartyDisb, alwMaxDisbCheckReq, CostOfFunds, FinLTVCheck, PartiallySecured , AlwVan, vanAllocationMethod, AlwSanctionAmt, AlwSanctionAmtOverride, AutoApprove  ");
-		selectSql.append(
-				" GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed ");
-		selectSql.append(" , ThrldtoMaintainGrcPrd, TdsType, SubventionReq");
-		selectSql.append(" FROM RMTFinanceTypes");
-		selectSql.append(" Where FinType = :FinType");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  FinType, Product, FinCategory, FinDivision");
+		sql.append(", FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks, PastduePftCalMthd, PastduePftMargin");
+		sql.append(", AlwMultiPartyDisb, AlwMaxDisbCheckReq, CostOfFunds, FinLTVCheck, PartiallySecured, AlwVan");
+		sql.append(", VanAllocationMethod, AlwSanctionAmt, AlwSanctionAmtOverride, AutoApprove, GrcAdjReq");
+		sql.append(", GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed, SubventionReq");
+		sql.append(", ThrldtoMaintainGrcPrd, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType, ProductCategory");
+		sql.append(", TdsType, AutoApprove, GrcAdjReq");
+		sql.append(" FROM RMTFinanceTypes");
+		sql.append(" Where FinType = ?");
 
-		logger.debug("selectListSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
-		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinanceType ft = new FinanceType();
+
+				ft.setFinType(rs.getString("FinType"));
+				ft.setProduct(rs.getString("Product"));
+				ft.setFinCategory(rs.getString("FinCategory"));
+				ft.setFinDivision(rs.getString("FinDivision"));
+				ft.setFinIsAlwPartialRpy(rs.getBoolean("FinIsAlwPartialRpy"));
+				ft.setFinSuspTrigger(rs.getString("FinSuspTrigger"));
+				ft.setFinSuspRemarks(rs.getString("FinSuspRemarks"));
+				ft.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
+				ft.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
+				ft.setAlwMultiPartyDisb(rs.getBoolean("AlwMultiPartyDisb"));
+				ft.setAlwMaxDisbCheckReq(rs.getBoolean("AlwMaxDisbCheckReq"));
+				ft.setCostOfFunds(rs.getString("CostOfFunds"));
+				ft.setFinLTVCheck(rs.getString("FinLTVCheck"));
+				ft.setPartiallySecured(rs.getBoolean("PartiallySecured"));
+				ft.setAlwVan(rs.getBoolean("AlwVan"));
+				ft.setVanAllocationMethod(rs.getString("VanAllocationMethod"));
+				ft.setAlwSanctionAmt(rs.getBoolean("AlwSanctionAmt"));
+				ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
+				ft.setAutoApprove(rs.getBoolean("AutoApprove"));
+				ft.setGrcAdjReq(rs.getBoolean("GrcAdjReq"));
+				ft.setGrcPeriodAftrFullDisb(rs.getBoolean("GrcPeriodAftrFullDisb"));
+				ft.setAutoIncrGrcEndDate(rs.getBoolean("AutoIncrGrcEndDate"));
+				ft.setGrcAutoIncrMonths(rs.getInt("GrcAutoIncrMonths"));
+				ft.setMaxAutoIncrAllowed(rs.getInt("MaxAutoIncrAllowed"));
+				ft.setSubventionReq(rs.getBoolean("SubventionReq"));
+				ft.setThrldtoMaintainGrcPrd(rs.getInt("ThrldtoMaintainGrcPrd"));
+				ft.setOverdraftTxnChrgReq(rs.getBoolean("OverdraftTxnChrgReq"));
+				ft.setOverdraftTxnChrgFeeType(rs.getLong("OverdraftTxnChrgFeeType"));
+				ft.setProductCategory(rs.getString("ProductCategory"));
+
+				return ft;
+			}, finType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -654,6 +692,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		selectSql.append(" FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
 		selectSql.append(
 				" PastduePftCalMthd, PastduePftMargin,RpyHierarchy, CostOfFunds, FinLTVCheck, PartiallySecured ");
+		selectSql.append(", OverdraftTxnChrgReq, OverdraftTxnChrgFeeType");
 		selectSql.append(" FROM RMTFinanceTypes");
 
 		logger.debug("selectListSql: " + selectSql.toString());
@@ -763,7 +802,10 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes");
 		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths ");
 		sql.append(
-				", MaxAutoIncrAllowed, ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType,InstBasedSchd, TdsType, SubventionReq) ");
+				", MaxAutoIncrAllowed, ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType,InstBasedSchd, TdsType, SubventionReq");
+		sql.append(", RegProvRule, IntProvRule, OverDraftExtGraceDays");
+		sql.append(", OverDraftColChrgFeeType, OverDraftColAmt, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType");
+		sql.append(")");
 		sql.append(" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, ");
 		sql.append(" :FinIsGenRef,");
 		sql.append(" :FinMaxAmount, :FinMinAmount,  :FinDftStmtFrq,  :FinIsAlwMD,");
@@ -815,7 +857,10 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", :OcrRequired, :AllowedOCRS, :DefaultOCR, :AllowedLoanPurposes, :SpecificLoanPurposes ");
 		sql.append(", :GrcAdjReq, :GrcPeriodAftrFullDisb, :AutoIncrGrcEndDate, :GrcAutoIncrMonths ");
 		sql.append(
-				", :MaxAutoIncrAllowed, :ThrldtoMaintainGrcPrd, :CalcOfSteps, :StepsAppliedFor, :AlwLoanSplit, :SplitLoanType,:InstBasedSchd, :TdsType, :SubventionReq) ");
+				", :MaxAutoIncrAllowed, :ThrldtoMaintainGrcPrd, :CalcOfSteps, :StepsAppliedFor, :AlwLoanSplit, :SplitLoanType,:InstBasedSchd, :TdsType, :SubventionReq");
+		sql.append(", :RegProvRule, :IntProvRule, :OverDraftExtGraceDays");
+		sql.append(", :OverDraftColChrgFeeType, :OverDraftColAmt, :OverdraftTxnChrgReq, :OverdraftTxnChrgFeeType");
+		sql.append(")");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
@@ -929,10 +974,14 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				", GrcAdjReq = :GrcAdjReq, GrcPeriodAftrFullDisb = :GrcPeriodAftrFullDisb, AutoIncrGrcEndDate = :AutoIncrGrcEndDate");
 		sql.append(", GrcAutoIncrMonths = :GrcAutoIncrMonths, MaxAutoIncrAllowed = :MaxAutoIncrAllowed");
-		sql.append(
-				", ThrldtoMaintainGrcPrd = :ThrldtoMaintainGrcPrd, CalcOfSteps = :CalcOfSteps, StepsAppliedFor = :StepsAppliedFor ");
-		sql.append(
-				", AlwLoanSplit = :AlwLoanSplit, SplitLoanType = :SplitLoanType,InstBasedSchd=:InstBasedSchd, TdsType = :TdsType, SubventionReq =:SubventionReq");
+		sql.append(", ThrldtoMaintainGrcPrd = :ThrldtoMaintainGrcPrd, CalcOfSteps = :CalcOfSteps");
+		sql.append(", StepsAppliedFor = :StepsAppliedFor");
+		sql.append(", RegProvRule = :RegProvRule, IntProvRule = :IntProvRule");
+		sql.append(", OverDraftExtGraceDays = :OverDraftExtGraceDays");
+		sql.append(", OverDraftColChrgFeeType = :OverDraftColChrgFeeType, OverDraftColAmt = :OverDraftColAmt");
+		sql.append(", OverdraftTxnChrgReq= :OverdraftTxnChrgReq, OverdraftTxnChrgFeeType = :OverdraftTxnChrgFeeType");
+		sql.append(", AlwLoanSplit = :AlwLoanSplit, SplitLoanType = :SplitLoanType,InstBasedSchd=:InstBasedSchd");
+		sql.append(", TdsType = :TdsType, SubventionReq =:SubventionReq");
 		sql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {
@@ -1244,46 +1293,26 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 	@Override
 	public String getFinTypeByReference(String finref) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select FinType From financemain_view Where finreference = ?";
 
-		StringBuilder sql = new StringBuilder("select fintype");
-		sql.append(" From financemain_view");
-		sql.append(" Where finreference = ?");
-		String loanType = "";
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("sql: " + sql.toString());
 		try {
-			loanType = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finref },
-					new RowMapper<String>() {
-
-						@Override
-						public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-
-							return rs.getString(1);
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finref);
 		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
-
 		}
-		logger.debug("Leaving");
-		return loanType;
-
 	}
 
 	@Override
 	public String getRepayHierarchy(String finType) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select RpyHierarchy From RMTFinanceTypes Where FinType = ?";
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" RpyHierarchy");
-		sql.append(" From RMTFinanceTypes");
-		sql.append(" Where FinType = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finType }, String.class);
+			return jdbcOperations.queryForObject(sql.toString(), String.class, finType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -1318,10 +1347,23 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql, new Object[] {}, (rs, i) -> {
+		return this.jdbcOperations.query(sql, (rs, i) -> {
 			return rs.getString("AlloweDocrs");
 		});
 
 	}
 
+	@Override
+	public String getFinDivsion(String finType) {
+		String sql = "Select FinDivision From RMTFinanceTypes Where FinType = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, finType);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

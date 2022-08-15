@@ -481,7 +481,9 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (getFinScheduleData().getDisbursementDetails() != null
 				&& getFinScheduleData().getDisbursementDetails().size() > 0) {
 			for (FinanceDisbursement finDisbursement : getFinScheduleData().getDisbursementDetails()) {
-				if (finDisbursement.getDisbDate().compareTo((Date) this.fromDate.getSelectedItem().getValue()) == 0) {
+				int sequence = (Integer) this.fromDate.getSelectedItem().getAttribute("Seq");
+				if (finDisbursement.getDisbDate().compareTo((Date) this.fromDate.getSelectedItem().getValue()) == 0
+						&& sequence == finDisbursement.getDisbSeq()) {
 					this.disbAmount.setValue(PennantAppUtil.formateAmount(finDisbursement.getDisbAmount(),
 							CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
 					break;

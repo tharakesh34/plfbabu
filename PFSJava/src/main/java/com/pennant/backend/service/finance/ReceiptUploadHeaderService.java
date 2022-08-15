@@ -31,14 +31,12 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadLog;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pff.core.TableType;
 
 public interface ReceiptUploadHeaderService {
 
@@ -54,15 +52,11 @@ public interface ReceiptUploadHeaderService {
 
 	boolean isFileNameExist(String value);
 
-	void updateStatus(ReceiptUploadDetail receiptUploadDetail);
-
 	boolean isFileDownloaded(long id, int receiptDownloaded);
 
 	void updateUploadProgress(long id, int receiptDownloaded);
 
 	void updateRejectStatusById(String id, String errorMsg);
-
-	List<ManualAdvise> getManualAdviseByRef(long finID, String referenceCode, String type);
 
 	long saveReceiptResponseFileHeader(String procName);
 
@@ -76,22 +70,7 @@ public interface ReceiptUploadHeaderService {
 
 	void updatePickBatchId(long jobid);
 
-	String getLoanReferenc(String reference, String value);
-
-	int getFinanceCountById(long finID, String string, boolean b);
-
-	Long getFinID(String finReference, String entity, TableType tableType);
-
-	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber,
-			String type);
-
-	boolean isFinReferenceExists(String reference, String type, boolean b);
-
 	int[] getHeaderStatusCnt(long receiptUploadId);
-
-	boolean isChequeExist(String reference, String paytypeCheque, String chequeNo, String favourNumber, String type);
-
-	boolean isOnlineExist(String reference, String subReceiptMode, String tranRef, String type);
 
 	int updateThread(List<Long> headerIdList);
 

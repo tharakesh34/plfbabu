@@ -44,6 +44,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
@@ -379,7 +380,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		try {
 			if (StringUtils.trimToNull(this.fileName.getValue()) == null) {
-				throw new WrongValueException(this.btnBrowse, Labels.getLabel("empty_file"));
+				throw new WrongValueException(this.fileName, Labels.getLabel("empty_file"));
 			}
 			fileName = this.fileName.getDescription();
 
@@ -730,10 +731,12 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			} else {
 				valueDate = getUtilDate(row.get(3));
 				if (valueDate != null && fm != null) {
-					Date appDate = SysParamUtil.getAppDate();
-					if (valueDate.compareTo(fm.getFinStartDate()) < 0 || valueDate.compareTo(appDate) > 0) {
-						reason.append(
-								"Value Date should be greater than Finance Start Date & Lessthan or Equal to Application date.");
+					if (valueDate.compareTo(fm.getFinStartDate()) < 0) {
+						reason.append("Value Date should be greater than Finance Start Date.");
+						error = true;
+					} else if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE
+							&& valueDate.compareTo(fm.getMaturityDate()) >= 0) {
+						reason.append("Value Date should be less than or equal to Loan Maturity Date.");
 						error = true;
 					}
 				}
@@ -807,9 +810,9 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			}
 			/*
 			 * FinanceMain finMain1 = financeMainService.getFinanceMainDetails(finReference, "_temp"); if (finMain1 !=
-			 * null && (FinanceConstants.FINSER_EVENT_ADDDISB.equals(finMain1. getRcdMaintainSts()) ||
-			 * FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain1. getRcdMaintainSts()) ||
-			 * FinanceConstants.FINSER_EVENT_EARLYRPY.equals(finMain1. getRcdMaintainSts()))) { reason =
+			 * null && (FinServiceEvent.ADDDISB.equals(finMain1. getRcdMaintainSts()) ||
+			 * FinServiceEvent.RATECHG.equals(finMain1. getRcdMaintainSts()) ||
+			 * FinServiceEvent.EARLYRPY.equals(finMain1. getRcdMaintainSts()))) { reason =
 			 * "Loan Reference is in rescheduling process,upload isn't allowed." ; error = true; }
 			 */
 		}
@@ -1296,7 +1299,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		 * this.downloadEntity.setValue(this.uploadEntity.getValue(), this.uploadEntity.getDescription());
 		 * this.fileName.setValue(this.txtFileName.getValue()); this.dateOfUpload.setValue(null);
 		 */
-
+		this.uploadEntity.setValue("");
+		this.txtFileName.setValue("");
 		logger.debug("Leaving ");
 	}
 
@@ -1304,12 +1308,12 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
+		doCheckFields();
 
 		this.downloadEntity.setValue("");
 		this.dateOfUpload.setValue(null);
 		this.fileName.setValue("");
 
-		doCheckFields();
 		logger.debug(Literal.LEAVING);
 	}
 

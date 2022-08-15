@@ -111,6 +111,104 @@
 							</row>
 						</rows>
 					</grid>
+					<groupbox id="gb_RestructureStep" style="border:none;" visible="false">
+						<caption label="${c:l('Restructure_stepDetails')}" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_RestructureDialog_CalcOfSteps"
+										value="${c:l('label_RestructureDialog_CalcOfSteps.value')}" />
+									<hbox id="hbox_calcOfSteps">
+										<space spacing="2px" id="space_calcOfSteps" />
+										<combobox id="calcOfSteps" width="135px" />
+									</hbox>
+									<label id="label_RestructureDialog_StepsAppliedFor"
+										value="${c:l('label_RestructureDialog_StepsAppliedFor.value')}" />
+									<hbox id="hbox_stepsAppliedFor">
+										<space spacing="2px" id="space_stepsAppliedFor" />
+										<combobox id="stepsAppliedFor" width="155px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_RestructureDialog_StepPolicy"
+										value="${c:l('label_RestructureDialog_StepPolicy.value')}" />
+									<hbox id="hbox_stepPolicy">
+										<extendedcombobox id="stepPolicy" />
+									</hbox>
+									<label id="label_RestructureDialog_StepType"
+										value="${c:l('label_RestructureDialog_StepType.value')}" />
+									<hbox id="hbox_stepType">
+										<space id="space_stepType" spacing="2px" />
+										<combobox id="stepType" width="275px" readonly="true" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_RestructureDialog_ManualSteps"
+										value="${c:l('label_RestructureDialog_ManualSteps.value')}" />
+									<hbox id="hbox_alwManualSteps">
+										<space id="space_alwManualSteps" spacing="2px" />
+										<checkbox id="alwManualSteps" />
+									</hbox>
+									<label id="label_RestructureDialog_numberOfSteps"
+										value="${c:l('label_RestructureDialog_RepaySteps.value')}" />
+									<hbox id="hbox_numberOfSteps">
+										<space id="space_noOfSteps" spacing="2px" />
+										<intbox id="noOfSteps" width="90px" />
+									</hbox>
+								</row>
+								<row visible="false">
+									<label id="label_RestructureDialog_grcfSteps"
+										value="${c:l('label_RestructureDialog_GrcSteps.value')}" />
+									<hbox id="hbox_grcSteps">
+										<space id="space_grcSteps" spacing="2px" />
+										<intbox id="grcSteps" width="90px" />
+									</hbox>
+
+								</row>
+							</rows>
+						</grid>
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+								<toolbar align="start" style="border:none;">
+									<label value="${c:l('label_RestructureStepDetails.value')}"
+										sclass="listboxHeading">
+									</label>
+								</toolbar>
+								<toolbar align="end" style="float:right; border-style: none; padding:0px;">
+									<button id="btnNew_RestructureStep" visible="false" label="${c:l('label_New')}"
+										tooltiptext="${c:l('button_RestructureDialog_NewStep.tooltiptext')}" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxRestructureSteps" span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="false">
+								<listheader id="listheader_RestructureDialog_StepNo"
+									label="${c:l('listheader_RestructureDialog_StepNo.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_RestructureDialog_TenorSplit" align="right"
+									label="${c:l('listheader_RestructureDialog_TenorSplit.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_RestructureDialog_Installments" align="right"
+									label="${c:l('listheader_RestructureDialog_Installments.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_RestructureDialog_RateMargin" align="right"
+									label="${c:l('listheader_RestructureDialog_RateMargin.label')}" sort="false" hflex="min" visible="false" />
+								<listheader id="listheader_RestructureDialog_AppliedRate" align="right"
+									label="${c:l('listheader_RestructureDialog_AppliedRate.label')}" sort="false" hflex="min" visible="false" />
+								<listheader id="listheader_RestructureDialog_EMIStepPercent" align="right"
+									label="${c:l('listheader_RestructureDialog_EMIStepPercent.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_RestructureDialog_SteppedEMI" align="right"
+									label="${c:l('listheader_RestructureDialog_SteppedEMI.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_RestructureDialog_EMIDiff" align="right"
+									label="${c:l('listheader_RestructureDialog_EMIDiff.label')}" sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
 					<listbox id="listBoxCharges" emptyMessage="${c:l('listbox.emptyMessage')}" style="overflow:auto"
 						tooltiptext="${c:l('listbox.tooltiptext1')}" width="99.7%" height="100%" multiple="false" span="true"
 						sizedByContent="true" visible="false">

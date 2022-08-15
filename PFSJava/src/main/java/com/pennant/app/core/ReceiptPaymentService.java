@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ReceiptCalculator;
-import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -27,12 +26,17 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.XcessPayables;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.ProductUtil;
+import com.pennanttech.pff.payment.model.LoanPayment;
+import com.pennanttech.pff.payment.service.LoanPaymentService;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class ReceiptPaymentService extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(ReceiptPaymentService.class);
@@ -40,9 +44,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private RepaymentProcessUtil repaymentProcessUtil;
 	private ReceiptCalculator receiptCalculator;
-	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailDAO;
+	private LoanPaymentService loanPaymentService;
 
 	public void processrReceipts(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -103,6 +107,13 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 					BigDecimal pftDue = sch.getProfitSchd().subtract(sch.getSchdPftPaid());
 
+					BigDecimal balanceAmount = BigDecimal.ZERO;
+					if (ProductUtil.isOverDraftChargeReq(fm)) {
+						String custBranch = custEODEvent.getCustomer().getCustAddrProvince();
+						balanceAmount = overdrafLoanService.calculateODAmounts(fm, sch.getSchDate(), custBranch)
+								.getCurOverdraftTxnChrg();
+					}
+
 					BigDecimal tdsDue = BigDecimal.ZERO;
 					if (sch.isTDSApplicable()) {
 						tdsDue = receiptCalculator.getTDS(fm, pftDue);
@@ -110,7 +121,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 					BigDecimal priDue = sch.getPrincipalSchd().subtract(sch.getSchdPriPaid());
 					BigDecimal feeDue = sch.getFeeSchd().subtract(sch.getSchdFeePaid());
-					BigDecimal schAmtDue = pftDue.subtract(tdsDue).add(priDue).add(feeDue);
+					BigDecimal schAmtDue = pftDue.subtract(tdsDue).add(priDue).add(feeDue).add(balanceAmount);
 
 					if (schAmtDue.compareTo(BigDecimal.ZERO) <= 0) {
 						continue;
@@ -233,12 +244,24 @@ public class ReceiptPaymentService extends ServiceHelper {
 		receiptDetails.add(rcd);
 
 		rch.setReceiptDetails(receiptDetails);
-		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, rch, businessDate,
-				businessDate);
+
+		ReceiptDTO receiptDTO = new ReceiptDTO();
+		receiptDTO.setFinanceMain(fm);
+		receiptDTO.setCustomer(customer);
+		receiptDTO.setSchedules(schedules);
+		receiptDTO.setFees(null);
+		receiptDTO.setProfitDetail(profitDetail);
+		receiptDTO.setFinReceiptHeader(rch);
+		receiptDTO.setPresentmentHeader(null);
+		receiptDTO.setPresentmentDetail(null);
+		receiptDTO.setValuedate(businessDate);
+		receiptDTO.setPostDate(businessDate);
+
+		repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
 		financeMainDAO.updateSchdVersion(fm, true);
 		if (pd.getId() != Long.MIN_VALUE) {
 			pd.setReceiptID(rch.getReceiptID());
-			presentmentDetailDAO.updateReceptId(pd.getId(), rch.getReceiptID());
+			presentmentDetailDAO.updateReceptIdAndAmounts(pd);
 		}
 	}
 
@@ -312,19 +335,37 @@ public class ReceiptPaymentService extends ServiceHelper {
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
-		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, rch, businessDate,
-				businessDate);
 
-		boolean isFinFullyPaid = repaymentPostingsUtil.isSchdFullyPaid(finID, schedules);
+		ReceiptDTO receiptDTO = new ReceiptDTO();
+		receiptDTO.setFinanceMain(fm);
+		receiptDTO.setCustomer(customer);
+		receiptDTO.setSchedules(schedules);
+		receiptDTO.setFees(null);
+		receiptDTO.setProfitDetail(profitDetail);
+		receiptDTO.setFinReceiptHeader(rch);
+		receiptDTO.setPresentmentHeader(null);
+		receiptDTO.setPresentmentDetail(null);
+		receiptDTO.setValuedate(businessDate);
+		receiptDTO.setPostDate(businessDate);
+
+		repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
+
+		EventProperties eventProperties = fm.getEventProperties();
+		Date appDate = null;
+
+		if (eventProperties.isParameterLoaded()) {
+			appDate = eventProperties.getAppDate();
+		} else {
+			appDate = SysParamUtil.getAppDate();
+		}
+
+		LoanPayment lp = new LoanPayment(finID, fm.getFinReference(), schedules, appDate);
+		boolean isFinFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
 
 		if (isFinFullyPaid) {
-			EventProperties eventProperties = fm.getEventProperties();
-			Date appDate = null;
-
-			if (eventProperties.isParameterLoaded()) {
-				appDate = eventProperties.getAppDate();
-			} else {
-				appDate = SysParamUtil.getAppDate();
+			if (FinanceConstants.PRODUCT_ODFACILITY.equals(fm.getProductCategory())
+					&& DateUtil.compare(appDate, fm.getMaturityDate()) < 0) {
+				return;
 			}
 
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
@@ -344,23 +385,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 		return null;
 	}
 
-	public void setRepaymentProcessUtil(RepaymentProcessUtil repaymentProcessUtil) {
-		this.repaymentProcessUtil = repaymentProcessUtil;
-	}
-
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	@Autowired
-	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
-		this.receiptCalculator = receiptCalculator;
-	}
-
-	@Autowired
-	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
-		this.repaymentPostingsUtil = repaymentPostingsUtil;
 	}
 
 	@Autowired
@@ -372,4 +399,20 @@ public class ReceiptPaymentService extends ServiceHelper {
 	public void setProfitDetailDAO(FinanceProfitDetailDAO profitDetailDAO) {
 		this.profitDetailDAO = profitDetailDAO;
 	}
+
+	@Autowired
+	public void setLoanPaymentService(LoanPaymentService loanPaymentService) {
+		this.loanPaymentService = loanPaymentService;
+	}
+
+	@Autowired
+	public void setRepaymentProcessUtil(RepaymentProcessUtil repaymentProcessUtil) {
+		this.repaymentProcessUtil = repaymentProcessUtil;
+	}
+
+	@Autowired
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
+	}
+
 }

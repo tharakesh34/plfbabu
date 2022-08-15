@@ -12,9 +12,13 @@ public class RuleResult {
 	public Object value;
 	@HostAccess.Export
 	public Object deviation;
+	@HostAccess.Export
 	public Object provPercentage;
+	@HostAccess.Export
 	public Object provAmount;
+	@HostAccess.Export
 	public Object vasProvPercentage;
+	@HostAccess.Export
 	public Object vasProvAmount;
 
 	public Object getValue() {
@@ -39,6 +43,7 @@ public class RuleResult {
 		return provPercentage;
 	}
 
+	@HostAccess.Export
 	public void setProvPercentage(Object provPercentage) {
 		this.provPercentage = provPercentage;
 	}
@@ -47,6 +52,7 @@ public class RuleResult {
 		return provAmount;
 	}
 
+	@HostAccess.Export
 	public void setProvAmount(Object provAmount) {
 		this.provAmount = provAmount;
 	}
@@ -55,6 +61,7 @@ public class RuleResult {
 		return vasProvPercentage;
 	}
 
+	@HostAccess.Export
 	public void setVasProvPercentage(Object vasProvPercentage) {
 		this.vasProvPercentage = vasProvPercentage;
 	}
@@ -63,6 +70,7 @@ public class RuleResult {
 		return vasProvAmount;
 	}
 
+	@HostAccess.Export
 	public void setVasProvAmount(Object vasProvAmount) {
 		this.vasProvAmount = vasProvAmount;
 	}

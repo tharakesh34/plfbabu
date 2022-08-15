@@ -438,7 +438,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 
 		Date alwdBackDate = DateUtility.addDays(SysParamUtil.getAppDate(),
-				-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+				-SysParamUtil.getValueAsInt(SMTParameterConstants.RATE_CHANGE_FROM_DATE_BACK_DAYS));
 
 		if (this.anyDateRateChangeFromDate != null
 				&& DateUtility.compare(this.anyDateRateChangeFromDate.getValue(), alwdBackDate) < 0) {
@@ -932,7 +932,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		// Back Date Allowed Condition Check
-		Date alwdBackDate = DateUtility.addDays(currBussDate, -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+		Date alwdBackDate = DateUtility.addDays(currBussDate,
+				-SysParamUtil.getValueAsInt(SMTParameterConstants.RATE_CHANGE_FROM_DATE_BACK_DAYS));
 		if (lastPaidDate.compareTo(alwdBackDate) < 0) {
 			lastPaidDate = alwdBackDate;
 		}
@@ -1502,6 +1503,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	private void changeRecalType() {
+
+		setCalTypesForManualSchdule();
+
 		if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLDATE)) {
 			this.tillDateRow.setVisible(true);
 			this.fromDateRow.setVisible(true);
@@ -1544,6 +1548,20 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.tillDateRow.setVisible(false);
 			this.fromDateRow.setVisible(false);
 		}
+	}
+
+	/**
+	 * For open amortization loans RecalType is allowed only TILLDATE And TILLMDT
+	 */
+	private void setCalTypesForManualSchdule() {
+		FinanceMain fm = getFinScheduleData().getFinanceMain();
+
+		if (fm.isManualSchedule()) {
+			this.cbReCalType.setDisabled(true);
+			fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_TILLMDT, PennantStaticListUtil.getSchCalCodes(),
+					",ADDTERM,ADDLAST,ADDRECAL,STEPPOS,TILLDATE,ADJMDT,ADJTERMS,");
+		}
+
 	}
 
 	public void onChange$cbRateChangeToDate(Event event) {

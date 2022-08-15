@@ -56,4 +56,5 @@ public class LengthConstants {
 	public static final int LEN_AADHAAR = 12;
 	public static final int LEN_MOBILE = 10;
 	public static final int LEN_REFERRALID = 10;
+	public static final int LEN_APP_NO = 40;
 }

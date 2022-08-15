@@ -2,6 +2,7 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,6 +27,24 @@ public class FinanceStatusEnquiry implements Serializable {
 	private String closingStatus;
 	@XmlElement
 	private String status;
+	@XmlElement(name = "POS")
+	private BigDecimal pos;
+	@XmlElement(name = "Principal Overdue")
+	private BigDecimal odprincipal;
+	@XmlElement(name = "Interest Overdue")
+	private BigDecimal odprofit;
+	@XmlElement(name = "Total Charges Overdue")
+	private BigDecimal totChagrOved;
+	@XmlElement(name = "Writeoff Amount")
+	private BigDecimal writeOffAmt;
+	@XmlElement(name = "Excess Amount")
+	private BigDecimal excessAmt;
+	@XmlElement(name = "Foreclosure Amount")
+	private BigDecimal foreclosureAmt;
+	@XmlElement(name = "Loan Maturity Date")
+	private Date maturityDate;
+	@XmlElement(name = "PenaltyDue")
+	private BigDecimal penaltyDue;
 
 	public FinanceStatusEnquiry() {
 		super();
@@ -79,4 +98,75 @@ public class FinanceStatusEnquiry implements Serializable {
 		this.curODDays = curODDays;
 	}
 
+	public BigDecimal getPos() {
+		return pos;
+	}
+
+	public void setPos(BigDecimal pos) {
+		this.pos = pos;
+	}
+
+	public BigDecimal getOdprincipal() {
+		return odprincipal;
+	}
+
+	public void setOdprincipal(BigDecimal odprincipal) {
+		this.odprincipal = odprincipal;
+	}
+
+	public BigDecimal getOdprofit() {
+		return odprofit;
+	}
+
+	public void setOdprofit(BigDecimal odprofit) {
+		this.odprofit = odprofit;
+	}
+
+	public BigDecimal getTotChagrOved() {
+		return totChagrOved;
+	}
+
+	public void setTotChagrOved(BigDecimal totChagrOved) {
+		this.totChagrOved = totChagrOved;
+	}
+
+	public BigDecimal getWriteOffAmt() {
+		return writeOffAmt;
+	}
+
+	public void setWriteOffAmt(BigDecimal writeOffAmt) {
+		this.writeOffAmt = writeOffAmt;
+	}
+
+	public BigDecimal getExcessAmt() {
+		return excessAmt;
+	}
+
+	public void setExcessAmt(BigDecimal excessAmt) {
+		this.excessAmt = excessAmt;
+	}
+
+	public BigDecimal getForeclosureAmt() {
+		return foreclosureAmt;
+	}
+
+	public void setForeclosureAmt(BigDecimal foreclosureAmt) {
+		this.foreclosureAmt = foreclosureAmt;
+	}
+
+	public Date getMaturityDate() {
+		return maturityDate;
+	}
+
+	public void setMaturityDate(Date maturityDate) {
+		this.maturityDate = maturityDate;
+	}
+
+	public BigDecimal getPenaltyDue() {
+		return penaltyDue;
+	}
+
+	public void setPenaltyDue(BigDecimal penaltyDue) {
+		this.penaltyDue = penaltyDue;
+	}
 }

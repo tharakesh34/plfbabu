@@ -1011,22 +1011,21 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public FinanceExposure getCoAppRepayBankTotal(String custCIF) {
-		logger.debug("Entering");
+		String sql = "Select CustID, CustBaseCcy, CustTotalIncome, CustTotalExpense From Customers Where CustCIF = ?";
 
-		Customer detail = new Customer();
-		detail.setCustCIF(custCIF);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT CustBaseCcy FinCCY, CustTotalIncome FinanceAmt, ");
-		selectSql.append(
-				" CustTotalExpense OverdueAmt, CustRepayBank CurrentExpoSure, CustProcBank CurrentExpoSureinBaseCCY  ");
-		selectSql.append(" FROM  CoAppBankExpense_View WHERE CustCIF=:CustCIF ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<FinanceExposure> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				FinanceExposure fe = new FinanceExposure();
+
+				fe.setCustID(rs.getLong("CustID"));
+				fe.setFinCCY(rs.getString("CustBaseCcy"));
+				fe.setFinanceAmt(rs.getBigDecimal("CustTotalIncome"));
+				fe.setOverdueAmt(rs.getBigDecimal("CustTotalExpense"));
+
+				return fe;
+			}, custCIF);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -2847,4 +2846,32 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			return finEnqy;
 		});
 	}
+
+	@Override
+	public boolean isPanFoundByCustIds(List<Long> coAppCustIds, String panNumber) {
+		StringBuilder sql = new StringBuilder("Select count(CustCrCpr) From Customers");
+		sql.append(" Where CustCrCpr = ? and CustID in (");
+
+		Object[] obj = new Object[coAppCustIds.size() + 1];
+		obj[0] = panNumber;
+		int i = 1;
+
+		for (Long custID : coAppCustIds) {
+			sql.append(" ?,");
+			obj[i++] = custID;
+		}
+
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(")");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, obj) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
+	}
+
 }

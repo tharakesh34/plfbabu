@@ -90,6 +90,7 @@ public class InstallmentDueService extends ServiceHelper {
 		amountCodes.setInstpri(schd.getPrincipalSchd());
 		amountCodes.setInstcpz(schd.getCpzAmount());
 		amountCodes.setInsttot(amountCodes.getInstpft().add(amountCodes.getInstpri()));
+		amountCodes.setNpa(finEODEvent.isNpaStage());
 
 		if ("B".equals(schd.getBpiOrHoliday())) {
 			advancePaymentService.setIntAdvFlag(fm, amountCodes, true);
@@ -170,6 +171,8 @@ public class InstallmentDueService extends ServiceHelper {
 				finEODEvent.setUpdLBDPostings(true);
 			}
 		}
+
+		overdrafLoanService.createBills(custEODEvent);
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		logger.info("Installment due date postings completed for the FinReference {}.", fm.getFinReference());

@@ -38,6 +38,7 @@ public class SOASummaryReport {
 	private BigDecimal due;
 	private String dueInWords;
 	private BigDecimal receipt;
+	private BigDecimal waiver;
 	private BigDecimal overDue;
 	private int ccyEditField;
 
@@ -140,5 +141,13 @@ public class SOASummaryReport {
 
 	public void setDueInWords(String dueInWords) {
 		this.dueInWords = dueInWords;
+	}
+
+	public BigDecimal getWaiver() {
+		return waiver;
+	}
+
+	public void setWaiver(BigDecimal waiver) {
+		this.waiver = waiver;
 	}
 }

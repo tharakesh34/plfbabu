@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+	<?xml version="1.0" encoding="UTF-8"?>
 
 <constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
 	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
@@ -149,12 +149,12 @@
 				<element name="max">50</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-				<message>pinCode is invalid. Allowed Characters are [0-9].</message>
+				<message>pinCode is invalid. Allowed Characters are [A-Za-z0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-				<element name="regexp">^$|[0-9]+</element>
+				<element name="regexp">^[A-Za-z0-9]+[A-Za-z0-9]*</element>
 			</constraint>
 		</field>
 		<field name="custAddrPriority">

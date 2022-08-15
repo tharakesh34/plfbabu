@@ -86,18 +86,31 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		sql.append(" Inner join FinanceMain fm on fm.FinID = amz.FinID");
 		sql.append(" Inner join ExpenseTypes fe on fe.ExpenseTypeID = amz.IncomeTypeID and IncomeType = ?");
 		sql.append(getIncomeAMZDetailsCommonJoins());
+		sql.append(" union all");
+		sql.append(" Select fm.FinID, amz.FinReference, amz.CustID, amz.FinType, cbd.Type FeeTypeCode, ReferenceID");
+		sql.append(", IncomeTypeID, IncomeType, CalculatedOn, CalcFactor, amz.Amount, ActualAmount, AMZMethod");
+		sql.append(", MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz");
+		sql.append(", amz.Active, e.EntityCode, fm.FinBranch, fm.FinCcy");
+		sql.append(" from IncomeAmortization amz");
+		sql.append(" Inner join FinanceMain fm on fm.FinID = amz.FinID");
+		sql.append(" Inner join CashBackDetails cbd on  fm.FinID = cbd.FinID");
+		sql.append(" and cbd.FeeTypeID = amz.IncomeTypeID and IncomeType = ? and cbd.RetainedAmount != ?");
+		sql.append(getIncomeAMZDetailsCommonJoins());
 		sql.append(") amz Where amz.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, AmortizationConstants.AMZ_INCOMETYPE_FEE);
-			ps.setString(2, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
-			ps.setLong(3, finID);
+			int index = 1;
+			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_FEE);
+			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
+			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_SUBVENTIONAMOUNT);
+			ps.setInt(index++, 0);
+			ps.setLong(index++, finID);
 		}, (rs, rowNum) -> {
 			ProjectedAmortization pamz = new ProjectedAmortization();
 
-			pamz.setFinID(rs.getLong("FInID"));
+			pamz.setFinID(rs.getLong("FinID"));
 			pamz.setFinReference(rs.getString("FinReference"));
 			pamz.setCustID(rs.getLong("CustID"));
 			pamz.setFinType(rs.getString("FinType"));
@@ -592,7 +605,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 	@Override
 	public void deleteAllProjAccruals() {
-		String sql = "Delete From ProjectedAccruals";
+		String sql = "TRUNCATE TABLE ProjectedAccruals";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -913,7 +926,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		sql.append(" (FinID, FinReference, CustId, EodDate, ThreadId, Progress, StartTime, EodProcess)");
 		sql.append(" Select FinID, FinReference, CustID, ?, ?, ?, ?, ? From FinanceMain");
 		sql.append(" Where (ClosedDate is NULL or ClosedDate >= ?)");
-		sql.append(" and FinID IN (Select FinID From IncomeAmortization)");
+		sql.append(" and FinID IN (Select FinID From IncomeAmortization Where Active = 1) ");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -1008,6 +1021,36 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 			ps.setString(index++, String.valueOf(threadId));
 			ps.setString(index++, String.valueOf(0));
+		});
+	}
+
+	@Override
+	public int prepareSVFeeDetails(Date monthEndDate, Date appDate) {
+		StringBuilder sql = new StringBuilder("Insert Into IncomeAmortization");
+		sql.append(" (FinID, FinReference, CustID, FinType, ReferenceID, IncomeTypeID");
+		sql.append(", IncomeType, LastMntOn, CalculatedOn, CalcFactor");
+		sql.append(", Amount, ActualAmount, AMZMethod, MonthEndDate");
+		sql.append(", AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
+		sql.append(" SELECT T2.FinID, T2.FinReference, T2.CUSTID, T2.FINTYPE, T1.ID, T1.FEETYPEID, ?");
+		sql.append(", ?, ?, 0 CalcFactor");
+		sql.append(", T1.RetainedAmount, T1.RetainedAmount ActualAmount, T2.AMZMethod, ?");
+		sql.append(", 0 AmortizedAmount, T1.Amount UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, ?");
+		sql.append(" From CashBackDetails T1");
+		sql.append(" Inner Join FinPftDetails T2 ON T2.FinID = T1.FinID");
+		sql.append(" Where T1.RetainedAmount > 0");
+		sql.append(" AND T1.ID NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_SUBVENTIONAMOUNT);
+			ps.setDate(index++, JdbcUtil.getDate(DateUtility.getSysDate()));
+			ps.setDate(index++, JdbcUtil.getDate(appDate));
+			ps.setDate(index++, JdbcUtil.getDate(monthEndDate));
+			ps.setBoolean(index++, true);
+			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_SUBVENTIONAMOUNT);
 		});
 	}
 }

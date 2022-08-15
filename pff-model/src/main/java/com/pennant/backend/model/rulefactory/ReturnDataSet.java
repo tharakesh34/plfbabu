@@ -86,6 +86,9 @@ public class ReturnDataSet implements Serializable {
 	 * Possible values 0- NON EOD posting 1- EOD Postings 2- EOD Postings and Accounts Updates
 	 */
 	private int postCategory = 0;
+	private long invoiceId;
+	private BigDecimal invoiceAmt;
+	private long transactionId;
 
 	private EventProperties eventProperties = new EventProperties();
 
@@ -145,6 +148,10 @@ public class ReturnDataSet implements Serializable {
 		entity.setEntityCode(this.entityCode);
 		entity.setPostCategory(this.postCategory);
 		entity.setEventProperties(this.eventProperties.copyEntity());
+		entity.setInvoiceId(this.invoiceId);
+		entity.setInvoiceAmt(this.invoiceAmt);
+		entity.setTransactionId(this.transactionId);
+		
 		return entity;
 	}
 
@@ -554,6 +561,30 @@ public class ReturnDataSet implements Serializable {
 
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
+	}
+
+	public long getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(long invoiceId) {
+		this.invoiceId = invoiceId;
+	}
+
+	public BigDecimal getInvoiceAmt() {
+		return invoiceAmt;
+	}
+
+	public void setInvoiceAmt(BigDecimal invoiceAmt) {
+		this.invoiceAmt = invoiceAmt;
+	}
+
+	public long getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(long transactionId) {
+		this.transactionId = transactionId;
 	}
 
 }

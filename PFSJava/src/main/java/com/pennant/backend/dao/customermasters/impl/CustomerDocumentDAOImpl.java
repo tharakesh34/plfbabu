@@ -100,14 +100,11 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 	public void delete(CustomerDocument cd, String type) {
 		StringBuilder sql = new StringBuilder("Delete From CustomerDocuments");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CustID = ? and CustDocCategory = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
+		sql.append(" Where Id = ?");
 
 		try {
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, cd.getCustID());
-				ps.setString(2, cd.getCustDocCategory());
+				ps.setLong(1, cd.getID());
 			});
 
 			if (recordCount <= 0) {
@@ -135,19 +132,24 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 	public long save(CustomerDocument cd, String type) {
 		StringBuilder sql = new StringBuilder("Insert Into CustomerDocuments");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn, CustDocExpDate");
+		sql.append(" (ID, CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn, CustDocExpDate");
 		sql.append(", CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified, CustDocVerifiedBy, CustDocIsAcrive");
 		sql.append(", CustDocCategory, CustDocName, DocRefId, DocPurpose, DocUri, PdfPassWord, Remarks");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
 		sql.append(") values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
+
+		if (cd.getID() == Long.MIN_VALUE) {
+			cd.setID(getNextValue("SeqDocumentDetails"));
+		}
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, cd.getID());
 			ps.setLong(index++, cd.getCustID());
 			ps.setString(index++, cd.getCustDocType());
 			ps.setString(index++, cd.getCustDocTitle());
@@ -227,7 +229,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		sql.append(", CustDocIsAcrive = ?, DocRefId = ?, DocPurpose = ?, DocUri = ?, PdfPassWord = ?");
 		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
-		sql.append(" Where CustID = ? and CustDocCategory = ?");
+		sql.append(" Where ID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -261,8 +263,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ps.setString(index++, cd.getRecordType());
 			ps.setLong(index++, cd.getWorkflowId());
 
-			ps.setLong(index++, cd.getCustID());
-			ps.setString(index++, cd.getCustDocCategory());
+			ps.setLong(index++, cd.getID());
 		});
 
 		if (recordCount <= 0) {
@@ -272,7 +273,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 	public DocumentDetails getCustDocByCustAndDocType(final long custId, String docType, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustID, CustDocCategory, CustDocType, CustDocName, DocRefId, DocPurpose, DocUri");
+		sql.append(" ID, CustID, CustDocCategory, CustDocType, CustDocName, DocRefId, DocPurpose, DocUri");
 
 		if (type.contains("View")) {
 			sql.append(", LovDescCustDocCategory, CustDocTitle, CustDocSysName, CustDocRcvdOn, CustDocExpDate");
@@ -293,6 +294,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				DocumentDetails dd = new DocumentDetails();
 
+				dd.setDocId(rs.getLong("ID"));
 				dd.setCustId(rs.getLong("CustID"));
 				dd.setDocCategory(rs.getString("CustDocCategory"));
 				dd.setCategoryCode("CUSTOMER");
@@ -344,10 +346,84 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		}
 	}
 
+	public DocumentDetails getCustDocByCustAndDocType(final long docId, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, CustID, CustDocCategory, CustDocType, CustDocName, DocRefId, DocPurpose, DocUri");
+
+		if (type.contains("View")) {
+			sql.append(", LovDescCustDocCategory, CustDocTitle, CustDocSysName");
+			sql.append(", CustDocRcvdOn, CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry");
+			sql.append(", LovDescCustDocIssuedCountry, CustDocIsVerified, CustDocVerifiedBy, CustDocIsAcrive");
+			sql.append(", DocExpDateIsMand, DocIssueDateMand, DocIdNumMand");
+			sql.append(", DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, PdfPassWord");
+		}
+
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CustomerDocuments");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Id = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				DocumentDetails dd = new DocumentDetails();
+
+				dd.setId(rs.getLong("Id"));
+				dd.setCustId(JdbcUtil.getLong(rs.getObject("CustID")));
+				dd.setDocCategory(rs.getString("CustDocCategory"));
+				dd.setCategoryCode("CUSTOMER");
+				dd.setDoctype(rs.getString("CustDocType"));
+				dd.setDocName(rs.getString("CustDocName"));
+				dd.setDocRefId(JdbcUtil.getLong(rs.getObject("DocRefId")));
+				dd.setDocPurpose(rs.getString("DocPurpose"));
+				dd.setDocUri(rs.getString("DocUri"));
+
+				if (type.contains("View")) {
+					dd.setLovDescDocCategoryName(rs.getString("LovDescCustDocCategory"));
+					dd.setCustDocTitle(rs.getString("CustDocTitle"));
+					dd.setCustDocSysName(rs.getString("CustDocSysName"));
+					dd.setCustDocRcvdOn(rs.getTimestamp("CustDocRcvdOn"));
+					dd.setCustDocExpDate(rs.getDate("CustDocExpDate"));
+					dd.setCustDocIssuedOn(rs.getDate("CustDocIssuedOn"));
+					dd.setCustDocIssuedCountry(rs.getString("CustDocIssuedCountry"));
+					dd.setLovDescCustDocIssuedCountry(rs.getString("LovDescCustDocIssuedCountry"));
+					dd.setCustDocIsVerified(rs.getBoolean("CustDocIsVerified"));
+					dd.setCustDocVerifiedBy(rs.getLong("CustDocVerifiedBy"));
+					dd.setCustDocIsAcrive(rs.getBoolean("CustDocIsAcrive"));
+					// dd.setDocExpDateIsMand(rs.getString("DocExpDateIsMand"));
+					// dd.setDocIssueDateMand(rs.getString("DocIssueDateMand"));
+					// dd.setDocIdNumMand(rs.getString("DocIdNumMand"));
+					dd.setDocIsPdfExtRequired(rs.getBoolean("DocIsPdfExtRequired"));
+					dd.setDocIsPasswordProtected(rs.getBoolean("DocIsPasswordProtected"));
+					dd.setPdfMappingRef(JdbcUtil.getLong(rs.getObject("PdfMappingRef")));
+					dd.setPdfPassWord(rs.getString("PdfPassWord"));
+				}
+
+				dd.setVersion(rs.getInt("Version"));
+				dd.setLastMntBy(rs.getLong("LastMntBy"));
+				dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				dd.setRecordStatus(rs.getString("RecordStatus"));
+				dd.setRoleCode(rs.getString("RoleCode"));
+				dd.setNextRoleCode(rs.getString("NextRoleCode"));
+				dd.setTaskId(rs.getString("TaskId"));
+				dd.setNextTaskId(rs.getString("NextTaskId"));
+				dd.setRecordType(rs.getString("RecordType"));
+				dd.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return dd;
+			}, docId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 	@Override
 	public List<DocumentDetails> getCustDocListByDocTypes(final long custId, List<String> docTypeList, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustID, CustDocCategory, CustDocType, DocPurpose, DocUri");
+		sql.append(" ID, CustID, CustDocCategory, CustDocType, DocPurpose, DocUri");
 		sql.append(", CustDocName, RecordStatus, RecordType, WorkflowId, Remarks");
 		sql.append(" From CustomerDocuments");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -376,6 +452,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		}, (rs, rowNum) -> {
 			DocumentDetails dd = new DocumentDetails();
 
+			dd.setDocId(rs.getLong("ID"));
 			dd.setCustId(JdbcUtil.getLong(rs.getObject("CustID")));
 			dd.setDocCategory(rs.getString("CustDocCategory"));
 			dd.setCategoryCode("CUSTOMER");
@@ -544,7 +621,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, CustId, FinID, FinReference, BankId, DocName, DocType");
-		sql.append(", FromDate, ToDate, PasswordProtected, DocRefId, DocUri"); // Password,
+		sql.append(", FromDate, ToDate, PasswordProtected, DocRefId, DocUri"); // Password
 		sql.append(" From ExternalDocuments");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where BankId = ?");
@@ -576,7 +653,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn, CustDocCategory");
+		sql.append(" ID, CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn, CustDocCategory");
 		sql.append(", CustDocName, DocRefId, CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry");
 		sql.append(", CustDocIsVerified, CustDocVerifiedBy, CustDocIsAcrive, DocPurpose, DocUri, Remarks");
 		if (type.contains("View")) {
@@ -602,6 +679,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		public CustomerDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
 			CustomerDocument cd = new CustomerDocument();
 
+			cd.setID(rs.getLong("Id"));
 			cd.setCustID(rs.getLong("CustID"));
 			cd.setCustDocType(rs.getString("CustDocType"));
 			cd.setCustDocTitle(rs.getString("CustDocTitle"));
@@ -649,4 +727,12 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 	}
 
+	@Override
+	public boolean getCustomerDocExists(long custId, String docType) {
+		String sql = "Select count(CustID) From CustomerDocuments Where CustID = ? and CustDocCategory = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, Integer.class, custId, docType) > 0;
+	}
 }

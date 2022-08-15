@@ -12,7 +12,8 @@
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<bean id="interfaceLoggingDAO" class="com.pennanttech.pff.logging.dao.impl.InterfaceLoggingDAOImpl" parent="basicDao" />
+	<bean id="interfaceLoggingDAO" class="com.pennanttech.pff.logging.dao.impl.InterfaceLoggingDAOImpl"
+		parent="basicDao" />
 	<bean id="creditInterfaceDAOImpl" class="com.pennanttech.pff.dao.impl.CreditInterfaceDAOImpl" parent="basicDao">
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
@@ -21,13 +22,14 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="defaultMandateProcess" class="com.pennanttech.pff.external.mandate.DefaultMandateProcess" parent="abstractInterface" />
+	<bean id="defaultMandateProcess" class="com.pennanttech.pff.external.mandate.DefaultMandateProcess"
+		parent="abstractInterface" />
 	<bean id="defaultPresentmentRequest" class="com.pennanttech.pff.external.presentment.DefaultPresentmentRequest"
 		parent="abstractInterface" />
 	<bean id="defaultDisbursementRequest" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementRequest"
 		parent="abstractInterface" />
-	<bean id="defaultDisbursementResponse" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementResponse"
-		parent="abstractInterface">
+	<bean id="defaultDisbursementResponse"
+		class="com.pennanttech.pff.external.disbursment.DefaultDisbursementResponse" parent="abstractInterface">
 		<property name="disbursementProcess" ref="disbursementProcess" />
 		<property name="paymentProcess" ref="paymentProcess" />
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
@@ -36,8 +38,9 @@
 	<!-- The below bean configurations should be in implementation layer only if required. -->
 	<bean id="creditInformation" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess"
 		parent="abstractInterface" />
-	<bean id="abstractDMSIntegration" class="com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService"
-		abstract="true" parent="abstractInterface" />
+	<bean id="abstractDMSIntegration"
+		class="com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService" abstract="true"
+		parent="abstractInterface" />
 	<bean id="dmsIdentificationDAO" class="com.pennant.backend.dao.dms.impl.DMSIdentificationDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
@@ -52,13 +55,15 @@
 
 	<!-- PAN Validation Service -->
 	<bean id="primaryAccountService" class="com.pennanttech.pff.external.pan.service.PrimaryAccountServiceImpl" />
-	<bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl" parent="basicDao" />
+	<bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl"
+		parent="basicDao" />
 
 	<bean name="externalServiceStatus" class="com.pennanttech.external.services.ExternalServiceStatus">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="abstractCersaiProcess" class="com.pennanttech.pff.external.cersai.AbstractCersaiProcess" abstract="true"
 		parent="abstractInterface" />
-	<bean id="extendedFieldRendererDAO" class="com.pennanttech.pff.extended.dao.ExtendedFieldRendererDAOImpl" parent="basicDao" />
+	<bean id="extendedFieldRendererDAO" class="com.pennanttech.pff.extended.dao.ExtendedFieldRendererDAOImpl"
+		parent="basicDao" />
 
 </beans>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                                                                                                
+                                                                                                    
+    
     
     
     
@@ -23,7 +24,8 @@
     
     
     <wb-module deploy-name="pff-jobs">
-                                                                                                                                                                                                
+                                                                                                                                                                                                        
+        
         
         
         
@@ -47,7 +49,8 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-                                                                                                                                                                                                
+                                                                                                                                                                                                        
+        
         
         
         
@@ -71,7 +74,8 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-                                                                                                                                                                                                
+                                                                                                                                                                                                        
+        
         
         
         
@@ -95,7 +99,8 @@
         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                                                                                                                                                                                                
+                                                                                                                                                                                                        
+        
         
         
         
@@ -119,31 +124,32 @@
         
         
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
-        <dependent-module archiveName="PFSJava-6.0.0_R4.17.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/PFSJava/PFSJava">
+        <dependent-module archiveName="PFSJava-6.0.0_R4.14.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/PFSJava/PFSJava">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-core-6.0.0_R4.17.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-core/pff-core">
+        <dependent-module archiveName="pff-core-6.0.0_R4.14.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-core/pff-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-model-6.0.0_R4.17.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-model/pff-model">
+        <dependent-module archiveName="pff-model-6.0.0_R4.14.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-model/pff-model">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-interface-6.0.0_R4.17.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface/pff-interface">
+        <dependent-module archiveName="pff-interface-6.0.0_R4.14.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface/pff-interface">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-extension-6.0.0_R4.17.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension/pff-extension">
+        <dependent-module archiveName="pff-extension-6.0.0_R4.14.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension/pff-extension">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="PFSBatch-6.0.0_R4.17.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/PFSBatch/PFSBatch">
+        <dependent-module archiveName="PFSBatch-6.0.0_R4.14.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/PFSBatch/PFSBatch">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-interface-core-6.0.0_R4.17.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface-core/pff-interface-core">
+        <dependent-module archiveName="pff-interface-core-6.0.0_R4.14.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-interface-core/pff-interface-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pff-extension-core-6.0.0_R4.17.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension-core/pff-extension-core">
+        <dependent-module archiveName="pff-extension-core-6.0.0_R4.14.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension-core/pff-extension-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-                                                                                                                                                                                                
+                                                                                                                                                                                                        
+        
         
         
         
@@ -167,7 +173,8 @@
         
         
         <property name="context-root" value="pff-jobs"/>
-                                                                                                                                                                                                
+                                                                                                                                                                                                        
+        
         
         
         
@@ -191,7 +198,8 @@
         
         
         <property name="java-output-path" value="/pff-jobs/target/classes"/>
-                                                                                                                                                                                            
+                                                                                                                                                                                                    
+    
     
     
     
@@ -215,7 +223,8 @@
     
     
     </wb-module>
-                                                                                            
+                                                                                                
+
 
 
 

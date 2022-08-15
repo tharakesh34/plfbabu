@@ -67,6 +67,7 @@ import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.service.dedup.DedupFieldsService;
 import com.pennant.backend.service.dedup.DedupParmService;
@@ -1317,7 +1318,15 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		String resultQuery = "";
 		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
 				|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
-			resultQuery = "select " + PennantConstants.CUST_DEDUP_LIST_FIELDS + " from CustomersDedup_View";
+			CustomerDedup dedup = new CustomerDedup();
+			dedup.setCustCtgCode(this.custCtgCode.getSelectedItem().getValue().toString());
+			boolean blackList = true;
+
+			if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER)) {
+				blackList = false;
+			}
+
+			resultQuery = dedupParmService.getSelectQuery(dedup, blackList).toString();
 			if (!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex() < 1) {
 				throw new WrongValueException(custCtgCode, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_DedupParmDialog_CustCtgCode.value") }));

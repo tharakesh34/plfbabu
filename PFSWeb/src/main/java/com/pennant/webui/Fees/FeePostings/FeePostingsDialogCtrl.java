@@ -90,6 +90,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -100,6 +101,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -158,8 +160,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	private transient AccountingSetService accountingSetService;
 	private AccountEngineExecution engineExecution;
 	private boolean isAccountingExecuted = false;
-	Date minReqPostingDate = DateUtility.addDays(DateUtility.getAppDate(),
-			-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+	Date minReqPostingDate = DateUtil.addDays(SysParamUtil.getAppDate(),
+			-SysParamUtil.getValueAsInt(SMTParameterConstants.FEE_POSTING_DATE_BACK_DAYS));
 
 	/**
 	 * default constructor.<br>

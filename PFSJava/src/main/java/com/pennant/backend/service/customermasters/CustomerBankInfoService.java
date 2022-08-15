@@ -21,7 +21,7 @@ public interface CustomerBankInfoService {
 
 	int getVersion(long id);
 
-	AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType);
+	AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType, AuditDetail auditDetail);
 
 	CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId);
 

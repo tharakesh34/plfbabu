@@ -120,7 +120,7 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 	}
 
 	@Override
-	public void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType) {
+	public void saveCharges(List<FeeRule> chargeList, boolean isWIF, String tableType) {
 		StringBuilder sql = new StringBuilder();
 
 		if (isWIF) {

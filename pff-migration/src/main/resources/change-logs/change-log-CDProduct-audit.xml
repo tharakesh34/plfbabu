@@ -75,6 +75,78 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="EP#3496.1.1" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="AddressLine1" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.1.2" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="AddressLine2" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.1.3" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="AddressLine3" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.1.4" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="City" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.1.5" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="State" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.1.6" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="Country" type="CHAR(2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.1.7" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="PincodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.1.8" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="ManufacPAN" type="VARCHAR(10)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.1.9" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="GstInNumber" type="VARCHAR(15)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.1.10" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="ManfMobileNo" type="VARCHAR(15)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.1.11" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="ManfEmailId" type="VARCHAR(50)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.1.12" author="Gopal.p">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="ManfacContactName" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
 	<changeSet id="EP#3496.2" author="Gopal.p">
 		<addPrimaryKey tableName="AdtCD_Manufacturers" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
 			constraintName="PK_ACD_MANUFACTURER" />

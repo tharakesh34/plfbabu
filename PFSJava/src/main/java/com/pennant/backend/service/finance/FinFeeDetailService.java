@@ -111,4 +111,8 @@ public interface FinFeeDetailService {
 
 	List<FinFeeDetail> getFinFeeDetailsByTran(String reference, boolean isWIF, String type);
 
+	Map<String, Object> prepareGstMappingByBranch(String fromBranch, String toBranch);
+
+	Map<String, Object> prepareGstMapping(String fromStateCode, String toStateCode);
+
 }

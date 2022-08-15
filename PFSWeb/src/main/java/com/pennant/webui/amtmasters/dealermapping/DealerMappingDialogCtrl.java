@@ -32,7 +32,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
+import com.pennanttech.pff.cd.model.MerchantDetails;
 
 public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	private static final long serialVersionUID = 1L;

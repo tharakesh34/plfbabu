@@ -50,7 +50,6 @@ import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class UserServiceImpl implements UserService {
@@ -80,6 +79,8 @@ public class UserServiceImpl implements UserService {
 			throw new UsernameNotFoundException("User account disabled.");
 		} else if (user.isUsrAcLocked()) {
 			throw new UsernameNotFoundException("User account locked.");
+		} else if (user.isDeleted()) {
+			throw new UsernameNotFoundException("User account is deleted.");
 		}
 
 		Date date = DateUtil.getSysDate();
@@ -151,8 +152,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public long logLoginAttempt(SecLoginlog logingLog) {
-		logger.info(Literal.ENTERING + logingLog.getLoginUsrLogin());
-
 		return this.secLoginlogDAO.saveLog(logingLog);
 	}
 

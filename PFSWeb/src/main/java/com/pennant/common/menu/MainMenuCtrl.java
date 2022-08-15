@@ -240,14 +240,14 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_School":
 		case "menu_Item_School_IncomeExpense":
 			return ImplementationConstants.ALLOW_SCHOOL_ORG;
-		case "menu_Item_AssetClassificationHeader":
-		case "menu_Item_NPAProvisionHeader":
+		case "menu_Item_AssetClassCodes":
+		case "menu_Item_AssetSubClassCodes":
+		case "menu_Item_AssetClassSetup":
+		case "menu_Item_NPA_Report":
+			return ImplementationConstants.ALLOW_NPA;
 		case "menu_Item_ManualProvisioning":
-		case "menu_Item_AssetClassificationHeaderEnquiry":
-		case "menu_Item_NPAProvisionHeaderEnquiry":
-		case "menu_Item_ManualProvisioningEnquiry":
-		case "menu_Item_NPAProvisionReport":
-			return ImplementationConstants.ALLOW_NPA_PROVISION;
+		case "menu_Item_Provision_Report":
+			return ImplementationConstants.ALLOW_PROVISION;
 		case "menu_Item_LoanDownSizing":
 			return ImplementationConstants.ALLOW_LOAN_DOWNSIZING;
 		case "menu_Item_PMAY":

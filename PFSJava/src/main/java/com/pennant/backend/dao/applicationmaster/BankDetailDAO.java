@@ -48,4 +48,5 @@ public interface BankDetailDAO extends BasicCrudDao<BankDetail> {
 
 	boolean isBankCodeExits(String bankCode);
 
+	BankDetail getAccNoLengths(String bankCode);
 }

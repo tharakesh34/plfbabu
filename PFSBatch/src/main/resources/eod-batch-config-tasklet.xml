@@ -77,7 +77,8 @@
 	</bean>
 	<!-- Not used -->
 	<!-- Backup Data base Before Eod -->
-	<bean id="backupDatabaseBeforeEodTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="backupDatabaseBeforeEodTaskLet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="backupDatabaseTargetBeforeEod" />
 		<property name="transactionAttributes">
@@ -91,7 +92,8 @@
 		<property name="beforeEod" value="true" />
 	</bean>
 	<!-- Backup Data base After Eod -->
-	<bean id="backupDatabaseAfterEodTaskLet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="backupDatabaseAfterEodTaskLet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="backupDatabaseTargetAfterEod" />
 		<property name="transactionAttributes">
@@ -125,7 +127,8 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<!-- Commitment Expiry Details Updation -->
-	<bean id="commitmentExpiryProcessTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="commitmentExpiryProcessTasklet"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="target" ref="commitmentExpiryProcessTarget" />
 		<property name="transactionAttributes">
@@ -138,7 +141,17 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
+	<bean id="autoKnockOffDataBackUpTasklet"
+		class="com.pennant.backend.endofday.tasklet.AutoKnockOffDataBackUpTasklet" />
+
 	<bean id="processInActiveFinancesTaskLet" class="com.pennant.backend.endofday.tasklet.ProcessInActiveFinances" />
+
+	<bean id="processINDASForInActiveFinancesTasklet"
+		class="com.pennanttech.pff.indas.eod.tasklet.ProcessINDASForInActiveFinances">
+		<property name="dataSource" ref="dataSource" />
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
+	</bean>
 
 	<bean id="collectionDataDownLoadTaskLet" class="com.pennant.backend.endofday.tasklet.CollectionDataDownload" />
 
@@ -146,13 +159,18 @@
 
 	<bean id="ledgerNotificationTaskLet" class="com.pennant.backend.endofday.tasklet.LedgerNotification" />
 
-	<bean id="ledgerDownloadTaskLet" class="com.pennant.backend.endofday.tasklet.LedgerDownload" />
+	<bean id="ledgerDownloadQueueTasklet" class="com.pennant.backend.ledger.eod.tasklet.LedgerDownloadQueue"/>
 
-	<bean id="loadCollateralRevaluationDataTaskLet" class="com.pennanttech.pff.eod.collateral.reval.LoadCollateralRevaluationDataTasklet"
-		parent="basicDao" />
+	<bean id="ledgerDownloadProcessTaskLet" class="com.pennant.backend.ledger.eod.tasklet.LedgerDownloadProcess"/>
+	
+	<bean id="ledgerDownloadTaskLet" class="com.pennant.backend.ledger.eod.tasklet.LedgerDownload" />
+	
 
-	<bean id="collateralRevaluationItemReader" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationItemReader"
-		scope="step">
+	<bean id="loadCollateralRevaluationDataTaskLet"
+		class="com.pennanttech.pff.eod.collateral.reval.LoadCollateralRevaluationDataTasklet" parent="basicDao" />
+
+	<bean id="collateralRevaluationItemReader"
+		class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationItemReader" scope="step">
 		<property name="dataSource" ref="dataSource" />
 		<property name="rowMapper">
 			<bean class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationRowMapper" />
@@ -160,41 +178,38 @@
 	</bean>
 
 
-	<bean id="collateralRevaluationProcessor" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationProcessor"
-		scope="step" parent="basicDao" />
+	<bean id="collateralRevaluationProcessor"
+		class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationProcessor" scope="step" parent="basicDao" />
 
-	<bean id="collateralRevaluationRowMapper" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationRowMapper"
-		scope="step" />
-	<bean id="collateralRevaluationItemWriter" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationItemWriter"
-		scope="step" parent="basicDao" />
+	<bean id="collateralRevaluationRowMapper"
+		class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationRowMapper" scope="step" />
+	<bean id="collateralRevaluationItemWriter"
+		class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationItemWriter" scope="step" parent="basicDao" />
 
 	<bean id="gSTDownloadTaskLet" class="com.pennant.backend.endofday.tasklet.GSTDownload" />
 
-	<bean id="loadAutoKnockOffProcessTasklet" class="com.pennanttech.pff.eod.auto.knockoff.reval.LoadAutoKnockOffProcessDataTasklet"
-		parent="basicDao">
+	<bean id="manualAdvisesCancellationTaskLet"
+		class="com.pennanttech.pff.manualadvise.eod.tasklet.ManualAdvisesCancellation" />
+
+	<!-- NotifyLoanClosureDetailsToEFS -->
+	<bean id="notifyLoanClosureDetailsToEFSTaskLet"
+		class="com.pennant.backend.endofday.tasklet.NotifyLoanClosureDetailsToEFS" />
+
+	<bean id="beforeAssetClassificationTasklet" class="com.pennanttech.pff.npa.eod.tasklet.BeforeAssetClassification" />
+	<bean id="assetClassificationQueueTasklet" class="com.pennanttech.pff.npa.eod.tasklet.AssetClassificationQueue" />
+	<bean id="assetClassificationTaskLet" class="com.pennanttech.pff.npa.eod.tasklet.AssetClassificationTaskLet" />
+
+	<bean id="effAssetClassificationQueueTasklet"
+		class="com.pennanttech.pff.npa.eod.tasklet.EffAssetClassificationQueue" />
+	<bean id="effAssetClassificationTaskLet" class="com.pennanttech.pff.npa.eod.tasklet.EffAssetClassificationTaskLet" />
+
+	<bean id="provisionCalcQueueTasklet" class="com.pennanttech.pff.provision.eod.tasklet.ProvisionCalcQueue" />
+	<bean id="provisionClacTaskLet" class="com.pennanttech.pff.provision.eod.tasklet.ProvisionClacTaskLet" />
+
+	<bean id="loadAutoKnockOffProcessTasklet"
+		class="com.pennant.backend.endofday.tasklet.LoadAutoKnockOffProcessDataTasklet" parent="basicDao">
 		<property name="autoKnockOffDAO" ref="autoKnockOffDAO" />
 	</bean>
-
-	<bean id="autoKnockOffProcessItemReader" class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessTaskletItemReader"
-		scope="step">
-		<property name="dataSource" ref="dataSource" />
-		<property name="rowMapper">
-			<bean class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessRowMapper" />
-		</property>
-	</bean>
-
-	<bean id="autoKnockOffProcessor" class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessor" scope="step"
-		parent="basicDao">
-		<property name="autoKnockOffProcessService" ref="autoKnockProcessService" />
-	</bean>
-
-	<bean id="autoKnockOffProcessRowMapper" class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessRowMapper"
-		scope="step" />
-
-	<bean id="autoKnockOffProcessItemWriter" class="com.pennanttech.pff.eod.auto.knockoff.reval.AutoKnockOffProcessItemWriter"
-		scope="step" parent="basicDao" />
-
-	<bean id="autoKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.AutoKnockOffDAOImpl" parent="basicDao" />
 
 	<bean id="customerDataPreperationTaskLet" class="com.pennant.backend.endofday.tasklet.CustomerDataExport" />
 

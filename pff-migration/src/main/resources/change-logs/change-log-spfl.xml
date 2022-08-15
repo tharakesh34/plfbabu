@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
@@ -89,8 +91,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet  id="5" author="satyanarayana.g">
+
+	<changeSet id="5" author="satyanarayana.g">
 		<sql>
 		   <![CDATA[
 			  UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
@@ -98,8 +100,7 @@
 			]]>
 		</sql>
 		<insert tableName="WorkFlowDetails">
-			<column name="WorkFlowId"
-				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
 			<column name="WorkFlowType">MANDATE_CREATE</column>
 			<column name="WorkFlowSubType">Mandate Create Workflow Process</column>
 			<column name="WorkFlowDesc">Maker/Checker Mandate Create Workflow Process</column>
@@ -120,7 +121,7 @@
 			<column name="RecordType">NULL</column>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="5.0" author="satyanarayana.g">
 		<update tableName="WORKFLOWDETAILS">
 			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":1139,"properties":{"process_id":"MANDATE_CREATE","name":"Mandate Create Workflow Process","documentation":"Maker/Checker Mandate Create Workflow Process","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-ABA5CD2C-DB88-4DE4-AEA3-E5F9675E3EA8"}],"bounds":{"lowerRight":{"x":180,"y":190},"upperLeft":{"x":150,"y":160}},"dockers":[]},{"resourceId":"sid-1F6CE5BD-B315-4221-9A86-E287F3132BC4","properties":{"overrideid":"","name":"Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"MANDATE_CREATE_MAKER","firstName":"MANDATE_CREATE_MAKER","fullName":"MANDATE_CREATE_MAKER","id":"MANDATE_CREATE_MAKER","roledesc":"Mandate  Role Maker Details","$$hashKey":"object:2933"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-CFCEC999-6A88-4610-8D0D-8C7845E51F37"},{"resourceId":"sid-1818C257-6267-4B36-B27C-5F014FCD51D0"}],"bounds":{"lowerRight":{"x":340,"y":215},"upperLeft":{"x":240,"y":135}},"dockers":[]},{"resourceId":"sid-ABA5CD2C-DB88-4DE4-AEA3-E5F9675E3EA8","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-1F6CE5BD-B315-4221-9A86-E287F3132BC4"}],"bounds":{"lowerRight":{"x":239.1953125,"y":175},"upperLeft":{"x":180.6484375,"y":175}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-1F6CE5BD-B315-4221-9A86-E287F3132BC4"}},{"resourceId":"sid-5D0116EA-5F04-4A75-8F76-E320483FBF18","properties":{"overrideid":"","name":"Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"MANDATE_CREATE_APPROVER","firstName":"MANDATE_CREATE_APPROVER","fullName":"MANDATE_CREATE_APPROVER","id":"MANDATE_CREATE_APPROVER","roledesc":"Mandate  Role Approver Details","$$hashKey":"object:3628"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-8983C5D3-36A9-44B9-8B4E-D79CF8061D2E"}],"bounds":{"lowerRight":{"x":550,"y":215},"upperLeft":{"x":450,"y":135}},"dockers":[]},{"resourceId":"sid-80B309A5-2092-4965-8FB5-58145557F7FE","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-4895950B-9FEE-49C7-AA3E-AAFF9CF3BF41"},{"resourceId":"sid-3489D383-685E-4343-9983-ABA0F411C2D0"},{"resourceId":"sid-08A91673-27FE-43CA-A282-E267EC35C0A5"}],"bounds":{"lowerRight":{"x":635,"y":195},"upperLeft":{"x":595,"y":155}},"dockers":[]},{"resourceId":"sid-8983C5D3-36A9-44B9-8B4E-D79CF8061D2E","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-80B309A5-2092-4965-8FB5-58145557F7FE"}],"bounds":{"lowerRight":{"x":594.6484468700075,"y":175.4097335362338},"upperLeft":{"x":550.6288968799925,"y":175.2191727137662}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-80B309A5-2092-4965-8FB5-58145557F7FE"}},{"resourceId":"sid-1C620DEC-5BAC-44A8-A300-FCE8613A7AAD","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":913,"y":189},"upperLeft":{"x":885,"y":161}},"dockers":[]},{"resourceId":"sid-BEC18337-F8FE-4DCB-AD72-EDD930BD0D55","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-1C620DEC-5BAC-44A8-A300-FCE8613A7AAD"}],"bounds":{"lowerRight":{"x":884.8984375,"y":175},"upperLeft":{"x":820.3828125,"y":175}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-1C620DEC-5BAC-44A8-A300-FCE8613A7AAD"}},{"resourceId":"sid-185D365B-B9BD-4497-8220-A37B4F15533C","properties":{"overrideid":"","name":"Complete Process","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None","formkeydefinition":"","type":"http://b3mn.org/stencilset/bpmn2.0#UserTask","usertaskassignment":"","additionalforms":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":""},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-7DDD45BE-4CDF-4343-B2E3-3368B0F189D9"},{"resourceId":"sid-BEC18337-F8FE-4DCB-AD72-EDD930BD0D55"}],"bounds":{"lowerRight":{"x":820,"y":215},"upperLeft":{"x":720,"y":135}},"dockers":[]},{"resourceId":"sid-5CEEC812-3384-4168-9904-AEAD994AB041","properties":{"overrideid":"","name":"Cancel Process","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None","formkeydefinition":"","type":"http://b3mn.org/stencilset/bpmn2.0#UserTask","usertaskassignment":"","additionalforms":"","duedatedefinition":"","prioritydefinition":"Role Queue","baseactor":""},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-C50AF65C-7405-4B14-A6A6-9B492EE805A6"}],"bounds":{"lowerRight":{"x":665,"y":365},"upperLeft":{"x":565,"y":285}},"dockers":[]},{"resourceId":"sid-4D026A5C-CAF1-4DCD-844F-3A1BAF290E58","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":738,"y":339},"upperLeft":{"x":710,"y":311}},"dockers":[]},{"resourceId":"sid-C50AF65C-7405-4B14-A6A6-9B492EE805A6","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-4D026A5C-CAF1-4DCD-844F-3A1BAF290E58"}],"bounds":{"lowerRight":{"x":709.375,"y":325},"upperLeft":{"x":665.390625,"y":325}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-4D026A5C-CAF1-4DCD-844F-3A1BAF290E58"}},{"resourceId":"sid-7DDD45BE-4CDF-4343-B2E3-3368B0F189D9","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-1C620DEC-5BAC-44A8-A300-FCE8613A7AAD"}],"bounds":{"lowerRight":{"x":884.8984375,"y":175},"upperLeft":{"x":820.3828125,"y":175}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-1C620DEC-5BAC-44A8-A300-FCE8613A7AAD"}},{"resourceId":"sid-08A91673-27FE-43CA-A282-E267EC35C0A5","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-1F6CE5BD-B315-4221-9A86-E287F3132BC4"}],"bounds":{"lowerRight":{"x":615.5,"y":154.53125},"upperLeft":{"x":290,"y":69}},"dockers":[{"x":20.5,"y":20.5},{"x":615.5,"y":69},{"x":290,"y":69},{"x":50,"y":40}],"target":{"resourceId":"sid-1F6CE5BD-B315-4221-9A86-E287F3132BC4"}},{"resourceId":"sid-4895950B-9FEE-49C7-AA3E-AAFF9CF3BF41","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-185D365B-B9BD-4497-8220-A37B4F15533C"}],"bounds":{"lowerRight":{"x":719.5117239866028,"y":175.43426377099223},"upperLeft":{"x":635.8124947633972,"y":175.16339247900777}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-185D365B-B9BD-4497-8220-A37B4F15533C"}},{"resourceId":"sid-1818C257-6267-4B36-B27C-5F014FCD51D0","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5CEEC812-3384-4168-9904-AEAD994AB041"}],"bounds":{"lowerRight":{"x":564.48828125,"y":325},"upperLeft":{"x":290,"y":215.84375}},"dockers":[{"x":50,"y":40},{"x":290,"y":325},{"x":50,"y":40}],"target":{"resourceId":"sid-5CEEC812-3384-4168-9904-AEAD994AB041"}},{"resourceId":"sid-CFCEC999-6A88-4610-8D0D-8C7845E51F37","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5D0116EA-5F04-4A75-8F76-E320483FBF18"}],"bounds":{"lowerRight":{"x":449.78125,"y":175},"upperLeft":{"x":340.21875,"y":175}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-5D0116EA-5F04-4A75-8F76-E320483FBF18"}},{"resourceId":"sid-3489D383-685E-4343-9983-ABA0F411C2D0","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5CEEC812-3384-4168-9904-AEAD994AB041"}],"bounds":{"lowerRight":{"x":615.4341555370994,"y":284.28906809273167},"upperLeft":{"x":615.1361569629006,"y":195.1874944072683}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-5CEEC812-3384-4168-9904-AEAD994AB041"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
@@ -128,4 +129,1099 @@
 			<where>workflowtype='MANDATE_CREATE'and workflowactive=1</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="ST#14.1" author="kavya.n">
+		<createTable tableName="EFS_LMS_EVENTS">
+			<column name="Id" type="bigInt" autoIncrement="true" />
+			<column name="FinEvent" type="varchar(20)" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="SentOn" type="datetime" />
+			<column name="Remarks" type="varchar(1000)" />
+			<column name="ProcessedFlag" type="boolean" />
+			<column name="NoOfAttempts" type="int" />
+			<column name="RetryOn" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#14.2" author="kavya.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EFS_LMS_EVENTS ADD CONSTRAINT DF_EFSLMSEVENTS_PROCESSEDFLAG DEFAULT 0 FOR ProcessedFlag;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#14.3" author="kavya.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessedFlag" tableName="EFS_LMS_EVENTS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#14.4" author="kavya.n">
+		<addPrimaryKey tableName="EFS_LMS_EVENTS" columnNames="Id" constraintName="PK_EFS_LMS_EVENTS" />
+	</changeSet>
+
+	<changeSet id="ST#14.5" author="kavya.n">
+		<addForeignKeyConstraint constraintName="FK_RCAL_FM_FINREF" referencedTableName="FinanceMain"
+			baseColumnNames="FinReference" baseTableName="EFS_LMS_EVENTS" referencedColumnNames="FinReference" />
+	</changeSet>
+
+	<changeSet id="ST#14.6" author="kavya.n">
+		<createIndex tableName="EFS_LMS_EVENTS" indexName="IX_EFSLMSEVENTS_ProcessedFlag">
+			<column name="ProcessedFlag" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#14.7" author="kavya.n">
+		<addColumn tableName="INTERFACELOGDETAILS">
+			<column name="ProcessId" type="bigInt" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#14.8" author="kavya.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EFS_LMS_EVENTS ADD CONSTRAINT DF_EFSLMSEVENTS_NOOFATTEMPTS DEFAULT 0 FOR NoOfAttempts;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#14.9" author="kavya.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="NoOfAttempts" tableName="EFS_LMS_EVENTS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="6.0" author="gopalaswamy.m">
+		<sql>
+			<![CDATA[	
+				UPDATE Postings Set Account=replace(ACCOUNT, 'ADVCUST', 'INTADV'), AccountType='INTADV' Where FinEvent='EARLYSTL' And TranDesc='INTEREST IN ADVANCE';
+				UPDATE RMTTransactionEntry Set AccountType='INTADV' Where AccountSetId = (Select AccountSetId From RMTAccountingSet Where EventCode='EARLYSTL') And TransDesc='INTEREST IN ADVANCE';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.1" author="gopalaswamy.m">
+		<sql>
+			<![CDATA[	
+				DELETE FROM BMTAmountCodes where AllowedEvent='EARLYSTL' and AmountCode='ae_pftWaived';
+				INSERT INTO BMTAmountCodes (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON,RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES('EARLYSTL',0,'ae_pftWaived','Profit waived',1,1,1005,'2020-12-21 00:00:00.000','Approved',' ',' ',' ',' ',' ',0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.2" author="gopalaswamy.m">
+		<sql>
+			<![CDATA[	
+				DELETE FROM BMTAmountCodes where AllowedEvent='EARLYSTL' and AmountCode='ae_priWaived';
+				INSERT INTO BMTAmountCodes (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON,RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYSTL',0,'ae_priWaived','Principle waived',1,1,1005,'2020-12-15 00:00:00.000','Approved',' ',' ',' ',' ',' ',0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.3" author="gopalaswamy.m">
+		<sql>
+			<![CDATA[	
+				DELETE FROM BMTAmountCodes Where ALLOWEDEVENT = 'EARLYSTL' And AMOUNTCODE = 'ae_prvMthAcr';
+				INSERT INTO BMTAmountCodes(ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON,RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)values ('EARLYSTL', 0,'ae_prvMthAcr', 'Previous Month Accrued Amount', '1', 1, 1000, Current_TimeStamp, 'Approved',null, null, null, null,null, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.4" author="gopalaswamy.m">
+		<createIndex tableName="FinLogEntryDetail" indexName="IDX_FLED_FINREF_PDATE">
+			<column name="FinReference" type="VARCHAR(8)" />
+			<column name="POSTDATE" type="DATETIME" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#11.1_1" author="kavya.n">
+		<addColumn tableName="CustomerDocuments">
+			<column name="Id" type="bigInt" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#11.2_1" author="kavya.n">
+		<addColumn tableName="CustomerDocuments_Temp">
+			<column name="Id" type="bigInt" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#11.3_1" author="kavya.n">
+		<createTable tableName="Cust_Docs">
+			<column name ="ID" type="bigInt" autoIncrement="true"/>
+			<column name="CustID" type="bigInt" />
+			<column name="CustDocCategory" type="varchar(50)" />
+			<column name="seq" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#11.13_pre" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'CustomerDocuments_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.13" author="kavya.n">
+		<createView viewName="CustomerDocuments_view" replaceIfExists="true">
+			<![CDATA[
+                    SELECT T1.custid,
+                        T1.custdoctype,
+                        T2.doctypedesc AS lovdesccustdoccategory,
+                        T1.custdoctitle,
+                        T1.custdocsysname,
+                        T1.custdocrcvdon,
+                        T1.custdocexpdate,
+                        T1.custdocissuedon,
+                        T1.custdocissuedcountry,
+                        T3.countrydesc AS lovdesccustdocissuedcountry,
+                        T1.custdocisverified,
+                        T1.custdocverifiedby,
+                        T1.custdocisacrive,
+                        T1.docpurpose,
+                        T1.docuri,
+                        T1.version,
+                        T1.lastmntby,
+                        T1.lastmnton,
+                        T1.recordstatus,
+                        T1.rolecode,
+                        T1.nextrolecode,
+                        T1.custdocname,
+                        T1.custdoccategory,
+                        T1.custdocimage,
+                        T1.taskid,
+                        T1.nexttaskid,
+                        T1.recordtype,
+                        T1.workflowid,
+                        T2.docexpdateismand,
+                        T2.docissuedatemand,
+                        T2.docidnummand,
+                        T2.docissuedauthoritymand,
+                        T2.docismandatory,
+                        T1.docrefid,
+                        T2.docispdfextrequired,
+                        T2.docispasswordprotected,
+                        T2.pdfmappingref,
+                        T1.pdfpassword,
+                        T1.id
+                    FROM customerdocuments_temp T1
+                    JOIN bmtdocumenttypes T2 ON T1.custdoccategory = T2.doctypecode
+                    JOIN bmtcountries T3 ON T1.custdocissuedcountry = T3.countrycode
+                    UNION ALL
+                    SELECT T1.custid,
+                        T1.custdoctype,
+                        T2.doctypedesc AS lovdesccustdoccategory,
+                        T1.custdoctitle,
+                        T1.custdocsysname,
+                        T1.custdocrcvdon,
+                        T1.custdocexpdate,
+                        T1.custdocissuedon,
+                        T1.custdocissuedcountry,
+                        T3.countrydesc AS lovdesccustdocissuedcountry,
+                        T1.custdocisverified,
+                        T1.custdocverifiedby,
+                        T1.custdocisacrive,
+                        T1.docpurpose,
+                        T1.docuri,
+                        T1.version,
+                        T1.lastmntby,
+                        T1.lastmnton,
+                        T1.recordstatus,
+                        T1.rolecode,
+                        T1.nextrolecode,
+                        T1.custdocname,
+                        T1.custdoccategory,
+                        T1.custdocimage,
+                        T1.taskid,
+                        T1.nexttaskid,
+                        T1.recordtype,
+                        T1.workflowid,
+                        T2.docexpdateismand,
+                        T2.docissuedatemand,
+                        T2.docidnummand,
+                        T2.docissuedauthoritymand,
+                        T2.docismandatory,
+                        T1.docrefid,
+                        T2.docispdfextrequired,
+                        T2.docispasswordprotected,
+                        T2.pdfmappingref,
+                        T1.pdfpassword,
+                        T1.id
+                    FROM customerdocuments T1
+                    JOIN bmtdocumenttypes T2 ON T1.custdoccategory = T2.doctypecode
+                    JOIN bmtcountries T3 ON T1.custdocissuedcountry = T3.countrycode
+                    WHERE NOT (EXISTS ( SELECT 1
+                    FROM customerdocuments_temp
+                    WHERE customerdocuments_temp.custid = T1.custid AND customerdocuments_temp.custdoccategory = T1.custdoccategory))
+	       ]]>	
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#11.13_post" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'CustomerDocuments_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.14_pre" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'CustomerDocuments_AView');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.14" author="kavya.n">
+		<createView viewName="CustomerDocuments_AView" replaceIfExists="true">
+			<![CDATA[
+	                SELECT T1.custid,
+                        T1.custdoctype,
+                        T2.doctypedesc AS lovdesccustdoccategory,
+                        T1.custdoctitle,
+                        T1.custdocsysname,
+                        T1.custdocrcvdon,
+                        T1.custdocexpdate,
+                        T1.custdocissuedon,
+                        T1.custdocissuedcountry,
+                        T3.countrydesc AS lovdesccustdocissuedcountry,
+                        T1.custdocisverified,
+                        T1.custdocverifiedby,
+                        T1.custdocisacrive,
+                        T1.version,
+                        T1.lastmntby,
+                        T1.lastmnton,
+                        T1.recordstatus,
+                        T1.rolecode,
+                        T1.nextrolecode,
+                        T1.custdocname,
+                        T1.custdoccategory,
+                        T1.custdocimage,
+                        T1.taskid,
+                        T1.nexttaskid,
+                        T1.recordtype,
+                        T1.workflowid,
+                        T2.docexpdateismand,
+                        T2.docissuedatemand,
+                        T2.docidnummand,
+                        T2.docissuedauthoritymand,
+                        T2.docismandatory,
+                        T1.docrefid,
+                        T1.docpurpose,
+                        T1.docuri,
+                        T2.docispdfextrequired,
+                        T2.docispasswordprotected,
+                        T2.pdfmappingref,
+                        T1.pdfpassword,
+                        T1.id
+                    FROM customerdocuments T1
+                    JOIN bmtdocumenttypes T2 ON T1.custdoccategory = T2.doctypecode
+                    JOIN bmtcountries T3 ON T1.custdocissuedcountry = T3.countrycode
+	        ]]>	
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#11.14_post" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'CustomerDocuments_AView');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.4_1" author="kavya.n">
+		<sql>
+			<![CDATA[
+			          INSERT INTO Cust_Docs (CustID, CustDocCategory) SELECT CustID, CustDocCategory FROM CustomerDocuments_view;
+					  update Cust_Docs set seq= ID + (select coalesce(max(DocId),0) + 1 from documentdetails_view);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.5_1" author="kavya.n" dbms="mssql, postgresql">
+		<sql>
+			<![CDATA[
+                      UPDATE CustomerDocuments
+							SET CustomerDocuments.id = Cust_Docs.seq
+							FROM CustomerDocuments 
+							INNER JOIN Cust_Docs 
+							ON (CustomerDocuments.custid = Cust_Docs.custid and CustomerDocuments.CustDocCategory=Cust_Docs.CustDocCategory);
+							
+					UPDATE CustomerDocuments_temp
+							SET CustomerDocuments_temp.id = Cust_Docs.seq
+							FROM CustomerDocuments_temp 
+							INNER JOIN Cust_Docs 
+							ON (CustomerDocuments_temp.custid = Cust_Docs.custid and CustomerDocuments_temp.CustDocCategory=Cust_Docs.CustDocCategory);		
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.5" author="kavya.n" dbms="oracle">
+		<sql>
+			<![CDATA[
+			         
+                      MERGE INTO CustomerDocuments cd
+                      USING (SELECT T1.Id, cd1.CustID, cd1.CustDocCategory FROM (
+                      SELECT (select coalesce(max(DocId),0) from documentdetails_view) + ROW_NUMBER() OVER(ORDER BY cd2.CustID, cd2.CustDocCategory) Id, CustID, CustDocCategory 
+                      FROM Cust_Docs cd2 )T1
+                      INNER JOIN CustomerDocuments cd1 ON cd1.CustID = T1.CustID)T2
+                      ON (CustomerDocuments.CustID = T2.CustID)
+                      WHEN MATCHED THEN UPDATE SET Id = T2.Id
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.6" author="kavya.n" dbms="mssql, postgresql">
+		<sql>
+			<![CDATA[
+			         
+                      UPDATE CustomerDocuments_Temp SET ID = T2.Id from
+                      (SELECT T1.Id, cd1.CustID, cd1.CustDocCategory FROM (
+                      SELECT (select coalesce(max(DocId),0) from documentdetails_view) + ROW_NUMBER() OVER(ORDER BY cd2.CustID, cd2.CustDocCategory) Id, CustID, CustDocCategory 
+                      FROM Cust_Docs cd2 )T1
+                      INNER JOIN CustomerDocuments_Temp cd1 ON cd1.CustID = T1.CustID)T2
+                      WHERE CustomerDocuments_Temp.CustID = T2.CustID 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.6" author="kavya.n" dbms="oracle">
+		<sql>
+			<![CDATA[
+			         
+                      MERGE INTO CustomerDocuments_Temp cd
+                      USING (SELECT T1.Id, cd1.CustID, cd1.CustDocCategory FROM (
+                      SELECT (select coalesce(max(DocId),0) from documentdetails_view) + ROW_NUMBER() OVER(ORDER BY cd2.CustID, cd2.CustDocCategory) Id, CustID, CustDocCategory 
+                      FROM Cust_Docs cd2 )T1
+                      INNER JOIN CustomerDocuments_Temp cd1 ON cd1.CustID = T1.CustID)T2
+                      ON (CustomerDocuments_Temp.CustID = T2.CustID)
+                      WHEN MATCHED THEN UPDATE SET Id = T2.Id
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.7" author="kavya.n">
+		<createIndex tableName="CustomerDocuments" indexName="IX_CustDocs_CustID_DocCategory" unique="true">
+			<column name="CustID" />
+			<column name="CustDocCategory" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#11.8" author="kavya.n">
+		<createIndex tableName="CustomerDocuments_Temp" indexName="IX_CustDocs_CustID_DocCategory_Temp" unique="true">
+			<column name="CustID" />
+			<column name="CustDocCategory" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#11.9" author="kavya.n">
+		<sql>
+			ALTER TABLE CustomerDocuments ALTER COLUMN Id bigInt NOT NULL
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.10" author="kavya.n">
+		<sql>
+			ALTER TABLE CustomerDocuments_Temp ALTER COLUMN Id bigInt NOT NULL
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.10.1" author="kavya.n">
+		<dropPrimaryKey constraintName="PK_CustomerDocuments" tableName="CustomerDocuments" />
+	</changeSet>
+	
+	<changeSet id="ST#11.10.2" author="kavya.n">
+		<dropPrimaryKey constraintName="PK_CustomerDocuments_Temp" tableName="CustomerDocuments_Temp" />
+	</changeSet>
+	
+	<changeSet id="ST#11.11.1" author="kavya.n">
+		<addPrimaryKey tableName="CustomerDocuments" columnNames="Id" constraintName="PK_CustomerDocuments" />
+	</changeSet>
+
+	<changeSet id="ST#11.12.1" author="kavya.n">
+		<addPrimaryKey tableName="CustomerDocuments_Temp" columnNames="Id" constraintName="PK_CustomerDocuments_Temp" />
+	</changeSet>
+
+	<changeSet id="ST#11.18" author="kavya.n">
+		<createSequence sequenceName="SeqDocument_Status" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="ST#11.18.1" author="kavya.n">
+		<createTable tableName="Document_Status">
+			<column name="Id" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#11.18.2" author="kavya.n">
+		<createTable tableName="Document_Status_Temp">
+			<column name="Id" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#11.18.3" author="kavya.n">
+		<addPrimaryKey tableName="Document_Status" columnNames="Id" constraintName="PK_Document_Status" />
+	</changeSet>
+
+	<changeSet id="ST#11.18.4" author="kavya.n">
+		<addPrimaryKey tableName="Document_Status_Temp" columnNames="Id" constraintName="PK_Document_Status_Temp" />
+	</changeSet>
+
+	<changeSet id="ST#11.18.5" author="kavya.n">
+		<createIndex tableName="Document_Status_Temp" indexName="IX_Document_Status_Temp_FR" unique="true">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#11.18.6" author="kavya.n">
+		<createIndex tableName="Document_Status" indexName="IX_Document_Status_FR" unique="true">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#11.19" author="kavya.n">
+		<createSequence sequenceName="SeqDocument_Status_Details" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="ST#11.19.1" author="kavya.n">
+		<createTable tableName="Document_Status_Details">
+			<column name="Id" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocId" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)" />
+			<column name="Remarks" type="varchar(2000)" />
+			<column name="Covenants" type="varchar(200)" />
+			<column name="Processed" type="int"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#11.19.2" author="kavya.n">
+		<createTable tableName="Document_Status_Details_Temp">
+			<column name="Id" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocId" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)" />
+			<column name="Remarks" type="varchar(2000)" />
+			<column name="Covenants" type="varchar(200)" />
+			<column name="Processed" type="int"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#11.19.3" author="kavya.n">
+		<addPrimaryKey tableName="Document_Status_Details" columnNames="Id" constraintName="PK_Document_Status_Dtls" />
+	</changeSet>
+
+	<changeSet id="ST#11.19.4" author="kavya.n">
+		<addPrimaryKey tableName="Document_Status_Details_Temp" columnNames="Id" constraintName="PK_Document_Status_Dtls_Temp" />
+	</changeSet>
+
+	<changeSet id="ST#11.19.5" author="kavya.n">
+		<createIndex tableName="Document_Status_Details_Temp" indexName="IDX_Document_sts_dtl_temp_HI">
+			<column name="HeaderId" type="bigInt" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#11.19.6" author="kavya.n">
+		<createIndex tableName="Document_Status_Details" indexName="IDX_Document_sts_dtl_HI">
+			<column name="HeaderId" type="bigInt" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#11.19.7" author="kavya.n">
+		<createIndex tableName="Document_Status_Details_Temp" indexName="IDX_Document_sts_dtl_temp_DocId">
+			<column name="DocId" type="bigInt" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#11.19.8" author="kavya.n">
+		<createIndex tableName="Document_Status_Details" indexName="IDX_Document_sts_dtl_DocId">
+			<column name="DocId" type="bigInt" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#11.20" author="kavya.n">
+		<createView viewName="DocumentStatus_View" replaceIfExists="true">
+			<![CDATA[
+                      SELECT fm.FinReference,
+                         ft.Fintype,
+                         fm.FinBranch,
+                         fm.FinStartDate,
+                         fm.MaturityDate,
+                         fm.FinCcy,
+                         fm.ScheduleMethod,
+                         fm.ProfitDaysBasis,
+                         cu.CustCIF,
+				         cu.CustShrtName,
+				         ft.FinCategory,
+				         rb.BranchDesc,
+				         ft.FinTypeDesc,
+				         ds.Version,
+						 ds.LastMntBy,
+						 ds.LastMntOn,
+						 ds.RecordStatus,
+						 ds.RoleCode,
+						 ds.NextRoleCode,
+						 ds.TaskId,
+						 ds.NextTaskId,
+						 ds.RecordType,
+						 ds.WorkFlowId
+                    FROM Financemain_Temp fm
+                    JOIN Customers cu on cu.CustId = fm.CustId
+                    JOIN RMTFINANCETYPES ft ON ft.FinType = fm.FinType
+                    JOIN RMTBRANCHES rb ON rb.BranchCode = fm.FinBranch
+                    LEFT Join (select * from Document_Status_Temp union all select * from Document_Status where not exists(select 1 from Document_Status_Temp where id=Document_Status.id)) ds on ds.FinReference = fm.FinReference
+                    where cu.CustId in (select CustId from CustomerDocuments_Temp union all select CustId from CustomerDocuments) or fm.finReference in (select ReferenceId from DocumentDetails_Temp)
+	       ]]>	
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#11.21" author="kavya.n">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+			
+				DELETE FROM SECROLEGROUPS Where GrpID = (select GrpID from SecGroups Where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_MAKER') and RoleID = (select RoleID from secRoles where RoleCd='DOCUMENT_EXTERNAL_STATUS_MAKER');
+				DELETE FROM SECROLEGROUPS where GrpID = (select GrpID from SecGroups Where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_APPROVER') and RoleID = (select RoleID from secRoles where RoleCd='DOCUMENT_EXTERNAL_STATUS_APPROVER');
+				
+				DELETE FROM SECOPERATIONROLES Where RoleID = (select RoleID from secRoles where RoleCd='DOCUMENT_EXTERNAL_STATUS_MAKER');
+				DELETE FROM SECOPERATIONROLES Where RoleID = (select RoleID from secRoles where RoleCd='DOCUMENT_EXTERNAL_STATUS_APPROVER');
+				
+				DELETE FROM SECROLES Where RoleCd = 'DOCUMENT_EXTERNAL_STATUS_MAKER';
+				DELETE FROM SECROLES Where RoleCd = 'DOCUMENT_EXTERNAL_STATUS_APPROVER';
+				
+				DELETE FROM SECGROUPRIGHTS Where GrpID = (Select GrpID from SecGroups Where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_MAKER');
+				DELETE FROM SECGROUPRIGHTS Where GrpID = (Select GrpID from SecGroups Where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_APPROVER');
+				
+				DELETE FROM SecRights Where RightName = 'menu_Item_Document_Status';
+				
+				DELETE FROM SecRights Where RightName = 'DocumentStatusDialog_status';
+				DELETE FROM SecRights Where RightName = 'DocumentStatusDialog_remarks';
+				DELETE FROM SecRights Where RightName = 'DocumentStatusDialog_covenants';
+				
+				DELETE FROM SecGroups Where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_MAKER';
+				DELETE FROM SecGroups Where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_APPROVER';
+			
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DOCUMENT_EXTERNAL_STATUS_MAKER',			'Group for Document status Maker', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DOCUMENT_EXTERNAL_STATUS_APPROVER',		'Group for Document status Approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights), 0, 'menu_Item_Document_Status', 'MENU', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights), 3, 'DocumentStatusDialog_status', 'DocumentStatusDialog', 1, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights), 3, 'DocumentStatusDialog_remarks', 'DocumentStatusDialog', 1, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights), 3, 'DocumentStatusDialog_covenants', 'DocumentStatusDialog', 1, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_Document_Status'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_MAKER'), (Select RightID from SecRights where RightName = 'DocumentStatusDialog_status'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_MAKER'), (Select RightID from SecRights where RightName = 'DocumentStatusDialog_remarks'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_MAKER'), (Select RightID from SecRights where RightName = 'DocumentStatusDialog_covenants'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DOCUMENT_EXTERNAL_STATUS_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_Document_Status'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'DOCUMENT_EXTERNAL_STATUS_MAKER', 'Role for Document status Maker', null, 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 FROM SEQSECROLES WHERE 0=0;
+				INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'DOCUMENT_EXTERNAL_STATUS_APPROVER', 'Role for Document status Approver', null, 0,1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 FROM SEQSECROLES WHERE 0=0;
+				
+				INSERT INTO SECROLEGROUPS values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='DOCUMENT_EXTERNAL_STATUS_MAKER'), (select RoleID from secRoles where RoleCd='DOCUMENT_EXTERNAL_STATUS_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='DOCUMENT_EXTERNAL_STATUS_APPROVER'), (select RoleID from secRoles where RoleCd='DOCUMENT_EXTERNAL_STATUS_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId)  from SecRoleGroups);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.22" author="kavya.n">
+		<createView viewName="DocumentStatusCovenants_View" replaceIfExists="true">
+			<![CDATA[
+					select c.Id, KeyReference, ct.Code, ct.Description, DocType
+					from covenants_temp c
+					inner join Covenant_Types ct on ct.Id = c.CovenantTypeId
+					inner join BMTDocumentTypes dt on dt.DocTypeCode = ct.DocType
+					inner JOIN documentcategory dc ON dc.id = dt.categoryid
+					where dc.code = 'COVENANT'
+	       ]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#11.23" author="kavya.n">
+		<sql>
+			<![CDATA[
+				drop table Cust_Docs;
+			]]>	
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.15" author="kavya.n">
+		<sql>
+			drop table SeqDocumentDetails;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.16" author="kavya.n">
+		<createSequence sequenceName="SeqDocumentDetails" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" />
+	</changeSet>
+
+	<!-- <changeSet id="ST#11.17_1" author="kavya.n" dbms="mssql">
+		<sql splitStatements="false">
+
+			DECLARE @SQLCmd NVARCHAR(MAX);
+			DECLARE @MAXNO BIGINT;
+			SELECT @MAXNO=COALESCE(max(T.ID),0)+1
+			from
+			(select ID from CUSTOMERDOCUMENTS union all select ID from CUSTOMERDOCUMENTS_Temp union all select DocId from DOCUMENTDETAILS union all select DocId from DOCUMENTDETAILS_Temp) T;
+
+			SET @SQLCmd = '
+			ALTER
+			SEQUENCE SEQDOCUMENTDETAILS
+			RESTART WITH
+			' + CAST( @MAXNO AS VARCHAR(30)) +'
+			INCREMENT BY 1
+			MINVALUE -9223372036854775808
+			MAXVALUE 9223372036854775807
+			CACHE ';
+
+
+			EXEC
+			SP_EXECUTESQL @SQLCmd;
+
+		</sql>
+	</changeSet> -->
+
+	<changeSet id="ST#11.17_1" author="kavya.n" dbms="postgresql">
+		<sql splitStatements="false">
+			do $$
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.ID),0)+1 into v_maxval from
+			(select ID from CUSTOMERDOCUMENTS union all select ID from CUSTOMERDOCUMENTS_Temp union all select DocId from DOCUMENTDETAILS union all select DocId from DOCUMENTDETAILS_Temp) T;
+			EXECUTE 'alter sequence SEQDOCUMENTDETAILS
+			restart
+			start
+			with ' || v_maxval;
+			end;
+			$$;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.17_1" author="kavya.n" dbms="oracle">
+		<sql splitStatements="false">
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.ID),0)+1 into v_maxval from
+			(select ID from CUSTOMERDOCUMENTS union all select ID from CUSTOMERDOCUMENTS_Temp union all select DocId from DOCUMENTDETAILS union all select DocId from DOCUMENTDETAILS_Temp) T;
+			EXECUTE IMMEDIATE 'alter sequence
+			SEQDOCUMENTDETAILS
+			restart
+			start with ' || v_maxval;
+			end;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.18" author="murthy.y">
+		<sql>
+		    <![CDATA[
+		        Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('CALL_SFDC_API', 'Enable SFDC API Call ?', 'String', 1, 'Y', 3, 0, null, null, 'Enable SFDC API Call ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		     ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#11.17_1_1" author="Gopalaswamy.m" dbms="mssql">
+		<sql splitStatements="false">
+
+			DECLARE @SQLCmd NVARCHAR(MAX);
+			DECLARE @MAXNO BIGINT;
+			SELECT @MAXNO=COALESCE(max(T.ID),0)+ 1
+			from
+			(select max(ID) as ID from CUSTOMERDOCUMENTS
+			union all
+			select max(ID) as ID from CUSTOMERDOCUMENTS_Temp
+			union all
+			select max(DocId) as ID from DOCUMENTDETAILS
+			union all
+			select max(DocId) as ID from DOCUMENTDETAILS_Temp) T;
+
+			SET @SQLCmd = '
+			ALTER
+			SEQUENCE SEQDOCUMENTDETAILS
+			RESTART WITH
+			' + CAST(
+			@MAXNO AS VARCHAR(30)) +'
+			INCREMENT BY 1
+			MINVALUE -9223372036854775808
+			MAXVALUE 9223372036854775807
+			CACHE ';
+
+			EXEC
+			SP_EXECUTESQL @SQLCmd;
+
+		</sql>
+	</changeSet>
+			
+	
+	<changeSet id="ST#11.33.1_pre" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'DocumentStatus_View');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.33.1" author="kavya.n">
+		<createView viewName="DocumentStatus_View" replaceIfExists="true">
+			<![CDATA[
+                     SELECT fm.FinReference,
+                         ft.Fintype,
+                         fm.FinBranch,
+                         fm.FinStartDate,
+                         fm.MaturityDate,
+                         fm.FinCcy,
+                         fm.ScheduleMethod,
+                         fm.ProfitDaysBasis,
+                         fm.FinIsActive,
+                         cu.CustCIF,
+				         cu.CustShrtName,
+				         ft.FinCategory,
+				         rb.BranchDesc,
+				         ft.FinTypeDesc,
+				         ds.Version,
+						 ds.LastMntBy,
+						 ds.LastMntOn,
+						 ds.RecordStatus,
+						 ds.RoleCode,
+						 ds.NextRoleCode,
+						 ds.TaskId,
+						 ds.NextTaskId,
+						 ds.RecordType,
+						 ds.WorkFlowId
+                    FROM Financemain_Temp fm
+                    JOIN Customers cu on cu.CustId = fm.CustId
+                    JOIN RMTFINANCETYPES ft ON ft.FinType = fm.FinType
+                    JOIN RMTBRANCHES rb ON rb.BranchCode = fm.FinBranch
+                    LEFT Join (select * from Document_Status_Temp union all select * from Document_Status where not exists(select 1 from Document_Status_Temp where id=Document_Status.id)) ds on ds.FinReference = fm.FinReference
+                   	UNION ALL
+					SELECT fm.FinReference,
+                         ft.Fintype,
+                         fm.FinBranch,
+                         fm.FinStartDate,
+                         fm.MaturityDate,
+                         fm.FinCcy,
+                         fm.ScheduleMethod,
+                         fm.ProfitDaysBasis,
+                         fm.FinIsActive,
+                         cu.CustCIF,
+				         cu.CustShrtName,
+				         ft.FinCategory,
+				         rb.BranchDesc,
+				         ft.FinTypeDesc,
+				         ds.Version,
+						 ds.LastMntBy,
+						 ds.LastMntOn,
+						 ds.RecordStatus,
+						 ds.RoleCode,
+						 ds.NextRoleCode,
+						 ds.TaskId,
+						 ds.NextTaskId,
+						 ds.RecordType,
+						 ds.WorkFlowId
+                    FROM Financemain fm
+                    JOIN Customers cu on cu.CustId = fm.CustId
+                    JOIN RMTFINANCETYPES ft ON ft.FinType = fm.FinType
+                    JOIN RMTBRANCHES rb ON rb.BranchCode = fm.FinBranch
+                    LEFT Join (select * from Document_Status_Temp union all select * from Document_Status where not exists(select 1 from Document_Status_Temp where id=Document_Status.id)) ds on ds.FinReference = fm.FinReference
+					where cu.CustId in (select CustId from CustomerDocuments_Temp union all select CustId from CustomerDocuments) or fm.finReference in (select ReferenceId from DocumentDetails_Temp union all select ReferenceId from DocumentDetails)
+	       ]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#11.33.1_post" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'DocumentStatus_View');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.34" author="kavya.n">
+		<sql>
+     <![CDATA[
+     
+        DELETE FROM REPORTLIST WHERE CODE = 'DocumentStatus';
+        
+        INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) 
+        values ('DocumentStatus', 'DocumentStatus', 'listheader_LovDescCustCIF.label,listheader_LovDescCustShrtName.label,listheader_FinReference.label,listheader_FinType.label',
+			    'custCIF,custShrtName,finReference,finType', 'String,String,String,String', null, 'ReportList04',
+                'Document Approve/Reject Details', 'Loan Origination', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+         ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.35_pre" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'DocumentStatusCovenants_View');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#11.35" author="kavya.n">
+		<createView viewName="DocumentStatusCovenants_View" replaceIfExists="true">
+			<![CDATA[
+					SELECT c.Id, KeyReference, ct.Code, ct.Description, DocType
+					FROM covenants_temp c
+					INNER JOIN Covenant_Types ct on ct.Id = c.CovenantTypeId
+					INNER JOIN BMTDocumentTypes dt on dt.DocTypeCode = ct.DocType
+					INNER JOIN documentcategory dc ON dc.id = dt.categoryid
+					UNION ALL
+					SELECT c.Id, KeyReference, ct.Code, ct.Description, DocType
+					FROM covenants c
+					INNER JOIN Covenant_Types ct on ct.Id = c.CovenantTypeId
+					INNER JOIN BMTDocumentTypes dt on dt.DocTypeCode = ct.DocType
+					INNER JOIN documentcategory dc ON dc.id = dt.categoryid
+					WHERE dc.code = 'COVENANT'
+	       ]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#11.35_post" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'DocumentStatusCovenants_View');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#58" author="gopalaswamy.m">
+		<sql>
+			<![CDATA[	
+				DELETE FROM BMTAmountCodes Where ALLOWEDEVENT = 'EARLYSTL' And AMOUNTCODE = 'ae_intTdsUnpaid';
+				INSERT INTO BMTAmountCodes(ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON,RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)values ('EARLYSTL', 0,'ae_intTdsUnpaid', 'Unutilised Tds Amount from AdvIntrst', '1', 1, 1000, Current_TimeStamp, 'Approved',null, null, null, null,null, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- Duplicate indexes removal start -->
+
+	<changeSet id="IX_01" author="Ranga Babu" dbms="mssql">
+		<comment>Duplicate unique key constraints are there on same columns</comment>
+		<sql>
+			<![CDATA[
+				drop index AMORTIZATIONQUEUING_NLS_IDX on AmortizationQueuing
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="IX_02" author="Ranga Babu" dbms="mssql">
+		<comment>Duplicate unique key constraints are there on same columns</comment>
+		<sql>
+			<![CDATA[
+				ALTER TABLE COMMODITIES DROP CONSTRAINT UQ__COMMODIT__0E0AE3D3E3FB74C4
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="IX_03" author="Ranga Babu" dbms="mssql">
+		<comment>Duplicate unique key constraints are there on same columns</comment>
+		<sql>
+			<![CDATA[
+				ALTER TABLE COMMODITIES_TEMP DROP CONSTRAINT UQ__COMMODIT__0E0AE3D3991EEF44
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="IX_04" author="Ranga Babu" dbms="mssql">
+		<comment>Duplicate unique key constraints are there on same columns</comment>
+		<sql>
+			<![CDATA[
+				DROP INDEX ix_cust_incomes_custid ON link_cust_incomes
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="IX_05" author="Ranga Babu" dbms="mssql">
+		<comment>Duplicate unique key constraints are there on same columns</comment>
+		<sql>
+			<![CDATA[
+				ALTER TABLE ManualDeviations DROP CONSTRAINT UQ__ManualDe__A25C5AA73AD6EAAC
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="IX_06" author="Ranga Babu" dbms="mssql">
+		<comment>Duplicate unique key constraints are there on same columns</comment>
+		<sql>
+			<![CDATA[
+				ALTER TABLE [dbo].[ManualDeviations_Temp] DROP CONSTRAINT [UQ__ManualDe__A25C5AA742780C74]
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="IX_07" author="Ranga Babu" dbms="mssql">
+		<comment>Duplicate unique key constraints are there on same columns</comment>
+		<sql>
+			<![CDATA[
+				DROP INDEX PROJECTEDACCRUALS_WORK_NLS_IDX ON ProjectedAccruals_WORK
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="IX_08" author="Ranga Babu" dbms="mssql">
+		<comment>Duplicate unique key constraints are there on same columns</comment>
+		<sql>
+			<![CDATA[
+				DROP INDEX IX_SGR ON SecGroupRights
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="IX_09" author="Ranga Babu" dbms="mssql">
+		<comment>Duplicate unique key constraints are there on same columns</comment>
+		<sql>
+			<![CDATA[
+				ALTER TABLE SecRoles DROP CONSTRAINT idxSecRoles_RoldeCode_U_NC
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- Duplicate indexes removal start -->
+	
+	<changeSet id="200439" author="nagavamsi.p">
+		<sql>
+     <![CDATA[
+             DELETE FROM WORKFLOWDETAILS WHERE WORKFLOWID=(SELECT MAX(WORKFLOWID) FROM WORKFLOWDETAILS WHERE WORKFLOWTYPE='CHEQUEMAINTENANCE'); 
+         ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="200464.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+              EXEC sp_rename 'PRESENTMENT_REQ_DETAILS.SPECIALHIT_FILE_#', 'specialhit_file', 'COLUMN';
+             ]]>
+		</sql>
+	</changeSet>
+	
+		<changeSet id="200464.2.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+              ALTER TABLE PRESENTMENT_REQ_DETAILS_TEMP DROP COLUMN  specialhit_file
+             ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="200464.3.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+              EXEC sp_rename 'PRESENTMENT_REQ_DETAILS_TEMP.SPECIALHIT_FILE_#', 'specialhit_file', 'COLUMN';
+             ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#201189" author="NagaVamsi.P" dbms="mssql">
+		<sql splitStatements="false">
+            <![CDATA[   
+                declare @MAXNO varchar(max),
+                 @SQL varchar(max)
+                SET @MAXNO =
+                (SELECT COALESCE(max(T.ID),0)+1
+                from (select COALESCE(max(ID), 0) + 1 ID from AUTO_KNOCKOFF
+                union all
+                select COALESCE(max(ID), 0) + 1 ID from AUTO_KNOCKOFF_TEMP)  t) + 1;
+                Set @SQL = 'alter sequence SEQAUTO_KNOCKOFF restart with ' + cast(@MAXNO as varchar(max))
+                EXEC (@SQL)
+            ]]>
+		</sql>
+	</changeSet>
+		
 </databaseChangeLog>

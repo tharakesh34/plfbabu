@@ -128,6 +128,8 @@ public class FinanceEnquiry implements Serializable {
 	private Date closedDate;
 	private boolean writeoffLoan;
 	private String entityCode;
+	private BigDecimal odProfit = BigDecimal.ZERO;
+	private String customerType;
 
 	public FinanceEnquiry() {
 
@@ -171,6 +173,8 @@ public class FinanceEnquiry implements Serializable {
 		excludeFields.add("loanStsDesc");
 		excludeFields.add("recordStatus");
 		excludeFields.add("entityCode");
+		excludeFields.add("odProfit");
+		excludeFields.add("customerType");
 		return excludeFields;
 	}
 
@@ -852,5 +856,21 @@ public class FinanceEnquiry implements Serializable {
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
+	}
+
+	public BigDecimal getOdProfit() {
+		return odProfit;
+	}
+
+	public void setOdProfit(BigDecimal odProfit) {
+		this.odProfit = odProfit;
+	}
+
+	public String getCustomerType() {
+		return customerType;
+	}
+
+	public void setCustomerType(String customerType) {
+		this.customerType = customerType;
 	}
 }

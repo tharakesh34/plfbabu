@@ -60,6 +60,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -77,6 +78,7 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinDueData;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -112,6 +114,8 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.ProductUtil;
+import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
@@ -132,6 +136,7 @@ public class ReceiptCalculator {
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private NPAService npaService;
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
+	private AssetClassificationService assetClassificationService;
 
 	private static final String DESC_INC_TAX = " (Inclusive)";
 	private static final String DESC_EXC_TAX = " (Exclusive)";
@@ -142,6 +147,7 @@ public class ReceiptCalculator {
 	private BigDecimal tdsPerc = BigDecimal.ZERO;
 	private BigDecimal tdsMultiplier = BigDecimal.ZERO;
 	private String taxRoundMode = null;
+	private int taxRoundingTarget = 0;
 
 	// Default Constructor
 	public ReceiptCalculator() {
@@ -166,6 +172,7 @@ public class ReceiptCalculator {
 
 		rd.setPresentment(isPresentment);
 		if ("I".equals(buildProcess)) {
+			rd.setAdjSchedule(false);
 			rd = initializeReceipt(rd);
 		} else if ("R".equals(buildProcess)) {
 			rd = recalReceipt(rd, isPresentment);
@@ -214,6 +221,15 @@ public class ReceiptCalculator {
 		boolean isAllocated = false;
 		Date valueDate = rd.getValueDate();
 		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rd.getReceiptHeader().getReceiptPurpose());
+
+		/**
+		 * In case of Presentment considered PresentmentSchDate as valueDate<br>
+		 * Based on value date Accruals are calculated.
+		 * 
+		 */
+		if (rd.isPresentment()) {
+			valueDate = rd.getPresentmentSchDate();
+		}
 
 		if (receiptPurposeCtg == 2) {
 			schdData.setFeeEvent(AccountingEvent.EARLYSTL);
@@ -265,7 +281,7 @@ public class ReceiptCalculator {
 		rd.setRepayMain(rm);
 
 		List<FinanceScheduleDetail> schdDetails = schdData.getFinanceScheduleDetails();
-		if (rd.isPresentment()) {
+		if (rd.isPresentment() && ProductUtil.isNotOverDraft(fm)) {
 			if (!ImplementationConstants.ALLOW_OLDEST_DUE) {
 				return initializePresentment(rd);
 			}
@@ -310,7 +326,7 @@ public class ReceiptCalculator {
 		}
 
 		rd = fetchODPenalties(rd, valueDate, presentmentDates);
-		rd = fetchManualAdviseDetails(rd, valueDate);
+		fetchManualAdviseDetails(rd, valueDate);
 
 		rd = setXcessPayables(rd);
 
@@ -344,9 +360,9 @@ public class ReceiptCalculator {
 						if (!receiptData.isForeClosure()) {
 							if (allocate.getAllocationType().equals(Allocation.FEE)) {
 								allocate.setWaivedAmount(alloc.getWaivedAmount());
-								allocate.setPaidAmount(allocate.getDueAmount());
+								allocate.setPaidAmount(alloc.getTotalDue());
 								allocate.setPaidGST(allocate.getDueGST());
-								allocate.setTotalPaid(allocate.getDueAmount());
+								allocate.setTotalPaid(alloc.getTotalDue().add(alloc.getTdsPaid()));
 								allocate.setTdsPaid(alloc.getTdsPaid());
 							} else {
 								allocate.setPaidAmount(alloc.getPaidAmount());
@@ -454,6 +470,12 @@ public class ReceiptCalculator {
 					}
 				}
 			}
+		} else {
+			for (ReceiptAllocationDetail allocate : receiptHeader.getAllocations()) {
+				if (allocate.getTotalDue().compareTo(allocate.getPaidAmount()) == 0) {
+					allocate.setWaivedAmount(BigDecimal.ZERO);
+				}
+			}
 		}
 
 		return receiptData;
@@ -473,6 +495,7 @@ public class ReceiptCalculator {
 
 		EventProperties eventProperties = fm.getEventProperties();
 		boolean cpzPosIntact = false;
+		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rchd.getReceiptHeader().getReceiptPurpose());
 
 		if (eventProperties.isParameterLoaded()) {
 			cpzPosIntact = eventProperties.isCpzPosIntact();
@@ -485,6 +508,21 @@ public class ReceiptCalculator {
 		} else {
 			rm.setFinAmount(pfd.getTotalpriSchd().subtract(rm.getTotalCapitalize()));
 			rm.setCurFinAmount(pfd.getTotalPriBal().subtract(rm.getTotalCapitalize()).add(pfd.getTdPftCpz()));
+
+			if (receiptPurposeCtg == 2) {
+				List<FinanceScheduleDetail> schdList = schd.getFinanceScheduleDetails();
+				for (FinanceScheduleDetail curSchd : schdList) {
+					Date schDate = curSchd.getSchDate();
+					if (schDate.compareTo(valueDate) == 0) {
+						if (curSchd.getCpzAmount().compareTo(BigDecimal.ZERO) > 0) {
+							rm.setCurFinAmount(rm.getCurFinAmount().subtract(curSchd.getCpzAmount()));
+						}
+						break;
+					} else if (schDate.compareTo(valueDate) > 0) {
+						break;
+					}
+				}
+			}
 		}
 
 		rm.setPrincipal(pfd.getTotalpriSchd());
@@ -492,8 +530,6 @@ public class ReceiptCalculator {
 		rm.setTotalFeeAmt(fm.getFeeChargeAmt());
 		rm.setPrincipalPaid(pfd.getTotalPriPaid());
 		rm.setProfitPaid(pfd.getTotalPftPaid());
-
-		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rchd.getReceiptHeader().getReceiptPurpose());
 
 		if (receiptPurposeCtg == 2) {
 			rm.setPrincipalBalance(rm.getCurFinAmount());
@@ -567,6 +603,7 @@ public class ReceiptCalculator {
 			ReceiptAllocationDetail allocDetail = setAllocationRecord(rd, Allocation.FEE, 1, feeAmount,
 					feeDtls.getFeeTypeDesc(), -(feeDtls.getFeeTypeID()), feeDtls.getTaxComponent(), true, true);
 			allocDetail.setFeeTypeCode(feeDtls.getFeeTypeCode());
+			allocDetail.setValueDate(rd.getReceiptHeader().getValueDate());
 
 			BigDecimal tdsAmount = BigDecimal.ZERO;
 			if (TDSCalculator.isTDSApplicable(fm, feeDtls) && !rd.getReceiptHeader().isExcldTdsCal()) {
@@ -781,6 +818,49 @@ public class ReceiptCalculator {
 	}
 
 	public ReceiptAllocationDetail setAllocationRecord(FinReceiptData receiptData, String allocType, int id,
+			BigDecimal due, String desc, long allocTo, String taxType, boolean isEditable, boolean isDueAdded,
+			ManualAdvise advise) {
+
+		FinanceDetail financeDetail = receiptData.getFinanceDetail();
+		BigDecimal inProcAmount = findInProcAllocAmount(receiptData.getInProcRadList(), allocType, allocTo);
+		BigDecimal curDue = due;
+
+		BigDecimal waivedGST = BigDecimal.ZERO;
+		BigDecimal paidGST = BigDecimal.ZERO;
+
+		TaxAmountSplit taxSplit = calculateGST(financeDetail, taxType, advise.getAdviseAmount());
+
+		paidGST = CalculationUtil.getTotalPaidGST(advise);
+		waivedGST = CalculationUtil.getTotalWaivedGST(advise);
+
+		taxSplit.setAmount(advise.getAdviseAmount());
+		taxSplit.settGST(taxSplit.gettGST().subtract(paidGST).subtract(waivedGST));
+		taxSplit.setsGST(taxSplit.getsGST().subtract(advise.getPaidSGST()).subtract(advise.getWaivedSGST()));
+		taxSplit.setcGST(taxSplit.getcGST().subtract(advise.getPaidCGST()).subtract(advise.getWaivedCGST()));
+		taxSplit.setuGST(taxSplit.getuGST().subtract(advise.getPaidUGST()).subtract(advise.getWaivedUGST()));
+		taxSplit.setiGST(taxSplit.getiGST().subtract(advise.getPaidIGST()).subtract(advise.getWaivedIGST()));
+		taxSplit.setCess(taxSplit.getCess().subtract(advise.getPaidCESS()).subtract(advise.getWaivedCESS()));
+
+		ReceiptAllocationDetail allocation = new ReceiptAllocationDetail();
+		allocation.setAllocationID(id);
+		allocation.setAllocationType(allocType);
+		allocation.setDueAmount(curDue);
+		allocation.setInProcess(inProcAmount);
+		allocation.setAllocationTo(allocTo);
+		allocation.setDueGST(taxSplit.gettGST());
+		allocation.setTotalDue(due);
+		allocation.setEditable(isEditable);
+		allocation.setTotRecv(due);
+		allocation.setTypeDesc(desc);
+		allocation.setTaxType(taxType);
+
+		setAllocationDetails(financeDetail, taxSplit, allocation);
+
+		return allocation;
+
+	}
+
+	public ReceiptAllocationDetail setAllocationRecord(FinReceiptData receiptData, String allocType, int id,
 			BigDecimal due, String desc, long allocTo, String taxType, boolean isEditable, boolean isDueAdded) {
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 
@@ -799,14 +879,25 @@ public class ReceiptCalculator {
 		allocation.setTotalDue(due);
 		allocation.setEditable(isEditable);
 		allocation.setTotRecv(due);
+		allocation.setTypeDesc(desc);
+		allocation.setTaxType(taxType);
 
-		Map<String, BigDecimal> taxPercMap = financeDetail.getGstPercentages();
+		setAllocationDetails(financeDetail, taxSplit, allocation);
+
+		return allocation;
+	}
+
+	private void setAllocationDetails(FinanceDetail fd, TaxAmountSplit taxSplit, ReceiptAllocationDetail allocation) {
+
+		Map<String, BigDecimal> taxPercMap = fd.getGstPercentages();
 
 		BigDecimal cgstPerc = getTaxPercentage(RuleConstants.CODE_CGST, taxPercMap);
 		BigDecimal igstPerc = getTaxPercentage(RuleConstants.CODE_IGST, taxPercMap);
 		BigDecimal sgstPerc = getTaxPercentage(RuleConstants.CODE_SGST, taxPercMap);
 		BigDecimal ugstPerc = getTaxPercentage(RuleConstants.CODE_UGST, taxPercMap);
 		BigDecimal cessPerc = getTaxPercentage(RuleConstants.CODE_CESS, taxPercMap);
+
+		String taxType = allocation.getTaxType();
 
 		if (StringUtils.isNotEmpty(taxType)) {
 			allocation.setPercCGST(cgstPerc);
@@ -823,13 +914,11 @@ public class ReceiptCalculator {
 		}
 
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
-			allocation.setTypeDesc(desc + DESC_EXC_TAX);
-			allocation.setTotalDue(due.add(taxSplit.gettGST()));
-			allocation.setTotRecv(due.add(taxSplit.gettGST()));
+			allocation.setTypeDesc(allocation.getTypeDesc() + DESC_EXC_TAX);
+			allocation.setTotalDue(allocation.getTotalDue().add(taxSplit.gettGST()));
+			allocation.setTotRecv(allocation.getTotRecv().add(taxSplit.gettGST()));
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
-			allocation.setTypeDesc(desc + DESC_INC_TAX);
-		} else {
-			allocation.setTypeDesc(desc);
+			allocation.setTypeDesc(allocation.getTypeDesc() + DESC_INC_TAX);
 		}
 
 		allocation.setBalance(allocation.getTotalDue());
@@ -850,8 +939,6 @@ public class ReceiptCalculator {
 		} else {
 			allocation.setTaxHeader(null);
 		}
-
-		return allocation;
 	}
 
 	private Taxes getTaxDetail(String taxType, BigDecimal taxPerc, BigDecimal taxAmount) {
@@ -897,21 +984,6 @@ public class ReceiptCalculator {
 		allocation.setBalance(allocation.getTotalDue());
 		allocation.setTaxType(taxType);
 
-		Map<String, BigDecimal> taxPercMap = taxSplit.getTaxPercMap();
-		BigDecimal cessPerc = getTaxPercentage(RuleConstants.CODE_CESS, taxPercMap);
-
-		// CESS Calculations
-		if (StringUtils.isNotBlank(taxType)) {
-			TaxHeader taxHeader = new TaxHeader();
-			Taxes tax = new Taxes();
-			tax.setTaxType(RuleConstants.CODE_CESS);
-			tax.setTaxPerc(cessPerc);
-			tax.setNetTax(taxSplit.getCess());
-			tax.setActualTax(taxSplit.getCess());
-			taxHeader.getTaxDetails().add(tax);
-			allocation.setTaxHeader(taxHeader);
-		}
-
 		return allocation;
 	}
 
@@ -952,21 +1024,6 @@ public class ReceiptCalculator {
 
 		allocation.setBalance(allocation.getTotalDue());
 		allocation.setTaxType(taxType);
-
-		Map<String, BigDecimal> taxPercMap = taxSplit.getTaxPercMap();
-		BigDecimal cessPerc = getTaxPercentage(RuleConstants.CODE_CESS, taxPercMap);
-
-		// CESS Calculations
-		if (StringUtils.isNotBlank(taxType)) {
-			TaxHeader taxHeader = new TaxHeader();
-			Taxes tax = new Taxes();
-			tax.setTaxType(RuleConstants.CODE_CESS);
-			tax.setTaxPerc(cessPerc);
-			tax.setNetTax(taxSplit.getCess());
-			tax.setActualTax(taxSplit.getCess());
-			taxHeader.getTaxDetails().add(tax);
-			allocation.setTaxHeader(taxHeader);
-		}
 
 		return allocation;
 	}
@@ -1054,7 +1111,7 @@ public class ReceiptCalculator {
 		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 
 		FinODPenaltyRate finODPenaltyRate = schdData.getFinODPenaltyRate();
-		if (finODPenaltyRate == null) {
+		if (finODPenaltyRate == null && finODPenaltyRateDAO != null) {
 			finODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinID(), "_AView");
 		}
 
@@ -1122,24 +1179,21 @@ public class ReceiptCalculator {
 		return rd;
 	}
 
-	public FinReceiptData fetchManualAdviseDetails(FinReceiptData rd, Date valueDate) {
-		if (rd.isPresentment()) {
-			return rd;
+	public void fetchManualAdviseDetails(FinReceiptData rd, Date valueDate) {
+		FinScheduleData fsd = rd.getFinanceDetail().getFinScheduleData();
+		FinanceMain fm = fsd.getFinanceMain();
+
+		if (rd.isPresentment() && ProductUtil.isNotOverDraft(fm)) {
+			return;
 		}
 
-		FinanceDetail fd = rd.getFinanceDetail();
-		FinScheduleData schdData = fd.getFinScheduleData();
-		FinanceMain fm = schdData.getFinanceMain();
-
-		FinReceiptHeader rch = rd.getReceiptHeader();
-
-		List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdviseByRef(fm.getFinID(),
-				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
+		List<ManualAdvise> adviseList = manualAdviseDAO.getReceivableAdvises(fm.getFinID(), valueDate, "_AView");
 
 		if (CollectionUtils.isEmpty(adviseList)) {
-			return rd;
+			return;
 		}
 
+		FinReceiptHeader rch = rd.getReceiptHeader();
 		List<ReceiptAllocationDetail> allocationsList = rch.getAllocations();
 
 		// Bounce Tax Details
@@ -1147,6 +1201,9 @@ public class ReceiptCalculator {
 		BigDecimal adviseDue = BigDecimal.ZERO;
 
 		for (ManualAdvise advise : adviseList) {
+			if (fm.isOverdraftTxnChrgReq() && DateUtil.compare(advise.getDueDate(), null) == 0) {
+				continue;
+			}
 			boolean isTdsApplicable = false;
 			adviseDue = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 			String type = null;
@@ -1182,13 +1239,15 @@ public class ReceiptCalculator {
 
 			int id = allocationsList.size();
 			ReceiptAllocationDetail allocDetail = setAllocationRecord(rd, type, id, adviseDue, desc, advID, taxType,
-					true, true);
+					true, true, advise);
 
 			if (advise.getBounceID() > 0) {
 				allocDetail.setFeeTypeCode(bounceFeeType.getFeeTypeCode());
 			} else {
 				allocDetail.setFeeTypeCode(advise.getFeeTypeCode());
 			}
+
+			allocDetail.setValueDate(advise.getValueDate());
 
 			BigDecimal tdsAmount = BigDecimal.ZERO;
 			if (TDSCalculator.isTDSApplicable(fm, isTdsApplicable)) {
@@ -1228,8 +1287,6 @@ public class ReceiptCalculator {
 
 		rch.setAllocations(allocationsList);
 		rch.setReceivableAdvises(adviseList);
-
-		return rd;
 	}
 
 	public FinReceiptData setXcessPayables(FinReceiptData receiptData) {
@@ -1243,6 +1300,7 @@ public class ReceiptCalculator {
 
 		// Load FinExcess Details
 		List<FinExcessAmount> excessList = receiptData.getReceiptHeader().getExcessAmounts();
+		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 		if (CollectionUtils.isEmpty(excessList)) {
 			receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
@@ -1272,7 +1330,8 @@ public class ReceiptCalculator {
 				}
 			}
 
-			xcessPayable.setAvailableAmt(xcessPayable.getAmount());
+			BigDecimal tdsUnpaid = getIntTdsUnpaid(receiptData, fm, excess.getAmountType());
+			xcessPayable.setAvailableAmt(xcessPayable.getAmount().subtract(tdsUnpaid));
 			xcessPayable.setTotPaidNow(BigDecimal.ZERO);
 			xcessPayable.setReserved(BigDecimal.ZERO);
 			xcessPayable.setBalanceAmt(xcessPayable.getAvailableAmt().subtract(xcessPayable.getTotPaidNow()));
@@ -1281,6 +1340,19 @@ public class ReceiptCalculator {
 
 		receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
 		return receiptData;
+	}
+
+	private BigDecimal getIntTdsUnpaid(FinReceiptData rd, FinanceMain fm, String amountType) {
+		BigDecimal amount = BigDecimal.ZERO;
+
+		FinReceiptHeader rch = rd.getReceiptHeader();
+		if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)
+				&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()) && AdvanceType.hasAdvInterest(fm)
+				&& fm.istDSApplicable()) {
+			amount = rd.getIntTdsUnpaid();
+		}
+
+		return amount;
 	}
 
 	public FinReceiptData getPayableList(FinReceiptData rd) {
@@ -1508,7 +1580,7 @@ public class ReceiptCalculator {
 			partPayAmount = partPayAmount.subtract(rch.getTotalPastDues().getPaidAmount())
 					.subtract(rch.getTotalBounces().getPaidAmount()).subtract(rch.getTotalRcvAdvises().getPaidAmount());
 
-			partPayAmount = adjustAdvIntPayment(receiptData, partPayAmount);
+			// partPayAmount = adjustAdvIntPayment(receiptData, partPayAmount);
 		}
 		if (receiptCtg < 2) {
 
@@ -1596,7 +1668,7 @@ public class ReceiptCalculator {
 
 			FinRepayHeader rph = new FinRepayHeader();
 			rcd.setRepayHeader(rph);
-			if (rcd.getDueAmount().compareTo(BigDecimal.ZERO) > 0) {
+			if (rcd.getDueAmount().compareTo(BigDecimal.ZERO) > 0 || rch.isClosureWithFullWaiver()) {
 				rch.setBalAmount(payNow.add(rch.getRefWaiverAmt()));
 				rph.setFinReference(rch.getReference());
 				rph.setValueDate(rch.getValueDate());
@@ -1737,12 +1809,90 @@ public class ReceiptCalculator {
 		return GSTCalculator.calculateGST(fd, taxType, paidAmount, waivedAmount);
 	}
 
-	/**
-	 * Method for Processing Schedule Data and Receipts to Prepare Allocation Details
-	 * 
-	 * @param rd
-	 * @param aFinScheduleData
-	 */
+	public FinReceiptData recalAutoAllocationHierarchy(FinReceiptData rd, boolean isPresentment) {
+		FinReceiptHeader rch = rd.getReceiptHeader();
+
+		FinanceDetail fd = rd.getFinanceDetail();
+		List<FinODDetails> odList = fd.getFinScheduleData().getFinODDetails();
+		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(rch.getReceiptPurpose());
+		List<ReceiptAllocationDetail> allocations = rch.getAllocations();
+
+		List<FinODDetails> tempOdList = new ArrayList<>(1);
+		for (FinODDetails fod : odList) {
+			tempOdList.add(fod.copyEntity());
+		}
+
+		BigDecimal balAmount = rch.getReceiptAmount();
+		rch.setBalAmount(balAmount);
+
+		List<FinDueData> dueDataList = rd.getDueDataList();
+		if (CollectionUtils.isEmpty(dueDataList)) {
+			return rd;
+		}
+
+		for (FinDueData dueData : dueDataList) {
+			if (!dueData.isAdjust() && receiptPurposeCtg != 2) {
+				continue;
+			}
+
+			rd.setDueDate(dueData.getDueDate());
+			rd.setDueData(dueData);
+
+			switch (dueData.getAllocType()) {
+			case RepayConstants.DUETYPE_PRINICIPAL:
+				rch.setSchdIdx(dueData.getSchdIdx());
+				rd = priApportion(rd);
+				if (rd.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getFutPriIdx() > 0 && rch.getPriIdx() > 0
+						&& allocations.get(rch.getPriIdx()).getPaidAvailable().compareTo(BigDecimal.ZERO) <= 0) {
+					rd = priApportion(rd);
+				}
+				break;
+			case RepayConstants.DUETYPE_PROFIT:
+				rch.setSchdIdx(dueData.getSchdIdx());
+				rd = repayIntApportion(rd);
+				if (rd.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getPftIdx() != -1 && rch.getFutPftIdx() != -1
+						&& allocations.get(rch.getPftIdx()).getPaidAvailable().compareTo(BigDecimal.ZERO) <= 0) {
+					rd = repayIntApportion(rd);
+				}
+				break;
+			case RepayConstants.DUETYPE_MANUALADVISE:
+				rd.setDueData(dueData);
+				rd = eventFeeAndAdviseApportion(rd, false);
+				break;
+			case RepayConstants.DUETYPE_BOUNCE:
+				rd.setDueData(dueData);
+				rd = eventFeeAndAdviseApportion(rd, false);
+				break;
+			case RepayConstants.DUETYPE_FEES:
+				rd.setDueData(dueData);
+				rd = eventFeeAndAdviseApportion(rd, true);
+				break;
+			case RepayConstants.DUETYPE_LPFT:
+				rch.setSchdIdx(dueData.getSchdIdx());
+				rd = lateIntApportion(rd);
+				break;
+			case RepayConstants.DUETYPE_ODC:
+				rch.setSchdIdx(dueData.getSchdIdx());
+				rd.setDueData(dueData);
+				rd = penalApportion(rd);
+				break;
+			default:
+				break;
+			}
+		}
+
+		setEmi(rd);
+
+		setTotals(rd, 0);
+
+		if (!rd.isAdjSchedule()) {
+			fd.getFinScheduleData().setFinODDetails(tempOdList);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return rd;
+	}
+
 	public FinReceiptData recalAutoAllocation(FinReceiptData rd, boolean isPresentment) {
 		logger.debug(Literal.ENTERING);
 
@@ -1851,6 +2001,11 @@ public class ReceiptCalculator {
 			return rd;
 		}
 
+		if (AllocationType.AUTO.equals(rch.getAllocationType()) || rd.isAdjSchedule()) {
+			recalAutoAllocationHierarchy(rd, isPresentment);
+			return rd;
+		}
+
 		BigDecimal balAmount = BigDecimal.ZERO;
 		if (rd.isAdjSchedule()) {
 			balAmount = rch.getBalAmount();
@@ -1860,7 +2015,7 @@ public class ReceiptCalculator {
 		}
 
 		// If no balance for repayment then return with out calculation
-		if (balAmount.compareTo(BigDecimal.ZERO) <= 0) {
+		if (balAmount.compareTo(BigDecimal.ZERO) <= 0 && !rch.isClosureWithFullWaiver()) {
 			logger.debug(Literal.LEAVING);
 			return rd;
 		}
@@ -2019,8 +2174,7 @@ public class ReceiptCalculator {
 					xcess.setTotPaidNow(xcess.getTotPaidNow().add(payNow));
 					allocate.setTotalPaid(allocate.getTotalPaid().add(payNow));
 					allocate.setPaidAmount(allocate.getPaidAmount().add(payNow));
-					if (Allocation.NPFT.equals(allocate.getAllocationType())
-							|| Allocation.FUT_PRI.equals(allocate.getAllocationType())) {
+					if (Allocation.NPFT.equals(allocate.getAllocationType())) {
 						for (ReceiptAllocationDetail all : rch.getAllocations()) {
 							if (Allocation.EMI.equals(all.getAllocationType())) {
 								all.setTotalPaid(all.getTotalPaid().add(payNow));
@@ -2183,7 +2337,9 @@ public class ReceiptCalculator {
 	}
 
 	public FinReceiptData eventFeeAndAdviseApportion(FinReceiptData receiptData, boolean isEventFee) {
-		if (receiptData.isPresentment()) {
+		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+		if ((receiptData.isPresentment() && !receiptData.isRepresentment()) && ProductUtil.isNotOverDraft(fm)) {
 			return receiptData;
 		}
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -2191,6 +2347,7 @@ public class ReceiptCalculator {
 		BigDecimal balAmount = rch.getBalAmount();
 		BigDecimal balDue = BigDecimal.ZERO;
 		FinRepayHeader rph = null;
+		FinDueData dueData = receiptData.getDueData();
 
 		if (receiptData.isAdjSchedule()) {
 			rph = rcdList.get(receiptData.getRcdIdx()).getRepayHeader();
@@ -2206,8 +2363,14 @@ public class ReceiptCalculator {
 				if (allocate.getAllocationTo() >= 0) {
 					continue;
 				}
+				if (!allocate.getFeeTypeCode().equals(dueData.getFeeTypeCode())) {
+					continue;
+				}
 			} else {
 				if (allocate.getAllocationTo() <= 0) {
+					continue;
+				}
+				if (dueData.getAdviseId() != allocate.getAllocationTo()) {
 					continue;
 				}
 			}
@@ -2291,9 +2454,8 @@ public class ReceiptCalculator {
 								allocate.getPaidAmount().add(allocate.getTdsPaid()).subtract(allocate.getPaidGST()));
 						feeDtl.setRemainingFeeOriginal(feeDtl.getActualAmountOriginal()
 								.subtract(allocate.getWaivedNow()).subtract(feeDtl.getPaidAmountOriginal()));
-					} else {
-						feeDtl.setPaidAmount(feeDtl.getPaidAmount().add(allocate.getPaidNow()));
 					}
+					feeDtl.setPaidAmount(feeDtl.getPaidAmount().add(allocate.getPaidNow()));
 					feeDtl.setWaivedAmount(feeDtl.getWaivedAmount().add(allocate.getWaivedNow()));
 					feeDtl.setRemainingFee(
 							feeDtl.getActualAmount().subtract(feeDtl.getPaidAmount().add(feeDtl.getWaivedAmount())));
@@ -2318,7 +2480,7 @@ public class ReceiptCalculator {
 		BigDecimal percMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).add(totalPerc), 20,
 				RoundingMode.HALF_DOWN);
 		paidAmount = netAmount.multiply(percMultiplier);
-		paidAmount = CalculationUtil.roundAmount(paidAmount, tdsRoundMode, tdsRoundingTarget);
+		paidAmount = CalculationUtil.roundAmount(paidAmount, taxRoundMode, taxRoundingTarget);
 		return paidAmount;
 	}
 
@@ -2335,7 +2497,7 @@ public class ReceiptCalculator {
 		BigDecimal percMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).add(totalPerc), 20,
 				RoundingMode.HALF_DOWN);
 		paidAmount = netAmount.multiply(percMultiplier);
-		paidAmount = CalculationUtil.roundAmount(paidAmount, tdsRoundMode, tdsRoundingTarget);
+		paidAmount = CalculationUtil.roundAmount(paidAmount, taxRoundMode, taxRoundingTarget);
 		return paidAmount;
 	}
 
@@ -2344,6 +2506,7 @@ public class ReceiptCalculator {
 
 		ManualAdviseMovements movement = new ManualAdviseMovements();
 		movement.setAdviseID(allocate.getAllocationTo());
+		movement.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 		movement.setMovementDate(valueDate);
 		movement.setMovementAmount(allocate.getPaidNow());
 
@@ -2381,7 +2544,7 @@ public class ReceiptCalculator {
 		TaxHeader taxHeader = new TaxHeader();
 		TaxHeader allocTaxHeader = allocate.getTaxHeader();
 
-		if (allocTaxHeader != null && allocate.getPaidNow().compareTo(BigDecimal.ZERO) > 0) {
+		if (allocTaxHeader != null) {
 			List<Taxes> taxDetails = allocTaxHeader.getTaxDetails();
 			if (CollectionUtils.isNotEmpty(taxDetails)) {
 				for (Taxes taxDetail : taxDetails) {
@@ -2442,6 +2605,15 @@ public class ReceiptCalculator {
 		FinReceiptHeader rch = rd.getReceiptHeader();
 		Date valueDate = rch.getValueDate();
 
+		/**
+		 * In case of Presentment considered PresentmentSchDate as valueDate<br>
+		 * Because Interest allocation must be done based on the given schedule
+		 * 
+		 */
+		if (rd.isPresentment()) {
+			valueDate = rd.getPresentmentSchDate();
+		}
+
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinScheduleData schData = fd.getFinScheduleData();
 		List<FinanceScheduleDetail> schedules = schData.getFinanceScheduleDetails();
@@ -2453,7 +2625,7 @@ public class ReceiptCalculator {
 		long finID = fm.getFinID();
 
 		EventProperties eventProperties = fm.getEventProperties();
-		String repayHierarchy = getRepayHierarchyOnNPA(finID, eventProperties);
+		String repayHierarchy = getRepayHierarchyOnNPA(finID);
 
 		if ("".equals(repayHierarchy)) {
 			repayHierarchy = schData.getFinanceType().getRpyHierarchy();
@@ -2480,7 +2652,7 @@ public class ReceiptCalculator {
 			if (ImplementationConstants.ALLOW_OLDEST_DUE) {
 				// Adjust Oldest Dues first
 			} else {
-				if (isPresentment && (DateUtility.compare(valueDate, schdDate) != 0)) {
+				if ((isPresentment && (DateUtil.compare(valueDate, schdDate) != 0)) && ProductUtil.isNotOverDraft(fm)) {
 					continue;
 				}
 			}
@@ -2499,40 +2671,8 @@ public class ReceiptCalculator {
 		return rd;
 	}
 
-	private String getRepayHierarchyOnNPA(long finID, EventProperties eventProperties) {
-		String repayHierarchy = "";
-		String npaRepayHierarchy = null;
-		int dpdbucket = 0;
-		boolean alwDiffRepayOnNpa = false;
-		if (eventProperties.isParameterLoaded()) {
-			npaRepayHierarchy = eventProperties.getNpaRepayHierarchy();
-			dpdbucket = eventProperties.getDpdBucket();
-			alwDiffRepayOnNpa = eventProperties.isAlwDiffRepayOnNpa();
-		} else {
-			npaRepayHierarchy = SysParamUtil.getValueAsString(SMTParameterConstants.RPYHCY_ON_NPA);
-			dpdbucket = SysParamUtil.getValueAsInt(SMTParameterConstants.RPYHCY_ON_DPD_BUCKET);
-			alwDiffRepayOnNpa = SysParamUtil.isAllowed(SMTParameterConstants.ALW_DIFF_RPYHCY_NPA);
-		}
-
-		if (ImplementationConstants.ALLOW_NPA_PROVISION) {
-			if (StringUtils.trimToNull(npaRepayHierarchy) != null) {
-				boolean isNPARepayHierarchyReq = npaService.isNAPRepayHierarchyReq(finID);
-				if (isNPARepayHierarchyReq) {
-					repayHierarchy = npaRepayHierarchy;
-				}
-			}
-		} else {
-			if (alwDiffRepayOnNpa) {
-				// FIXME:Currently NPA is updating on EOD, so for temporary purpose
-				// we are changing repay hierarchy on basis of DPD.
-				int dueBucket = financeScheduleDetailDAO.getDueBucket(finID);
-				if (dueBucket >= dpdbucket) {
-					repayHierarchy = npaRepayHierarchy;
-				}
-			}
-		}
-
-		return repayHierarchy == null ? "" : repayHierarchy;
+	private String getRepayHierarchyOnNPA(long finID) {
+		return assetClassificationService.getNpaRepayHierarchy(finID);
 	}
 
 	public FinReceiptData calApportion(char[] rpyOrder, FinReceiptData rd) {
@@ -2543,7 +2683,10 @@ public class ReceiptCalculator {
 			List<ReceiptAllocationDetail> allocations = rch.getAllocations();
 			if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
 				rd = priApportion(rd);
-				if (rd.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getFutPriIdx() > 0 && rch.getPriIdx() > 0
+				/**
+				 * PSD#165029 - Unable to do Part Prepayment & Early Settlement on the date of schedule payment
+				 */
+				if (rd.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getFutPriIdx() > -1 && rch.getPriIdx() > -1
 						&& allocations.get(rch.getPriIdx()).getPaidAvailable().compareTo(BigDecimal.ZERO) <= 0) {
 					rd = priApportion(rd);
 				}
@@ -2791,6 +2934,7 @@ public class ReceiptCalculator {
 		} else {
 			allocatePft = allocationList.get(rch.getPftIdx());
 		}
+
 		FinRepayHeader rph = null;
 
 		if (receiptData.isAdjSchedule()) {
@@ -2883,13 +3027,20 @@ public class ReceiptCalculator {
 
 		int schdIdx = rch.getSchdIdx();
 		FinScheduleData schData = rd.getFinanceDetail().getFinScheduleData();
-		FinanceScheduleDetail schd = schData.getFinanceScheduleDetails().get(schdIdx);
+		Date schdDate = rd.getDueDate();
 
 		List<ReceiptAllocationDetail> allocationList = rd.getReceiptHeader().getAllocations();
 		ReceiptAllocationDetail allocate = allocationList.get(rch.getLpiIdx());
 
 		FinRepayHeader rph = null;
 		if (rd.isAdjSchedule()) {
+			if (rd.getDueData() != null) {
+				FinDueData dueData = rd.getDueData();
+				schdDate = dueData.getDueDate();
+			} else {
+				FinanceScheduleDetail schd = schData.getFinanceScheduleDetails().get(schdIdx);
+				schdDate = schd.getSchDate();
+			}
 			rph = rch.getReceiptDetails().get(rd.getRcdIdx()).getRepayHeader();
 			balAmount = allocate.getPaidAvailable();
 		} else {
@@ -2905,7 +3056,7 @@ public class ReceiptCalculator {
 		for (int i = 0; i < finODDetails.size(); i++) {
 			FinODDetails fod = finODDetails.get(i);
 
-			if (fod.getFinODSchdDate().compareTo(schd.getSchDate()) == 0) {
+			if (fod.getFinODSchdDate().compareTo(schdDate) == 0) {
 				finOd = finODDetails.get(i);
 				rch.setOdIdx(i);
 				balLPI = fod.getLPIBal();
@@ -2913,7 +3064,7 @@ public class ReceiptCalculator {
 				break;
 			}
 
-			if (fod.getFinODSchdDate().compareTo(schd.getSchDate()) > 0) {
+			if (fod.getFinODSchdDate().compareTo(schdDate) > 0) {
 				break;
 			}
 		}
@@ -3132,8 +3283,7 @@ public class ReceiptCalculator {
 		int schdIdx = rch.getSchdIdx();
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
-
-		FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(schdIdx);
+		Date schdDate = rd.getDueDate();
 
 		List<ReceiptAllocationDetail> allocationList = rd.getReceiptHeader().getAllocations();
 		ReceiptAllocationDetail allocate = allocationList.get(rch.getLppIdx());
@@ -3145,6 +3295,13 @@ public class ReceiptCalculator {
 		FinRepayHeader rph = null;
 		if (rd.isAdjSchedule()) {
 			rph = rch.getReceiptDetails().get(rd.getRcdIdx()).getRepayHeader();
+			if (rd.getDueData() != null) {
+				FinDueData dueData = rd.getDueData();
+				schdDate = dueData.getDueDate();
+			} else {
+				FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(schdIdx);
+				schdDate = curSchd.getSchDate();
+			}
 			balAmount = allocate.getPaidAvailable();
 		} else {
 			balAmount = rch.getBalAmount();
@@ -3159,7 +3316,7 @@ public class ReceiptCalculator {
 		List<FinODDetails> finODDetails = schdData.getFinODDetails();
 		for (int i = 0; i < finODDetails.size(); i++) {
 			FinODDetails fod = finODDetails.get(i);
-			if (fod.getFinODSchdDate().compareTo(curSchd.getSchDate()) == 0) {
+			if (fod.getFinODSchdDate().compareTo(schdDate) == 0) {
 				finOd = finODDetails.get(i);
 				rch.setOdIdx(i);
 				penaltyBal = fod.getTotPenaltyBal();
@@ -3167,21 +3324,15 @@ public class ReceiptCalculator {
 				break;
 			}
 
-			if (fod.getFinODSchdDate().compareTo(curSchd.getSchDate()) > 0) {
+			if (fod.getFinODSchdDate().compareTo(schdDate) > 0) {
 				break;
 			}
 		}
 
-		if (!isLPPFound || penaltyBal.compareTo(BigDecimal.ZERO) <= 0) {
+		if (!isLPPFound || (penaltyBal.compareTo(BigDecimal.ZERO) <= 0 && !rch.isClosureWithFullWaiver())) {
 			return rd;
 		}
-		if (allocate.getWaivedAvailable().compareTo(BigDecimal.ZERO) > 0) {
-			if (allocate.getWaivedAvailable().compareTo(penaltyBal) > 0) {
-				waivedNow = penaltyBal;
-			} else {
-				waivedNow = allocate.getWaivedAvailable();
-			}
-		}
+
 		if (lppFeeType == null && rd.getLppFeeType() == null) {
 			lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 			rd.setLppFeeType(lppFeeType);
@@ -3191,13 +3342,23 @@ public class ReceiptCalculator {
 		if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
 			taxType = lppFeeType.getTaxComponent();
 		}
-		penaltyBal = penaltyBal.subtract(waivedNow);
+
 		BigDecimal taxableAmount = penaltyBal;
 		BigDecimal tdsAmount = BigDecimal.ZERO;
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
 			TaxAmountSplit taxSplit = calculateGST(fd, taxType, penaltyBal);
 			penaltyBal = penaltyBal.add(taxSplit.gettGST());
 		}
+
+		if (allocate.getWaivedAvailable().compareTo(BigDecimal.ZERO) > 0) {
+			if (allocate.getWaivedAvailable().compareTo(penaltyBal) > 0) {
+				waivedNow = penaltyBal;
+			} else {
+				waivedNow = allocate.getWaivedAvailable();
+			}
+		}
+
+		penaltyBal = penaltyBal.subtract(waivedNow);
 
 		if (allocate.isTdsReq() && !rch.isExcldTdsCal()) {
 			tdsAmount = getTDSAmount(fd.getFinScheduleData().getFinanceMain(), taxableAmount);
@@ -3235,7 +3396,8 @@ public class ReceiptCalculator {
 		finOd.setTotWaived(finOd.getTotWaived().add(waivedNow));
 		finOd.setTotPenaltyBal(finOd.getTotPenaltyBal().subtract(paidNow.add(waivedNow)));
 
-		if (rd.isAdjSchedule() && paidNow.add(waivedNow).compareTo(BigDecimal.ZERO) > 0) {
+		if (rd.isAdjSchedule()
+				&& (paidNow.add(waivedNow).compareTo(BigDecimal.ZERO) > 0 || rch.isClosureWithFullWaiver())) {
 			rph.setRepayAmount(rph.getRepayAmount().add(paidNow));
 			rph.setTotalPenalty(rph.getTotalPenalty().add(paidNow));
 			rph.setTotalWaiver(rph.getTotalWaiver().add(waivedNow));
@@ -3321,7 +3483,7 @@ public class ReceiptCalculator {
 				rps.setPenaltyPayNow(alloc.getPaidNow().add(alloc.getTdsPaidNow()));
 				rps.setWaivedAmt(alloc.getWaivedNow());
 			}
-			rps.setWaivedAmt(alloc.getWaivedNow().add(alloc.getTdsWaivedNow()));
+			// rps.setWaivedAmt(alloc.getWaivedNow().add(alloc.getTdsWaivedNow()));
 
 			// GST Calculations
 			TaxHeader taxHeader = alloc.getTaxHeader();
@@ -3929,13 +4091,16 @@ public class ReceiptCalculator {
 
 		TaxAmountSplit taxSplit = calculateGST(fd, taxType, paidAmount);
 
-		// Set the GST to allocations
 		allocation.setPaidCGST(allocation.getPaidCGST().add(taxSplit.getcGST()));
 		allocation.setPaidSGST(allocation.getPaidSGST().add(taxSplit.getsGST()));
 		allocation.setPaidUGST(allocation.getPaidUGST().add(taxSplit.getuGST()));
 		allocation.setPaidIGST(allocation.getPaidIGST().add(taxSplit.getiGST()));
 		allocation.setPaidCESS(allocation.getPaidCESS().add(taxSplit.getCess()));
 		allocation.setPaidGST(allocation.getPaidGST().add(taxSplit.gettGST()));
+
+		if (allocation.getPaidAmount().compareTo(allocation.getTotalDue()) == 0) {
+			allocation.setPaidGST(allocation.getDueGST());
+		}
 
 		if (allocation.getTaxHeader() == null) {
 			return;
@@ -4165,8 +4330,7 @@ public class ReceiptCalculator {
 				radList.add(rad);
 				break;
 			case RepayConstants.REPAY_OTHERS:
-				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(finID,
-						FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
+				List<ManualAdvise> advises = manualAdviseDAO.getReceivableAdvises(finID, "_AView");
 				if (advises == null || advises.isEmpty()) {
 					continue;
 				}
@@ -4486,7 +4650,7 @@ public class ReceiptCalculator {
 	public void setSMTParms(EventProperties eventProperties) {
 		if (eventProperties.isParameterLoaded()) {
 			taxRoundMode = eventProperties.getTaxRoundMode();
-
+			taxRoundingTarget = eventProperties.getTaxRoundingTarget();
 			tdsRoundMode = eventProperties.getTdsRoundMode();
 			tdsRoundingTarget = eventProperties.getTdsRoundingTarget();
 
@@ -4495,7 +4659,7 @@ public class ReceiptCalculator {
 		} else {
 			if (StringUtils.isEmpty(taxRoundMode) || StringUtils.isEmpty(tdsRoundMode)) {
 				taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
-
+				taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 				tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
 				tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 
@@ -4645,6 +4809,10 @@ public class ReceiptCalculator {
 		FinScheduleData schdData = fd.getFinScheduleData();
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 		Date valueDate = rd.getValueDate();
+
+		if (rd.isPresentment()) {
+			valueDate = rd.getPresentmentSchDate();
+		}
 
 		if (rh.getPresentmentSchDate() != null) {
 			valueDate = rh.getPresentmentSchDate();
@@ -4870,9 +5038,115 @@ public class ReceiptCalculator {
 		allocate.setTdsWaived(BigDecimal.ZERO);
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public FinReceiptData fetchLppForRePresentment(FinReceiptData rd, Date valueDate, Date schDate) {
+		logger.debug(Literal.ENTERING);
+
+		FinScheduleData schdData = rd.getFinanceDetail().getFinScheduleData();
+
+		BigDecimal receiptAmt = rd.getTotReceiptAmount();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+
+		List<FinODDetails> odList = getValueDatePenalties(schdData, receiptAmt, valueDate, null, true, schedules);
+
+		if (CollectionUtils.isEmpty(odList)) {
+			return rd;
+		}
+
+		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+		String taxType = null;
+
+		if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
+			taxType = lppFeeType.getTaxComponent();
+		}
+
+		// Fetching Actual Late Payments for the given schedule.
+		BigDecimal lppBal = BigDecimal.ZERO;
+		BigDecimal penalGst = BigDecimal.ZERO;
+		List<FinODDetails> curOverdueList = new ArrayList<>(1);
+
+		for (FinODDetails od : odList) {
+			if (od.getFinODSchdDate().compareTo(schDate) == 0) {
+				FinanceDetail fd = rd.getFinanceDetail();
+
+				TaxAmountSplit taxSplit = GSTCalculator.calculateGST(fd, taxType, od.getTotPenaltyBal());
+				penalGst = penalGst.add(taxSplit.gettGST());
+				lppBal = lppBal.add(taxSplit.getNetAmount());
+				curOverdueList.add(od);
+				break;
+			}
+		}
+
+		if (lppBal.compareTo(BigDecimal.ZERO) > 0) {
+			List<ReceiptAllocationDetail> allocations = rd.getReceiptHeader().getAllocations();
+			rd.setPendingODC(lppBal);
+			boolean isODCAllocExists = false;
+			for (ReceiptAllocationDetail allocate : allocations) {
+				if (RepayConstants.ALLOCATION_ODC.equalsIgnoreCase(allocate.getAllocationType())) {
+					isODCAllocExists = true;
+					break;
+				}
+			}
+
+			if (!isODCAllocExists) {
+				String desc = Labels.getLabel("label_RecceiptDialog_AllocationType_ODC");
+				allocations.add(setODCAllocRecord(rd, RepayConstants.ALLOCATION_ODC, 6, lppBal, penalGst, desc, 0,
+						taxType, true));
+			}
+		}
+
+		schdData.setFinODDetails(curOverdueList);
+		logger.debug(Literal.LEAVING);
+		return rd;
+	}
+
+	public FinReceiptData fetchBouncedAdviseDetailsForRepresentment(FinReceiptData frd, Date valueDate) {
+		logger.debug(Literal.ENTERING);
+
+		List<ManualAdvise> advices = manualAdviseDAO.getUnpaidBounces(frd.getFinID(), "_AView");
+
+		if (CollectionUtils.isEmpty(advices)) {
+			return frd;
+		}
+
+		List<ReceiptAllocationDetail> allocations = frd.getReceiptHeader().getAllocations();
+
+		FeeType bounceFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.BOUNCE);
+
+		String taxComponent = null;
+
+		String desc = "Bounce Charges";
+
+		if (bounceFeeType != null && bounceFeeType.isTaxApplicable()) {
+			taxComponent = bounceFeeType.getTaxComponent();
+		}
+
+		for (ManualAdvise advise : advices) {
+			BigDecimal adviseDue = BigDecimal.ZERO;
+
+			adviseDue = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
+			int id = allocations.size();
+			boolean isBounceAllocExists = false;
+
+			for (ReceiptAllocationDetail allocate : allocations) {
+				if (RepayConstants.ALLOCATION_BOUNCE.equalsIgnoreCase(allocate.getAllocationType())) {
+					isBounceAllocExists = true;
+					break;
+				}
+			}
+
+			if (!isBounceAllocExists) {
+				ReceiptAllocationDetail allocDetail = setAllocationRecord(frd, RepayConstants.ALLOCATION_BOUNCE, id,
+						adviseDue, desc, advise.getAdviseID(), taxComponent, true, false, advise);
+				allocDetail.setFeeTypeCode(advise.getFeeTypeCode());
+				allocations.add(allocDetail);
+			}
+		}
+
+		frd.getReceiptHeader().setReceivableAdvises(advices);
+
+		logger.debug(Literal.LEAVING);
+		return frd;
+	}
 
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
@@ -4920,6 +5194,11 @@ public class ReceiptCalculator {
 
 	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
+	@Autowired
+	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
+		this.assetClassificationService = assetClassificationService;
 	}
 
 }

@@ -729,8 +729,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdRetained.setChecked(aPromotion.isDbdRtnd());
 			this.mbdRetained.setChecked(aPromotion.isMbdRtnd());
 			this.knockOffOverDueAmountWithCashBackAmount.setChecked(aPromotion.isKnckOffDueAmt());
-			onCheck$mbdRetained();
-			onCheck$dbdRetained();
+			onCheckdbd();
+			onCheckmbd();
 			FeeType dbdFeeType = setFeeTypeData(aPromotion.getDbdFeeTypId());
 			FeeType mbdFeeType = setFeeTypeData(aPromotion.getMbdFeeTypId());
 			FeeType dbdAndMbdFeeType = setFeeTypeData(aPromotion.getDbdAndMbdFeeTypId());
@@ -1171,15 +1171,27 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				wve.add(we);
 			}
 			try {
-				if (this.manufacturerCashbackToTheCustomer.getValue() != null) {
-					if (!this.manufacturerCashbackToTheCustomer.isReadonly() && this.manufacturerCashbackToTheCustomer
-							.getValue() < this.cashBackFromTheManufacturer.getValue()) {
-						throw new WrongValueException(this.manufacturerCashbackToTheCustomer,
-								Labels.getLabel("label_CDSchemeDialog_ManufacturerCashbackToTheCustomer.value")
-										+ " should be greater than or equal to "
-										+ Labels.getLabel("label_CDSchemeDialog_CashbackFromTheManufacturer.value"));
-					} else {
-						aPromotion.setMnfCbToCust(this.manufacturerCashbackToTheCustomer.getValue());
+				aPromotion.setDbdRtnd(this.dbdRetained.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aPromotion.setMbdRtnd(this.mbdRetained.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				if (!aPromotion.isMbdRtnd()) {
+					if (this.manufacturerCashbackToTheCustomer.getValue() != null) {
+						if (this.manufacturerCashbackToTheCustomer.getValue() < this.cashBackFromTheManufacturer
+								.getValue()) {
+							throw new WrongValueException(this.manufacturerCashbackToTheCustomer,
+									Labels.getLabel("label_CDSchemeDialog_ManufacturerCashbackToTheCustomer.value")
+											+ " should be greater than or equal to " + Labels.getLabel(
+													"label_CDSchemeDialog_CashbackFromTheManufacturer.value"));
+						} else {
+							aPromotion.setMnfCbToCust(this.manufacturerCashbackToTheCustomer.getValue());
+						}
 					}
 				} else {
 					aPromotion.setMnfCbToCust(0);
@@ -1219,16 +1231,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			}
 			try {
 				aPromotion.setDbdPercCal(getComboboxValue(this.dbdPercentageCalculationOn));
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				aPromotion.setDbdRtnd(this.dbdRetained.isChecked());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				aPromotion.setMbdRtnd(this.mbdRetained.isChecked());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}

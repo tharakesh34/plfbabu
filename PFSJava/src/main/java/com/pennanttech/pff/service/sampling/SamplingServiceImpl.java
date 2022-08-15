@@ -39,7 +39,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerIncomeValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
@@ -85,7 +85,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentDetailValidation documentValidation;
 	@Autowired
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 	@Autowired
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	@Autowired
@@ -683,7 +683,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 					break;
 				}
 			}
-			temp.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(custId, true, "_View"));
+			temp.setCustomerDetails(customerDataService.getCustomerDetailsbyID(custId, true, "_View"));
 			temp.setEligibilityRules(samplingDAO.getEligibilityRules());
 			List<String> collateralTypes = samplingDAO.getCollateralTypes(finReference);
 
@@ -1423,14 +1423,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 	private Map<String, ExtendedFieldData> getCollateralMap(String table, String reference) {
 		return extendedFieldDetailsService.getCollateralFields(table, reference);
-	}
-
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
 	}
 
 	public CustomerIncomeValidation getCustomerIncomeValidation() {

@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -55,7 +56,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.CollateralConstants;
@@ -86,7 +87,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	private FinanceWorkFlow financeWorkFlow;
 	private FinanceWorkFlowService financeWorkFlowService;
 	private CollateralSetupService collateralSetupService;
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 	private CollateralStructureService collateralStructureService;
 	private FinanceTypeService financeTypeService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
@@ -452,11 +453,11 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			} else {
 
 				// check Customer Data in LOCAL PFF system
-				customer = getCustomerDetailsService().getCheckCustomerByCIF(cif);
+				customer = customerDataService.getCheckCustomerByCIF(cif);
 			}
 
 			if (customer != null) {
-				customerDetails = getCustomerDetailsService().getCustomerDetailsById(customer.getId(), true, "_AView");
+				customerDetails = customerDataService.getCustomerDetailsbyID(customer.getId(), true, "_AView");
 			}
 
 		} catch (Exception e) {
@@ -570,14 +571,6 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		this.collateralSetupService = collateralSetupService;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public CollateralStructureService getCollateralStructureService() {
 		return collateralStructureService;
 	}
@@ -600,6 +593,11 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

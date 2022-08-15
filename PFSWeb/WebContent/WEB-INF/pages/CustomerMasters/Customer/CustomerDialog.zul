@@ -58,6 +58,7 @@
 							<tab label="${c:l('label_CustomerDialog_CardSalesDetails.value')}" id="tabCardSaleDetails" />
 							<tab label="${c:l('label_CustomerDialog_GstDetails.value')}" id="tabGstDetails"
 								visible="false" />
+							<tab label="${c:l('label_CustomerDialog_CustGstDetails.value')}" id="tabCustGstDetails" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_basicDetails">
@@ -963,6 +964,8 @@
 															label="${c:l('listheader_CustFinExposure_OutstandingBal.label')}" sort="false" hflex="min" />
 														<listheader id="listheader_CustFinExposure_FinStatus"
 															label="${c:l('listheader_CustFinExposure_FinStatus.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustFinExposure_CustomerType"  label="${c:l('listheader_CustFinExposure_CustomerType.label')}" 
+														    sort="false" hflex="min" />		
 													</listhead>
 												</listbox>
 											</groupbox>
@@ -1090,6 +1093,55 @@
 									</groupbox>
 								</div>
 							</tabpanel>
+							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_custGstDetails">
+									<div id="divKeyCustGstDetails">
+										<groupbox id="gb_custGstDetails">
+											<div sclass="z-toolbar" style="padding:0">
+												<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+													style=" padding:0px;" width="100%">
+													<toolbar align="start" style="border:none;">
+														<label value="${c:l('customerGSTDetails.label')}"
+															sclass="listboxHeading">
+														</label>
+													</toolbar>
+													<toolbar align="end"
+														style="float:right; border-style: none; padding:0px;">
+														<button id="btnNew_GSTDetails"
+															label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerGSTDetails.tooltiptext')}" />
+													</toolbar>
+												</hbox>
+											</div>
+											<listbox id="listBoxCustomerGstDetails"
+												emptyMessage="${c:l('listbox.emptyMessage')}" span="true" sizedByContent="true"
+												tooltiptext="${c:l('listbox.tooltiptext')}" multiple="false">
+												<listhead sizable="true">
+													<listheader id="listheader_CustomerGst_Number"
+														label="${c:l('listheader_CustomerGst_Number.label')}" sort="false" hflex="min" />
+													<listheader id="listheader_CustomerGst_Address"
+														label="${c:l('listheader_CustomerGst_Address.label')}" sort="false" hflex="min" />
+													<listheader id="listheader_CustomerGst_City"
+														label="${c:l('listheader_CustomerGst_City.label')}" sort="false" hflex="min" />
+													<listheader id="listheader_CustomerGst_State"
+														label="${c:l('listheader_CustomerGst_State.label')}" sort="false" hflex="min" />
+													<listheader id="listheader_CustomerGst_Pincode"
+														label="${c:l('listheader_CustomerGst_Pincode.label')}" sort="false" hflex="min" />
+													<listheader id="listheader_CustomerGst_Default"
+														label="${c:l('listheader_CustomerGst_Default.label')}" sort="false" hflex="min" />
+													<listheader id="listheader_CustomerGst_TIN"
+														label="${c:l('listheader_CustomerGst_TIN.label')}" sort="false" hflex="min" />
+													<listheader id="listheader_CustomerGst_TINName"
+														label="${c:l('listheader_CustomerGst_TINName.label')}" sort="false" hflex="min" />
+													<listheader id="listheader_CustomerGst_TINAddress"
+														label="${c:l('listheader_CustomerGst_TINAddress.label')}" sort="false" hflex="min" />
+													<listheader id="listheader_CustomerGst_RecordStatus"
+														label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
+													<listheader id="listheader_CustomerGst_RecordType"
+														label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" visible="false" />
+												</listhead>
+											</listbox>
+										</groupbox>
+									</div>
+								</tabpanel>
 						</tabpanels>
 					</tabbox>
 				</div>

@@ -29,8 +29,10 @@ public class UploadAlloctionDetail extends AbstractWorkflowEntity {
 	private String referenceCode;
 	@XmlElement
 	private BigDecimal paidAmount = BigDecimal.ZERO;
+	private String strPaidAmount;
 	@XmlElement
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
+	private String strWaivedAmount;
 	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>(1);
 
 	public UploadAlloctionDetail copyEntity() {
@@ -41,7 +43,9 @@ public class UploadAlloctionDetail extends AbstractWorkflowEntity {
 		entity.setAllocationType(this.allocationType);
 		entity.setReferenceCode(this.referenceCode);
 		entity.setPaidAmount(this.paidAmount);
+		entity.setStrPaidAmount(this.strPaidAmount);
 		entity.setWaivedAmount(this.waivedAmount);
+		entity.setStrWaivedAmount(this.strWaivedAmount);
 		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
@@ -131,6 +135,22 @@ public class UploadAlloctionDetail extends AbstractWorkflowEntity {
 			}
 			this.errorDetails.add(errorDetail);
 		}
+	}
+
+	public String getStrPaidAmount() {
+		return strPaidAmount;
+	}
+
+	public void setStrPaidAmount(String strPaidAmount) {
+		this.strPaidAmount = strPaidAmount;
+	}
+
+	public String getStrWaivedAmount() {
+		return strWaivedAmount;
+	}
+
+	public void setStrWaivedAmount(String strWaivedAmount) {
+		this.strWaivedAmount = strWaivedAmount;
 	}
 
 }

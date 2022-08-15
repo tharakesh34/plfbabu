@@ -30,8 +30,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceWriteoff;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.ScheduleDueTaxDetail;
 
 public interface FinanceScheduleDetailDAO {
@@ -126,4 +128,13 @@ public interface FinanceScheduleDetailDAO {
 	List<Date> getScheduleDates(long finID, Date valueDate);
 
 	List<FinanceScheduleDetail> getSchedulesForLMSEvent(long finID);
+
+	BigDecimal getUnpaidTdsAmount(String finReference);
+
+	RestructureDetail getRestructureDetail(String finReference);
+
+	FinanceProfitDetail getAmzTillLBD(String finReference);
+
+	void updateDueTaxDetail(long oldInvoiceId);
+
 }

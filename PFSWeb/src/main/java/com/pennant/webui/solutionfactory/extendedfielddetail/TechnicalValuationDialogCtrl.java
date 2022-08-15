@@ -551,6 +551,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 			map.put("technicalValuationDialogCtrl", this);
 			map.put("roleCode", getRole());
 			map.put("firstTaskRole", this.firstTaskRole);
+			map.put("module", extendedFieldHeader.getModuleName());
 			// map.put("layoutDesign", numberOfColumns.getSelectedItem().getValue());
 			// call the zul-file with the parameters packed in a map
 			try {

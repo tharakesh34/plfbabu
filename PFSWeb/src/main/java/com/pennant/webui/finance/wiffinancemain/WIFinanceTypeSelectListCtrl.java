@@ -56,7 +56,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
@@ -334,7 +333,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 		searchObject.addTabelName("RMTFinanceTypes_AView");
 		Filter[] filters = new Filter[4];
 
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		filters[1] = new Filter("Product", StringUtils.trimToEmpty(this.finType.getValue()), Filter.OP_EQUAL);
 		filters[2] = new Filter("StartDate", appDate, Filter.OP_LESS_OR_EQUAL);
@@ -642,6 +641,12 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			// set the default barch for wif with out customer selection
 			getSwiftBranchCode(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 			FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
+
+			/*
+			 * ManualSchedule flag is setting as false, due to ManualSchedule Functionality is not available for WIF
+			 * Loans
+			 */
+			finMain.setManualSchedule(false);
 			FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(),
 					financeType);
 			this.financeDetail.getFinScheduleData().setFinanceMain(finMain);
@@ -658,7 +663,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			}
 
 			// Fetch Fee Charge Details List
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			this.financeDetail.setFeeCharges(getFinanceDetailService()
 					.getFeeRuleDetails(this.financeDetail.getFinScheduleData().getFinanceType(), curBussDate, true));
 

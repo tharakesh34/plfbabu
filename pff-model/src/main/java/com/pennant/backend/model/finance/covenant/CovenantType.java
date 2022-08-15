@@ -44,7 +44,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlRootElement(name = "covenantType")
 public class CovenantType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement
 	private long id = Long.MIN_VALUE;
 	@XmlElement
 	private String code;
@@ -57,8 +57,11 @@ public class CovenantType extends AbstractWorkflowEntity {
 	private String docType;
 	private String docTypeName;
 	private boolean allowPostPonement;
+	@XmlElement
 	private int maxAllowedDays;
+	@XmlElement
 	private String allowedPaymentModes;
+
 	private boolean alertsRequired;
 	@XmlElement
 	private String frequency;
@@ -67,6 +70,7 @@ public class CovenantType extends AbstractWorkflowEntity {
 	@XmlElement
 	private String alertType;
 	private String alertTypeName;
+	@XmlElement
 	private String alertToRoles;
 	private String alertToRolesName;
 	@XmlElement

@@ -123,8 +123,9 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
+	 * @throws Exception
 	 */
-	public void onCreate$window_NPAProvisionHeaderDialog(Event event) {
+	public void onCreate$window_NPAProvisionHeaderDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -175,9 +176,16 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		logger.debug(Literal.ENTERING);
 
 		this.entity.setMandatoryStyle(true);
+		this.entity.setModuleName("Entity");
+		this.entity.setValueColumn("entity");
+		this.entity.setDescColumn("entityName");
+		this.entity.setValidateColumns(new String[] { "entityCode" });
 		this.finType.setMandatoryStyle(true);
+		this.finType.setModuleName("FinanceType");
+		this.finType.setValueColumn("finType");
+		this.finType.setDescColumn("finTypeName");
+		this.finType.setValidateColumns(new String[] { "finType" });
 		this.npaTemplateType.setMandatoryStyle(true);
-
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -314,7 +322,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		this.finType.setDescription(provisionHeader.getFinTypeName());
 		this.recordStatus.setValue(provisionHeader.getRecordStatus());
 		this.npaTemplateType.setValue(provisionHeader.getNpaTemplateCode());
-		this.npaTemplateType.setDescription(provisionHeader.getNpaTemplateCode());
+		this.npaTemplateType.setDescription(provisionHeader.getNpaTemplateDesc());
 
 		doFillProvisionDetails(provisionHeader);
 
@@ -373,14 +381,48 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doDelete() {
+	/**
+	 * Deletes a NPAProvisionHeader object from database.<br>
+	 * 
+	 * @throws InterruptedException
+	 */
+	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final NPAProvisionHeader aNPAProvisionHeader = new NPAProvisionHeader();
 		BeanUtils.copyProperties(this.nPAProvisionHeader, aNPAProvisionHeader);
+		String tranType = PennantConstants.TRAN_WF;
 
-		doClearProvisionDeatils(aNPAProvisionHeader);
-		doDelete(aNPAProvisionHeader.getFinType() + " - " + aNPAProvisionHeader.getFinTypeName(), aNPAProvisionHeader);
+		// Show a confirm box
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aNPAProvisionHeader.getFinType() + " - " + aNPAProvisionHeader.getFinTypeName();
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			doClearProvisionDeatils(aNPAProvisionHeader);
+			if (StringUtils.trimToEmpty(aNPAProvisionHeader.getRecordType()).equals("")) {
+				aNPAProvisionHeader.setVersion(aNPAProvisionHeader.getVersion() + 1);
+				aNPAProvisionHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+				if (isWorkFlowEnabled()) {
+					aNPAProvisionHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					aNPAProvisionHeader.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aNPAProvisionHeader.getNextTaskId(),
+							aNPAProvisionHeader);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+			}
+
+			try {
+				if (doProcess(aNPAProvisionHeader, tranType)) {
+					refreshList();
+					closeDialog();
+				}
+
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -465,7 +507,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		boolean isNew = false;
 
 		if (!isNPAActive()) {
-			MessageUtil.showError(Labels.getLabel("label_NPAProvisionHeaderDialog_Error_NPA"));
+			MessageUtil.showError("Please select atleast one NPA checkbox.");
 			return;
 		}
 
@@ -716,6 +758,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 				auditHeader.setOverideMessage(null);
 			}
 		}
+
 		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug(Literal.LEAVING);
@@ -1100,7 +1143,6 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		aNPAProvisionHeader.setProvisionDetailsList(listNPAProvisionDetail);
 		Events.postEvent("onClick$button_NPAProvisionHeaderList_NewNPAProvisionHeader",
 				nPAProvisionHeaderListCtrl.window_NPAProvisionHeaderList, aNPAProvisionHeader);
-
 	}
 
 	// Extract Button
@@ -1109,12 +1151,8 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 
 		// Excel file downloading automatically using Jasper Report
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
-		try {
-			String userName = getUserWorkspace().getLoggedInUser().getFullName();
-			ReportsUtil.generateReport(userName, "NPA_Provision", "", searchCriteriaDesc);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
+		ReportsUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "NPA_Provision", "",
+				searchCriteriaDesc);
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -61,7 +61,7 @@ public interface FinFeeDetailDAO {
 
 	long getFinFeeTypeIdByFeeType(String feeTypeCode, long finID, String type);
 
-	FinFeeDetail getFeeDetailByExtReference(String loanReference, long feeTypeId, String tableType);
+	List<FinFeeDetail> getFeeDetailByExtReference(String loanReference, long feeTypeId, String tableType);
 
 	List<FinFeeDetail> getFinFeeDetailsByTran(String reference, boolean isWIF, String type);
 
@@ -86,4 +86,6 @@ public interface FinFeeDetailDAO {
 	void deleteByTransactionId(String transactionId, boolean isWIF, String tableType);
 
 	boolean isFinFeeDetailExists(FinFeeDetail finFeeDetail, String tableType);
+
+	List<FinFeeDetail> getTotalPaidFees(String reference, String type);
 }

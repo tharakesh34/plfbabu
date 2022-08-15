@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.PaymentInstruction;
@@ -25,7 +26,7 @@ public class PaymentsProcessService {
 	@Autowired
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	@Autowired
-	private PaymentInstructionService paymentInstructionService;
+	private PaymentInstructionDAO paymentInstructionDAO;
 
 	public static final String DISB_STATUS = "DISB";
 	public static final String DISB_PYMT = "PYMT";
@@ -86,7 +87,7 @@ public class PaymentsProcessService {
 			PaymentInstruction instruction = new PaymentInstruction();
 			instruction.setPaymentInstructionId(finAdvancePayment.getPaymentId());
 			instruction.setStatus(finAdvancePayment.getStatus());
-			this.paymentInstructionService.updateStatus(instruction, "");
+			this.paymentInstructionDAO.updateStatus(instruction, "");
 		}
 		logger.debug(Literal.LEAVING);
 	}

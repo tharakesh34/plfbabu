@@ -7,8 +7,8 @@ import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public interface ReceiptCancellationService {
 

@@ -56,7 +56,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -90,8 +90,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	private SamplingDAO samplingDAO;
 	@Autowired
 	private SamplingService samplingService;
-	@Autowired
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 	private CustomerDocumentDAO customerDocumentDAO;
 
 	public JointAccountDetailServiceImpl() {
@@ -1180,7 +1179,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				detail.setCustomerExtLiabilityList(getJointExtLiabilityByCustomer(detail.getCustID()));
 				detail.setCustFinanceExposureList(getJointCustFinanceExposureByCustomer(detail.getCustID()));
 				detail.setCustomerDetails(
-						getCustomerDetailsService().getCustomerDetailsById(detail.getCustID(), true, "_AView"));
+						customerDataService.getCustomerDetailsbyID(detail.getCustID(), true, "_AView"));
 
 			}
 		}
@@ -1373,16 +1372,14 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		logger.debug(Literal.LEAVING);
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
+	@Override
+	public List<Long> getCustIdsByFinID(long finID) {
+		return jointAccountDetailDAO.getCustIdsByFinID(finID);
 	}
 
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	public CustomerDocumentDAO getCustomerDocumentDAO() {
-		return customerDocumentDAO;
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {

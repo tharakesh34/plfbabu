@@ -25,7 +25,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
 		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode");
-		sql.append(", ODMinCapAmount, ODTDSReq");
+		sql.append(", ODMinCapAmount, ODTDSReq, OverDraftExtGraceDays, OverDraftColChrgFeeType, OverDraftColAmt");
 		sql.append(" from FinODPenaltyRates");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
@@ -50,6 +50,9 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 				pr.setODRuleCode(rs.getString("ODRuleCode"));
 				pr.setoDMinCapAmount(rs.getBigDecimal("ODMinCapAmount"));
 				pr.setoDTDSReq(rs.getBoolean("ODTDSReq"));
+				pr.setOverDraftExtGraceDays(rs.getInt("OverDraftExtGraceDays"));
+				pr.setOverDraftColChrgFeeType(rs.getLong("OverDraftColChrgFeeType"));
+				pr.setOverDraftColAmt(rs.getBigDecimal("OverDraftColAmt"));
 
 				return pr;
 			}, finID);
@@ -80,9 +83,9 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
 		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount");
-		sql.append(", ODTDSReq");
+		sql.append(", ODTDSReq, OverDraftExtGraceDays, OverDraftColChrgFeeType, OverDraftColAmt");
 		sql.append(") values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -104,6 +107,9 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			ps.setString(index++, pr.getODRuleCode());
 			ps.setBigDecimal(index++, pr.getoDMinCapAmount());
 			ps.setBoolean(index++, pr.isoDTDSReq());
+			ps.setInt(index++, pr.getOverDraftExtGraceDays());
+			ps.setLong(index++, pr.getOverDraftColChrgFeeType());
+			ps.setBigDecimal(index++, pr.getOverDraftColAmt());
 		});
 
 		return pr.getFinReference();
@@ -120,9 +126,10 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(LogKey, FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType");
 		sql.append(", ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
-		sql.append(", ODRuleCode, ODMinCapAmount, ODTDSReq");
+		sql.append(
+				", ODRuleCode, ODMinCapAmount, ODTDSReq, OverDraftExtGraceDays, OverDraftColChrgFeeType, OverDraftColAmt");
 		sql.append(") values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -145,6 +152,9 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			ps.setString(index++, pr.getODRuleCode());
 			ps.setBigDecimal(index++, pr.getoDMinCapAmount());
 			ps.setBoolean(index++, pr.isoDTDSReq());
+			ps.setInt(index++, pr.getOverDraftExtGraceDays());
+			ps.setLong(index++, pr.getOverDraftColChrgFeeType());
+			ps.setBigDecimal(index++, pr.getOverDraftColAmt());
 		});
 	}
 
@@ -156,6 +166,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		sql.append(", ODChargeType = ?, ODChargeAmtOrPerc = ?, ODGraceDays = ?");
 		sql.append(", ODChargeCalOn = ?, ODAllowWaiver = ?, ODMaxWaiverPerc = ?");
 		sql.append(", ODRuleCode = ?, ODMinCapAmount = ?, ODTDSReq = ?");
+		sql.append(", OverDraftExtGraceDays = ?, OverDraftColChrgFeeType = ?, OverDraftColAmt = ?");
 		sql.append(" Where  FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -175,6 +186,10 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			ps.setString(index++, odpr.getODRuleCode());
 			ps.setBigDecimal(index++, odpr.getoDMinCapAmount());
 			ps.setBoolean(index++, odpr.isoDTDSReq());
+			ps.setInt(index++, odpr.getOverDraftExtGraceDays());
+			ps.setLong(index++, odpr.getOverDraftColChrgFeeType());
+			ps.setBigDecimal(index++, odpr.getOverDraftColAmt());
+
 			ps.setLong(index++, odpr.getFinID());
 		});
 
@@ -192,4 +207,19 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	public FinODPenaltyRate getFinODPenaltyRateForLMSEvent(long finID) {
 		return getFinODPenaltyRateByRef(finID, "");
 	}
+
+	@Override
+	public int getExtnODGrcDays(long finID) {
+		String sql = "select OverDraftExtGraceDays From FinODPenaltyRates Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
+	}
+
 }

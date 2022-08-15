@@ -62,6 +62,7 @@ public class CalculationConstants {
 	public static final String SCHMTHD_MANUAL = "MANUAL";
 	public static final String SCHMTHD_PRI = "PRI";
 	public static final String SCHMTHD_PRI_PFT = "PRI_PFT";
+	public static final String SCHMTHD_PRI_PFTC = "PRI_PFTC";
 	public static final String SCHMTHD_PFT = "PFT";
 	public static final String SCHMTHD_NOPAY = "NO_PAY";
 	public static final String SCHMTHD_GRCENDPAY = "GRCNDPAY";
@@ -111,6 +112,8 @@ public class CalculationConstants {
 	public static final String RPYCHG_ADDRECAL = "ADDRECAL";
 	public static final String RPYCHG_STEPPOS = "STEPPOS";
 	public static final String RPYCHG_STEPINST = "STEPINST";
+	public static final String RPYCHG_ADJTNR_STEP = "SADJTNR";
+	public static final String RPYCHG_ADJEMI_STEP = "SADJEMI";
 
 	// Step Loan Recal Types
 	public static final String RPYCHG_STEPADJTNR = "SADJTNR";

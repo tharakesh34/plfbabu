@@ -48,7 +48,7 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity {
 	private List<FinanceRepayments> rpyList = new ArrayList<FinanceRepayments>();
 	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
 
-	private String finSourceID = null;
+	private String finSourceID;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
 	private ExtendedFieldRender extendedFieldRender = null;

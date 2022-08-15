@@ -237,7 +237,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 
 				if (StringUtils.equals(APIConstants.STMT_FORECLOSUREV1, serviceName)) {
-					FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference,
+					FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference, fromDate,
 							AccountingEvent.EARLYSTL, FinServiceEvent.RECEIPT, "");
 					getForeClosureReport(receiptData, stmtResponse);
 				}
@@ -363,26 +363,24 @@ public class FinStatementController extends SummaryDetailService {
 		List<FinFeeDetail> feeDues = new ArrayList<>();
 
 		// Bounce and manual advice fees if applicable
-		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
-				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
-		if (manualAdviseFees != null && !manualAdviseFees.isEmpty()) {
-			for (ManualAdvise advisedFees : manualAdviseFees) {
-				FinFeeDetail feeDetail = new FinFeeDetail();
-				if (advisedFees.getBounceID() > 0) {
-					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
-					feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
-				} else {
-					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
-				}
-				feeDetail.setFeeTypeCode(advisedFees.getFeeTypeCode());
-				feeDetail.setActualAmount(advisedFees.getAdviseAmount());
-				feeDetail.setPaidAmount(advisedFees.getPaidAmount());
-				feeDetail.setRemainingFee(advisedFees.getBalanceAmt());
+		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getReceivableAdvises(finID, "_View");
 
-				feeDues.add(feeDetail);
+		for (ManualAdvise advisedFees : manualAdviseFees) {
+			FinFeeDetail feeDetail = new FinFeeDetail();
+			if (advisedFees.getBounceID() > 0) {
+				feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
+				feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
+			} else {
+				feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 			}
-			schdData.getFeeDues().addAll(feeDues);
+			feeDetail.setFeeTypeCode(advisedFees.getFeeTypeCode());
+			feeDetail.setActualAmount(advisedFees.getAdviseAmount());
+			feeDetail.setPaidAmount(advisedFees.getPaidAmount());
+			feeDetail.setRemainingFee(advisedFees.getBalanceAmt());
+
+			feeDues.add(feeDetail);
 		}
+		schdData.getFeeDues().addAll(feeDues);
 	}
 
 	public FinStatementResponse getStatement(FinStatementRequest statementRequest, String serviceName) {
@@ -565,8 +563,7 @@ public class FinStatementController extends SummaryDetailService {
 		BigDecimal totBounceAndReceivables = BigDecimal.ZERO;
 		BigDecimal totReceivableAdFee = BigDecimal.ZERO;
 
-		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
-				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
+		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getReceivableAdvises(finID, "_View");
 
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 		TaxAmountSplit taxSplit = null;

@@ -1,5 +1,6 @@
 package com.pennanttech.controller;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -42,6 +44,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class LimitServiceController extends ExtendedTestClass {
@@ -57,6 +60,7 @@ public class LimitServiceController extends ExtendedTestClass {
 	private LimitManagement limitManagement;
 	private FinanceDetailService financeDetailService;
 	private LimitHeaderDAO limitHeaderDAO;
+	private LimitDetailDAO limitDetailDAO;
 
 	public LimitServiceController() {
 
@@ -164,6 +168,36 @@ public class LimitServiceController extends ExtendedTestClass {
 
 		logger.debug("Leaving");
 		return headerDetail;
+	}
+
+	public LimitHeader getInstitutionLimitSetup(String ruleCode) {
+		logger.info(Literal.ENTERING);
+
+		LimitHeader lh = limitHeaderDAO.getLimitHeaderByRule(ruleCode, LimitConstants.LIMIT_CATEGORY_BANK, "");
+
+		if (lh == null) {
+			return new LimitHeader();
+		}
+
+		int format = CurrencyUtil.getFormat(lh.getLimitCcy());
+		List<LimitDetails> limitDetails = limitDetailDAO.getLimitDetailsByHeaderId(lh.getHeaderId(), "_AView");
+
+		for (LimitDetails ld : limitDetails) {
+			long sID = ld.getLimitStructureDetailsID();
+			BigDecimal limitBalance = ld.getLimitSanctioned().subtract(ld.getUtilisedLimit());
+
+			ld.setLimitReservedexposure(PennantApplicationUtil.formateAmount(ld.getReservedexposure(), format));
+			ld.setLimitActualexposure(PennantApplicationUtil.formateAmount(ld.getActualexposure(), format));
+			ld.setReservedLimit(PennantApplicationUtil.formateAmount(ld.getReservedLimit(), format));
+			ld.setActualLimit(PennantApplicationUtil.formateAmount(limitBalance, format));
+			ld.setLimitStructureDetails(limitStructureDetailDAO.getLimitStructureDetail(sID, "_AView"));
+			ld.setLimitSanctioned(PennantApplicationUtil.formateAmount(ld.getLimitSanctioned(), format));
+		}
+
+		lh.setInstitutionLimitDetailsList(limitDetails);
+
+		logger.info(Literal.LEAVING);
+		return lh;
 	}
 
 	/**
@@ -573,5 +607,9 @@ public class LimitServiceController extends ExtendedTestClass {
 
 	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
 		this.limitHeaderDAO = limitHeaderDAO;
+	}
+
+	public void setLimitDetailDAO(LimitDetailDAO limitDetailDAO) {
+		this.limitDetailDAO = limitDetailDAO;
 	}
 }

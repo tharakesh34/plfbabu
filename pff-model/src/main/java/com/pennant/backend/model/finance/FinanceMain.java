@@ -110,7 +110,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date finContractDate;
 	@XmlElement
 	private BigDecimal finAmount = BigDecimal.ZERO;
-
+	private BigDecimal earlyPayAmount = BigDecimal.ZERO;
 	private BigDecimal minDownPayPerc = BigDecimal.ZERO;
 	private BigDecimal downPayment = BigDecimal.ZERO;
 	private BigDecimal advanceEMI = BigDecimal.ZERO;
@@ -229,7 +229,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	private BigDecimal adjOrgBal = BigDecimal.ZERO;
 	private BigDecimal remBalForAdj = BigDecimal.ZERO;
-	private boolean devFinCalReq = true;
+	private boolean devFinCalReq = false;
+	private boolean stepRecalOnProrata = false;
 	private boolean resetNxtRpyInstReq = false;
 	private boolean resetOrgBal = true;
 	private String lovDescEntityCode;
@@ -802,18 +803,40 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean isGrcStps;
 	@XmlElement
 	private int noOfGrcSteps = 0;
+	private int noOfPrincipalHdays = 0;
 	@XmlElement
 	private boolean escrow = false;
 	@XmlElement
 	private Long custBankId;
 	private String custAcctNumber;
 	private String custAcctHolderName;
+	private String manualSchdType;
+	private boolean isra = false;
+
+	@XmlElement(name = "txnChrgReq")
+	private boolean overdraftTxnChrgReq;
+	@XmlElement(name = "oDCalculatedCharge")
+	private String overdraftCalcChrg;
+	@XmlElement(name = "oDChargeCalOn")
+	private String overdraftChrCalOn;
+	@XmlElement(name = "oDChargeAmtOrPerc")
+	private BigDecimal overdraftChrgAmtOrPerc = BigDecimal.ZERO;
+	@XmlElement(name = "txnChrgCode")
+	private long overdraftTxnChrgFeeType = Long.MIN_VALUE;
+	private String receiptChannel;
+	private List<FinanceScheduleDetail> oldSchedules = new ArrayList<>();
+	private Date restructureDate;
 
 	private boolean cpzPosIntact = false;
 	private Map<String, BigDecimal> taxPercentages = new HashMap<>();
 	private Map<String, Object> gstExecutionMap = new HashMap<>();
 
 	private BigDecimal expectedEndBal = BigDecimal.ZERO;
+	private String effSchdMethod = "";
+	private BigDecimal sanBasedPft = BigDecimal.ZERO;
+	private String moduleDefiner;
+	private Date sanctionedDate;
+	private FinODPenaltyRate penaltyRate = null;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -920,9 +943,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("adjOrgBal");
 		excludeFields.add("remBalForAdj");
 		excludeFields.add("devFinCalReq");
+		excludeFields.add("stepRecalOnProrata");
 		excludeFields.add("resetOrgBal");
 		excludeFields.add("resetNxtRpyInstReq");
 		excludeFields.add("postingId");
+		excludeFields.add("earlyPayAmount");
 
 		// GST
 		excludeFields.add("recalCGSTFee");
@@ -1041,6 +1066,17 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("taxPercentages");
 		excludeFields.add("gstExecutionMap");
 		excludeFields.add("expectedEndBal");
+		excludeFields.add("noOfPrincipalHdays");
+		excludeFields.add("overdraftTxnChrgFeeType");
+		excludeFields.add("receiptChannel");
+		excludeFields.add("taxPercentages");
+		excludeFields.add("penaltyRate");
+		excludeFields.add("oldSchedules");
+		excludeFields.add("restructureDate");
+		excludeFields.add("effSchdMethod");
+		excludeFields.add("sanBasedPft");
+		excludeFields.add("cpzPosIntact");
+		excludeFields.add("moduleDefiner");
 		return excludeFields;
 	}
 
@@ -1135,6 +1171,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setAdjOrgBal(this.adjOrgBal);
 		entity.setRemBalForAdj(this.remBalForAdj);
 		entity.setDevFinCalReq(this.devFinCalReq);
+		entity.setStepRecalOnProrata(this.stepRecalOnProrata);
 		entity.setResetNxtRpyInstReq(this.resetNxtRpyInstReq);
 		entity.setResetOrgBal(this.resetOrgBal);
 		entity.setLovDescEntityCode(this.lovDescEntityCode);
@@ -1517,6 +1554,25 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setTaxPercentages(this.taxPercentages);
 		entity.setGstExecutionMap(this.gstExecutionMap);
 		entity.setExpectedEndBal(this.expectedEndBal);
+		entity.setNoOfPrincipalHdays(this.noOfPrincipalHdays);
+		entity.setManualSchdType(this.manualSchdType);
+		entity.setEarlyPayAmount(this.earlyPayAmount);
+		entity.setIsra(this.isra);
+		entity.setOverdraftTxnChrgReq(this.overdraftTxnChrgReq);
+		entity.setOverdraftCalcChrg(this.overdraftCalcChrg);
+		entity.setOverdraftChrgAmtOrPerc(this.overdraftChrgAmtOrPerc);
+		entity.setOverdraftChrCalOn(this.overdraftChrCalOn);
+		entity.setOverdraftTxnChrgFeeType(this.overdraftTxnChrgFeeType);
+		entity.setReceiptChannel(this.receiptChannel);
+		entity.setSanctionedDate(this.sanctionedDate);
+		entity.setTaxPercentages(this.taxPercentages);
+		entity.setPenaltyRate(this.penaltyRate);
+		entity.setOldSchedules(this.oldSchedules);
+		entity.setRestructureDate(this.restructureDate);
+		entity.setEffSchdMethod(this.effSchdMethod);
+		entity.setSanBasedPft(this.sanBasedPft);
+		entity.setCpzPosIntact(this.cpzPosIntact);
+		entity.setModuleDefiner(this.moduleDefiner);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -5320,4 +5376,147 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.expectedEndBal = expectedEndBal;
 	}
 
+	public int getNoOfPrincipalHdays() {
+		return noOfPrincipalHdays;
+	}
+
+	public void setNoOfPrincipalHdays(int noOfPrincipalHdays) {
+		this.noOfPrincipalHdays = noOfPrincipalHdays;
+	}
+
+	public String getManualSchdType() {
+		return manualSchdType;
+	}
+
+	public void setManualSchdType(String manualSchdType) {
+		this.manualSchdType = manualSchdType;
+	}
+
+	public BigDecimal getEarlyPayAmount() {
+		return earlyPayAmount;
+	}
+
+	public void setEarlyPayAmount(BigDecimal earlyPayAmount) {
+		this.earlyPayAmount = earlyPayAmount;
+	}
+
+	public boolean isIsra() {
+		return isra;
+	}
+
+	public void setIsra(boolean isra) {
+		this.isra = isra;
+	}
+
+	public boolean isOverdraftTxnChrgReq() {
+		return overdraftTxnChrgReq;
+	}
+
+	public void setOverdraftTxnChrgReq(boolean overdraftTxnChrgReq) {
+		this.overdraftTxnChrgReq = overdraftTxnChrgReq;
+	}
+
+	public long getOverdraftTxnChrgFeeType() {
+		return overdraftTxnChrgFeeType;
+	}
+
+	public void setOverdraftTxnChrgFeeType(long overdraftTxnChrgFeeType) {
+		this.overdraftTxnChrgFeeType = overdraftTxnChrgFeeType;
+	}
+
+	public String getOverdraftCalcChrg() {
+		return overdraftCalcChrg;
+	}
+
+	public void setOverdraftCalcChrg(String overdraftCalcChrg) {
+		this.overdraftCalcChrg = overdraftCalcChrg;
+	}
+
+	public String getOverdraftChrCalOn() {
+		return overdraftChrCalOn;
+	}
+
+	public void setOverdraftChrCalOn(String overdraftChrCalOn) {
+		this.overdraftChrCalOn = overdraftChrCalOn;
+	}
+
+	public BigDecimal getOverdraftChrgAmtOrPerc() {
+		return overdraftChrgAmtOrPerc;
+	}
+
+	public void setOverdraftChrgAmtOrPerc(BigDecimal overdraftChrgAmtOrPerc) {
+		this.overdraftChrgAmtOrPerc = overdraftChrgAmtOrPerc;
+	}
+
+	public String getReceiptChannel() {
+		return receiptChannel;
+	}
+
+	public void setReceiptChannel(String receiptChannel) {
+		this.receiptChannel = receiptChannel;
+	}
+
+	public Date getSanctionedDate() {
+		return sanctionedDate;
+	}
+
+	public void setSanctionedDate(Date sanctionedDate) {
+		this.sanctionedDate = sanctionedDate;
+	}
+
+	public FinODPenaltyRate getPenaltyRate() {
+		return penaltyRate;
+	}
+
+	public void setPenaltyRate(FinODPenaltyRate penaltyRate) {
+		this.penaltyRate = penaltyRate;
+	}
+
+	public List<FinanceScheduleDetail> getOldSchedules() {
+		return oldSchedules;
+	}
+
+	public void setOldSchedules(List<FinanceScheduleDetail> oldSchedules) {
+		this.oldSchedules = oldSchedules;
+	}
+
+	public Date getRestructureDate() {
+		return restructureDate;
+	}
+
+	public void setRestructureDate(Date restructureDate) {
+		this.restructureDate = restructureDate;
+	}
+
+	public String getEffSchdMethod() {
+		return effSchdMethod;
+	}
+
+	public void setEffSchdMethod(String effSchdMethod) {
+		this.effSchdMethod = effSchdMethod;
+	}
+
+	public BigDecimal getSanBasedPft() {
+		return sanBasedPft;
+	}
+
+	public void setSanBasedPft(BigDecimal sanBasedPft) {
+		this.sanBasedPft = sanBasedPft;
+	}
+
+	public String getModuleDefiner() {
+		return moduleDefiner;
+	}
+
+	public void setModuleDefiner(String moduleDefiner) {
+		this.moduleDefiner = moduleDefiner;
+	}
+
+	public boolean isStepRecalOnProrata() {
+		return stepRecalOnProrata;
+	}
+
+	public void setStepRecalOnProrata(boolean stepRecalOnProrata) {
+		this.stepRecalOnProrata = stepRecalOnProrata;
+	}
 }

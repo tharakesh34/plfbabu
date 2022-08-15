@@ -101,7 +101,7 @@ import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -256,7 +256,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Groupbox gb_otherDetails;
 	private Groupbox gb_recommendationNoteDetails;
 
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 	private GuarantorDetailService guarantorDetailService;
 
 	List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
@@ -1441,7 +1441,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeDetail.getCustomerDetails().getCustomer().getCustCIF().equals(custCif)) {
 			customerDetails = financeDetail.getCustomerDetails();
 		} else {
-			customerDetails = customerDetailsService.getCustomerDetailsById(custID, true, "_AView");
+			customerDetails = customerDataService.getCustomerDetailsbyID(custID, true, "_AView");
 
 		}
 		String pageName = PennantAppUtil.getCustomerPageName();
@@ -1925,14 +1925,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.sanctionConditionsDetailList = sanctionConditionsDetailList;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public GuarantorDetailService getGuarantorDetailService() {
 		return guarantorDetailService;
 	}
@@ -2020,6 +2012,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

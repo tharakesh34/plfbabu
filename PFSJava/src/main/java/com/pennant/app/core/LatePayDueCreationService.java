@@ -273,11 +273,13 @@ public class LatePayDueCreationService extends ServiceHelper {
 			addZeroifNotContains(calGstMap, "LPI_SGST_R");
 			addZeroifNotContains(calGstMap, "LPI_UGST_R");
 			addZeroifNotContains(calGstMap, "LPI_IGST_R");
+			addZeroifNotContains(calGstMap, "LPI_CESS_R");
 		} else {
 			calGstMap.put("LPI_CGST_R", lpiTaxDetail.getCGST());
 			calGstMap.put("LPI_SGST_R", lpiTaxDetail.getSGST());
 			calGstMap.put("LPI_UGST_R", lpiTaxDetail.getUGST());
 			calGstMap.put("LPI_IGST_R", lpiTaxDetail.getIGST());
+			calGstMap.put("LPI_CESS_R", lpiTaxDetail.getCESS());
 		}
 
 		if (lppTaxDetail == null) {
@@ -285,11 +287,13 @@ public class LatePayDueCreationService extends ServiceHelper {
 			addZeroifNotContains(calGstMap, "LPP_SGST_R");
 			addZeroifNotContains(calGstMap, "LPP_UGST_R");
 			addZeroifNotContains(calGstMap, "LPP_IGST_R");
+			addZeroifNotContains(calGstMap, "LPP_CESS_R");
 		} else {
 			calGstMap.put("LPP_CGST_R", lppTaxDetail.getCGST());
 			calGstMap.put("LPP_SGST_R", lppTaxDetail.getSGST());
 			calGstMap.put("LPP_UGST_R", lppTaxDetail.getUGST());
 			calGstMap.put("LPP_IGST_R", lppTaxDetail.getIGST());
+			calGstMap.put("LPP_CESS_R", lppTaxDetail.getCESS());
 		}
 
 		aeEvent.getDataMap().putAll(calGstMap);
@@ -403,12 +407,14 @@ public class LatePayDueCreationService extends ServiceHelper {
 			taxRcv.setSGST(taxRcv.getSGST().add(calGstMap.get("LPI_SGST_R")));
 			taxRcv.setUGST(taxRcv.getUGST().add(calGstMap.get("LPI_UGST_R")));
 			taxRcv.setIGST(taxRcv.getIGST().add(calGstMap.get("LPI_IGST_R")));
+			taxRcv.setCESS(taxRcv.getCESS().add(calGstMap.get("LPI_CESS_R")));
 		} else {
 			amzAmount = aeAmountCodes.getdLPPAmz();
 			taxRcv.setCGST(taxRcv.getCGST().add(calGstMap.get("LPP_CGST_R")));
 			taxRcv.setSGST(taxRcv.getSGST().add(calGstMap.get("LPP_SGST_R")));
 			taxRcv.setUGST(taxRcv.getUGST().add(calGstMap.get("LPP_UGST_R")));
 			taxRcv.setIGST(taxRcv.getIGST().add(calGstMap.get("LPP_IGST_R")));
+			taxRcv.setCESS(taxRcv.getCESS().add(calGstMap.get("LPP_CESS_R")));
 		}
 
 		taxRcv.setReceivableAmount(taxRcv.getReceivableAmount().add(amzAmount));
@@ -452,6 +458,12 @@ public class LatePayDueCreationService extends ServiceHelper {
 		igstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_IGST));
 		ugstTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_UGST));
 		cessTax.setTaxPerc(taxPercMap.get(RuleConstants.CODE_CESS));
+
+		cgstTax.setTaxType(RuleConstants.CODE_CGST);
+		sgstTax.setTaxType(RuleConstants.CODE_SGST);
+		igstTax.setTaxType(RuleConstants.CODE_IGST);
+		ugstTax.setTaxType(RuleConstants.CODE_UGST);
+		cessTax.setTaxType(RuleConstants.CODE_CESS);
 
 		if (RepayConstants.ALLOCATION_ODC.equals(feeType.getFeeTypeCode())) {
 			cgstTax.setNetTax(calGstMap.get("LPP_CGST_R"));
@@ -530,7 +542,8 @@ public class LatePayDueCreationService extends ServiceHelper {
 		BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
 		BigDecimal ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
 		BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
-		BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
+		BigDecimal cessPerc = taxPercmap.get(RuleConstants.CODE_CESS);
+		BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc).add(cessPerc);
 
 		FinODAmzTaxDetail taxDetail = new FinODAmzTaxDetail();
 		taxDetail.setTaxType(taxType);
@@ -558,6 +571,12 @@ public class LatePayDueCreationService extends ServiceHelper {
 			BigDecimal igstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, igstPerc, totalGSTPerc);
 			taxDetail.setIGST(igstAmount);
 			totalGST = totalGST.add(igstAmount);
+		}
+
+		if (cessPerc.compareTo(BigDecimal.ZERO) > 0) {
+			BigDecimal cessAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, cessPerc, totalGSTPerc);
+			taxDetail.setCESS(cessAmount);
+			totalGST = totalGST.add(cessAmount);
 		}
 
 		taxDetail.setTotalGST(totalGST);

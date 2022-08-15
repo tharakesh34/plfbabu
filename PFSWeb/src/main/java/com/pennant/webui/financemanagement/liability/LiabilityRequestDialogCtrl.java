@@ -93,6 +93,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -535,7 +536,12 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				}
 
 				// User Notifications Message/Alert
-				publishNotification(Notify.ROLE, getLiabilityRequest().getFinReference(), getLiabilityRequest());
+				if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
+					publishNotification(Notify.ROLE, getLiabilityRequest().getFinReference(), getLiabilityRequest());
+				} else {
+					publishNotification(Notify.ROLE, getLiabilityRequest().getFinReference(), getLiabilityRequest(),
+							finDivision, aFinanceMain.getFinBranch());
+				}
 
 				// For Finance Maintenance
 				if (getLiabilityRequestListCtrl() != null) {

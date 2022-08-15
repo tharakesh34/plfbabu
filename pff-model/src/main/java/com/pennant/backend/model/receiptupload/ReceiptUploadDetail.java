@@ -3,7 +3,9 @@ package com.pennant.backend.model.receiptupload;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -21,10 +23,13 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	private String excessAdjustTo = "";
 	private String allocationType = "";
 	private BigDecimal receiptAmount = BigDecimal.ZERO;
+	private String strReceiptAmount;
 	private String effectSchdMethod = "";
 	private String remarks = "";
 	private Date valueDate;
+	private String strValueDate;
 	private Date receivedDate;
+	private String strReceivedDate;
 	private String receiptMode = "";
 	private String fundingAc = "";
 	private String paymentRef = "";
@@ -34,8 +39,11 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	private String transactionRef = "";
 	private String status = "";
 	private Date depositDate;
+	private String strDepositDate;
 	private Date realizationDate;
+	private String strRealizationDate;
 	private Date instrumentDate;
+	private String strInstrumentDate;
 	private int processingStatus;
 	private String reason = "";
 	private Long receiptId;
@@ -45,15 +53,31 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	private String panNumber = "";
 	private String extReference = "";
 	private Long collectionAgentId;
+	private String strCollectionAgentId;
 	private String receivedFrom = "";
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
 	private LoggedInUser loggedInUser;
 	private Integer threadId;
 	private Long bounceId;
 	private String bounceReason;
+	private String cancelReason;
+	private Date bounceDate;
+	private String strBounceDate;
+	private boolean isNewReceipt;
+	private boolean bckdtdWthOldDues;
+	private String strBckdtdWthOldDues;
+	private Date appDate;
+	private String entityCode;
+	private String fileName;
+	private boolean dedupCheck;
+	private boolean receiptdetailExits;
 
 	private List<UploadAlloctionDetail> listAllocationDetails = new ArrayList<>();
 	private List<ErrorDetail> errorDetails = new ArrayList<>(1);
+
+	private Set<String> txnKeys = new HashSet<>();
+	private Set<String> txnChequeKeys = new HashSet<>();
+	private Set<String> receiptValidList = new HashSet<>();
 
 	public ReceiptUploadDetail() {
 		super();
@@ -140,6 +164,14 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 		this.receiptAmount = receiptAmount;
 	}
 
+	public String getStrReceiptAmount() {
+		return strReceiptAmount;
+	}
+
+	public void setStrReceiptAmount(String strReceiptAmount) {
+		this.strReceiptAmount = strReceiptAmount;
+	}
+
 	public String getEffectSchdMethod() {
 		return effectSchdMethod;
 	}
@@ -164,12 +196,28 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 		this.valueDate = valueDate;
 	}
 
+	public String getStrValueDate() {
+		return strValueDate;
+	}
+
+	public void setStrValueDate(String strValueDate) {
+		this.strValueDate = strValueDate;
+	}
+
 	public Date getReceivedDate() {
 		return receivedDate;
 	}
 
 	public void setReceivedDate(Date receivedDate) {
 		this.receivedDate = receivedDate;
+	}
+
+	public String getStrReceivedDate() {
+		return strReceivedDate;
+	}
+
+	public void setStrReceivedDate(String strReceivedDate) {
+		this.strReceivedDate = strReceivedDate;
 	}
 
 	public String getReceiptMode() {
@@ -244,6 +292,14 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 		this.depositDate = depositDate;
 	}
 
+	public String getStrDepositDate() {
+		return strDepositDate;
+	}
+
+	public void setStrDepositDate(String strDepositDate) {
+		this.strDepositDate = strDepositDate;
+	}
+
 	public Date getRealizationDate() {
 		return realizationDate;
 	}
@@ -252,12 +308,28 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 		this.realizationDate = realizationDate;
 	}
 
+	public String getStrRealizationDate() {
+		return strRealizationDate;
+	}
+
+	public void setStrRealizationDate(String strRealizationDate) {
+		this.strRealizationDate = strRealizationDate;
+	}
+
 	public Date getInstrumentDate() {
 		return instrumentDate;
 	}
 
 	public void setInstrumentDate(Date instrumentDate) {
 		this.instrumentDate = instrumentDate;
+	}
+
+	public String getStrInstrumentDate() {
+		return strInstrumentDate;
+	}
+
+	public void setStrInstrumentDate(String strInstrumentDate) {
+		this.strInstrumentDate = strInstrumentDate;
 	}
 
 	public String getReason() {
@@ -314,6 +386,14 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 
 	public void setCollectionAgentId(Long collectionAgentId) {
 		this.collectionAgentId = collectionAgentId;
+	}
+
+	public String getStrCollectionAgentId() {
+		return strCollectionAgentId;
+	}
+
+	public void setStrCollectionAgentId(String strCollectionAgentId) {
+		this.strCollectionAgentId = strCollectionAgentId;
 	}
 
 	public String getReceivedFrom() {
@@ -381,11 +461,123 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	}
 
 	public String getBounceReason() {
-		return bounceReason;
+		return bounceReason == null ? "" : bounceReason;
 	}
 
 	public void setBounceReason(String bounceReason) {
 		this.bounceReason = bounceReason;
+	}
+
+	public String getCancelReason() {
+		return cancelReason == null ? "" : cancelReason;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
+	}
+
+	public Date getBounceDate() {
+		return bounceDate;
+	}
+
+	public void setBounceDate(Date bounceDate) {
+		this.bounceDate = bounceDate;
+	}
+
+	public String getStrBounceDate() {
+		return strBounceDate;
+	}
+
+	public void setStrBounceDate(String strBounceDate) {
+		this.strBounceDate = strBounceDate;
+	}
+
+	public boolean isNewReceipt() {
+		return isNewReceipt;
+	}
+
+	public void setNewReceipt(boolean isNewReceipt) {
+		this.isNewReceipt = isNewReceipt;
+	}
+
+	public boolean isBckdtdWthOldDues() {
+		return bckdtdWthOldDues;
+	}
+
+	public void setBckdtdWthOldDues(boolean bckdtdWthOldDues) {
+		this.bckdtdWthOldDues = bckdtdWthOldDues;
+	}
+
+	public String getStrBckdtdWthOldDues() {
+		return strBckdtdWthOldDues;
+	}
+
+	public void setStrBckdtdWthOldDues(String strBckdtdWthOldDues) {
+		this.strBckdtdWthOldDues = strBckdtdWthOldDues;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public boolean isDedupCheck() {
+		return dedupCheck;
+	}
+
+	public void setDedupCheck(boolean dedupCheck) {
+		this.dedupCheck = dedupCheck;
+	}
+
+	public boolean isReceiptdetailExits() {
+		return receiptdetailExits;
+	}
+
+	public void setReceiptdetailExits(boolean receiptdetailExits) {
+		this.receiptdetailExits = receiptdetailExits;
+	}
+
+	public Set<String> getTxnKeys() {
+		return txnKeys;
+	}
+
+	public void setTxnKeys(Set<String> txnKeys) {
+		this.txnKeys = txnKeys;
+	}
+
+	public Set<String> getTxnChequeKeys() {
+		return txnChequeKeys;
+	}
+
+	public void setTxnChequeKeys(Set<String> txnChequeKeys) {
+		this.txnChequeKeys = txnChequeKeys;
+	}
+
+	public Set<String> getReceiptValidList() {
+		return receiptValidList;
+	}
+
+	public void setReceiptValidList(Set<String> receiptValidList) {
+		this.receiptValidList = receiptValidList;
 	}
 
 }

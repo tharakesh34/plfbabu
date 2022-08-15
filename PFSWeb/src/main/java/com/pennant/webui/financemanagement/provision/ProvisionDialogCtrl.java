@@ -84,6 +84,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -928,7 +929,12 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 				if (fm.getNextUserId() != null) {
 					publishNotification(Notify.USER, fm.getFinReference(), fm);
 				} else {
-					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
+					if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
+						publishNotification(Notify.ROLE, fm.getFinReference(), fm);
+					} else {
+						publishNotification(Notify.ROLE, fm.getFinReference(), fm, finDivision,
+								aFinanceMain.getFinBranch());
+					}
 				}
 
 				closeDialog();

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_TDSPostingsDialog" border="none" apply="${tdsPostingDetailsDialogCtrl}" width="80%"
+			height="350px" sizable="false">
+			<div>
+				<hbox width="100%" widths="3%,40%,20%">
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<groupbox id="gb_Posting" closable="false">
+				<caption label="${c:l('label_TdsPostingDialog_PostingDetails')}" />
+				<listbox id="listBoxTDSPostingDetail" fixedLayout="true" sizedByContent="true" span="true"
+					emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false" rows="10">
+					<listhead sizable="true">
+						<listheader id="listheader_Acc_FinEvent" label="${c:l('listheader_Acc_FinEvent.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_Acc_PostDate" label="${c:l('listheader_Acc_PostDate.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_Acc_ValueDate" label="${c:l('listheader_Acc_ValueDate.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_Acc_TranDesc" label="${c:l('listheader_Acc_EntryDesc.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_Acc_DebitOrCredit"
+							label="${c:l('listheader_Acc_DebitOrCredit.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_Acc_TranCode" label="${c:l('listheader_Acc_TranCode.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_Acc_RevTranCode" label="${c:l('listheader_Acc_RevTranCode.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_Acc_AccountNo" label="${c:l('listheader_Acc_AccountNo.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_Acc_AcCcy" label="${c:l('listheader_Acc_AcCcy.label')}" sort="false"
+							hflex="min" />
+						<listheader id="listheader_Acc_Amount" label="${c:l('listheader_Acc_Amount.label')}"
+							sort="false" hflex="min" />
+					</listhead>
+				</listbox>
+			</groupbox>
+		</window>
+	</window>
+</zk>

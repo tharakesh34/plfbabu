@@ -47,7 +47,6 @@ import com.pennant.backend.model.applicationmaster.AssetClassificationDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -90,8 +89,7 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, HeaderId, AssetClassificationId, NPAActive, DPDdays, NPARepayApprtnmnt, IntSecPerc");
 		sql.append(", IntUnSecPerc, RegSecPerc, RegUnSecPerc, Version, LastMntOn, LastMntBy, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(", RuleId, Active");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, RuleId, Active");
 		if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
 			sql.append(", AssetCode, AssetStageOrder");
 		}
@@ -101,51 +99,43 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		List<NPAProvisionDetail> npaProvsionDetails = null;
+		List<NPAProvisionDetail> npaProvsionDetails = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index, id);
+		}, (rs, rowNum) -> {
+			NPAProvisionDetail pd = new NPAProvisionDetail();
 
-		try {
-			npaProvsionDetails = this.jdbcOperations.query(sql.toString(), ps -> {
-				int index = 1;
-				ps.setLong(index, id);
-			}, (rs, rowNum) -> {
-				NPAProvisionDetail pd = new NPAProvisionDetail();
+			pd.setId(rs.getLong("Id"));
+			pd.setHeaderId(rs.getLong("HeaderId"));
+			pd.setAssetClassificationId(rs.getLong("AssetClassificationId"));
+			pd.setNPAActive(rs.getBoolean("NPAActive"));
+			pd.setDPDdays(rs.getInt("DPDdays"));
+			pd.setNPARepayApprtnmnt(rs.getString("NPARepayApprtnmnt"));
+			pd.setIntSecPerc(rs.getBigDecimal("IntSecPerc"));
+			pd.setIntUnSecPerc(rs.getBigDecimal("IntUnSecPerc"));
+			pd.setRegSecPerc(rs.getBigDecimal("RegSecPerc"));
+			pd.setRegUnSecPerc(rs.getBigDecimal("RegUnSecPerc"));
+			pd.setVersion(rs.getInt("Version"));
+			pd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			pd.setLastMntBy(rs.getLong("LastMntBy"));
+			pd.setRecordStatus(rs.getString("RecordStatus"));
+			pd.setRoleCode(rs.getString("RoleCode"));
+			pd.setNextRoleCode(rs.getString("NextRoleCode"));
+			pd.setTaskId(rs.getString("TaskId"));
+			pd.setNextTaskId(rs.getString("NextTaskId"));
+			pd.setRecordType(rs.getString("RecordType"));
+			pd.setWorkflowId(rs.getLong("WorkflowId"));
+			pd.setRuleId(rs.getLong("RuleId"));
+			pd.setActive(rs.getBoolean("Active"));
 
-				pd.setId(rs.getLong("Id"));
-				pd.setHeaderId(rs.getLong("HeaderId"));
-				pd.setAssetClassificationId(rs.getLong("AssetClassificationId"));
-				pd.setNPAActive(rs.getBoolean("NPAActive"));
-				pd.setDPDdays(rs.getInt("DPDdays"));
-				pd.setNPARepayApprtnmnt(rs.getString("NPARepayApprtnmnt"));
-				pd.setIntSecPerc(rs.getBigDecimal("IntSecPerc"));
-				pd.setIntUnSecPerc(rs.getBigDecimal("IntUnSecPerc"));
-				pd.setRegSecPerc(rs.getBigDecimal("RegSecPerc"));
-				pd.setRegUnSecPerc(rs.getBigDecimal("RegUnSecPerc"));
-				pd.setVersion(rs.getInt("Version"));
-				pd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				pd.setLastMntBy(rs.getLong("LastMntBy"));
-				pd.setRecordStatus(rs.getString("RecordStatus"));
-				pd.setRoleCode(rs.getString("RoleCode"));
-				pd.setNextRoleCode(rs.getString("NextRoleCode"));
-				pd.setTaskId(rs.getString("TaskId"));
-				pd.setNextTaskId(rs.getString("NextTaskId"));
-				pd.setRecordType(rs.getString("RecordType"));
-				pd.setWorkflowId(rs.getLong("WorkflowId"));
-				pd.setRuleId(JdbcUtil.getLong(rs.getObject("RuleId")));
-				pd.setActive(rs.getBoolean("Active"));
+			if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
+				pd.setAssetCode(rs.getString("AssetCode"));
+				pd.setAssetStageOrder(rs.getInt("AssetStageOrder"));
+			}
 
-				if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
-					pd.setAssetCode(rs.getString("AssetCode"));
-					pd.setAssetStageOrder(rs.getInt("AssetStageOrder"));
-				}
+			return pd;
 
-				return pd;
-
-			});
-		} catch (EmptyResultDataAccessException e) {
-			npaProvsionDetails = new ArrayList<>();
-			logger.warn("Records not found in NPA_PROVISION_DETAILS{} for the specified id {}", tableType.getSuffix(),
-					id);
-		}
+		});
 
 		return sortByAssetStageOrder(npaProvsionDetails);
 
@@ -314,10 +304,10 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, headerId, assetClassificationId, npaactive, dPDdays, nPARepayApprtnmnt");
-		sql.append(", intSecPerc, intUnSecPerc, regSecPerc, regUnSecPerc");
-		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId");
-		sql.append(", NextTaskId,RecordType, WorkflowId, RuleId, Active");
+		sql.append(" id, headerId, assetClassificationId, npaactive, dPDdays, nPARepayApprtnmnt, ");
+		sql.append(" intSecPerc, intUnSecPerc, regSecPerc, regUnSecPerc, ");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+		sql.append(" NextTaskId, RecordType, WorkflowId, RuleId, Active");
 
 		if (tableType.getSuffix().contains("View")) {
 			sql.append(", assetCode, assetStageOrder");

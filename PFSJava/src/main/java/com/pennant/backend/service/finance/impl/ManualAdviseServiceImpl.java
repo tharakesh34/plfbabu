@@ -26,6 +26,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.core.CustEODEvent;
+import com.pennant.app.core.FinEODEvent;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -50,6 +55,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.InvoiceDetail;
@@ -223,7 +229,9 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		if (StringUtils.equals(manualAdvise.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			com.pennant.backend.model.finance.FeeType feeType = manualAdvise.getFeeType();
 			if (feeType != null && feeType.isDueAccReq()) {
-				manualAdvise = executeDueAccountingProcess(manualAdvise, auditHeader.getAuditBranchCode());
+				if ((manualAdvise.getValueDate().compareTo(SysParamUtil.getAppDate()) <= 0)) {
+					manualAdvise = executeDueAccountingProcess(manualAdvise, auditHeader.getAuditBranchCode());
+				}
 			}
 		}
 
@@ -354,32 +362,40 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		ManualAdviseMovements advMovement = aeEvent.getMovement();
 		AdviseDueTaxDetail detail = new AdviseDueTaxDetail();
 
-		List<Taxes> taxDetails = advMovement.getTaxHeader().getTaxDetails();
 		BigDecimal gstAmount = BigDecimal.ZERO;
-		for (Taxes taxes : taxDetails) {
-			gstAmount = gstAmount.add(taxes.getPaidTax());
-			String taxType = taxes.getTaxType();
+		if (advise.isTaxApplicable()) {
+			List<Taxes> taxDetails = advMovement.getTaxHeader().getTaxDetails();
+			for (Taxes taxes : taxDetails) {
+				gstAmount = gstAmount.add(taxes.getPaidTax());
+				String taxType = taxes.getTaxType();
 
-			switch (taxType) {
-			case RuleConstants.CODE_CGST:
-				detail.setCGST(taxes.getPaidTax());
-				break;
-			case RuleConstants.CODE_SGST:
-				detail.setSGST(taxes.getPaidTax());
-				break;
-			case RuleConstants.CODE_IGST:
-				detail.setIGST(taxes.getPaidTax());
-				break;
-			case RuleConstants.CODE_UGST:
-				detail.setUGST(taxes.getPaidTax());
-				break;
-			case RuleConstants.CODE_CESS:
-				detail.setCESS(taxes.getPaidTax());
-				break;
-			default:
-				break;
+				switch (taxType) {
+				case RuleConstants.CODE_CGST:
+					detail.setCGST(taxes.getPaidTax());
+					break;
+				case RuleConstants.CODE_SGST:
+					detail.setSGST(taxes.getPaidTax());
+					break;
+				case RuleConstants.CODE_IGST:
+					detail.setIGST(taxes.getPaidTax());
+					break;
+				case RuleConstants.CODE_UGST:
+					detail.setUGST(taxes.getPaidTax());
+					break;
+				case RuleConstants.CODE_CESS:
+					detail.setCESS(taxes.getPaidTax());
+					break;
+				default:
+					break;
+				}
+
 			}
-
+		} else {
+			detail.setCGST(BigDecimal.ZERO);
+			detail.setSGST(BigDecimal.ZERO);
+			detail.setIGST(BigDecimal.ZERO);
+			detail.setUGST(BigDecimal.ZERO);
+			detail.setCESS(BigDecimal.ZERO);
 		}
 		detail.setAmount(advMovement.getPaidAmount());
 		detail.setTotalGST(gstAmount);
@@ -413,9 +429,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		detail.setTaxType(advise.getTaxComponent());
 		detail.setAmount(advise.getAdviseAmount());
 		detail.setInvoiceID(invoiceID);
-
-		detail.setTotalGST(detail.getCGST().add(detail.getSGST()).add(detail.getIGST()).add(detail.getUGST())
-				.add(detail.getCESS()));
+		detail.setTotalGST(CalculationUtil.getTotalGST(detail));
 
 		manualAdviseDAO.saveDueTaxDetail(detail);
 	}
@@ -448,7 +462,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		amountCodes.setFinType(fm.getFinType());
-
 		aeEvent.setPostingUserBranch(postBranch);
 		aeEvent.setValueDate(advise.getValueDate());
 		aeEvent.setPostDate(SysParamUtil.getAppDate());
@@ -461,68 +474,27 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		aeEvent.setFinReference(fm.getFinReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		Map<String, Object> eventMapping = aeEvent.getDataMap();
-
 		TaxHeader taxHeader = null;
 		if (taxApplicable) {
+			taxHeader = getTaxHeader(fm, taxType, adviseAmount, eventMapping);
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
+			ManualAdviseMovements mam = new ManualAdviseMovements();
+			mam.setFeeTypeCode(advise.getFeeTypeCode());
+			mam.setFeeTypeDesc(advise.getFeeTypeDesc());
+			mam.setMovementAmount(advise.getAdviseAmount());
+			mam.setTaxApplicable(taxApplicable);
+			mam.setTaxComponent(taxType);
+			mam.setPaidAmount(adviseAmount);
+			mam.setTaxHeader(taxHeader);
 
-			taxHeader = new TaxHeader();
-			taxHeader.setNewRecord(true);
-			taxHeader.setRecordType(PennantConstants.RCD_ADD);
-			taxHeader.setVersion(taxHeader.getVersion() + 1);
-			if (taxHeader.getTaxDetails() == null) {
-				taxHeader.setTaxDetails(new ArrayList<>());
-			}
-
-			// CGST
-			Taxes cgstTax = getTaxDetail(RuleConstants.CODE_CGST, taxPercentages.get(RuleConstants.CODE_CGST),
-					taxHeader);
-			taxHeader.getTaxDetails().add(cgstTax);
-
-			// SGST
-			Taxes sgstTax = getTaxDetail(RuleConstants.CODE_SGST, taxPercentages.get(RuleConstants.CODE_SGST),
-					taxHeader);
-			taxHeader.getTaxDetails().add(sgstTax);
-
-			// IGST
-			Taxes igstTax = getTaxDetail(RuleConstants.CODE_IGST, taxPercentages.get(RuleConstants.CODE_IGST),
-					taxHeader);
-			taxHeader.getTaxDetails().add(igstTax);
-
-			// UGST
-			Taxes ugstTax = getTaxDetail(RuleConstants.CODE_UGST, taxPercentages.get(RuleConstants.CODE_UGST),
-					taxHeader);
-			taxHeader.getTaxDetails().add(ugstTax);
-
-			// CESS percentage
-			Taxes cessTax = getTaxDetail(RuleConstants.CODE_CESS, taxPercentages.get(RuleConstants.CODE_CESS),
-					taxHeader);
-			taxHeader.getTaxDetails().add(cessTax);
-
-			TaxAmountSplit taxSplit = null;
-			if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-				taxSplit = GSTCalculator.getExclusiveGST(adviseAmount, taxPercentages);
-			} else if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-				taxSplit = GSTCalculator.getInclusiveGST(adviseAmount, taxPercentages);
-			}
-
-			cgstTax.setPaidTax(taxSplit.getcGST());
-			sgstTax.setPaidTax(taxSplit.getsGST());
-			igstTax.setPaidTax(taxSplit.getiGST());
-			ugstTax.setPaidTax(taxSplit.getuGST());
-			cessTax.setPaidTax(taxSplit.getCess());
-
-			// Total GST
-			BigDecimal totalGstAmount = cgstTax.getPaidTax().add(sgstTax.getPaidTax()).add(igstTax.getPaidTax())
-					.add(ugstTax.getPaidTax()).add(cessTax.getPaidTax());
-
-			eventMapping.put("ae_feeCGST", cgstTax.getPaidTax());
-			eventMapping.put("ae_feeSGST", sgstTax.getPaidTax());
-			eventMapping.put("ae_feeIGST", igstTax.getPaidTax());
-			eventMapping.put("ae_feeUGST", ugstTax.getPaidTax());
-			eventMapping.put("ae_feeCESS", cessTax.getPaidTax());
-			eventMapping.put("ae_feeGST_TOT", totalGstAmount);
+			aeEvent.setMovement(mam);
+		} else {
+			eventMapping.put("ae_feeCGST", BigDecimal.ZERO);
+			eventMapping.put("ae_feeSGST", BigDecimal.ZERO);
+			eventMapping.put("ae_feeIGST", BigDecimal.ZERO);
+			eventMapping.put("ae_feeUGST", BigDecimal.ZERO);
+			eventMapping.put("ae_feeCESS", BigDecimal.ZERO);
+			eventMapping.put("ae_feeGST_TOT", BigDecimal.ZERO);
 
 			ManualAdviseMovements advMovement = new ManualAdviseMovements();
 			advMovement.setFeeTypeCode(advise.getFeeTypeCode());
@@ -553,11 +525,42 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return aeEvent;
 	}
 
-	private Taxes getTaxDetail(String taxType, BigDecimal taxPerc, TaxHeader taxHeader) {
-		Taxes taxes = new Taxes();
-		taxes.setTaxType(taxType);
-		taxes.setTaxPerc(taxPerc);
-		return taxes;
+	private TaxHeader getTaxHeader(FinanceMain fm, String taxType, BigDecimal adviseAmount,
+			Map<String, Object> eventMapping) {
+		Map<String, BigDecimal> taxPercentages = fm.getTaxPercentages();
+
+		TaxHeader taxHeader = new TaxHeader();
+		taxHeader.setNewRecord(true);
+		taxHeader.setRecordType(PennantConstants.RCD_ADD);
+		taxHeader.setVersion(taxHeader.getVersion() + 1);
+
+		TaxAmountSplit taxSplit = GSTCalculator.calculateGST(taxPercentages, taxType, adviseAmount);
+
+		List<Taxes> taxDetails = taxHeader.getTaxDetails();
+
+		taxDetails.add(getTax(taxPercentages, taxSplit, RuleConstants.CODE_CGST));
+		taxDetails.add(getTax(taxPercentages, taxSplit, RuleConstants.CODE_SGST));
+		taxDetails.add(getTax(taxPercentages, taxSplit, RuleConstants.CODE_IGST));
+		taxDetails.add(getTax(taxPercentages, taxSplit, RuleConstants.CODE_UGST));
+		taxDetails.add(getTax(taxPercentages, taxSplit, RuleConstants.CODE_CESS));
+
+		eventMapping.put("ae_feeCSGT", taxSplit.getcGST());
+		eventMapping.put("ae_feeSSGT", taxSplit.getcGST());
+		eventMapping.put("ae_feeUSGT", taxSplit.getcGST());
+		eventMapping.put("ae_feeISGT", taxSplit.getcGST());
+		eventMapping.put("ae_feeCESS", taxSplit.getcGST());
+		eventMapping.put("ae_feeGST_TOT", taxSplit.gettGST());
+
+		return taxHeader;
+	}
+
+	private Taxes getTax(Map<String, BigDecimal> taxPer, TaxAmountSplit split, String taxType) {
+		Taxes tax = new Taxes();
+		tax.setTaxType(taxType);
+		tax.setTaxPerc(taxPer.get(taxType));
+		tax.setPaidTax(split.getcGST());
+
+		return tax;
 	}
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
@@ -813,34 +816,185 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return auditList;
 	}
 
+	@Override
+	public void cancelFutureDatedAdvises(CustEODEvent custEODEvent) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinanceMain> fmList = new ArrayList<>();
+		custEODEvent.getFinEODEvents().forEach(fod -> fmList.add(fod.getFinanceMain()));
+
+		manualAdviseDAO.cancelFutureDatedAdvises(fmList);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void prepareManualAdvisePostings(CustEODEvent custEODEvent) {
+		logger.debug(Literal.ENTERING);
+
+		boolean isGSTInvOnDue = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
+		custEODEvent.getFinEODEvents().forEach(fodEvent -> {
+			fodEvent.getPostingManualAdvises().forEach(ma -> {
+				ma.setInvoiceReq(isGSTInvOnDue);
+				postManualAdvise(fodEvent, custEODEvent, ma);
+			});
+		});
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void postManualAdvise(FinEODEvent fodEvent, CustEODEvent codEvent, ManualAdvise ma) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain fm = fodEvent.getFinanceMain();
+
+		fm.setTaxPercentages(GSTCalculator.getTaxPercentages(fm.getFinID()));
+
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		schdData.setFinReference(fm.getFinReference());
+		schdData.setFinanceMain(fm);
+		schdData.setFinanceType(fodEvent.getFinType());
+		fm.setOverdraftTxnChrgFeeType(fodEvent.getFinType().getOverdraftTxnChrgFeeType());
+
+		AEEvent aeEvent = prepareAccSetData(ma, PennantConstants.APP_PHASE_EOD, fm);
+
+		aeEvent.setPostDate(codEvent.getEodValueDate());
+		aeEvent.setCustAppDate(codEvent.getCustomer().getCustAppDate());
+
+		prepareAccountingProcess(ma, aeEvent, fd);
+
+		fodEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+		fodEvent.setUpdLBDPostings(true);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void prepareAccountingProcess(ManualAdvise advise, AEEvent aeEvent, FinanceDetail fd) {
+		logger.debug(Literal.ENTERING);
+
+		postingsPreparationUtil.postAccountingEOD(aeEvent);
+
+		long linkedTranId = aeEvent.getLinkedTranId();
+
+		advise.setLinkedTranId(linkedTranId);
+		advise.setDueCreation(true);
+
+		ManualAdviseMovements advMovement = new ManualAdviseMovements();
+		advMovement.setFeeTypeCode(advise.getFeeTypeCode());
+		advMovement.setFeeTypeDesc(advise.getFeeTypeDesc());
+		advMovement.setMovementAmount(advise.getAdviseAmount());
+		advMovement.setTaxApplicable(advise.isTaxApplicable());
+		advMovement.setTaxComponent(advise.getTaxComponent());
+
+		Map<String, Object> dataMap = aeEvent.getDataMap();
+
+		AdviseDueTaxDetail detail = new AdviseDueTaxDetail();
+
+		detail.setAmount(new BigDecimal(dataMap.get("ae_feeAmount").toString()));
+		detail.setCGST(new BigDecimal(dataMap.get("ae_feeCGST").toString()));
+		detail.setSGST(new BigDecimal(dataMap.get("ae_feeSGST").toString()));
+		detail.setUGST(new BigDecimal(dataMap.get("ae_feeUGST").toString()));
+		detail.setIGST(new BigDecimal(dataMap.get("ae_feeIGST").toString()));
+		detail.setCESS(new BigDecimal(dataMap.get("ae_feeCESS").toString()));
+		detail.setTotalGST(new BigDecimal(dataMap.get("ae_feeGST_TOT").toString()));
+
+		if (!advise.isInvoiceReq()) {
+			manualAdviseDAO.updateLinkedTranId(advise);
+
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		if (detail.getTotalGST().compareTo(BigDecimal.ZERO) <= 0) {
+			saveDueTaxDetail(advise, detail, null);
+			manualAdviseDAO.updateLinkedTranId(advise);
+
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		BigDecimal paidAmt = advise.getAdviseAmount();
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advMovement.getTaxComponent())) {
+			paidAmt = advise.getAdviseAmount().subtract(detail.getTotalGST());
+		}
+
+		advMovement.setPaidAmount(paidAmt);
+		advMovement.setPaidCGST(detail.getCGST());
+		advMovement.setPaidSGST(detail.getSGST());
+		advMovement.setPaidIGST(detail.getIGST());
+		advMovement.setPaidUGST(detail.getUGST());
+
+		List<ManualAdviseMovements> advMovements = new ArrayList<>();
+		advMovements.add(advMovement);
+
+		InvoiceDetail id = new InvoiceDetail();
+		id.setLinkedTranId(linkedTranId);
+		id.setFinanceDetail(fd);
+		id.setWaiver(false);
+		id.setMovements(advMovements);
+		id.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+
+		Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(id);
+
+		saveDueTaxDetail(advise, detail, invoiceID);
+
+		manualAdviseDAO.updateLinkedTranId(advise);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public int getFutureDatedAdvises(long finID) {
+		return manualAdviseDAO.getFutureDatedAdvises(finID);
+	}
+
+	@Override
+	public int cancelFutureDatedAdvises() {
+		return manualAdviseDAO.cancelFutureDatedAdvises();
+	}
+
+	@Override
+	public BigDecimal getBalanceAmt(long finID, Date valueDate) {
+		return manualAdviseDAO.getBalanceAmt(finID, valueDate);
+	}
+
+	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
+	@Autowired
 	public void setFeeTypeService(FeeTypeService feeTypeService) {
 		this.feeTypeService = feeTypeService;
 	}
 
+	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
+	@Autowired
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
+	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	@Autowired
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
+	@Autowired
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}

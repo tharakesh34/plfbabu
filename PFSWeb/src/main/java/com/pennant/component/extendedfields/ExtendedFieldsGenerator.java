@@ -176,6 +176,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private List<String> hsnCodes = new ArrayList<>();
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private String moduleDefiner;
+	private String userAction;
 
 	public ExtendedFieldsGenerator() {
 		super();
@@ -931,9 +932,12 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						Datebox datebox = (Datebox) component;
 						datebox.setConstraint("");
 						datebox.setErrorMessage("");
-						if (!datebox.isReadonly() && !datebox.isDisabled() && !isReadOnly
-								&& (detail.isFieldMandatory() || datebox.getValue() != null)) {
-							dateValidation(datebox, detail);
+						if (!"Cancel".equalsIgnoreCase(this.userAction) && !"Resubmit".equalsIgnoreCase(this.userAction)
+								&& !"Reject".equalsIgnoreCase(this.userAction)) {
+
+							if (!isReadOnly && (detail.isFieldMandatory() || datebox.getValue() != null)) {
+								dateValidation(datebox, detail);
+							}
 						}
 
 						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType())) {
@@ -3428,4 +3432,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	public void setModuleDefiner(String moduleDefiner) {
 		this.moduleDefiner = moduleDefiner;
 	}
+
+	public String getUserAction() {
+		return userAction;
+	}
+
+	public void setUserAction(String userAction) {
+		this.userAction = userAction;
+	}
+
 }

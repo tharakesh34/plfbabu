@@ -90,6 +90,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
@@ -124,7 +125,7 @@ import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
@@ -229,7 +230,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private transient VASRecordingService vASRecordingService;
 	private transient CollateralSetupService collateralSetupService;
 	private transient FinanceDetailService financeDetailService;
-	private transient CustomerDetailsService customerDetailsService;
+	private transient CustomerDataService customerDataService;
+	private CustomerDAO customerDAO;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private Window mainWindow = null;
 
@@ -858,6 +860,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 					// send the data back to customer
 					closeDialog();
+					setVASPremiumCalc(false);
 				}
 
 			} else if (doProcess(aVASRecording, tranType)) {
@@ -2703,7 +2706,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				aeEvent.setCcy(financeMain.getFinCcy());
 				aeEvent.setCustID(financeMain.getCustID());
 			} else if (StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, getVASRecording().getPostingAgainst())) {
-				Customer customer = getCustomerDetailsService().getCustomerByCIF(getVASRecording().getPrimaryLinkRef());
+				Customer customer = customerDAO.getCustomerByCIF(getVASRecording().getPrimaryLinkRef(), "");
 				aeEvent.setBranch(customer.getCustDftBranch());
 				aeEvent.setCcy(customer.getCustBaseCcy());
 				aeEvent.setCustID(customer.getCustID());
@@ -2970,8 +2973,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if (CollectionUtils.isNotEmpty(resultAccountDetails)) {
 				for (JointAccountDetail jointAccountDetail : resultAccountDetails) {
 					if (!isDeleted(jointAccountDetail.getRecordType())) {
-						CustomerDetails details = getCustomerDetailsService()
-								.getCustomerDetailsById(jointAccountDetail.getCustID(), false, "_AView");
+						CustomerDetails details = customerDataService
+								.getCustomerDetailsbyID(jointAccountDetail.getCustID(), false, "_AView");
 						formatCustomerData(details.getCustomer());
 						jointAccountDetail.setCustomerDetails(details);
 					}
@@ -2987,8 +2990,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			VasCustomer vasCustomer = vASRecording.getVasCustomer();
 			CustomerDetails details = new CustomerDetails();
 			if (vasCustomer != null && vasCustomer.getCustomerId() != 0) {
-				details = getCustomerDetailsService().getCustomerDetailsById(vasCustomer.getCustomerId(), false,
-						"_AView");
+				details = customerDataService.getCustomerDetailsbyID(vasCustomer.getCustomerId(), false, "_AView");
 				formatCustomerData(details.getCustomer());
 			} else {
 				details.setCustomer(new Customer());
@@ -3387,8 +3389,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 
 			if (BigDecimal.ZERO.compareTo(newPremiumCalcDetails.getPremiumPercentage()) >= 0) {
-				MessageUtil.showError("Premium Percentage is not available for the selected input data.");
-				return;
+				String msg = "Premium Percentage is not available for the selected input data.";
+				if (MessageUtil.confirm(msg, MessageUtil.OK | MessageUtil.OVERIDE) == MessageUtil.OK) {
+					return;
+				}
 			}
 
 			BigDecimal vasFee = loanAmt.multiply(newPremiumCalcDetails.getPremiumPercentage());
@@ -3396,9 +3400,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			vasFee = this.vasPremiumCalculation.getVasFee(vasFee);
 
 			if (BigDecimal.ZERO.compareTo(vasFee) >= 0) {
-				MessageUtil.showError("Premium amount from the Premium calculation is less than zero.");
-				this.fee.setReadonly(false);
-				return;
+				String msg = "Premium amount from the Premium calculation is less than zero.";
+				if (MessageUtil.confirm(msg, MessageUtil.OK | MessageUtil.OVERIDE) == MessageUtil.OK) {
+					this.fee.setReadonly(false);
+					return;
+				}
 			} else {
 				vasFee = vasFee.divide(new BigDecimal(100));
 				// Adds gst value to vasfee
@@ -3408,7 +3414,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				this.fee.setValue(vasFee);
 			}
 
-			setVASPremiumCalc(false);
+			vASRecording.setCalFeeAmt(PennantApplicationUtil.unFormateAmount(vasFee, getCcyFormat()));
+
 
 		} catch (Exception e) {
 			{
@@ -3757,14 +3764,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.financeDetailService = financeDetailService;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
@@ -3815,6 +3814,16 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
+	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 
 }

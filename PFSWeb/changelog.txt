@@ -1,3 +1,992 @@
+PLF-Release-5.16.0-AXIS_R14.20 2022-04-15
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.TK#0:Loan Wise Voucher Details - (Error in Config)
+2.TK#4:Covenant Status Report - (Details not Found)
+3.TK#5:Covenants Report - (Report not Implemented Yet)
+4.TK#6:Loan by Maturity - (Error in Config)
+5.TK#11:Loanwise Mandate Details - (Report not Implemented Yet)
+6.TK#12:Covenants Report - (Error in Config)
+7.TK#13:Interest Accural Report - (Report not Implemented Yet)
+8.TK#14:Receipt Details - (Report not Implemented Yet)
+9.TK#7: Vas Details - (Report not Config Yet)
+10.TK#8: Write Off - (Report not Config Yet)
+
+PLF-Release-5.16.0-AXIS_R14.19 2022-04-11
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#388: Getting null value as reference while updating limit for group code in customers limit screen (Internal issues)
+2.DE#389: Getting 900 blocker while generating the Reschedule report (internal issue)
+3.DE#390: PSD# 191651: Payment Instructions - OD Loan
+4.TK#9: NPA Report - (Error in Config)
+5.TK#10:Payoff Deals - (Error in Config)
+
+Enhancements
+----------
+1.ST#367: Finance & Accounts:- GST Billing Report
+2.ST#368: Finance & Accounts:- GST Credit Note Report
+3.ST#330: Day Wise Book for Entries passed in System - Operations
+4.ST#331: TDS Register for Period - Operations
+5.ST#332: Stat AUdit Interest Reco For period_Interest - Operations
+
+PLF-Release-5.16.0-AXIS_R14.18 2022-04-01
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#386: PSD#192498 - Issues on pending interest register report
+2.DE#387: PSD#192703: Interest Accrued But Not Due Report issue
+
+PLF-Release-5.16.0-AXIS_R14.17 2022-03-29
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#381: Sanction Letter reference number - Field Length increase to 40
+
+Bug Fixes
+----------
+1.DE#353: PSD# 190502: Covenants - Extended Date Issue
+2.DE#385 - PSD#192073-Foreclosure Accounting Entry Incorrect
+3.DE#377: PSD# 191778: SPRE0000517 - Incorrect Schedule - subsequent disbursement
+
+PLF-Release-5.16.0-AXIS_R14.16 2022-03-24
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#368:Finance & Accounts:- GST Credit Note Report
+2.ST#367: Finance & Accounts:- GST Billing Report
+3.ST#283: Loan Disbursement Basic Listing
+
+Bug Fixes
+----------
+1.DE#380:PSD#192079: Add disbursement 900 issue( when step loan created with zero step)
+PLF-Release-5.16.0-AXIS_R14.15 2022-03-21
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#366:Finance & Accounts:- TDS Report
+2.DE#379:PSD#191654:Accrual Accounting and its reversal for OD loans
+3.DE#373:PSD#191653Receipts - Appropriation Configuration - Repayment Hierarchy for OD Loans
+
+Bug Fixes
+----------
+1.DE#378: PSD#191650:Foreclosure entry - OD Loan
+2.DE#353: PSD#190502: Covenants - Extended Date Issue
+
+PLF-Release-5.16.0-AXIS_R14.14 2022-03-16
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#372: PSD#191574: Payment Instructions - wrong calculation reflecting.
+
+PLF-Release-5.16.0-AXIS_R14.13 2022-03-15
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#371: Unable to resubmit the receipt in realization approver screen (Internal issue)
+2.ST#283: Loan Disbursement Basic Listing Report
+
+PLF-Release-5.16.0-AXIS_R14.12 2022-03-14
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#359: PSD#191073 - 900 error on sourcing vendor master
+2.DE#307: PSD#188903 - 0 values are displayed in the collection register report
+3.DE#370: PSD#191299 - Alignment of (Observe total amounts are displayed at the bottom of the report)
+4.DE#369: PSD#191110 - Duplicate references added for Next put call option date report
+
+PLF-Release-5.16.0-AXIS_R14.11 2022-03-10
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#364:PSD#191151:Partpayment for step loan LIFO and FIFO
+
+PLF-Release-5.16.0-AXIS_R14.10 2022-03-09
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#336: Client Contact Details  - Operations
+
+Bug Fixes
+----------
+1.DE#359: PSD#191073 - 900 error on sourcing vendor master
+2.DE#361: PSD#191197 - Issues in revised limit report
+3.DE#360: PSD#191148 - Loan closure issue
+4.DE#362: PSD#191150 - Record is getting added even we reject in workflow for Put-Call
+
+PLF-Release-5.16.0-AXIS_R14.9 2022-03-08
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#356: PSD#190898 - Loan disbursement report issues
+2.DE#357: PSD#190994 - 900 error in loan queue
+
+PLF-Release-5.16.0-AXIS_R14.8 2022-03-04
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#337: Cme Exposure - Operations
+2.ST#330: Day Wise Book for Entries passed in System - Operations
+3.ST#331: TDS Register for Period - Operations
+4.ST#332: Stat AUdit Interest Reco For period_Interest - Operations
+
+Bug Fixes
+----------
+1.DE#356: PSD#190898 - Loan disbursement report issues
+2.DE#323: PSD# 189625: Unable to Add disbursement - SPLA0000165
+
+PLF-Release-5.16.0-AXIS_R14.7 2022-02-28
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#345: PSD# 188120: WRONG DATE REFLECTING IN OVERDUE SCREEN 
+
+Enhancements
+----------
+1.ST#351: PSD# 187402: TDS applicability on interest flag not visible for OD loans
+2.ST#298: Fixed and Floating Rate of interest (both options) are required at loan level for selection.
+
+PLF-Release-5.16.0-AXIS_R14.6 2022-02-25
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#326:Step details edit at the time of Add Disbursement
+2.ST#298: Fixed and Floating Rate of interest (both options) are required at loan level for selection.
+
+PLF-Release-5.16.0-AXIS_R14.5 2022-02-25
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#350: PSD#190360 - Ending balance negative in Variable dropline OD
+Enhancements
+----------
+1.ST#326:Step details edit at the time of Add Disbursement
+
+PLF-Release-5.16.0-AXIS_R14.4 2022-02-24
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#320: PSD# 189518: Unable to Save Disbursement - OD loan - SPEM0002545
+2.DE#321: PSD# 189517: Overdraft - Interest due not getting generated
+3.DE#350: PSD#190360 - Ending balance negative in Variable dropline OD
+
+PLF-Release-5.16.0-AXIS_R14.3 2022-02-23
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#348: Interest review frequency getting null in loan level (Internal issue)
+2.DE#343:PSD#190206:Issue in Part payment with Principal holiday
+3.DE#344:PSD#190209 - Penalty issue in OD loans
+Corrections done in escrow API
+Manual schedule changes in loan type based on Implementation constant
+
+Enhancements
+----------
+1.ST#347:Payment instruction menu workflow change
+
+PLF-Release-5.16.0-AXIS_R14.2 2022-02-22
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#342: Getting 900 blocker while submitting loan with manual deviation (Internal QC issue)
+2.DE#341: PSD# 190069: SPCO0000381 -  Grace Interest rate reflecting as 0 in approver screen 
+
+Enhancements
+----------
+1.ST#326:Step details edit at the time of Add Disbursement
+
+PLF-Release-5.16.0-AXIS_R14.1 2022-02-21
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#326:Step details edit at the time of Add Disbursement
+
+PLF-Release-5.16.0-AXIS_R14.0 2022-02-18
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#298: Fixed and Floating Rate of interest (both options) are required at loan level for selection.
+
+PLF-Release-5.16.0-AXIS_R13.9 2022-02-16
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#324: PSD# 189520: Payable advice reflecting under fee waiver screen
+
+Enhancements
+----------
+1.ST#281: Fee Report
+2.ST#282: GST Income related data - F&A Report
+
+PLF-Release-5.16.0-AXIS_R13.8 2022-02-14
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#314: PSD#189219 - 900 error while approving customer limit setup
+2.DE#315: Getting 900 blocker in variable drop line Tab when no tenor entered
+3.DE#316: PSD# 189525: 900 Error Print listing
+
+Enhancements
+----------
+1.ST#284: Repayment schedule cash flow to client
+
+PLF-Release-5.16.0-AXIS_R13.7 2022-02-12
+----------------------------------------------------------------------------------------------------------------------
+1.ST#310: LOS configurations for walkthrough
+
+PLF-Release-5.16.0-AXIS_R13.6 2022-02-11
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#309: PSD# 188973: Early Payment effect - Principal Holiday
+Enhancements
+----------
+1.ST#293: Loan Basic Info Report
+
+PLF-Release-5.16.0-AXIS_R13.5 2022-02-08
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#306:PSD#189030 - Interest rate is displaying wrong in Interest Reset report
+2.DE#307: PSD#188903 - 0 values are displayed in the collection register report
+Enhancements
+----------
+1.ST#289:Balance Confirmation format
+2.ST#288:Balance Confirmation To client
+3.ST#292: Pending Interest Register
+
+PLF-Release-5.16.0-AXIS_R13.4 2022-02-07
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#283: Loan Disbursement Basic Listing Report
+2.ST#287: Interest Accrued but not Due Report
+
+PLF-Release-5.16.0-AXIS_R13.3 2022-02-04
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#274: Processing fees invoice format 
+2.ST#275: Processing Fees Invoice
+
+Bug Fixes
+----------
+1.DE#304: PSD#188846 - 900 error while submit the loan with collateral
+
+PLF-Release-5.16.0-AXIS_R13.2 2022-02-03
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#269:Loan Disbursement Report
+2.ST#277:Revised Limit Report
+
+PLF-Release-5.16.0-AXIS_R13.1 2022-02-01
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#302: PSD#188664:Issue with OD Loan interest review frequency date
+2.DE#303: PSD#188584:Issue with early settlement(OD Loans)
+
+PLF-Release-5.16.0-AXIS_R13.0 2022-01-31
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#271: Collection Register Report
+2.ST#270: Interst Reset Report
+3.ST#276: Schedule of receipts vs Dues_Principal Report
+4.ST#272: Next Put Call Option date Report
+
+PLF-Release-5.16.0-AXIS_R12.6 2022-01-29
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.DE#296: PSD#187410-Option to Foreclose OD Loan(Enable the early settle option for OD product)
+
+PLF-Release-5.16.0-AXIS_R12.5 2022-01-28
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#294:Principal Due adjustments based on OD Dropline.
+2.ST#295:Limit Drop Rounding Correction based on Loan parameters.
+
+PLF-Release-5.16.0-AXIS_R12.4 2022-01-24
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#278: PSD#188014: Issue with rescheduling - While rescheduling to step loan even we made changes to schedule
+2.DE#279:PSD#188106:Issue in step loan with Zero step
+
+PLF-Release-5.16.0-AXIS_R12.3 2022-01-21
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.TK#455:Principle holiday functionality against on step part payment.
+Bug Fixes
+----------
+2.DE#277: District master, Put call Menus are displaying with out having corresponding rights.
+
+PLF-Release-5.16.0-AXIS_R12.2 2022-01-20
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.TK#454:Reschedule LMS option enable to the Step Loan functionality
+
+PLF-Release-5.16.0-AXIS_R12.1.1 2022-01-20
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#275: EOM Failed in UAT(PSD#187903 - EOM failed in QC)
+
+PLF-Release-5.16.0-AXIS_R12.1 2022-01-18
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#275: EOM Failed in UAT
+2.DE#276: PSD#187767:STEP LOAN - UNABLE TO SAVE LOAN
+
+PLF-Release-5.16.0-AXIS_R12.0 2022-01-12
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#272: NPA merging from Core version 5.17 to AFL version 5.16
+
+PLF-Release-5.16.0-AXIS_R11.19 2022-01-11
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#273: PSD#186798:900 ERROR - LOAN BASIC DETAILS
+
+PLF-Release-5.16.0-AXIS_R11.18 2022-01-07
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.ST#271: Step loan functionality - Unit testing
+
+PLF-Release-5.16.0-AXIS_R11.17 2022-01-06
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#266: PSD#186683 - All fields are setting non editable in step tab
+
+PLF-Release-5.16.0-AXIS_R11.16.1 2022-01-06
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.ST#271: Step loan functionality - Unit testing
+
+PLF-Release-5.16.0-AXIS_R11.16 2022-01-05
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#270: Log4j2 Security Vulnerability Changed log4j version from  2.17.0 to 2.17.1
+2.ST#271: Step loan functionality - Unit testing
+
+PLF-Release-5.16.0-AXIS_R11.15 2022-01-04
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#260: Step Loan internal fixes
+
+PLF-Release-5.16.0-AXIS_R11.14 2022-01-04
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#269: PSD# 186529: Receivable of Bounce charges is reflecting as Payable in Excess Enquiry Report, Some payables are missing after utilize half amount
+
+PLF-Release-5.16.0-AXIS_R11.13 2021-12-30
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#264: PSD#186389 - Unable to disable Manual steps for percentage based in Step Loan, if loan once saved with step details and trying to disable it.
+2.DE#265: PSD#186449 - Work flow issue (While early settlement receipt is in submitted stage, Add disbursement is approved)
+
+PLF-Release-5.16.0-AXIS_R11.12 2021-12-28
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#262: PSD# 186393: ISRA amount not getting updated - Isra details updated not reflecting in basic detail maintenance after submit
+
+PLF-Release-5.16.0-AXIS_R11.11 2021-12-27
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#261: PSD#186322 - Wrong Due calculation during early settlement
+
+PLF-Release-5.16.0-AXIS_R11.10 2021-12-25
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#257: Getting 850 validation while submitting the early settlement receipt having payable with GST
+2.DE#260: Step Loan internal fixes
+
+PLF-Release-5.16.0-AXIS_R11.9 2021-12-24
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#257: Getting 850 validation while submitting the early settlement receipt having payable with GST
+2.DE#258: Getting accounting mismatch of 2 rupees while early settlement.
+
+PLF-Release-5.16.0-AXIS_R11.8 2021-12-23
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#256: GST is wrongly calculated while amount is adjusted to more than one payable.
+
+PLF-Release-5.16.0-AXIS_R11.7 2021-12-21
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#251: PSD#185930 - While doing multiple disbursement getting blocker in submit stage
+2.DE#255: Getting Accounting mismatch while  two or more payables are adjusting to receipt in early settlement.
+
+PLF-Release-5.16.0-AXIS_R11.6 2021-12-21
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.ST#253: Updated Log4j version from 2.16.0 to 2.17.0
+2.DE#254: Cash collateral and DSF excess amount not reversed if we cancel the initiated receipt.
+
+PLF-Release-5.16.0-AXIS_R11.5 2021-12-20
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#250: Accounting not getting generated if we do the knock off receipt using due creation required fee type with payable advice.
+
+PLF-Release-5.16.0-AXIS_R11.4 2021-12-17
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#243:Log4j Security Vulnerability
+2.DE#231: GST amount is changing in manual allocation in receipt maker
+3.DE#204: PSD#183906 - In Receipt maker screen receipts tab click on Loan Reference search box Print button getting screen allocation issues
+4.DE#245: PSD#185717- Getting Error message while doing multiple disbursement
+5.DE#247: While rejecting  the partpayment receipt of manualschedule getting validation.
+6.DE#246: While add disbursement schedule is not generating properly for step loans.
+
+PLF-Release-5.16.0-AXIS_R11.3 2021-12-16
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#244: Accounting mismatch for manual advise creation with ADVDUE Event.
+
+PLF-Release-5.16.0-AXIS_R11.2 2021-12-14
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#242: EOD failed in QC Environment
+2.DE#243:Log4j Security Vulnerability
+
+PLF-Release-5.16.0-AXIS_R11.1 2021-12-13
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#241: Part payment with Adjust Stepping EMI.(PSD#185309)
+2.DE#240: Step tab missing after saving loan with step.
+3.DE#230: PSD#184916 - Issue with share holder data selection in customer (While creating a customer, in share holder tab, when we selected existing customer check box, after selecting CIF address fields are not updated as per Selected CIF information)
+4.DE#235: While the developer finance is checked in the loan type, at the approved stage it must be disabled and while developer finance is checked step loan must be unchecked if checked and must be disabled
+
+Enhancements
+----------
+5.ST#239: Currently we are allowing two digits steps in both repay and grace, now are allowing three digits in both repay and grace.
+
+PLF-Release-5.16.0-AXIS_R11.0 2021-12-10
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#238: While booking step loans application is not allowing the zero step amount, now are allowing the zero step amount.
+2.ST#239: Currently we are allowing two digits steps in both repay and grace, now are allowing three digits in both repay and grace.
+
+PLF-Release-5.16.0-AXIS_R10.2 2021-12-10
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#236: While enabling step loan in loan queue after allow grace is enabled getting 900 blocker. (PSD#185241)
+2.DE#237: PSD#185265 - While downsizing the loan getting 900 blocker in submit stage
+
+PLF-Release-5.16.0-AXIS_R10.1 2021-12-08
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#233: Step loan fields are not working as expected.
+2.DE#234: 900 blocker while check the step loan in loan queue.
+
+PLF-Release-5.16.0-AXIS_R10.0 2021-12-07
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#232: “Loan Downsizing”, “Planned/ UnPlanned EMI Holiday”,  “Rescheduling”  and “Partial Settlement / Part Prepayment”  LMS functionalities changes merged from Godrej source to AFL source.
+
+PLF-Release-5.16.0-AXIS_R9.10 2021-12-01
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#160: PSD#182318 After the save the data in the Recommendations tab enter data are not populating in the screen level
+2.DE#214: Allow Payment in Grace Period check box is enabled in loan basic details
+3.DE#224: In loan type level, while developer finance is checked, all the schedule methods are available but only PRI_PFT and PRI should be available in schedule methods. In loan queue level, when developer finance is enabled, schedule methods should be same as that in loan type.
+4.DE#213: UI issue in the downloaded report acknowledgement (difference in the font style and font size) pdf in realization approver
+
+PLF-Release-5.16.0-AXIS_R9.9 2021-11-30
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#217: Loan Created with Step functionality, post loan approval step functionally is disabled, now we corrected the same.
+
+PLF-Release-5.16.0-AXIS_R9.8 2021-11-29
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#11: AFL OGL IDB Integration with AFL partner System
+
+PLF-Release-5.16.0-AXIS_R9.7 2021-11-26
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#212: In OD loan after selecting dropping method as constant, dropline frequency is not automatically setting as default
+
+Enhancements
+----------
+2.ST#215:Currently we are allowing “Constant principle and calculated interest” schedule method for developer loans. Now we are allowing “Constant principle” schedule method for developer loans.
+(183982:  Constant Principal - Principal Holiday Schedule - Subsequent Disbursement - schedule not generated Properly)
+
+PLF-Release-5.16.0-AXIS_R9.6 2021-11-25
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#211: While doing part-payment for OD loans, application is taking lest than the outstanding amount. 
+
+PLF-Release-5.16.0-AXIS_R9.5 2021-11-24
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#205: Getting 900 error, while approving loan in “Loan Downsizing” menu. 
+2.DE#206: OD loan not getting closed even maturity date crossed and without dues.
+
+PLF-Release-5.16.0-AXIS_R9.4 2021-11-23
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#11: AFL OGL IDB Integration with AFL partner System
+
+Bug Fixes
+----------
+1.DE#194: System did not allow full disbursement before 1st grace period interest date.
+
+PLF-Release-5.16.0-AXIS_R9.3 2021-11-22
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#197: PSD# 184060: save button functionality not working in Receipt maker screen to submit the Loan to next stage.
+
+PLF-Release-5.16.0-AXIS_R9.2 2021-11-19
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#192: For OD loans repayment not considering while doing disbursement.
+2.DE#193: In Receipts getting validation if the loan reference having underscore
+3.DE#194: System did not allow full disbursement before 1st grace period interest date.
+4.DE#195: In Receipts List screens While filtering with receipt amount not filtering as per receipt amount.
+
+PLF-Release-5.16.0-AXIS_R9.1 2021-11-18
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#190: As per client request in 'DIRECT DEBIT - AXIS BANK Presentment Request File',  we modified the Corporate code.  "AXISFI"  to ‘AXISFIN'.
+
+Bug Fixes
+----------
+2.DE#189:Customer module - In customer phone number details, data is not displayed for FAX while selecting
+3.DE#191:Getting a 900 error while generating a GST invoice report.
+
+PLF-Release-5.16.0-AXIS_R9.0 2021-11-17
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#11: AFL OGL IDB Integration with AFL partner System
+
+PLF-Release-5.16.0-AXIS_R8.5 2021-11-16
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#184:As per client request UMRN Number is mandatory in Mandate Response Upload.
+
+Bug Fixes
+----------
+2.DE#181:PSD#183473 - After save the Part payment with manual schedule then update after save the record with out simulate already saved Partner Bank Code is disappear
+3.DE#182:PSD#182957 - In Add Disbursement screen while delete and add new collateral while Approve the record getting validation like some one else processed this record
+4.DE#183:PSD#183097 - In Payment Instructions screen if we have two fees one fee accepting negative values
+
+PLF-Release-5.16.0-AXIS_R8.4 2021-11-12
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#178: PSD# 183374: Mandate Download file for SBI (In Mandate Download file for SBI - filed name 'Debit Accnt Type' is blank inspite user has updated the value in system.)
+
+Bug Fixes
+----------
+2.DE#177: While Perform manual advise fee's in Receipts with TDS Current Receivable,Paid Amount,Net Paid wrongly populating 
+(PSD# 183402: WRONG FEE CALCULATION - ROLL OVER FEES - FEE RECEIVABLES)
+
+PLF-Release-5.16.0-AXIS_R8.3 2021-11-12
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#174:While doing part payment, once we click on simulate button, application will disable the simulate button. For manual schedule loans also same behaviour, but we are allowing to re upload the file, but without simulate there is no use of file upload. Now we disabled the manual schedule upload option along with simulate button.added validation while saving also.  (PSD#183270-In Receipt Manual schedule upload update means after simulate or after Part payment charges update invalid Amount file upload also saved with out any validation)
+2.ST#176:As per client we disabled the GST Exempted flag.  PSD#178365:GST EXEMPTED FLAG NOT WORKING
+
+BugFixes
+----------
+1.DE#175: PSD# 183331: Wrong schedule generated while doing partial payment with  manual schedule upload.
+
+PLF-Release-5.16.0-AXIS_R8.2 2021-11-11
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#173:For manual schedules if any part payment receipt in maker queue, if user want to initiate one more part payment , we are not allowing and thawing below validation.  “Part payment has already been initiated for this loan number: LAN123, Receipt ID: 123331, Receipt Date: 01-Nov-2021. Please process the initiated receipt”.  (PSD#183266-If one partial settlement in queue perform another partial settlement using manual scheduled with different amount while Approve one Record getting validation of amount due to new upload file exist)​
+2.ST#174:While doing part payment, once we click on simulate button, application will disable the simulate button. For manual schedule loans also same behaviour, but we are allowing to re upload the file, but without simulate there is no use of file upload. Now we disabled the manual schedule upload option along with simulate button.added validation while saving also.  (PSD#183270-In Receipt Manual schedule upload update means after simulate or after Part payment charges update invalid Amount file upload also saved with out any validation)
+
+Bug Fixes
+----------
+1.DE#172:UMRN is not storing for Mandate SBI Response.
+
+PLF-Release-5.16.0-AXIS_R8.1 2021-11-10
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#169: Disabled the Penny Drop Result in mandates. Penny drop is a third part system integration with other system, it is developed for other client. Now  we disabled in AFL.
+2.ST#170: As per client request in 'DIRECT DEBIT - AXIS BANK Presentment Request File',  we modified the corporate user name "AXIS FINANCE LIMITED"  to  "AXIS FINANCE LIMITED (AXISFIN)”.
+3.ST#171: As per client request In Mandate Download file for NACH , earlier we displaying  MICR now we displaying IFSC code . In Amount column earlier we considered as debit amount, now we modified it to max amount limit.
+
+PLF-Release-5.16.0-AXIS_R8.0 2021-11-09
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#135: Structured OD - Functionality to define OD limit drop in a structured way using file upload.
+
+PLF-Release-5.16.0-AXIS_R7.12 2021-11-09
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#109: While creating beneficiary details allocation will validate the beneficiary account number using third part API “KARZA”.
+
+PLF-Release-5.16.0-AXIS_R7.11 2021-11-08
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#164: While Partial settlement with part payment charges even enter valid manual schedule file also getting validation like Total uploaded principal amount should be equal to the loan amount. (PSD#182770 - Manual upload - prepayment issue),
+(PSD#183227 - Unable to change % of prepayment charges on transaction level).
+2.DE#165: While part payment with allocation Method: Manual in Knock off approver screen getting accounting mismatch.
+
+PLF-Release-5.16.0-AXIS_R7.10 2021-11-05
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#162:In mandates for NACH mandate in rejected case status it is accepting "REJECT". where as in remaining mandates is accepting "REJECTED".
+
+PLF-Release-5.16.0-AXIS_R7.9 2021-11-03
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#159: In Linking De-Linking screen while save the record getting 900 error.
+2.DE#160: After the save the data in the Recommendations tab enter data are not populating in the screen level.
+
+PLF-Release-5.16.0-AXIS_R7.8 2021-11-03
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#158: Getting credit and debit mismatch while execute the accounting in partial settlement receipt in Knock Off Approver Screen.
+
+PLF-Release-5.16.0-AXIS_R7.7 2021-11-02
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#109: While creating beneficiary details allocation will validate the beneficiary account number using third part API “KARZA”.
+
+PLF-Release-5.16.0-AXIS_R7.6 2021-11-01
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#157: While adding disbursement after part payment with the principal holiday option and before the BPI period, the schedule is overriding the principal holiday effect.
+(PSD: 182767- Incorrect repayment schedule - subsequent disbursement - principal holiday)
+
+PLF-Release-5.16.0-AXIS_R7.5.1 2021-11-01
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#155: While loan creation after upload the manual schedule then build the schedule, and update the Manual Schedule flag as false while saving the loan, in this case we are getting 900 error.
+
+PLF-Release-5.16.0-AXIS_R7.5 2021-10-29
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#153:In LMS events Loan Basic Details tab if loan have Allow BPI?, Allow Planned EMI Holiday ? flags are in enable mode.
+2.DE#155: While loan creation after upload the manual schedule then build the schedule, and update the Manual Schedule flag as false while saving the loan, in this case we are getting 900 error.
+Enhancements
+--------------
+1.ST#152:Disbursement response file changes for Cheque and DD modes as per client configurations.
+
+PLF-Release-5.16.0-AXIS_R7.4 2021-10-28
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#153:In LMS events Loan Basic Details tab if loan have Allow BPI?, Allow Planned EMI Holiday ? flags are in enable mode.
+
+PLF-Release-5.16.0-AXIS_R7.3 2021-10-27
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.ST#150: Enabled the “presentment file control” menu to down load the presentment request files.
+2.ST#151: Presentment and Mandate request and response file paths changes and Presentment file name generation changes.
+
+PLF-Release-5.16.0-AXIS_R7.2 2021-10-27
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#146:While creating customer, In bank details information screen, There is no validation between To and From dates. It is accepting To date beyond the From date.
+2.DE#147: In the Fee waiver Screen while update the waive amount multiple times even more than less amount also getting validation.
+
+PLF-Release-5.16.0-AXIS_R7.1 2021-10-25
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#141:Loan with manual schedule upload loans in the Recalculate menu while click on Fees tab getting 900 error.
+2.DE#142:Loan with manual schedule upload loans in the Add Disbursement menu while click on Fees tab getting 900 error.
+3.DE#143:Manual schedule upload loan after receipt while open Schedule ,Fee tab and also Recalculate pop screen not populating. One more Delete button extra populating in the screen.
+
+PLF-Release-5.16.0-AXIS_R7.0 2021-10-25
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#87: New option to book “DSF” and “Cash collateral” excess heads through receipts, same cab be utilized in Knock off Receipt(Schedule payment and Partpayment)  and Closure  Receipt(Early Settlement ) and Payment instruction(customer refunds).
+
+PLF-Release-5.16.0-AXIS_R6.0 2021-10-22
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#109: While creating beneficiary details allocation will validate the beneficiary account number using third part API “KARZA”.
+Bug Fixes
+----------
+2.DE#137:PSD# 182283: ISRA Module System is not allowing to use Space and few special characters in captioned module
+
+PLF-Release-5.16.0-AXIS_R5.10 2021-10-21
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#136:While approving manual schedule loans getting error , due to this loan not approved.
+
+PLF-Release-5.16.0-AXIS_R5.9 2021-10-20
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#132:In the Add disbursement menu perform add disbursement using Schedule upload file existing interest change in to zero in the schedule screen.
+2.DE#133: Loan with Base Rate Margin in the Recalculate menu while upload the file existing 13 interest amount changed to zero percentage in the schedule screen
+3.DE#134: While Create WIF loans (normal loans)then open the record getting 900 error.
+
+PLF-Release-5.16.0-AXIS_R5.8 2021-10-19
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#131:While creating manual upload schedule loans Updated Actual Interest Rate not impacted in the loan queue schedule screen.
+
+PLF-Release-5.16.0-AXIS_R5.7 2021-10-18
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#128:For manual schedule loans next frequency dates not setting properly, due to this we are getting issues in EOD process.
+2.DE#129:In Receipt maker screen after the Receipt Purpose remaining all headers data are wrongly populating in the font end screen
+3.DE#130:While update the manual schedule flag even active the manual schedule flag also in the schedule screen add disbursement ,recalculate, EMI holiday etc ...tabs are active(PSD#181865)
+
+PLF-Release-5.16.0-AXIS_R5.6 2021-10-18
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#126: In manual schedule, enabled the “Interest Review Frequency” and “Next Interest Review Frequency Date” in loan origination.
+
+Bug Fixes
+----------
+2.DE#127:Getting 900 blocker while saving the loan.
+
+PLF-Release-5.16.0-AXIS_R5.5 2021-10-13
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#123:In the Recalculate menu while update the Number of Instalments filed then upload the file getting 900 error.
+2.DE#124:While save the record in the HOLD EMI screen getting 900 error.
+
+PLF-Release-5.16.0-AXIS_R5.4 2021-10-12
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#122: For manual type loans auto rate review not happened during the EOD process.
+
+PLF-Release-5.16.0-AXIS_R5.3 2021-10-11
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#121:While opening record in cancel loan getting 900 blocker.
+
+PLF-Release-5.16.0-AXIS_R5.2 2021-10-09
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#115: In Disbursement download adding bank branch description column and Changing Benficiary name column to Primary CustomerName.(PSD#181513)
+
+PLF-Release-5.16.0-AXIS_R5.1 2021-10-07
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#110: While Submitting the record in disbursement queue getting 849 blocker.(PSD#181418).
+2.DE#111: While using Manual Schedule Type as upload then save and submit the loan in loan queue getting 900 blocker.(PSD#181426)
+3.DE#112: While Perform Partpayment using manual schedule upload case getting 849 The record is in use and therefore cannot be deleted. validation due to this we are unable to perform partpayment.(PSD#181476).
+4.DE#113: While doing schedule payment, transaction account seems to be not working correctly for REPAY event.  
+5.DE#114: 900 blocker while doing partial payment for manual upload schedule loan.
+
+PLF-Release-5.16.0-AXIS_R5.0 2021-10-06
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#92: ISRA details capturing in LOS and LMS(basic detail maintenance) based ISRA check box in loan basic details.
+Bug Fixes
+----------
+2.DE#108:Getting 900 blocker while clicking the notes and resubmitting the loan.
+
+PLF-Release-5.16.0-AXIS_R4.0 2021-10-04
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+----------
+1.ST#57: In Receipt capturing the  Customer bank account when Receipt mode is ONLINE and Sub-Receipt mode is ESCROW.
+
+PLF-Release-5.16.0-AXIS_R3.2 2021-10-04
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#107:While doing early settlement getting TDS amounts differences compare to allocations and accounting.
+
+PLF-Release-5.16.0-AXIS_R3.1 2021-10-01
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+----------
+1.DE#105: Getting 900 error while submitting the loan in addratechange queue.
+2.DE#106: While doing partial payment for the loan , Getting accounting mismatch due to partial pay amount not reflecting in accounting tab. 
+
+PLF-Release-5.16.0-AXIS_R3.0 2021-09-30
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1.ST#103: For OGL we added “OGL_LOANTYPE_PRODUCT_CODE” code in look up values to capture the OGL product code against the each loan type.
+
+PLF-Release-5.16.0-AXIS_R2.6 2021-09-28
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#100: While creating a OD loan, getting 900 blocker.
+2. DE#101: While importing uploaded covenant document getting 900 blocker.
+3. DE#102: OD loan type not available in Loan queue to create a loan.
+
+PLF-Release-5.16.0-AXIS_R2.5 2021-09-28
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1.DE#99: While creating a upfront fee receipt for a loan where TDS not Applicable , TDS is calculated and amount is adjusting to TDS.
+
+PLF-Release-5.16.0-AXIS_R2.4 2021-09-27
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1.DE#98: In all loan types (Normal, CD and overdraft), “Grace Period Schedule Details” tab not getting scrolling. Due to this unable to see the full details.
+
+PLF-Release-5.16.0-AXIS_R2.3 2021-09-25
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1.DE#96 : While step loan check box is checked in loan basic details, step loan tab is not available to create to steps.
+
+PLF-Release-5.16.0-AXIS_R2.2 2021-09-24
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1.DE#96 : While step loan check box is checked in loan basic details, step loan tab is not available to create to steps.
+2.DE#97: While creating loan getting 900 blocker. 
+
+PLF-Release-5.16.0-AXIS_R2.1 2021-09-22
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1.DE#94: While built the schedule with manual schedule upload, interest is not plotting even given Y in upload file.
+2.DE#93: While approving loan getting 850 error. This error is coming in only case where, covenants are added in the loan queue.
+ (PSD#180448 : While approving loan getting 850 error. This error is coming in only case where, covenants are added in the loan queue.)
+
+PLF-Release-5.16.0-AXIS_R2.0 2021-09-20
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+-------------
+1.ST#85: Manual schedule upload in LOS, Recalculate, Add Rate Change, Add Disbursement and Partial Settlement based on the loan type configuration.
+
+PLF-Release-5.16.0-AXIS_R1.9 2021-09-16
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1.DE#84: While opening submitted record in Add disbursement getting 900 blocker.
+
+PLF-Release-5.16.0-AXIS_R1.8 2021-09-15
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1.DE#79:While creating a upfront fee receipt for a loan where GST is exempted, GST is calculated and amount is adjusting to GST.
+2.DE#80:While selecting OD loan in to create new extended filed, it not taking OD loan when selected in selection box.
+
+PLF-Release-5.16.0-AXIS_R1.7 2021-09-08
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1.DE#78: While opening loans in loan queue getting 900 blocker.
+
+PLF-Release-5.16.0-AXIS_R1.6 2021-09-07
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#76: Getting 900 blocker while generate the statement of account
+2. DE#77: While creating a receipt for Earlysettelement payment of loan, some payables are taken as zero even payable have balance amount.
+
+PLF-Release-5.16.0-AXIS_R1.5 2021-09-06
+----------------------------------------------------------------------------------------------------------------------
+Accounting Feecodes and Transaction entries logs enabled...
+
+PLF-Release-5.16.0-AXIS_R1.4 2021-09-02
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#73: While approving the receipt, application will download the sample receipt template. But it is not downloading and getting issue.
+2. ST#74: Added PLF default document categories(CUSTOMER,COLLATERAL,VERIFICATION_TV,VERIFICATION_FI,VERIFICATION_LV,VERIFICATION_RCU,SAMPLING,LEGAL,VERIFICATION_PD,COVENANT) added through scripts.
+3. DE#75: While saving/submitting the record in Covenants screen getting 900 blocker.
+
+PLF-Release-5.16.0-AXIS_R1.3 2021-09-01
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#72: Getting 900 blocker while saving Guarantor Details in Loan Queue screen
+
+PLF-Release-5.16.0-AXIS_R1.2 2021-08-31
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#70: Getting 900 blocker while saving the record in loan queue.
+
+PLF-Release-5.16.0-AXIS_R1.1 2021-08-28
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#66: Getting 900 blocker while saving new user with reporting manger in users screen.
+2. DE#67:Getting 900 blocker while saving the record in Linking/Delinking Screen.
+3. DE#68:Getting 900 blocker while approving the record.
+
+
+PLF-Release-5.16.0-AXIS_R1.0 2021-08-26
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#65: Enable the “Constant principal” schedule method.
+
 PLF-Release-5.15.0-AXIS_R12.1 2021-08-10
 ----------------------------------------------------------------------------------------------------------------------
 Bug Fixes

@@ -60,6 +60,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	private LoggedInUser userDetails;
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
+	private boolean allowMultipleIFSC;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -186,4 +187,11 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 		this.minAccNoLength = minAccNoLength;
 	}
 
+	public boolean isAllowMultipleIFSC() {
+		return allowMultipleIFSC;
+	}
+
+	public void setAllowMultipleIFSC(boolean allowMultipleIFSC) {
+		this.allowMultipleIFSC = allowMultipleIFSC;
+	}
 }

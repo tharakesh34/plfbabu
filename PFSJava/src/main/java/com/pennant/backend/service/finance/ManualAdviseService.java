@@ -24,8 +24,11 @@
  */
 package com.pennant.backend.service.finance;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -58,4 +61,13 @@ public interface ManualAdviseService {
 
 	long getNewAdviseID();
 
+	BigDecimal getBalanceAmt(long finID, Date valueDate);
+
+	void cancelFutureDatedAdvises(CustEODEvent custEODEvent);
+
+	void prepareManualAdvisePostings(CustEODEvent custEODEvent) throws Exception;
+
+	int getFutureDatedAdvises(long finID);
+
+	int cancelFutureDatedAdvises();
 }

@@ -4,20 +4,20 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>6.0.0_R4.17</version>
+	<version>6.0.0_R4.14</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
-		<pff.version>6.0.0_R4.17</pff.version>
+		<pff.version>6.0.0_R4.14</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>11</jdk.version>
-		<spring.version>5.3.8</spring.version>
-		<spring.security.version>5.5.1</spring.security.version>
-		<spring.batch.version>4.3.3</spring.batch.version>
-		<spring.ws.version>3.1.1</spring.ws.version>
-		<spring.web.version>5.3.8</spring.web.version>
+		<spring.version>5.3.20</spring.version>
+		<spring.security.version>5.7.1</spring.security.version>
+		<spring.batch.version>4.3.6</spring.batch.version>
+		<spring.ws.version>3.1.3</spring.ws.version>
+		<spring.web.version>5.3.20</spring.web.version>
 		<zk.version>8.6.2</zk.version>
 		<atlantic.version>8.0.1</atlantic.version>
 		<jasperreports.version>6.17.0</jasperreports.version>
@@ -63,7 +63,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-core</artifactId>
-				<version>1.10.01</version>
+				<version>1.12.01</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps.pff</groupId>

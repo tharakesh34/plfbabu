@@ -1122,6 +1122,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
+	 * 
 	 */
 	protected boolean doProcess(LegalDetail aLegalDetail, String tranType) {
 		logger.debug(Literal.ENTERING);

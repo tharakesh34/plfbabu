@@ -84,7 +84,7 @@
 													<label id="label_LoanDownsizing_CustShrtName" value="${c:l('label_LoanDownsizing_CustShrtName.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<textbox id="custShrtName" width="180px" maxlength="50" readonly="true" />
+														<textbox id="custShrtName" width="180px" maxlength="100" readonly="true" />
 													</hbox>
 												</row>
 												<row id="row_FinType">
@@ -156,6 +156,10 @@
 														<space spacing="2px" />
 														<decimalbox id="revisedSanctionedAmt" readonly="true" width="180px" />
 													</hbox>
+												</row>
+												<row id="row_cpzIntAmt" visible="false">
+													<label id="label_LoanDownSizing_CpzIntAmt" value="${c:l('label_LoanDownSizing_CpzIntAmt.value')}" />
+													<currencyBox id="cpzIntAmt" readonly="true" width="180px" />
 												</row>
 											</rows>
 										</grid>

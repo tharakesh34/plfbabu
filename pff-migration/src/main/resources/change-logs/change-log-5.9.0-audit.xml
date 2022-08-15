@@ -623,8 +623,27 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="DE#1438.1_pre" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				alter table AdtFinFeeDetail add ActPercentage1 decimal(5,2);
+				update AdtFinFeeDetail set ActPercentage1=ActPercentage;
+				Update AdtFinFeeDetail set ActPercentage = null;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="DE#1438.1" author="Gopal.p">
 		<modifyDataType tableName="AdtFinFeeDetail" columnName="ActPercentage" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="DE#1438.1_post" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update AdtFinFeeDetail set ActPercentage=ActPercentage1;
+				alter table AdtFinFeeDetail drop column ActPercentage1;
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="DE#1438.1_post" author="Gopal.p" dbms="postgresql">
@@ -635,4 +654,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="DE#1438.1_post" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update AdtFinFeeDetail set ActPercentage=ActPercentage1;
+				alter table AdtFinFeeDetail drop column ActPercentage1;
+			]]>
+		</sql>
+	</changeSet>
+ 
 </databaseChangeLog>

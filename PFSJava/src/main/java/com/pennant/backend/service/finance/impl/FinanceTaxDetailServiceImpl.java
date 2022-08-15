@@ -60,7 +60,6 @@ import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -76,7 +75,6 @@ import com.pennanttech.pff.core.TableType;
 public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail> implements FinanceTaxDetailService {
 	private static final Logger logger = LogManager.getLogger(FinanceTaxDetailServiceImpl.class);
 
-	private CustomerDetailsService customerDetailsService;
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private GuarantorDetailDAO guarantorDetailDAO;
@@ -329,7 +327,8 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.GSTDETAILS.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.FEEPOSTING.equals(rcdMntnSts)
+				&& !FinServiceEvent.GSTDETAILS.equals(rcdMntnSts)) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = rcdMntnSts;
 			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
@@ -364,7 +363,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			return errorsList;
 		}
 
-		Customer customer = customerDetailsService.getCheckCustomerByCIF(ftd.getCustCIF());
+		Customer customer = customerDAO.getCustomerByCIF(ftd.getCustCIF(), "_View");
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = ftd.getCustCIF();
@@ -575,7 +574,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 
 		List<ErrorDetail> errorsList = new ArrayList<>();
 
-		Customer customer = customerDetailsService.getCustomerByCIF(ftd.getCustCIF());
+		Customer customer = customerDAO.getCustomerByCIF(ftd.getCustCIF(), "");
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = ftd.getCustCIF();
@@ -651,8 +650,11 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	}
 
 	@Override
-	public FinanceMain getFinanceDetailsForService(long finID, String type, boolean isWIF) {
-		return this.financeMainDAO.getFinanceDetailsForService(finID, type, isWIF);
+	public Long getCustomerIdByFinRef(String finReference) {
+		logger.debug(Literal.ENTERING);
+		long custID = this.financeMainDAO.getCustomerIdByFinRef(finReference);
+		logger.debug(Literal.LEAVING);
+		return custID;
 	}
 
 	/**
@@ -737,10 +739,6 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	@Override
 	public CustomerAddres getHighPriorityCustAddr(final long id) {
 		return customerAddresDAO.getHighPriorityCustAddr(id, "_AView");
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

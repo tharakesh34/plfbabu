@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -79,13 +80,14 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -142,7 +144,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private transient SuspenseService suspenseService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 	private FinanceWorkFlowService financeWorkFlowService;
 	private NotificationService notificationService;
 	private FinanceMain financeMain;
@@ -591,7 +593,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(main.getFinID(), "_View",
 					false);
 			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
-			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
+			financeDetail.setCustomerDetails(customerDataService.getCustomerDetailsbyID(
 					financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
 			financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, getRole(), "DDE",
 					eventCode, moduleDefiner, false);
@@ -668,7 +670,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(main.getFinID(), "_View",
 						false);
 				financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
-				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
+				financeDetail.setCustomerDetails(customerDataService.getCustomerDetailsbyID(
 						financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
 				financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, getRole(), "DDE",
 						eventCode, moduleDefiner, false);
@@ -929,7 +931,12 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				if (fm.getNextUserId() != null) {
 					publishNotification(Notify.USER, fm.getFinReference(), fm);
 				} else {
-					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
+					if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
+						publishNotification(Notify.ROLE, fm.getFinReference(), fm);
+					} else {
+						publishNotification(Notify.ROLE, fm.getFinReference(), fm, finDivision,
+								aFinanceMain.getFinBranch());
+					}
 				}
 
 				closeDialog();
@@ -1396,20 +1403,17 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
 
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

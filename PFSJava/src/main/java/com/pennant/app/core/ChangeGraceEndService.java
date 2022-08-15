@@ -183,6 +183,8 @@ public class ChangeGraceEndService extends ServiceHelper {
 				if (aeEvent != null) {
 					finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 				}
+
+				finEODEvent.setStepPolicyDetails(fsd.getStepPolicyDetails());
 			}
 		}
 	}
@@ -210,6 +212,11 @@ public class ChangeGraceEndService extends ServiceHelper {
 				HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate();
 
 		nextGrcPftDate = formatDate(nextGrcPftDate);
+
+		if (nextGrcPftDate.compareTo(newGrcEndDate) > 0) {
+			nextGrcPftDate = newGrcEndDate;
+		}
+
 		fm.setNextGrcPftDate(nextGrcPftDate);
 
 		boolean includeStartDate = false;
@@ -225,7 +232,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 					.getTerms(fm.getGrcPftFrq(), nextGrcPftDate, newGrcEndDate, includeStartDate, false).getTerms());
 			changeStpDetails(finScheduleData, prvGrcTerms);
 		} else {
-
+			int prvGrcTerms = fm.getGraceTerms();
 			int graceTerms = fm.getGraceTerms() + financeType.getGrcAutoIncrMonths();
 			fm.setGraceTerms(graceTerms);
 
@@ -240,6 +247,8 @@ public class ChangeGraceEndService extends ServiceHelper {
 				fm.setGrcPeriodEndDate(newGrcEndDate);
 			}
 			scheduleDateList = null;
+
+			changeStpDetails(finScheduleData, prvGrcTerms);
 		}
 
 		// NextGrcPftRvwDate
@@ -332,12 +341,13 @@ public class ChangeGraceEndService extends ServiceHelper {
 
 			// Plan EMI Holidays Resetting after Change Grace Period End Date
 			if (fm.isPlanEMIHAlw()) {
-
-				fm.setEventFromDate(fm.getRecalFromDate());
-				fm.setEventToDate(fm.getMaturityDate());
-				fm.setRecalFromDate(fm.getRecalFromDate());
-				fm.setRecalToDate(fm.getMaturityDate());
-				fm.setRecalSchdMethod(fm.getScheduleMethod());
+				if (!(fm.isStepFinance() && PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps()))) {
+					fm.setEventFromDate(fm.getRecalFromDate());
+					fm.setEventToDate(fm.getMaturityDate());
+					fm.setRecalFromDate(fm.getRecalFromDate());
+					fm.setRecalToDate(fm.getMaturityDate());
+					fm.setRecalSchdMethod(fm.getScheduleMethod());
+				}
 
 				fm.setEqualRepay(true);
 				fm.setCalculateRepay(true);
@@ -355,20 +365,19 @@ public class ChangeGraceEndService extends ServiceHelper {
 	}
 
 	// Modifying the Step policy details based on grace terms.
-	private void changeStpDetails(FinScheduleData finScheduleData, int prvGrcTerms) {
+	private void changeStpDetails(FinScheduleData schdData, int prvGrcTerms) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = finScheduleData.getFinanceMain();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		List<FinanceStepPolicyDetail> spdList = finScheduleData.getStepPolicyDetails();
+		List<FinanceStepPolicyDetail> spdList = schdData.getStepPolicyDetails();
 
 		if (fm.isStepFinance() && PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())
 				&& CollectionUtils.isNotEmpty(spdList)) {
 			List<FinanceStepPolicyDetail> newSpdList = new ArrayList<>();
-			int stpGrcTerms = 0;
 			int curGrcTerms = 0;
 			boolean isGrcTenorIncr = false;
-			List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
+			List<FinanceScheduleDetail> fsdList = schdData.getFinanceScheduleDetails();
 
 			for (FinanceScheduleDetail fsd : fsdList) {
 				if (fsd.isFrqDate() && DateUtil.compare(fsd.getSchDate(), fm.getGrcPeriodEndDate()) <= 0
@@ -379,24 +388,8 @@ public class ChangeGraceEndService extends ServiceHelper {
 				}
 			}
 
-			for (FinanceStepPolicyDetail spd : spdList) {
-				if (PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
-					fm.setGrcStps(true);
-					BigDecimal tenorSplitPerc = BigDecimal.ZERO;
-					tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
-							.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
-					spd.setTenorSplitPerc(tenorSplitPerc);
-					stpGrcTerms = stpGrcTerms + spd.getInstallments();
-					if (curGrcTerms > prvGrcTerms && fm.getNoOfGrcSteps() == spd.getStepNo()) {
-						isGrcTenorIncr = true;
-						int remgrcTerms = curGrcTerms - prvGrcTerms;
-						spd.setInstallments(spd.getInstallments() + remgrcTerms);
-						tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
-								.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
-						spd.setTenorSplitPerc(tenorSplitPerc);
-						break;
-					}
-				}
+			if (curGrcTerms != 0) {
+				isGrcTenorIncr = isGrcTenorIncr(prvGrcTerms, fm, spdList, curGrcTerms);
 			}
 
 			if (!isGrcTenorIncr && curGrcTerms < prvGrcTerms) {
@@ -407,21 +400,23 @@ public class ChangeGraceEndService extends ServiceHelper {
 								.thenComparingInt(FinanceStepPolicyDetail::getStepNo).reversed())
 						.collect(Collectors.toList());
 				for (FinanceStepPolicyDetail spd : spdList) {
-					if (PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
-						BigDecimal tenorSplitPerc = BigDecimal.ZERO;
 
-						if (redGrcStps > 0) {
-							int remStps = spd.getInstallments() - redGrcStps;
-							redGrcStps = redGrcStps - spd.getInstallments();
-							if (remStps > 0) {
-								spd.setInstallments(remStps);
-								tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
-										.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
-								spd.setTenorSplitPerc(tenorSplitPerc);
-								newSpdList.add(spd);
-								noOfGrcStps = noOfGrcStps + 1;
-							}
-						} else {
+					if (!PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
+						newSpdList.add(spd);
+						continue;
+					}
+
+					if (curGrcTerms == 0) {
+						continue;
+					}
+
+					BigDecimal tenorSplitPerc = BigDecimal.ZERO;
+
+					if (redGrcStps > 0) {
+						int remStps = spd.getInstallments() - redGrcStps;
+						redGrcStps = redGrcStps - spd.getInstallments();
+						if (remStps > 0) {
+							spd.setInstallments(remStps);
 							tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
 									.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
 							spd.setTenorSplitPerc(tenorSplitPerc);
@@ -429,15 +424,53 @@ public class ChangeGraceEndService extends ServiceHelper {
 							noOfGrcStps = noOfGrcStps + 1;
 						}
 					} else {
+						tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
+								.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
+						spd.setTenorSplitPerc(tenorSplitPerc);
 						newSpdList.add(spd);
+						noOfGrcStps = noOfGrcStps + 1;
 					}
 				}
-				finScheduleData.setStepPolicyDetails(newSpdList, true);
-				finScheduleData.getFinanceMain().setNoOfGrcSteps(noOfGrcStps);
+
+				schdData.setStepPolicyDetails(newSpdList, true);
+				schdData.getFinanceMain().setNoOfGrcSteps(noOfGrcStps);
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private boolean isGrcTenorIncr(int prvGrcTerms, FinanceMain fm, List<FinanceStepPolicyDetail> spdList,
+			int curGrcTerms) {
+
+		int stpGrcTerms = 0;
+		boolean isGrcTenorIncr = false;
+
+		for (FinanceStepPolicyDetail spd : spdList) {
+			if (!PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
+				continue;
+			}
+
+			fm.setGrcStps(true);
+			BigDecimal tenorSplitPerc = BigDecimal.ZERO;
+			tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
+					.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
+			spd.setTenorSplitPerc(tenorSplitPerc);
+			stpGrcTerms = stpGrcTerms + spd.getInstallments();
+
+			if (curGrcTerms > prvGrcTerms && fm.getNoOfGrcSteps() == spd.getStepNo()) {
+				isGrcTenorIncr = true;
+				int remgrcTerms = curGrcTerms - prvGrcTerms;
+				spd.setInstallments(spd.getInstallments() + remgrcTerms);
+				tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
+						.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
+				spd.setTenorSplitPerc(tenorSplitPerc);
+				break;
+			}
+
+		}
+
+		return isGrcTenorIncr;
 	}
 
 	public AEEvent getChangeGrcEndPostings(FinScheduleData fsd) {
@@ -539,6 +572,11 @@ public class ChangeGraceEndService extends ServiceHelper {
 
 		finEODEvent.setOrgRepayInsts(repayIns);
 		schdData.setRepayInstructions(repayInstructions);
+
+		if (fm.isStepFinance() && fm.getNoOfGrcSteps() > 0
+				&& PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())) {
+			schdData.setStepPolicyDetails(financeStepDetailDAO.getFinStepDetailListByFinRef(finID, "", false));
+		}
 
 		List<FinanceDisbursement> fd = financeDisbursementDAO.getFinanceDisbursementDetails(finID, "", false);
 

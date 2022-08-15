@@ -22,8 +22,8 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.ConsumerProduct;
-import com.pennanttech.pff.mmfl.cd.service.ConsumerProductService;
+import com.pennanttech.pff.cd.model.ConsumerProduct;
+import com.pennanttech.pff.cd.service.ConsumerProductService;
 
 public class ConsumerProductListCtrl extends GFCBaseListCtrl<ConsumerProduct> {
 	private static final long serialVersionUID = 1L;

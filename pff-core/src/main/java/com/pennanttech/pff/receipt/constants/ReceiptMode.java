@@ -37,6 +37,13 @@ public class ReceiptMode {
 	public static final String CASHCLT = "CASHCLT";
 	public static final String DSF = "DSF";
 
+	public static final String BBPS = "BBPS";
+	public static final String RTRNGDS = "RTRNGDS";
+	public static final String NACH = "NACH";
+	public static final String PAYMENTGATEWAY = "PAYMENTGATEWAY";
+	public static final String UPI = "UPI";
+	public static final String ZERORECEIPT = "ZERORECEIPT";
+
 	private ReceiptMode() {
 		super();
 	}
@@ -53,6 +60,7 @@ public class ReceiptMode {
 		case PORTAL:
 		case ESCROW:
 		case DIGITAL:
+		case RTRNGDS:
 			return ONLINE;
 		case RESTRUCT:
 			return RESTRUCT;
@@ -170,6 +178,11 @@ public class ReceiptMode {
 			subReceiptModes.add(PAYTM);
 			subReceiptModes.add(PORTAL);
 			subReceiptModes.add(DIGITAL);
+			subReceiptModes.add(RTRNGDS);
+			subReceiptModes.add(NACH);
+			subReceiptModes.add(PAYMENTGATEWAY);
+			subReceiptModes.add(UPI);
+			subReceiptModes.add(BBPS);
 		}
 
 		return subReceiptModes;

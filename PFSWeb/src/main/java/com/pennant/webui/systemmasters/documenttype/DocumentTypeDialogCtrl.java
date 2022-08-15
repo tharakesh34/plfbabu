@@ -1023,7 +1023,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docExpDateIsMand.setDisabled(isReadOnly("DocumentTypeDialog_docExpDateIsMand"));
 		this.docIdNumMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssueDateMand"));
 		this.docIssueDateMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIdNumMand"));
-		this.docIssuedAuthorityMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssuedAuthorityMand"));
+		this.docIssuedAuthorityMand.setDisabled(isReadOnly("DocumentTypeDialog_docIssuedAuthorityMand"));
 		if (DocumentCategories.CUSTOMER.getKey().equals(categoryCode)) {
 			this.docExpDateIsMand.setChecked(true);
 			this.docIssueDateMand.setChecked(true);

@@ -897,17 +897,17 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		if (!this.firstName.isReadonly()) {
 			this.firstName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_FirstName.value"),
-							PennantRegularExpressions.REGEX_NAME, false));
+							PennantRegularExpressions.REGEX_CUST_NAME, false));
 		}
 		if (!this.lastName.isReadonly()) {
 			this.lastName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_LastName.value"),
-							PennantRegularExpressions.REGEX_NAME, false));
+							PennantRegularExpressions.REGEX_CUST_NAME, false));
 		}
 		if (!this.shortName.isReadonly()) {
 			this.shortName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_ShortName.value"),
-							PennantRegularExpressions.REGEX_NAME, false));
+							PennantRegularExpressions.REGEX_CUST_NAME, false));
 		}
 		if (!this.firstName.isReadonly() && !this.lastName.isReadonly() && !this.shortName.isReadonly()) {
 			if (StringUtils.isBlank(this.firstName.getValue()) && StringUtils.isBlank(this.lastName.getValue())
@@ -915,7 +915,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 
 				this.shortName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_AnyName.value"),
-								PennantRegularExpressions.REGEX_NAME, true));
+								PennantRegularExpressions.REGEX_CUST_NAME, true));
 			}
 		}
 		if (this.shareholder.isChecked()) {
@@ -1688,6 +1688,12 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 
 	public void onFulfill$custAddrProvince(Event event) {
 		logger.debug("Entering" + event.toString());
+		onFulfillProvince();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onFulfillProvince() {
+		logger.debug(Literal.ENTERING);
 		this.custAddrCity.setErrorMessage("");
 		if (!StringUtils.trimToEmpty(sCustAddrProvince).equals(this.custAddrProvince.getValue())) {
 			this.custAddrCity.setValue("");
@@ -1699,11 +1705,17 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		filtersCity[0] = new Filter("PCCountry", this.custAddrCountry.getValue(), Filter.OP_EQUAL);
 		filtersCity[1] = new Filter("PCProvince", this.custAddrProvince.getValue(), Filter.OP_EQUAL);
 		this.custAddrCity.setFilters(filtersCity);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$custAddrCountry(Event event) {
 		logger.debug("Entering" + event.toString());
+		onFulfillCountry();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onFulfillCountry() {
+		logger.debug(Literal.ENTERING);
 		this.custAddrProvince.setErrorMessage("");
 		this.custAddrCity.setErrorMessage("");
 		if (!StringUtils.trimToEmpty(sCustAddrCountry).equals(this.custAddrCountry.getValue())) {
@@ -1716,7 +1728,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		Filter[] filtersProvince = new Filter[1];
 		filtersProvince[0] = new Filter("CPCountry", this.custAddrCountry.getValue(), Filter.OP_EQUAL);
 		this.custAddrProvince.setFilters(filtersProvince);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$designation(Event event) {
@@ -1844,12 +1856,28 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 				this.nationality.setValue(aCustomer.getCustNationality());
 				this.nationality.setDescription(aCustomer.getLovDescCustNationalityName());
 				this.dob.setValue(aCustomer.getCustDOB());
+				this.custAddrCountry.setValue(aCustomer.getCustAddrCountry());
+				this.custAddrCountry.setDescription(aCustomer.getLovDescCustAddrCountry());
+				onFulfillCountry();
+				this.custAddrProvince.setValue(aCustomer.getCustAddrProvince());
+				this.custAddrProvince.setDescription(aCustomer.getLovDescCustAddrProvince());
+				onFulfillProvince();
+				this.custAddrCity.setValue(aCustomer.getCustAddrCity());
+				this.custAddrCity.setDescription(aCustomer.getLovDescCustAddrCity());
 			} else if (PennantConstants.PFF_CUSTCTG_INDIV.equals(aCustomer.getCustCtgCode())) {
 				this.firstName.setValue(aCustomer.getCustFName());
 				this.lastName.setValue(aCustomer.getCustLName());
 				this.nationality.setValue(aCustomer.getCustNationality());
 				this.nationality.setDescription(aCustomer.getLovDescCustNationalityName());
 				this.dob.setValue(aCustomer.getCustDOB());
+				this.custAddrCountry.setValue(aCustomer.getCustAddrCountry());
+				this.custAddrCountry.setDescription(aCustomer.getLovDescCustAddrCountry());
+				onFulfillCountry();
+				this.custAddrProvince.setValue(aCustomer.getCustAddrProvince());
+				this.custAddrProvince.setDescription(aCustomer.getLovDescCustAddrProvince());
+				onFulfillProvince();
+				this.custAddrCity.setValue(aCustomer.getCustAddrCity());
+				this.custAddrCity.setDescription(aCustomer.getLovDescCustAddrCity());
 			}
 		}
 

@@ -218,7 +218,12 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		int maxLength = Integer.valueOf(attributes.get("LENGTH"));
 
 		label_CoreCustomerDialog_PrimaryID.setValue(Labels.getLabel(primaryIdLabel));
-		space_PrimaryID.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
+		if (!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+			space_PrimaryID.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
+			if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY) {
+				space_PrimaryID.setSclass(primaryIdMandatory ? PennantConstants.NONE : "");
+			}
+		}
 		primaryID.setSclass(PennantConstants.mandateSclass);
 		primaryID.setValue("");
 		primaryID.setMaxlength(maxLength);
@@ -257,8 +262,19 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		if (prospect.isChecked()) {
 			primaryID.clearErrorMessage();
-			primaryID.setConstraint(
-					new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+			if (!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+				primaryID.setConstraint(
+						new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+			}
+			if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP
+					&& StringUtils.isNotBlank(this.primaryID.getText())) {
+				primaryID.setConstraint(
+						new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+			}
+
+			if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY) {
+				primaryID.setConstraint(new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, false));
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -432,12 +448,13 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 							this.custCtgType.getSelectedItem().getValue(), "_View");
 				}
 				if (StringUtils.isNotBlank(cif)) {
+					if (!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+						String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
+								new String[] { Labels.getLabel(primaryIdLabel), cif + ". \n" });
 
-					String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
-							new String[] { Labels.getLabel(primaryIdLabel), cif + ". \n" });
-
-					if (MessageUtil.confirm(msg) != MessageUtil.YES) {
-						return;
+						if (MessageUtil.confirm(msg) != MessageUtil.YES) {
+							return;
+						}
 					}
 
 					exsiting.setSelected(true);

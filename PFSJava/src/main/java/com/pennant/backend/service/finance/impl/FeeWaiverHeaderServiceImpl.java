@@ -40,6 +40,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -109,12 +110,16 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.payment.model.LoanPayment;
+import com.pennanttech.pff.payment.service.LoanPaymentService;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.rits.cloning.Cloner;
 
 /**
@@ -141,11 +146,12 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 	private ReceiptCalculator receiptCalculator;
-	private RepaymentPostingsUtil repayPostingUtil;
+	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
+	private LoanPaymentService loanPaymentService;
 
 	List<ManualAdvise> manualAdviseList; // TODO remove this
 
@@ -272,7 +278,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			fwd.setFinReference(finReference);
 			fwd.setNewRecord(true);
 			fwd.setAdviseId(-3);
-			fwd.setFeeTypeCode(RepayConstants.ALLOCATION_BOUNCE);
+			fwd.setFeeTypeCode(Allocation.BOUNCE);
 			FeeType bounce = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(RepayConstants.ALLOCATION_BOUNCE);
 			if (bounce != null) {
 				fwd.setFeeTypeDesc(bounce.getFeeTypeDesc());
@@ -463,19 +469,20 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			return;
 		}
 
+		BigDecimal receivableAmount = BigDecimal.ZERO;
 		TaxAmountSplit taxSplit = null;
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fwd.getTaxComponent())) {
 			taxSplit = GSTCalculator.getExclusiveGST(receivableAmt, gstPercentages);
 			fwd.setActualReceivable(receivableAmt);
+			receivableAmount = receivableAmt.add(taxSplit.gettGST());
 		} else {
 			taxSplit = GSTCalculator.getInclusiveGST(receivableAmt, gstPercentages);
 			fwd.setActualReceivable(receivableAmt.subtract(taxSplit.gettGST()));
+			receivableAmount = taxSplit.getNetAmount();
 		}
 
-		GSTCalculator.calculateActualGST(fwd, taxSplit, gstPercentages);
-
 		fwd.setReceivableGST(taxSplit.gettGST());
-		fwd.setReceivableAmount(taxSplit.getNetAmount());
+		fwd.setReceivableAmount(receivableAmount);
 
 		List<Taxes> taxes = new ArrayList<>();
 
@@ -849,13 +856,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						fwd.setTaxHeaderId(taxHeader.getHeaderId());
 					}
 
-					if (fwh.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					if (PennantConstants.RECORD_TYPE_NEW.equals(fwh.getRecordType())) {
 						feeWaiverDetailDAO.save(fwd, TableType.MAIN_TAB);
 						fwh.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					} else {
 						feeWaiverDetailDAO.update(fwd, TableType.MAIN_TAB);
 					}
-					if (!PennantConstants.FINSOURCE_ID_API.equals(fwh.getFinSourceID())) {
+					if (!PennantConstants.FINSOURCE_ID_API.equals(fwh.getFinSourceID())
+							&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(fwh.getFinSourceID())) {
 						feeWaiverDetailDAO.delete(fwd, TableType.TEMP_TAB);
 					}
 				}
@@ -868,7 +876,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			allocateWaiverAmounts(fwh);
 		}
 
-		if (!PennantConstants.FINSOURCE_ID_API.equals(fwh.getFinSourceID())) {
+		if (!PennantConstants.FINSOURCE_ID_API.equals(fwh.getFinSourceID())
+				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(fwh.getFinSourceID())) {
 			feeWaiverHeaderDAO.delete(fwh, TableType.TEMP_TAB);
 		}
 
@@ -946,7 +955,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		// Overdue Details
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finID);
 
-		fm = repayPostingUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null,
+		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null,
 				isPresentmentInProcess);
 
 		if (!fm.isFinIsActive()) {
@@ -975,30 +984,32 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 			// Prepare GST Invoice for Bounce/LPP Waiver(when it is due base accounting)
 			if (aeEvent.getLinkedTranId() > 0 && aeEvent.isPostingSucess()) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE)) {
+					List<ManualAdviseMovements> waiverMovements = new ArrayList<>();
 
-				List<ManualAdviseMovements> waiverMovements = new ArrayList<>();
+					InvoiceDetail id = new InvoiceDetail();
+					id.setLinkedTranId(aeEvent.getLinkedTranId());
+					id.setFinanceDetail(fd);
+					id.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
+					id.setWaiver(true);
 
-				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setLinkedTranId(aeEvent.getLinkedTranId());
-				invoiceDetail.setFinanceDetail(fd);
-				invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
-				invoiceDetail.setWaiver(true);
+					for (ManualAdviseMovements advMov : advMovements) {
+						waiverMovements.add(advMov);
 
-				for (ManualAdviseMovements advMov : advMovements) {
-					waiverMovements.add(advMov);
+						id.setMovements(waiverMovements);
+						Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(id);
 
-					invoiceDetail.setMovements(waiverMovements);
-					Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+						if (advMov.getTaxHeader() != null) {
+							advMov.getTaxHeader().setInvoiceID(invoiceID);
+						}
 
-					if (advMov.getTaxHeader() != null) {
-						advMov.getTaxHeader().setInvoiceID(invoiceID);
+						waiverMovements.clear();
 					}
-					waiverMovements.clear();
+
+					// Penalty Overdue GST Creation
+					prepareTaxMovement(fm, lppMovements, aeEvent.getLinkedTranId());
+
 				}
-
-				// Penalty Overdue GST Creation
-				prepareTaxMovement(fm, lppMovements, aeEvent.getLinkedTranId());
-
 				if (fwh.getRpyList() != null && !fwh.getRpyList().isEmpty()) {
 					for (int i = 0; i < fwh.getRpyList().size(); i++) {
 						FinanceRepayments repayment = fwh.getRpyList().get(i);
@@ -1016,19 +1027,19 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		}
 
-		fm = repayPostingUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null, false);
+		// Common issue#21
+		// Loan Active Status Verification
+		List<FinanceScheduleDetail> schdList = this.financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 
-		if (!fm.isFinIsActive()) {
-			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
-			fd = allocateWaiverToSchduleDetails(fwh, fd, aeEvent, true);
+		LoanPayment lp = new LoanPayment(finID, fm.getFinReference(), schdList, appDate);
+		boolean isFinFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
+
+		if (isFinFullyPaid) {
+			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, null);
+			profitDetailsDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
 		}
 
-		if (CollectionUtils.isEmpty(schedules)) {
-			schedules = this.financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
-			schdData.setFinanceScheduleDetails(schedules);
-		}
-
-		fm = repayPostingUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null, false);
+		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null, false);
 
 		if (!fm.isFinIsActive()) {
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
@@ -1208,7 +1219,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		List<ManualAdviseMovements> movements = new ArrayList<>();
 		Date appDate = SysParamUtil.getAppDate();
-		boolean gstInvOnDue = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
 		List<FinanceRepayments> rpyList = new ArrayList<>();
 
 		FinanceMain fm = new FinanceMain();
@@ -1318,7 +1328,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					}
 
 					// TODO update LPP related GST Table data
-					if (gstInvOnDue && fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
+					if (fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 						if (amountWaived.compareTo(BigDecimal.ZERO) > 0) {
 							ManualAdviseMovements movement = new ManualAdviseMovements();
 							movement.setMovementDate(appDate);
@@ -1910,10 +1920,13 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					amountWaived = advise.getBalanceAmt();
 					advise.setBalanceAmt(BigDecimal.ZERO);
 					curActualwaivedAmt = BigDecimal.ZERO;
+					taxSplit = getExclusiveTax(advise, gstPercentages);
 				}
 
-				taxSplit = GSTCalculator.getExclusiveGST(amountWaived, gstPercentages);
-				waiverdetail.setCurrWaiverAmount(amountWaived.add(taxSplit.gettGST()));
+				if (amountWaived.compareTo(BigDecimal.ZERO) > 0) {
+					taxSplit = GSTCalculator.getInclusiveGST(curwaivedAmt, gstPercentages);
+					waiverdetail.setCurrWaiverAmount(amountWaived.add(taxSplit.gettGST()));
+				}
 			} else {
 				if (advise.getBalanceAmt().compareTo(curwaivedAmt) >= 0) {
 					advise.setWaivedAmount(advise.getWaivedAmount().add(curwaivedAmt));
@@ -1936,7 +1949,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			}
 
 			// Taxes Splitting
-			taxHeader = taxSplitting(gstPercentages, taxSplit, advise);
+			if (taxSplit != null) {
+				taxHeader = taxSplitting(gstPercentages, taxSplit, advise);
+			}
 
 		} else {
 
@@ -1998,6 +2013,17 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		return null;
+	}
+
+	private TaxAmountSplit getExclusiveTax(ManualAdvise advise, Map<String, BigDecimal> gstPercentages) {
+		TaxAmountSplit taxSplit = GSTCalculator.getExclusiveGST(advise.getAdviseAmount(), gstPercentages);
+
+		taxSplit.setcGST(taxSplit.getcGST().subtract(advise.getPaidCGST()).subtract(advise.getWaivedCGST()));
+		taxSplit.setsGST(taxSplit.getsGST().subtract(advise.getPaidSGST()).subtract(advise.getWaivedSGST()));
+		taxSplit.setiGST(taxSplit.getiGST().subtract(advise.getPaidIGST()).subtract(advise.getWaivedIGST()));
+		taxSplit.setuGST(taxSplit.getuGST().subtract(advise.getPaidUGST()).subtract(advise.getWaivedUGST()));
+
+		return taxSplit;
 	}
 
 	private TaxHeader taxSplitting(Map<String, BigDecimal> gstPercentages, TaxAmountSplit taxSplit,
@@ -2487,8 +2513,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		this.receiptCalculator = receiptCalculator;
 	}
 
-	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
-		this.repayPostingUtil = repayPostingUtil;
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
 	}
 
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
@@ -2511,4 +2537,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
+	@Autowired
+	public void setLoanPaymentService(LoanPaymentService loanPaymentService) {
+		this.loanPaymentService = loanPaymentService;
+	}
 }

@@ -5,11 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.backend.model.applicationmaster.ClosureType;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.ReceiptAPIRequest;
+import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinReceiptHeaderDAO {
@@ -80,10 +82,6 @@ public interface FinReceiptHeaderDAO {
 
 	List<Long> getInProcessMultiReceiptRecord();
 
-	boolean isChequeExists(String reference, String paytypeCheque, String chequeNo, String favourNumber, String type);
-
-	boolean isOnlineExists(String reference, String subReceiptMode, String tranRef, String type);
-
 	String getLoanReferenc(String reference, String receiptFileName);
 
 	boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type);
@@ -117,4 +115,30 @@ public interface FinReceiptHeaderDAO {
 	List<FinReceiptHeader> getInprocessReceipts(long finID);
 
 	List<FinReceiptHeader> getLastMntOn(long receiptID);
+
+	ClosureType getClosureType(String closureType);
+
+	FinReceiptHeader getReceiptById(long receiptId);
+
+	FinReceiptHeader getInititatedReceipts(String reference, String type, String receiptPurpose);
+
+	String getCustCIF(String finRef);
+
+	boolean isReceiptExistsByOnlineAndMob(String reference, long receiptId);
+
+	FinReceiptHeader getReceiptHeader(long receiptId);
+
+	boolean isReceiptExists(ReceiptUploadDetail rud, String type);
+
+	boolean isChequeExists(ReceiptUploadDetail rud);
+
+	boolean isOnlineExists(ReceiptUploadDetail rud);
+
+	int isReceiptExists(String finreference, long receiptId);
+
+	int updateUTRNum(long receiptId, String utrNum, String receiptMode);
+
+	void updateReceiptHeader(long receiptId, String utrNum);
+
+	String getReceiptMode(long receiptId);
 }

@@ -147,9 +147,9 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			saveUserDivisions(securityUser, tableType.getSuffix(), null);
 		}
 
-		List<AuditDetail> userDivBranchs = securityUser.getAuditDetailMap().get("UserDivBranchs");
-		if (CollectionUtils.isNotEmpty(userDivBranchs)) {
-			auditDetails.addAll(processingDetailList(userDivBranchs, tableType.getSuffix(), securityUser));
+		List<AuditDetail> auditDtls = auditHeader.getAuditDetails();
+		if (CollectionUtils.isNotEmpty(auditDtls)) {
+			auditDetails.addAll(processingDetailList(auditDtls, tableType.getSuffix(), securityUser));
 		}
 
 		List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
@@ -306,6 +306,9 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			if (deleteRecord) {
 				if (recordExist != null) {
 					getSecurityUsersDAO().deleteDivBranchDetails(securityUserDivBranch, type);
+				} else if ((securityUserDivBranch.getUserBranch() != null) && (recordExist == null)) {
+					String tableType = "";
+					securityUsersDAO.deleteDivBranchDetails(securityUserDivBranch, tableType);
 				}
 			}
 
@@ -371,9 +374,10 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 		if (securityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			auditDetails.addAll(deleteDivBranchs(securityUser.getSecurityUserDivBranchList(), "", tranType));
-			securityUsersDAO.delete(securityUser, "");
+			securityUser.setUsrEnabled(false);
+			securityUser.setDeleted(true);
 
+			securityUsersDAO.markAsDelete(securityUser, "");
 		} else {
 			securityUser.setRoleCode("");
 			securityUser.setNextRoleCode("");
@@ -1072,7 +1076,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 		if (securityUser.isUsrEnabled()) {
 			try {
-				License.validateLicensedUsers(securityUsersDAO.getActiveUsersCount(securityUser.getId()));
+				// License.validateLicensedUsers(securityUsersDAO.getActiveUsersCount(securityUser.getId()));
 			} catch (LicenseException e) {
 				auditDetail.setErrorDetail(new ErrorDetail(e.getErrorCode(), e.getErrorMessage(), null));
 			}

@@ -56,6 +56,78 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="EP#3496.2.1" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="AddressLine1" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.2.2" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="AddressLine2" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.2.3" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="AddressLine3" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.2.4" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="City" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.2.5" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="State" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.2.6" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="Country" type="CHAR(2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.2.7" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="PincodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.2.8" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="ManufacPAN" type="VARCHAR(10)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.2.9" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="GstInNumber" type="VARCHAR(15)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.2.10" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="ManfMobileNo" type="VARCHAR(15)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.2.11" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="ManfEmailId" type="VARCHAR(50)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.2.12" author="Gopal.p">
+		<addColumn tableName="CD_MANUFACTURERS">
+			<column name="ManfacContactName" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="EP#3496.3" author="Gopal.p">
 		<addPrimaryKey tableName="CD_Manufacturers" columnNames="ManufacturerId"
@@ -85,13 +157,120 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="EP#3496.4.1" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="AddressLine1" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.4.2" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="AddressLine2" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.4.3" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="AddressLine3" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.4.4" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="City" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.4.5" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="State" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.4.6" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="Country" type="CHAR(2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.4.7" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="PincodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="EP#3496.4.8" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="ManufacPAN" type="VARCHAR(10)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.4.9" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="GstInNumber" type="VARCHAR(15)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.4.10" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="ManfMobileNo" type="VARCHAR(15)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.4.11" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="ManfEmailId" type="VARCHAR(50)" />
+		</addColumn>
+		</changeSet>
+	
+	<changeSet id="EP#3496.4.12" author="Gopal.p">
+		<addColumn tableName="CD_Manufacturers_Temp">
+			<column name="ManfacContactName" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="EP#3496.5" author="Gopal.p">
 		<addPrimaryKey tableName="CD_Manufacturers_Temp" columnNames="ManufacturerId"
 			constraintName="PK_CD_MANUFACTURER_TEMP_ID" />
 	</changeSet>
+	
+	<changeSet id="EP#3496.5.1" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_CD_MNFCTRERS_PID" referencedTableName="PINCODES"
+			referencedColumnNames="PinCodeId" baseTableName="CD_MANUFACTURERS" baseColumnNames="PinCodeId" />
+	</changeSet>
 
-	<changeSet id="EP#3496.6_pre" author="vijaya.a" dbms="postgresql">
+	<changeSet id="EP#3496.5.2" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_CD_MNFCTRERS_CNTRYVSPROV"
+			referencedTableName="RMTCOUNTRYVSPROVINCE" referencedColumnNames="CPCOUNTRY,CPPROVINCE"
+			baseTableName="CD_MANUFACTURERS" baseColumnNames="Country,State" />
+	</changeSet>
+
+	<changeSet id="EP#3496.5.3" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_CD_MNFCTRERS_CITY"
+			referencedTableName="RMTPROVINCEVSCITY" referencedColumnNames="PCCITY" baseTableName="CD_MANUFACTURERS"
+			baseColumnNames="City" />
+	</changeSet>
+
+	<changeSet id="EP#3496.5.4" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_CD_MNFCTRERS_T_PID" referencedTableName="PINCODES"
+			referencedColumnNames="PinCodeId" baseTableName="CD_MANUFACTURERS_TEMP" baseColumnNames="PinCodeId" />
+	</changeSet>
+
+	<changeSet id="EP#3496.5.5" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_CD_MNFCTRERS_T_CNTRYVSPROV"
+			referencedTableName="RMTCOUNTRYVSPROVINCE" referencedColumnNames="CPCOUNTRY,CPPROVINCE"
+			baseTableName="CD_MANUFACTURERS_TEMP" baseColumnNames="Country,State" />
+	</changeSet>
+
+	<changeSet id="EP#3496.5.6" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_CD_MNFCTRERS_T_CITY"
+			referencedTableName="RMTPROVINCEVSCITY" referencedColumnNames="PCCITY" baseTableName="CD_MANUFACTURERS_TEMP"
+			baseColumnNames="City" />
+	</changeSet>
+	
+
+	<changeSet id="EP#3496.6.1_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cd_manufacturers_view');
@@ -99,13 +278,29 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="EP#3496.6" author="Gopal.p">
+	<changeSet id="EP#3496.6.1" author="Gopal.p">
 		<createView viewName="CD_MANUFACTURERS_VIEW" replaceIfExists="true">
 			<![CDATA[	
 				SELECT T1.MANUFACTURERID,
 					T1.NAME,
 					T1.DESCRIPTION,
 					T1.CHANNEL,
+					T1.ADDRESSLINE1,
+	          		T1.ADDRESSLINE2,
+	          		T1.ADDRESSLINE3,
+	          		T1.CITY,
+	          		T4.PCCITYNAME LOVDESCCITYNAME,
+	          		T1.STATE,
+	          		T3.CPPROVINCENAME LOVDESCSTATENAME,
+	          		T1.COUNTRY,
+	          		T2.COUNTRYDESC LOVDESCCOUNTRYNAME,
+	          		T1.PINCODEID,
+	          		T5.AREANAME PINAREADESC,
+	          		T1.MANUFACPAN,
+	          		T1.GSTINNUMBER,
+	          		T1.MANFMOBILENO,
+	          		T1.MANFEMAILID,
+	          		T1.MANFACCONTACTNAME,
 					T1.ACTIVE,
 					T1.VERSION,
 					T1.LASTMNTBY,
@@ -116,13 +311,34 @@
 					T1.TASKID,
 					T1.NEXTTASKID,
 					T1.RECORDTYPE,
-					T1.WORKFLOWID
+					T1.WORKFLOWID,
+					T5.PINCODE
 				FROM CD_MANUFACTURERS_TEMP T1
+				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+			    LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.COUNTRY = T3.CPCOUNTRY AND T1.STATE = T3.CPPROVINCE
+			    LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.COUNTRY = T4.PCCOUNTRY AND T1.STATE = T4.PCPROVINCE AND T1.CITY = T4.PCCITY
+			    LEFT JOIN PINCODES T5 ON T5.PINCODEID = T1.PINCODEID
 				UNION ALL
 				SELECT T1.MANUFACTURERID,
 					T1.NAME,
 					T1.DESCRIPTION,
 					T1.CHANNEL,
+					T1.ADDRESSLINE1,
+	          		T1.ADDRESSLINE2,
+	          		T1.ADDRESSLINE3,
+	          		T1.CITY,
+	          		T4.PCCITYNAME LOVDESCCITYNAME,
+	          		T1.STATE,
+	          		T3.CPPROVINCENAME LOVDESCSTATENAME,
+	          		T1.COUNTRY,
+	          		T2.COUNTRYDESC LOVDESCCOUNTRYNAME,
+	          		T1.PINCODEID,
+	          		T5.AREANAME PINAREADESC,
+	          		T1.MANUFACPAN,
+	          		T1.GSTINNUMBER,
+	          		T1.MANFMOBILENO,
+	          		T1.MANFEMAILID,
+	          		T1.MANFACCONTACTNAME,
 					T1.ACTIVE,
 					T1.VERSION,
 					T1.LASTMNTBY,
@@ -133,14 +349,19 @@
 					T1.TASKID,
 					T1.NEXTTASKID,
 					T1.RECORDTYPE,
-					T1.WORKFLOWID
+					T1.WORKFLOWID,
+					T5.PINCODE
 				FROM CD_MANUFACTURERS T1
+				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+			    LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.COUNTRY = T3.CPCOUNTRY AND T1.STATE = T3.CPPROVINCE
+			    LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.COUNTRY = T4.PCCOUNTRY AND T1.STATE = T4.PCPROVINCE AND T1.CITY = T4.PCCITY
+			    LEFT JOIN PINCODES T5 ON T5.PINCODEID = T1.PINCODEID
 				WHERE NOT (EXISTS (SELECT 1 FROM CD_MANUFACTURERS_TEMP WHERE CD_MANUFACTURERS_TEMP.MANUFACTURERID = T1.MANUFACTURERID))
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="EP#3496.6_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="EP#3496.6.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cd_manufacturers_view');
@@ -148,7 +369,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="EP#3496.7_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="EP#3496.7.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cd_manufacturers_aview');
@@ -156,13 +377,29 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="EP#3496.7" author="Gopal.p">
+	<changeSet id="EP#3496.7.1" author="Gopal.p">
 		<createView viewName="CD_MANUFACTURERS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.MANUFACTURERID,
 					T1.NAME,
 					T1.DESCRIPTION,
 					T1.CHANNEL,
+					T1.ADDRESSLINE1,
+	          		T1.ADDRESSLINE2,
+	          		T1.ADDRESSLINE3,
+	          		T1.CITY,
+	          		T4.PCCITYNAME LOVDESCCITYNAME,
+	          		T1.STATE,
+	          		T3.CPPROVINCENAME LOVDESCSTATENAME,
+	          		T1.COUNTRY,
+	          		T2.COUNTRYDESC LOVDESCCOUNTRYNAME,
+	          		T1.PINCODEID,
+	          		T5.AREANAME PINAREADESC,
+	          		T1.MANUFACPAN,
+	          		T1.GSTINNUMBER,
+	          		T1.MANFMOBILENO,
+	          		T1.MANFEMAILID,
+	          		T1.MANFACCONTACTNAME,
 					T1.ACTIVE,
 					T1.VERSION,
 					T1.LASTMNTBY,
@@ -173,13 +410,18 @@
 					T1.TASKID,
 					T1.NEXTTASKID,
 					T1.RECORDTYPE,
-					T1.WORKFLOWID
+					T1.WORKFLOWID,
+					T5.PINCODE
 				FROM CD_MANUFACTURERS T1
+				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+			    LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.COUNTRY = T3.CPCOUNTRY AND T1.STATE = T3.CPPROVINCE
+			    LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.COUNTRY = T4.PCCOUNTRY AND T1.STATE = T4.PCPROVINCE AND T1.CITY = T4.PCCITY
+			    LEFT JOIN PINCODES T5 ON T5.PINCODEID = T1.PINCODEID
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="EP#3496.7_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="EP#3496.7.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cd_manufacturers_aview');
@@ -187,7 +429,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="EP#3496.8_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="EP#3496.8.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cd_manufacturers_tview');
@@ -195,13 +437,29 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="EP#3496.8" author="Gopal.p">
+	<changeSet id="EP#3496.8,1" author="Gopal.p">
 		<createView viewName="CD_MANUFACTURERS_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.MANUFACTURERID,
 					T1.NAME,
 					T1.DESCRIPTION,
 					T1.CHANNEL,
+					T1.ADDRESSLINE1,
+	          		T1.ADDRESSLINE2,
+	          		T1.ADDRESSLINE3,
+	          		T1.CITY,
+	          		T4.PCCITYNAME LOVDESCCITYNAME,
+	          		T1.STATE,
+	          		T3.CPPROVINCENAME LOVDESCSTATENAME,
+	          		T1.COUNTRY,
+	          		T2.COUNTRYDESC LOVDESCCOUNTRYNAME,
+	          		T1.PINCODEID,
+	          		T5.AREANAME PINAREADESC,
+	          		T1.MANUFACPAN,
+	          		T1.GSTINNUMBER,
+	          		T1.MANFMOBILENO,
+	          		T1.MANFEMAILID,
+	          		T1.MANFACCONTACTNAME,
 					T1.ACTIVE,
 					T1.VERSION,
 					T1.LASTMNTBY,
@@ -212,13 +470,18 @@
 					T1.TASKID,
 					T1.NEXTTASKID,
 					T1.RECORDTYPE,
-					T1.WORKFLOWID
+					T1.WORKFLOWID,
+					T5.PINCODE
 				FROM CD_MANUFACTURERS_TEMP T1
+				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+			    LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.COUNTRY = T3.CPCOUNTRY AND T1.STATE = T3.CPPROVINCE
+			    LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.COUNTRY = T4.PCCOUNTRY AND T1.STATE = T4.PCPROVINCE AND T1.CITY = T4.PCCITY
+			    LEFT JOIN PINCODES T5 ON T5.PINCODEID = T1.PINCODEID
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="EP#3496.8_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="EP#3496.8.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cd_manufacturers_tview');

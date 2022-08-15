@@ -141,6 +141,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 					this.btnImport.setDisabled(false);
 				}
 				config = dataEngineConfig.getConfigurationByName(fileConfig);
+				DISB_IMPORT_STATUS = dataEngineConfig.getLatestExecution(config.getName());
+				doFillPanel(config, DISB_IMPORT_STATUS);
 			} else {
 				this.btnImport.setDisabled(true);
 				return;

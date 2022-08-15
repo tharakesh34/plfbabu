@@ -568,12 +568,24 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 	}
 
 	@Override
-	public boolean isExistRestructureType(long rstTypeId) {
-		String sql = "Select Count(Id) from Restructure_Types Where Id = ?";
+	public boolean isExistRestructureType(long rstTypeId, boolean isStepFinance) {
+		Object object[] = new Object[] { rstTypeId };
 
-		logger.debug(Literal.SQL + sql);
+		StringBuilder sql = new StringBuilder("Select Count(*) from Restructure_Types Where id = ?");
 
-		return this.jdbcOperations.queryForObject(sql, Boolean.class, rstTypeId);
+		if (isStepFinance) {
+			sql.append(" and alwStep = ?");
+			object = new Object[] { rstTypeId, isStepFinance };
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Boolean.class, object);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
 	}
 
 	@Override

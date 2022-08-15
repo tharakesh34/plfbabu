@@ -50,6 +50,7 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -226,8 +227,13 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		registerButton(button_ReceiptList_ReceiptSearchDialog);
 
-		registerField("receiptID", listheader_ReceiptId, SortOrder.ASC, receiptId, sortOperator_receiptId,
-				Operators.NUMERIC);
+		if (!enqiryModule) {
+			registerField("receiptID", listheader_ReceiptId, SortOrder.ASC, receiptId, sortOperator_receiptId,
+					Operators.NUMERIC);
+		} else {
+			registerField("receiptID", listheader_ReceiptId, SortOrder.NONE, receiptId, sortOperator_receiptId,
+					Operators.NUMERIC);
+		}
 		registerField("receiptDate", listheader_ReceiptDate, SortOrder.NONE, receiptDate, sortOperator_receiptDate,
 				Operators.DATE);
 		registerField("receivedDate", listheader_ReceivedDate, SortOrder.NONE, receivedDate, sortOperator_receiptDate,
@@ -297,7 +303,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			if (filter != null) {
 
 				if (filter.getProperty().equals("receiptAmount")) {
-					filter.setValue(CurrencyUtil.unFormat((BigDecimal) filter.getValue(), 2));
+					filter.setValue(PennantApplicationUtil.unFormateAmount((BigDecimal) filter.getValue(),
+							PennantConstants.defaultCCYDecPos));
 				}
 
 				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
@@ -401,7 +408,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		// TODO CH : Static List method should be changed to Receipt Modes and
 		// Sub receipt mode should be available for filter and list box
-		fillComboBox(receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
+		fillComboBox(receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), ",PRESENT,");
 		fillComboBox(receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
 
 		this.finType.setModuleName("FinanceType");

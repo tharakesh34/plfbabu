@@ -54,4 +54,5 @@ public interface BankDetailService {
 
 	boolean isBankCodeExits(String bankCode, String string, boolean active);
 
+	BankDetail getAccNoLengths(String bankCode);
 }

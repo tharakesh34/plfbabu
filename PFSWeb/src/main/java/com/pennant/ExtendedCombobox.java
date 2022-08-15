@@ -93,6 +93,8 @@ public class ExtendedCombobox extends Hbox {
 
 	private boolean multySelection;
 	private transient Map<String, Object> selectedValues = new HashMap<>();
+	/** For Duplicate Records To Identify setting Filter Columns. **/
+	private String[] filterColumns;
 
 	public List<?> getList() {
 		return list;
@@ -498,9 +500,65 @@ public class ExtendedCombobox extends Hbox {
 			return;
 		}
 
+		Object object2 = this.object;
 		this.object = null;
 		final SearchResult<?> searchResult = getSearchProcessor().getResults(getSearch(), false);
 		if (CollectionUtils.isNotEmpty(searchResult.getResult())) {
+			if (searchResult.getResult().size() > 1 && this.filterColumns != null) {
+				setObjectByFilters(object2, searchResult);
+			} else {
+				this.object = searchResult.getResult().get(0);
+			}
+		}
+	}
+
+	private void setObjectByFilters(Object object, SearchResult<?> searchResult) {
+		Boolean exist = false;
+
+		try {
+			for (Object result : searchResult.getResult()) {
+				if (exist) {
+					break;
+				}
+
+				for (int i = 0; i < this.filterColumns.length; i++) {
+					String fieldValue1 = null;
+					String fieldValue2 = null;
+
+					String filterColumn = filterColumns[i];
+					String fieldMethod = "get" + filterColumn.substring(0, 1).toUpperCase() + filterColumn.substring(1);
+
+					Class<?> returnType = result.getClass().getMethod(fieldMethod).getReturnType();
+					Class<?> objReturnType = object.getClass().getMethod(fieldMethod).getReturnType();
+
+					if (returnType.equals(String.class)) {
+						fieldValue1 = (String) result.getClass().getMethod(fieldMethod).invoke(result);
+					} else {
+						fieldValue1 = result.getClass().getMethod(fieldMethod).invoke(result).toString();
+					}
+
+					if (objReturnType.equals(String.class)) {
+						fieldValue2 = (String) object.getClass().getMethod(fieldMethod).invoke(object);
+					} else {
+						fieldValue2 = object.getClass().getMethod(fieldMethod).invoke(object).toString();
+					}
+
+					if (StringUtils.isNotEmpty(fieldValue1) && StringUtils.isNotEmpty(fieldValue1)
+							&& fieldValue1.equals(fieldValue2)) {
+						exist = true;
+					} else {
+						exist = false;
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		if (exist) {
+			this.object = object;
+		} else {
 			this.object = searchResult.getResult().get(0);
 		}
 	}
@@ -970,5 +1028,13 @@ public class ExtendedCombobox extends Hbox {
 
 	public void setSelectedValues(Map<String, Object> selectedValues) {
 		this.selectedValues = selectedValues;
+	}
+
+	public String[] getFilterColumns() {
+		return filterColumns;
+	}
+
+	public void setFilterColumns(String[] filterColumns) {
+		this.filterColumns = filterColumns;
 	}
 }

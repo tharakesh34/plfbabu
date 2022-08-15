@@ -17,6 +17,7 @@ public class InterfaceLogDetail implements Serializable {
 	private String status;
 	private String errorCode;
 	private String errorDesc;
+	private Long processId;
 
 	public InterfaceLogDetail() {
 		super();
@@ -109,4 +110,13 @@ public class InterfaceLogDetail implements Serializable {
 	public void setErrorDesc(String errorDesc) {
 		this.errorDesc = errorDesc;
 	}
+
+	public Long getProcessId() {
+		return processId;
+	}
+
+	public void setProcessId(Long processId) {
+		this.processId = processId;
+	}
+
 }

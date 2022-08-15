@@ -42,6 +42,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -121,7 +122,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.commitment.CommitmentService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CommitmentConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -364,10 +365,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	private Commitment commitment;
 
 	// ServiceDAOs / Domain Classes
-	private transient CustomerDetailsService customerDetailsService;
 	private transient CommitmentService commitmentService;
 	private transient PagedListService pagedListService;
 	private transient AccountsService accountsService;
+	private CustomerDataService customerDataService;
 
 	private CommitmentDAO commitmentDAO;
 
@@ -818,10 +819,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		try {
 			Customer customer = null;
 			// check Customer Data in LOCAL PFF system
-			customer = getCustomerDetailsService().getCheckCustomerByCIF(cif);
+			customer = customerDataService.getCheckCustomerByCIF(cif);
 
 			if (customer != null) {
-				customerDetails = getCustomerDetailsService().getCustomerDetailsById(customer.getId(), true, "_View");
+				customerDetails = customerDataService.getCustomerDetailsbyID(customer.getId(), true, "_View");
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -4259,14 +4260,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.collateralHeaderDialogCtrl = collateralHeaderDialogCtrl;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public List<FinFlagsDetail> getCmtFlagsDetailList() {
 		return cmtFlagsDetailList;
 	}
@@ -4294,4 +4287,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	public void setCommitmentChecklists(List<FinanceCheckListReference> collateralChecklists) {
 		this.collateralChecklists = collateralChecklists;
 	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
+	}
+
 }

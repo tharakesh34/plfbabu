@@ -33,9 +33,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -54,6 +54,10 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 
 		Listcell lc;
 		lc = new Listcell(presentmentHeader.getReference());
+		lc.setParent(item);
+
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentHeader.getPresentmentType(),
+				PennantStaticListUtil.getPresetmentTypeList()));
 		lc.setParent(item);
 
 		lc = new Listcell(presentmentHeader.getEntityCode());

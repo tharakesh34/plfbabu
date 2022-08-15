@@ -203,14 +203,11 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 				totOutStanding = totOutStanding.add(tdsReceivable);// TDS
 																	// Receivable
-				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinID(),
-						FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any
-																		// Charges
-				if (CollectionUtils.isNotEmpty(advises)) {
-					for (ManualAdvise manualAdvise : advises) {
-						totOutStanding = totOutStanding.add(manualAdvise.getAdviseAmount()
-								.subtract(manualAdvise.getPaidAmount().subtract(manualAdvise.getWaivedAmount())));
-					}
+				List<ManualAdvise> advises = manualAdviseDAO.getReceivableAdvises(financeMain.getFinID(), "");
+
+				for (ManualAdvise manualAdvise : advises) {
+					totOutStanding = totOutStanding.add(manualAdvise.getAdviseAmount()
+							.subtract(manualAdvise.getPaidAmount().subtract(manualAdvise.getWaivedAmount())));
 				}
 			}
 			logger.debug("totOutStanding " + totOutStanding);

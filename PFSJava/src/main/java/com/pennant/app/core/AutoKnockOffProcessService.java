@@ -39,15 +39,21 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.AutoKnockOffData;
@@ -70,7 +76,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
-public class AutoKnockOffProcessService extends ServiceHelper {
+public class AutoKnockOffProcessService {
+	private static Logger logger = LogManager.getLogger(AutoKnockOffProcessService.class);
 
 	private transient RepaymentProcessUtil repaymentProcessUtil;
 	private transient ReceiptCalculator receiptCalculator;
@@ -80,6 +87,10 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 	private transient FinanceProfitDetailDAO profitDetailsDAO;
 	private transient EntityDAO entityDAO;
 	private transient ManualAdviseDAO manualAdviseDAO;
+	private CustomerDAO customerDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	public void processAutoKnockOff(AutoKnockOffData knockOffData) {
 		String finreference = knockOffData.getFinReference();
@@ -238,6 +249,8 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 			allocate.setBalance(allocate.getTotalDue());
 			receiptCalculator.resetPaidAllocations(allocate);
 		}
+
+		repaymentProcessUtil.prepareFinDueData(receiptData);
 
 		receiptCalculator.initiateReceipt(receiptData, false);
 		fsd.setFinanceScheduleDetails(schedules);
@@ -429,5 +442,21 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 }

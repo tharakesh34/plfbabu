@@ -33,6 +33,7 @@ public class OtherFinanceDetail {
 	private String finReference;
 	private String finType;
 	private String applicantType;
+	private String custCIF;
 
 	public OtherFinanceDetail() {
 		super();
@@ -60,6 +61,14 @@ public class OtherFinanceDetail {
 
 	public void setApplicantType(String applicantType) {
 		this.applicantType = applicantType;
+	}
+
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
 	}
 
 }

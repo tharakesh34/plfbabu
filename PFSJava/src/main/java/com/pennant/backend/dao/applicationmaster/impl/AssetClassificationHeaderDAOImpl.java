@@ -45,6 +45,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -87,70 +88,13 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		return header;
 	}
 
-	private StringBuilder getSQLQuery(String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, Code, Description, StageOrder, Active, Version, LastMntOn, LastMntBy, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NpaTemplateId");
-
-		if (type.contains("View")) {
-			sql.append(", NpaTemplateDesc, NpaTemplateCode");
-		}
-
-		sql.append(" from ASSET_CLSSFICATN_HEADER");
-		sql.append(type);
-		return sql;
-	}
-
-	@Override
-	public List<AssetClassificationHeader> getAssetClassificationHeaderByTemplate(long templateId, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = getSQLQuery(type);
-		sql.append("  Where NpaTemplateId = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setLong(index, templateId);
-		}, (rs, rowNum) -> {
-
-			AssetClassificationHeader ah = new AssetClassificationHeader();
-
-			ah.setId(rs.getLong("Id"));
-			ah.setCode(rs.getString("Code"));
-			ah.setDescription(rs.getString("Description"));
-			ah.setStageOrder(rs.getInt("StageOrder"));
-			ah.setActive(rs.getBoolean("Active"));
-			ah.setVersion(rs.getInt("Version"));
-			ah.setLastMntOn(rs.getTimestamp("LastMntOn"));
-			ah.setLastMntBy(rs.getLong("LastMntBy"));
-			ah.setRecordStatus(rs.getString("RecordStatus"));
-			ah.setRoleCode(rs.getString("RoleCode"));
-			ah.setNextRoleCode(rs.getString("NextRoleCode"));
-			ah.setTaskId(rs.getString("TaskId"));
-			ah.setNextTaskId(rs.getString("NextTaskId"));
-			ah.setRecordType(rs.getString("RecordType"));
-			ah.setWorkflowId(rs.getLong("WorkflowId"));
-			ah.setNpaTemplateId(rs.getLong("NpaTemplateId"));
-
-			if (type.contains("View")) {
-				ah.setNpaTemplateDesc(rs.getString("NpaTemplateDesc"));
-				ah.setNpaTemplateCode(rs.getString("NpaTemplateCode"));
-			}
-
-			return ah;
-
-		});
-	}
-
 	@Override
 	public boolean isDuplicateKey(long id, String code, int stageOrder, Long npaTemplateId, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "code = :code AND stageOrder = :stageOrder AND npaTemplateId = :npaTemplateId AND id != :id";
+		String whereClause = "code = :code AND stageOrder = :stageOrder AND NpaTemplateId = :NpaTemplateId AND id != :id";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -171,7 +115,7 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		paramSource.addValue("id", id);
 		paramSource.addValue("code", code);
 		paramSource.addValue("stageOrder", stageOrder);
-		paramSource.addValue("npaTemplateId", npaTemplateId);
+		paramSource.addValue("NpaTemplateId", npaTemplateId);
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -196,13 +140,13 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into ASSET_CLSSFICATN_HEADER");
 		sql.append(tableType.getSuffix());
-		sql.append(" (id, code, description, stageOrder, active, Version , LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(", npaTemplateId)");
+		sql.append(" (id, code, description, stageOrder, active, Version , LastMntBy, LastMntOn,");
+		sql.append(
+				"  RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NpaTemplateId)");
 		sql.append(" values(");
-		sql.append(" :id, :code, :description, :stageOrder, :active, :Version , :LastMntBy, :LastMntOn");
-		sql.append(", :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
-		sql.append(", :npaTemplateId)");
+		sql.append(" :id, :code, :description, :stageOrder, :active, :Version , :LastMntBy, :LastMntOn, ");
+		sql.append(
+				" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :NpaTemplateId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -400,8 +344,12 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 
 		RowMapper<AssetClassificationDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationDetail.class);
-
-		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		try {
+			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	public AssetClassificationDetail getAssetClassificationDetail(long id, String type) {
@@ -454,7 +402,15 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		source = new MapSqlParameterSource();
 		source.addValue("Code", code);
 
-		return jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
+		try {
+			if (jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0) {
+				return true;
+			}
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return false;
 	}
 
 	@Override
@@ -464,15 +420,22 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		MapSqlParameterSource source = null;
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From ASSET_CLSSFICATN_HEADER");
 		selectSql.append(type.getSuffix());
-		selectSql.append(" Where StageOrder = :StageOrder AND npaTemplateId = :npaTemplateId");
+		selectSql.append(" Where StageOrder = :StageOrder AND NpaTemplateId = :NpaTemplateId");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("StageOrder", stageOrder);
-		source.addValue("npaTemplateId", npaTemplateId);
-
-		return jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0;
+		source.addValue("NpaTemplateId", npaTemplateId);
+		try {
+			if (jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0) {
+				return true;
+			}
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return false;
 	}
 
 	@Override
@@ -499,7 +462,12 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		RowMapper<AssetClassificationDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationDetail.class);
 
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override
@@ -519,6 +487,59 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
+	}
+
+	@Override
+	public List<AssetClassificationHeader> getAssetClassificationHeaderByTemplate(long templateId, String type) {
+		StringBuilder sql = getSQLQuery(type);
+		sql.append("  Where NpaTemplateId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, templateId);
+		}, (rs, rowNum) -> {
+			AssetClassificationHeader ah = new AssetClassificationHeader();
+
+			ah.setId(rs.getLong("Id"));
+			ah.setCode(rs.getString("Code"));
+			ah.setDescription(rs.getString("Description"));
+			ah.setStageOrder(rs.getInt("StageOrder"));
+			ah.setActive(rs.getBoolean("Active"));
+			ah.setVersion(rs.getInt("Version"));
+			ah.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ah.setLastMntBy(rs.getLong("LastMntBy"));
+			ah.setRecordStatus(rs.getString("RecordStatus"));
+			ah.setRoleCode(rs.getString("RoleCode"));
+			ah.setNextRoleCode(rs.getString("NextRoleCode"));
+			ah.setTaskId(rs.getString("TaskId"));
+			ah.setNextTaskId(rs.getString("NextTaskId"));
+			ah.setRecordType(rs.getString("RecordType"));
+			ah.setWorkflowId(rs.getLong("WorkflowId"));
+			ah.setNpaTemplateId(rs.getLong("NpaTemplateId"));
+
+			if (type.contains("View")) {
+				ah.setNpaTemplateDesc(rs.getString("NpaTemplateDesc"));
+				ah.setNpaTemplateCode(rs.getString("NpaTemplateCode"));
+			}
+
+			return ah;
+		});
+	}
+
+	private StringBuilder getSQLQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, Code, Description, StageOrder, Active, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NpaTemplateId");
+
+		if (type.contains("View")) {
+			sql.append(", NpaTemplateDesc, NpaTemplateCode");
+		}
+
+		sql.append(" from ASSET_CLSSFICATN_HEADER");
+		sql.append(type);
+
+		return sql;
 	}
 
 }

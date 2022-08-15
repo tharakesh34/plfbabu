@@ -9,13 +9,21 @@
 		height="350px" sizable="false" title="${c:l('window_AddDisbursementDialog.title')}" closable="true">
 
 		<borderlayout id="borderlayoutAddDisbursement">
-			<center border="none" autoscroll="true">
+			<center border="none" autoscroll="false">
+				<tabbox id="tabBoxIndexCenter" width="99%"
+					height="100%">
+					<tabs id="tabsIndexCenter">
+						<tab id="disbursementDetailsTab"
+							label="${c:l('label_AddDisbursementDialog_DisbursementDetails')}" />
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel >
 
-				<groupbox id="gb_DisbursementDetails" height="270px" style="border:1px solid #F38C60;">
+				<groupbox id="gb_DisbursementDetails" height="240px" style="border:1px solid #F38C60;">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
 							<column width="200px" />
-							<column width="360px" />
+							<column width="450px" />
 						</columns>
 						<rows>
 							<row>
@@ -104,9 +112,12 @@
 						</rows>
 					</grid>
 				</groupbox>
+				</tabpanel>
+					</tabpanels>
+				</tabbox>
 			</center>
 			<south border="none" margins="1,0,0,0" size="30px" splittable="false">
-				<div id="divSouth" align="left" width="100%">
+				<div id="divSouth" align="left" width="99%">
 					<grid>
 						<rows>
 							<row valign="middle">

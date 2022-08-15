@@ -3996,7 +3996,8 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<!-- Need to delete the duplicate data while execting script  -->
 	<changeSet author="Sai Varun.R" id="DE#874.1">
 		<addUniqueConstraint columnNames="FieldCode,FieldCodeValue" constraintName="uk_rmtlovfielddetail"
 			tableName="RMTLOVFIELDDETAIL" />

@@ -8,10 +8,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 import com.pennanttech.ws.model.presentment.PresentmentResponse;
 
 @Produces(MediaType.APPLICATION_JSON)

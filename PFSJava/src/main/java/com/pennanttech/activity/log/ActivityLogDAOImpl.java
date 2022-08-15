@@ -1,6 +1,6 @@
 package com.pennanttech.activity.log;
 
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,8 +70,7 @@ public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLo
 
 	@Override
 	public List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo,
-			long instructionUID) throws SQLException {
-		logger.debug(Literal.ENTERING);
+			long instructionUID) {
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" A.AuditId, A.Lastmnton AuditDate, A.Version, A.RoleCode, A.NextRoleCode");
@@ -79,24 +78,29 @@ public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLo
 		sql.append(", A.lastMntBy, U.UsrLogin");
 		sql.append(" From ADT").append(tableName).append(" A");
 
-		switch (App.DATABASE) {
-		case ORACLE:
-			String userName = basicDataSource.getConnection().getMetaData().getUserName();
-			sql.append(" Inner Join ").append(userName).append(".Secusers U ON U.usrid = A.lastmntby");
-			break;
-		case MY_SQL:
-			// FIXME for sql server
-			break;
-		case POSTGRES:
-			String schemaName = basicDataSource.getConnection().getSchema();
-			sql.append(" Inner Join ").append(schemaName).append(".Secusers U ON U.usrid = A.lastmntby");
-			break;
-		default:
-			sql.append(" Inner Join Secusers U ON U.usrid = A.lastmntby");
-			break;
+		try {
+			switch (App.DATABASE) {
+			case ORACLE:
+				String userName = basicDataSource.getConnection().getMetaData().getUserName();
+				sql.append(" Inner Join ").append(userName).append(".Secusers U ON U.usrid = A.lastmntby");
+				break;
+			case MY_SQL:
+				// FIXME for sql server
+				break;
+			case POSTGRES:
+				String schemaName = basicDataSource.getConnection().getSchema();
+				sql.append(" Inner Join ").append(schemaName).append(".Secusers U ON U.usrid = A.lastmntby");
+				break;
+			default:
+				sql.append(" Inner Join Secusers U ON U.usrid = A.lastmntby");
+				break;
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return new ArrayList<>();
 		}
 
-		sql.append(" Where A.reference = ? and A.seqNo = ? and instructionUID = ?");
+		sql.append(" Where A.reference = ? and A.seqNo = ? and InstructionUID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -104,6 +108,64 @@ public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLo
 			ps.setString(1, reference);
 			ps.setLong(2, seqNo);
 			ps.setLong(3, instructionUID);
+		}, (rs, rowNum) -> {
+			Activity activity = new Activity();
+
+			activity.setAuditId(rs.getLong("AuditId"));
+			activity.setAuditDate(rs.getTimestamp("AuditDate"));
+			activity.setVersion(rs.getInt("Version"));
+			activity.setRoleCode(rs.getString("RoleCode"));
+			activity.setNextRoleCode(rs.getString("NextRoleCode"));
+			activity.setRecordStatus(rs.getString("RecordStatus"));
+			activity.setTaskId(rs.getString("TaskId"));
+			activity.setNextTaskId(rs.getString("NextTaskId"));
+			activity.setRecordType(rs.getString("RecordType"));
+			activity.setWorkflowId(rs.getLong("WorkflowId"));
+			activity.setLastMntBy(rs.getLong("lastMntBy"));
+			activity.setUserLogin(rs.getString("UsrLogin"));
+
+			return activity;
+		});
+
+		return list.stream().sorted((l1, l2) -> Long.compare(l1.getAuditId(), l2.getAuditId()))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Activity> getManualAdviseActivitiyLog(String tableName, String reference, long adviseID) {
+		StringBuilder sql = new StringBuilder("Select A.AuditId, A.Lastmnton AuditDate, A.Version, A.RoleCode");
+		sql.append(", A.NextRoleCode, A.RecordStatus, A.TaskId, A.NextTaskId, A.RecordType, A.WorkflowId");
+		sql.append(", A.lastMntBy, U.UsrLogin from Adt").append(tableName).append(" A");
+
+		try {
+			switch (App.DATABASE) {
+			case ORACLE:
+				String userName = basicDataSource.getConnection().getMetaData().getUserName();
+				sql.append(" Inner Join ").append(userName).append(".Secusers U ON U.usrid = A.lastmntby");
+				break;
+			case MY_SQL:
+				// FIXME for sql server
+				break;
+			case POSTGRES:
+				String schemaName = basicDataSource.getConnection().getSchema();
+				sql.append(" Inner Join ").append(schemaName).append(".Secusers U ON U.usrid = A.lastmntby");
+				break;
+			default:
+				sql.append(" Inner Join Secusers U ON U.usrid = A.lastmntby");
+				break;
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return new ArrayList<>();
+		}
+
+		sql.append(" where A.FinReference = ? And AdviseID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<Activity> list = jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, reference);
+			ps.setLong(2, adviseID);
 		}, (rs, rowNum) -> {
 			Activity activity = new Activity();
 

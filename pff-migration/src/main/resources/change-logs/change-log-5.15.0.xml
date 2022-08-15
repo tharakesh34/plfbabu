@@ -1313,17 +1313,17 @@
 				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('90500', 'EN', 'E', '{0}  is Linked with {1}  . Please Delink to Proceed ', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);			
 		    ]]>
 		</sql>
-	</changeSet>
-
-	<changeSet id="80_pre" author="Gopal.p" dbms="postgresql">
+	</changeSet>	
+	
+	<changeSet id="80.1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'linkedfinances');
-				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_temp');
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_aview');
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_tview');
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_view');
 			]]>
 		</sql>
 	</changeSet>
-	
 	
 	<changeSet id="80.1_pre" author="Gopal.p">
 		<createView viewName="LINKEDFINANCES_AVIEW" replaceIfExists="true">
@@ -1457,6 +1457,25 @@
 				WHERE NOT EXISTS (SELECT 1 FROM LINKEDFINANCES_TEMP WHERE  FINREFERENCE = T1.FINREFERENCE)
 			]]>
 		</createView>
+	</changeSet>
+	
+	<changeSet id="80.1.1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'linkedfinances_view');
+				select deps_restore_dependencies ('plf', 'linkedfinances_tview');
+				select deps_restore_dependencies ('plf', 'linkedfinances_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="80_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances');
+				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_temp');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="80.1" author="Gopal.p">

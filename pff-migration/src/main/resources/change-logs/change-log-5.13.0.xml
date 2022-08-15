@@ -3657,12 +3657,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1952.8" author="gopalaswamy.M" dbms="oracle">
+	<changeSet id="ST#1952.8_post" author="gopalaswamy.M" dbms="oracle">
 		<sql>
-			<![CDATA[
-				UPDATE RECEIPTUPLOADDETAILS tt SET    tt.ProcessingStatus = (SELECT (CASE WHEN UploadStatus = 'SUCCESS' THEN 2
-																						  WHEN UploadStatus = 'FAILURE' THEN 3 
-                                                                                          ELSE 0 END) UploadStatus FROM RECEIPTUPLOADDETAILS);
+			<![CDATA[	
+					MERGE INTO RECEIPTUPLOADDETAILS T1
+					USING ( select REFERENCE,UPLOADDETAILID,UPLOADHEADERID,CASE WHEN UploadStatus = 'SUCCESS' THEN 2
+																				WHEN UploadStatus = 'FAILURE' THEN 3 	
+																				ELSE 0 END UploadStatus from RECEIPTUPLOADDETAILS ) T2
+					ON (T1.REFERENCE = T2.REFERENCE and t1.UPLOADDETAILID=t2.UPLOADDETAILID and t1.UPLOADHEADERID=t2.UPLOADHEADERID )
+					WHEN MATCHED THEN UPDATE SET T1.ProcessingStatus = T2.UploadStatus;
 			]]>
 		</sql>
 	</changeSet>

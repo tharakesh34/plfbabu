@@ -44,6 +44,7 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -171,7 +172,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		this.stepNumber.setMaxlength(2);
+		this.stepNumber.setMaxlength(3);
 		this.tenorSplitPerc.setMaxlength(6);
 		this.emiSplitPerc.setMaxlength(6);
 
@@ -355,11 +356,11 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 			wve.add(we);
 		}
 		try {
-			if (this.emiSplitPerc.intValue() == 0) {
+			if (this.emiSplitPerc.intValue() == 0 && !ImplementationConstants.ALLOW_ZERO_STEP_AMOUNT_PERC) {
 				throw new WrongValueException(this.emiSplitPerc, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_StepPolicyDetailDialog_EMISplitPerc.value") }));
 			}
-			if (this.emiSplitPerc.getValue().compareTo(BigDecimal.ZERO) != 1) {
+			if (this.emiSplitPerc.getValue().compareTo(BigDecimal.ZERO) < 0) {
 				throw new WrongValueException(this.emiSplitPerc, Labels.getLabel("FIELD_NO_NEGATIVE",
 						new String[] { Labels.getLabel("label_StepPolicyDetailDialog_EMISplitPerc.value") }));
 			}

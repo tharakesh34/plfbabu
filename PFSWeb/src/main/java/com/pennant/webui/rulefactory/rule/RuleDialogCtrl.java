@@ -945,89 +945,93 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * set the Java Script Builder Component
 	 */
 	private void doSetRuleBuilder() {
+		String ruleModule = this.rule.getRuleModule();
+
 		// Rule Building
-		this.javaScriptSqlRule.setModule(this.rule.getRuleModule());
+		this.javaScriptSqlRule.setModule(ruleModule);
 		this.javaScriptSqlRule.setMode(RuleConstants.RULEMODE_SELECTFIELDLIST);
 		this.javaScriptSqlRule.setNoOfRowsVisible(this.grid_basicDetail.getRows().getVisibleItemCount());
 
 		String returnType = this.returnType.getSelectedItem().getValue().toString();
-		RuleReturnType ruleReturnType = null;
 		List<JSRuleReturnType> jsRuleReturnTypeList = new ArrayList<JSRuleReturnType>();
 
 		this.space_DeviationType.setSclass("");
 		this.deviationType.setErrorMessage("");
 
-		if (!StringUtils.equals(returnType, PennantConstants.List_Select)) {
-			if (StringUtils.equals(returnType, RuleReturnType.BOOLEAN.value())) {
+		RuleReturnType ruleReturnType = null;
+		if (!PennantConstants.List_Select.equals(returnType)) {
+			if (RuleReturnType.BOOLEAN.value().equals(returnType)) {
 				ruleReturnType = RuleReturnType.BOOLEAN;
-			} else if (StringUtils.equals(returnType, RuleReturnType.DECIMAL.value())) {
+			} else if (RuleReturnType.DECIMAL.value().equals(returnType)) {
 				ruleReturnType = RuleReturnType.DECIMAL;
-			} else if (StringUtils.equals(returnType, RuleReturnType.STRING.value())) {
+			} else if (RuleReturnType.STRING.value().equals(returnType)) {
 				ruleReturnType = RuleReturnType.STRING;
-			} else if (StringUtils.equals(returnType, RuleReturnType.CALCSTRING.value())) {
+			} else if (RuleReturnType.CALCSTRING.value().equals(returnType)) {
 				ruleReturnType = RuleReturnType.CALCSTRING;
-			} else if (StringUtils.equals(returnType, RuleReturnType.INTEGER.value())) {
+			} else if (RuleReturnType.INTEGER.value().equals(returnType)) {
 				ruleReturnType = RuleReturnType.INTEGER;
-			} else if (StringUtils.equals(returnType, RuleReturnType.OBJECT.value())) {
+			} else if (RuleReturnType.OBJECT.value().equals(returnType)) {
 				ruleReturnType = RuleReturnType.OBJECT;
-				this.space_DeviationType.setSclass(PennantConstants.mandateSclass);
-				String deviationTypeValue = this.deviationType.getSelectedItem().getValue();
+			}
+		}
 
-				if (StringUtils.equals(deviationTypeValue, PennantConstants.List_Select)) {
+		if (RuleReturnType.OBJECT.value().equals(returnType)) {
+			if (this.hbox_DeviationType.isVisible()) {
+				if (PennantConstants.List_Select.equals(this.deviationType.getSelectedItem().getValue())) {
 					throw new WrongValueException(deviationType, Labels.getLabel("Label_RuleDialog_select_list"));
-				} else {
-					List<ValueLabel> valueLabelList = new ArrayList<ValueLabel>();
-					JSRuleReturnType jsRuleReturnType = null;
-
-					if (StringUtils.equals(this.rule.getRuleModule(), RuleConstants.MODULE_ELGRULE)) {
-						jsRuleReturnType = new JSRuleReturnType();
-						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_COMBOBOX);
-						valueLabelList.add(new ValueLabel("1", "TRUE"));
-						valueLabelList.add(new ValueLabel("0", "FALSE"));
-						jsRuleReturnType.setListOfData(valueLabelList);
-
-						jsRuleReturnType.setResultLabel("result.value = ");
-
-						jsRuleReturnTypeList.add(jsRuleReturnType);
-
-						String deviationType_Label = this.deviationType.getSelectedItem().getLabel();
-						jsRuleReturnType = new JSRuleReturnType();
-
-						if (StringUtils.equals(deviationType_Label, Labels.getLabel("label_Boolean"))) {
-							jsRuleReturnType.setListOfData(valueLabelList);
-							deviationType_Label = RuleConstants.COMPONENTTYPE_COMBOBOX;
-						}
-
-						jsRuleReturnType.setResultLabel(" result.deviation = ");
-						jsRuleReturnType.setComponentType(deviationType_Label);
-
-						jsRuleReturnTypeList.add(jsRuleReturnType);
-					}
-
-					if (RuleConstants.MODULE_PROVSN.equals(this.rule.getRuleModule())) {
-
-						jsRuleReturnType = new JSRuleReturnType();
-						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_PERCENTAGE);
-						jsRuleReturnType.setResultLabel(" result.provPercentage = ");
-						jsRuleReturnTypeList.add(jsRuleReturnType);
-
-						jsRuleReturnType = new JSRuleReturnType();
-						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_DECIMAL);
-						jsRuleReturnType.setResultLabel(" result.provAmount = ");
-						jsRuleReturnTypeList.add(jsRuleReturnType);
-
-						jsRuleReturnType = new JSRuleReturnType();
-						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_PERCENTAGE);
-						jsRuleReturnType.setResultLabel(" result.vasProvPercentage = ");
-						jsRuleReturnTypeList.add(jsRuleReturnType);
-
-						jsRuleReturnType = new JSRuleReturnType();
-						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_DECIMAL);
-						jsRuleReturnType.setResultLabel(" result.vasProvAmount = ");
-						jsRuleReturnTypeList.add(jsRuleReturnType);
-
-					}
 				}
+
+				this.space_DeviationType.setSclass(PennantConstants.mandateSclass);
+			}
+
+			List<ValueLabel> valueLabelList = new ArrayList<ValueLabel>();
+			JSRuleReturnType jsRuleReturnType = null;
+
+			if (RuleConstants.MODULE_ELGRULE.equals(ruleModule)) {
+				jsRuleReturnType = new JSRuleReturnType();
+				jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_COMBOBOX);
+				valueLabelList.add(new ValueLabel("1", "TRUE"));
+				valueLabelList.add(new ValueLabel("0", "FALSE"));
+				jsRuleReturnType.setListOfData(valueLabelList);
+
+				jsRuleReturnType.setResultLabel("result.value = ");
+
+				jsRuleReturnTypeList.add(jsRuleReturnType);
+
+				String deviationType_Label = this.deviationType.getSelectedItem().getLabel();
+				jsRuleReturnType = new JSRuleReturnType();
+
+				if (StringUtils.equals(deviationType_Label, Labels.getLabel("label_Boolean"))) {
+					jsRuleReturnType.setListOfData(valueLabelList);
+					deviationType_Label = RuleConstants.COMPONENTTYPE_COMBOBOX;
+				}
+
+				jsRuleReturnType.setResultLabel(" result.deviation = ");
+				jsRuleReturnType.setComponentType(deviationType_Label);
+
+				jsRuleReturnTypeList.add(jsRuleReturnType);
+			}
+
+			if (RuleConstants.MODULE_PROVSN.equals(ruleModule)) {
+				jsRuleReturnType = new JSRuleReturnType();
+				jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_PERCENTAGE);
+				jsRuleReturnType.setResultLabel(" result.provPercentage = ");
+				jsRuleReturnTypeList.add(jsRuleReturnType);
+
+				jsRuleReturnType = new JSRuleReturnType();
+				jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_DECIMAL);
+				jsRuleReturnType.setResultLabel(" result.provAmount = ");
+				jsRuleReturnTypeList.add(jsRuleReturnType);
+
+				jsRuleReturnType = new JSRuleReturnType();
+				jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_PERCENTAGE);
+				jsRuleReturnType.setResultLabel(" result.vasProvPercentage = ");
+				jsRuleReturnTypeList.add(jsRuleReturnType);
+
+				jsRuleReturnType = new JSRuleReturnType();
+				jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_DECIMAL);
+				jsRuleReturnType.setResultLabel(" result.vasProvAmount = ");
+				jsRuleReturnTypeList.add(jsRuleReturnType);
 			}
 		}
 
@@ -1131,7 +1135,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		if (RuleConstants.MODULE_PROVSN.equals(this.rule.getRuleModule())) {
 			this.returnType.setDisabled(true);
-			this.deviationType.setDisabled(true);
+			this.hbox_DeviationType.setVisible(false);
+			this.label_DeviationType.setVisible(false);
 		}
 
 		this.seqOrder.setReadonly(isReadOnly("RuleDialog_seqOrder"));

@@ -180,7 +180,6 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		Provision provision = new Provision();
 		BeanUtils.copyProperties((Provision) auditHeader.getAuditDetail().getModelData(), provision);
 
-		provisionDAO.deleteAmounts(provision.getId(), TableType.TEMP_TAB);
 		provisionDAO.delete(provision, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(provision.getRecordType())) {
@@ -205,14 +204,11 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 				tranType = PennantConstants.TRAN_ADD;
 				provision.setRecordType("");
 				provisionDAO.save(provision, TableType.MAIN_TAB);
-				provisionDAO.saveAmounts(provision.getProvisionAmounts(), TableType.MAIN_TAB, false);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				provision.setRecordType("");
 				provisionDAO.update(provision, TableType.MAIN_TAB);
-				provisionDAO.updateAmounts(provision.getProvisionAmounts(), TableType.MAIN_TAB);
 			}
-			saveProvisionMovement(provision);
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);

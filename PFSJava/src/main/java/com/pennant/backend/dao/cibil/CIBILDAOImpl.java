@@ -26,6 +26,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -260,113 +261,76 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	@Override
 	public FinanceEnquiry getFinanceSummary(long customerId, long finID, String segmentType) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinType, cs.FinID, cs.FinReference, FinStartDate, FinApprovedDate, cs.LatestRpyDate");
-		sql.append(", RepayFrq, FinAssetValue, Future_Schedule_Prin, Instalment_Due, Instalment_Paid");
-		sql.append(", Bounce_Due, Bounce_Paid, Late_Payment_Penalty_Due, Late_Payment_Penalty_Paid");
-		sql.append(", Total_Pri_Schd, Total_Pri_Paid, Total_Pft_Schd, Total_Pft_Paid");
-		sql.append(", Excess_Amount, Excess_Amt_Paid, CurOdDays, ClosingStatus, ClosedDate");
-		sql.append(", cs.OwnerShip, NumberOfTerms, CustIncome, MaturityDate, CurReducingRate, FirstRepay");
-		sql.append(" From Cibil_Customer_Loans_View cs");
-		sql.append(" Where cs.FinID = ? and CustID = ? and cs.Segment_Type = ?");
+		sql.append(" FinID, CustId, Fintype, FinReference, FinStartDate, FinApprovedDate,");
+		sql.append(" LatestRpyDate, RepayFrq, FinAssetValue, Instalment_Paid,");
+		sql.append(" CurOdDays, MaturityDate, ClosingStatus, Ownership, NumberofTerms");
+		sql.append(" From Cibil_Customer_Loans_View");
+		sql.append(" Where FinID = ? and CustID = ? and Segment_Type = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinanceEnquiry finEnqy = new FinanceEnquiry();
-				finEnqy.setFinType(rs.getString("FinType"));
+
 				finEnqy.setFinID(rs.getLong("FinID"));
+				finEnqy.setCustID(rs.getLong("CustId"));
+				finEnqy.setFinType(rs.getString("FinType"));
 				finEnqy.setFinReference(rs.getString("FinReference"));
 				finEnqy.setFinStartDate(rs.getDate("FinStartDate"));
 				finEnqy.setFinApprovedDate(rs.getDate("FinApprovedDate"));
 				finEnqy.setLatestRpyDate(rs.getDate("LatestRpyDate"));
 				finEnqy.setRepayFrq(rs.getString("RepayFrq"));
 				finEnqy.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-				finEnqy.setFutureSchedulePrin(rs.getBigDecimal("Future_Schedule_Prin"));
-				finEnqy.setInstalmentDue(rs.getBigDecimal("Instalment_Due"));
 				finEnqy.setInstalmentPaid(rs.getBigDecimal("Instalment_Paid"));
-				finEnqy.setBounceDue(rs.getBigDecimal("Bounce_Due"));
-				finEnqy.setBouncePaid(rs.getBigDecimal("Bounce_Paid"));
-				finEnqy.setLatePaymentPenaltyDue(rs.getBigDecimal("Late_Payment_Penalty_Due"));
-				finEnqy.setLatePaymentPenaltyPaid(rs.getBigDecimal("Late_Payment_Penalty_Paid"));
-				finEnqy.setTotalPriSchd(rs.getBigDecimal("Total_Pri_Schd"));
-				finEnqy.setTotalPriPaid(rs.getBigDecimal("Total_Pri_Paid"));
-				finEnqy.setTotalPftSchd(rs.getBigDecimal("Total_Pft_Schd"));
-				finEnqy.setTotalPftPaid(rs.getBigDecimal("Total_Pft_Paid"));
-				finEnqy.setExcessAmount(rs.getBigDecimal("Excess_Amount"));
-				finEnqy.setExcessAmtPaid(rs.getBigDecimal("Excess_Amt_Paid"));
 				finEnqy.setCurODDays(rs.getInt("CurOdDays"));
+				finEnqy.setMaturityDate(rs.getDate("MaturityDate"));
 				finEnqy.setClosingStatus(rs.getString("ClosingStatus"));
-				finEnqy.setClosedDate(rs.getDate("ClosedDate"));
 				finEnqy.setOwnership(rs.getString("OwnerShip"));
 				finEnqy.setNumberOfTerms(rs.getInt("NumberOfTerms"));
-				finEnqy.setSvAmount(rs.getBigDecimal("CustIncome"));
-				finEnqy.setMaturityDate(rs.getDate("MaturityDate"));
-				finEnqy.setRepayProfitRate(rs.getBigDecimal("CurReducingRate"));
-				finEnqy.setFirstRepay(rs.getBigDecimal("FirstRepay"));
 
 				return finEnqy;
 			}, finID, customerId, segmentType);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Loan details not availabe for the specified Custome Id {}, FinID {}, segmentType {}",
-					customerId, finID, segmentType);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
 	@Override
 	public List<FinanceEnquiry> getFinanceSummary(long customerId, String segmentType) {
-		logger.trace(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select");
-		sql.append(" FinType, cs.FinID, cs.FinReference, FinStartDate, FinApprovedDate, cs.LatestRpyDate");
-		sql.append(", RepayFrq, FinAssetValue, Future_Schedule_Prin, Instalment_Due, Instalment_Paid");
-		sql.append(", Bounce_Due, Bounce_Paid, Late_Payment_Penalty_Due, Late_Payment_Penalty_Paid");
-		sql.append(", Total_Pri_Schd, Total_Pri_Paid, Total_Pft_Schd, Total_Pft_Paid");
-		sql.append(", Excess_Amount, Excess_Amt_Paid, CurOdDays, ClosingStatus, ClosedDate");
-		sql.append(", cs.OwnerShip, NumberOfTerms, CustIncome, MaturityDate");
-		sql.append(" From Cibil_Customer_Loans_View cs");
-		sql.append(" Inner Join Cibil_Customer_Extract cce on cce.FinID = cs.FinID and cs.CustID = cce.CustID");
-		sql.append(" where cs.CustID = ? and cs.segment_type = ?");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" cs.FinID, cs.CustId, Fintype, cs.FinReference, FinStartDate, FinApprovedDate");
+		sql.append(", cs.LatestRpyDate,RepayFrq, FinAssetValue, Instalment_Paid");
+		sql.append(", CurOdDays, MaturityDate, ClosingStatus, cs.Ownership, NumberofTerms");
+		sql.append(" from Cibil_Customer_Loans_View cs");
+		sql.append(" Inner Join Cibil_Customer_Extract cce on cce.FinID = cs.FinID");
+		sql.append(" and cs.CustId = cce.CustId");
+		sql.append(" where cs.Custid = ? and cs.Segment_Type = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			FinanceEnquiry finEnqy = new FinanceEnquiry();
 
-			finEnqy.setFinType(rs.getString("FinType"));
 			finEnqy.setFinID(rs.getLong("FinID"));
+			finEnqy.setCustID(rs.getLong("CustId"));
+			finEnqy.setFinType(rs.getString("FinType"));
 			finEnqy.setFinReference(rs.getString("FinReference"));
 			finEnqy.setFinStartDate(rs.getDate("FinStartDate"));
 			finEnqy.setFinApprovedDate(rs.getDate("FinApprovedDate"));
 			finEnqy.setLatestRpyDate(rs.getDate("LatestRpyDate"));
 			finEnqy.setRepayFrq(rs.getString("RepayFrq"));
 			finEnqy.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-			finEnqy.setFutureSchedulePrin(rs.getBigDecimal("Future_Schedule_Prin"));
-			finEnqy.setInstalmentDue(rs.getBigDecimal("Instalment_Due"));
 			finEnqy.setInstalmentPaid(rs.getBigDecimal("Instalment_Paid"));
-			finEnqy.setBounceDue(rs.getBigDecimal("Bounce_Due"));
-			finEnqy.setBouncePaid(rs.getBigDecimal("Bounce_Paid"));
-			finEnqy.setLatePaymentPenaltyDue(rs.getBigDecimal("Late_Payment_Penalty_Due"));
-			finEnqy.setLatePaymentPenaltyPaid(rs.getBigDecimal("Late_Payment_Penalty_Paid"));
-			finEnqy.setTotalPriSchd(rs.getBigDecimal("Total_Pri_Schd"));
-			finEnqy.setTotalPriPaid(rs.getBigDecimal("Total_Pri_Paid"));
-			finEnqy.setTotalPftSchd(rs.getBigDecimal("Total_Pft_Schd"));
-			finEnqy.setTotalPftPaid(rs.getBigDecimal("Total_Pft_Paid"));
-			finEnqy.setExcessAmount(rs.getBigDecimal("Excess_Amount"));
-			finEnqy.setExcessAmtPaid(rs.getBigDecimal("Excess_Amt_Paid"));
 			finEnqy.setCurODDays(rs.getInt("CurOdDays"));
+			finEnqy.setMaturityDate(rs.getDate("MaturityDate"));
 			finEnqy.setClosingStatus(rs.getString("ClosingStatus"));
-			finEnqy.setClosedDate(rs.getDate("ClosedDate"));
 			finEnqy.setOwnership(rs.getString("OwnerShip"));
 			finEnqy.setNumberOfTerms(rs.getInt("NumberOfTerms"));
-			finEnqy.setSvAmount(rs.getBigDecimal("CustIncome"));
-			finEnqy.setMaturityDate(rs.getDate("MaturityDate"));
 
 			return finEnqy;
 		}, customerId, segmentType);
-
 	}
 
 	@Override
@@ -621,6 +585,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 				ps.setDate(index++, JdbcUtil.getDate(DateUtil.addMonths(SysParamUtil.getAppDate(), -36)));
 			});
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			throw new Exception(String.format("Unable Extarct %s CIBIL Data", segmentType));
 		}
 	}
@@ -838,7 +803,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 	@Override
 	public BigDecimal getGuarantorPercentage(long finID) {
-		String sql = "Select sum(GuranteePercentage) From FinGuarantorsDetails Where FinID = ?";
+		String sql = "Select coalesce(sum(GuranteePercentage), 0) From FinGuarantorsDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
@@ -864,6 +829,27 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		try {
 			return jdbcOperations.queryForObject(sql, String.class, finID, custCIF);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public FinanceSummary getFinanceProfitDetails(String finRef) {
+		String sql = "Select TotalOverDue, OutStandPrincipal from FinanceProfitEnquiry_View where FinReference = ?";
+
+		logger.trace(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				FinanceSummary summary = new FinanceSummary();
+
+				summary.setTotalOverDue(rs.getBigDecimal("TotalOverDue"));
+				summary.setOutStandPrincipal(rs.getBigDecimal("OutStandPrincipal"));
+
+				return summary;
+			});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

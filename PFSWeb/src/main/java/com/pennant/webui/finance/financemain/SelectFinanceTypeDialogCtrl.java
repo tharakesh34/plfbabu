@@ -71,6 +71,8 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -118,6 +120,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.external.CustomerDedupCheckService;
 import com.pennanttech.pff.external.CustomerDedupService;
 import com.pennanttech.pff.external.CustomerInterfaceService;
@@ -379,9 +382,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		 * Filter.OP_LESS_OR_EQUAL); filters[1] = new Filter("EndDate", DateUtility.formateDate(appDate,
 		 * PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL); filters[2] = new Filter("LovDescProductName",
 		 * StringUtils.trimToEmpty(this.finType.getValue()), Filter.OP_EQUAL); if
-		 * (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, requestSource)) { filters[3] = new
-		 * Filter("FinEvent", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL); } else { filters[3] = new
-		 * Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL); }
+		 * (StringUtils.equals(FinServiceEvent.PREAPPROVAL, requestSource)) { filters[3] = new
+		 * Filter("FinEvent", FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL); } else { filters[3] = new
+		 * Filter("FinEvent", FinServiceEvent.ORG, Filter.OP_EQUAL); }
 		 * 
 		 * this.promotionCode.setFilters(filters); if (!setFilters) { JdbcSearchObject<FinanceWorkFlow> searchObject =
 		 * new JdbcSearchObject<FinanceWorkFlow>( FinanceWorkFlow.class);
@@ -1215,10 +1218,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 						String pageName = PennantAppUtil.getFinancePageName(false);
 						fileLocation.append(pageName);
 					}
-				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_ODFACILITY)) {
+				} else if (ProductUtil.isOverDraft(productType)) {
 					if (financeDetail.getCustomerDedupList() == null
 							|| financeDetail.getCustomerDedupList().isEmpty()) {
-						fileLocation.append("ODFacilityFinanceMainDialog.zul");
+						fileLocation = new StringBuilder("/WEB-INF/pages/Finance/Overdraft/");
+						fileLocation.append("OverdraftFinanceMainDialog.zul");
 					}
 				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_DISCOUNT)) {
 					fileLocation.append("DiscountFinanceMainDialog.zul");
@@ -1339,8 +1343,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					wve.add(e);
 				}
 				// ### 01-05-2018 Tuleapp id #360
-				eidNumber.setConstraint(
-						new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+				if (!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+					eidNumber.setConstraint(
+							new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
+					if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY) {
+						eidNumber.setConstraint(
+								new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, false));
+					}
+				}
 
 				this.mobileNo.setConstraint(new PTMobileNumberValidator(
 						Labels.getLabel("label_SelectFinanceTypeDialog_MobileNo.value"), primaryIdMOBMandatory));
@@ -1566,7 +1576,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// FIXME: preApproved will be only if requestSource is Preapproved. why
 		// it is required again?
 		/*
-		 * if (StringUtils.equals(requestSource, FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
+		 * if (StringUtils.equals(requestSource, FinServiceEvent.PREAPPROVAL)) {
 		 * this.labelRow.setVisible(false); this.wIfReferenceRow.setVisible(false); }
 		 */}
 
@@ -1890,7 +1900,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		int maxLength = Integer.valueOf(attributes.get("LENGTH"));
 
 		label_SelectFinanceTypeDialog_EIDNumber.setValue(Labels.getLabel(primaryIdLabel));
-		space_EIDNumber.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
+		if (!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+			space_EIDNumber.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
+			if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY) {
+				space_EIDNumber.setSclass(primaryIdMandatory ? PennantConstants.NONE : "");
+			}
+		}
 		eidNumber.setSclass(PennantConstants.mandateSclass);
 		eidNumber.setValue("");
 		eidNumber.setMaxlength(maxLength);
@@ -1958,6 +1973,17 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			customerDedup.setCustPOB(customer.getCustPOB());
 			customerDedup.setCustResdCountry(customer.getCustResdCountry());
 			customerDedup.setCustEMail(customer.getEmailID());
+
+			if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+				for (ExtendedField details : customerDetails.getExtendedDetails()) {
+					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+						if (extFieldData.getFieldName().equalsIgnoreCase("UCIC")) {
+							customerDedup.setUcic(extFieldData.getFieldValue().toString());
+							break;
+						}
+					}
+				}
+			}
 		}
 		return customerDedup;
 

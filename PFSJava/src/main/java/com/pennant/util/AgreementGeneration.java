@@ -66,6 +66,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Filedownload;
@@ -204,7 +205,7 @@ import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
@@ -238,6 +239,7 @@ import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.pff.extension.feature.AgreementGenerationService;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.sampling.model.SamplingDetail;
@@ -274,7 +276,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private FinanceDetailService financeDetailService;
 
 	@Autowired
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 	@Autowired
 	private VerificationService verificationService;
 	@Autowired
@@ -309,6 +311,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
+	@Autowired(required = false)
+	@Qualifier("agreementGenerationService")
+	private AgreementGenerationService agreementGenerationService;
 
 	private List<ValueLabel> listLandHolding = PennantStaticListUtil.getYesNo();
 	private List<ValueLabel> subCategoryList = PennantStaticListUtil.getSubCategoryList();
@@ -540,6 +545,11 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							.getCustomerPhoneNumList();
 					if (CollectionUtils.isNotEmpty(customerPhoneNumList)) {
 						for (CustomerPhoneNumber phoneNumber : customerPhoneNumList) {
+
+							if (phoneNumber.getPhoneTypePriority() == 5) {
+								agreement.setPriorityNumber(phoneNumber.getPhoneNumber());
+							}
+
 							if ("HOME".equals(phoneNumber.getPhoneTypeCode())) {
 								agreement.setPhoneHome(phoneNumber.getPhoneNumber());
 							}
@@ -711,6 +721,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						}
 						List<LegalDocument> legalDocuments = legalDetail.getDocumentList();
 						if (legalDocuments != null) {
+							int seqNum = 0;
 							for (LegalDocument document : legalDocuments) {
 								if (null != document) {
 									com.pennant.backend.model.finance.AgreementDetail.LegalDocument legalDocument = agreement.new LegalDocument();
@@ -752,6 +763,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 									} else {
 										legalDocument.setDocumentMortgage("No");
 									}
+									legalDocument.setSeqNum(String.valueOf(++seqNum));
 									agreement.getLegalDocuments().add(legalDocument);
 								}
 							}
@@ -853,6 +865,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					emailDetails.setEmailType(StringUtils.trimToEmpty(email.getLovDescCustEMailTypeCode()));
 					emailDetails.setEmailValue(StringUtils.trimToEmpty(email.getCustEMail()));
 					agreement.getEmailDetails().add(emailDetails);
+					if (email.getCustEMailPriority() == 5) {
+						agreement.setPriorityEmail(email.getCustEMail());
+					}
 				}
 			}
 			if (CollectionUtils.isEmpty(agreement.getEmailDetails())) {
@@ -1093,8 +1108,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 			if (detail.getJointAccountDetailList() != null && !detail.getJointAccountDetailList().isEmpty()) {
 				for (JointAccountDetail jointAccountDetail : detail.getJointAccountDetailList()) {
-					CustomerDetails custdetails = customerDetailsService
-							.getCustomerDetailsById(jointAccountDetail.getCustID(), true, "_AView");
+					CustomerDetails custdetails = customerDataService
+							.getCustomerDetailsbyID(jointAccountDetail.getCustID(), true, "_AView");
 					if (aggModuleDetails.contains(PennantConstants.AGG_INCOMDE) && null != custdetails
 							&& CollectionUtils.isNotEmpty(custdetails.getCustomerIncomeList())) {
 						populateAppIncExpDetails(custdetails.getCustomerIncomeList(), agreement, formatter,
@@ -2162,6 +2177,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				agreement.setSanctionDetailsList(new ArrayList<>());
 			}
 			setNetFinanceAmount(agreement, detail);
+			
+			if (agreementGenerationService != null) {
+				agreementGenerationService.setAdditionalRequiredFields(agreement, detail);
+			}
 
 			List<AuditTransaction> facilityAuditDetails = getFacilityAuditDetails(financeMain.getFinReference());
 			if (CollectionUtils.isNotEmpty(facilityAuditDetails)) {
@@ -3578,7 +3597,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			} else {
 				charge.setFeeChargeDesc(StringUtils.trimToEmpty(fee.getFeeTypeDesc()));
 			}
-
+			charge.setChargeAmt(PennantApplicationUtil.amountFormate(fee.getActualAmount(), formatter));
 			String scheduleMethod = fee.getFeeScheduleMethod();
 			BigDecimal totalDeduction = BigDecimal.ZERO;
 			if (StringUtils.isNotBlank(scheduleMethod) && scheduleMethod.equals("DISB")) {
@@ -3651,6 +3670,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				custbank.setBankName(StringUtils.trimToEmpty(customerBankInfo.getLovDescBankName()));
 				custbank.setAccountType(StringUtils.trimToEmpty(customerBankInfo.getAccountType()));
 				custbank.setAccountNumber(StringUtils.trimToEmpty(customerBankInfo.getAccountNumber()));
+				custbank.setAccountHolderName(StringUtils.trimToEmpty(customerBankInfo.getAccountHolderName()));
+				custbank.setIfsc(StringUtils.trimToEmpty(customerBankInfo.getiFSC()));
+				custbank.setAccountTypeDesc(StringUtils.trimToEmpty(customerBankInfo.getLovDescAccountType()));
 				agreement.getCustomerBankInfos().add(custbank);
 			}
 
@@ -3985,8 +4007,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		if (aggModuleDetails.contains(PennantConstants.AGG_COAPPDT) && detail.getJointAccountDetailList() != null
 				&& !detail.getJointAccountDetailList().isEmpty()) {
 			for (JointAccountDetail jointAccountDetail : detail.getJointAccountDetailList()) {
-				CustomerDetails custdetails = customerDetailsService
-						.getCustomerDetailsById(jointAccountDetail.getCustID(), true, "_AView");
+				CustomerDetails custdetails = customerDataService.getCustomerDetailsbyID(jointAccountDetail.getCustID(),
+						true, "_AView");
 				CoApplicant coapplicant = agreement.new CoApplicant();
 				Customer customer = custdetails.getCustomer();
 				coapplicant.setCustId(customer.getCustID());
@@ -4074,8 +4096,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			detail.getGurantorsDetailList().forEach((guarantorDetail) -> {
 				CoApplicant coapplicant = agreement.new CoApplicant();
 				if (guarantorDetail.getCustID() > 0) {
-					CustomerDetails customerDetails = customerDetailsService
-							.getCustomerDetailsById(guarantorDetail.getCustID(), true, "_AView");
+					CustomerDetails customerDetails = customerDataService
+							.getCustomerDetailsbyID(guarantorDetail.getCustID(), true, "_AView");
 					Customer customer = customerDetails.getCustomer();
 					coapplicant.setCustId(customer.getCustID());
 					coapplicant.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));

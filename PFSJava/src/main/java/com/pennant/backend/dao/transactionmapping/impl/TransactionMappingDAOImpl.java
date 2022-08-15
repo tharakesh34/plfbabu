@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -17,9 +18,10 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pff.cd.model.TransactionMapping;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
-import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
 
 public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> implements TransactionMappingDAO {
 
@@ -180,7 +182,7 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 	}
 
 	@Override
-	public int getcountByMID(long mid, long tid) {
+	public int getcountByMID(long mid, String tid) {
 		logger.debug("Entering");
 		TransactionMapping transactionMapping = new TransactionMapping();
 		transactionMapping.setMid(new BigDecimal(mid) == null ? BigDecimal.ZERO : new BigDecimal(mid));
@@ -238,4 +240,26 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
 	}
+
+	@Override
+	public TransactionMapping getDealerDetails(String mId, String tId) {
+		String sql = "Select DealerCode, DealerName From TransactionMapping Where Mid = ? and Tid = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				TransactionMapping tm = new TransactionMapping();
+
+				tm.setDealerCode(rs.getLong("DealerCode"));
+				tm.setDealerName(rs.getString("DealerName"));
+
+				return tm;
+			}, mId, tId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }

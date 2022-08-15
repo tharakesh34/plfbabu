@@ -96,6 +96,24 @@
 									<label id="label_Entity" value="${c:l('label_PresentmentDetailList_Entity.value')}" />
 									<extendedcombobox id="entity" />
 								</row>
+								
+								<row id="row_lppAndBounceRequited"
+									visible="false">
+									<label id="label_BounceRequired"
+										value="${c:l('label_PresentmentDetailList_BounceRequired.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="bounceRequired" />
+									</hbox>
+
+									<label id="label_LppRequired"
+										value="${c:l('label_PresentmentDetailList_LppRequired.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="lppRequired" />
+									</hbox>
+								</row>
+								
 							</rows>
 						</grid>
 						<listbox id="listBoxPresentmentExtractDetail" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"

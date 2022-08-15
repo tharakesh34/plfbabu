@@ -8,7 +8,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.mmfl.cd.model.SchemeDealerGroup;
+import com.pennanttech.pff.cd.model.SchemeDealerGroup;
 
 public class SchemeDealerGroupModelItemRenderer implements ListitemRenderer<SchemeDealerGroup>, Serializable {
 	private static final long serialVersionUID = 1L;

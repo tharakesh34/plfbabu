@@ -26,7 +26,6 @@ package com.pennant.backend.service.loanquery.impl;
 
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +44,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
@@ -265,35 +263,6 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			}
 		}
 		return auditHeader;
-	}
-
-	/**
-	 * This method validating the all quarry's raised by users resolved or not.
-	 * 
-	 * @param auditHeader
-	 * @return
-	 */
-	@Override
-	public AuditDetail validate(AuditDetail auditDetail) {
-
-		LegalDetail legalDetail = (LegalDetail) auditDetail.getModelData();
-
-		String[] errParm = new String[1];
-		String[] valueParm = new String[1];
-		valueParm[0] = legalDetail.getLegalReference();
-		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ": " + valueParm[0];
-
-		List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtListByRef(legalDetail.getLegalReference(), "_AView");
-
-		if (CollectionUtils.isNotEmpty(list)) {
-			for (QueryDetail queryDetail : list) {
-				if (!StringUtils.equals(queryDetail.getStatus(), Labels.getLabel("label_QueryDetailDialog_Closed"))) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "QRYMGMT1", errParm, valueParm), "EN"));
-				}
-			}
-		}
-		return auditDetail;
 	}
 
 	/**

@@ -28,7 +28,7 @@ public interface RestructureDAO {
 
 	void deleteRestructureCharges(long id, String type);
 
-	boolean isExistRestructureType(long rstTypeId);
+	boolean isExistRestructureType(long rstTypeId, boolean isStepFinance);
 
 	boolean isExistRestructureReason(String code);
 

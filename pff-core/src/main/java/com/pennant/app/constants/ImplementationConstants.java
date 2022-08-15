@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 
 import com.pennanttech.extension.implementation.IFeatureExtension;
 import com.pennanttech.pennapps.core.FactoryException;
+import com.pennanttech.pff.npa.NpaScope;
+import com.pennanttech.pff.provision.ProvisionBook;
+import com.pennanttech.pff.provision.ProvisionReversalStage;
 
 @Component
 public class ImplementationConstants {
@@ -23,7 +26,7 @@ public class ImplementationConstants {
 		// The below are the steps that are required to extend the constants.
 		// 1. Interface, IFeatureExtension, will be available in pff-core.
 		// 2. The implementation class, FeatureExtension, for the above interface will be available in both
-		// - pff-extension-core (dummy implementation and can be u sed for testing the constants as well)
+		// - pff-extension-core (dummy implementation and can be used for testing the constants as well)
 		// - pff-extension-client
 
 		Map<String, Object> extensions = getFeatureExtensions();
@@ -36,6 +39,7 @@ public class ImplementationConstants {
 		ALLOW_CUSTOMER_MAINTENANCE = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_MAINTENANCE", true);
 		ALLOW_CUSTOMER_RATINGS = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_RATINGS", false);
 		ALLOW_CUSTOMER_INCOMES = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_INCOMES", true);
+		ALLOW_CUSTCIF_IN_IMD = getValueAsBoolean(extensions, "ALLOW_CUSTCIF_IN_IMD", true);
 		ALLOW_CUSTOMER_SHAREHOLDERS = getValueAsBoolean(extensions, "ALLOW_CUSTOMER_SHAREHOLDERS", true);
 		ALLOW_COLLATERAL_VALUE_UPDATION = getValueAsBoolean(extensions, "ALLOW_COLLATERAL_VALUE_UPDATION", false);
 		INDIAN_IMPLEMENTATION = getValueAsBoolean(extensions, "INDIAN_IMPLEMENTATION", true);
@@ -138,7 +142,6 @@ public class ImplementationConstants {
 		ALLOW_SAMPLING = getValueAsBoolean(extensions, "ALLOW_SAMPLING", false);
 		ALLOW_SCHOOL_ORG = getValueAsBoolean(extensions, "ALLOW_SCHOOL_ORG", false);
 		ALLOW_FDD_ON_RVW_DATE = getValueAsBoolean(extensions, "ALLOW_FDD_ON_RVW_DATE", false);
-		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
 		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean(extensions, "ALLOW_UNACCURED_PENALITY_SOA", true);
 		ALLOW_AUTO_GRACE_EXT = getValueAsBoolean(extensions, "ALLOW_AUTO_GRACE_EXT", false);
 		ALLOW_LOAN_DOWNSIZING = getValueAsBoolean(extensions, "ALLOW_LOAN_DOWNSIZING", false);
@@ -182,6 +185,7 @@ public class ImplementationConstants {
 		FEE_SERVICEING_STAMPIN_ON_ORG = getValueAsBoolean(extensions, "FEE_SERVICEING_STAMPIN_ON_ORG", false);
 		ALW_VERIFICATION_SYNC = getValueAsBoolean(extensions, "ALW_VERIFICATION_SYNC", false);
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
+		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean(extensions, "ALLOW_ED_FIELDS_IN_NPA", false);
 		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean(extensions, "ALLOW_EOD_INTERVAL_VALIDATION", false);
 		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
 		PRESENTMENT_EXTRACT_DEALER_MAN = getValueAsBoolean(extensions, "PRESENTMENT_EXTRACT_DEALER_MAN", true);
@@ -286,6 +290,48 @@ public class ImplementationConstants {
 		VAS_INST_ON_DISB = getValueAsBoolean(extensions, "VAS_INST_ON_DISB", false);
 		FUR_DISBINST_ACC_REQ = getValueAsBoolean(extensions, "FUR_DISBINST_ACC_REQ", false);
 
+		ALLOW_TDS_PERC_BASED_ON_YEAR = getValueAsBoolean(extensions, "ALLOW_TDS_PERC_BASED_ON_YEAR", false);
+		ALLOW_TDS_CERTIFICATE_ADJUSTMENT = getValueAsBoolean(extensions, "ALLOW_TDS_CERTIFICATE_ADJUSTMENT", false);
+
+		GST_INCLUSIVE_SYMBOL = getValueAsString(extensions, "GST_INCLUSIVE_SYMBOL", "");
+		GST_EXCLUSIVE_SYMBOL = getValueAsString(extensions, "GST_EXCLUSIVE_SYMBOL", "");
+		ALW_RATE_CHANGE = getValueAsBoolean(extensions, "ALW_RATE_CHANGE", false);
+		MANDATE_FRQ_DES_REQ = getValueAsBoolean(extensions, "MANDATE_FRQ_DES_REQ", false);
+		IMD_EXT_REFERENCE = getValueAsBoolean(extensions, "IMD_EXT_REFERENCE", false);
+		BOUNCE_CHARGE_ON_DPD_COUNT = getValueAsBoolean(extensions, "BOUNCE_CHARGE_ON_DPD_COUNT", false);
+		RETAIL_CUST_PAN_MANDATORY = getValueAsBoolean(extensions, "RETAIL_CUST_PAN_MANDATORY", true);
+		FINREFERENCE_ALW_FREE_TEXT = getValueAsBoolean(extensions, "FINREFERENCE_ALW_FREE_TEXT", false);
+		ALLOW_ISRA_DETAILS = getValueAsBoolean(extensions, "ALLOW_ISRA_DETAILS", false);
+		ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS = getValueAsBoolean(extensions, "ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS",
+				false);
+		ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS = getValueAsBoolean(extensions,
+				"ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS", false);
+		ALLOW_OD_POSINT_SCHD_METHOD = getValueAsBoolean(extensions, "Allow_OD_POSINT_SCHD_METHOD", true);
+		RECEIPT_DUPLICATE_CHECK_STOP = getValueAsBoolean(extensions, "RECEIPT_DUPLICATE_CHECK_STOP", false);
+		EXTENDEDFIELDS_ORG_WORKFLOW = getValueAsBoolean(extensions, "EXTENDEDFIELDS_ORG_WORKFLOW", false);
+		OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE = getValueAsBoolean(extensions,
+				"OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE", true);
+		MANUAL_ADVISE_FUTURE_DATE = getValueAsBoolean(extensions, "MANUAL_ADVISE_FUTURE_DATE", true);
+		DISB_INST_POST_DWNLD = getValueAsBoolean(extensions, "DISB_INST_POST_DWNLD", false);
+		ACCRUAL_DIFF_ONETIME_POST = getValueAsBoolean(extensions, "ACCRUAL_DIFF_ONETIME_POST", true);
+		ALLOW_GST_DETAILS = getValueAsBoolean(extensions, "ALLOW_GST_DETAILS", false);
+		SAN_BASED_EMI_REQUIRED_STEP = getValueAsBoolean(extensions, "SAN_BASED_EMI_REQUIRED_STEP", false);
+		ALLOW_ZERO_STEP_AMOUNT_PERC = getValueAsBoolean(extensions, "ALLOW_ZERO_STEP_AMOUNT_PERC", false);
+		ALLOW_STEP_RECAL_PRORATA = getValueAsBoolean(extensions, "ALLOW_STEP_RECAL_PRORATA", false);
+		RECEIPT_DUPLICATE_FORMAT = getValueAsString(extensions, "RECEIPT_DUPLICATE_FORMAT", "TR_VD_AMT");
+		CUSTOMER_PAN_VALIDATION_STOP = getValueAsBoolean(extensions, "CUSTOMER_PAN_VALIDATION_STOP", false);
+		ALLOW_NPA = getValueAsBoolean(extensions, "ALLOW_NPA", false);
+		ALLOW_PROVISION = getValueAsBoolean(extensions, "ALLOW_PROVISION", false);
+		NPA_SCOPE = (NpaScope) getValue(extensions, "NPA_SCOPE", NpaScope.LOAN);
+		PROVISION_REVERSAL_REQ = getValueAsBoolean(extensions, "PROVISION_REVERSAL_REQ", false);
+		PROVISION_BOOKS = (ProvisionBook) getValue(extensions, "PROVISION_BOOKS", ProvisionBook.NO_PROVISION);
+		PROVISION_REVERSAL_STAGE = (ProvisionReversalStage) getValue(extensions, "PROVISION_REVERSAL_STAGE",
+				ProvisionReversalStage.SOM);
+		ALLOW_EXTENDEDFIELDS_IN_WORKFLOW = getValueAsBoolean(extensions, "ALLOW_EXTENDEDFIELDS_IN_WORKFLOW", false);
+		PROVISION_POSTINGS_REQ = getValueAsBoolean(extensions, "PROVISION_POSTINGS_REQ", true);
+		RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT = getValueAsBoolean(extensions,
+				"RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT", true);
+		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean(extensions, "RECEIPT_ALLOW_FULL_WAIVER", false);
 	}
 
 	public static boolean LIMIT_INTERNAL;
@@ -407,9 +453,6 @@ public class ImplementationConstants {
 	/* Flag to allow similarity to check the % patch match of given string values */
 	public static boolean ALLOW_SIMILARITY;
 
-	// FIXME>>HL >>
-
-	public static boolean ALLOW_NPA_PROVISION;
 	public static boolean ALLOW_UNACCURED_PENALITY_SOA;
 	public static boolean SOA_SHOW_UNACCURED_PENALITY;
 	public static boolean GROUP_BATCH_BY_PARTNERBANK; // this field is true for Veritas
@@ -495,6 +538,22 @@ public class ImplementationConstants {
 	public static boolean ALLOW_SHADOW_POSTINGS;
 	public static boolean DISB_REQ_RES_FILE_GEN_MODE;
 	public static boolean ALLOW_ESCROW_MODE;
+	public static boolean ALLOW_CUSTCIF_IN_IMD;
+	// Allow TDS percentage based on year
+	public static boolean ALLOW_TDS_PERC_BASED_ON_YEAR;
+	// TDS Certificate Adjustment
+	public static boolean ALLOW_TDS_CERTIFICATE_ADJUSTMENT;
+	public static boolean ALLOW_ISRA_DETAILS;
+	public static boolean ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS;
+	public static boolean ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS;
+	public static boolean ALLOW_OD_POSINT_SCHD_METHOD;
+	// Allow Accrual Difference posting one Time or complete recalculation
+	public static boolean ACCRUAL_DIFF_ONETIME_POST;
+	public static boolean ALLOW_GST_DETAILS;
+	public static boolean SAN_BASED_EMI_REQUIRED_STEP;
+	public static boolean ALLOW_ZERO_STEP_AMOUNT_PERC;
+	public static boolean ALLOW_STEP_RECAL_PRORATA;
+	public static boolean CUSTOMER_PAN_VALIDATION_STOP;
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis
@@ -534,6 +593,35 @@ public class ImplementationConstants {
 	public static boolean SNAP_SHOT_DATE_AS_CUR_BUS_DATE;
 	public static boolean CHEQUE_AMOUNT_ZERO_UDC;
 	public static boolean ALLOW_SINGLE_FEE_CONFIG;
+
+	public static String GST_INCLUSIVE_SYMBOL;
+	public static String GST_EXCLUSIVE_SYMBOL;
+	public static boolean ALW_RATE_CHANGE;
+	public static boolean MANDATE_FRQ_DES_REQ;
+	public static boolean IMD_EXT_REFERENCE;
+	public static boolean BOUNCE_CHARGE_ON_DPD_COUNT;
+	public static boolean RETAIL_CUST_PAN_MANDATORY;
+	public static boolean FINREFERENCE_ALW_FREE_TEXT;
+	public static boolean RECEIPT_DUPLICATE_CHECK_STOP;
+	public static boolean EXTENDEDFIELDS_ORG_WORKFLOW;
+
+	public static boolean OVERDRAFT_REPRESENTMENT_CHARGES_INCLUDE;
+	public static boolean MANUAL_ADVISE_FUTURE_DATE;
+	public static String RECEIPT_DUPLICATE_FORMAT;
+	/**
+	 * Parameter for to allow the 'DISBINS' postings while disbursement instructions download.
+	 */
+	public static boolean DISB_INST_POST_DWNLD;
+	public static boolean ALLOW_NPA;
+	public static boolean ALLOW_PROVISION;
+	public static NpaScope NPA_SCOPE;
+	public static ProvisionBook PROVISION_BOOKS;
+	public static boolean PROVISION_REVERSAL_REQ;
+	public static ProvisionReversalStage PROVISION_REVERSAL_STAGE;
+	public static boolean ALLOW_EXTENDEDFIELDS_IN_WORKFLOW;
+	public static boolean PROVISION_POSTINGS_REQ;
+	public static boolean RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT;
+	public static boolean RECEIPT_ALLOW_FULL_WAIVER;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;
@@ -667,6 +755,14 @@ public class ImplementationConstants {
 				false);
 		VER_INITATE_DURING_SAVE = getValueAsBoolean(extensions, "VER_INITATE_DURING_SAVE", true);
 		VER_RCU_INITATE_BY_AGENCY = getValueAsBoolean(extensions, "VER_RCU_INITATE_BY_AGENCY", true);
+	}
+
+	private static Object getValue(Map<String, Object> extensions, String key, Object defaultValue) {
+		try {
+			return (Object) extensions.computeIfAbsent(key, ft -> defaultValue);
+		} catch (Exception ex) {
+			return defaultValue;
+		}
 	}
 
 }

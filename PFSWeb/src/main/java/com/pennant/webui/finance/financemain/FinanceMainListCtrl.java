@@ -202,7 +202,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private String CREATE_CIF = "CREATECIF";
 	private String CREATE_ACCOUNT = "CREATACCOUNT";
 	private List<String> usrfinRolesList = new ArrayList<String>();
-	private String betaDialog = "_Beta";
 	private List<ValueLabel> betaConfig = PennantStaticListUtil.getBetaConfiguration();
 
 	private FinanceDetailService financeDetailService;
@@ -423,6 +422,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("NumberOfTerms");
 		this.searchObj.addField("CalTerms");
 		this.searchObj.addField("LovDescFinProduct");
+		this.searchObj.addField("LovDescProductCodeName");
 		this.searchObj.addField("NextRoleCode");
 		this.searchObj.addField("LovDescRequestStage");
 		this.searchObj.addField("Priority");
@@ -488,6 +488,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// CAST AND STORE THE SELECTED OBJECT
 		final FinanceMain afm = (FinanceMain) item.getAttribute("data");
 
+		if (ImplementationConstants.ALLOW_EXTENDEDFIELDS_IN_WORKFLOW) {
+			financeDetailService.addExtFieldsToAttributes(afm);
+		}
+
 		String screenEvent = "";
 		if (FinServiceEvent.PREAPPROVAL.equals(this.requestSource)) {
 			screenEvent = FinServiceEvent.PREAPPROVAL;
@@ -532,6 +536,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			logger.debug(Literal.LEAVING);
 			return;
 		}
+
+		financeDetail.getFinScheduleData().getFinanceMain().addAttributes(afm.getAttributes());
 
 		// Check whether the record was locked by any other user.
 		String userId = financeDetail.getFinScheduleData().getFinanceMain().getNextUserId();
@@ -869,19 +875,15 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			switch (productType) {
 			case FinanceConstants.PRODUCT_CONVENTIONAL:
-				String pageName = "ConvFinanceMainDialog";
-				if (StringUtils.isEmpty(betaDialog)) {
-					pageName = pageName + ".zul";
-				} else {
-					pageName = pageName + betaDialog + ".zul";
-				}
-				zulPath.append(pageName);
+				zulPath.append("ConvFinanceMainDialog.zul");
 				break;
 			case FinanceConstants.PRODUCT_CD:
+				zulPath = new StringBuilder("/WEB-INF/pages/Finance/Cd/");
 				zulPath.append("CDFinanceMainDialog.zul");
 				break;
 			case FinanceConstants.PRODUCT_ODFACILITY:
-				zulPath.append("ODFacilityFinanceMainDialog.zul");
+				zulPath = new StringBuilder("/WEB-INF/pages/Finance/Overdraft/");
+				zulPath.append("OverdraftFinanceMainDialog.zul");
 				break;
 			case FinanceConstants.PRODUCT_DISCOUNT:
 				zulPath.append("DiscountFinanceMainDialog.zul");

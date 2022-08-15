@@ -85,6 +85,7 @@ public class Beneficiary extends AbstractWorkflowEntity {
 
 	private boolean beneficiaryActive;
 	private boolean defaultBeneficiary;
+	@XmlElement
 	private String micr;
 
 	private Long usrID;

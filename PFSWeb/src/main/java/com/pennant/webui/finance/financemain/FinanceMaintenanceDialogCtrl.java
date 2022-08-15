@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,6 +90,8 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.isradetail.ISRADetail;
+import com.pennant.backend.model.isradetail.ISRALiquidDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -103,6 +106,7 @@ import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
@@ -198,6 +202,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Combobox cbTdsType;
 	private Label label_FinanceMainDialog_TDSType;
 	private List<ValueLabel> tdsTypeList = PennantStaticListUtil.getTdsTypes();
+
+	// Open Amortization CR
+	protected Combobox manualSchdType;
 
 	/**
 	 * default constructor.<br>
@@ -644,6 +651,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
+		if (ImplementationConstants.ALLOW_ISRA_DETAILS) {
+			this.row_Isra.setVisible(true);
+			this.isra.setChecked(aFinanceMain.isIsra());
+			if (aFinanceMain.isIsra()) {
+				this.isra.setDisabled(true);
+			}
+		}
+
 		doCheckMandate(aFinanceMain.getFinRepayMethod(), aFinanceMain.getCustID(), false);
 
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired()
@@ -660,6 +675,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Co-applicants & joint account Holder Details
 		if (StringUtils.equals(moduleDefiner, FinServiceEvent.BASICMAINTAIN)) {
 			appendJointGuarantorDetailTab();
+			if (ImplementationConstants.ALLOW_ISRA_DETAILS) {
+				appendIsraDetailsTab(true);
+			}
 		}
 		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 			this.row_finWriteoff.setVisible(true);
@@ -701,6 +719,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Append Extended Field Details
 		appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
 
+		if (aFinanceMain.istDSApplicable() && FinServiceEvent.ORG.equals(moduleDefiner)) {
+			appendTanDetailTab();
+		}
+
 		// fill the components with the Finance Flags Data and Display
 		doFillFinFlagsList(aFinanceDetail.getFinFlagsDetails());
 
@@ -718,6 +740,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isManualSchedule()) {
 			this.row_ManualSchedule.setVisible(true);
 			this.manualSchedule.setChecked(aFinanceMain.isManualSchedule());
+			fillComboBox(this.manualSchdType, aFinanceMain.getManualSchdType(),
+					PennantStaticListUtil.getManualScheduleTypeList(), "");
 		} else {
 			this.row_ManualSchedule.setVisible(false);
 		}
@@ -935,6 +959,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		try {
+			aFinanceMain.setIsra(this.isra.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			if (isOverDraft) {
 				if (StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, this.moduleDefiner)) {
 					if (this.odFinAssetValue.getValidateValue()
@@ -1013,6 +1043,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
+
+		// Open amortization Cr
+		if (this.manualSchedule.isChecked()) {
+			aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
+			aFinanceMain.setManualSchdType(getComboboxValue(this.manualSchdType));
+		}
 		// FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);
 
@@ -1066,11 +1102,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (afinanceDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			this.manualSchedule.setDisabled(false);
+			this.manualSchdType.setDisabled(false);
 			doEdit();
 		} else {
 			if (isWorkFlowEnabled()) {
 				this.btnNotes.setVisible(true);
 				this.manualSchedule.setDisabled(true);
+				this.manualSchdType.setDisabled(true);
 				doEdit();
 			} else {
 				this.btnCtrl.setInitNew();
@@ -1926,6 +1964,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_escrow"), this.escrow);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_CustomerBankAcctNumber"), this.customerBankAcct);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_isra"), this.isra);
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finStartDate"), this.odStartDate);
 		readOnlyComponent(true, this.underConstruction);
@@ -1976,6 +2015,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finAssetValue.setReadonly(true);
 		this.finWriteoffPayAmount.setReadonly(true);
 		this.manualSchedule.setDisabled(true);
+		this.manualSchdType.setDisabled(true);
 		readOnlyComponent(true, this.underConstruction);
 		logger.debug("Leaving");
 	}
@@ -2058,6 +2098,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setDocumentDetailsList(getDocumentDetailDialogCtrl().getDocumentDetailsList());
 		} else {
 			aFinanceDetail.setDocumentDetailsList(null);
+		}
+
+		if (getIsraDetailDialogCtrl() != null && this.isra.isChecked()) {
+			getIsraDetailDialogCtrl().doSaveISRADetails(aFinanceDetail);
 		}
 
 		isNew = aFinanceDetail.isNewRecord();
@@ -2232,10 +2276,21 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setFinanceCollaterals(null);
 		}
 
+		if (getTanDetailListCtrl() != null) {
+			getTanDetailListCtrl().doSave(aFinanceDetail);
+			if (aFinanceDetail.getTanAssignments() == null) {
+				return;
+			}
+			aFinanceDetail.setTanAssignments(getTanDetailListCtrl().getTanAssiginmentList());
+		} else {
+			aFinanceDetail.setTanAssignments(null);
+		}
+
 		if (isFeeReExecute) {
 			String message = Labels.getLabel("label_FeeExecute");
 			MessageUtil.showMessage(message);
 		}
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the box
 		// Do data level validations here
@@ -2301,7 +2356,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (fm.getNextUserId() != null) {
 					publishNotification(Notify.USER, fm.getFinReference(), fm);
 				} else {
-					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
+					if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
+						publishNotification(Notify.ROLE, fm.getFinReference(), fm);
+					} else {
+						publishNotification(Notify.ROLE, fm.getFinReference(), fm, finDivision,
+								aFinanceMain.getFinBranch());
+					}
 				}
 
 				if (extendedFieldCtrl != null && getFinanceDetail().getExtendedFieldHeader() != null) {
@@ -2451,6 +2511,46 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					if (StringUtils.trimToNull(extendedFieldDetail.getRecordType()) == null) {
 						extendedFieldDetail.setRecordType(afinanceMain.getRecordType());
 						extendedFieldDetail.setNewRecord(true);
+					}
+				}
+			}
+		}
+
+		// Insra Details
+		if (aFinanceDetail.getIsraDetail() != null) {
+			ISRADetail israDetail = aFinanceDetail.getIsraDetail();
+			israDetail.setFinReference(afinanceMain.getFinReference());
+			israDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			israDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			israDetail.setRecordStatus(afinanceMain.getRecordStatus());
+			israDetail.setWorkflowId(afinanceMain.getWorkflowId());
+			israDetail.setTaskId(taskId);
+			israDetail.setNextTaskId(nextTaskId);
+			israDetail.setRoleCode(getRole());
+			israDetail.setNextRoleCode(nextRoleCode);
+			if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
+				if (StringUtils.trimToNull(israDetail.getRecordType()) == null) {
+					israDetail.setRecordType(afinanceMain.getRecordType());
+					israDetail.setNewRecord(true);
+				}
+			}
+
+			List<ISRALiquidDetail> israLiquidDetails = israDetail.getIsraLiquidDetails();
+			if (CollectionUtils.isNotEmpty(israLiquidDetails)) {
+				for (ISRALiquidDetail detail : israLiquidDetails) {
+					detail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					detail.setRecordStatus(afinanceMain.getRecordStatus());
+					detail.setWorkflowId(afinanceMain.getWorkflowId());
+					detail.setTaskId(taskId);
+					detail.setNextTaskId(nextTaskId);
+					detail.setRoleCode(getRole());
+					detail.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
+						if (StringUtils.trimToNull(detail.getRecordType()) == null) {
+							detail.setRecordType(afinanceMain.getRecordType());
+							detail.setNewRecord(true);
+						}
 					}
 				}
 			}

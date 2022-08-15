@@ -91,6 +91,7 @@ public class MailTemplateData {
 	private String totalProfitPaid = "";
 	private String totalProfitBalance = "";
 	private String nextRepayDate = "";
+	private String repaymentDate = "";
 	private String emiAmount = "";
 	private String repayAmount = "";
 
@@ -1068,6 +1069,14 @@ public class MailTemplateData {
 
 	public void setNextRepayDate(String nextRepayDate) {
 		this.nextRepayDate = nextRepayDate;
+	}
+
+	public String getRepaymentDate() {
+		return repaymentDate;
+	}
+
+	public void setRepaymentDate(String repaymentDate) {
+		this.repaymentDate = repaymentDate;
 	}
 
 	public String getRecordStatus() {

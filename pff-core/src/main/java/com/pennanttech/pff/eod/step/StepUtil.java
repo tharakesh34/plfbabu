@@ -5,10 +5,12 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 public class StepUtil {
 	public enum Step {
 		microEOD, microEODMonitor, beforeEOD, loanCancel, prepareCustomerQueue, masterStep, processInActiveFinances,
-		prepareCustomerGroupQueue, limitCustomerGroupsUpdate, institutionLimitUpdate, limitsUpdate, datesUpdate,
-		snapShotPreparation, ledgerDownLoad, ledgerNotification, gstDownload, collectionDataDownLoad,
-		collectionNotification, loadCollateralRevaluationData, collateralRevaluation, endOfMonthDecider, retailcibil,
-		corporatecibil, prepareIncomeAMZDetails, autoKnockOffProcess, customerDataPreperation, masterDataPreparation,
+		assetClassification, effAssetClassification, provisionCalc, processINDASForInActiveFinances,
+		prepareCustomerGroupQueue, limitCustomerGroupsUpdate, institutionLimitUpdate, limitsUpdate,
+		manualAdvisesCancellation, datesUpdate, snapShotPreparation, ledgerDownLoad, ledgerNotification, gstDownload,
+		collectionDataDownLoad, collectionNotification, loadCollateralRevaluationData, collateralRevaluation,
+		endOfMonthDecider, retailcibil, corporatecibil, prepareIncomeAMZDetails, autoKnockOffProcess,
+		notifyLoanClosureDetailsToEFS, customerDataPreperation, masterDataPreparation,
 		prepareAmortizationQueue
 	}
 
@@ -39,6 +41,20 @@ public class StepUtil {
 			"PREPARE_AMORTIZATION_QUEUE");
 
 	public static final DataEngineStatus AUTO_KNOCKOFF_PROCESS = new DataEngineStatus("AUTO_KNOCKOFF_PROCESS");
+
+	public static final DataEngineStatus PROCESS_INDAS_INACTIVE_FINANCES = new DataEngineStatus(
+			"PROCESS_INDAS_INACTIVE_FINANCES");
+
+	public static final DataEngineStatus CANCEL_INACTIVE_FINANCES_ADVISES = new DataEngineStatus(
+			"CANCEL_INACTIVE_FINANCES_ADVISES");
+
+	public static final DataEngineStatus LOAN_CLOSURE_DETAILS = new DataEngineStatus("LOAN_CLOSURE_DETAILS");
+
+	public static final DataEngineStatus NPA_CLASSIFICATION = new DataEngineStatus("NPA_CLASSIFICATION");
+
+	public static final DataEngineStatus EFF_NPA_CLASSIFICATION = new DataEngineStatus("EFF_NPA_CLASSIFICATION");
+
+	public static final DataEngineStatus PROVISION_CALC = new DataEngineStatus("PROVISION_CALC");
 
 	private StepUtil() {
 		super();

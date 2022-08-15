@@ -2,10 +2,11 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import AutoKnockOffExcess.AutoKnockOffExcessDetails;
+import com.pennant.backend.model.autoknockoff.AutoKnockOffExcessDetails;
 
 public class AutoKnockOffExcess implements Serializable {
 	private static final long serialVersionUID = 2800538447276766022L;
@@ -14,7 +15,7 @@ public class AutoKnockOffExcess implements Serializable {
 	private long finID;
 	private String finReference;
 	private String amountType;
-	private BigDecimal balanceAmount;
+	private BigDecimal balanceAmount = BigDecimal.ZERO;
 	private Date valueDate;
 	private boolean processingFlag;
 	private BigDecimal totalUtilizedAmnt = BigDecimal.ZERO;
@@ -22,7 +23,7 @@ public class AutoKnockOffExcess implements Serializable {
 	private String executionDay;
 	private String thresholdValue;
 
-	private List<AutoKnockOffExcessDetails> excessDetails;
+	private List<AutoKnockOffExcessDetails> excessDetails = new ArrayList<>();
 
 	public AutoKnockOffExcess() {
 		super();

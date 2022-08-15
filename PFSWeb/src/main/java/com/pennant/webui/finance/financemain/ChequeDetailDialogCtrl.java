@@ -185,6 +185,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private transient BankAccountValidationService bankAccountValidationService;
 	protected Button btnFetchAccountDetails;
 	private BankDetail bankDetail;
+	private Date appDate = SysParamUtil.getAppDate();
 
 	/**
 	 * default constructor.<br>
@@ -689,6 +690,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				this.ifsc.setValue(details.getIFSC());
 				this.city.setValue(details.getCity());
 				this.cityName.setValue(details.getPCCityName());
+				this.bankBranchID.setValue(details.getBranchCode());
+				this.bankBranchID.setDescription(details.getBankName());
 				if (StringUtils.isNotBlank(details.getBankName())) {
 					this.bankDetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 					this.maxAccNoLength = this.bankDetail.getAccNoLength();
@@ -796,6 +799,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		} else {
 			this.pennyDropResult.setValue("");
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -856,7 +860,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		// bankBranchID
 		try {
-			this.bankBranchID.getValidatedValue();
+			this.bankBranchID.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1753,6 +1757,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		Listcell chequeType;
 		Listcell checkSerialNum;
 		Listcell ifsc;
+		Listcell accountNum;
 
 		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
 
@@ -1766,13 +1771,15 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				for (ChequeDetail chequeDetail : chequeDetails) {
 					checkSerialNum = list.get(1);
 					ifsc = list.get(5);
+					accountNum = list.get(4);
 					Intbox intbox = (Intbox) checkSerialNum.getFirstChild();
 					String serialNo = String.valueOf(intbox.intValue());
 					// Validate duplicate cheque details. IFSC Code + Serial Number
 					if (!StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 						if (StringUtils.equals(serialNo, String.valueOf(chequeDetail.getChequeSerialNo()))
 								&& StringUtils.equals(((ExtendedCombobox) ifsc.getChildren().get(0)).getValue(),
-										chequeDetail.getIfsc())) {
+										chequeDetail.getIfsc())
+								&& StringUtils.equals(accountNum.getLabel(), chequeDetail.getAccountNo())) {
 							if (fromLoan) {
 								parenttab.setSelected(true);
 							}
@@ -1862,15 +1869,17 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 											parenttab.setSelected(true);
 										}
 										try {
-											if (isTDS) {
-												throw new WrongValueException(emiAmount,
-														Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
-											} else if (!PennantConstants.RCD_STATUS_CANCELLED
-													.equalsIgnoreCase(chequeStatus.getValue())) {
-												throw new WrongValueException(emiAmount,
-														Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+											if (!emiAmount.isReadonly()) {
+												if (isTDS) {
+													throw new WrongValueException(emiAmount,
+															Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
+												} else if (!PennantConstants.RCD_STATUS_CANCELLED
+														.equalsIgnoreCase(chequeStatus.getValue())
+														&& DateUtil.compare(appDate, emiDate) <= 0) {
+													throw new WrongValueException(emiAmount,
+															Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+												}
 											}
-
 										} catch (WrongValueException e) {
 											wve.add(e);
 											break;
@@ -2092,12 +2101,14 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		Listcell chequeType;
 		Listcell chequeSerialNo;
 		Listcell ifsc;
+		Listcell accNum;
 
 		for (Listitem listitem : listbox.getItems()) {
 			list = listitem.getChildren();
 			chequeType = list.get(0);
 			chequeSerialNo = list.get(1);
 			ifsc = list.get(5);
+			accNum = list.get(4);
 
 			// Cheque number
 			Intbox intbox = (Intbox) chequeSerialNo.getFirstChild();
@@ -2105,7 +2116,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			try {
 				serialNo = String.valueOf(intbox.getValue());
 				chequeDetail = getObject(((ExtendedCombobox) ifsc.getChildren().get(0)).getValue(),
-						Integer.valueOf(serialNo), oldList);
+						Integer.valueOf(serialNo), accNum.getLabel(), oldList);
 			} catch (WrongValueException e) {
 				wve.add(e);
 				return wve;
@@ -2213,10 +2224,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		return wve;
 	}
 
-	private ChequeDetail getObject(String ifsc, int serialNo, List<ChequeDetail> chequeDetailList) {
+	private ChequeDetail getObject(String ifsc, int serialNo, String accNum, List<ChequeDetail> chequeDetailList) {
 		if (chequeDetailList != null && chequeDetailList.size() > 0) {
 			for (ChequeDetail chequeDetail : chequeDetailList) {
-				if (chequeDetail.getChequeSerialNo() == serialNo && StringUtils.equals(chequeDetail.getIfsc(), ifsc)) {
+				if (chequeDetail.getChequeSerialNo() == serialNo && StringUtils.equals(chequeDetail.getIfsc(), ifsc)
+						&& StringUtils.equals(chequeDetail.getAccountNo(), accNum)) {
 					return chequeDetail;
 				}
 			}
@@ -2287,7 +2299,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<ChequeDetail> detailsList = getChequeHeader().getChequeDetailList();
 		if (detailsList != null && !detailsList.isEmpty()) {
 			for (ChequeDetail detail : detailsList) {
-				if (detail.getChequeSerialNo() == chequeDetail.getChequeSerialNo()) {
+				if (detail.getChequeSerialNo() == chequeDetail.getChequeSerialNo()
+						&& detail.getIfsc().equals(chequeDetail.getIfsc())
+						&& detail.getAccountNo().equals(chequeDetail.getAccountNo())) {
 					removeDetails = detail;
 					break;
 				}

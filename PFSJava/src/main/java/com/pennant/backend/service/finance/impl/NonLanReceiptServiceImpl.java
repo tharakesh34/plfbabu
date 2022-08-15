@@ -187,7 +187,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		if (receiptHeader.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		// financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
+		// financeMain.setRcdMaintainSts(FinServiceEvent.RECEIPT);
 		if (tableType == TableType.MAIN_TAB) {
 			receiptHeader.setRcdMaintainSts(null);
 		}

@@ -34,6 +34,7 @@
 
 package com.pennant.backend.dao.rulefactory;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -74,4 +75,8 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getPostings(String postRef, String finEvent);
 
 	List<ReturnDataSet> getDisbursementPostings(long FinReference);
+
+	List<ReturnDataSet> getInstDatePostings(String finReference, Date schdDate);
+
+	List<Long> getAMZPostings(String finReference, Date postDate);
 }

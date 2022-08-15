@@ -100,7 +100,10 @@ public class FinODDetails implements Serializable {
 
 	private BigDecimal paidNow = BigDecimal.ZERO;
 	private BigDecimal waivedNow = BigDecimal.ZERO;
-	// OD Penalty Capitalization
+
+	private BigDecimal curOverdraftTxnChrg = BigDecimal.ZERO;
+	private BigDecimal maxOverdraftTxnChrg = BigDecimal.ZERO;
+	private Long presentmentID;
 
 	/*
 	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
@@ -159,6 +162,10 @@ public class FinODDetails implements Serializable {
 		entity.setPaidNow(this.paidNow);
 		entity.setWaivedNow(this.waivedNow);
 		entity.setRcdAction(this.rcdAction);
+		entity.setPresentmentID(this.presentmentID);
+		entity.setCurOverdraftTxnChrg(this.curOverdraftTxnChrg);
+		entity.setMaxOverdraftTxnChrg(this.maxOverdraftTxnChrg);
+
 		return entity;
 	}
 
@@ -513,6 +520,30 @@ public class FinODDetails implements Serializable {
 
 	public void setWaivedNow(BigDecimal waivedNow) {
 		this.waivedNow = waivedNow;
+	}
+
+	public Long getPresentmentID() {
+		return presentmentID;
+	}
+
+	public void setPresentmentID(Long presentmentID) {
+		this.presentmentID = presentmentID;
+	}
+
+	public BigDecimal getCurOverdraftTxnChrg() {
+		return curOverdraftTxnChrg;
+	}
+
+	public void setCurOverdraftTxnChrg(BigDecimal curOverdraftTxnChrg) {
+		this.curOverdraftTxnChrg = curOverdraftTxnChrg;
+	}
+
+	public BigDecimal getMaxOverdraftTxnChrg() {
+		return maxOverdraftTxnChrg;
+	}
+
+	public void setMaxOverdraftTxnChrg(BigDecimal maxOverdraftTxnChrg) {
+		this.maxOverdraftTxnChrg = maxOverdraftTxnChrg;
 	}
 
 }

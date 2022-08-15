@@ -332,6 +332,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 							Collections.min(verificationAmountsList), PennantConstants.defaultCCYDecPos));
 				}
 				this.finalValuationAmount.setAttribute("minValue", Collections.min(verificationAmountsList));
+				this.finalValuationAmount.setAttribute("minValue", Collections.min(verificationAmountsList));
 			}
 		}
 	}

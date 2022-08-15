@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_documentStatusDialog" border="none" apply="${documentStatusDialogCtrl}" width="100%"
+			height="100%" sizable="false">
+
+			<borderlayout id="borderlayout_DocumentStatusDialog">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start" sclass="toolbar-start">
+								<button id="btnSave" label="${c:l('btnDocumentStatus.label')}"
+									tooltiptext="${c:l('btnDocumentStatus.tooltiptext')}" autodisable="btnSave,btnClose, btnNotes"
+									sclass="z-toolbarbutton" />
+								<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnSave,btnClose, btnNotes" visible="false" sclass="z-toolbarbutton" />
+							</toolbar>
+
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center">
+								<label id="windowTitle" value="${c:l('window_DocumentStatus.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose" label="${c:l('btnClose.label')}"
+									tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnDocumentStatus,btnClose" sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+
+				<center border="none" autoscroll="false">
+					<div>
+						<groupbox width="100%">
+							<grid id="grid_BasicDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="padding-left:20px;">
+								<columns>
+									<column width="190px" />
+									<column />
+									<column width="190px" />
+									<column />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label id="label_FinanceEnquiryDialog_FinReference"
+											value="${c:l('label_FinanceEnquiryDialog_FinReference.value')}" />
+										<textbox id="finReference_header" readonly="true" width="170px" visible="true" />
+										<label id="label_FinanceEnquiryDialog_FinStatus"
+											value="${c:l('label_FinanceEnquiryDialog_FinStatus.value')}" />
+										<hbox>
+											<textbox id="finStatus_header" readonly="true" width="170px" visible="true" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label id="label_FinanceEnquiryDialog_FinType"
+											value="${c:l('label_FinanceEnquiryDialog_FinType.value')}" />
+										<textbox id="finType_header" width="250px" readonly="true" />
+										<label id="label_FinanceEnquiryDialog_FinCcy"
+											value="${c:l('label_FinanceEnquiryDialog_FinCcy.value')}" />
+										<textbox id="finCcy_header" width="250px" readonly="true" />
+									</row>
+									<row visible="true">
+										<label id="label_FinanceEnquiryDialog_ScheduleMethod"
+											value="${c:l('label_FinanceEnquiryDialog_ScheduleMethod.value')}" />
+										<textbox id="scheduleMethod_header" width="250px" readonly="true" />
+										<label id="label_FinanceEnquiryDialog_ProfitDaysBasis"
+											value="${c:l('label_FinanceEnquiryDialog_ProfitDaysBasis.value')}" />
+										<textbox id="profitDaysBasis_header" width="250px" readonly="true" />
+									</row>
+									<row visible="true">
+										<label id="label_FinanceEnquiryDialog_FinBranch"
+											value="${c:l('label_FinanceEnquiryDialog_FinBranch.value')}" />
+										<textbox id="finBranch_header" width="250px" readonly="true" />
+										<label id="label_FinanceEnquiryDialog_CustID"
+											value="${c:l('label_FinanceEnquiryDialog_CustID.value')}" />
+										<hbox>
+											<textbox id="custCIF_header" width="150px" readonly="true" />
+											<label id="custShrtName" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox id="gb_details1" height="100%">
+							<caption label="Documents" />
+							<listbox id="docmentslistBox" width="100%" span="true" style="overflow:auto;"
+								emptyMessage="${c:l('listbox.emptyMessage')}" xmlns:w="client"
+								w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+								w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});" vflex="true" rows="4">
+								<listhead sizable="true">
+									<listheader label="ID" sort="false" hflex="min" width="10%" />
+									<listheader label="Name" sort="false" hflex="min" width="20%" />
+									<listheader label="View" sort="false" hflex="min" width="10%" />
+									<listheader label="Status" sort="false" hflex="min" width="10%" />
+									<listheader label="Remarks" sort="false" hflex="min" width="20%" />
+									<listheader label="Covenants" sort="false" hflex="min" width="20%" />
+								</listhead>
+							</listbox>
+						</groupbox>
+					</div>
+				</center>
+
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="75%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

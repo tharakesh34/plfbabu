@@ -723,7 +723,25 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("SeqNo", seqNo);
-
+		
 		this.jdbcTemplate.update(sql.toString(), source);
+	}
+	
+	@Override
+	public String getUCICNumber(String tablename, Object ucic) {
+		StringBuilder sql = new StringBuilder("Select Reference from");
+		sql.append(" CUSTOMER_");
+		sql.append(tablename);
+		sql.append("_ED");
+		sql.append(" where UCIC = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, ucic);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 }

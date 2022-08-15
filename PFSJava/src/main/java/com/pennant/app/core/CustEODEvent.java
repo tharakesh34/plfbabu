@@ -27,7 +27,6 @@ public class CustEODEvent extends AbstractEntity {
 	private boolean eodSuccess = true;
 
 	/* NPA and Provision fields */
-	private boolean executeNPAAndProvision;
 	private boolean customerProvision;
 	private String provisionBooks;
 	private Date provisionEffectiveDate;
@@ -154,14 +153,6 @@ public class CustEODEvent extends AbstractEntity {
 		this.amzMethodRule = amzMethodRule;
 	}
 
-	public boolean isExecuteNPAAndProvision() {
-		return executeNPAAndProvision;
-	}
-
-	public void setExecuteNPAaAndProvision(boolean executeNPAAndProvision) {
-		this.executeNPAAndProvision = executeNPAAndProvision;
-	}
-
 	public boolean isCustomerProvision() {
 		return customerProvision;
 	}
@@ -197,5 +188,4 @@ public class CustEODEvent extends AbstractEntity {
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
 	}
-
 }

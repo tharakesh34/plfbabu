@@ -61,7 +61,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
 		"customerChequeInfoList", "customerExtLiabilityList", "dedupReq", "extendedDetails", "balckListCustomers",
 		"blackListReq", "customerDirectorList", "customerDedupList", "customerGstLists", "custCardSales",
-		"customerFinanceDetailList", "returnStatus" })
+		"customerFinanceDetailList", "returnStatus", "gstDetailsList" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
@@ -124,6 +124,10 @@ public class CustomerDetails implements java.io.Serializable {
 	@XmlElementWrapper(name = "phones")
 	@XmlElement(name = "phone")
 	private List<CustomerPhoneNumber> customerPhoneNumList;
+
+	@XmlElementWrapper(name = "gstDetails")
+	@XmlElement(name = "gstDetail")
+	private List<GSTDetail> gstDetailsList;
 
 	@XmlElementWrapper(name = "emails")
 	@XmlElement(name = "email")
@@ -679,4 +683,11 @@ public class CustomerDetails implements java.io.Serializable {
 		this.actualError = actualError;
 	}
 
+	public List<GSTDetail> getGstDetailsList() {
+		return gstDetailsList;
+	}
+
+	public void setGstDetailsList(List<GSTDetail> gstDetailsList) {
+		this.gstDetailsList = gstDetailsList;
+	}
 }
