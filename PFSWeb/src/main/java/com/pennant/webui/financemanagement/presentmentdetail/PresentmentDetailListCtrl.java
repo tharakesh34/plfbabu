@@ -42,13 +42,13 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -64,6 +64,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 /**
  * This is the controller class for the
@@ -81,6 +82,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 
 	// List headers
 	protected Listheader listheader_Reference;
+	protected Listheader listheader_presentmentType;
 	protected Listheader listheader_PresentmentDate;
 	protected Listheader listheader_BankCode;
 	protected Listheader listheader_PartnerBankId;
@@ -96,6 +98,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 
 	// Search Fields
 	protected Textbox reference;
+	protected Combobox presentmentType;
 	protected ExtendedCombobox partnerBank;
 	protected Combobox status;
 	protected Combobox mandateType;
@@ -106,6 +109,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected ExtendedCombobox entityCode;
 
 	protected Listbox sortOperator_Reference;
+	protected Listbox sortOperator_presentmentType;
 	protected Listbox sortOperator_PresentmentDate;
 	protected Listbox sortOperator_PartnerBankId;
 	protected Listbox sortOperator_Status;
@@ -114,6 +118,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Listbox sortOperator_Schdate;
 	protected Listbox sortOperator_BankCode;
 	protected Listbox sortOperator_Entity;
+	protected Row row_PresentmentHeaderList_BankCode;
 
 	protected Label label_EmandateSource;
 	protected ExtendedCombobox emandateSource;
@@ -180,6 +185,8 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		registerButton(button_PresentmentHeaderList_PresentmentHeaderSearch);
 		registerField("reference", listheader_Reference, SortOrder.NONE, reference, sortOperator_Reference,
 				Operators.STRING);
+		registerField("presentmentType", listheader_presentmentType, SortOrder.NONE, presentmentType,
+				sortOperator_presentmentType, Operators.STRING);
 		registerField("entityCode", listheader_Entity, SortOrder.NONE, entityCode, sortOperator_Entity,
 				Operators.STRING);
 		registerField("presentmentDate", listheader_PresentmentDate, SortOrder.NONE, presentmentDate,
@@ -198,6 +205,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		registerField("partnerBankName");
 		registerField("emandateSource");
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {
+			this.row_PresentmentHeaderList_BankCode.setVisible(false);
 			listheader_BankCode.setVisible(false);
 			this.label_PresentmentHeaderList_BankCode.setVisible(false);
 			this.sortOperator_BankCode.setVisible(false);
@@ -236,6 +244,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 
 		fillList(status, PennantStaticListUtil.getPresentmentBatchStatusList(), null);
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
 		this.presentmentDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.schdate.setFormat(DateFormat.SHORT_DATE.getPattern());
 

@@ -13,6 +13,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
@@ -84,4 +85,6 @@ public interface CIBILDAO {
 	List<String> getEntityCodes();
 
 	String getCoAppRelation(String custCIF, long finID);
+
+	FinanceSummary getFinanceProfitDetails(String finRef);
 }

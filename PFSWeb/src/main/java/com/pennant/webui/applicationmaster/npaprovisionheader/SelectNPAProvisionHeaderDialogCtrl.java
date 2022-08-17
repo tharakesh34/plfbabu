@@ -22,6 +22,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
+import com.pennant.backend.model.applicationmaster.NPATemplateType;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.NPAProvisionHeaderService;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -39,6 +40,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 	protected Button btnProceed;
 	private NPAProvisionHeader nPAProvisionHeader;
 	private NPAProvisionHeaderListCtrl nPAProvisionHeaderListCtrl;
+	protected ExtendedCombobox npaTemplateType;
 
 	private transient NPAProvisionHeaderService nPAProvisionHeaderService;
 	private boolean isCopyProcess;
@@ -52,7 +54,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_SelectNPAProvisionHeaderDialog(Event event) {
+	public void onCreate$window_SelectNPAProvisionHeaderDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -77,7 +79,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void showSelectNPAProvisionHeaderDialog() {
+	private void showSelectNPAProvisionHeaderDialog() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		try {
 			// open the dialog in modal mode
@@ -96,15 +98,22 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 
 		this.entity.setMandatoryStyle(true);
 		this.entity.setModuleName("Entity");
-		this.entity.setValueColumn("EntityCode");
-		this.entity.setDescColumn("EntityDesc");
-		this.entity.setValidateColumns(new String[] { "EntityCode" });
+		this.entity.setValueColumn("entityCode");
+		this.entity.setDescColumn("entityDesc");
+		this.entity.setValidateColumns(new String[] { "entityCode" });
 
 		this.finType.setMandatoryStyle(true);
 		this.finType.setModuleName("FinanceType");
-		this.finType.setValueColumn("FinType");
-		this.finType.setDescColumn("FinTypeDesc");
-		this.finType.setValidateColumns(new String[] { "FinType" });
+		this.finType.setValueColumn("finType");
+		this.finType.setDescColumn("finTypeName");
+		this.finType.setValidateColumns(new String[] { "finType" });
+
+		this.npaTemplateType.setMandatoryStyle(true);
+		this.npaTemplateType.setModuleName("NPATemplateType");
+		this.npaTemplateType.setMandatoryStyle(true);
+		this.npaTemplateType.setValueColumn("Code");
+		this.npaTemplateType.setDescColumn("Description");
+		this.npaTemplateType.setValidateColumns(new String[] { "Code" });
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -151,29 +160,58 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 		logger.debug(Literal.LEAVING + " " + event.toString());
 	}
 
+	public void onFulfill$npaTemplateType(Event event) {
+		logger.debug(Literal.ENTERING + " " + event.toString());
+
+		this.npaTemplateType.setConstraint("");
+		this.npaTemplateType.clearErrorMessage();
+		Clients.clearWrongValue(npaTemplateType);
+		Object dataObject = this.npaTemplateType.getObject();
+
+		if (dataObject instanceof String) {
+			this.npaTemplateType.setValue(dataObject.toString());
+			this.npaTemplateType.setDescription("");
+		} else {
+			NPATemplateType details = (NPATemplateType) dataObject;
+			if (details != null) {
+				this.npaTemplateType.setValue(details.getCode());
+				this.npaTemplateType.setDescription(details.getDescription());
+			}
+		}
+		logger.debug(Literal.LEAVING + " " + event.toString());
+	}
+
 	/**
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
+	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) {
+	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + " " + event.toString());
 
 		doSetFieldValidation();
 		boolean isExists = false;
 		String finTypeLabel = null;
+		String npaTypeLabel = null;
 		this.nPAProvisionHeader.setFinType(this.finType.getValue());
 		this.nPAProvisionHeader.setEntity(this.entity.getValue());
+		NPATemplateType npaTemplateType = (NPATemplateType) this.npaTemplateType.getObject();
+		this.nPAProvisionHeader.setNpaTemplateId(npaTemplateType.getId());
 		finTypeLabel = nPAProvisionHeader.getFinType() + " ";
+		npaTypeLabel = " " + npaTemplateType.getCode();
+
 		isExists = this.nPAProvisionHeaderService.getIsFinTypeExists(nPAProvisionHeader.getFinType(),
 				nPAProvisionHeader.getNpaTemplateId(), TableType.VIEW);
 
 		if (isExists) {
-			MessageUtil.showError(finTypeLabel.concat(Labels.getLabel("label_FinType_AlreadyExists")));
+			MessageUtil.showError(
+					finTypeLabel.concat(Labels.getLabel("label_FinType_AlreadyExists")).concat(npaTypeLabel));
 			return;
 		}
 
-		if (isCopyProcess) {
+		if (isCopyProcess
+				&& StringUtils.equals(npaTemplateType.getCode(), this.nPAProvisionHeader.getNpaTemplateCode())) {
 
 			List<NPAProvisionDetail> oldDetailsList = nPAProvisionHeader.getProvisionDetailsList();
 
@@ -181,9 +219,8 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 			List<NPAProvisionDetail> newDetailsList = new ArrayList<>();
 
 			NPAProvisionHeader newNPAProvisionHeader = new NPAProvisionHeader();
-			newNPAProvisionHeader.setFinType(this.finType.getValue());
-			newNPAProvisionHeader = this.nPAProvisionHeaderService.getNewNPAProvisionHeader(newNPAProvisionHeader,
-					TableType.VIEW);
+			newNPAProvisionHeader = this.nPAProvisionHeaderService
+					.getNewNPAProvisionHeaderByTemplate(nPAProvisionHeader, TableType.VIEW);
 
 			if (newNPAProvisionHeader != null) {
 				newDetailsList = newNPAProvisionHeader.getProvisionDetailsList();
@@ -212,11 +249,13 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 				nPAProvisionHeader.setProvisionDetailsList(resvDetailsList);
 				this.nPAProvisionHeader.setEntityName(this.entity.getDescription());
 				this.nPAProvisionHeader.setFinTypeName(this.finType.getDescription());
+				this.nPAProvisionHeader.setNpaTemplateDesc(this.npaTemplateType.getDescription());
+				this.nPAProvisionHeader.setNpaTemplateCode(this.npaTemplateType.getValue());
 				showDetailView();
 			}
 		} else {
-			this.nPAProvisionHeader = this.nPAProvisionHeaderService.getNewNPAProvisionHeader(nPAProvisionHeader,
-					TableType.VIEW);
+			this.nPAProvisionHeader = this.nPAProvisionHeaderService
+					.getNewNPAProvisionHeaderByTemplate(nPAProvisionHeader, TableType.VIEW);
 
 			if (CollectionUtils.isEmpty(this.nPAProvisionHeader.getProvisionDetailsList())) {
 				MessageUtil.showError(Labels.getLabel("label_FinType_AssetCodes_Configurations_Notavailable"));
@@ -225,6 +264,8 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 
 			this.nPAProvisionHeader.setEntityName(this.entity.getDescription());
 			this.nPAProvisionHeader.setFinTypeName(this.finType.getDescription());
+			this.nPAProvisionHeader.setNpaTemplateDesc(this.npaTemplateType.getDescription());
+			this.nPAProvisionHeader.setNpaTemplateCode(this.npaTemplateType.getValue());
 			showDetailView();
 		}
 		logger.debug(Literal.LEAVING + " " + event.toString());
@@ -275,6 +316,33 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 			wve.add(e);
 		}
 
+		try {
+			if (StringUtils.isBlank(this.npaTemplateType.getValue())) {
+				throw new WrongValueException(this.npaTemplateType, Labels.getLabel("CHECK_NO_EMPTY",
+						new String[] { Labels.getLabel("label_NPAProvisionHeaderDialog_NPAType.value") }));
+			}
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+
+		try {
+			if (StringUtils.isBlank(this.npaTemplateType.getValue())) {
+				throw new WrongValueException(this.npaTemplateType, Labels.getLabel("CHECK_NO_EMPTY",
+						new String[] { Labels.getLabel("label_NPAProvisionHeaderDialog_NPAType.value") }));
+			}
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+
+		try {
+			if (StringUtils.isBlank(this.npaTemplateType.getValue())) {
+				throw new WrongValueException(this.npaTemplateType, Labels.getLabel("CHECK_NO_EMPTY",
+						new String[] { Labels.getLabel("label_NPAProvisionHeaderDialog_NPAType.value") }));
+			}
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -294,6 +362,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 
 		this.entity.setConstraint("");
 		this.finType.setConstraint("");
+		this.npaTemplateType.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -303,6 +372,8 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 		logger.debug(Literal.ENTERING);
 		this.entity.setErrorMessage("");
 		this.finType.setErrorMessage("");
+		this.npaTemplateType.setErrorMessage("");
+
 		logger.debug(Literal.LEAVING);
 	}
 

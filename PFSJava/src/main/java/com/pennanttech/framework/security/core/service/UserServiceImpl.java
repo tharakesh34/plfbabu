@@ -41,7 +41,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.pennant.backend.dao.SecLoginlogDAO;
 import com.pennant.backend.dao.UserDAO;
@@ -50,6 +49,8 @@ import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennanttech.pennapps.core.security.user.AuthenticationError;
+import com.pennanttech.pennapps.core.security.user.UserAuthenticationException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -75,11 +76,13 @@ public class UserServiceImpl implements UserService {
 		SecurityUser user = userDAO.getUserByLogin(userName);
 
 		if (user == null) {
-			throw new UsernameNotFoundException("User not found.");
+			throw new UserAuthenticationException(AuthenticationError.USER_NOT_FOUND);
 		} else if (!user.isUsrEnabled()) {
-			throw new UsernameNotFoundException("User account disabled.");
+			throw new UserAuthenticationException(AuthenticationError.ACCOUN_DISABLED);
 		} else if (user.isUsrAcLocked()) {
-			throw new UsernameNotFoundException("User account locked.");
+			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED);
+		} else if (user.isDeleted()) {
+			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED);
 		}
 
 		Date date = DateUtil.getSysDate();
@@ -89,19 +92,19 @@ public class UserServiceImpl implements UserService {
 		Date expiredDate = user.getUsrAcExpDt();
 
 		if ((expiredDate != null && expiredDate.before(DateUtil.getSysDate()))) {
-			throw new UsernameNotFoundException("User account expired.");
+			throw new UserAuthenticationException(AuthenticationError.ACCOUN_EXPIRED);
 		}
 
 		Date signonFrom = user.getUsrCanSignonFrom();
 		if (signonFrom != null && date.compareTo(signonFrom) < 0) {
 			String strSignOnFrom = DateUtil.format(signonFrom, LONG_TIME);
-			throw new UsernameNotFoundException("You are not allowed to loging before " + strSignOnFrom);
+			throw new UserAuthenticationException(AuthenticationError.LOGIN_BEFORE, strSignOnFrom);
 		}
 
 		Date signOnTo = user.getUsrCanSignonTo();
 		if (signOnTo != null && date.compareTo(signOnTo) > 0) {
 			String strSignOnTo = DateUtil.format(signonFrom, LONG_TIME);
-			throw new UsernameNotFoundException("You are not allowed to loging after " + strSignOnTo);
+			throw new UserAuthenticationException(AuthenticationError.LOGIN_AFTER, strSignOnTo);
 		}
 		return user;
 
@@ -151,8 +154,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public long logLoginAttempt(SecLoginlog logingLog) {
-		logger.info(Literal.ENTERING + logingLog.getLoginUsrLogin());
-
 		return this.secLoginlogDAO.saveLog(logingLog);
 	}
 

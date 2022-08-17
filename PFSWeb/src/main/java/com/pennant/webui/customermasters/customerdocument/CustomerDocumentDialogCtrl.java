@@ -69,6 +69,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MasterDefUtil;
@@ -107,6 +108,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -1431,6 +1433,15 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		} else {
 			aCustomerDocument.setApplicationNo(StringUtils.trimToEmpty(this.dmsApplicationNo));
 			aCustomerDocument.setOfferId(StringUtils.trimToEmpty(this.leadId));
+		}
+
+		if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY
+				&& (this.custDocType.getValue().equalsIgnoreCase(PennantConstants.FORM60))) {
+			Date addMonths = DateUtil.addMonths(this.custDocIssuedOn.getValue(), 72);
+			if (DateUtility.compare(addMonths, this.custDocExpDate.getValue()) < 0) {
+				MessageUtil.showError("Difference Between Issued On & Expiry Date Sholud be Less Than 6 Years");
+			}
+			return;
 		}
 
 		// Write the additional validations as per below example

@@ -53,7 +53,6 @@ import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
@@ -72,6 +71,7 @@ import com.pennant.backend.model.commitment.CommitmentMovement;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -87,6 +87,7 @@ import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -126,6 +127,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private long tempWorkflowId;
 	private ReasonDetailDAO reasonDetailDAO;
 	private CollateralAssignmentValidation collateralAssignmentValidation;
+	private FinChequeHeaderService finChequeHeaderService;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -174,6 +176,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 				FinanceConstants.MODULEID_FINTYPE));
 
 		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, "_TView"));
+
+		fd.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finID));
 
 		logger.debug(Literal.LEAVING);
 		return fd;
@@ -251,8 +255,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 				logger.debug("Reverse Transaction Success for Reference : " + finReference);
 			} else {
 				// Event Based Accounting on Final Stage
-				Date curBDay = SysParamUtil.getAppDate();
-				auditHeader = executeAccountingProcess(auditHeader, curBDay);
+				auditHeader = executeAccountingProcess(auditHeader, appDate);
 
 				if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 					return auditHeader;
@@ -282,6 +285,13 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		// =======================================
 		if (fd.getFinanceCheckList() != null && !fd.getFinanceCheckList().isEmpty()) {
 			auditDetails.addAll(checkListDetailService.saveOrUpdate(fd, tableType.getSuffix(), serviceUID));
+		}
+
+		// cheque Details
+		ChequeHeader ch = fd.getChequeHeader();
+		if (ch != null && CollectionUtils.isNotEmpty(ch.getChequeDetailList())) {
+			auditDetails.addAll(finChequeHeaderService.processingChequeDetailList(
+					fd.getAuditDetailMap().get("ChequeDetail"), tableType, ch.getHeaderID()));
 		}
 
 		// Save Document Details
@@ -562,6 +572,13 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			auditDetails.addAll(details);
 		}
 
+		// cheque Details
+		ChequeHeader ch = fd.getChequeHeader();
+		if (ch != null && CollectionUtils.isNotEmpty(ch.getChequeDetailList())) {
+			auditDetails.addAll(finChequeHeaderService.processingChequeDetailList(
+					fd.getAuditDetailMap().get("ChequeDetail"), TableType.MAIN_TAB, ch.getHeaderID()));
+		}
+
 		saveCancelReasonData(fm);
 
 		// Notification
@@ -761,6 +778,18 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 						checkListDetailService.getAuditDetail(auditDetailMap, financeDetail, auditTranType, method));
 			}
 		}
+
+		// chequeHeader details
+		ChequeHeader ch = financeDetail.getChequeHeader();
+		if (ch != null) {
+			if (CollectionUtils.isNotEmpty(ch.getChequeDetailList())) {
+				ch.getChequeDetailList().forEach(cd -> cd.setRecordType(PennantConstants.RECORD_TYPE_DEL));
+				auditDetailMap.put("ChequeDetail",
+						finChequeHeaderService.setChequeDetailAuditData(ch, auditTranType, method));
+				auditDetails.addAll(auditDetailMap.get("ChequeDetail"));
+			}
+		}
+
 		financeDetail.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 		auditHeader.setAuditDetails(auditDetails);
@@ -894,8 +923,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 		}
 		// vallidation for manual dues
-		List<ManualAdvise> manualAdvise = manualAdviseDAO.getManualAdviseByRef(finID,
-				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");
+		List<ManualAdvise> manualAdvise = manualAdviseDAO.getReceivableAdvises(finID, "");
 		if (CollectionUtils.isNotEmpty(manualAdvise)) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60022", errParm, valueParm));
 		}
@@ -912,7 +940,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			BigDecimal postAmount, long linkedtranId) {
 
 		CommitmentMovement movement = new CommitmentMovement();
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 
 		movement.setCmtReference(commitment.getCmtReference());
 		movement.setFinReference(financeMain.getFinReference());
@@ -1042,5 +1070,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			this.collateralAssignmentValidation = new CollateralAssignmentValidation(collateralAssignmentDAO);
 		}
 		return collateralAssignmentValidation;
+	}
+
+	@Autowired
+	public void setFinChequeHeaderService(FinChequeHeaderService finChequeHeaderService) {
+		this.finChequeHeaderService = finChequeHeaderService;
 	}
 }

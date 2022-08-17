@@ -57,15 +57,18 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.pff.eod.cache.RuleConfigCache;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class LatePayPenaltyService extends ServiceHelper {
@@ -78,7 +81,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 	}
 
 	public void computeLPP(FinODDetails fod, Date valueDate, FinanceMain fm, List<FinanceScheduleDetail> schedules,
-			List<FinanceRepayments> repayments) {
+			List<FinanceRepayments> repayments, List<ManualAdviseMovements> movements, int extnODGrcDays) {
 
 		BigDecimal penalty = BigDecimal.ZERO;
 
@@ -91,13 +94,23 @@ public class LatePayPenaltyService extends ServiceHelper {
 			return;
 		}
 
+		int oDGrcDays = fod.getODGraceDays();
+		if (ProductUtil.isOverDraft(fm)) {
+			oDGrcDays = oDGrcDays + extnODGrcDays;
+		}
+
 		/* Still before the grace days no need to calculate OD penalty */
-		if (fod.getFinCurODDays() <= fod.getODGraceDays()) {
-			// #PSD 137379
-			fod.setTotPenaltyAmt(penalty);
-			fod.setTotPenaltyBal(penalty);
-			setTotals(fod);
-			return;
+		if (fod.isODIncGrcDays()) {
+			if (fod.getFinCurODDays() <= oDGrcDays) {
+				// #PSD 137379
+				fod.setTotPenaltyAmt(penalty);
+				fod.setTotPenaltyBal(penalty);
+				return;
+			}
+		} else {
+			if (fod.getFinCurODDays() <= 0) {
+				return;
+			}
 		}
 
 		BigDecimal balanceForCal = BigDecimal.ZERO;
@@ -153,7 +166,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			}
 
 			repayments = sortRpdListByValueDate(repayments);
-			prepareDueDateData(fod, valueDate, pftDaysBasis, repayments, fm, schedules);
+			prepareDueDateData(fod, valueDate, pftDaysBasis, repayments, fm, schedules, movements, extnODGrcDays);
 			penalty = fod.getTotPenaltyAmt();
 
 			break;
@@ -192,16 +205,29 @@ public class LatePayPenaltyService extends ServiceHelper {
 	}
 
 	private void prepareDueDateData(FinODDetails fod, Date valueDate, String idb, List<FinanceRepayments> rpdList,
-			FinanceMain fm, List<FinanceScheduleDetail> schedules) {
+			FinanceMain fm, List<FinanceScheduleDetail> schedules, List<ManualAdviseMovements> movements,
+			int extnODGrcDays) {
 
 		long finID = fod.getFinID();
 		String finReference = fod.getFinReference();
 		Date odDate = fod.getFinODSchdDate();
+		Date odDateIncGrc = fod.getFinODSchdDate();
+		String productCategory = fm.getProductCategory();
 
-		BigDecimal odPri = fod.getFinMaxODPri();
-		BigDecimal odPft = fod.getFinMaxODPft();
+		if (ProductUtil.isOverDraftChargeReq(fm)) {
+			odDateIncGrc = DateUtil.addDays(odDateIncGrc, fod.getODGraceDays());
+
+			if (!fod.isODIncGrcDays()) {
+				odDateIncGrc = DateUtil.addDays(odDateIncGrc, extnODGrcDays);
+			}
+		}
+
+		if (rpdList == null) {
+			rpdList = new ArrayList<>();
+		}
 
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
+
 		String odChargeCalOn = fod.getODChargeCalOn();
 
 		if (FinanceConstants.ODCALON_PIPD_FRQ.equals(odChargeCalOn)
@@ -211,125 +237,41 @@ public class LatePayPenaltyService extends ServiceHelper {
 			fod.setTotWaived(BigDecimal.ZERO);
 		}
 
-		BigDecimal totPenaltyPaid = BigDecimal.ZERO;
-		BigDecimal totWaived = BigDecimal.ZERO;
+		List<OverdueChargeRecovery> odcrList = new ArrayList<>();
 
-		List<OverdueChargeRecovery> odcrList = new ArrayList<OverdueChargeRecovery>();
-		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
+		odcrList.add(getODChrgRecovery(fod, odDate, odDateIncGrc));
 
-		// Add Schedule Date to the ODC Recovery
-		odcr.setFinReference(finReference);
-		odcr.setFinODSchdDate(odDate);
-		odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
-		odcr.setMovementDate(odDate);
+		Date grcDate = DateUtil.addDays(fod.getFinODSchdDate(), fod.getODGraceDays() + extnODGrcDays);
 
-		if (DateUtil.compare(odcr.getMovementDate(), DateUtil.getMonthStart(odcr.getMovementDate())) == 0) {
-			odcr.setLpCpz(true);
-			odcr.setNewRecord(true);
+		OverdueChargeRecovery odcRecovery = getODCRecovery(fod, valueDate, rpdList, odDate, odcrList, grcDate);
+
+		BigDecimal totPenaltyPaid = fod.getTotPenaltyPaid();
+		BigDecimal totWaived = fod.getTotWaived();
+		BigDecimal odChrg = fod.getMaxOverdraftTxnChrg();
+
+		BigDecimal odPri = odcRecovery.getFinCurODPri();
+		BigDecimal odPft = odcRecovery.getFinCurODPft();
+
+		if (ProductUtil.isOverDraft(fm)) {
+			odcRecovery = getODCRecovery(fod, valueDate, movements, odDate, odcrList, grcDate, odPri, odPft);
 		}
 
-		odcr.setFinCurODPri(odPri);
-		odcr.setFinCurODPft(odPft);
-		odcr.setFinCurODAmt(odPri.add(odPft));
-		odcrList.add(odcr);
-
-		if (rpdList == null) {
-			rpdList = new ArrayList<>();
-		}
-
-		boolean isAddTodayRcd = true;
-
-		Date grcDate = DateUtil.addDays(odDate, fod.getODGraceDays());
-
-		// Load Overdue Charge Recovery from Repayments Movements
-		for (FinanceRepayments rpd : rpdList) {
-
-			Date schdDate = rpd.getFinSchdDate();
-			Date finValueDate = rpd.getFinValueDate();
-
-			// check the payment made against the actual schedule date
-			if (schdDate.compareTo(odDate) != 0) {
-				continue;
-			}
-
-			// PSD#163479
-			totPenaltyPaid = totPenaltyPaid.add(rpd.getPenaltyPaid());
-			totWaived = totWaived.add(rpd.getPenaltyWaived());
-
-			/*
-			 * PSD#169647 Removing This Condition as We need to consider past paid value date receipts as well in LPP
-			 * calculation
-			 */
-			// common issue 20
-			/*
-			 * if (finValueDate.compareTo(valueDate) > 0) { continue; }
-			 */
-
-			if (schdDate.compareTo(finValueDate) == 0 || grcDate.compareTo(finValueDate) > 0) {
-				continue;
-			}
-
-			// MAx OD amounts is same as repayments balance amounts
-			if (schdDate.compareTo(finValueDate) == 0 || grcDate.compareTo(finValueDate) >= 0) {
-				continue;
-			}
-
-			boolean isOdcrFound = false;
-
-			for (OverdueChargeRecovery oldOdcr : odcrList) {
-				if (oldOdcr.getMovementDate().compareTo(finValueDate) == 0) {
-					isOdcrFound = true;
-
-					oldOdcr.setFinCurODPri(oldOdcr.getFinCurODPri().subtract(rpd.getFinSchdPriPaid()));
-					oldOdcr.setFinCurODPft(oldOdcr.getFinCurODPft().subtract(rpd.getFinSchdPftPaid()));
-					oldOdcr.setFinCurODAmt(oldOdcr.getFinCurODPri().add(oldOdcr.getFinCurODPft()));
-					oldOdcr.setPenaltyPaid(oldOdcr.getPenaltyPaid().add(rpd.getPenaltyPaid()));
-					oldOdcr.setWaivedAmt(oldOdcr.getWaivedAmt().add(rpd.getPenaltyWaived()));
-
-					odPri = oldOdcr.getFinCurODPri();
-					odPft = oldOdcr.getFinCurODPft();
-					break;
-				}
-			}
-
-			if (isOdcrFound) {
-				continue;
-			}
-
-			odcr = new OverdueChargeRecovery();
-			odcr.setFinReference(finReference);
-			odcr.setFinODSchdDate(odDate);
-			odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
-			odcr.setMovementDate(finValueDate);
-			odcr.setFinCurODPri(odPri.subtract(rpd.getFinSchdPriPaid()));
-			odcr.setFinCurODPft(odPft.subtract(rpd.getFinSchdPftPaid()));
-			odcr.setFinCurODAmt(odcr.getFinCurODPri().add(odcr.getFinCurODPft()));
-			odcr.setPenaltyPaid(rpd.getPenaltyPaid());
-			odcr.setWaivedAmt(rpd.getPenaltyWaived());
-
-			BigDecimal schdpaid = rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid());
-			if (schdpaid.compareTo(BigDecimal.ZERO) > 0) {
-				odcrList.add(odcr);
-			}
-			odPri = odcr.getFinCurODPri();
-			odPft = odcr.getFinCurODPft();
-
-			if (odcr.getMovementDate().compareTo(valueDate) == 0 && schdpaid.compareTo(BigDecimal.ZERO) > 0) {
-				isAddTodayRcd = false;
-			}
-
-		}
+		odPri = odcRecovery.getFinCurODPri();
+		odPft = odcRecovery.getFinCurODPft();
+		odChrg = odcRecovery.getFinCurODTxnChrg();
 
 		// Add record with today date
-		if (isAddTodayRcd) {
-			odcr = new OverdueChargeRecovery();
+		if (odcRecovery.isAddTodayRcd()) {
+			OverdueChargeRecovery odcr = new OverdueChargeRecovery();
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
 			odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
 			odcr.setMovementDate(valueDate);
 			odcr.setFinCurODPri(odPri);
 			odcr.setFinCurODPft(odPft);
-			odcr.setFinCurODAmt(odPri.add(odPft));
+			odcr.setFinCurODTxnChrg(odChrg);
+			odcr.setFinCurODAmt(odPri.add(odPft).add(odChrg));
+
 			odcrList.add(odcr);
 		}
 
@@ -373,6 +315,15 @@ public class LatePayPenaltyService extends ServiceHelper {
 			Date dateCur = odcrCur.getMovementDate();
 			Date datePrv = odcrPrv.getMovementDate();
 
+			if (!fod.isODIncGrcDays()) {
+				Date minODDate = DateUtil.addDays(odDate, fod.getODGraceDays() + extnODGrcDays - 1);
+				if (DateUtil.compare(datePrv, minODDate) < 0) {
+					continue;
+				} else if (DateUtil.compare(dateCur, minODDate) < 0) {
+					dateCur = minODDate;
+				}
+			}
+
 			BigDecimal penalty = BigDecimal.ZERO;
 
 			// If charge calculation Type is Rule Fixed amount by Due Days
@@ -391,7 +342,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 					datamap.put("fpd_tdSchdPftBal", pfd.getTdSchdPftBal());
 				}
 
-				datamap.put("fm_productCategory", fm.getProductCategory());
+				datamap.put("fm_productCategory", productCategory);
 				datamap.put("ft_product", fm.getFinCategory());
 
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
@@ -467,6 +418,205 @@ public class LatePayPenaltyService extends ServiceHelper {
 		fod.setTotPenaltyPaid(totPenaltyPaid);
 		fod.setTotWaived(totWaived);
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
+	}
+
+	private OverdueChargeRecovery identifyODCRecovery(List<OverdueChargeRecovery> odcrList, FinODDetails fod,
+			FinanceRepayments rpd, Date finValueDate, Date odDate) {
+
+		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
+
+		BigDecimal odPri = fod.getFinMaxODPri();
+		BigDecimal odPft = fod.getFinMaxODPft();
+
+		for (OverdueChargeRecovery oldOdcr : odcrList) {
+			if (oldOdcr.getMovementDate().compareTo(finValueDate) == 0) {
+
+				oldOdcr.setFinCurODPri(oldOdcr.getFinCurODPri().subtract(rpd.getFinSchdPriPaid()));
+				oldOdcr.setFinCurODPft(oldOdcr.getFinCurODPft().subtract(rpd.getFinSchdPftPaid()));
+				oldOdcr.setFinCurODAmt(oldOdcr.getFinCurODPri().add(oldOdcr.getFinCurODPft()));
+				oldOdcr.setPenaltyPaid(oldOdcr.getPenaltyPaid().add(rpd.getPenaltyPaid()));
+				oldOdcr.setWaivedAmt(oldOdcr.getWaivedAmt().add(rpd.getPenaltyWaived()));
+
+				odPri = oldOdcr.getFinCurODPri();
+				odPft = oldOdcr.getFinCurODPft();
+
+				odcRecovery = oldOdcr.copyEntity();
+				return odcRecovery;
+			}
+		}
+
+		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
+		odcr.setFinReference(fod.getFinReference());
+		odcr.setFinODSchdDate(odDate);
+		odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+		odcr.setMovementDate(finValueDate);
+		odcr.setFinCurODPri(odPri.subtract(rpd.getFinSchdPriPaid()));
+		odcr.setFinCurODPft(odPft.subtract(rpd.getFinSchdPftPaid()));
+		odcr.setFinCurODAmt(odcr.getFinCurODPri().add(odcr.getFinCurODPft()));
+		odcr.setPenaltyPaid(rpd.getPenaltyPaid());
+		odcr.setWaivedAmt(rpd.getPenaltyWaived());
+
+		BigDecimal schdpaid = rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid());
+
+		if (schdpaid.compareTo(BigDecimal.ZERO) > 0) {
+			odcrList.add(odcr);
+		}
+
+		return odcRecovery;
+	}
+
+	private OverdueChargeRecovery identifyODCRecovery(List<OverdueChargeRecovery> odcrList, FinODDetails fod,
+			BigDecimal paidAdviseAmt, Date finValueDate, Date odDate, BigDecimal odPri, BigDecimal odPft) {
+		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
+
+		BigDecimal odChrg = fod.getMaxOverdraftTxnChrg();
+
+		for (OverdueChargeRecovery oldOdcr : odcrList) {
+			if (oldOdcr.getMovementDate().compareTo(finValueDate) == 0) {
+
+				oldOdcr.setFinCurODTxnChrg(oldOdcr.getFinCurODTxnChrg().subtract(paidAdviseAmt));
+				oldOdcr.setFinCurODAmt(
+						oldOdcr.getFinCurODPri().add(oldOdcr.getFinCurODPft()).add(oldOdcr.getFinCurODTxnChrg()));
+
+				odPri = oldOdcr.getFinCurODPri();
+				odPft = oldOdcr.getFinCurODPft();
+				odChrg = oldOdcr.getFinCurODTxnChrg();
+
+				odcRecovery = oldOdcr.copyEntity();
+				return odcRecovery;
+			}
+		}
+
+		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
+		odcr.setFinReference(fod.getFinReference());
+		odcr.setFinODSchdDate(odDate);
+		odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+		odcr.setMovementDate(finValueDate);
+		odcr.setFinCurODPri(odPri);
+		odcr.setFinCurODPft(odPft);
+		odcr.setFinCurODTxnChrg(odChrg.subtract(paidAdviseAmt));
+		odcr.setFinCurODAmt(odcr.getFinCurODPri().add(odcr.getFinCurODPft()).add(odcr.getFinCurODTxnChrg()));
+
+		if (paidAdviseAmt.compareTo(BigDecimal.ZERO) > 0) {
+			odcrList.add(odcr);
+		}
+
+		return odcRecovery;
+	}
+
+	private OverdueChargeRecovery getODCRecovery(FinODDetails fod, Date valueDate, List<FinanceRepayments> rpdList,
+			Date odDate, List<OverdueChargeRecovery> odcrList, Date grcDate) {
+
+		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
+
+		BigDecimal totPenalty = BigDecimal.ZERO;
+		BigDecimal totWaived = BigDecimal.ZERO;
+
+		for (FinanceRepayments rpd : rpdList) {
+			Date schdDate = rpd.getFinSchdDate();
+			Date finValueDate = rpd.getFinValueDate();
+
+			if (schdDate.compareTo(odDate) != 0) {
+				continue;
+			}
+
+			// PSD#163479
+			totPenalty = totPenalty.add(rpd.getPenaltyPaid());
+			totWaived = totWaived.add(rpd.getPenaltyWaived());
+
+			/*
+			 * PSD#169647 Removing This Condition as We need to consider past paid value date receipts as well in LPP
+			 * calculation
+			 */
+			// common issue 20
+			/*
+			 * if (finValueDate.compareTo(valueDate) > 0) { continue; }
+			 */
+
+			if (schdDate.compareTo(finValueDate) == 0 || grcDate.compareTo(finValueDate) > 0) {
+				continue;
+			}
+
+			// MAx OD amounts is same as repayments balance amounts
+			if (schdDate.compareTo(finValueDate) == 0 || grcDate.compareTo(finValueDate) >= 0) {
+				continue;
+			}
+
+			odcRecovery = identifyODCRecovery(odcrList, fod, rpd, finValueDate, odDate);
+
+			BigDecimal schdpaid = rpd.getFinSchdPriPaid().add(rpd.getFinSchdPftPaid());
+			if (odDate.compareTo(valueDate) == 0 && schdpaid.compareTo(BigDecimal.ZERO) > 0) {
+				odcRecovery.setAddTodayRcd(false);
+			}
+		}
+
+		fod.setTotPenaltyPaid(totPenalty);
+		fod.setTotWaived(totWaived);
+
+		return odcRecovery;
+	}
+
+	private OverdueChargeRecovery getODCRecovery(FinODDetails fod, Date valueDate,
+			List<ManualAdviseMovements> movements, Date odDate, List<OverdueChargeRecovery> odcrList, Date grcDate,
+			BigDecimal odPri, BigDecimal odPft) {
+
+		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
+
+		// Load Overdue Charge Recovery from Repayments Movements
+		for (ManualAdviseMovements mam : movements) {
+			Date schdDate = mam.getDueDate();
+			Date finValueDate = mam.getMovementDate();
+
+			// check the payment made against the actual schedule date
+			if (schdDate.compareTo(odDate) != 0) {
+				continue;
+			}
+
+			// MAx OD amounts is same as repayments balance amounts
+			if (schdDate.compareTo(finValueDate) == 0 || grcDate.compareTo(finValueDate) >= 0) {
+				continue;
+			}
+
+			BigDecimal paidAdviseAmt = mam.getPaidAmount().add(mam.getWaivedAmount());
+			if (mam.isTaxApplicable() && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(mam.getTaxComponent())) {
+				paidAdviseAmt = paidAdviseAmt
+						.add(CalculationUtil.getTotalPaidGST(mam).add(CalculationUtil.getTotalPaidGST(mam)));
+			}
+
+			String status = mam.getStatus();
+			if (RepayConstants.MODULETYPE_BOUNCE.equals(status) || RepayConstants.MODULETYPE_CANCEL.equals(status)) {
+				paidAdviseAmt = BigDecimal.ZERO;
+			}
+
+			odcRecovery = identifyODCRecovery(odcrList, fod, paidAdviseAmt, finValueDate, odDate, odPri, odPft);
+
+			if (odDate.compareTo(valueDate) == 0 && paidAdviseAmt.compareTo(BigDecimal.ZERO) > 0) {
+				odcRecovery.setAddTodayRcd(false);
+			}
+		}
+		return odcRecovery;
+
+	}
+
+	private OverdueChargeRecovery getODChrgRecovery(FinODDetails fod, Date odDate, Date odDateIncGrc) {
+		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
+
+		odcr.setFinReference(fod.getFinReference());
+		odcr.setFinODSchdDate(odDate);
+		odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+		odcr.setMovementDate(odDateIncGrc);
+
+		if (DateUtil.compare(odcr.getMovementDate(), DateUtil.getMonthStart(odcr.getMovementDate())) == 0) {
+			odcr.setLpCpz(true);
+			odcr.setNewRecord(true);
+		}
+
+		odcr.setFinCurODPri(fod.getFinMaxODPri());
+		odcr.setFinCurODPft(fod.getFinMaxODPft());
+		odcr.setFinCurODTxnChrg(fod.getMaxOverdraftTxnChrg());
+		odcr.setFinCurODAmt(fod.getFinMaxODPri().add(fod.getFinMaxODPft()).add(fod.getMaxOverdraftTxnChrg()));
+
+		return odcr;
 	}
 
 	private void loadFrqCpzDate(List<FinanceScheduleDetail> schedules, List<OverdueChargeRecovery> odcrList,

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:cxf="http://cxf.apache.org/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:p="http://www.springframework.org/schema/p"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://cxf.apache.org/core 
 	http://cxf.apache.org/schemas/core.xsd  
@@ -102,8 +103,8 @@
 	</jaxrs:server>
 
 	<!-- soap container -->
-	<jaxws:endpoint id="presentmentSOAPService" implementor="#wsPresentmentService" address="/presentmentSoap"
-		publish="false" />
+	<jaxws:endpoint id="presentmentSOAPService" implementor="#wsPresentmentService"
+		address="/presentmentSoap" publish="false" />
 
 	<!-- Loan Schedule Service -->
 	<bean id="wsFinanceSchedule" class="com.pennanttech.service.impl.FinanceScheduleWebServiceImpl" />
@@ -130,8 +131,8 @@
 	</jaxrs:server>
 
 	<!-- soap container -->
-	<jaxws:endpoint id="finScheduleSoapService" implementor="#wsFinanceSchedule" address="/financeScheduleSoap"
-		publish="false" />
+	<jaxws:endpoint id="finScheduleSoapService" implementor="#wsFinanceSchedule"
+		address="/financeScheduleSoap" publish="false" />
 
 	<!-- Loan Services gateway -->
 	<!-- rest container -->
@@ -158,8 +159,8 @@
 	</jaxrs:server>
 
 	<!-- soap container -->
-	<jaxws:endpoint id="finInstructionSOAPService" implementor="#wsFinInstructionService" address="/finInstructionSoap"
-		publish="false" />
+	<jaxws:endpoint id="finInstructionSOAPService" implementor="#wsFinInstructionService"
+		address="/finInstructionSoap" publish="false" />
 
 	<!-- FinanceType API gateway -->
 	<bean id="wsFinanceTypeService" class="com.pennanttech.service.impl.FinanceTypeWebServiceImpl" />
@@ -185,8 +186,8 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
-	<jaxws:endpoint id="financeTypeSoapService" implementor="#wsFinanceTypeService" address="/financeTypeSoap"
-		publish="false" />
+	<jaxws:endpoint id="financeTypeSoapService" implementor="#wsFinanceTypeService"
+		address="/financeTypeSoap" publish="false" />
 
 	<!-- Promotion API gateway -->
 	<bean id="wsPromotionTypeService" class="com.pennanttech.service.impl.PromotionTypeWebServiceImpl" />
@@ -213,8 +214,8 @@
 	</jaxrs:server>
 
 	<!-- Soap container -->
-	<jaxws:endpoint id="promotionTypeSoapService" implementor="#wsPromotionTypeService" address="/promotionTypeSoap"
-		publish="false" />
+	<jaxws:endpoint id="promotionTypeSoapService" implementor="#wsPromotionTypeService"
+		address="/promotionTypeSoap" publish="false" />
 
 	<!-- Finance/Loan API gateway -->
 	<bean id="wsCreateFinanceService" class="com.pennanttech.service.impl.CreateFinanceWebServiceImpl" />
@@ -240,8 +241,8 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
-	<jaxws:endpoint id="createFinanceSoapService" implementor="#wsCreateFinanceService" address="/createFinanceSoap"
-		publish="false" />
+	<jaxws:endpoint id="createFinanceSoapService" implementor="#wsCreateFinanceService"
+		address="/createFinanceSoap" publish="false" />
 
 	<!-- Mandate API gateway -->
 	<bean id="wsMandateServices" class="com.pennanttech.service.impl.MandateWebServiceImpl" />
@@ -268,7 +269,8 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
-	<jaxws:endpoint id="mandateSoapService" implementor="#mandateService" address="/mandateSoap" publish="false" />
+	<jaxws:endpoint id="mandateSoapService" implementor="#mandateService" address="/mandateSoap"
+		publish="false" />
 
 	<!-- Limits API gateway -->
 	<bean id="wsLimitService" class="com.pennanttech.service.impl.LimitWebServiceImpl" />
@@ -320,8 +322,8 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
-	<jaxws:endpoint id="beneficiarySoapService" implementor="#wsBeneficiaryService" address="/beneficiarySoap"
-		publish="false">
+	<jaxws:endpoint id="beneficiarySoapService" implementor="#wsBeneficiaryService"
+		address="/beneficiarySoap" publish="false">
 	</jaxws:endpoint>
 
 
@@ -377,7 +379,8 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
-	<jaxws:endpoint id="flagSoapService" implementor="#wsFinanceFlagsService" address="/flagSoap" publish="false" />
+	<jaxws:endpoint id="flagSoapService" implementor="#wsFinanceFlagsService" address="/flagSoap"
+		publish="false" />
 
 	<!-- Rest container for SecRoles -->
 	<bean id="wsSecRolessService" class="com.pennanttech.service.impl.SecRolesWebServiceImpl" />
@@ -568,8 +571,8 @@
 	</jaxrs:server>
 
 	<!-- soap container -->
-	<jaxws:endpoint id="extendedFieldDetailSoapService" implementor="#wsExtendedFieldDetailService" address="/extendedFieldDetailSoap"
-		publish="false" />
+	<jaxws:endpoint id="extendedFieldDetailSoapService" implementor="#wsExtendedFieldDetailService"
+		address="/extendedFieldDetailSoap" publish="false" />
 	<!-- rest container -->
 	<bean id="wsQueryModuleService" class="com.pennanttech.service.impl.QueryModuleWebServiceImpl" />
 
@@ -623,7 +626,8 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
-	<jaxws:endpoint id="remarksSoapService" implementor="#wsRemarksService" address="/remarksSoap" publish="false">
+	<jaxws:endpoint id="remarksSoapService" implementor="#wsRemarksService" address="/remarksSoap"
+		publish="false">
 	</jaxws:endpoint>
 
 	<!-- Miscellaneous Post API Gateway -->
@@ -651,8 +655,8 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
-	<jaxws:endpoint id="miscellaneousSoapService" implementor="#wsMiscellaneousService" address="/miscellaneousSoap"
-		publish="false">
+	<jaxws:endpoint id="miscellaneousSoapService" implementor="#wsMiscellaneousService"
+		address="/miscellaneousSoap" publish="false">
 	</jaxws:endpoint>
 
 	<!-- Document POST API Gateway -->
@@ -709,8 +713,8 @@
 	</jaxrs:server>
 
 	<!-- TransactionMapping Soap Container -->
-	<jaxws:endpoint id="transactionMappingSoapService" implementor="#wsTransactionMappingService" address="/transactionMappingSoap"
-		publish="false" />
+	<jaxws:endpoint id="transactionMappingSoapService" implementor="#wsTransactionMappingService"
+		address="/transactionMappingSoap" publish="false" />
 
 	<!--Application Masters API Gateway -->
 	<bean id="wsApplicationMasterService" class="com.pennanttech.service.impl.ApplicationMasterWebServiceImpl" />
@@ -738,8 +742,8 @@
 	</jaxrs:server>
 
 	<!-- Application Masters Soap Container -->
-	<jaxws:endpoint id="applicationMasterSoapService" implementor="#wsApplicationMasterService" address="/applicationMasterSoap"
-		publish="false" />
+	<jaxws:endpoint id="applicationMasterSoapService" implementor="#wsApplicationMasterService"
+		address="/applicationMasterSoap" publish="false" />
 
 	<!-- Login service -->
 	<bean id="wsLoginWebService" class="com.pennanttech.service.impl.LoginWebServiceImpl" />
@@ -767,7 +771,8 @@
 	</jaxrs:server>
 
 	<!-- SOAP Container -->
-	<jaxws:endpoint id="loginSOAPService" implementor="#wsLoginWebService" address="/loginSoap" publish="false" />
+	<jaxws:endpoint id="loginSOAPService" implementor="#wsLoginWebService" address="/loginSoap"
+		publish="false" />
 
 	<!-- Dealer API gateway -->
 	<bean id="wsDealerService" class="com.pennanttech.service.impl.DealerWebServiceImpl" />
@@ -792,7 +797,8 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
-	<jaxws:endpoint id="dealerSoapService" implementor="#wsDealerService" address="/dealerSoap" publish="false" />
+	<jaxws:endpoint id="dealerSoapService" implementor="#wsDealerService" address="/dealerSoap"
+		publish="false" />
 
 	<!-- RelationshipOfficer API gateway -->
 	<bean id="wsRelationshipOfficersService" class="com.pennanttech.service.impl.RelationshipOfficersWebServiceImpl" />
@@ -845,9 +851,9 @@
 	</jaxrs:server>
 
 	<!-- soap container -->
-	<jaxws:endpoint id="disbursementSOAPService" implementor="#wsDisbursementService" address="/disbursementSoap"
-		publish="false" />
-		
+	<jaxws:endpoint id="disbursementSOAPService" implementor="#wsDisbursementService"
+		address="/disbursementSoap" publish="false" />
+
 	<!-- rest container -->
 	<bean id="wsVerificationsService" class="com.pennanttech.service.impl.VerificationsWebServiceImpl" />
 
@@ -871,7 +877,7 @@
 			<ref bean="restOutHeaderInterceptor" />
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
-	
+
 	<!-- FinCovenant API gateway -->
 
 	<bean id="wsFinCovenantService" class="com.pennanttech.service.impl.FinCovenantWebServiceImpl" />
@@ -897,7 +903,7 @@
 	</jaxrs:server>
 
 	<!-- SOAP Container -->
-	<jaxws:endpoint id="finCovenantSoapService" implementor="#wsFinCovenantService" address="/finCovenantSoap"
-		publish="false" />
+	<jaxws:endpoint id="finCovenantSoapService" implementor="#wsFinCovenantService"
+		address="/finCovenantSoap" publish="false" />
 
 </beans>

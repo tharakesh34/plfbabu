@@ -486,6 +486,51 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		}
 	}
 
+	protected void publishNotification(Notify notify, String reference, AbstractWorkflowEntity entity,
+			String finDivision, String finBranch) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PUBLISH)) {
+			return;
+		}
+
+		try {
+			String usrAction = StringUtils.trimToEmpty(this.userAction.getSelectedItem().getLabel()).toLowerCase();
+			String recordStatus = StringUtils.trimToEmpty(entity.getRecordStatus()).toUpperCase();
+			String nextRoleCodes = entity.getNextRoleCode();
+
+			if ("save".equals(usrAction) || "cancel".equals(usrAction) || usrAction.contains("reject")) {
+				return;
+			}
+
+			String[] to = null;
+
+			if (notify == Notify.ROLE) {
+				if (StringUtils.isEmpty(entity.getNextRoleCode())) {
+					return;
+				}
+				to = nextRoleCodes.split(",");
+			} else {
+				to = getNextUsers(entity);
+			}
+
+			String messagePrefix = Labels.getLabel("REC_PENDING_MESSAGE");
+
+			if (StringUtils.isBlank(entity.getNextTaskId())) {
+				messagePrefix = Labels.getLabel("REC_FINALIZED_MESSAGE");
+			}
+
+			if (StringUtils.isNotEmpty(reference)) {
+				if (!PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus)) {
+					eventManager.publish(messagePrefix + " with Reference" + ":" + reference, to, finDivision,
+							finBranch);
+				}
+			} else {
+				eventManager.publish(messagePrefix, to, finDivision, finBranch);
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+
 	protected String[] getNextUsers(AbstractWorkflowEntity entity) {
 		return new String[0];
 	}

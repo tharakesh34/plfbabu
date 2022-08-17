@@ -812,6 +812,7 @@ public class ProjectedAmortizationService {
 
 		this.projectedAmortizationDAO.updateActualAmount(appDate);
 
+		count = count + this.projectedAmortizationDAO.prepareSVFeeDetails(monthEndDate, appDate);
 		// insert new finance expenses
 		count = count + this.projectedAmortizationDAO.prepareAMZExpenseDetails(monthEndDate, appDate);
 
@@ -840,12 +841,13 @@ public class ProjectedAmortizationService {
 			calProjIncomeAMZList = calculateMonthEndIncomeAMZ(finEODEvent);
 		}
 
-		// finance created and cancelled in same month then list empty
-		if (!calProjIncomeAMZList.isEmpty()) {
-			// reset income AMZ details and save Projected AMZ Details
-			doSetIncomeAMZAmounts(finEODEvent, calProjIncomeAMZList);
-			this.projectedAmortizationDAO.saveBatchProjIncomeAMZ(calProjIncomeAMZList);
+		if (calProjIncomeAMZList.isEmpty()) {
+			return;
 		}
+		// finance created and cancelled in same month then list empty
+		// reset income AMZ details and save Projected AMZ Details
+		doSetIncomeAMZAmounts(finEODEvent, calProjIncomeAMZList);
+		this.projectedAmortizationDAO.saveBatchProjIncomeAMZ(calProjIncomeAMZList);
 
 		// Post Accounting
 		Long accountingSetId = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), AccountingEvent.INDAS,
@@ -855,8 +857,9 @@ public class ProjectedAmortizationService {
 		aeEvent.setAccountingEvent(AccountingEvent.INDAS);
 
 		aeEvent.getAcSetIDList().add(accountingSetId);
-		aeEvent.setValueDate(SysParamUtil.getAppDate());
-		aeEvent.setPostDate(amzMonth);
+		Date appDate = SysParamUtil.getAppDate();
+		aeEvent.setValueDate(appDate);
+		aeEvent.setPostDate(appDate);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
@@ -885,6 +888,10 @@ public class ProjectedAmortizationService {
 				dataMap.put(feeType.getFeeTypeCode() + "_AMZ", BigDecimal.ZERO);
 				dataMap.put(feeType.getFeeTypeCode() + "_AMZ_N", BigDecimal.ZERO);
 			}
+
+			dataMap.put("MBD_AMZ", BigDecimal.ZERO);
+			dataMap.put("DBD_AMZ", BigDecimal.ZERO);
+			dataMap.put("DBMBD_AMZ", BigDecimal.ZERO);
 
 			aeEvent.setBranch(amz.getFinBranch());
 			aeEvent.setCcy(amz.getFinCcy());
@@ -1162,6 +1169,11 @@ public class ProjectedAmortizationService {
 					} else {
 						incomeAMZ.setActive(finMain.isFinIsActive());
 					}
+
+					if (appDate.compareTo(finMain.getMaturityDate()) >= 0) {
+						incomeAMZ.setActive(false);
+					}
+
 					incomeAMZ.setMonthEndDate(curMonthEnd);
 
 					incomeAMZ.setCurMonthAmz(curProjIncomeAMZ.getAmortizedAmount());// Current Month Amortized Amount

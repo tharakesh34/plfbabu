@@ -185,6 +185,9 @@ public class PennantConstants {
 	public static final String method_doCheckCollaterals = "doCheckCollaterals";
 	public static final String method_doCheckDepositProc = "doCheckDeposit";
 	public static final String method_doCheckFurtherWF = "doCheckFurtherWF";
+	/* Sanctioning date and reversals for sanction date functioning */
+	public static final String method_execSanctionExpData = "execSanctionExpData";
+	public static final String method_doRevSanctionExpData = "doRevSanctionExpData";
 
 	public static final String method_externalDedup = "executeExperianDedup";
 	public static final String method_hunter = "executeHunter";
@@ -206,6 +209,7 @@ public class PennantConstants {
 	public static final String METHOD_DOMAINCHECKSERVICE = "doDomainCheckService";
 	public static final String METHOD_DOCUMENTVERIFICATION = "doDocumentVerification";
 	public static final String METHOD_LOAN_DATA_SYNC = "executeLoanDataSync";
+	public static final String method_pushToEFS = "pushToEFS";
 
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
@@ -281,7 +285,7 @@ public class PennantConstants {
 	public static final String PFF_CIBIL_TYPE_ENQUIRY = "E";
 
 	// Customer De-dup Field Details
-	public static final String CUST_DEDUP_LIST_FIELDS = "CustCIF,CustShrtName,CustCtgCode,CustDOB,CustNationality";
+	public static final String CUST_DEDUP_LIST_FIELDS = "CustCIF,CustShrtName,CustCtgCode,CustDOB,CustNationality, CustCompName";
 	public static final String CUST_DEDUP_LIST_BUILD_EQUAL = "CustIDList = :CustIDList";
 	public static final String CUST_DEDUP_LIST_BUILD_LIKE = "CustIDList LIKE :likeCustIDList";
 	public static final String CUST_DEDUP_LISTFILED1 = "CustIDList";
@@ -304,6 +308,7 @@ public class PennantConstants {
 	public static final String PASSPORT = "02";
 	public static final String TRADELICENSE = "15";
 	public static final String PANNUMBER = "03";
+	public static final String FORM60 = "FORM60";
 
 	// Customer Employment Status Codes
 	public static final String CUSTEMPSTS_EMPLOYED = "EMPLOYED";
@@ -545,6 +550,7 @@ public class PennantConstants {
 	public static final String FEE_CALCULATEDON_OUTSTANDINGAMOUNT = "OUTSAM";
 	public static final String FEE_CALCULATEDON_OUTSTANDINGINTEREST = "OUTSIN";
 	public static final String FEE_CALCULATEDON_ADJUSTEDPRINCIPAL = "ADTP";
+	public static final String FEE_CALCULATEDON_CUSTOMERSANCTIONLIMIT = "CUSTSL";
 
 	// Validation Groups
 	public static final String VLD_CRT_SCHD = "CRTSCHD";
@@ -902,4 +908,28 @@ public class PennantConstants {
 	public static final String MODULETYPE_MAINT = "MAINT";
 	public static final String INSTRUMENT_TYPE_PARTNER_BANK = "INSTRUMENT_TYPE_PARTNER_BANK";
 	public static final String INSTRUMENT_TYPE = "INSTRUMENT_TYPE";
+	// Tds Certificate Manaagement
+	public static final String RECEIVABLE_CANCEL = "C";
+	public static final String RECEIVABLE_ADJUSTMENT_MODULE = "TXN_ADJ";
+	public static final String RECEIVABLE_CANCEL_MODULE = "REC_CANCEL";
+	public static final String RECEIVABLE_ADJUSTMENT_CNCL_MODULE = "TXN_CANCEL";
+	public static final String RECEIVABLE_ENQUIRY_MODULE = "ADJ_ENQUIRY";
+
+	// Schedule Type
+	public static final String MANUALSCHEDULETYPE_SCREEN = "S";
+	public static final String MANUALSCHEDULETYPE_UPLOAD = "U";
+	// Cashbackdetail
+	public static final String MBD_RETAINED = "MBD";
+	public static final String DBD_RETAINED = "DBD";
+	public static final String DBMBD_RETAINED = "DBMBD";
+
+	// Manual Advise Management
+	public static final String MANUALADVISE_CANCEL = "C";
+	public static final String MANUALADVISE_MAINTAIN = "M";
+
+	public static final String MANUALADVISE_CREATE_MODULE = "MA_CREATE";
+	public static final String MANUALADVISE_ENQUIRY_MODULE = "MA_ENQIRY";
+	public static final String MANUALADVISE_MAINTAIN_MODULE = "MA_MAINTAIN";
+	public static final String MANUALADVISE_CANCEL_MODULE = "MA_CANCEL";
+	public static final String BLOCK_LIMIT_TYPE = "AUTO";
 }

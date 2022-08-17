@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +25,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.beneficiary.BeneficiaryDetail;
 import com.pennanttech.ws.model.mandate.MandateDetial;
@@ -50,7 +50,7 @@ public class BeneficiaryController extends ExtendedTestClass {
 				.get(APIHeader.API_HEADER_KEY);
 		try {
 			// setting required values which are not received from API
-			prepareRequiredData(beneficiary);
+			ErrorDetail aErrorDetail = prepareRequiredData(beneficiary);
 			Customer customer = customerDetailsService.getCustomerByCIF(beneficiary.getCustCIF());
 			beneficiary.setCustID(customer.getCustID());
 			beneficiary.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -59,6 +59,11 @@ public class BeneficiaryController extends ExtendedTestClass {
 			AuditHeader auditHeader = getAuditHeader(beneficiary, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = beneficiaryService.doApprove(auditHeader);
+
+			if (aErrorDetail != null) {
+				auditHeader.getAuditDetail().getErrorDetails().add(aErrorDetail);
+			}
+
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new Beneficiary();
@@ -125,7 +130,7 @@ public class BeneficiaryController extends ExtendedTestClass {
 		WSReturnStatus response = new WSReturnStatus();
 		try {
 			// set the default values for mandate
-			prepareRequiredData(beneficiary);
+			ErrorDetail aErrorDetail = prepareRequiredData(beneficiary);
 
 			Beneficiary prevBeneficiary = beneficiaryService.getApprovedBeneficiaryById(beneficiary.getBeneficiaryId());
 			beneficiary.setCustID(prevBeneficiary.getCustID());
@@ -142,6 +147,10 @@ public class BeneficiaryController extends ExtendedTestClass {
 			AuditHeader auditHeader = getAuditHeader(prevBeneficiary, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = beneficiaryService.doApprove(auditHeader);
+
+			if (aErrorDetail != null) {
+				auditHeader.getAuditDetail().getErrorDetails().add(aErrorDetail);
+			}
 
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -174,7 +183,7 @@ public class BeneficiaryController extends ExtendedTestClass {
 			// get the mandate by the mandateId
 			Beneficiary beneficiary = beneficiaryService.getApprovedBeneficiaryById(beneficiaryId);
 
-			prepareRequiredData(beneficiary);
+			ErrorDetail aErrorDetail = prepareRequiredData(beneficiary);
 			beneficiary.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			beneficiary.setNewRecord(false);
 			beneficiary.setVersion(beneficiary.getVersion() + 1);
@@ -183,6 +192,10 @@ public class BeneficiaryController extends ExtendedTestClass {
 			AuditHeader auditHeader = getAuditHeader(beneficiary, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = beneficiaryService.doApprove(auditHeader);
+
+			if (aErrorDetail != null) {
+				auditHeader.getAuditDetail().getErrorDetails().add(aErrorDetail);
+			}
 
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -254,16 +267,18 @@ public class BeneficiaryController extends ExtendedTestClass {
 	 * @param mandate
 	 * 
 	 */
-	private void prepareRequiredData(Beneficiary beneficiary) {
-		logger.debug("Entering");
+	private ErrorDetail prepareRequiredData(Beneficiary beneficiary) {
+		logger.debug(Literal.ENTERING);
 
-		BankBranch bankBranch = new BankBranch();
+		String ifsc = beneficiary.getiFSC();
+		String micr = beneficiary.getMicr();
+		String bankCode = beneficiary.getBankCode();
+		String branchCode = beneficiary.getBranchCode();
 
-		if (StringUtils.isNotBlank(beneficiary.getiFSC())) {
-			bankBranch = bankBranchService.getBankBrachByIFSC(beneficiary.getiFSC());
-		} else if (StringUtils.isNotBlank(beneficiary.getBankCode())
-				&& StringUtils.isNotBlank(beneficiary.getBranchCode())) {
-			bankBranch = bankBranchService.getBankBrachByCode(beneficiary.getBankCode(), beneficiary.getBranchCode());
+		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+		if (bankBranch.getError() != null) {
+			return bankBranch.getError();
 		}
 
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
@@ -274,8 +289,10 @@ public class BeneficiaryController extends ExtendedTestClass {
 		beneficiary.setLastMntBy(userDetails.getUserId());
 		beneficiary.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		beneficiary.setSourceId(APIConstants.FINSOURCE_ID_API);
-		logger.debug("Leaving");
 
+		logger.debug(Literal.LEAVING);
+
+		return null;
 	}
 
 	/**

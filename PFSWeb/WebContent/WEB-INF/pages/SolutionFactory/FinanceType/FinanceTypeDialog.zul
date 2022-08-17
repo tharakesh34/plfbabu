@@ -356,7 +356,7 @@
 													<checkbox id="finCollateralCheck" width="200px" />
 												</hbox>
 											</row>
-											<row id="row_ManualSchedule" visible="true">
+											<row id="row_ManualSchedule" visible="false">
 												<label id="label_FinanceTypeDialog_manualSchedule"
 													value="${c:l('label_FinanceTypeDialog_manualSchedule.value')}" />
 												<hbox>
@@ -430,6 +430,7 @@
 							</div>
 						</tabpanel>
 						<tabpanel style="overflow:auto" ca:data-scrollable="true">
+							<div id="graceDetailDiv">
 							<groupbox id="gb_GracePeriod" closable="false">
 								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 									<columns>
@@ -662,8 +663,7 @@
 									</rows>
 								</grid>
 							</groupbox>
-
-
+							</div>
 						</tabpanel>
 						<tabpanel style="overflow:auto" ca:data-scrollable="true">
 							<div id="repayDetailDiv">
@@ -960,7 +960,7 @@
 													value="${c:l('label_FinanceTypeDialog_RepayHierarchy.value')}" />
 												<hbox>
 													<space id="space_rpyHierarchy" spacing="2px" sclass="mandatory" />
-													<combobox id="rpyHierarchy" width="275px" readonly="true" />
+													<uppercasebox id="rpyHierarchy" width="200px" />
 												</hbox>
 											</row>
 											<row visible="true">
@@ -1399,6 +1399,18 @@
 													<decimalbox id="oDMinCapAmount" width="120px" maxlength="15" />
 												</hbox>
 											</row>
+											<row id="row_ODCollection" visible="false">
+												<label id="label_FinanceTypeDialog_CollecChrgcode" value="${c:l('label_FinanceTypeDialog_CollecChrgcode.value')}" />
+												<hbox>
+													<space id="space_collecChrgCode" spacing="2px" />
+													<extendedcombobox id="collecChrgCode" readonly="true" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_CollectionAmt" value="${c:l('label_FinanceTypeDialog_CollectionAmt.value')}" />
+												<hbox>
+													<space id="space_collectionAmt" spacing="2px" />
+													<decimalbox id="collectionAmt" width="120px" readonly="true" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>
@@ -1661,6 +1673,31 @@
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="allowDrawingPower" checked="false" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox id="gb_ProvisionRules" visible="false" height="auto">
+									<caption label="${c:l('label_FinanceTypeDialog_ProvisionRules')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="260px" />
+											<column />
+											<column width="260px" />
+											<column />
+										</columns>
+										<rows>
+											<row visible="true">
+												<label value="${c:l('label_FinanceTypeDialog_FinTypeRegProvRule.value')}" />
+												<hbox>
+													<space id="space_RegProvRule" spacing="2px" />
+													<combobox id="regProvRule" disabled="false" />
+												</hbox>
+												<label value="${c:l('label_FinanceTypeDialog_FinTypeIntProvRule.value')}" />
+												<hbox>
+													<space id="space_IntProvRule" spacing="2px" />
+													<combobox id="intProvRule" disabled="false" />
 												</hbox>
 											</row>
 										</rows>

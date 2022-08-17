@@ -36,6 +36,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RestructureDAO;
+import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.ValueLabel;
@@ -52,6 +53,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RestructureCharge;
@@ -90,6 +92,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private BaseRateDAO baseRateDAO;
+	private FinanceStepDetailDAO financeStepDetailDAO;
 
 	@Override
 	public FinScheduleData doRestructure(FinScheduleData schdData, FinServiceInstruction fsi) {
@@ -127,17 +130,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		FinanceScheduleDetail lastSchd = schedules.get(schedules.size() - 2);
 		rd.setOldFinalEmi(lastSchd.getRepayAmount());
 		rd.setRepayProfitRate(lastSchd.getCalculatedRate());
-
-		String finStatus = StringUtils.trimToEmpty(fm.getFinStatus());
-		if ("S".equals(fm.getFinStatus())) {
-			finStatus = "0";
-		} else if (finStatus.startsWith("DPD")) {
-			finStatus = finStatus.replace("DPD", "");
-		} else if (finStatus.startsWith("M")) {
-			finStatus = finStatus.replace("M", "");
-		}
-
-		rd.setOldBucket(Integer.parseInt(finStatus));
+		rd.setOldBucket(financeMainDAO.getBucketByFinStatus(fm.getFinID()));
 		rd.setOldDpd(fpd.getCurODDays());
 		rd.setOldEmiOs((fpd.getTotalpriSchd().add(fpd.getTotalPftSchd()))
 				.subtract(fpd.getTdSchdPri().add(fpd.getTdSchdPft())));
@@ -603,8 +596,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		// Receivable and Bounce Charges
 		// ----------------------------
-		List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdviseByRef(finID,
-				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
+		List<ManualAdvise> adviseList = manualAdviseDAO.getReceivableAdvises(finID, "_AView");
 
 		if (CollectionUtils.isNotEmpty(adviseList)) {
 			// Bounce Tax Details
@@ -928,18 +920,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			FinanceScheduleDetail lastSchd = fsdList.get(fsdList.size() - 2);
 			rd.setNewFinalEmi(lastSchd.getRepayAmount());
 			rd.setRepayProfitRate(lastSchd.getCalculatedRate());
-
-			String finStatus = StringUtils.trimToEmpty(fm.getFinStatus());
-			if ("S".equals(fm.getFinStatus())) {
-				finStatus = "0";
-			} else if (finStatus.startsWith("DPD ")) {
-				finStatus = finStatus.replace("DPD ", "");
-			} else if (finStatus.startsWith("M")) {
-				finStatus = finStatus.replace("M", "");
-			}
-
-			rd.setNewBucket(Integer.parseInt(finStatus));
-
+			rd.setNewBucket(financeMainDAO.getBucketByFinStatus(finID));
 			rd.setNewDpd(fpd.getCurODDays());
 			BigDecimal totalPriSchd = fpd.getTotalpriSchd();
 			BigDecimal tdSchdPri = fpd.getTdSchdPri();
@@ -1258,7 +1239,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 					rpdList = financeRepaymentsDAO.getByFinRefAndSchdDate(finID, odSchdDate);
 					latePayMarkingService.resetMaxODAmount(rpdList, fod, fsd);
-					latePayMarkingService.latePayMarking(fm, fod, fsdList, rpdList, fsd, appDate, false);
+					latePayMarkingService.latePayMarking(fm, fod, fsdList, rpdList, fsd, appDate, appDate, false);
 					updatedODList.add(fod);
 					break;
 				}
@@ -1332,7 +1313,8 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			errors.add(getErrorDetail("90502", "restructureType"));
 		} else {
 			// validating RestructureType if exists or not
-			boolean exists = restructureDAO.isExistRestructureType(Long.parseLong(restructureType));
+			boolean exists = restructureDAO.isExistRestructureType(Long.parseLong(restructureType),
+					schdData.getFinanceMain().isStepFinance());
 			if (!exists) {
 				errors.add(getErrorDetail("90224", "RestructureType", restructureType));
 			}
@@ -1341,6 +1323,10 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			if (rstType != null) {
 				validateRestructureType(restructureType, rd, rstType, errors);
 			}
+		}
+
+		if ("9".equals(restructureType) || "10".equals(restructureType) || "11".equals(restructureType)) {
+			stepLoanValidations(fd, rd, errors);
 		}
 
 		if (StringUtils.isBlank(rstReason)) {
@@ -1359,14 +1345,6 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {
 				List<FinanceScheduleDetail> schdules = schdData.getFinanceScheduleDetails();
 				setAlwdRestructureDates(schdules, finID, rd.getRestructureDate(), errors);
-				Date validRstDate = validateRestructureDate(schdData);
-				if (validRstDate != null && rd.getRestructureDate().compareTo(validRstDate) < 0) {
-					String[] valueParm = new String[3];
-					valueParm[0] = "Restructure Date";
-					valueParm[1] = DateUtil.formatToShortDate(validRstDate);
-					valueParm[2] = DateUtil.formatToShortDate(SysParamUtil.getAppDate());
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("12721", valueParm)));
-				}
 			}
 		}
 
@@ -1561,6 +1539,10 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, isWif));
 
+		if (fm.isStepFinance()) {
+			schdData.setStepPolicyDetails(financeStepDetailDAO.getFinStepDetailListByFinRef(finID, "_View", false));
+		}
+
 		logger.debug(Literal.LEAVING);
 		return fd;
 	}
@@ -1702,6 +1684,292 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		return allowedRestrcutureDate;
 	}
 
+	private void stepLoanValidations(FinanceDetail fd, RestructureDetail rd, List<ErrorDetail> errors) {
+		logger.debug(Literal.ENTERING);
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType financeType = schdData.getFinanceType();
+
+		// Finance Type allow Step?
+		if (fm.isStepFinance() && !financeType.isStepFinance()) {
+			errors.add(getErrorDetail("91129", fm.getFinType()));
+		} else if (!fm.isStepFinance() && !financeType.isStepFinance()) {
+			errors.add(getErrorDetail("91129", fm.getFinType()));
+		}
+
+		if (!fm.isStepFinance() && financeType.isSteppingMandatory()) {
+			errors.add(getErrorDetail("91128", fm.getFinType()));
+		}
+
+		if (fm.isStepFinance() && StringUtils.isNotBlank(fm.getStepsAppliedFor())) {
+			// Check if stepsAppliedFor is given same as FinanceMain in request
+			if (StringUtils.isBlank(rd.getStepsAppliedFor())) {
+				errors.add(getErrorDetail("92021", "stepsAppliedFor cannot be blank for step loan"));
+			} else if (!StringUtils.equals(rd.getStepsAppliedFor(), fm.getStepsAppliedFor())) {
+				errors.add(getErrorDetail("STP0012", "stepsAppliedFor", rd.getStepsAppliedFor()));
+			}
+		} else {
+			// check for Non step loans
+			if (StringUtils.isNotBlank(rd.getStepsAppliedFor())) {
+				List<ValueLabel> stepsApplForList = PennantStaticListUtil.getStepsAppliedFor();
+				boolean stepsApplForSts = false;
+				for (ValueLabel value : stepsApplForList) {
+					if (StringUtils.equals(value.getValue(), rd.getStepsAppliedFor())) {
+						stepsApplForSts = true;
+						break;
+					}
+				}
+				if (!stepsApplForSts) {
+					errors.add(getErrorDetail("STP0012", "stepsAppliedFor", rd.getStepsAppliedFor()));
+				}
+			} else {
+				errors.add(getErrorDetail("92021", "Steps applied for cannot be blank"));
+			}
+		}
+
+		if (fm.isStepFinance() && StringUtils.isNotBlank(fm.getCalcOfSteps())) {
+			// check if calcOfSteps is same as FinanceMain in request
+			if (StringUtils.isBlank(rd.getCalcOfSteps())) {
+				errors.add(getErrorDetail("92021", "calcOfSteps cannot be blank for step loan"));
+			} else if (!StringUtils.equals(rd.getCalcOfSteps(), fm.getCalcOfSteps())) {
+				errors.add(getErrorDetail("STP0012", "calcOfSteps", rd.getCalcOfSteps()));
+			}
+		} else {
+			// check calcOfSteps for Non step loans
+			if (StringUtils.isNotBlank(rd.getCalcOfSteps())) {
+				List<ValueLabel> calcOfStepsList = PennantStaticListUtil.getCalcOfStepsList();
+				boolean calcOfStepsSts = false;
+				for (ValueLabel value : calcOfStepsList) {
+					if (StringUtils.equals(value.getValue(), rd.getCalcOfSteps())) {
+						calcOfStepsSts = true;
+						break;
+					}
+				}
+				if (!calcOfStepsSts) {
+					errors.add(getErrorDetail("STP0012", "calcOfSteps", rd.getCalcOfSteps()));
+				}
+			} else {
+				errors.add(getErrorDetail("90502", rd.getCalcOfSteps()));
+			}
+		}
+
+		if (PennantConstants.STEPPING_CALC_AMT.equals(rd.getCalcOfSteps())
+				&& (StringUtils.isNotEmpty(rd.getStepPolicy()) || StringUtils.isNotEmpty(rd.getStepType()))) {
+			errors.add(getErrorDetail("92021",
+					"Step Policy & Step Type are not allowed for calcOfSteps " + rd.getCalcOfSteps()));
+		}
+
+		if (PennantConstants.STEPPING_CALC_AMT.equals(rd.getCalcOfSteps()) && !rd.isAlwManualSteps()) {
+			errors.add(getErrorDetail("92021", "AlwManualSteps should be true for " + rd.getCalcOfSteps()));
+		}
+
+		if (rd.isAlwManualSteps() && rd.getNoOfSteps() <= 0) {
+			errors.add(getErrorDetail("92021", "No of Steps cannot be less than or equal to 0"));
+		}
+
+		if (fm.isStepFinance() && rd.isAlwManualSteps() && CollectionUtils.isEmpty(rd.getStepPolicyDetails())
+				&& rd.getNoOfSteps() == 0) {
+			errors.add(getErrorDetail("92021", "Step Details must be provided "));
+		}
+
+		// check if steps details are equal to no of steps
+		if (rd.getNoOfSteps() != rd.getStepPolicyDetails().size()) {
+			errors.add(getErrorDetail("92021", "Step Details should be equal to Repay steps " + rd.getNoOfSteps()));
+		}
+
+		// check step loan tenor
+		validateStepTenor(rd, schdData, errors);
+
+		// For Step Detail that has overdue & future installments , no of installments cannot be less than total
+		// no of overdue installments
+		if (fm.isStepFinance()) {
+			List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+			for (FinanceStepPolicyDetail spd : rd.getStepPolicyDetails()) {
+				int instCount = 0;
+				if (spd.getStepEnd() != null && spd.getStepEnd().compareTo(rd.getRestructureDate()) > 0) {
+					for (FinanceScheduleDetail fsd : schedules) {
+						if (fsd.getSchDate().compareTo(spd.getStepStart()) >= 0
+								&& fsd.getSchDate().compareTo(rd.getRestructureDate()) < 0) {
+							instCount++;
+						}
+					}
+					if (spd.getInstallments() < instCount) {
+						errors.add(getErrorDetail("92021", "No of Installments cannot be less than " + instCount
+								+ " for Step No " + spd.getStepNo()));
+						break;
+					}
+				}
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void validateStepTenor(RestructureDetail rd, FinScheduleData schdData, List<ErrorDetail> errors) {
+		// validate Tenor for Step Loans
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceStepPolicyDetail> stepDtls = rd.getStepPolicyDetails();
+		int noOfStepTerms = 0;
+		boolean override = false;
+		int noOfEMITerms = fm.getNumberOfTerms() + rd.getEmiPeriods();
+
+		for (FinanceStepPolicyDetail rstStepDetail : stepDtls) {
+			noOfStepTerms = noOfStepTerms + rstStepDetail.getInstallments();
+
+			if (rstStepDetail.getStepNo() > rd.getNoOfSteps()) {
+				errors.add(getErrorDetail("92021", "Step number " + rstStepDetail.getStepNo()
+						+ " should be less than/equal to Repay Steps " + rd.getNoOfSteps()));
+			}
+
+			if (rstStepDetail.getStepNo() == rd.getNoOfSteps()
+					&& rstStepDetail.getSteppedEMI().compareTo(BigDecimal.ZERO) > 0) {
+				errors.add(getErrorDetail("92021", "SteppedEMI Amount is not allowed for last Step Detail"));
+			} else if (rstStepDetail.getStepNo() != rd.getNoOfSteps()
+					&& rstStepDetail.getSteppedEMI().compareTo(BigDecimal.ZERO) == 0) {
+				errors.add(getErrorDetail("92021", "SteppedEMI Amount cannot be 0 for " + rstStepDetail.getStepNo()));
+			}
+
+			if (fm.isStepFinance()) {
+				override = validateStepPolicyDetail(rstStepDetail, schdData, rd.getRestructureDate());
+				if (override) {
+					errors.add(getErrorDetail("92021", "Not allowed to Edit Step No " + rstStepDetail.getStepNo()));
+				}
+				for (FinanceStepPolicyDetail stepPolicyDtl : schdData.getStepPolicyDetails()) {
+					if (rstStepDetail.getStepNo() == stepPolicyDtl.getStepNo()) {
+						rstStepDetail.setAutoCal(stepPolicyDtl.isAutoCal());
+						rstStepDetail.setFinReference(stepPolicyDtl.getFinReference());
+						rstStepDetail.setNewRecord(stepPolicyDtl.isNewRecord());
+						rstStepDetail.setStepStart(stepPolicyDtl.getStepStart());
+						rstStepDetail.setStepEnd(stepPolicyDtl.getStepEnd());
+						rstStepDetail.setStepSpecifier(stepPolicyDtl.getStepSpecifier());
+					} else {
+						rstStepDetail.setAutoCal(false);
+						rstStepDetail.setFinReference(stepPolicyDtl.getFinReference());
+						rstStepDetail.setStepSpecifier(stepPolicyDtl.getStepSpecifier());
+					}
+				}
+			} else {
+				// for non step loans while sorting of step details at the time of schedule generation
+				// step specifier is required otherwise getting unhandled exception
+				rstStepDetail.setStepSpecifier(PennantConstants.STEP_SPECIFIER_REG_EMI);
+
+				// validation to check if all overdue installments are given in first step and with same amount
+				if (rstStepDetail.getStepNo() == 1 && (StringUtils.equals(rd.getRestructureType(), "9")
+						|| StringUtils.equals(rd.getRestructureType(), "10")
+						|| StringUtils.equals(rd.getRestructureType(), "11"))) {
+					Map<String, Object> map = getNoOfInstAndAmt(schdData, rd.getRestructureDate());
+					BigDecimal amt = BigDecimal.ZERO;
+					int inst = 0;
+					if (map.get("Amount") != null && map.get("NoOfInstallments") != null) {
+						amt = (BigDecimal) map.get("Amount");
+						inst = (int) map.get("NoOfInstallments");
+					}
+					if (rstStepDetail.getInstallments() != inst) {
+						errors.add(getErrorDetail("92021",
+								"No of Step Installments should be equal to No of Overdue Installments " + inst));
+						break;
+					}
+					if (rstStepDetail.getStepNo() == 1 && rstStepDetail.getSteppedEMI().compareTo(amt) != 0) {
+						errors.add(
+								getErrorDetail("92021", "Amount should be same as Overdue installment amount " + amt));
+						break;
+					}
+				}
+			}
+		}
+		if (noOfEMITerms != noOfStepTerms) {
+			errors.add(getErrorDetail("92021", Labels.getLabel("label_RestructureDialog_NumberOfSteps.value")));
+		}
+	}
+
+	private Boolean validateStepPolicyDetail(FinanceStepPolicyDetail stepPolicy, FinScheduleData schdData,
+			Date rstDate) {
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		int idxStart = 0;
+		Date stepEndDate = null;
+		FinanceStepPolicyDetail finStpDtl = null;
+		int noOfFinSteps = schdData.getFinanceMain().getNoOfSteps();
+
+		if (stepPolicy.isNewRecord()) {
+			return false;
+		}
+
+		if (stepPolicy.getStepNo() > noOfFinSteps) {
+			return false;
+		}
+
+		for (int i = 0; i < stepPolicy.getStepNo(); i++) {
+			if (i > stepPolicy.getStepNo()) {
+				break;
+			}
+
+			finStpDtl = schdData.getStepPolicyDetails().get(i);
+
+			int instCount = 0;
+			for (int iFsd = idxStart; iFsd < schedules.size(); iFsd++) {
+				FinanceScheduleDetail fsd = schedules.get(iFsd);
+				String specifier = fsd.getSpecifier();
+				if (fsd.isRepayOnSchDate() && fsd.isFrqDate()) {
+					instCount = instCount + 1;
+				} else if (iFsd != 0 && PennantConstants.STEP_SPECIFIER_GRACE.equals(stepPolicy.getStepSpecifier())
+						&& !(FinanceConstants.FLAG_BPI.equals(fsd.getBpiOrHoliday()))
+						&& (CalculationConstants.SCH_SPECIFIER_GRACE.equals(specifier)
+								|| CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier))
+						&& !fsd.isDisbOnSchDate() && fsd.isFrqDate()) {
+					instCount = instCount + 1;
+				}
+
+				if (finStpDtl.getInstallments() == instCount) {
+					stepEndDate = fsd.getSchDate();
+					/* aFinStepPolicy.setValidAmountForRestructuring(fsd.getRepayAmount()); */
+					idxStart = iFsd + 1;
+					break;
+				}
+			}
+		}
+
+		if (stepEndDate != null && stepEndDate.compareTo(rstDate) < 0) {
+			if (finStpDtl != null && finStpDtl.getStepNo() != stepPolicy.getStepNo()
+					|| finStpDtl.getInstallments() != stepPolicy.getInstallments()
+					|| finStpDtl.getSteppedEMI().compareTo(stepPolicy.getSteppedEMI()) != 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Map<String, Object> getNoOfInstAndAmt(FinScheduleData schdData, Date rstDate) {
+		logger.debug(Literal.ENTERING);
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		Map<String, Object> map = new HashMap<>();
+		int installments = 0;
+		BigDecimal amount = BigDecimal.ZERO;
+
+		for (int i = 0; i < schedules.size(); i++) {
+			FinanceScheduleDetail fsd = schedules.get(i);
+			if (fsd.isDisbOnSchDate() || FinanceConstants.FLAG_BPI.equals(fsd.getBpiOrHoliday())) {
+				continue;
+			}
+			if (fsd.getSchDate().compareTo(rstDate) < 0) {
+				installments++;
+				if (fsd.isRepayOnSchDate()) {
+					amount = fsd.getRepayAmount();
+				}
+			}
+			if (fsd.getSchDate().compareTo(rstDate) > 0) {
+				break;
+			}
+		}
+
+		map.put("Amount", amount);
+		map.put("NoOfInstallments", installments);
+
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
+
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
@@ -1748,6 +2016,10 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
+		this.financeStepDetailDAO = financeStepDetailDAO;
 	}
 
 }

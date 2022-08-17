@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -19,7 +20,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -34,7 +35,7 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 
 	@Override
 	public List<FinOption> getFinOptions(long finID, TableType tableType) {
@@ -376,8 +377,8 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 
 		// Finance Customer Details
 		if (schdData.getFinanceMain().getCustID() != 0 && schdData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
-			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(schdData.getFinanceMain().getCustID(),
-					true, "_View"));
+			fd.setCustomerDetails(
+					customerDataService.getCustomerDetailsbyID(schdData.getFinanceMain().getCustID(), true, "_View"));
 		}
 
 		List<FinOption> finOption = finOptionDAO.getFinOptions(finID, TableType.VIEW);
@@ -385,6 +386,11 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 		fd.setFinOptions(finOption);
 
 		return fd;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

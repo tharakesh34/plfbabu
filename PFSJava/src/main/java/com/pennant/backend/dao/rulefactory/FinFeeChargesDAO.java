@@ -44,7 +44,7 @@ public interface FinFeeChargesDAO {
 
 	boolean updateFeeChargesByFinRefAndFee(FeeRule feeRule, String tableType);
 
-	void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType);
+	void saveCharges(List<FeeRule> chargeList, boolean isWIF, String tableType);
 
 	void deleteChargesBatch(long finID, String finEvent, boolean isWIF, String tableType);
 

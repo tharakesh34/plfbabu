@@ -130,6 +130,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.LinkedFinancesService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -323,6 +324,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private boolean isMatured = false;
 	private boolean isWIF = false;
 	private LinkedFinancesService linkedFinancesService;
+	private ManualAdviseService manualAdviseService;
+	private int futureManualAdvisescount;
 
 	/**
 	 * default constructor.<br>
@@ -397,6 +400,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			this.btnCalcReceipts.setDisabled(false);
 			this.btnChangeReceipt.setDisabled(false);
 			this.gb_Payable.setVisible(true);
+
+			if (futureManualAdvisescount > 0) {
+				MessageUtil.showMessage(Labels.getLabel("label_FutureManualAdvise_ClosureEnq_Alert.Msg"));
+			}
+
 			if (isModelWindow) {
 				this.window_LoanClosureEnquiryDialog.setWidth("90%");
 				this.window_LoanClosureEnquiryDialog.setHeight("90%");
@@ -503,7 +511,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		this.btnReceipt.setVisible(false);
-		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
+		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), ",PRESENT,");
 		this.receiptDate.setValue(SysParamUtil.getAppDate());
 
 		// isForeClosure = true;
@@ -1143,7 +1151,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		// fillComboBox(this.receiptPurpose,
-		// FinanceConstants.FINSER_EVENT_EARLYSETTLE,
+		// FinServiceEvent.EARLYSETTLE,
 		// PennantStaticListUtil.getReceiptPurpose(),"");
 		// this.receiptPurpose.setDisabled(true);
 
@@ -1198,9 +1206,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				allocationListData = receiptData.getReceiptHeader().getAllocations();
 			}
 
-			receiptData = receiptService.getFinReceiptDataById(finReference, AccountingEvent.EARLYSTL,
+			receiptData = receiptService.getFinReceiptDataById(finReference, valueDate, AccountingEvent.EARLYSTL,
 					FinServiceEvent.RECEIPT, "");
-
+			futureManualAdvisescount = manualAdviseService.getFutureDatedAdvises(receiptData.getFinID());
 			FinReceiptHeader rch = receiptData.getReceiptHeader();
 			rch.setFinID(receiptData.getFinID());
 			rch.setReference(finReference);
@@ -3040,11 +3048,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		// in case of early settlement,do not allow before first installment
 		// date(based on AlwEarlySettleBefrFirstInstn in finType )
 		if (receiptPurposeCtg == 2 && !financeType.isAlwCloBefDUe()) {
-			Date firstInstDate = getFirstInstDate(
-					receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
-			if (firstInstDate != null && receiptValueDate.compareTo(firstInstDate) < 0) {
+			if (fm.getFinApprovedDate() != null && rch.getValueDate().compareTo(fm.getFinApprovedDate()) < 0) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_First_Inst_Date",
-						new String[] { firstInstDate.toString() }));
+						new String[] { fm.getFinApprovedDate().toString() }));
 				return false;
 			}
 		}
@@ -3597,9 +3603,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 					// Late Payment Charges
 					if (Allocation.ODC.equals(receiptAllocationDetail.getAllocationType())) {
-						closureReport.setLatePayCharges(PennantApplicationUtil.formateAmount(
-								receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST()),
-								formatter));
+						closureReport.setLatePayCharges(
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
 					}
 
 					// Late Payment Interest Amount
@@ -3618,16 +3623,15 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 					// Interest for the month
 					if (Allocation.FUT_PFT.equals(receiptAllocationDetail.getAllocationType())) {
-						closureReport.setInstForTheMonth(PennantApplicationUtil.formateAmount(
-								receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST()),
-								formatter));
+						closureReport.setInstForTheMonth(
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
 					}
 
 					if (Allocation.PFT.equals(receiptAllocationDetail.getAllocationType())) {
-						profitAmt = receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST());
+						profitAmt = receiptAllocationDetail.getTotRecv();
 					}
 					if (Allocation.PRI.equals(receiptAllocationDetail.getAllocationType())) {
-						principleAmt = receiptAllocationDetail.getTotRecv().add(receiptAllocationDetail.getDueGST());
+						principleAmt = receiptAllocationDetail.getTotRecv();
 					}
 
 					if (Allocation.TDS.equals(receiptAllocationDetail.getAllocationType())) {
@@ -3693,7 +3697,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 						.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
 				if (noOfIntDays > 0) {
 					closureReport
-							.setIntPerday(closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2));
+							.setIntPerday((closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2)));
 				}
 				// Issue Fixed 141142
 				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
@@ -4504,5 +4508,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 	public void setLinkedFinancesService(LinkedFinancesService linkedFinancesService) {
 		this.linkedFinancesService = linkedFinancesService;
+	}
+
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
 	}
 }

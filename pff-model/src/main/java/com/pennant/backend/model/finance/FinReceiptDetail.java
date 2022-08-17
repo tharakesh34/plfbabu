@@ -76,6 +76,10 @@ public class FinReceiptDetail implements Serializable {
 	private List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>(1);
 	private BigDecimal partialPaidAMount = BigDecimal.ZERO;
 	private BigDecimal dueAmount = BigDecimal.ZERO;
+	@XmlElement
+	private String bankBranchCode;
+	@XmlElement
+	private String micr;
 
 	public Map<String, Object> getDeclaredFieldValues() {
 		Map<String, Object> receiptDetailMap = new HashMap<>();
@@ -146,6 +150,9 @@ public class FinReceiptDetail implements Serializable {
 		this.advMovements.stream().forEach(e -> entity.getAdvMovements().add(e == null ? null : e.copyEntity()));
 		entity.setPartialPaidAMount(this.partialPaidAMount);
 		entity.setDueAmount(this.dueAmount);
+		entity.setBankBranchCode(this.bankBranchCode);
+		entity.setMicr(this.micr);
+
 		return entity;
 	}
 
@@ -175,6 +182,8 @@ public class FinReceiptDetail implements Serializable {
 		excludeFields.add("iFSC");
 		excludeFields.add("branchDesc");
 		excludeFields.add("noManualReserve");
+		excludeFields.add("bankBranchCode");
+		excludeFields.add("micr");
 		return excludeFields;
 	}
 
@@ -536,5 +545,21 @@ public class FinReceiptDetail implements Serializable {
 
 	public void setNoManualReserve(boolean noManualReserve) {
 		this.noManualReserve = noManualReserve;
+	}
+
+	public String getBankBranchCode() {
+		return bankBranchCode;
+	}
+
+	public void setBankBranchCode(String bankBranchCode) {
+		this.bankBranchCode = bankBranchCode;
+	}
+
+	public String getMicr() {
+		return micr;
+	}
+
+	public void setMicr(String micr) {
+		this.micr = micr;
 	}
 }

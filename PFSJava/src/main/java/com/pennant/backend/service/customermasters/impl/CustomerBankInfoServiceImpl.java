@@ -16,10 +16,12 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -37,6 +39,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	private AuditHeaderDAO auditHeaderDAO;
 	private LovFieldDetailService lovFieldDetailService;
 	private BankDetailDAO bankDetailDAO;
+	private BankBranchDAO bankBranchDAO;
 
 	/**
 	 * getBankInfoByCustomerId fetch the details by using CustomerBankInfoDAO's getBankInfoByCustomer method . with
@@ -220,11 +223,46 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType) {
-		AuditDetail auditDetail = new AuditDetail();
+	public AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType, AuditDetail auditDetail) {
 		ErrorDetail errorDetail = new ErrorDetail();
 
 		// validate Master code with PLF system masters
+		if (customerBankInfo.isAddToBenficiary()) {
+			if (StringUtils.isNotBlank(customerBankInfo.getiFSC())) {
+				if (customerBankInfo.getBankBranchID() == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "bankBranchID";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+				BankBranch bb = bankBranchDAO.getBankBrachByIFSC(customerBankInfo.getiFSC(), "_AView");
+				if ((customerBankInfo.getBankBranchID().equals(bb.getBankBranchID()))
+						&& (customerBankInfo.getBankName().equals(bb.getBankCode()))) {
+					customerBankInfo.setBankName(bb.getBankCode());
+					customerBankInfo.setBankBranch(bb.getBranchDesc());
+				} else {
+					String[] valueParm = new String[2];
+					valueParm[0] = customerBankInfo.getiFSC();
+					valueParm[1] = "bankBranchID and bankName given";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90329", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+			}
+			if (StringUtils.isBlank(customerBankInfo.getAccountHolderName())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "accountHolderName";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			}
+		} else {
+			if (customerBankInfo.getBankBranchID() != null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "bankBranchID when addToBenficiary is true";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			}
+		}
+
 		int count = getCustomerBankInfoDAO().getBankCodeCount(customerBankInfo.getBankName());
 		if (count <= 0) {
 			String[] valueParm = new String[2];
@@ -390,6 +428,10 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 
 	public void setBankDetailDAO(BankDetailDAO bankDetailDAO) {
 		this.bankDetailDAO = bankDetailDAO;
+	}
+
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
 	}
 
 }

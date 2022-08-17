@@ -1,11 +1,9 @@
 package com.pennanttech.service.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -14,36 +12,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.finance.FeeType;
-import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceSummary;
-import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.ForeClosureLetter;
 import com.pennant.backend.model.finance.ForeClosureResponse;
-import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinStatementController;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.foreclosure.service.ForeClosureService;
 import com.pennanttech.pffws.FinStatementRestService;
 import com.pennanttech.pffws.FinStatementSoapService;
 import com.pennanttech.util.APIConstants;
@@ -63,6 +53,7 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 	private SOAReportGenerationService soaReportGenerationService;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private FeeTypeDAO feeTypeDAO;
+	private ForeClosureService foreClosureService;
 
 	/**
 	 * get the FinStatement Details by the given FinReference/CustCif.
@@ -686,61 +677,8 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		// call controller to get fore-closure letter
 		FinStatementResponse finStatement = null;
 		try {
-			finStatement = finStatementController.getStatement(statementRequest, APIConstants.STMT_FORECLOSURE);
-			FinanceDetail financeDetail = finStatement.getFinance().get(0);
-			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+			ForeClosureLetter letter = foreClosureService.getForeClosureAmt(statementRequest);
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
-			TaxAmountSplit taxSplit;
-			BigDecimal totalADgstAmt = BigDecimal.ZERO;
-			BigDecimal totalBCgstFee = BigDecimal.ZERO;
-
-			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getAllExcessAmountsByRef(finID, "");
-
-			ForeClosureLetter letter = new ForeClosureLetter();
-			if (excessAmounts != null) {
-				for (FinExcessAmount excessAmount : excessAmounts) {
-					BigDecimal emiInAdvance = BigDecimal.ZERO;
-					if (StringUtils.contains(RepayConstants.EXAMOUNTTYPE_EXCESS, excessAmount.getAmountType())) {
-						letter.setExcessAmount(excessAmount.getBalanceAmt());
-					} else if (StringUtils.contains(RepayConstants.EXAMOUNTTYPE_EMIINADV,
-							excessAmount.getAmountType())) {
-						letter.setEmiInAdvance(emiInAdvance.add(excessAmount.getBalanceAmt()));
-					}
-				}
-
-			}
-
-			FinanceSummary summary = finScheduleData.getFinanceSummary();
-			letter.setOutStandPrincipal(summary.getOutStandPrincipal());
-			letter.setPricipleAmount(summary.getPrincipal());
-			letter.setFuturePricipleAmount(summary.getFuturePrincipal());
-			letter.setInterestAmount(summary.getInterest());
-			response.setForeClosureFees(finScheduleData.getForeClosureFees());
-			response.setFeeDues(finScheduleData.getFeeDues());
-
-			for (ForeClosure foreClosure : financeDetail.getForeClosureDetails()) {
-				letter.setAccuredIntTillDate(foreClosure.getAccuredIntTillDate());
-				letter.setFutureInterestAmount(foreClosure.getAccuredIntTillDate().subtract(summary.getInterest()));
-				letter.setValueDate(foreClosure.getValueDate());
-				letter.setChargeAmount(foreClosure.getChargeAmount());
-				letter.setForeCloseAmount(foreClosure.getForeCloseAmount());
-				letter.setBounceCharge(foreClosure.getBounceCharge().add(totalBCgstFee));
-				letter.setBounceCharge(foreClosure.getBounceCharge());
-				letter.setTotalLPIAmount(foreClosure.getLPIAmount());
-				letter.setReceivableAdviceAmt(foreClosure.getReceivableADFee());
-			}
-
-			FeeType taxDetail = feeTypeDAO.getApprovedFeeTypeByFeeCode(RepayConstants.ALLOCATION_ODC);
-			BigDecimal totPenaltyGstAmt = BigDecimal.ZERO;
-			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxDetail.getTaxComponent())) {
-				taxSplit = GSTCalculator.getExclusiveGST(letter.getChargeAmount(), taxPercentages);
-				totPenaltyGstAmt = totPenaltyGstAmt.add(taxSplit.gettGST());
-				letter.setChargeAmount(letter.getChargeAmount().add(totPenaltyGstAmt));
-			}
-
-			letter.setForeCloseAmount(
-					letter.getForeCloseAmount().add(letter.getTotalLPIAmount().add(totPenaltyGstAmt)));
 			response.setFinReference(finReference);
 			response.setForeClosure(letter);
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
@@ -838,4 +776,8 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		this.feeTypeDAO = feeTypeDAO;
 	}
 
+	@Autowired
+	public void setForeClosureService(ForeClosureService foreClosureService) {
+		this.foreClosureService = foreClosureService;
+	}
 }

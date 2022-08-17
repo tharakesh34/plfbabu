@@ -79,6 +79,7 @@ import com.pennanttech.pff.eod.step.StepUtil.Step;
 import com.pennanttech.pff.external.GSTDownloadService;
 import com.pennanttech.pff.external.LedgerDownloadService;
 import com.pennanttech.pff.external.eod.EODNotificationService;
+import com.pennanttech.pff.external.service.ExternalFinanceSystemService;
 import com.pennanttech.pff.process.collection.CollectionDataDownloadProcess;
 
 /**
@@ -615,6 +616,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				}
 
 			} else {
+				stepName = stepName.split(":")[0];
 				processName = Step.valueOf(stepName);
 			}
 
@@ -831,6 +833,17 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 		appendRow(Step.processInActiveFinances.name(), StepUtil.PROCESS_INACTIVE_FINANCES.getName());
 
+		if (ImplementationConstants.ALLOW_NPA) {
+			appendRow(Step.assetClassification.name(), StepUtil.NPA_CLASSIFICATION.getName());
+			appendRow(Step.effAssetClassification.name(), StepUtil.EFF_NPA_CLASSIFICATION.getName());
+		}
+
+		if (ImplementationConstants.ALLOW_PROVISION) {
+			appendRow(Step.provisionCalc.name(), StepUtil.PROVISION_CALC.getName());
+		}
+
+		appendRow(Step.processINDASForInActiveFinances.name(), StepUtil.PROCESS_INDAS_INACTIVE_FINANCES.getName());
+
 		if (customerGroupQueuingDAO.isLimitsConfigured()) {
 			appendRow(Step.prepareCustomerGroupQueue.name(), StepUtil.PREPARE_CUSTOMER_GROUP_QUEUE.getName());
 			appendRow(Step.limitCustomerGroupsUpdate.name(), StepUtil.CUSTOMER_GROUP_LIMITS_UPDATE.getName());
@@ -838,6 +851,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		// appendRow(Step.limitsUpdate.name(), StepUtil.CUSTOMER_LIMITS_UPDATE.getName());
+
+		if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+			appendRow(Step.manualAdvisesCancellation.name(), StepUtil.CANCEL_INACTIVE_FINANCES_ADVISES.getName());
+		}
+
+		if (isServiceExists(ExternalFinanceSystemService.class)) {
+			appendRow(Step.notifyLoanClosureDetailsToEFS.name(), StepUtil.LOAN_CLOSURE_DETAILS.getName());
+		}
 
 		appendRow(Step.datesUpdate.name(), StepUtil.DATES_UPDATE.getName());
 		appendRow(Step.snapShotPreparation.name(), StepUtil.SNAPSHOT_PREPARATION.getName());
@@ -869,9 +890,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		appendRow(Step.retailcibil.name(), StepUtil.CIBIL_EXTRACT_RETAIL.getName());
 		appendRow(Step.corporatecibil.name(), StepUtil.CIBIL_EXTRACT_CORPORATE.getName());
 
-		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF) {
-			appendRow(Step.autoKnockOffProcess.name(), StepUtil.AUTO_KNOCKOFF_PROCESS.getName());
-		}
 	}
 
 	private boolean isServiceExists(Class<?> requiredType) {

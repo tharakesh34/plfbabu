@@ -375,7 +375,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		try {
 			saveConsideredObligations(dataMap);
 			jsonInString = mapper.writeValueAsString(dataMap);
-			setSpreedSheetData(dataMap, aFinanceDetail);
+			// setSpreedSheetData(dataMap, aFinanceDetail);
 		} catch (Exception e) {
 			logger.error("Exception in json request string" + e);
 		}

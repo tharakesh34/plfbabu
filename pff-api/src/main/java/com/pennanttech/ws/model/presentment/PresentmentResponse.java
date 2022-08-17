@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 @XmlType(propOrder = { "presentmentDetails", "approvedPresentments", "presentment", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)

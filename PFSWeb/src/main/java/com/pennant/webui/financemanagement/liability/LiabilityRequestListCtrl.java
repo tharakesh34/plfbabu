@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -50,7 +51,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.liability.service.LiabilityRequestService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -106,7 +107,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 	private LiabilityRequestService liabilityRequestService;
 	private FinanceDetailService financeDetailService;
 	private WorkFlowDetails workFlowDetails = null;
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 
 	protected Textbox finReference;
 	protected Textbox custCIF;
@@ -335,7 +336,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 			FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(aLiabilityRequest.getFinID(),
 					"_View", false);
 			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(false);
-			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
+			financeDetail.setCustomerDetails(customerDataService.getCustomerDetailsbyID(
 					financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
 			financeDetail.setDocumentDetailsList(getFinanceDetailService()
 					.getFinDocByFinRef(aLiabilityRequest.getFinReference(), moduleDefiner, "_View"));
@@ -614,11 +615,9 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		return this.financeWorkFlowService;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
 }

@@ -31,8 +31,8 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.SchemeDealerGroup;
-import com.pennanttech.pff.mmfl.cd.service.SchemeDealerGroupService;
+import com.pennanttech.pff.cd.model.SchemeDealerGroup;
+import com.pennanttech.pff.cd.service.SchemeDealerGroupService;
 
 public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup> {
 	private static final long serialVersionUID = 1L;

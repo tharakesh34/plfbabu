@@ -53,7 +53,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -62,8 +61,6 @@ import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.ProvisionConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
@@ -151,26 +148,20 @@ public class MicroEOD implements Tasklet {
 		Date provisionEffectiveDate = null;
 		String provisionBooks = null;
 
-		if (ImplementationConstants.ALLOW_NPA_PROVISION) {
-			logger.info("NPA and Provisining Enabled");
-
-			provisionBooks = eventProperties.getProvisionBooks();
-			String npaTagging = eventProperties.getNpaTagging();
-
-			if (ProvisionConstants.NPA_TAGGING_CUSTOMER.equals(npaTagging)) {
-				customerProvision = true;
-			}
-
-			String provEffPostDate = eventProperties.getProvEffPostDate();
-
-			if (PennantConstants.NO.equals(provEffPostDate)) {
-				provisionEffectiveDate = eventProperties.getPostDate();
-			}
-
-			logger.info("ProvisionBooks  {}", provisionBooks);
-			logger.info("NPA Tagging {}", npaTagging);
-			logger.info("Customer Provision {}", customerProvision);
-		}
+		/*
+		 * if (ImplementationConstants.ALLOW_NPA_PROVISION) { logger.info("NPA and Provisining Enabled");
+		 * 
+		 * provisionBooks = eventProperties.getProvisionBooks(); String npaTagging = eventProperties.getNpaTagging();
+		 * 
+		 * if (ProvisionConstants.NPA_TAGGING_CUSTOMER.equals(npaTagging)) { customerProvision = true; }
+		 * 
+		 * String provEffPostDate = eventProperties.getProvEffPostDate();
+		 * 
+		 * if (PennantConstants.NO.equals(provEffPostDate)) { provisionEffectiveDate = eventProperties.getPostDate(); }
+		 * 
+		 * logger.info("ProvisionBooks  {}", provisionBooks); logger.info("NPA Tagging {}", npaTagging);
+		 * logger.info("Customer Provision {}", customerProvision); }
+		 */
 
 		// to hold the exception till the process completed for all the customers
 		List<Exception> exceptions = new ArrayList<Exception>(1);
@@ -195,7 +186,6 @@ public class MicroEOD implements Tasklet {
 				custEODEvent.setProvisionRule(provisionRule);
 				custEODEvent.setAmzMethodRule(amzMethodRule);
 
-				custEODEvent.setExecuteNPAaAndProvision(ImplementationConstants.ALLOW_NPA_PROVISION);
 				custEODEvent.setProvisionBooks(provisionBooks);
 				custEODEvent.setCustomerProvision(customerProvision);
 				custEODEvent.setProvisionEffectiveDate(provisionEffectiveDate);

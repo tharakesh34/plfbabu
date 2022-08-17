@@ -99,6 +99,20 @@ public class RestructureDetail extends AbstractWorkflowEntity {
 	private List<RestructureCharge> chargeList = new ArrayList<>();
 	@XmlElement
 	private String reqType;
+	@XmlElement
+	private boolean alwManualSteps;
+	@XmlElement
+	private int noOfSteps;
+	@XmlElement
+	private String stepType;
+	@XmlElement
+	private String stepPolicy;
+	@XmlElement
+	private String calcOfSteps;
+	@XmlElement
+	private String stepsAppliedFor;
+	@XmlElement
+	private List<FinanceStepPolicyDetail> stepPolicyDetails = new ArrayList<>();
 
 	public RestructureDetail copyEntity() {
 		RestructureDetail entity = new RestructureDetail();
@@ -172,6 +186,14 @@ public class RestructureDetail extends AbstractWorkflowEntity {
 		entity.setReceiptID(this.receiptID);
 		this.chargeList.stream().forEach(e -> entity.getChargeList().add(e == null ? null : e.copyEntity()));
 		entity.setReqType(this.reqType);
+		entity.setAlwManualSteps(this.alwManualSteps);
+		entity.setNoOfSteps(this.noOfSteps);
+		entity.setStepType(this.stepType);
+		entity.setStepPolicy(this.stepPolicy);
+		entity.setCalcOfSteps(this.calcOfSteps);
+		entity.setStepsAppliedFor(this.stepsAppliedFor);
+		this.stepPolicyDetails.stream()
+				.forEach(e -> entity.getStepPolicyDetails().add(e == null ? null : e.copyEntity()));
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -191,6 +213,14 @@ public class RestructureDetail extends AbstractWorkflowEntity {
 		excludeFields.add("rstTypeCode");
 		excludeFields.add("rstTypeDesc");
 		excludeFields.add("reqType");
+		excludeFields.add("alwManualSteps");
+		excludeFields.add("noOfSteps");
+		excludeFields.add("stepType");
+		excludeFields.add("stepPolicy");
+		excludeFields.add("noOfGrcSteps");
+		excludeFields.add("calcOfSteps");
+		excludeFields.add("stepsAppliedFor");
+		excludeFields.add("stepPolicyDetails");
 		return excludeFields;
 	}
 
@@ -761,4 +791,61 @@ public class RestructureDetail extends AbstractWorkflowEntity {
 	public void setReqType(String reqType) {
 		this.reqType = reqType;
 	}
+
+	public boolean isAlwManualSteps() {
+		return alwManualSteps;
+	}
+
+	public void setAlwManualSteps(boolean alwManualSteps) {
+		this.alwManualSteps = alwManualSteps;
+	}
+
+	public int getNoOfSteps() {
+		return noOfSteps;
+	}
+
+	public void setNoOfSteps(int noOfSteps) {
+		this.noOfSteps = noOfSteps;
+	}
+
+	public String getStepType() {
+		return stepType;
+	}
+
+	public void setStepType(String stepType) {
+		this.stepType = stepType;
+	}
+
+	public String getStepPolicy() {
+		return stepPolicy;
+	}
+
+	public void setStepPolicy(String stepPolicy) {
+		this.stepPolicy = stepPolicy;
+	}
+
+	public String getCalcOfSteps() {
+		return calcOfSteps;
+	}
+
+	public void setCalcOfSteps(String calcOfSteps) {
+		this.calcOfSteps = calcOfSteps;
+	}
+
+	public String getStepsAppliedFor() {
+		return stepsAppliedFor;
+	}
+
+	public void setStepsAppliedFor(String stepsAppliedFor) {
+		this.stepsAppliedFor = stepsAppliedFor;
+	}
+
+	public List<FinanceStepPolicyDetail> getStepPolicyDetails() {
+		return stepPolicyDetails;
+	}
+
+	public void setStepPolicyDetails(List<FinanceStepPolicyDetail> stepPolicyDetails) {
+		this.stepPolicyDetails = stepPolicyDetails;
+	}
+
 }

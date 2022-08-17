@@ -435,24 +435,23 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 		AssetClassificationHeader header = (AssetClassificationHeader) auditDetail.getModelData();
 
 		// Check the unique keys.
-		Long templateId = header.getNpaTemplateId();
-		int stageOrder = header.getStageOrder();
-		if (header.isNewRecord() && assetClassificationHeaderDAO.isDuplicateKey(header.getId(), header.getCode(),
-				stageOrder, templateId, header.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (header.isNewRecord()
+				&& assetClassificationHeaderDAO.isDuplicateKey(header.getId(), header.getCode(), header.getStageOrder(),
+						header.getNpaTemplateId(), header.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + header.getCode();
-			parameters[1] = PennantJavaUtil.getLabel("label_StageOrder") + ": " + stageOrder;
+			parameters[1] = PennantJavaUtil.getLabel("label_StageOrder") + ": " + header.getStageOrder();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		// Stage Order Unique Key Checking
 		if (header.isNewRecord() && header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-			if (header.isNewRecord()
-					&& assetClassificationHeaderDAO.isStageOrderExists(stageOrder, templateId, TableType.VIEW)) {
+			if (header.isNewRecord() && assetClassificationHeaderDAO.isStageOrderExists(header.getStageOrder(),
+					header.getNpaTemplateId(), TableType.VIEW)) {
 				String[] parameters = new String[1];
-				parameters[0] = PennantJavaUtil.getLabel("label_StageOrder") + ": " + stageOrder;
+				parameters[0] = PennantJavaUtil.getLabel("label_StageOrder") + ": " + header.getStageOrder();
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 		}

@@ -41,6 +41,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -100,6 +101,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 
 	protected Button btnSearchBankCode;
 	protected Button btnSearchCity;
+	protected Space space_MICR;
 
 	// ServiceDAOs / Domain Classes
 	private transient BankBranchService bankBranchService;
@@ -390,6 +392,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.active.setChecked(aBankBranch.isActive());
 		this.recordStatus.setValue(aBankBranch.getRecordStatus());
 
+		setMICRValidation(aBankBranch.isAllowMultipleIFSC());
 		doShowEMandateSources(this.eMandate);
 
 		logger.debug("Leaving");
@@ -625,11 +628,6 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		if (!this.city.isReadonly()) {
 			this.city.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_BankBranchDialog_City.value"), null, false, true));
-		}
-		// MICR Code
-		if (!this.mICR.isReadonly()) {
-			this.mICR.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_MICR.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 		// IFSC Code
 		if (!this.iFSC.isReadonly()) {
@@ -1053,9 +1051,14 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 				Filter[] filters = new Filter[1];
 				filters[0] = new Filter("bankCode", details.getBankCode(), Filter.OP_EQUAL);
 				parentBranch.setFilters(filters);
+
+				this.bankBranch.setAllowMultipleIFSC(details.isAllowMultipleIFSC());
+				setMICRValidation(details.isAllowMultipleIFSC());
+				return;
 			}
 		}
 
+		setMICRValidation(false);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1074,6 +1077,18 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			}
 		}
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private void setMICRValidation(boolean allowMultipleIFSC) {
+		if (allowMultipleIFSC) {
+			this.space_MICR.setSclass("mandatory");
+		} else {
+			this.space_MICR.setSclass("");
+		}
+		if (!this.mICR.isReadonly()) {
+			this.mICR.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_MICR.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, allowMultipleIFSC));
+		}
 	}
 
 	// ******************************************************//

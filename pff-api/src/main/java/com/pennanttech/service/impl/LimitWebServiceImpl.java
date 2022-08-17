@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
+import com.pennant.backend.dao.rulefactory.impl.LimitRuleDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -24,6 +26,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitStructure;
 import com.pennant.backend.model.limit.LimitTransactionDetail;
+import com.pennant.backend.model.rulefactory.LimitFilterQuery;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -35,6 +38,7 @@ import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.validation.LimitSetupGroup;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
@@ -44,6 +48,7 @@ import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.LimitServiceController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.LimitRestService;
 import com.pennanttech.pffws.LimitSoapService;
 import com.pennanttech.util.APIConstants;
@@ -64,6 +69,8 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 	private ValidationUtility validationUtility;
 	private LimitTransactionDetailsDAO limitTransactionDetailDAO;
 	private FinanceMainDAO financeMainDAO;
+	private LimitRuleDAO limitRuleDAO;
+	private LimitStructureDetailDAO limitStructureDetailDAO;
 
 	/**
 	 * Fetch customer limit structure by structure code.
@@ -136,6 +143,37 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 			APIErrorHandlerService.logReference(String.valueOf(response.getHeaderId()));
 		}
 		logger.debug("Leaving");
+		return response;
+	}
+
+	@Override
+	public LimitHeader getInstitutionLimitSetup(LimitHeader limitHeader) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		// for logging purpose
+		String[] logFields = new String[3];
+		logFields[0] = limitHeader.getRuleCode();
+		logFields[1] = String.valueOf(limitHeader.getHeaderId());
+		logFields[2] = limitHeader.getLimitStructureCode();
+		APIErrorHandlerService.logKeyFields(logFields);
+
+		LimitHeader response = new LimitHeader();
+
+		// validate rule code and limit Structure Code
+		WSReturnStatus returnStatus = doInstitutionValidations(limitHeader);
+		response.setReturnStatus(returnStatus);
+
+		// call get Institution limit setup method
+		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
+			response = limitServiceController.getInstitutionLimitSetup(limitHeader.getRuleCode());
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+
+		// for logging purpose
+		if (response.getHeaderId() != Long.MIN_VALUE) {
+			APIErrorHandlerService.logReference(String.valueOf(response.getHeaderId()));
+		}
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -568,6 +606,47 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 		return new WSReturnStatus();
 	}
 
+	private WSReturnStatus doInstitutionValidations(LimitHeader limitHeader) {
+		logger.info(Literal.ENTERING);
+
+		String code = limitHeader.getRuleCode();
+		String strucCode = limitHeader.getLimitStructureCode();
+
+		if (StringUtils.isBlank(code)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Rule Code";
+			return getErrorDetails("90502", valueParm);
+		}
+
+		if (StringUtils.isBlank(strucCode)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Structure Code";
+			return getErrorDetails("90502", valueParm);
+		}
+
+		LimitFilterQuery filters = limitRuleDAO.getLimitRuleByQueryCode(code, RuleConstants.MODULE_IRLFILTER, "_AView");
+		if (filters == null) {
+			String[] valueParm = new String[4];
+			valueParm[0] = "Rule Code: " + code;
+			valueParm[1] = "is";
+			valueParm[2] = "Not Valid";
+			valueParm[3] = "";
+			return getErrorDetails("30550", valueParm);
+		}
+
+		limitHeader.setRuleCode(filters.getQueryCode());
+
+		// validate Limit Structure code
+		if (limitStructureDetailDAO.getLimitStructureCountById(strucCode, "") <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = strucCode;
+			return getErrorDetails("90107", valueParm);
+		}
+
+		logger.info(Literal.LEAVING);
+		return new WSReturnStatus();
+	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -657,6 +736,16 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setLimitRuleDAO(LimitRuleDAO limitRuleDAO) {
+		this.limitRuleDAO = limitRuleDAO;
+	}
+
+	@Autowired
+	public void setLimitStructureDetailDAO(LimitStructureDetailDAO limitStructureDetailDAO) {
+		this.limitStructureDetailDAO = limitStructureDetailDAO;
 	}
 
 }

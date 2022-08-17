@@ -48,7 +48,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
+import com.pennanttech.pff.cd.model.TransactionMapping;
 import com.pennanttech.pff.transactionmapping.webui.TransactionMappingListModelItemRenderer;
 
 public class TransactionMappingListCtrl extends GFCBaseListCtrl<TransactionMapping> {

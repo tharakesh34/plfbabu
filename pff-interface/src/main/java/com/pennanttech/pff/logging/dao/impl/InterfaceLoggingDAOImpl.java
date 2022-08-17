@@ -34,9 +34,9 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 		StringBuilder sql = new StringBuilder();
 		sql.append(" insert Into InterfaceLogDetails ");
 		sql.append(" (ServiceName, Reference, EndPoint, Request, Response,");
-		sql.append("  ReqSentOn, RespReceivedOn, Status, ErrorCode, ErrorDesc)");
+		sql.append("  ReqSentOn, RespReceivedOn, Status, ErrorCode, ErrorDesc, ProcessId)");
 		sql.append(" Values(:ServiceName, :Reference, :EndPoint, :Request, :Response,");
-		sql.append("  :ReqSentOn, :RespReceivedOn, :Status, :ErrorCode, :ErrorDesc)");
+		sql.append("  :ReqSentOn, :RespReceivedOn, :Status, :ErrorCode, :ErrorDesc, :ProcessId)");
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);

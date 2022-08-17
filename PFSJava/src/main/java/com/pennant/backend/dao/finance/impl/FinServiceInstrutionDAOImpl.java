@@ -298,19 +298,36 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
 	}
 
+	@Override
+	public FinServiceInstruction getFinServiceInstDetailsBySerReqNo(long finID, String serviceReqNo) {
+		StringBuilder sql = sqlSelectQuery();
+		sql.append(" Where FinID = ? and ServiceReqNo = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new FinServiceInstructionRowMapper(), finID,
+					serviceReqNo);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 	private String getInsertQuery(String type) {
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" FinServiceInstruction");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis");
 		sql.append(", SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate");
+		sql.append(", GrcPftRate, GraceBaseRate, GraceSpecialRate, GrcMargin");
 		sql.append(", RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
 		sql.append(", NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate");
 		sql.append(", RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg");
 		sql.append(", InstructionUID, LinkedTranID, LogKey, InitiatedDate, ApprovedDate)");
 		sql.append(" values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		return sql.toString();
@@ -332,6 +349,10 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		ps.setString(index++, fsd.getSplRate());
 		ps.setBigDecimal(index++, fsd.getMargin());
 		ps.setDate(index++, JdbcUtil.getDate(fsd.getGrcPeriodEndDate()));
+		ps.setBigDecimal(index++, fsd.getGrcPftRate());
+		ps.setString(index++, fsd.getGraceBaseRate());
+		ps.setString(index++, fsd.getGraceSpecialRate());
+		ps.setBigDecimal(index++, fsd.getGrcMargin());
 		ps.setString(index++, fsd.getRepayPftFrq());
 		ps.setString(index++, fsd.getRepayRvwFrq());
 		ps.setString(index++, fsd.getRepayCpzFrq());
@@ -365,6 +386,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
 		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
 		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, InitiatedDate, ApprovedDate");
+		sql.append(", GrcPftRate, GraceBaseRate, GraceSpecialRate, GrcMargin");
 		sql.append(" From FinServiceInstruction");
 
 		return sql;
@@ -414,6 +436,10 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			fsi.setLinkedTranID(rs.getLong("LinkedTranID"));
 			fsi.setInitiatedDate(rs.getTimestamp("InitiatedDate"));
 			fsi.setApprovedDate(rs.getTimestamp("ApprovedDate"));
+			fsi.setGrcPftRate(rs.getBigDecimal("GrcPftRate"));
+			fsi.setGraceBaseRate(rs.getString("GraceBaseRate"));
+			fsi.setGraceSpecialRate(rs.getString("GraceSpecialRate"));
+			fsi.setGrcMargin(rs.getBigDecimal("GrcMargin"));
 
 			return fsi;
 		}

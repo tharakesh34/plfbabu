@@ -3,6 +3,7 @@ package com.pennant.webui.dedup.dedupparm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -431,6 +432,13 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setVoterID(voterId);
 		customerDedup.setDrivingLicenceNo(drivingLicenseNo);
 		customerDedup.setAddress(custAddress.toString());
+
+		if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+			Map<String, Object> mapValues = customerDetails.getExtendedFieldRender().getMapValues();
+			if (mapValues != null && mapValues.get("UCIC") != null) {
+				customerDedup.setUcic(mapValues.get("UCIC").toString());
+			}
+		}
 
 		logger.debug("Leaving");
 		return customerDedup;

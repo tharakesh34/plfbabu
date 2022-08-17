@@ -58,7 +58,8 @@
 
 	<bean id="amzJobListener" class="com.pennant.backend.batch.listeners.AMZJobListener" />
 
-	<bean id="PFSJobParametersIncrementer" class="com.pennant.backend.endofday.jobparameter.PFSJobParametersIncrementer" />
+	<bean id="PFSJobParametersIncrementer"
+		class="com.pennant.backend.endofday.jobparameter.PFSJobParametersIncrementer" />
 
 	<step id="amzProcess" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="amzProcessTaskLet" allow-start-if-complete="true">
@@ -72,7 +73,8 @@
 
 	<!-- Partitioning Master -->
 
-	<bean id="partitioningMasterAmortization" class="com.pennant.backend.endofday.tasklet.PartitioningMasterAmortization">
+	<bean id="partitioningMasterAmortization"
+		class="com.pennant.backend.endofday.tasklet.PartitioningMasterAmortization">
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 	</bean>
 
@@ -113,23 +115,23 @@
 
 	<!-- Beans -->
 
-	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil" />
-
 	<bean id="projectedAmortizationDAO" class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl"
 		parent="sequenceDao" />
 
 	<bean id="financeMainDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl" parent="basicDao" />
 
-	<bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl" parent="basicDao" />
+	<bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl"
+		parent="basicDao" />
 
 	<bean id="finFeeDetailDAO" class="com.pennant.backend.dao.finance.impl.FinFeeDetailDAOImpl" parent="sequenceDao" />
 
-	<bean id="finExpenseDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinExpenseDetailsDAOImpl" parent="sequenceDao" />
+	<bean id="finExpenseDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinExpenseDetailsDAOImpl"
+		parent="sequenceDao" />
 
 	<bean id="manualAdviseDAO" class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl" parent="sequenceDao" />
 
 	<!-- Postings -->
-	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao"/>
+	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao" />
 
 	<!-- Postings Preparation Util -->
 	<bean name="postingsPreparationUtil" class="com.pennant.app.util.PostingsPreparationUtil">
@@ -144,7 +146,8 @@
 
 	<bean id="pFSParameterDAO" class="com.pennant.backend.dao.smtmasters.impl.PFSParameterDAOImpl" parent="basicDao" />
 
-	<bean name="globalVariableService" class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
+	<bean name="globalVariableService"
+		class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
 

@@ -190,6 +190,7 @@ import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.service.mandate.FinMandateService;
+import com.pennant.backend.service.tandetails.TanAssignmentService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -274,7 +275,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected FinAdvancePaymentsService finAdvancePaymentsService;
 	protected FinFeeDetailService finFeeDetailService;
 	protected FinCovenantTypeService finCovenantTypeService;
-	protected RepaymentPostingsUtil repayPostingUtil;
+	protected RepaymentPostingsUtil repaymentPostingsUtil;
 	protected FinFlagDetailsDAO finFlagDetailsDAO;
 	protected FinServiceInstrutionDAO finServiceInstructionDAO;
 	protected CollateralAssignmentValidation collateralAssignmentValidation;
@@ -299,6 +300,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected SubventionService subventionService;
 	protected RestructureService restructureService;
 	private FeeTypeService feeTypeService;
+	protected TanAssignmentService tanAssignmentService;
 
 	public GenericFinanceDetailService() {
 		super();
@@ -683,8 +685,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					documentDetails.setRecordType("");
 					documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
-				if (approveRec && StringUtils.equals(documentDetails.getRecordStatus(),
-						PennantConstants.RCD_STATUS_APPROVED)) {
+				if (approveRec
+						&& StringUtils.equals(documentDetails.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)
+						&& StringUtils.isBlank(financeMain.getNextRoleCode())) {
 					documentDetails.setRecordType("");
 				}
 
@@ -1479,7 +1482,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			}
 
 			gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinBranch(), custDftBranch, highPriorityState,
-					custResdSts, highPriorityCountry, fd.getFinanceTaxDetail());
+					custResdSts, highPriorityCountry, fd.getFinanceTaxDetail(),
+					fd.getCustomerDetails().getGstDetailsList());
 		} else {
 			gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinID());
 		}
@@ -2407,19 +2411,22 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param finDetail
 	 * @param tableType
 	 */
-	public void saveFeeChargeList(FinScheduleData finScheduleData, String finEvent, boolean isWIF, String tableType) {
-		logger.debug("Entering");
+	public void saveFeeChargeList(FinScheduleData schdData, String finEvent, boolean isWIF, String tableType) {
+		logger.debug(Literal.ENTERING);
 
-		// Finance Fee Charge Details
-		if (finScheduleData.getFeeRules() != null && finScheduleData.getFeeRules().size() > 0) {
-			for (int i = 0; i < finScheduleData.getFeeRules().size(); i++) {
-				finScheduleData.getFeeRules().get(i).setFinReference(finScheduleData.getFinReference());
-				finScheduleData.getFeeRules().get(i).setFinEvent(finEvent);
-			}
-			finFeeChargesDAO.saveChargesBatch(finScheduleData.getFeeRules(), isWIF, tableType);
+		if (CollectionUtils.isEmpty(schdData.getFeeRules())) {
+			logger.debug(Literal.LEAVING);
+			return;
 		}
 
-		logger.debug("Leaving");
+		for (FeeRule feeRule : schdData.getFeeRules()) {
+			feeRule.setFinReference(schdData.getFinReference());
+			feeRule.setFinEvent(finEvent);
+		}
+
+		finFeeChargesDAO.saveCharges(schdData.getFeeRules(), isWIF, tableType);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -3012,8 +3019,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finCovenantTypeService = finCovenantTypeService;
 	}
 
-	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
-		this.repayPostingUtil = repayPostingUtil;
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
 	}
 
 	public void setExtTablesDAO(ExtTablesDAO extTablesDAO) {
@@ -3151,12 +3158,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.restructureService = restructureService;
 	}
 
-	public FeeTypeService getFeeTypeService() {
-		return feeTypeService;
-	}
-
 	public void setFeeTypeService(FeeTypeService feeTypeService) {
 		this.feeTypeService = feeTypeService;
 	}
 
+	@Autowired
+	public void setTanAssignmentService(TanAssignmentService tanAssignmentService) {
+		this.tanAssignmentService = tanAssignmentService;
+	}
 }

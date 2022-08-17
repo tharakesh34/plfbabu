@@ -52,6 +52,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
+import com.pennant.backend.model.customermasters.GSTDetail;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
@@ -816,6 +817,7 @@ public class CustomerController extends GenericService<Object> {
 		}
 		// customer director details
 		setDirectorDetails(customerDetails, processType, prvCustomerDetails);
+		setGSTDetails(customerDetails, processType, prvCustomerDetails);
 
 		if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)
 				&& !CollectionUtils.isEmpty(customerDetails.getCustomerDirectorList())) {
@@ -825,6 +827,37 @@ public class CustomerController extends GenericService<Object> {
 		curCustomer.setCustTotalExpense(custTotExpense);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setGSTDetails(CustomerDetails cd, String processType, CustomerDetails prvCd) {
+		List<GSTDetail> gstDetails = cd.getGstDetailsList();
+		if (CollectionUtils.isEmpty(gstDetails)) {
+			return;
+		}
+
+		for (GSTDetail gst : gstDetails) {
+			if (PROCESS_TYPE_SAVE.equals(processType)) {
+				gst.setNewRecord(true);
+				gst.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				gst.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				gst.setVersion(1);
+			} else {
+				List<GSTDetail> prvGSTDetails = prvCd.getGstDetailsList();
+
+				if (CollectionUtils.isEmpty(prvGSTDetails)) {
+					continue;
+				}
+
+				for (GSTDetail prvGST : prvGSTDetails) {
+					if (gst.getId() == prvGST.getId()) {
+						gst.setNewRecord(false);
+						gst.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						gst.setVersion(prvGST.getVersion() + 1);
+						gst.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					}
+				}
+			}
+		}
 	}
 
 	/**

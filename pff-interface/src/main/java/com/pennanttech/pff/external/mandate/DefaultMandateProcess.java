@@ -263,6 +263,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		logger.info("Connecting into SFTP Shared location to Retreive Files..");
 
 		List<String> fileNames = null;
+		FtpClient ftpClient = null;
 		try {
 			String hostName = eventProperty.getHostName();
 			String port = eventProperty.getPort();
@@ -270,7 +271,6 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			String secretKey = eventProperty.getSecretKey();
 			String bucketName = eventProperty.getBucketName();
 
-			FtpClient ftpClient = null;
 			if ("FTP".equals(protocol)) {
 				ftpClient = new FtpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
 				fileNames = ftpClient.getFileNameList(bucketName);
@@ -317,6 +317,11 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		} catch (Exception e) {
 			logger.info(Literal.EXCEPTION, e);
 			throw new AppException("" + e);
+		} finally {
+			// FIXME:: Gopal.p
+			/*
+			 * if (ftpClient != null) { ftpClient.disconnect(); }
+			 */
 		}
 		return null;
 	}

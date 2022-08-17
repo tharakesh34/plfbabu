@@ -301,14 +301,14 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
-		List<FinCovenantType> covenantTypes = fmi.getFinCovenantTypeList();
-		if (CollectionUtils.isNotEmpty(covenantTypes)) {
-			FinCovenantType finCovenantType = new FinCovenantType();
-			String[] fields = PennantJavaUtil.getFieldDetails(finCovenantType, finCovenantType.getExcludeFields());
+		List<FinOption> options = fmi.getFinOptions();
+		if (CollectionUtils.isNotEmpty(options)) {
+			FinOption finOption = new FinOption();
+			String[] fields = PennantJavaUtil.getFieldDetails(finOption, finOption.getExcludeFields());
 
-			for (FinCovenantType covenant : covenantTypes) {
+			for (FinOption option : options) {
 				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
-						covenant.getBefImage(), covenant));
+						option.getBefImage(), option));
 			}
 			finOptionDAO.deleteByFinRef(fmi.getFinID(), tableType);
 		}

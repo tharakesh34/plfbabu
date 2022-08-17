@@ -64,6 +64,9 @@ public class DisbursementConstants {
 	public static final String PAYMENT_TYPE_OTC = "OTC";
 	public static final String PAYMENT_TYPE_BTTP = "BTTP";
 	public static final String PAYMENT_TYPE_MOBILE = "MOBILE";
+	public static final String PAYMENT_TYPE_PAYMENTGATEWAY = "PAYMENTGATEWAY";
+	public static final String PAYMENT_TYPE_UPI = "UPI";
+	public static final String PAYMENT_TYPE_BBPS = "BBPS";
 	public static final String RECEIPT_CHANNEL_POR = "POR";
 	public static final String PAYMENT_TYPE_DIGITAL = "DIGITAL";
 

@@ -91,4 +91,6 @@ public interface FinAdvancePaymentsService {
 
 	public List<ErrorDetail> validateVasInstructions(List<VASRecording> vasRecordingList,
 			List<FinAdvancePayments> advPaymentsList, boolean validate);
+
+	int getStatusCountByFinRefrence(long finID);
 }

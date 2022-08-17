@@ -10,6 +10,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualReversalService;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.AutoDisbursementService;
+import com.pennant.app.core.AutoKnockOffService;
 import com.pennant.app.core.ChangeGraceEndService;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
@@ -24,9 +25,12 @@ import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
+import com.pennanttech.pff.npa.service.AssetClassificationService;
 
 public class EodService {
 	private static Logger logger = LogManager.getLogger(EodService.class);
@@ -47,6 +51,10 @@ public class EodService {
 	private LatePayDueCreationService latePayDueCreationService;
 	private AccrualReversalService accrualReversalService;
 	private ChangeGraceEndService changeGraceEndService;
+	private AutoKnockOffService eodAutoKnockOffService;
+	private OverdrafLoanService overdrafLoanService;
+	private ManualAdviseService manualAdviseService;
+	private AssetClassificationService assetClassificationService;
 
 	public EodService() {
 		super();
@@ -106,11 +114,19 @@ public class EodService {
 	public void doProcess(CustEODEvent custEODEvent) throws Exception {
 		long custId = custEODEvent.getCustomer().getCustID();
 
+		EventProperties eventProperties = custEODEvent.getEventProperties();
+
+		Date appDate = eventProperties.getAppDate();
+
+		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF) {
+			logger.info("Auto-Knock-Off process started for the Customer ID >> {} ", custId);
+			eodAutoKnockOffService.processKnockOff(custId, appDate);
+			logger.info("Auto-Knock-Off process completed for the Customer ID >> {} ", custId);
+		}
+
 		logger.info("Preparing EOD Events for the Customer ID {} >> started...", custId);
 		loadFinanceData.prepareFinEODEvents(custEODEvent, custId);
 		logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
-
-		EventProperties eventProperties = custEODEvent.getEventProperties();
 
 		if (!eventProperties.isSkipLatePay()) {
 			// late pay marking
@@ -126,11 +142,6 @@ public class EodService {
 
 			// customer status update
 			latePayMarkingService.processCustomerStatus(custEODEvent);
-
-			if (custEODEvent.isExecuteNPAAndProvision()) {
-				npaService.processProvisions(custEODEvent);
-			}
-
 		} else {
 			logger.info(
 					"Late Pay Marking, DPD Buketing and Processing of provisions skipped due to {} SMT parameter value is true",
@@ -163,13 +174,6 @@ public class EodService {
 		accrualService.processAccrual(custEODEvent);
 		logger.info("Preparing Accruals completed.");
 
-		// NPA Accounting
-		if (custEODEvent.isExecuteNPAAndProvision()) {
-			logger.info("Processing NPA Accounting started...");
-			npaService.processAccounting(custEODEvent);
-			logger.info("Processing NPA Accounting completed.");
-		}
-
 		// Penalty Accrual posted on EOD only
 		latePayDueCreationService.processLatePayAccrual(custEODEvent);
 
@@ -195,6 +199,10 @@ public class EodService {
 			logger.info("Accruals Process completed.");
 		}
 
+		logger.info("Charge Advice Creation for Overdraft Loans started...");
+		overdrafLoanService.createPenalties(custEODEvent);
+		logger.info("Charge Advice Creation for Overdraft Loans completed...");
+
 		// installment
 		if (custEODEvent.isDueExist()) {
 			logger.info("Instalment due date posting process started...");
@@ -211,6 +219,19 @@ public class EodService {
 		logger.info("Auto grace extension process started...");
 		changeGraceEndService.processChangeGraceEnd(custEODEvent);
 		logger.info("Auto grace extension process completed.");
+
+		logger.info("Future dated manual advice process started...");
+		manualAdviseService.cancelFutureDatedAdvises(custEODEvent);
+		manualAdviseService.prepareManualAdvisePostings(custEODEvent);
+		logger.info("Future dated manual advice process completed.");
+
+		logger.info("Updating the OverDraft loans closing status process started...");
+		overdrafLoanService.closeByMaturity(custEODEvent);
+		logger.info("Updating the OverDraft loans closing status process completed.");
+
+		if (ImplementationConstants.ALLOW_NPA) {
+			assetClassificationService.process(custEODEvent);
+		}
 
 	}
 
@@ -296,6 +317,26 @@ public class EodService {
 	@Autowired
 	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {
 		this.changeGraceEndService = changeGraceEndService;
+	}
+
+	@Autowired
+	public void setEodAutoKnockOffService(AutoKnockOffService eodAutoKnockOffService) {
+		this.eodAutoKnockOffService = eodAutoKnockOffService;
+	}
+
+	@Autowired
+	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
+		this.overdrafLoanService = overdrafLoanService;
+	}
+
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
+
+	@Autowired
+	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
+		this.assetClassificationService = assetClassificationService;
 	}
 
 }

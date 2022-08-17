@@ -73,7 +73,6 @@ import com.pennant.backend.model.finance.FinanceGraphReportData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceScheduleReportData;
-import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.SubventionScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -87,6 +86,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
 
 public class FinScheduleListItemRenderer implements Serializable {
 
@@ -633,13 +633,23 @@ public class FinScheduleListItemRenderer implements Serializable {
 						continue;
 					}
 
+					if (DateUtility.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0) {
+						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
+					}
+				}
+
+				for (int i = 0; i < disbList.size(); i++) {
+					FinanceDisbursement curDisb = disbList.get(i);
+					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
+						continue;
+					}
+
 					BigDecimal advEMi = BigDecimal.ZERO;
 					if (getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate()) == 0) {
 						advEMi = aFinanceMain.getAdvanceEMI();
 					}
 					if (DateUtil.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0) {
 						serviceInstIdList.add(curDisb.getInstructionUID());
-						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
 
 						BigDecimal endBal = BigDecimal.ZERO;
 
@@ -2068,6 +2078,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 											prvSchDetail.getClosingBalance().add(prvSchDetail.getDisbAmount()));
 								} else {
 									availLimit = odSchedule.getODLimit().subtract(prvSchDetail.getClosingBalance());
+									if (odSchedule.getODLimit().compareTo(BigDecimal.ZERO) <= 0) {
+										availLimit = BigDecimal.ZERO;
+									}
 								}
 							}
 

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -120,6 +121,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", PartnerBank_Id, PartnerBank_Code, PartnerBank_Account");
 		sql.append(", AlwFileDownload, Cheque_Number, FinAmount");
 		sql.append(", LEI, CITY_NAME, PROVINCE_NAME");
+		sql.append(", TRANSACTION_TYPE_CODE, PINCODE, FINBRANCH, PRINT_LOC_BRANCH_DESC");
 		sql.append(" From Int_Disbursement_Request_View");
 		sql.append(" Where PaymentId IN (Select PaymentId From Disbursement_Requests_Header Where ID = (?))");
 
@@ -187,6 +189,23 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			req.setLei(getValueAsString(rs, "LEI"));
 			req.setCityName(getValueAsString(rs, "CITY_NAME"));
 			req.setProvinceName(getValueAsString(rs, "PROVINCE_NAME"));
+			req.setPrintLocBranchDesc(getValueAsString(rs, "PRINT_LOC_BRANCH_DESC"));
+			req.setTransactionTypeCode(getValueAsString(rs, "TRANSACTION_TYPE_CODE"));
+			req.setAccountNo(getValueAsString(rs, "PARTNERBANK_ACCOUNT"));
+			req.setPinCode(getValueAsString(rs, "PINCODE"));
+			req.setFinBranch(getValueAsString(rs, "FINBRANCH"));
+
+			String benfName = req.getBenficiaryName();
+			String benfBank = req.getBenficiaryBank();
+			String benfAccount = req.getBenficiaryAccount();
+
+			if ("C".equals(req.getDisbursementType()) || "D".equals(req.getDisbursementType())) {
+				req.setAdditionalField1(benfName);
+			} else {
+				List<String> list = Arrays.asList(benfName, benfBank, benfAccount);
+				String str = list.stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(","));
+				req.setAdditionalField1(str);
+			}
 
 			req.setPaymentDetail1(DISB_FI_EMAIL);
 			req.setHeaderId(requestData.getHeaderId());
@@ -271,10 +290,11 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", Benficiary_Address4, Benficiary_Address5, Payment_detail1, Payment_detail2, Payment_detail3");
 		sql.append(", Payment_detail4, Payment_detail5, Payment_detail6, Payment_detail7, Status, Remarks");
 		sql.append(", Channel, Batch_Id, Auto_Download, Header_Id, Lei, City_Name, Province_Name");
-		sql.append(", Partnerbank_Id, Partnerbank_Code, Partnerbank_Account, Cheque_Number, Downloaded_On)");
+		sql.append(", Partnerbank_Id, Partnerbank_Code, Partnerbank_Account, Cheque_Number, Downloaded_On");
+		sql.append(", PRINT_LOC_BRANCH_DESC)");
 		sql.append(" Values (");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -341,6 +361,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				ps.setString(index++, req.getPartnerBankAccount());
 				ps.setString(index++, req.getChequeNumber());
 				ps.setDate(index++, JdbcUtil.getDate(req.getDownloadedOn()));
+				ps.setString(index++, req.getPrintLocBranchDesc());
 
 				return ps;
 			}, keyHolder);

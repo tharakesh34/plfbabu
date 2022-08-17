@@ -25,6 +25,7 @@
 package com.pennant.webui.finance.enquiry;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,16 +39,20 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -63,12 +68,17 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 	 */
 	protected Window window_OverdueEnquiryDialog; // autoWired
 	protected Listbox listBoxOverdue; // autoWired
+	protected Listheader finCurODTxnChrg;
+	protected Listheader finMaxODTxnChrg;
 	protected Borderlayout borderlayoutOverdueEnquiry; // autoWired
 	private Tabpanel tabPanel_dialogWindow;
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinODDetails> finODDetailList;
 	private int ccyformat = 0;
+	private String finReference = null;
+	private FinanceMainDAO financeMainDAO;
+	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 
 	private FinanceDetailService financeDetailService;
 	protected boolean disbEnquiry = false;
@@ -118,6 +128,10 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 			this.ccyformat = (Integer) arguments.get("ccyformat");
 		}
 
+		if (arguments.containsKey("FinReference")) {
+			this.finReference = (String) arguments.get("FinReference");
+		}
+
 		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
 			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
 					.get("financeEnquiryHeaderDialogCtrl");
@@ -150,7 +164,7 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 		try {
 
 			// fill the components with the data
-			doFillOverdueDetails(this.finODDetailList);
+			doFillOverdueDetails(this.finODDetailList, this.finReference);
 
 			if (tabPanel_dialogWindow != null) {
 				this.btnClose.setVisible(false);
@@ -175,36 +189,67 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 	 * 
 	 * @param docDetails
 	 */
-	public void doFillOverdueDetails(List<FinODDetails> finODDetailList) {
+	public void doFillOverdueDetails(List<FinODDetails> odDetails, String finReference) {
 		this.listBoxOverdue.getItems().clear();
-		if (finODDetailList != null) {
-			for (FinODDetails finodDetail : finODDetailList) {
-				Listitem item = new Listitem();
-				Listcell lc;
-				lc = new Listcell(DateUtility.formatToLongDate(finodDetail.getFinODSchdDate()));
-				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(finodDetail.getFinODTillDate()));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinCurODAmt(), ccyformat));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinCurODPri(), ccyformat));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinCurODPft(), ccyformat));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinMaxODAmt(), ccyformat));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinMaxODPri(), ccyformat));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getFinMaxODPft(), ccyformat));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getTotPenaltyAmt(), ccyformat));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getTotWaived(), ccyformat));
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(finodDetail.getTotPenaltyPaid(), ccyformat));
-				lc.setParent(item);
-				this.listBoxOverdue.appendChild(item);
+
+		if (odDetails == null) {
+			return;
+		}
+
+		boolean isOverDraft = financeMainDAO.isOverDraft(finReference);
+		int extnODGrcDays = 0;
+
+		if (isOverDraft) {
+			long finID = financeMainDAO.getFinID(finReference);
+			extnODGrcDays = finODPenaltyRateDAO.getExtnODGrcDays(finID);
+		}
+
+		this.finCurODTxnChrg.setVisible(isOverDraft);
+		this.finMaxODTxnChrg.setVisible(isOverDraft);
+
+		for (FinODDetails od : odDetails) {
+			Listitem item = new Listitem();
+			Listcell lc;
+
+			if (isOverDraft) {
+
+				Date grcDate = od.getFinODSchdDate();
+				if (od.isODIncGrcDays()) {
+					grcDate = DateUtil.addDays(od.getFinODSchdDate(), od.getODGraceDays());
+				} else {
+					grcDate = DateUtil.addDays(od.getFinODSchdDate(), od.getODGraceDays() + extnODGrcDays);
+				}
+				lc = new Listcell(DateUtility.formatToLongDate(grcDate));
+			} else {
+				lc = new Listcell(DateUtility.formatToLongDate(od.getFinODSchdDate()));
 			}
+
+			lc.setParent(item);
+			lc = new Listcell(DateUtility.formatToLongDate(od.getFinODTillDate()));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getFinCurODAmt(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getFinCurODPri(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getFinCurODPft(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getCurOverdraftTxnChrg(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getFinMaxODAmt(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getFinMaxODPri(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getFinMaxODPft(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getMaxOverdraftTxnChrg(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getTotPenaltyAmt(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getTotWaived(), ccyformat));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getTotPenaltyPaid(), ccyformat));
+			lc.setParent(item);
+			this.listBoxOverdue.appendChild(item);
 		}
 	}
 
@@ -257,4 +302,13 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
+		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
 }

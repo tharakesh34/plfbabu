@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
@@ -59,6 +60,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.util.APIConstants;
@@ -109,8 +111,9 @@ public class FinanceValidationService {
 			}
 
 			// Finance start date
-			Date appDate = DateUtility.getAppDate();
-			Date minReqFinStartDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+			Date appDate = SysParamUtil.getAppDate();
+			Date minReqFinStartDate = DateUtility.addDays(appDate,
+					-SysParamUtil.getValueAsInt(SMTParameterConstants.LOAN_START_DATE_BACK_DAYS));
 			if (financeMain.getFinStartDate().compareTo(minReqFinStartDate) < 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Loan Start Date";
@@ -630,32 +633,26 @@ public class FinanceValidationService {
 									DisbursementConstants.PAYMENT_TYPE_IFT)) {
 
 						// Ifsc, bank or branch codes
-						if (StringUtils.isBlank(advPayment.getiFSC())
-								&& (StringUtils.isBlank(advPayment.getBranchBankCode())
-										|| StringUtils.isBlank(advPayment.getBranchCode()))) {
-							String[] valueParm = new String[2];
-							valueParm[0] = "Ifsc";
-							valueParm[1] = "Bank/Branch code";
-							return getErrorDetails("90215", valueParm);
-						}
-						if (StringUtils.isNotBlank(advPayment.getiFSC())) {
-							BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(advPayment.getiFSC());
-							if (bankBranch == null) {
-								String[] valueParm = new String[1];
-								valueParm[0] = advPayment.getiFSC();
-								return getErrorDetails("90301", valueParm);
+						String ifsc = advPayment.getiFSC();
+						String micr = advPayment.getMicr();
+						String bankCode = advPayment.getBankCode();
+						String branchCode = advPayment.getBranchCode();
+
+						BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+						if (bankBranch.getError() != null) {
+							WSReturnStatus status = new WSReturnStatus();
+							status.setReturnCode(bankBranch.getError().getCode());
+							status.setReturnText("");
+
+							ErrorDetail ed = ErrorUtil.getErrorDetailById(bankBranch.getError().getCode());
+
+							if (ed != null) {
+								status.setReturnText(ErrorUtil.getErrorMessage(ed.getMessage(),
+										bankBranch.getError().getParameters()));
 							}
-						}
-						if (StringUtils.isNotBlank(advPayment.getBranchBankCode())
-								&& StringUtils.isNotBlank(advPayment.getBranchCode())) {
-							BankBranch bankBranch = bankBranchService.getBankBrachByCode(advPayment.getBranchBankCode(),
-									advPayment.getBranchCode());
-							if (bankBranch == null) {
-								String[] valueParm = new String[2];
-								valueParm[0] = advPayment.getBranchBankCode();
-								valueParm[1] = advPayment.getBranchCode();
-								return getErrorDetails("90302", valueParm);
-							}
+
+							return status;
 						}
 
 						// Account number
@@ -701,24 +698,17 @@ public class FinanceValidationService {
 
 			// validate Mandate fields
 			Mandate mandate = financeDetail.getMandate();
+
 			if (mandate != null) {
-				if (StringUtils.isNotBlank(mandate.getIFSC())) {
-					BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
-					if (bankBranch == null) {
-						String[] valueParm = new String[1];
-						valueParm[0] = mandate.getIFSC();
-						return getErrorDetails("90301", valueParm);
-					}
-				} else if (StringUtils.isNotBlank(mandate.getBankCode())
-						&& StringUtils.isNotBlank(mandate.getBranchCode())) {
-					BankBranch bankBranch = bankBranchService.getBankBrachByCode(mandate.getBankCode(),
-							mandate.getBranchCode());
-					if (bankBranch == null) {
-						String[] valueParm = new String[2];
-						valueParm[0] = mandate.getBankCode();
-						valueParm[1] = mandate.getBranchCode();
-						return getErrorDetails("90302", valueParm);
-					}
+				String ifsc = mandate.getiFSC();
+				String micr = mandate.getMICR();
+				String bankCode = mandate.getBankCode();
+				String branchCode = mandate.getBranchCode();
+
+				BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+				if (bankBranch.getError() != null) {
+					return APIErrorHandlerService.getWSReturnStatus(bankBranch.getError());
 				}
 
 				// validate MandateType
@@ -922,19 +912,8 @@ public class FinanceValidationService {
 						checkExistingDSA = true;
 					}
 				}
-				/*
-				 * if (!checkExistingDSA) { String[] valueParm = new String[1]; valueParm[0] = financeMain.getDsaCode();
-				 * returnStatus = getErrorDetails("90501", valueParm);
-				 * returnStatus.setReturnText(returnStatus.getReturnText().replace("code", "dsa code")); return
-				 * returnStatus; }
-				 */
 			}
-			/*
-			 * if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) { GeneralDepartment generalDepartment =
-			 * generalDepartmentService .getApprovedGeneralDepartmentById(financeMain.getSalesDepartment()); if
-			 * (generalDepartment == null) { String[] valueParm = new String[1]; valueParm[0] =
-			 * financeMain.getSalesDepartment(); return getErrorDetails("90501", valueParm); } }
-			 */
+
 			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
 				Department department = departmentService.getApprovedDepartmentById(financeMain.getSalesDepartment());
 				if (department == null) {

@@ -44,7 +44,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
-import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
@@ -78,6 +77,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
+import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
 
 public class RetailCibilReport extends BasicDao<Object> {
 	private static final Logger logger = LoggerFactory.getLogger(RetailCibilReport.class);
@@ -144,6 +144,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 		logger.debug(Literal.ENTERING);
 		initlize();
 
+		if (memberDetails == null) {
+			logger.info("Member Details are not configured for the retail customers");
+			return;
+		}
+
 		File cibilFile = null;
 		if ("TUFF".equals(memberDetails.getFileFormate())) {
 			cibilFile = createFile();
@@ -193,11 +198,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 		try {
 			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT");
 			if (properties != null) {
-				if (properties.getStorageType().equalsIgnoreCase("MOVE_TO_S3_BUCKET")) {
+				if ("MOVE_TO_S3_BUCKET".equalsIgnoreCase(properties.getStorageType())) {
 					DataEngineUtil.postEvents(Event.MOVE_TO_S3_BUCKET.name(), properties, cibilFile);
-				} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_SFTP")) {
+				} else if ("COPY_TO_SFTP".equalsIgnoreCase(properties.getStorageType())) {
 					DataEngineUtil.postEvents(Event.COPY_TO_SFTP.name(), properties, cibilFile);
-				} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_FTP")) {
+				} else if ("COPY_TO_FTP".equalsIgnoreCase(properties.getStorageType())) {
 					DataEngineUtil.postEvents(Event.COPY_TO_FTP.name(), properties, cibilFile);
 				}
 			}
@@ -562,14 +567,20 @@ public class RetailCibilReport extends BasicDao<Object> {
 			BigDecimal currBal = getCurrentBalance(finance);
 			/* Date Closed */
 			cell = row.createCell(40);
-			if (currBal.compareTo(BigDecimal.ZERO) == 0) {
-				cell.setCellValue(DateUtil.format(finance.getClosedDate(), DATE_FORMAT));
+
+			if (getCurrentBalance(finance).compareTo(BigDecimal.ZERO) == 0 && !finance.isFinIsActive()) {
+				if (DateUtil.compare(finance.getLatestRpyDate(), finance.getMaturityDate()) > 0) {
+					cell.setCellValue(DateUtil.format(finance.getLatestRpyDate(), DATE_FORMAT));
+				} else {
+					cell.setCellValue(DateUtil.format(finance.getMaturityDate(), DATE_FORMAT));
+				}
 			}
-			cell.setCellValue(DateUtil.format(finance.getMaturityDate(), DATE_FORMAT));
 
 			/* Date Reported */
+			Date PrvMonthEnd = DateUtil.addMonths(DateUtil.getMonthEnd(SysParamUtil.getAppDate()), -1);
 			cell = row.createCell(41);
-			cell.setCellValue(DateUtil.getSysDate(DATE_FORMAT));
+
+			cell.setCellValue(DateUtil.format(PrvMonthEnd, DATE_FORMAT));
 
 			/* High Credit/Sanctioned Amount */
 			cell = row.createCell(42);
@@ -900,12 +911,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 			}
 		}
 
-		if (custAddr.getCustAddrProvince() != null) {
-			builder.append(StringUtils.trimToEmpty(custAddr.getLovDescCustAddrProvinceName()));
-			if (custAddr.getCustAddrProvince() != null) {
-				builder.append(", ");
-			}
-		}
+		/*
+		 * if (custAddr.getCustAddrProvince() != null) {
+		 * builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrProvince())); if (custAddr.getCustAddrProvince()
+		 * != null) { builder.append(","); } }
+		 */
 
 		if (custAddr.getCustAddrCountry() != null) {
 			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrCountry()));
@@ -1284,38 +1294,9 @@ public class RetailCibilReport extends BasicDao<Object> {
 			}
 
 			int odDays = Integer.parseInt(getOdDays(loan.getCurODDays()));
-			BigDecimal currentBalance = BigDecimal.ZERO;
+			BigDecimal currentBalance = getCurrentBalance(loan);
 			String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
 
-			if (odDays > 0) {
-				BigDecimal futureSchedulePrincipal = getAmount(loan.getFutureSchedulePrin());
-				BigDecimal installmentDue = getAmount(loan.getInstalmentDue());
-				BigDecimal installmentPaid = getAmount(loan.getInstalmentPaid());
-				BigDecimal bounceDue = getAmount(loan.getBounceDue());
-				BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
-				BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
-				BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
-				BigDecimal excessAmount = getAmount(loan.getExcessAmount());
-				BigDecimal excessAmountPaid = getAmount(loan.getExcessAmtPaid());
-
-				currentBalance = futureSchedulePrincipal
-						.add(installmentDue.subtract(installmentPaid).add(bounceDue.subtract(bouncePaid).add(
-								penaltyDue.subtract(penaltyPaid).subtract(excessAmount.subtract(excessAmountPaid)))));
-			} else {
-				currentBalance = loan.getFutureSchedulePrin();
-			}
-
-			if (currentBalance != null) {
-				if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
-					currentBalance = BigDecimal.ZERO;
-				}
-			}
-
-			// ### PSD --127340 20-06-2018 FOr cancelled loans current balnce
-			// and overdue amount should be 0
-			if (StringUtils.equals("C", closingstatus)) {
-				currentBalance = BigDecimal.ZERO;
-			}
 			// ### PSD --127340 20-06-2018
 			if (currentBalance != null) {
 				if (currentBalance.compareTo(BigDecimal.ZERO) == 0 && loan.getLatestRpyDate() != null) {
@@ -1324,39 +1305,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 			}
 			writeValue(builder, "11", SysParamUtil.getAppDate(DATE_FORMAT), "08");
 			writeValue(builder, "12", loan.getFinAssetValue(), 9, "TL");
-			writeValue(builder, "13", getCurrentBalance(loan), 9, "TL");
+			writeValue(builder, "13", currentBalance, 9, "TL");
 
-			BigDecimal amountOverdue = BigDecimal.ZERO;
+			BigDecimal amountOverdue = getAmountOverDue(loan);
 
-			if (odDays > 0) {
-				BigDecimal installmentDue = getAmount(loan.getInstalmentDue());
-				BigDecimal installmentPaid = getAmount(loan.getInstalmentPaid());
-				BigDecimal bounceDue = getAmount(loan.getBounceDue());
-				BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
-				BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
-				BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
-				BigDecimal excessAmount = getAmount(loan.getExcessAmount());
-				BigDecimal excessAmountPaid = getAmount(loan.getExcessAmtPaid());
-
-				amountOverdue = (installmentDue.subtract(installmentPaid)).add(bounceDue.subtract(bouncePaid)
-						.add(penaltyDue.subtract(penaltyPaid).subtract(excessAmount.subtract(excessAmountPaid))));
-
-			} else {
-				amountOverdue = BigDecimal.ZERO;
-			}
-
-			if (amountOverdue.compareTo(BigDecimal.ZERO) < 0) {
-				amountOverdue = BigDecimal.ZERO;
-			}
-
-			// ### PSD --127340 20-06-2018 FOr cancelled loans current balnce
-			// and overdue amount should be 0
-			if (StringUtils.equals("C", closingstatus)) {
-				amountOverdue = BigDecimal.ZERO;
-			}
-			// ### PSD --127340 20-06-2018
-
-			writeValue(builder, "14", getAmountOverDue(loan), 9, "TL");
+			writeValue(builder, "14", amountOverdue, 9, "TL");
 
 			if (amountOverdue.compareTo(BigDecimal.ZERO) <= 0) {
 				writeValue(builder, "15", "0", 3, "TL");

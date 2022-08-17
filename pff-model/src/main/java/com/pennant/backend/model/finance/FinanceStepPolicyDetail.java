@@ -34,6 +34,7 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	private BigDecimal emiSplitPerc = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal steppedEMI = BigDecimal.ZERO;
+	private BigDecimal stepDiffEMI = BigDecimal.ZERO;
 	private String lovValue;
 	private FinanceStepPolicyDetail befImage;
 	private LoggedInUser userDetails;
@@ -43,6 +44,10 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	private Date stepEnd;
 	@XmlElement
 	private boolean autoCal = false;
+	private int minTerms;
+	private boolean isEMIChange;
+	private String message = "";
+	private boolean isDelete;
 
 	public FinanceStepPolicyDetail() {
 		super();
@@ -58,6 +63,7 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 		entity.setRateMargin(this.rateMargin);
 		entity.setEmiSplitPerc(this.emiSplitPerc);
 		entity.setSteppedEMI(this.steppedEMI);
+		entity.setStepDiffEMI(this.stepDiffEMI);
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -65,6 +71,10 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 		entity.setStepStart(this.stepStart);
 		entity.setStepEnd(this.stepEnd);
 		entity.setAutoCal(this.autoCal);
+		entity.setMinTerms(this.minTerms);
+		entity.setEMIChange(this.isEMIChange);
+		entity.setMessage(this.message);
+		entity.setDelete(this.isDelete);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -85,7 +95,13 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		return new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("minTerms");
+		excludeFields.add("isEMIChange");
+		excludeFields.add("message");
+		excludeFields.add("isDelete");
+		excludeFields.add("stepDiffEMI");
+		return excludeFields;
 	}
 
 	public String getId() {
@@ -214,5 +230,45 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 
 	public void setAutoCal(boolean autoCal) {
 		this.autoCal = autoCal;
+	}
+
+	public int getMinTerms() {
+		return minTerms;
+	}
+
+	public void setMinTerms(int minTerms) {
+		this.minTerms = minTerms;
+	}
+
+	public boolean isEMIChange() {
+		return isEMIChange;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setEMIChange(boolean isEMIChange) {
+		this.isEMIChange = isEMIChange;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public boolean isDelete() {
+		return isDelete;
+	}
+
+	public void setDelete(boolean isDelete) {
+		this.isDelete = isDelete;
+	}
+
+	public BigDecimal getStepDiffEMI() {
+		return stepDiffEMI;
+	}
+
+	public void setStepDiffEMI(BigDecimal stepDiffEMI) {
+		this.stepDiffEMI = stepDiffEMI;
 	}
 }

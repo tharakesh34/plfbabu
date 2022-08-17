@@ -20,6 +20,7 @@ public class FinODAmzTaxDetail implements Serializable {
 	private BigDecimal SGST = BigDecimal.ZERO;
 	private BigDecimal UGST = BigDecimal.ZERO;
 	private BigDecimal IGST = BigDecimal.ZERO;
+	private BigDecimal CESS = BigDecimal.ZERO;
 	private BigDecimal TotalGST = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
@@ -99,6 +100,14 @@ public class FinODAmzTaxDetail implements Serializable {
 
 	public void setIGST(BigDecimal iGST) {
 		IGST = iGST;
+	}
+
+	public BigDecimal getCESS() {
+		return CESS;
+	}
+
+	public void setCESS(BigDecimal cESS) {
+		CESS = cESS;
 	}
 
 	public BigDecimal getTotalGST() {

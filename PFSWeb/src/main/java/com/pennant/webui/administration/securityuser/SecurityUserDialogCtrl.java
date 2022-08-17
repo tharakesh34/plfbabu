@@ -436,7 +436,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				usrFName.setValue(user.getFirstName());
 				usrMName.setValue(user.getMiddleName());
 				usrLName.setValue(user.getLastName());
-				userStaffID.setValue(user.getStaffId());
+				try {
+					userStaffID.setValue(user.getStaffId());
+				} catch (Exception e) {
+					logger.debug(Literal.EXCEPTION, e.getMessage());
+				}
 				usrBranchCode.setValue(user.getBranchCode());
 				usrLanguage.setValue(user.getLanguage());
 				usrDeptCode.setValue(user.getDepartmentCode());
@@ -2852,8 +2856,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		clusters.setMandatoryStyle(true);
 		clusters.setModuleName("Cluster");
 		clusters.setValueColumn("Code");
-		clusters.setValidateColumns(new String[] { "ClusterId" });
-		clusters.setValueType(DataType.LONG);
+		clusters.setValidateColumns(new String[] { "Code" });
+		clusters.setValueType(DataType.STRING);
 		clusters.addForward("onFulfill", self, "onChangeClusters", row);
 
 		clusters.setMultySelection(true);

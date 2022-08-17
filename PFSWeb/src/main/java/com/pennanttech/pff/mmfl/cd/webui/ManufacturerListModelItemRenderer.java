@@ -8,7 +8,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.mmfl.cd.model.Manufacturer;
+import com.pennanttech.pff.cd.model.Manufacturer;
 
 public class ManufacturerListModelItemRenderer implements ListitemRenderer<Manufacturer>, Serializable {
 	private static final long serialVersionUID = 1L;

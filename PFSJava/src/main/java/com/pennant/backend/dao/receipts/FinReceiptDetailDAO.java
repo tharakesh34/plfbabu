@@ -61,4 +61,10 @@ public interface FinReceiptDetailDAO {
 	List<FinReceiptHeader> getReceiptsForDuplicateCheck(long finID);
 
 	long getReceiptIDForSP(FinReceiptHeader rh);
+
+	BigDecimal getReceiptAmountPerMonthByFinreference(Date receiptDate, List<String> finreference);
+
+	List<FinReceiptDetail> getFinReceiptDetailByExternalReference(String externalReference);
+
+	void updatePartnerBankByReceiptId(long receiptID, Long partnerBankId);
 }

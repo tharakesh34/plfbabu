@@ -88,7 +88,7 @@ public class PartitioningMaster implements Partitioner {
 
 			if (loanCount < threadCount) {
 				recordsLessThanThread = true;
-				noOfRows = 1;
+				noOfRows = loanCount;
 			}
 
 			long from = 0;
@@ -110,7 +110,7 @@ public class PartitioningMaster implements Partitioner {
 				ExecutionContext execution = addExecution(i, loanCount, customerCount);
 				partitionData.put(Integer.toString(i), execution);
 
-				if (recordsLessThanThread && i == customerCount) {
+				if (recordsLessThanThread && noOfRows == customerCount) {
 					break;
 				}
 			}

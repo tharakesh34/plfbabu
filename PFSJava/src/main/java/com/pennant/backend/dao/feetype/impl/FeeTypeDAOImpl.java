@@ -284,7 +284,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(" from FeeTypes");
 		sql.append(" Where FeeTypeCode = ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
@@ -310,10 +310,9 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				return fee;
 			}, feeTypeCd);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FeeTypes table with feeTypeCode>>{}", feeTypeCd);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -384,10 +383,9 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				return f;
 			}, feeTypeCode);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FeeTypes table for the specified FeeTypeCode >> {}", feeTypeCode);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override
@@ -579,4 +577,19 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
+
+	@Override
+	public long getManualAdviseFeeTypeById(long id) {
+		String sql = "Select FeeTypeID From FeeTypes_AView Where AdviseType = ? and ManualAdvice = ? and Active = ? and FeeTypeID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return jdbcOperations.queryForObject(sql, Long.class, 1, 1, 1, id);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return Long.MIN_VALUE;
+		}
+	}
+
 }

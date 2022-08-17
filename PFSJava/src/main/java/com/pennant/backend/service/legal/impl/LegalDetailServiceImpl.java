@@ -34,6 +34,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CurrencyUtil;
@@ -41,6 +42,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
@@ -48,6 +50,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.dao.legal.LegalApplicantDetailDAO;
 import com.pennant.backend.dao.legal.LegalDetailDAO;
 import com.pennant.backend.dao.legal.LegalDocumentDAO;
@@ -76,12 +79,9 @@ import com.pennant.backend.model.legal.LegalPropertyDetail;
 import com.pennant.backend.model.legal.LegalPropertyTitle;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.finance.JointAccountDetailService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.legal.LegalDetailService;
-import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -119,19 +119,14 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private LegalPropertyTitleService legalPropertyTitleService;
 	private LegalECDetailService legalECDetailService;
 	private LegalNoteService legalNoteService;
-	private QueryDetailService queryDetailService;
 	private CollateralSetupService collateralSetupService;
-	private CustomerDetailsService customerDetailsService;
-	private JointAccountDetailService jointAccountDetailService;
-	private BranchService branchService;
 	private LegalApplicantDetailDAO legalApplicantDetailDAO;
 	private LegalPropertyDetailDAO legalPropertyDetailDAO;
 	private LegalDocumentDAO legalDocumentDAO;
 	private QueryDetailDAO queryDetailDAO;
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	private JointAccountDetailDAO jointAccountDetailDAO;
+	private BranchDAO branchDAO;
+	private CustomerDataService customerDataService;
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
@@ -552,8 +547,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				if (CollectionUtils.isNotEmpty(coOwnerDetailsList)) {
 					for (CoOwnerDetail coOwnerDetail : coOwnerDetailsList) {
 						if (coOwnerDetail.getCustomerId() != 0) {
-							CustomerDetails customerDetails = getCustomerDetailsService()
-									.getCustomerDetailsById(coOwnerDetail.getCustomerId(), false, "_View");
+							CustomerDetails customerDetails = customerDataService
+									.getCustomerDetailsbyID(coOwnerDetail.getCustomerId(), false, "_View");
 							if (customerDetails != null) {
 								customersList.add(customerDetails.getCustomer());
 							}
@@ -571,12 +566,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				legalDetail.setFinType(financeMain.getFinType());
 				legalDetail.setFinCcy(financeMain.getFinCcy());
 				legalDetail.setFinNextRoleCode(financeMain.getNextRoleCode());
-				CustomerDetails customerDetails = getCustomerDetailsService()
-						.getCustomerDetailsById(financeMain.getCustID(), false, "_View");
+				CustomerDetails customerDetails = customerDataService.getCustomerDetailsbyID(financeMain.getCustID(),
+						false, "_View");
 				legalDetail.setCustName(customerDetails.getCustomer().getCustShrtName());
 				legalDetail.setFinTypeDesc(financeMain.getLovDescFinTypeName());
-				legalDetail.setJointAccountDetailList(getJointAccountDetailService()
-						.getJointAccountDetailByFinRef(financeMain.getFinReference(), "_View"));
+				legalDetail.setJointAccountDetailList(
+						jointAccountDetailDAO.getJointAccountDetailByFinRef(financeMain.getFinID(), "_View"));
 				legalDetail.setStrFinAmoun(PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),
 						CurrencyUtil.getFormat(financeMain.getFinCcy())));
 				try {
@@ -913,8 +908,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			if (StringUtils.equalsIgnoreCase("Y",
 					SysParamUtil.getValueAsString("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES"))) {
 				WorkFlowDetails legalWorkflow = WorkFlowUtil.getDetailsByType("LEGAL_DETAILS");
-				List<QueryDetail> queryList = getQueryDetailService()
-						.getQueryListByReference(legalDetail.getLegalReference());
+				List<QueryDetail> queryList = queryDetailDAO.getQueryListByReference(legalDetail.getLegalReference());
 				for (QueryDetail queryDetail : queryList) {
 					for (String legalRole : legalWorkflow.getRoles()) {
 						if (!StringUtils.equals(queryDetail.getStatus(),
@@ -924,7 +918,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 									new ErrorDetail(PennantConstants.KEY_FIELD, "Q002", null, null), "EN"));
 							break;
 						} else {
-							auditDetail = getQueryDetailService().validate(auditDetail);
+							validate(auditDetail);
 						}
 					}
 				}
@@ -935,6 +929,26 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	private void validate(AuditDetail auditDetail) {
+		LegalDetail legalDetail = (LegalDetail) auditDetail.getModelData();
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = legalDetail.getLegalReference();
+		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ": " + valueParm[0];
+
+		List<QueryDetail> list = queryDetailDAO.getQueryMgmtListByRef(legalDetail.getLegalReference(), "_AView");
+
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (QueryDetail queryDetail : list) {
+				if (!StringUtils.equals(queryDetail.getStatus(), Labels.getLabel("label_QueryDetailDialog_Closed"))) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "QRYMGMT1", errParm, valueParm), "EN"));
+				}
+			}
+		}
 	}
 
 	/**
@@ -1202,7 +1216,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		List<LegalDetail> detailList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(idLIst)) {
 			boolean modtDoc = true;
-			Branch branch = getBranchService().getApprovedBranchById(aFinanceMain.getFinBranch());
+			Branch branch = branchDAO.getBranchById(aFinanceMain.getFinBranch(), "_AView");
 			String stateName = branch.getLovDescBranchProvinceName();
 
 			if (isMODTDoc("ESFB_LEGAL_DETAIL_MODT_DOCUMENTS_GENERATION_STATES", stateName)) {
@@ -1248,7 +1262,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private LegalDetail formateMergeDetails(LegalDetail legalDetail, boolean fromLoan) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		legalDetail.setStrAppDate(DateUtility.getAppDate(DateFormat.SHORT_DATE));
+		legalDetail.setStrAppDate(SysParamUtil.getAppDate(DateFormat.SHORT_DATE));
 
 		List<LegalDocument> documentList = legalDetail.getDocumentList();
 		if (CollectionUtils.isNotEmpty(documentList)) {
@@ -1393,8 +1407,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		if (CollectionUtils.isNotEmpty(jointAccountDetails)) {
 			for (JointAccountDetail detail : jointAccountDetails) {
 				if (StringUtils.trimToNull(detail.getLovDescCIFName()) != null) {
-					CustomerDetails customerDetails = getCustomerDetailsService()
-							.getCustomerDetailsById(detail.getCustID(), false, "_View");
+					CustomerDetails customerDetails = customerDataService.getCustomerDetailsbyID(detail.getCustID(),
+							false, "_View");
 					if (sb.length() > 0) {
 						sb.append(", ").append(customerDetails.getCustomer().getLovDescCustSalutationCodeName())
 								.append(". ").append(detail.getLovDescCIFName());
@@ -1420,8 +1434,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 		if (!fromLoan) {
 			// Query details list
-			List<QueryDetail> querryList = getQueryDetailService()
-					.getQueryDetailsforAgreements(legalDetail.getLegalReference());
+			List<QueryDetail> querryList = queryDetailDAO.getQueryMgmtListForAgreements(legalDetail.getLegalReference(),
+					"_AView");
 			if (CollectionUtils.isEmpty(querryList)) {
 				querryList = new ArrayList<>();
 				QueryDetail queryDetail = new QueryDetail();
@@ -2036,44 +2050,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		this.finCovenantTypeDAO = finCovenantTypeDAO;
 	}
 
-	public QueryDetailService getQueryDetailService() {
-		return queryDetailService;
-	}
-
-	public void setQueryDetailService(QueryDetailService queryDetailService) {
-		this.queryDetailService = queryDetailService;
-	}
-
 	public CollateralSetupService getCollateralSetupService() {
 		return collateralSetupService;
 	}
 
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
-	}
-
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	public JointAccountDetailService getJointAccountDetailService() {
-		return jointAccountDetailService;
-	}
-
-	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
-		this.jointAccountDetailService = jointAccountDetailService;
-	}
-
-	public BranchService getBranchService() {
-		return branchService;
-	}
-
-	public void setBranchService(BranchService branchService) {
-		this.branchService = branchService;
 	}
 
 	public void setLegalApplicantDetailDAO(LegalApplicantDetailDAO legalApplicantDetailDAO) {
@@ -2090,6 +2072,19 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 	public void setQueryDetailDAO(QueryDetailDAO queryDetailDAO) {
 		this.queryDetailDAO = queryDetailDAO;
+	}
+
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
+	}
+
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

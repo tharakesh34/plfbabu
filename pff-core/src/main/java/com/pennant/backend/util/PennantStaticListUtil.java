@@ -34,6 +34,8 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.overdraft.OverdraftConstants;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
 
@@ -150,6 +152,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> currencyUnitsList;
 	private static List<ValueLabel> productCategories;
 	private static List<ValueLabel> rpyHierarchyTypes;
+	private static List<ValueLabel> npaHierarchyTypes;
 	private static List<ValueLabel> droplineTypes;
 	private static List<ValueLabel> stepTypes;
 	private static List<ValueLabel> ltvTypes;
@@ -316,6 +319,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> cashBackPayoutOptionsList;
 	private static List<ValueLabel> DBDPercentageList;
 	private static List<ValueLabel> emiClearance;
+	private static List<ValueLabel> receiptModesIncludeRTRNGDS;
 
 	// EOD Automation
 	private static List<ValueLabel> encryptionTypeList;
@@ -358,6 +362,11 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> stepDisbCalCodes;
 	// ### START SFA_20210405 -->
 	private static ArrayList<ValueLabel> receivableOrPayable;
+	private static List<ValueLabel> certificateQuarter;
+	private static List<ValueLabel> manualScheduleTypeList;
+	private static List<ValueLabel> fileFormatList;
+	private static List<ValueLabel> calChargeList;
+	private static List<ValueLabel> chargeCalOnList;
 
 	/**
 	 * Gets the list of applications.
@@ -795,8 +804,22 @@ public class PennantStaticListUtil {
 			// Labels.getLabel("label_REPAY_HIERARCHY_IPFCS")));
 			rpyHierarchyTypes.add(new ValueLabel(RepayConstants.REPAY_HIERARCHY_FIPCS,
 					Labels.getLabel("label_REPAY_HIERARCHY_FIPCS")));
+			rpyHierarchyTypes.add(new ValueLabel(RepayConstants.REPAY_HIERARCHY_PICFB,
+					Labels.getLabel("label_REPAY_HIERARCHY_PICFB")));
 		}
 		return rpyHierarchyTypes;
+	}
+
+	public static List<ValueLabel> getNPAHierarchy() {
+		if (npaHierarchyTypes == null) {
+			npaHierarchyTypes = new ArrayList<>(2);
+			npaHierarchyTypes.add(new ValueLabel(RepayConstants.REPAY_HIERARCHY_NPA_PICF,
+					Labels.getLabel("label_REPAY_HIERARCHY_PICF")));
+			npaHierarchyTypes.add(new ValueLabel(RepayConstants.REPAY_HIERARCHY_NPA_PIFC,
+					Labels.getLabel("label_REPAY_HIERARCHY_PIFC")));
+		}
+
+		return npaHierarchyTypes;
 	}
 
 	public static List<ValueLabel> getTranTypeBoth() {
@@ -1136,6 +1159,10 @@ public class PennantStaticListUtil {
 			schCalOnList.add(new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
 			schCalOnList.add(
 					new ValueLabel(CalculationConstants.EARLYPAY_PRIHLD, Labels.getLabel("label_Principal_Holiday")));
+			schCalOnList.add(
+					new ValueLabel(CalculationConstants.RPYCHG_ADJTNR_STEP, Labels.getLabel("label_Step_Adj_Tenor")));
+			schCalOnList.add(
+					new ValueLabel(CalculationConstants.RPYCHG_ADJEMI_STEP, Labels.getLabel("label_Step_Adj_EMI")));
 		}
 		return schCalOnList;
 	}
@@ -1167,9 +1194,9 @@ public class PennantStaticListUtil {
 
 		if (droplineTypes == null) {
 			droplineTypes = new ArrayList<ValueLabel>(2);
-			droplineTypes.add(new ValueLabel(FinanceConstants.DROPINGMETHOD_CONSTANT,
+			droplineTypes.add(new ValueLabel(OverdraftConstants.DROPING_METHOD_CONSTANT,
 					Labels.getLabel("label_dropingmethod_constant")));
-			droplineTypes.add(new ValueLabel(FinanceConstants.DROPINGMETHOD_VARIABLE,
+			droplineTypes.add(new ValueLabel(OverdraftConstants.DROPING_METHOD_VARIABLE,
 					Labels.getLabel("label_dropingmethod_variable")));
 		}
 		return droplineTypes;
@@ -1256,6 +1283,7 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("NTFLENQ", Labels.getLabel("label_NotificationEnquiry")));
 			enquiryTypes.add(new ValueLabel("DPDENQ", Labels.getLabel("label_DPDEnquiry")));
 			enquiryTypes.add(new ValueLabel("CREENQ", Labels.getLabel("label_CreditReviewDetailsEnquiry")));
+			enquiryTypes.add(new ValueLabel("TDSCERENQ", Labels.getLabel("label_TdsCertificateEnquiry")));
 
 			enquiryTypes.add(new ValueLabel("FINMANDENQ", Labels.getLabel("label_FINMANDEnquiry")));
 			// Module to display Loan extended details where label will be
@@ -1272,6 +1300,16 @@ public class PennantStaticListUtil {
 
 			if (ImplementationConstants.ALLOW_RESTRUCTURING) {
 				enquiryTypes.add(new ValueLabel("RSTENQ", Labels.getLabel("label_RestructureEnquiry")));
+			}
+
+			enquiryTypes.add(new ValueLabel("LMTENQ", Labels.getLabel("label_OverDraftLimitEnquiry")));
+
+			if (ImplementationConstants.ALLOW_NPA) {
+				enquiryTypes.add(new ValueLabel("NPAENQ", Labels.getLabel("label_NPAEnquiry")));
+			}
+
+			if (ImplementationConstants.ALLOW_PROVISION) {
+				enquiryTypes.add(new ValueLabel("PROVSNENQ", Labels.getLabel("label_ProvisionEnquiry")));
 			}
 		}
 		return enquiryTypes;
@@ -2195,7 +2233,7 @@ public class PennantStaticListUtil {
 			events.add(new FinServicingEvent(FinServiceEvent.ADDDISB,
 					Labels.getLabel("label_FinSerEvent_AddDisbursement"), "ADSB"));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_RLSDISB,Labels.getLabel("label_FinSerEvent_RlsHoldDisbursement")));
+			// ValueLabel(FinServiceEvent.RLSDISB,Labels.getLabel("label_FinSerEvent_RlsHoldDisbursement")));
 			events.add(new FinServicingEvent(FinServiceEvent.POSTPONEMENT,
 					Labels.getLabel("label_FinSerEvent_Postponement"), "EPP"));
 			events.add(new FinServicingEvent(FinServiceEvent.UNPLANEMIH,
@@ -2205,11 +2243,11 @@ public class PennantStaticListUtil {
 			events.add(new FinServicingEvent(FinServiceEvent.CHGGRCEND,
 					Labels.getLabel("label_FinSerEvent_ChangeGestation"), "CGE"));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_SCHDRPY,Labels.getLabel("label_FinSerEvent_SchdlRepayment")));
+			// ValueLabel(FinServiceEvent.SCHDRPY,Labels.getLabel("label_FinSerEvent_SchdlRepayment")));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_EARLYRPY,Labels.getLabel("label_FinSerEvent_EarlyPayment")));
+			// ValueLabel(FinServiceEvent.EARLYRPY,Labels.getLabel("label_FinSerEvent_EarlyPayment")));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_EARLYSETTLE,Labels.getLabel("label_FinSerEvent_EarlySettlement")));
+			// ValueLabel(FinServiceEvent.EARLYSETTLE,Labels.getLabel("label_FinSerEvent_EarlySettlement")));
 			events.add(new FinServicingEvent(FinServiceEvent.WRITEOFF, Labels.getLabel("label_FinSerEvent_WriteOff"),
 					"WO"));
 			events.add(new FinServicingEvent(FinServiceEvent.WRITEOFFPAY,
@@ -2217,13 +2255,13 @@ public class PennantStaticListUtil {
 			events.add(new FinServicingEvent(FinServiceEvent.CANCELFIN,
 					Labels.getLabel("label_FinSerEvent_CancelFinance"), "CFIN"));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_LIABILITYREQ,Labels.getLabel("label_FinSerEvent_LiabilityReq")));
+			// ValueLabel(FinServiceEvent.LIABILITYREQ,Labels.getLabel("label_FinSerEvent_LiabilityReq")));
 			events.add(new FinServicingEvent(FinServiceEvent.NOCISSUANCE,
 					Labels.getLabel("label_FinSerEvent_NOCIssuance"), "NOC"));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_TIMELYCLOSURE,Labels.getLabel("label_FinSerEvent_TimelyClosure")));
+			// ValueLabel(FinServiceEvent.TIMELYCLOSURE,Labels.getLabel("label_FinSerEvent_TimelyClosure")));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_INSCLAIM,Labels.getLabel("label_FinSerEvent_TakafulClaim")));
+			// ValueLabel(FinServiceEvent.INSCLAIM,Labels.getLabel("label_FinSerEvent_TakafulClaim")));
 			events.add(new FinServicingEvent(FinServiceEvent.RATECHG,
 					Labels.getLabel("label_FinSerEvent_AddRateChange"), "RCHG"));
 			events.add(new FinServicingEvent(FinServiceEvent.CHGRPY, Labels.getLabel("label_FinSerEvent_ChangeRepay"),
@@ -2237,23 +2275,23 @@ public class PennantStaticListUtil {
 			events.add(new FinServicingEvent(FinServiceEvent.RECEIPT, Labels.getLabel("label_FinSerEvent_Receipt"),
 					"RCPT"));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_SUBSCHD,Labels.getLabel("label_FinSerEvent_SubSchedule")));
+			// ValueLabel(FinServiceEvent.SUBSCHD,Labels.getLabel("label_FinSerEvent_SubSchedule")));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_CHGPFT,Labels.getLabel("label_FinSerEvent_ChangeProfit")));
+			// ValueLabel(FinServiceEvent.CHGPFT,Labels.getLabel("label_FinSerEvent_ChangeProfit")));
 			events.add(new FinServicingEvent(FinServiceEvent.CHGFRQ,
 					Labels.getLabel("label_FinSerEvent_ChangeFrequency"), "CFRQ"));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_FAIRVALREVAL,Labels.getLabel("label_FinSerEvent_FairValueRevaluation")));
+			// ValueLabel(FinServiceEvent.FAIRVALREVAL,Labels.getLabel("label_FinSerEvent_FairValueRevaluation")));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_INSCHANGE,Labels.getLabel("label_FinSerEvent_InsuranceChange")));
+			// ValueLabel(FinServiceEvent.INSCHANGE,Labels.getLabel("label_FinSerEvent_InsuranceChange")));
 			events.add(new FinServicingEvent(FinServiceEvent.PROVISION, Labels.getLabel("label_FinSerEvent_Provision"),
 					"PROV"));
 			events.add(new FinServicingEvent(FinServiceEvent.SUSPHEAD,
 					Labels.getLabel("label_FinSerEvent_FinanceSuspHead"), "NPA"));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_CANCELRPY,Labels.getLabel("label_FinSerEvent_CancelRepay")));
+			// ValueLabel(FinServiceEvent.CANCELRPY,Labels.getLabel("label_FinSerEvent_CancelRepay")));
 			// finServiceEvents.add(new
-			// ValueLabel(FinanceConstants.FINSER_EVENT_FINFLAGS,Labels.getLabel("label_FinSerEvent_FinFlags")));
+			// ValueLabel(FinServiceEvent.FINFLAGS,Labels.getLabel("label_FinSerEvent_FinFlags")));
 			events.add(new FinServicingEvent(FinServiceEvent.REINSTATE, Labels.getLabel("label_FinSerEvent_ReIstate"),
 					"RINS"));
 			events.add(new FinServicingEvent(FinServiceEvent.CANCELDISB,
@@ -2298,6 +2336,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_Upfront_Fee_Cancel"), "UFCM"));
 			events.add(new FinServicingEvent(FinServiceEvent.COLLATERAL,
 					Labels.getLabel("label_FinSerEvent_Collateral"), "COLL"));
+			events.add(new FinServicingEvent(FinServiceEvent.PRINH,
+					Labels.getLabel("label_FinSerEvent_PrincipleHoliday"), "PRINH"));
 		}
 		return events;
 	}
@@ -2578,7 +2618,7 @@ public class PennantStaticListUtil {
 
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PRI_PFT,
 					Labels.getLabel("label_ScheduleMethod_ConstantPrinCalProfit")));
-			if (SysParamUtil.isAllowed("ALW_CONST_PRINCIPLE_SCHD_METHOD")) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_CONST_PRINCIPLE_SCHD_METHOD)) {
 				schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PRI,
 						Labels.getLabel("label_ScheduleMethod_ConstantPrincipal")));
 			}
@@ -3098,6 +3138,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("Fee_CalculatedOn_PayAmount")));
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL,
 					Labels.getLabel("Fee_CalculatedOn_AdjustedPrincipal")));
+			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_CUSTOMERSANCTIONLIMIT,
+					Labels.getLabel("Fee_CalculatedOn_CustomerSanctionLimit")));
 		}
 		return feeCalculatedOn;
 	}
@@ -3152,6 +3194,14 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
 			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV,
 					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
+
+			if (ImplementationConstants.ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS) {
+				excessAdjustTo.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASHCLT,
+						Labels.getLabel("label_RecceiptDialog_ExcessType_CASHCLT")));
+				excessAdjustTo.add(new ValueLabel(RepayConstants.RECEIPTMODE_DSF,
+						Labels.getLabel("label_RecceiptDialog_ExcessType_DSF")));
+			}
+
 			// excessAdjustTo.add(new
 			// ValueLabel(RepayConstants.EXCESSADJUSTTO_PAYABLE,
 			// Labels.getLabel("label_ExcessAdjustTo_PayableAdvise")));
@@ -3164,7 +3214,7 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getReceiptModes() {
 		if (receiptModes == null) {
-			receiptModes = new ArrayList<ValueLabel>(7);
+			receiptModes = new ArrayList<ValueLabel>(8);
 			receiptModes
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASH, Labels.getLabel("label_ReceiptMode_Cash")));
 			receiptModes.add(
@@ -3184,6 +3234,8 @@ public class PennantStaticListUtil {
 					new ValueLabel(RepayConstants.RECEIPTMODE_MOBILE, Labels.getLabel("label_ReceiptMode_MOBILE")));
 			receiptModes.add(
 					new ValueLabel(RepayConstants.RECEIPTMODE_DIGITAL, Labels.getLabel("label_ReceiptMode_DIGITAL")));
+			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_PRESENTMENT,
+					Labels.getLabel("label_ReceiptMode_PRESENT")));
 			/*
 			 * receiptModes.add( new ValueLabel(RepayConstants.RECEIPTMODE_NACH,
 			 * Labels.getLabel("label_ReceiptMode_NACH")));
@@ -3200,6 +3252,16 @@ public class PennantStaticListUtil {
 		}
 
 		return receiptModeWithOnline;
+	}
+
+	public static List<ValueLabel> getReceiptModesIncludeRTRNGDS() {
+		if (receiptModesIncludeRTRNGDS == null) {
+			receiptModesIncludeRTRNGDS = new ArrayList<ValueLabel>(8);
+			receiptModesIncludeRTRNGDS.addAll(getReceiptModes());
+			receiptModesIncludeRTRNGDS
+					.add(new ValueLabel(ReceiptMode.RTRNGDS, Labels.getLabel("label_ReceiptMode_RTRNOFGOODS")));
+		}
+		return receiptModesIncludeRTRNGDS;
 	}
 
 	public static List<ValueLabel> getReceiptModeStatus() {
@@ -4007,7 +4069,15 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PaymentType_ONLINE")));
 			allPaymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DIGITAL,
 					Labels.getLabel("label_PaymentType_DIGITAL")));
-
+			allPaymentTypes.add(new ValueLabel(ReceiptMode.RTRNGDS, Labels.getLabel("label_ReceiptMode_RTRNOFGOODS")));
+			allPaymentTypes.add(
+					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_NACH, Labels.getLabel("label_PaymentType_NACH")));
+			allPaymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_PAYMENTGATEWAY,
+					Labels.getLabel("label_PaymentType_PAYMENTGATEWAY")));
+			allPaymentTypes.add(
+					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_UPI, Labels.getLabel("label_PaymentType_UPI")));
+			allPaymentTypes.add(
+					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_BBPS, Labels.getLabel("label_PaymentType_BBPS")));
 		}
 
 		return allPaymentTypes;
@@ -4590,16 +4660,15 @@ public class PennantStaticListUtil {
 		if (subReceiptPaymentModes == null) {
 			subReceiptPaymentModes = new ArrayList<>(6);
 
+			subReceiptPaymentModes.add(new ValueLabel(ReceiptMode.NEFT, Labels.getLabel("label_SubReceiptMode_NEFT")));
+			subReceiptPaymentModes.add(new ValueLabel(ReceiptMode.RTGS, Labels.getLabel("label_SubReceiptMode_RTGS")));
+			subReceiptPaymentModes.add(new ValueLabel(ReceiptMode.IMPS, Labels.getLabel("label_SubReceiptMode_IMPS")));
 			subReceiptPaymentModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_NEFT, Labels.getLabel("label_SubReceiptMode_NEFT")));
+					.add(new ValueLabel(ReceiptMode.ESCROW, Labels.getLabel("label_SubReceiptMode_ESCROW")));
 			subReceiptPaymentModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_RTGS, Labels.getLabel("label_SubReceiptMode_RTGS")));
+					.add(new ValueLabel(ReceiptMode.DIGITAL, Labels.getLabel("label_SubReceiptMode_DIGITAL")));
 			subReceiptPaymentModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_SubReceiptMode_IMPS")));
-			subReceiptPaymentModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_SubReceiptMode_ESCROW")));
-			subReceiptPaymentModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_DIGITAL,
-					Labels.getLabel("label_SubReceiptMode_DIGITAL")));
+					.add(new ValueLabel(ReceiptMode.RTRNGDS, Labels.getLabel("label_ReceiptMode_RTRNOFGOODS")));
 			/*
 			 * subReceiptPaymentModes.add( new ValueLabel(RepayConstants.RECEIPTMODE_PAYTM,
 			 * Labels.getLabel("label_SubReceiptMode_PAYTM"))); subReceiptPaymentModes.add(new
@@ -4608,6 +4677,11 @@ public class PennantStaticListUtil {
 			 * Labels.getLabel("label_SubReceiptMode_PAYU"))); subReceiptPaymentModes.add(new
 			 * ValueLabel(RepayConstants.RECEIPTMODE_BILLDESK, Labels.getLabel("label_SubReceiptMode_BillDesk")));
 			 */
+			subReceiptPaymentModes.add(new ValueLabel(ReceiptMode.NACH, Labels.getLabel("label_SubReceiptMode_NACH")));
+			subReceiptPaymentModes.add(
+					new ValueLabel(ReceiptMode.PAYMENTGATEWAY, Labels.getLabel("label_SubReceiptMode_PAYMENTGATEWAY")));
+			subReceiptPaymentModes.add(new ValueLabel(ReceiptMode.UPI, Labels.getLabel("label_SubReceiptMode_UPI")));
+			subReceiptPaymentModes.add(new ValueLabel(ReceiptMode.BBPS, Labels.getLabel("label_SubReceiptMode_BBPS")));
 		}
 		return subReceiptPaymentModes;
 	}
@@ -5498,6 +5572,22 @@ public class PennantStaticListUtil {
 
 	}
 
+	public static List<ValueLabel> getCertificateQuarter() {
+		if (certificateQuarter == null) {
+			certificateQuarter = new ArrayList<ValueLabel>(4);
+			certificateQuarter
+					.add(new ValueLabel("Quarter1", Labels.getLabel("label_CertificateQuarter_Quarter1.value")));
+			certificateQuarter
+					.add(new ValueLabel("Quarter2", Labels.getLabel("label_CertificateQuarter_Quarter2.value")));
+			certificateQuarter
+					.add(new ValueLabel("Quarter3", Labels.getLabel("label_CertificateQuarter_Quarter3.value")));
+			certificateQuarter
+					.add(new ValueLabel("Quarter4", Labels.getLabel("label_CertificateQuarter_Quarter4.value")));
+		}
+
+		return certificateQuarter;
+	}
+
 	public static List<ValueLabel> getSubVentionFrom() {
 		if (subVentionTypeList == null) {
 			subVentionTypeList = new ArrayList<>(2);
@@ -5528,6 +5618,45 @@ public class PennantStaticListUtil {
 		}
 		return receivableOrPayable;
 	}
-	// ### END SFA_20210405 <--
+
+	public static List<ValueLabel> getManualScheduleTypeList() {
+		if (manualScheduleTypeList == null) {
+			manualScheduleTypeList = new ArrayList<ValueLabel>(2);
+			manualScheduleTypeList.add(new ValueLabel(PennantConstants.MANUALSCHEDULETYPE_SCREEN,
+					Labels.getLabel("label_ScheduleType_Screen")));
+			manualScheduleTypeList.add(new ValueLabel(PennantConstants.MANUALSCHEDULETYPE_UPLOAD,
+					Labels.getLabel("label_ScheduleType_Upload")));
+		}
+
+		return manualScheduleTypeList;
+	}
+
+	public static List<ValueLabel> getFileFormatList() {
+		if (fileFormatList == null) {
+			fileFormatList = new ArrayList<>(1);
+			fileFormatList.add(new ValueLabel("EXCEL", ".xls/.xlsx"));
+		}
+
+		return fileFormatList;
+	}
+
+	public static List<ValueLabel> getOverdraftCalcChrg() {
+		if (calChargeList == null) {
+			calChargeList = new ArrayList<>(2);
+			calChargeList.add(new ValueLabel(FinanceConstants.FIXED_AMOUNT, Labels.getLabel("label_FixedAmount")));
+			calChargeList.add(new ValueLabel(FinanceConstants.PERCENTAGE, Labels.getLabel("label_Percentage")));
+		}
+
+		return calChargeList;
+	}
+
+	public static List<ValueLabel> getODChargeCalculatedOn() {
+		if (chargeCalOnList == null) {
+			chargeCalOnList = new ArrayList<>(1);
+			chargeCalOnList.add(
+					new ValueLabel(FinanceConstants.OD_TRANCHE_AMOUNT, Labels.getLabel("label_OD_TRANCHE_AMOUNT")));
+		}
+		return chargeCalOnList;
+	}
 
 }

@@ -89,11 +89,9 @@ public class ReportListDAOImpl extends BasicDao<ReportList> implements ReportLis
 	@Override
 	public ReportList getReportListById(final String id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-
 		sql.append(" Code, Module, FieldLabels, FieldValues, FieldType, Addfields, ReportFileName");
-		sql.append(", ReportHeading, ModuleType, FormatReq");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", ReportHeading, ModuleType, FormatReq, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ReportList");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where Code = ?");
@@ -101,7 +99,7 @@ public class ReportListDAOImpl extends BasicDao<ReportList> implements ReportLis
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
 				ReportList rl = new ReportList();
 
 				rl.setCode(rs.getString("Code"));

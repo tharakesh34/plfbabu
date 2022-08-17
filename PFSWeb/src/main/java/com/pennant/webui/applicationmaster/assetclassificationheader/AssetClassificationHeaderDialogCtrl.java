@@ -26,10 +26,7 @@ package com.pennant.webui.applicationmaster.assetclassificationheader;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -41,17 +38,17 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.applicationmaster.AssetClassificationDetail;
 import com.pennant.backend.model.applicationmaster.AssetClassificationHeader;
+import com.pennant.backend.model.applicationmaster.NPATemplateType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.AssetClassificationHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -59,7 +56,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -82,8 +78,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	protected Textbox description;
 	protected Intbox stageOrder;
 	protected Checkbox active;
-	protected Button btnFinType;
-	protected Textbox finType;
+	protected ExtendedCombobox npaTemplateType;
 
 	private AssetClassificationHeader assetClssfcatnHeader;
 	private transient AssetClassificationHeaderListCtrl listCtrl;
@@ -167,6 +162,12 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		this.code.setMaxlength(8);
 		this.description.setMaxlength(100);
 		this.stageOrder.setMaxlength(2);
+		this.npaTemplateType.setMandatoryStyle(true);
+		this.npaTemplateType.setModuleName("NPATemplateType");
+		this.npaTemplateType.setMandatoryStyle(true);
+		this.npaTemplateType.setValueColumn("Code");
+		this.npaTemplateType.setDescColumn("Description");
+		this.npaTemplateType.setValidateColumns(new String[] { "Code" });
 
 		setStatusDetails();
 
@@ -309,7 +310,8 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 			this.active.setChecked(header.isActive());
 		}
 
-		doFillFinTypeList(header.getAssetClassificationDetailList());
+		this.npaTemplateType.setValue(header.getNpaTemplateCode());
+		this.npaTemplateType.setDescription(header.getNpaTemplateDesc());
 
 		this.recordStatus.setValue(header.getRecordStatus());
 
@@ -352,9 +354,14 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		}
 		// templateId
 		try {
-			if (StringUtils.trimToNull(this.finType.getValue()) == null) {
-				throw new WrongValueException(this.finType,
-						Labels.getLabel("label_AssetClassificationHeaderDialog_FinType.value"));
+			if (StringUtils.trimToNull(this.npaTemplateType.getValue()) == null) {
+				throw new WrongValueException(this.npaTemplateType,
+						Labels.getLabel("label_AssetClassificationHeaderDialog_NPAType.value"));
+			} else {
+				NPATemplateType npaTemplateType = (NPATemplateType) this.npaTemplateType.getObject();
+				if (npaTemplateType != null) {
+					classificationHeader.setNpaTemplateId(npaTemplateType.getId());
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -433,10 +440,9 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 			this.stageOrder.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_AssetClassificationHeaderDialog_StageOrder.value"), true, false, 99));
 		}
-		if (!this.btnFinType.isDisabled() && (StringUtils.trimToNull(this.finType.getValue()) == null)) {
-			this.finType.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_AssetClassificationHeaderDialog_FinType.value"),
-							PennantRegularExpressions.REGEX_NAME, true));
+		if (!this.npaTemplateType.isReadonly()) {
+			this.npaTemplateType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_AssetClassificationHeaderDialog_NPAType.value"), null, true, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -451,7 +457,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		this.code.setConstraint("");
 		this.description.setConstraint("");
 		this.stageOrder.setConstraint("");
-		this.finType.setConstraint("");
+		this.npaTemplateType.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -463,7 +469,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	protected void doClearMessage() {
 		logger.debug(Literal.ENTERING);
 
-		this.finType.setErrorMessage("");
+		this.npaTemplateType.setErrorMessage("");
 		this.code.setErrorMessage("");
 		this.description.setErrorMessage("");
 		this.stageOrder.setErrorMessage("");
@@ -505,8 +511,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 
 		readOnlyComponent(isReadOnly("AssetClassificationHeaderDialog_Description"), this.description);
 		readOnlyComponent(isReadOnly("AssetClassificationHeaderDialog_Active"), this.active);
-		this.btnFinType.setDisabled(isReadOnly("button_AssetClassificationHeaderDialog_FinType"));
-		this.finType.setReadonly(true);
+		readOnlyComponent(isReadOnly("AssetClassificationHeaderDialog_NPAType"), this.npaTemplateType);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -535,7 +540,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		readOnlyComponent(true, this.description);
 		readOnlyComponent(true, this.stageOrder);
 		readOnlyComponent(true, this.active);
-		readOnlyComponent(true, this.finType);
+		readOnlyComponent(true, this.npaTemplateType);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -558,8 +563,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		this.description.setValue("");
 		this.stageOrder.setValue(0);
 		this.active.setChecked(false);
-		this.finType.setValue("");
-		this.finType.setTooltiptext("");
+		this.npaTemplateType.setValue("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -597,8 +601,6 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		}
 
 		// FintypeDetails
-		classificationHeader.setAssetClassificationDetailList(fetchFinTypeDetails());
-
 		isNew = classificationHeader.isNewRecord();
 		String tranType = "";
 
@@ -820,179 +822,21 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		return processCompleted;
 	}
 
-	public void onClick$btnFinType(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-
-		this.finType.setConstraint("");
-		this.finType.setErrorMessage("");
-
-		Map<String, Object> finTypeDataMap = new HashMap<String, Object>();
-		String[] finTypes = this.finType.getValue().split(",");
-		for (int i = 0; i < finTypes.length; i++) {
-			finTypeDataMap.put(finTypes[i], null);
-		}
-		Object dataObject = ExtendedMultipleSearchListBox.show(this.window_AssetClassificationHeaderDialog,
-				"FinanceType", finTypeDataMap);
-		if (dataObject instanceof String) {
-			this.finType.setValue(dataObject.toString());
-			this.finType.setTooltiptext("");
-		} else {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> details = (Map<String, Object>) dataObject;
-			if (details != null) {
-				String tempCode = details.keySet().toString();
-				tempCode = tempCode.replace("[", " ").replace("]", "").replace(" ", "");
-				if (tempCode.startsWith(",")) {
-					tempCode = tempCode.substring(1);
-				}
-				if (tempCode.endsWith(",")) {
-					tempCode = tempCode.substring(0, tempCode.length() - 1);
-				}
-				this.finType.setValue(tempCode);
-			}
-
-			// Setting tooltip with Descriptions
-			String toolTipDesc = "";
-			for (String key : details.keySet()) {
-				Object obj = (Object) details.get(key);
-				if (!(obj instanceof String)) {
-					FinanceType financeType = (FinanceType) obj;
-					if (financeType != null) {
-						toolTipDesc = toolTipDesc.concat(financeType.getFinTypeDesc() + " , ");
-					}
-				}
-			}
-
-			if (StringUtils.isNotBlank(toolTipDesc) && toolTipDesc.endsWith(", ")) {
-				toolTipDesc = toolTipDesc.substring(0, toolTipDesc.length() - 2);
-			}
-			this.finType.setTooltiptext(toolTipDesc);
-		}
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
-	private void setFinTypeDescription(List<AssetClassificationDetail> assetClassificationDetailList) {
-		logger.debug(Literal.ENTERING);
-
-		String finType = "";
-
-		for (AssetClassificationDetail detail : assetClassificationDetailList) {
-			if (detail.getFinType() != null
-					&& !StringUtils.equals(detail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-				finType = finType + detail.getFinType().concat(",");
-			}
-		}
-
-		this.finType.setTooltip(getFormattedFinType(finType));
-
-		logger.debug(Literal.LEAVING);
-
-	}
-
-	public String getFormattedFinType(String finType) {
-		if (finType != null && finType.length() > 0 && finType.charAt(finType.length() - 1) == ',') {
-			finType = finType.substring(0, finType.length() - 1);
-		}
-		return finType;
-	}
-
-	private void doFillFinTypeList(List<AssetClassificationDetail> detailList) {
-		logger.debug(Literal.ENTERING);
-
-		if (CollectionUtils.isEmpty(detailList)) {
-			return;
-		}
-
-		setClassificationDetailsList(detailList);
-
-		String tempFinType = "";
-		for (AssetClassificationDetail detail : detailList) {
-			if (!StringUtils.equals(detail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-				if (StringUtils.isEmpty(tempFinType)) {
-					tempFinType = detail.getFinType();
-				} else {
-					tempFinType = tempFinType.concat(",").concat(detail.getFinType());
-				}
-			}
-		}
-		this.finType.setValue(tempFinType);
-		setFinTypeDescription(detailList);
-
-		logger.debug(Literal.ENTERING);
-	}
-
-	private List<AssetClassificationDetail> fetchFinTypeDetails() {
-		logger.debug(Literal.ENTERING);
-
-		List<String> finTypesList = Arrays.asList(this.finType.getValue().split(","));
-		List<AssetClassificationDetail> resultList = new ArrayList<AssetClassificationDetail>();
-		List<AssetClassificationDetail> oldList = getClassificationDetailsList();
-		Map<String, AssetClassificationDetail> valueMap = new HashMap<>();
-
-		for (AssetClassificationDetail detail : oldList) {
-			valueMap.put(detail.getFinType(), detail);
-		}
-
-		for (String finTypeVal : finTypesList) {
-			if (StringUtils.isEmpty(finTypeVal)) {
-				continue;
-			}
-			// Check object is already exists in saved list or not
-			if (valueMap.containsKey(finTypeVal)) {
-				// Removing from map to identify existing modifications
-				boolean isDelete = false;
-				if (this.userAction.getSelectedItem() != null) {
-					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							|| this.userAction.getSelectedItem().getLabel().contains("Reject")
-							|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
-						isDelete = true;
-					}
-				}
-				if (!isDelete) {
-					AssetClassificationDetail oldRcd = valueMap.get(finTypeVal);
-					oldRcd.setNewRecord(false);
-					oldRcd.setRecordType(oldRcd.getRecordType());
-					oldRcd.setId(oldRcd.getId());
-					valueMap.remove(finTypeVal);
-					resultList.add(oldRcd);
-					valueMap.remove(finTypeVal);
-				}
+	public void onFulfill$npaTemplateType(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = npaTemplateType.getObject();
+		if (!(dataObject instanceof String)) {
+			NPATemplateType npaTemplateType = (NPATemplateType) dataObject;
+			if (npaTemplateType != null) {
+				this.npaTemplateType.setValue(npaTemplateType.getCode());
+				this.npaTemplateType.setDescription(npaTemplateType.getDescription());
+				this.npaTemplateType.setErrorMessage("");
 			} else {
-				AssetClassificationDetail detail = new AssetClassificationDetail();
-				detail.setFinType(finTypeVal);
-				detail.setNewRecord(true);
-				detail.setVersion(1);
-				detail.setRecordType(PennantConstants.RCD_ADD);
-				resultList.add(detail);
+				this.npaTemplateType.setValue("");
+				this.npaTemplateType.setDescription("");
 			}
 		}
-
-		resultList.addAll(valueMap.values());
-
-		// Removing unavailable records from DB by using Workflow details
-		for (AssetClassificationDetail detail : oldList) {
-			if (valueMap.containsKey(detail.getFinType())) {
-				if (StringUtils.isBlank(detail.getRecordType())) {
-					detail.setNewRecord(true);
-					detail.setVersion(detail.getVersion() + 1);
-					detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else {
-					if (!StringUtils.equals(detail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-						detail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-					}
-				}
-			} else {
-				if (StringUtils.isEmpty(detail.getRecordType())
-						&& !StringUtils.equals(detail.getRecordType(), PennantConstants.RCD_ADD)) {
-					detail.setNewRecord(true);
-					detail.setVersion(detail.getVersion() + 1);
-					detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-			}
-		}
-		logger.debug(Literal.LEAVING);
-
-		return resultList;
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**

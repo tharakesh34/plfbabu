@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -23,6 +24,7 @@ import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.BeneficiaryController;
 import com.pennanttech.controller.ExtendedTestClass;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.BeneficiaryRestService;
 import com.pennanttech.pffws.BeneficiarySoapService;
 import com.pennanttech.util.APIConstants;
@@ -212,29 +214,30 @@ public class BeneficiaryWebServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		// validate Beneficiary fields
-		if (StringUtils.isNotBlank(beneficiary.getiFSC())) {
-			BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(beneficiary.getiFSC());
-			if (bankBranch == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = beneficiary.getiFSC();
-				return getErrorDetails("90301", valueParm);
-			} else {
-				beneficiary.setBankCode(bankBranch.getBankCode());
+		String ifsc = beneficiary.getiFSC();
+		String micr = beneficiary.getMicr();
+		String bankCode = beneficiary.getBankCode();
+		String branchCode = beneficiary.getBranchCode();
+
+		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+		if (bankBranch.getError() != null) {
+			WSReturnStatus status = new WSReturnStatus();
+			status.setReturnCode(bankBranch.getError().getCode());
+			status.setReturnText("");
+
+			ErrorDetail ed = ErrorUtil.getErrorDetailById(bankBranch.getError().getCode());
+
+			if (ed != null) {
+				status.setReturnText(ErrorUtil.getErrorMessage(ed.getMessage(), bankBranch.getError().getParameters()));
 			}
-		} else if (StringUtils.isNotBlank(beneficiary.getBankCode())
-				&& StringUtils.isNotBlank(beneficiary.getBranchCode())) {
-			BankBranch bankBranch = bankBranchService.getBankBrachByCode(beneficiary.getBankCode(),
-					beneficiary.getBranchCode());
-			if (bankBranch == null) {
-				String[] valueParm = new String[2];
-				valueParm[0] = beneficiary.getBankCode();
-				valueParm[1] = beneficiary.getBranchCode();
-				return getErrorDetails("90302", valueParm);
-			} else {
-				beneficiary.setBankCode(bankBranch.getBankCode());
-			}
+
+			return status;
 		}
+
+		beneficiary.setBankCode(bankBranch.getBankCode());
+		beneficiary.setBankBranchID(bankBranch.getBankBranchID());
+
 		// validate Phone number
 		String mobileNumber = beneficiary.getPhoneNumber();
 		if (StringUtils.isNotBlank(mobileNumber)) {

@@ -37,7 +37,9 @@ public class RepayConstants {
 	public static final String REPAY_HIERARCHY_ICFP = "ICFP";
 	public static final String REPAY_HIERARCHY_ICPF = "ICPF";
 	public static final String REPAY_HIERARCHY_PICF = "PICF";
+	public static final String REPAY_HIERARCHY_NPA_PICF = "P,I,O,M,B,L,F";
 	public static final String REPAY_HIERARCHY_PIFC = "PIFC";
+	public static final String REPAY_HIERARCHY_NPA_PIFC = "P,I,F,O,M,B,L";
 	public static final String REPAY_HIERARCHY_PFIC = "PFIC";
 	public static final String REPAY_HIERARCHY_PFCI = "PFCI";
 	public static final String REPAY_HIERARCHY_PCIF = "PCIF";
@@ -54,6 +56,7 @@ public class RepayConstants {
 	public static final String REPAY_HIERARCHY_FIPCS = "FIPCS"; // FIXME not
 																// there
 																// in the PPT
+	public static final String REPAY_HIERARCHY_PICFB = "PICFB";
 
 	// Repayment Type Constants
 	public static final char REPAY_PROFIT = 'I';
@@ -398,4 +401,22 @@ public class RepayConstants {
 	public static final String SUB_RECEIPT_MODE = "SUBRCTMODE";
 	public static final String RECEIPT_SOURCE = "RCTSRC";
 	public static final String RECEIPT_CHANNEL_MOBILE = "MOB";
+	// Presentment FeeTypes
+	public static final String FEE_TYPE_MANUAL_ADVISE = "MANUAL";
+	public static final String FEE_TYPE_BOUNCE = "BOUNCE";
+	public static final String FEE_TYPE_LPI = "LPI";
+	public static final String FEE_TYPE_LPP = "LPP";
+
+	// Finevent constants
+	public static final String FINEVENT_REPAY = "REPAY";
+	public static final String FINEVENT_COL2CSH = "COL2CSH";
+	public static final String FINEVENT_CSH2BANK = "CSH2BANK";
+	// Due types
+	public static final String DUETYPE_PRINICIPAL = "P";
+	public static final String DUETYPE_PROFIT = "I";
+	public static final String DUETYPE_ODC = "O";
+	public static final String DUETYPE_LPFT = "L";
+	public static final String DUETYPE_BOUNCE = "B";
+	public static final String DUETYPE_MANUALADVISE = "M";
+	public static final String DUETYPE_FEES = "F"; //
 }

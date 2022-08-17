@@ -43,16 +43,17 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
@@ -71,7 +72,6 @@ import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
-import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
@@ -111,11 +111,9 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -150,11 +148,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private DocumentDetailsDAO documentDetailsDAO;
 	private CheckListDetailService checkListDetailService;
 	private VASConfigurationService vASConfigurationService;
-	private CustomerDetailsService customerDetailsService;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
 	private DocumentTypeDAO documentTypeDAO;
 	private CustomerDocumentDAO customerDocumentDAO;
-	private TransactionEntryDAO transactionEntryDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
 	private DocumentDetailValidation vasDocumentValidation;
@@ -162,7 +158,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private CollateralSetupDAO collateralSetupDAO;
 	private VasRecordingValidation vasRecordingValidation;
 	private PostingsDAO postingsDAO;
-	private AccountProcessUtil accountProcessUtil;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceDisbursementDAO financeDisbursementDAO;
@@ -170,7 +165,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private RelationshipOfficerDAO relationshipOfficerDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private FinanceWorkFlowService financeWorkFlowService;
-	private VehicleDealerService vehicleDealerService;
+	private VehicleDealerDAO vehicleDealerDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private AccountingSetDAO accountingSetDAO;
@@ -1727,7 +1722,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			aeEvent.setCcy(SysParamUtil.getAppCurrency());
 			// For GL Code
-			VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vASRecording.getProductCode());
+			VehicleDealer vehicleDealer = vehicleDealerDAO.getDealerShortCodes(vASRecording.getProductCode());
 			amountCodes.setProductCode(vehicleDealer.getProductShortCode());
 			amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
 
@@ -1820,7 +1815,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			aeEvent.setBranch(customer.getCustDftBranch());
 		}
 		// For GL Code
-		VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vASRecording.getProductCode());
+		VehicleDealer vehicleDealer = vehicleDealerDAO.getDealerShortCodes(vASRecording.getProductCode());
 		amountCodes.setProductCode(vehicleDealer.getProductShortCode());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
 
@@ -2011,7 +2006,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				return auditDetail;
 			}
 			if (StringUtils.equalsIgnoreCase(VASConsatnts.VASAGAINST_CUSTOMER, vasRecording.getPostingAgainst())) {
-				Customer customer = customerDetailsService.getCheckCustomerByCIF(vasRecording.getPrimaryLinkRef());
+				Customer customer = customerDAO.getCustomerByCIF(vasRecording.getPrimaryLinkRef(), "_View");
 				if (customer == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getPrimaryLinkRef();
@@ -2687,56 +2682,139 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return vASRecordingDAO.getVasInsStatus(paymentInsId);
 	}
 
+	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	@Autowired
 	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
 		this.vASRecordingDAO = vASRecordingDAO;
 	}
 
+	@Autowired
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
 	}
 
+	@Autowired
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
+	@Autowired
 	public void setCheckListDetailService(CheckListDetailService checkListDetailService) {
 		this.checkListDetailService = checkListDetailService;
 	}
 
+	@Autowired
 	public void setvASConfigurationService(VASConfigurationService vASConfigurationService) {
 		this.vASConfigurationService = vASConfigurationService;
 	}
 
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
+	@Autowired
 	public void setFinanceCheckListReferenceDAO(FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
 		this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
 	}
 
+	@Autowired
 	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
 		this.documentTypeDAO = documentTypeDAO;
 	}
 
+	@Autowired
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
 
-	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
-		this.transactionEntryDAO = transactionEntryDAO;
-	}
-
+	@Autowired
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
+	@Autowired
 	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
 		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	@Autowired
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
+	@Autowired
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+
+	@Autowired
+	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
+		this.repayInstructionDAO = repayInstructionDAO;
+	}
+
+	@Autowired
+	public void setRelationshipOfficerDAO(RelationshipOfficerDAO relationshipOfficerDAO) {
+		this.relationshipOfficerDAO = relationshipOfficerDAO;
+	}
+
+	@Autowired
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	@Autowired
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
+		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
+	@Autowired
+	public void setVehicleDealerDAO(VehicleDealerDAO vehicleDealerDAO) {
+		this.vehicleDealerDAO = vehicleDealerDAO;
+	}
+
+	@Autowired
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	@Autowired
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+
+	@Autowired
+	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
+		this.accountingSetDAO = accountingSetDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
 	}
 
 	public DocumentDetailValidation getVASDocumentValidation() {
@@ -2746,83 +2824,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return vasDocumentValidation;
 	}
 
-	public void setVasDocumentValidation(DocumentDetailValidation vasDocumentValidation) {
-		this.vasDocumentValidation = vasDocumentValidation;
-	}
-
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
-	}
-
-	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
-		this.collateralSetupDAO = collateralSetupDAO;
-	}
-
 	public VasRecordingValidation getVasRecordingValidation() {
 		if (vasRecordingValidation == null) {
 			this.vasRecordingValidation = new VasRecordingValidation(vASRecordingDAO);
 		}
 		return this.vasRecordingValidation;
-	}
-
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
-	}
-
-	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
-		this.accountProcessUtil = accountProcessUtil;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
-		this.financeDisbursementDAO = financeDisbursementDAO;
-	}
-
-	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
-		this.repayInstructionDAO = repayInstructionDAO;
-	}
-
-	public void setRelationshipOfficerDAO(RelationshipOfficerDAO relationshipOfficerDAO) {
-		this.relationshipOfficerDAO = relationshipOfficerDAO;
-	}
-
-	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
-		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
-		this.financeWorkFlowService = financeWorkFlowService;
-	}
-
-	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
-		this.vehicleDealerService = vehicleDealerService;
-	}
-
-	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
-		this.extendedFieldDetailsService = extendedFieldDetailsService;
-	}
-
-	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
-		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
-	}
-
-	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
-		this.accountingSetDAO = accountingSetDAO;
-	}
-
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
 	}
 
 }

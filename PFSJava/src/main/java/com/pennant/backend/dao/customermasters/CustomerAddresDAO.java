@@ -54,4 +54,6 @@ public interface CustomerAddresDAO {
 	boolean isServiceable(long pinCodeId);
 
 	CustomerAddres getHighPriorityCustAddr(long id, String type);
+
+	String getCustHighPriorityAddr(long id);
 }

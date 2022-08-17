@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -124,7 +125,12 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 
 	private FeeType feeType;
 	private List<DocumentDetails> documentDetails = new ArrayList<>(1);
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+	private Date dueDate;
+	private String status;
+	private String reason;
+	private Long presentmentID;
+	private boolean invoiceReq;
 
 	public String getFinSource() {
 		return finSource;
@@ -188,6 +194,11 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 		entity.setHoldDue(this.holdDue);
 		entity.setFeeType(this.feeType == null ? null : this.feeType.copyEntity());
 		this.documentDetails.stream().forEach(e -> entity.getDocumentDetails().add(e == null ? null : e.copyEntity()));
+		entity.setDueDate(this.dueDate);
+		entity.setStatus(this.status);
+		entity.setReason(this.reason);
+		entity.setPresentmentID(this.presentmentID);
+		entity.setInvoiceReq(this.invoiceReq);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -226,6 +237,8 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 		excludeFields.add("feeType");
 		excludeFields.add("tdsPaid");
 		excludeFields.add("tdsReq");
+		excludeFields.add("dueDate");
+		excludeFields.add("invoiceReq");
 		return excludeFields;
 	}
 
@@ -609,12 +622,52 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 		this.documentDetails = documentDetails;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+
+	public Long getPresentmentID() {
+		return presentmentID;
+	}
+
+	public void setPresentmentID(Long presentmentID) {
+		this.presentmentID = presentmentID;
+	}
+
+	public Date getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public boolean isInvoiceReq() {
+		return invoiceReq;
+	}
+
+	public void setInvoiceReq(boolean invoiceReq) {
+		this.invoiceReq = invoiceReq;
 	}
 
 }

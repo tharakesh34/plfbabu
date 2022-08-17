@@ -179,7 +179,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", PaidAmount, PaidAmountGST, PaidAmountOriginal, RemainingFee, RemainingFeeGST");
 		sql.append(", RemainingFeeOriginal, VasReference, Status, ReferenceId");
 		sql.append(", FeeScheduleMethod, ActPercentage, PaidTDS, RemTDS, NetTDS");
-		sql.append(", TaxHeaderId, TaxApplicable, ActualAmount");
+		sql.append(", TaxHeaderId, TaxApplicable, ActualAmount, RecordType, LastMntOn, RecordStatus");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent, TdsReq");
@@ -189,7 +189,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(" from FinFeeDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = ? and ActualAmount > ?");
-		sql.append(" and FeeScheduleMethod = ? and OriginationFee = ?");
+		sql.append(" and FeeScheduleMethod in (?, ?) and OriginationFee = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -199,6 +199,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setString(index++, reference);
 			ps.setInt(index++, 0);
 			ps.setString(index++, "DISB");
+			ps.setString(index++, "PBCU");
 			ps.setInt(index++, 1);
 		}, (rs, num) -> {
 			FinFeeDetail ffd = new FinFeeDetail();
@@ -233,6 +234,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ffd.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 			ffd.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 			ffd.setActualAmount(rs.getBigDecimal("ActualAmount"));
+			ffd.setRecordType(rs.getString("RecordType"));
+			ffd.setRecordStatus(rs.getString("RecordStatus"));
+			ffd.setLastMntOn(rs.getTimestamp("LastMntOn"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				ffd.setFeeTypeCode(rs.getString("FeeTypeCode"));
@@ -610,20 +614,17 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	@Override
-	public FinFeeDetail getFeeDetailByExtReference(String extReference, long feeTypeId, String tableType) {
+	public List<FinFeeDetail> getFeeDetailByExtReference(String extReference, long feeTypeId, String tableType) {
 		StringBuilder sql = getSelectQuery(false, tableType);
 		sql.append(" Where TransactionId = ? and FeeTypeID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		FinFeeDetailsRowMapper rowMapper = new FinFeeDetailsRowMapper(tableType, false);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, extReference, feeTypeId);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, extReference);
+			ps.setLong(index++, feeTypeId);
+		}, new FinFeeDetailsRowMapper(tableType, false));
 	}
 
 	@Override
@@ -798,7 +799,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc");
+			sql.append(", FeeTypeCode, FeeTypeDesc, TdsReq");
 
 			if (!isWIF) {
 				sql.append(", VasProductCode");
@@ -897,6 +898,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				fd.setFeeTypeCode(rs.getString("FeeTypeCode"));
 				fd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				fd.setTdsReq(rs.getBoolean("TdsReq"));
 
 				if (!wIf) {
 					fd.setVasProductCode(rs.getString("VasProductCode"));
@@ -905,5 +907,26 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 			return fd;
 		}
+	}
+
+	@Override
+	public List<FinFeeDetail> getTotalPaidFees(String reference, String type) {
+		StringBuilder sql = new StringBuilder("Select PaidAmount, FeeID, FeeTypeCode");
+		sql.append(" From FinFeeDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where TransactionId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> ps.setString(1, reference), (rs, rowNum) -> {
+			FinFeeDetail fee = new FinFeeDetail();
+
+			fee.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			fee.setFeeID(rs.getLong("FeeID"));
+			fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			fee.setTransactionId(reference);
+
+			return fee;
+		});
 	}
 }

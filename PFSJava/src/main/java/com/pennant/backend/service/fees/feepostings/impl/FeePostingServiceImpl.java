@@ -67,6 +67,7 @@ import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -600,7 +601,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			feePostings.setValueDate(DateUtility.getAppDate());
 		} else {
 			Date minReqPostingDate = DateUtility.addDays(DateUtility.getAppDate(),
-					-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+					-SysParamUtil.getValueAsInt(SMTParameterConstants.FEE_POSTING_DATE_BACK_DAYS));
 			if (feePostings.getValueDate().before(minReqPostingDate)
 					|| feePostings.getValueDate().after(DateUtility.getAppDate())) {
 				String[] valueParm = new String[3];

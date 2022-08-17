@@ -365,8 +365,7 @@ public class SummaryDetailService extends ExtendedTestClass {
 			totAdvAmount = totAdvAmount.add(excessAmount.getBalanceAmt());
 		}
 
-		List<ManualAdvise> payables = manualAdviseDAO.getManualAdviseByRef(finID,
-				FinanceConstants.MANUAL_ADVISE_PAYABLE, "_View");
+		List<ManualAdvise> payables = manualAdviseDAO.getPaybleAdvises(finID, "_View");
 
 		for (ManualAdvise manualAdvise : payables) {
 			String taxType = "";

@@ -58,10 +58,11 @@
 										<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
 											style="border:0px">
 											<columns>
-												<column width="220px" />
-												<column />
-												<column width="220px" />
-												<column />
+												<column width="150px" />
+												<column width="350px" />
+												<column width="150px" />
+												<column width="250px" />
+												<column width="280px" />
 											</columns>
 											<rows>
 												<row height="24px">
@@ -74,6 +75,8 @@
 													<hbox>
 														<label id="lbl_LoanType" style="font-weight:bold;" />
 													</hbox>
+													<a id="userActivityLog" visible="false" label="Activity Log"
+														style="padding-left:100px; white-space: nowrap;" />
 												</row>
 												<row height="24px">
 													<label value="${c:l('label_CustomerCIF')}" />
@@ -166,6 +169,14 @@
 														<textbox id="remarks" maxlength="100" width="400px" rows="4"
 															multiline="true" />
 													</hbox>
+													<label id="label_Reason"
+														value="${c:l('label_ManualAdviseDialog_Reason.value')}" />
+													<hbox>
+														<space id="space_Reason" spacing="2px" sclass="mandatory" />
+														<textbox id="reason" />
+													</hbox>
+												</row>
+												<row id="row4">
 													<hbox id="hbox_Sequence">
 														<label id="label_Sequence"
 															value="${c:l('label_ManualAdviseDialog_Sequence.value')}" />

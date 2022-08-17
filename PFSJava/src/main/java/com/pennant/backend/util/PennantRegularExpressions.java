@@ -177,6 +177,8 @@ public class PennantRegularExpressions {
 	public static final String REGEX_ACC_HOLDER_NAME = "REGEX_ACC_HOLDER_NAME";
 	public static final String REGEX_ACCOUNT_HOLDER_NAME = "REGEX_ACCOUNT_HOLDER_NAME";
 	public static final String REGEX_FAVOURING_NAME = "REGEX_FAVOURING_NAME";
+	public static final String REGEX_TAN_NUMBER = "REGEX_TAN_NUMBER";
+	public static final String REGEX_CERTIFICATE_NUMBER = "REGEX_CERTIFICATE_NUMBER";
 
 	public static final String REGEX_BARCODE_NUMBER = "REGEX_BARCODE_NUMBER";
 	public static final String REGEX_SPECIAL_REGX = "REGEX_SPECIAL_REGX";
@@ -193,6 +195,7 @@ public class PennantRegularExpressions {
 	public static final String REGEX_PHONE_COUNTRY = "REGEX_PHONE_COUNTRY";
 	public static final String REGEX_PHONE_AREA = "REGEX_PHONE_AREA";
 	public static final String REGEX_PHONE_NUMBER = "REGEX_PHONE_NUMBER";
+	public static final String REGEX_REPAY_HIERARCHY = "REGEX_REPAY_HIERARCHY";
 
 	private static Map<String, String> regexMapper = new HashMap<String, String>() {
 		private static final long serialVersionUID = -3549857310897774789L;
@@ -282,6 +285,9 @@ public class PennantRegularExpressions {
 			put(REGEX_PHONE_AREA, "^[1-9]{1}[0-9]{0,3}");
 			put(REGEX_PHONE_NUMBER, "[0-9]{6,8}");
 
+			put(REGEX_TAN_NUMBER, "[A-Za-z]{4}\\d{5}[A-Za-z]{1}");
+			put(REGEX_CERTIFICATE_NUMBER, "[A-Za-z]{6,8}");
+			put(REGEX_REPAY_HIERARCHY, "^(?!.*?([OPIMBLF]).*?\\1)[OPIMBLF](?:[,|][OPIMBLF])*$");
 		}
 	};
 

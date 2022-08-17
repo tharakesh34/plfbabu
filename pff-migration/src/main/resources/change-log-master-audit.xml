@@ -17,13 +17,17 @@
 	<include file="change-logs/change-log-5.14.0-audit.xml" />
 	<include file="change-logs/change-log-5.15.0-audit.xml" />
 	<include file="change-logs/change-log-5.16.0-audit.xml" />
+	<include file="change-logs/change-log-5.17.0-audit.xml" />
+	<include file="change-logs/change-log-gst_details-audit.xml" />
+	<include file="change-logs/change-log-5.18.0-audit.xml" />
+	<include file="change-logs/change-log-CDProduct-audit.xml" />
 	<include file="change-logs/change-log-6.0.0-audit.xml" />
 	<include file="change-logs/change-log-islamic_code_removal-audit.xml" />
 	<include file="change-logs/change-log-db-based-scheduler-audit.xml" />
 	<include file="change-logs/change-log-single_fee_accounting-audit.xml" />
 	<include file="change-logs/change-log-finid-audit.xml" />
-	<include file="change-logs/change-log-db-cleanup-audit.xml" /> 
 	<include file="change-logs/change-log-6.0.0-pt-audit.xml" />
-	<include file="change-logs/change-log-CDProduct-audit.xml" />
-	<include file="change-logs/change-log-hdfc-audit.xml" />
+	<include file="change-logs/change-log-db-cleanup-audit.xml" />
+	<include file="change-logs/change-log-6.1.0-audit.xml" /> 
+	
 </databaseChangeLog>

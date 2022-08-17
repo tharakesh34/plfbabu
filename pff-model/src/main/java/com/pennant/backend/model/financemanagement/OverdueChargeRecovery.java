@@ -59,10 +59,10 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 	private BigDecimal lpCpzAmount = BigDecimal.ZERO;
 	private BigDecimal lpCurCpzBal = BigDecimal.ZERO;
 
-	private BigDecimal maxWaiver = BigDecimal.ZERO; // FIXME TO be deleted
-	private BigDecimal waivedAmt = BigDecimal.ZERO; // FIXME TO be deleted
-	private BigDecimal penaltyPaid = BigDecimal.ZERO; // FIXME TO be deleted
-	private BigDecimal penaltyBal = BigDecimal.ZERO; // FIXME TO be deleted
+	private BigDecimal maxWaiver = BigDecimal.ZERO;
+	private BigDecimal waivedAmt = BigDecimal.ZERO;
+	private BigDecimal penaltyPaid = BigDecimal.ZERO;
+	private BigDecimal penaltyBal = BigDecimal.ZERO;
 
 	private boolean rcdCanDel = false;
 
@@ -88,6 +88,8 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 	private BigDecimal lovDescTotOvrDueChrgBal = BigDecimal.ZERO;
 	private BigDecimal pendingODC = BigDecimal.ZERO;
 	private BigDecimal totWaived = BigDecimal.ZERO;
+	private BigDecimal finCurODTxnChrg = BigDecimal.ZERO;
+	private boolean addTodayRcd = true;
 
 	public OverdueChargeRecovery() {
 		super();
@@ -117,6 +119,8 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 		entity.setLpCpz(this.lpCpz);
 		entity.setLpCpzAmount(this.lpCpzAmount);
 		entity.setLpCurCpzBal(this.lpCurCpzBal);
+		entity.setFinCurODTxnChrg(this.finCurODTxnChrg);
+		entity.setAddTodayRcd(this.addTodayRcd);
 		entity.setMaxWaiver(this.maxWaiver);
 		entity.setWaivedAmt(this.waivedAmt);
 		entity.setPenaltyPaid(this.penaltyPaid);
@@ -499,6 +503,22 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 
 	public void setLpCurCpzBal(BigDecimal lpCurCpzBal) {
 		this.lpCurCpzBal = lpCurCpzBal;
+	}
+
+	public BigDecimal getFinCurODTxnChrg() {
+		return finCurODTxnChrg;
+	}
+
+	public void setFinCurODTxnChrg(BigDecimal finCurODTxnChrg) {
+		this.finCurODTxnChrg = finCurODTxnChrg;
+	}
+
+	public boolean isAddTodayRcd() {
+		return addTodayRcd;
+	}
+
+	public void setAddTodayRcd(boolean addTodayRcd) {
+		this.addTodayRcd = addTodayRcd;
 	}
 
 }

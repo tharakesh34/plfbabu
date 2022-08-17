@@ -26,12 +26,15 @@ package com.pennant.webui.finance.manualadvise.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 
@@ -58,6 +61,18 @@ public class ManualAdviseListModelItemRenderer implements ListitemRenderer<Manua
 		lc.setParent(item);
 		lc = new Listcell(manualAdvise.getFeeTypeDesc());
 		lc.setParent(item);
+
+		if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+			String status = manualAdvise.getStatus();
+			if (PennantConstants.MANUALADVISE_CANCEL.equals(status)) {
+				status = PennantConstants.RCD_STATUS_CANCELLED;
+			} else if (PennantConstants.MANUALADVISE_MAINTAIN.equals(status)) {
+				status = PennantConstants.RCD_UPD;
+			}
+			lc = new Listcell(StringUtils.trimToEmpty(status));
+			lc.setParent(item);
+		}
+
 		lc = new Listcell(manualAdvise.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(manualAdvise.getRecordType()));

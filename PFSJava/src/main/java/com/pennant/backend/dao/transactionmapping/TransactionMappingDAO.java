@@ -1,8 +1,8 @@
 package com.pennant.backend.dao.transactionmapping;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennanttech.pff.cd.model.TransactionMapping;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
 
 public interface TransactionMappingDAO extends BasicCrudDao<TransactionMapping> {
 
@@ -10,10 +10,11 @@ public interface TransactionMappingDAO extends BasicCrudDao<TransactionMapping> 
 
 	TransactionMapping getTransactionMappingById(long id, String type);
 
-	int getcountByMID(long mid, long tid);
+	int getcountByMID(long mid, String tid);
 
 	int getCountByPhoneAndStroeId(String mobileNumber, int storeId, int posId);
 
 	int getCountByPhoneNumber(String mobileNumber);
 
+	TransactionMapping getDealerDetails(String mId, String tId);
 }

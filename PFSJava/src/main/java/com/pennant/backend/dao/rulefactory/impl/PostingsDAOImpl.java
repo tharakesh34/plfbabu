@@ -41,13 +41,17 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -174,7 +178,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		StringBuilder sql = getSelectQuery();
 		sql.append(" Where LinkedTranId in (");
 		sql.append(JdbcUtil.getInCondition(tranIdList));
-		sql.append(")");
+		sql.append(") and PostAmount > 0");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -418,7 +422,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	@Override
 	public List<ReturnDataSet> getPostingsByPostRef(long postrRef) {
 		StringBuilder sql = getSelectQuery();
-		sql.append(" Where PostStatus = ? and Postref = ?");
+		sql.append(" Where PostStatus = ? and Postref = ? and PostAmount > 0");
 		sql.append(" order by LinkedTranId, TranOrderId");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -493,16 +497,39 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	private void setEntityCode(List<ReturnDataSet> dataSetList) {
-		String entityCode = null;
+		Map<String, String> entityMap = new HashMap<>();
+
 		for (ReturnDataSet returnDataSet : dataSetList) {
 			if (returnDataSet.getEntityCode() == null) {
-				if (entityCode == null) {
-					entityCode = SysParamUtil.getValueAsString("ENTITYCODE");
+				String entityCode = SysParamUtil.getValueAsString("ENTITYCODE");
+
+				if (!entityMap.containsKey(returnDataSet.getFinReference())) {
+					entityCode = getEntityCode(returnDataSet.getFinType());
+					entityMap.put(returnDataSet.getFinReference(), entityCode);
+				} else {
+					entityCode = entityMap.get(returnDataSet.getFinReference());
 				}
 
 				returnDataSet.setEntityCode(entityCode);
 			}
 		}
+	}
+
+	private String getEntityCode(String finType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" sd.EntityCode");
+		sql.append(" From SMTDivisionDetail sd");
+		sql.append(" inner join RMTFinanceTypes ft on ft.FinDivision = sd.DivisionCode");
+		sql.append(" Where ft.FinType = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), String.class, finType);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
 	}
 
 	private StringBuilder getSelectQuery() {
@@ -599,6 +626,46 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		}
 
 		return postings;
+	}
+
+	@Override
+	public List<ReturnDataSet> getInstDatePostings(String finReference, Date schdDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Distinct Transactionid, G.Invoiceid, Invoice_Amt");
+		sql.append(" From ScheduleDueTaxDetails SDT");
+		sql.append(" Left Join GST_Invoice_Txn G on SDT.Invoiceid = G.Invoiceid");
+		sql.append(" Where SDT.FinReference = ? and SDT.schdate = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			ReturnDataSet dataSet = new ReturnDataSet();
+
+			dataSet.setFinReference(finReference);
+			dataSet.setPostDate(schdDate);
+			dataSet.setLinkedTranId(rs.getLong("Transactionid"));
+			dataSet.setInvoiceId(rs.getLong("Invoiceid"));
+			dataSet.setInvoiceAmt(rs.getBigDecimal("Invoice_Amt"));
+
+			return dataSet;
+		}, finReference, schdDate);
+	}
+
+	@Override
+	public List<Long> getAMZPostings(String finReference, Date valueDate) {
+		String sql = "Select distinct LinkedTranId From Postings  Where FinReference = ? and ValueDate = ? and FinEvent = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql, ps -> {
+			int index = 1;
+
+			ps.setString(index++, finReference);
+			ps.setDate(index++, JdbcUtil.getDate(valueDate));
+			ps.setString(index++, AccountingEvent.AMZ);
+		}, (rs, rowNum) -> {
+			return rs.getLong(1);
+		});
 	}
 
 }

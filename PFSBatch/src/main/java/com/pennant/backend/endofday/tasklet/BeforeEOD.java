@@ -47,6 +47,7 @@ import com.pennant.app.core.DateService;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
+import com.pennanttech.pff.npa.service.AssetClassificationService;
 
 public class BeforeEOD implements Tasklet {
 	private Logger logger = LogManager.getLogger(BeforeEOD.class);
@@ -56,6 +57,7 @@ public class BeforeEOD implements Tasklet {
 	}
 
 	private DateService dateService;
+	private AssetClassificationService assetClassificationService;
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
@@ -64,6 +66,7 @@ public class BeforeEOD implements Tasklet {
 		logger.info("START Before EOD On {}", valueDate);
 
 		dateService.doUpdatebeforeEod(true);
+		assetClassificationService.clearStage();
 
 		StepUtil.BEFORE_EOD.setTotalRecords(1);
 		StepUtil.BEFORE_EOD.setProcessedRecords(1);
@@ -79,4 +82,10 @@ public class BeforeEOD implements Tasklet {
 	public void setDateService(DateService dateService) {
 		this.dateService = dateService;
 	}
+
+	@Autowired
+	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
+		this.assetClassificationService = assetClassificationService;
+	}
+
 }

@@ -99,6 +99,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -428,9 +429,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
 		doClose(this.btnSave.isVisible());
+
 		if (getDisbursementInstructionsDialogCtrl() != null) {
 			getDisbursementInstructionsDialogCtrl().closeDialog();
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -933,7 +936,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				}
 
 				// User Notifications Message/Alert
-				publishNotification(Notify.ROLE, aPaymentHeader.getFinReference(), aPaymentHeader);
+				if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
+					publishNotification(Notify.ROLE, aPaymentHeader.getFinReference(), aPaymentHeader);
+				} else {
+					publishNotification(Notify.ROLE, aPaymentHeader.getFinReference(), aPaymentHeader,
+							financeMain.getFinPurpose(), financeMain.getFinBranch());
+				}
 
 			}
 		} catch (final DataAccessException e) {
@@ -1484,7 +1492,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					String amountType = oldDetail.getAmountType();
 					if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(amountType)
 							|| RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(amountType)
-							|| RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)) {
+							|| RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)
+							|| RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(amountType)
+							|| RepayConstants.EXAMOUNTTYPE_DSF.equals(amountType)) {
+
 						oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
 					} else {
 						oldDetail.setAvailableAmount(newDetail.getAvailableAmount());
@@ -1525,6 +1536,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		Clients.clearWrongValue(this.totAmount);
 		BigDecimal amt1 = BigDecimal.ZERO;
 		BigDecimal amount = PennantApplicationUtil.unFormateAmount(paymentAmt.getValue(), ccyFormatter);
+
+		if (BigDecimal.ZERO.compareTo(amount) == 1) {
+			amount = BigDecimal.ZERO;
+		}
+
 		BigDecimal avaAmount = BigDecimal.ZERO;
 		for (PaymentDetail detail : getPaymentDetailList()) {
 			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
@@ -1834,8 +1850,13 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					balanceAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 					balanceAmount.setStyle("text-align:right; ");
 					balanceAmount.setReadonly(true);
-					balanceAmount.setValue(PennantApplicationUtil.formateAmount(
-							paymentDetail.getAvailableAmount().subtract(paymentDetail.getAmount()), ccyFormatter));
+
+					BigDecimal balAmount = paymentDetail.getAvailableAmount().subtract(paymentDetail.getAmount());
+					if (balAmount.compareTo(BigDecimal.ZERO) < 0) {
+						balAmount = BigDecimal.ZERO;
+					}
+					balanceAmount.setValue(PennantApplicationUtil.formateAmount(balAmount, ccyFormatter));
+
 					lc.appendChild(balanceAmount);
 					lc.setParent(item);
 					this.listBoxPaymentTypeInstructions.appendChild(item);
@@ -1972,6 +1993,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		Clients.clearWrongValue(paymentAmt);
 		Clients.clearWrongValue(this.totAmount);
 		BigDecimal amount = PennantApplicationUtil.unFormateAmount(paymentAmt.getValue(), ccyFormatter);
+
+		if (BigDecimal.ZERO.compareTo(amount) == 1) {
+			amount = BigDecimal.ZERO;
+		}
+
 		PaymentDetail paymentDetail = (PaymentDetail) paymentAmt.getAttribute("object");
 		for (PaymentDetail detail : getPaymentDetailList()) {
 			if (paymentDetail.getReferenceId() == detail.getReferenceId()) {
@@ -2147,6 +2173,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		Clients.clearWrongValue(this.totAmount);
 
 		BigDecimal amount = PennantApplicationUtil.unFormateAmount(paymentAmount.getValue(), ccyFormatter);
+
+		if (BigDecimal.ZERO.compareTo(amount) == 1) {
+			amount = BigDecimal.ZERO;
+		}
+
 		PaymentDetail paymentDetail = (PaymentDetail) paymentAmount.getAttribute("object");
 
 		BigDecimal avaAmount = BigDecimal.ZERO;

@@ -1,0 +1,1174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.0" author="Mounika.M">
+		<addColumn tableName="AdtFinreceiptHeader">
+			<column name="ToState" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="1.1" author="Mounika.M">
+		<addColumn tableName="AdtFinreceiptHeader">
+			<column name="FromState" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="1.2" author="Mounika.M">
+		<addColumn tableName="AdtFinreceiptHeader">
+			<column name="FinType" type="VARCHAR(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="1.3" author="sampath.d">
+		<addColumn tableName="AdtFinreceiptHeader">
+			<column name="Moduletype" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="1.4" author="kavya.n">
+		<dropNotNullConstraint tableName="AdtFinreceiptHeader" columnName="Reference" columnDataType="VARCHAR(20)" />
+	</changeSet>
+
+	<!-- TDS certificate and TAN related change logs started -->
+
+	<changeSet id="64" author="Sravani.M">
+		<createTable tableName="AdtTAN_DETAILS">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="TANNumber" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TANHolderName" type="varchar(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="66" author="Sravani.M">
+		<createTable tableName="AdtTAN_ASSIGNMENTS">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="TANID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="68" author="Sravani.M">
+		<createTable tableName="AdtTDS_RECEIVABLES">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="TANId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CertificateNumber" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CertificateDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CertificateAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="UtilizedAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BalanceAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AssessmentYear" type="char(7)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DateOfReceipt" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CertificateQuarter" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="70" author="Sravani.M">
+		<createTable tableName="AdtTDS_RECEIVABLES_TXN">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="TxnId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdjustmentAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TranDate" type="datetime" />
+			<column name="FinTranYear" type="char(9)" />
+			<column name="Status" type="char(2)" />
+			<column name="Module" type="char(1)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="76" author="Sravani.M">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="RecAdjAmt" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<!-- TDS certificate and TAN related change logs end -->
+
+	<!-- Manual Schedule Changes Start -->
+
+	<changeSet id="ST#85.1" author="saisandeep.b">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="ManualSchdType" type="Varchar(10)" />
+		</addColumn>
+	</changeSet>
+
+	<!-- Manual Schedule Changes End -->
+
+	<changeSet id="DE#97" author="saisandeep.b">
+		<modifyDataType tableName="AdtFinanceMain" columnName="ReferralId" newDataType="varchar(10)" />
+	</changeSet>
+
+	<changeSet id="ST#57.5" author="Anilkumar.G">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="CustBankId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<!-- change logs for ISRA Details Start -->
+	<changeSet id="ST#92.1" author="saisandeep.b">
+		<createTable tableName="ADTISRA_DETAILS">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint" />
+			<column name="FinId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="MinISRAAmt" type="decimal(18,0)" />
+			<column name="MinDSRAAmt" type="decimal(18,0)" />
+			<column name="TotalAmt" type="decimal(18,0)" />
+			<column name="UndisbursedLimit" type="decimal(18,0)" />
+			<column name="FundsAmt" type="decimal(18,0)" />
+			<column name="ShortfallAmt" type="decimal(18,0)" />
+			<column name="ExcessCashCltAmt" type="decimal(18,0)" />
+			<column name="Version" type="int" />
+			<column name="LastmntBy" type="bigint" />
+			<column name="LastmntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#92.2" author="saisandeep.b">
+		<createTable tableName="ADTISRA_LIQUID_DETAILS">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint" />
+			<column name="ISRADetailId" type="bigint" />
+			<column name="Name" type="varchar(100)" />
+			<column name="Amount" type="decimal(18,0)" />
+			<column name="ExpiryDate" type="datetime" />
+			<column name="Version" type="int" />
+			<column name="LastmntBy" type="bigint" />
+			<column name="LastmntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#92.3" author="saisandeep.b">
+		<addColumn tableName="AdtFinancemain">
+			<column name="ISRA" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#92.4" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINANCEMAIN SET ISRA = 0 WHERE ISRA IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- change logs ISRA Details End -->
+
+	<changeSet id="ST#87" author="Durgaprasad G">
+		<modifyDataType tableName="ADTFINRECEIPTHEADER" columnName="EXCESSADJUSTTO" newDataType="varchar(8)" />
+	</changeSet>
+
+	<changeSet id="395" author="ahmad.s">
+		<addColumn tableName="ADTBMTBANKDETAIL">
+			<column name="AllowMultipleIFSC" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="395.1" author="ahmad.s">
+		<sql>
+			<![CDATA[
+				UPDATE ADTBMTBANKDETAIL SET ALLOWMULTIPLEIFSC = 0 where ALLOWMULTIPLEIFSC is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="395.2" author="ahmad.s" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTBMTBANKDETAIL ADD CONSTRAINT DF_ADTBMTBD_MULTIIFSC DEFAULT 0 FOR ALLOWMULTIPLEIFSC;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="395.2" author="ahmad.s" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ALLOWMULTIPLEIFSC" tableName="ADTBMTBANKDETAIL" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#99TK#96.1" author="Vijayakumar.k">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="SanctionedDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<!-- MMFSL changes merged from OD enhancements branch started -->
+
+	<changeSet id="ST#3220.1.1" author="Gopal.p">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="OverdraftTxnChrgReq" type="smallint">
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.1.2" author="Gopal.p">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="OverdraftTxnChrgFeeType" type="bigint">
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.1.3" author="Gopal.p">
+		<addColumn tableName="AdtRmtFinanceTypes">
+			<column name="OverDraftExtGraceDays" type="int">
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.1.4" author="Gopal.p">
+		<addColumn tableName="AdtRmtFinanceTypes">
+			<column name="OverDraftColChrgFeeType" type="bigint">
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.1.5" author="Gopal.p">
+		<addColumn tableName="AdtRmtFinanceTypes">
+			<column name="OverDraftColAmt" type="decimal(18,0)">
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.1.6" author="Gopal.p">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET OVERDRAFTTXNCHRGREQ = 0 WHERE OVERDRAFTTXNCHRGREQ IS NULL;
+				UPDATE ADTRMTFINANCETYPES SET OVERDRAFTTXNCHRGFEETYPE = 0 WHERE OVERDRAFTTXNCHRGFEETYPE IS NULL;
+				UPDATE ADTRMTFINANCETYPES SET OVERDRAFTEXTGRACEDAYS = 0 WHERE OVERDRAFTEXTGRACEDAYS IS NULL;
+				UPDATE ADTRMTFINANCETYPES SET OVERDRAFTCOLCHRGFEETYPE = 0 WHERE OVERDRAFTCOLCHRGFEETYPE IS NULL;
+				UPDATE ADTRMTFINANCETYPES SET OVERDRAFTCOLAMT = 0 WHERE OVERDRAFTCOLAMT IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220.1.7" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_ODTXNCHRGREQ DEFAULT 0 FOR OVERDRAFTTXNCHRGREQ;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3220.1.8" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_ODTXNCHRGFEETYPE DEFAULT 0 FOR OVERDRAFTTXNCHRGFEETYPE;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3220.1.9" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_ODEXTGRACEDAYS DEFAULT 0 FOR OVERDRAFTEXTGRACEDAYS;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3220.1.10" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_ODCOLCHRGFEETYPE DEFAULT 0 FOR OVERDRAFTCOLCHRGFEETYPE;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3220.1.11" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_ODCOLAMT DEFAULT 0 FOR OVERDRAFTCOLAMT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220.1.7" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OverdraftTxnChrgReq" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+	<changeSet id="ST#3220.1.8" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OverdraftTxnChrgFeeType" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+	<changeSet id="ST#3220.1.9" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OverDraftExtGraceDays" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+	<changeSet id="ST#3220.1.10" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OverDraftColChrgFeeType" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+	<changeSet id="ST#3220.1.11" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OverDraftColAmt" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#3220.1.12" author="Gopal.p">
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="OverdraftTxnChrgReq"
+			columnDataType="smallint" />
+	</changeSet>
+	<changeSet id="ST#3220.1.13" author="Gopal.p">
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="OverdraftTxnChrgFeeType"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="ST#3220.2.1" author="Gopal.p">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="OverdraftTxnChrgReq" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.2.2" author="Gopal.p">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="OverdraftCalcChrg" type="Varchar(20)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.2.3" author="Gopal.p">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="OverdraftChrgAmtOrPerc" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.2.4" author="Gopal.p">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="OverdraftChrCalOn" type="Varchar(30)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.2.5" author="Gopal.p">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTFINANCEMAIN SET OVERDRAFTTXNCHRGREQ = 0 WHERE OVERDRAFTTXNCHRGREQ IS NULL;
+				UPDATE ADTFINANCEMAIN SET OVERDRAFTCHRGAMTORPERC = 0 WHERE OVERDRAFTCHRGAMTORPERC IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220.2.6" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_AFM_ODTXNCHRGREQ DEFAULT 0 FOR OVERDRAFTTXNCHRGREQ;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3220.2.7" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_AFM_ODCHRGAMTORPERC DEFAULT 0 FOR OVERDRAFTCHRGAMTORPERC;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220.2.6" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OverdraftTxnChrgReq" tableName="ADTFINANCEMAIN" defaultValue="0" />
+	</changeSet>
+	<changeSet id="ST#3220.2.7" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OverdraftChrgAmtOrPerc" tableName="ADTFINANCEMAIN" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#3220.3.1" author="Gopal.p">
+		<addColumn tableName="ADTPRESENTMENTDETAILS">
+			<column name="Charges" type="decimal(18,0)">
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.3.2" author="Gopal.p">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTPRESENTMENTDETAILS SET CHARGES = 0 WHERE CHARGES IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220.3.3" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTPRESENTMENTDETAILS ADD CONSTRAINT DF_APD_CHARGES DEFAULT 0 FOR CHARGES;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220.3.3" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="CHARGES" tableName="ADTPRESENTMENTDETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#3220.3.4" author="Gopal.p">
+		<addNotNullConstraint tableName="ADTPRESENTMENTDETAILS" columnName="Charges" columnDataType="decimal(18,0)" />
+	</changeSet>
+
+	<changeSet id="ST#3220.4.1" author="Gopal.p">
+		<addColumn tableName="ADTMANUALADVISE">
+			<column name="PresentmentId" type="bigint">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#3220.4.2" author="Gopal.p">
+		<addColumn tableName="ADTMANUALADVISE">
+			<column name="DueDate" type="DateTime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.4.3" author="Gopal.p">
+		<addColumn tableName="ADTMANUALADVISE">
+			<column name="Status" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.4.4" author="Gopal.p">
+		<addColumn tableName="ADTMANUALADVISE">
+			<column name="Reason" type="varchar(250)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3220.8.1" author="Gopal.p">
+		<createTable tableName="ADTPRESENTMENT_CHARGES">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PresentmentID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeType" type="char(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ActualFeeAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CGSTAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SGSTAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="UGSTAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IGSTAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CESSAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3220.8.2" author="Gopal.p">
+		<addPrimaryKey tableName="ADTPRESENTMENT_CHARGES" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_ADT_PC" />
+	</changeSet>
+
+	<changeSet id="ST#3220.8.3" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_DETAILID DEFAULT 0 FOR PRESENTMENTID;
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_SEQNO DEFAULT 0 FOR SEQNO;
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_ACTUALFEEAMOUNT DEFAULT 0 FOR ACTUALFEEAMOUNT;
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_CGSTAMOUNT DEFAULT 0 FOR CGSTAMOUNT;
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_SGSTAMOUNT DEFAULT 0 FOR SGSTAMOUNT;
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_UGSTAMOUNT DEFAULT 0 FOR UGSTAMOUNT;
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_IGSTAMOUNT DEFAULT 0 FOR IGSTAMOUNT;
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_CESSAMOUNT DEFAULT 0 FOR CESSAMOUNT;
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_FEEAMOUNT DEFAULT 0 FOR FEEAMOUNT;
+				ALTER TABLE ADTPRESENTMENT_CHARGES ADD CONSTRAINT DF_APC_ADVISEID DEFAULT 0 FOR ADVISEID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220.9" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PRESENTMENTID" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="SEQNO" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="ACTUALFEEAMOUNT" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="CGSTAMOUNT" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="SGSTAMOUNT" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="UGSTAMOUNT" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="IGSTAMOUNT" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="CESSAMOUNT" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="FEEAMOUNT" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="ADVISEID" tableName="ADTPRESENTMENT_CHARGES" defaultValue="0" />
+	</changeSet>
+
+	<!-- MMFSL changes merged from OD enhancements branch completed -->
+
+	<changeSet id="ST#3220.10" author="Gopal.p">
+		<createTable tableName="ADTOVERDRAFT_LOAN_LIMITS">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="Varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ActualLimit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MonthlyLimit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ActualLimitBal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MonthlyLimitBal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BlockLimit" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BlockType" type="Varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#3220.11" author="Gopal.p">
+		<addPrimaryKey tableName="ADTOVERDRAFT_LOAN_LIMITS" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_ADT_OLL" />
+	</changeSet>
+
+	<changeSet id="ST#1325.65" author="Saranya.s">
+		<addColumn tableName="ADTJVPostingEntry">
+			<column name="TDSAdjReq" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1325.65_pre" author="Saranya.S">
+		<sql>
+			<![CDATA[
+				UPDATE ADTJVPOSTINGENTRY SET TDSADJREQ = 0 where TDSADJREQ is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1325.65.1" author="Saranya.S" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TDSAdjReq" tableName="ADTJVPostingEntry" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1325.65.1" author="Saranya.S" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTJVPostingEntry ADD CONSTRAINT DF_ATDSAdjReq_MAL DEFAULT 0  FOR TDSAdjReq;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#11.1" author="kavya.n">
+		<addColumn tableName="AdtCustomerDocuments">
+			<column name="Id" type="bigInt" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#11.2" author="kavya.n">
+		<createTable tableName="AdtDocument_Status">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#11.3" author="kavya.n">
+		<addPrimaryKey tableName="AdtDocument_Status" columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="pk_AdtDocument_Status"/>
+	</changeSet>
+	
+	<changeSet id="ST#11.4" author="kavya.n">
+		<createTable tableName="AdtDocument_Status_Details">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocId" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)" />
+			<column name="Remarks" type="varchar(2000)" />
+			<column name="Covenants" type="varchar(200)" />
+			<column name="Processed" type="int"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#11.5" author="kavya.n">
+		<addPrimaryKey tableName="AdtDocument_Status_Details" columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="pk_AdtDocument_Status_Details"/>
+	</changeSet>
+	
+	<changeSet id="ST#474.1" author="savitri.n">
+		<createTable tableName="AdtFeeWaiverUploadHeader">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="UploadId" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="filelocation" type="varchar(250)"/>
+			<column name="filename" type="varchar(250)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="transactiondate" type="datetime">
+				<constraints nullable="false"/>
+			</column>		
+			<column name="totalrecords" type="decimal(10,0)" />
+			<column name="successcount" type="decimal(10,0)" />
+			<column name="failedcount" type="decimal(10,0)" />
+			<column name="module" type="varchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="filedownload" type="smallint" />
+			<column name="approveddate" type="datetime" />
+			<column name="makerid" type="bigint" />
+			<column name="approverid" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(50)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>   	
+	
+	<changeSet id="ST#474.1_1" author="savitri.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="MakerId" tableName="AdtFeeWaiverUploadHeader" defaultValue="0" />
+		<addDefaultValue columnName="ApproverId" tableName="AdtFeeWaiverUploadHeader" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#474.1_1" author="savitri.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTFEEWAIVERUPLOADHEADER ADD CONSTRAINT DF_AFWUH_MAKERID DEFAULT 0 FOR MAKERID;
+				ALTER TABLE ADTFEEWAIVERUPLOADHEADER ADD CONSTRAINT DF_AFWUH_APPROVERID DEFAULT 0 FOR APPROVERID;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#474.2" author="savitri.n">
+		<createTable tableName="AdtFeeWaiverUploads">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>		
+			<column name="WaiverId" type="bigint">
+				<constraints nullable="false"/>
+			</column>		
+			<column name="UploadId" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FinReference" type="varchar(20)"/>
+			<column name="FeeTypeCode" type="char(8)"/>
+			<column name="ValueDate" type="datetime" />	
+			<column name="WaivedAmount" type="decimal(18,0)" />
+			<column name="Remarks" type="varchar(100)" />
+			<column name="Status" type="char(1)" />
+			<column name="Reason" type="varchar(500)" />
+			<column name="RejectStage" type="varchar(50)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(50)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>	
+		
+	<changeSet id="ST#474.2_1" author="savitri.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WaivedAmount" tableName="AdtFeeWaiverUploads" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#474.2_1" author="savitri.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTFEEWAIVERUPLOADS ADD CONSTRAINT DF_AFWU_WAIVEDAMOUNT DEFAULT 0 FOR WAIVEDAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#700_pre" author="savitri.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtrmtfinancetypes');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#700" author="savitri.n">
+		<modifyDataType tableName="adtrmtfinancetypes" columnName="eligibilitymethods"
+			newDataType="varchar(500)" />
+	</changeSet>  
+	
+	<changeSet id="ST#697.2" author="Manoj.p">
+		<modifyDataType tableName="ADTRMTFINANCETYPES" columnName="RPYHIERARCHY" newDataType="VARCHAR(20)" />
+	</changeSet>	
+	
+	<changeSet id="ST#700_post" author="savitri.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtrmtfinancetypes');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#701.1" author="savitri.n">
+		<addColumn tableName="AdtFintaxdetail">
+			<column name="AvailCustTaxNum" type="boolean"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#701.2" author="savitri.n">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINTAXDETAIL SET AVAILCUSTTAXNUM = 0 where AVAILCUSTTAXNUM is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#701.3" author="savitri.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AvailCustTaxNum" tableName="AdtFintaxdetail" defaultValue="0"/>
+	</changeSet>
+
+	<changeSet id="ST#701.3" author="savitri.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINTAXDETAIL ADD CONSTRAINT DF_AFTD_AVAILCUSTTAXNUM DEFAULT 0  FOR AVAILCUSTTAXNUM;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#701.4" author="savitri.n">
+		<createTable tableName="AdtGST_Details">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="custId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="gstNumber" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Address" type="varchar(50)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="AddressLine1" type="varchar(50)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="AddressLine2" type="varchar(50)" />	
+			<column name="AddressLine3" type="varchar(50)" />	
+			<column name="AddressLine4" type="varchar(50)" />
+			<column name="CountryCode" type="char(2)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="StateCode" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Pincode" type="varchar(10)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="PincodeId" type="bigint" />
+			<column name="Tin" type="boolean" />
+			<column name="TinAddress" type="boolean" />
+			<column name="TinName" type="boolean" />
+			<column name="DefaultGST" type="boolean" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#701.5" author="savitri.n">
+		<addPrimaryKey tableName="AdtGST_Details" columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="pk_AdtGST_Details"/>
+	</changeSet>
+	
+	<changeSet id="ST#701.6" author="savitri.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO ADTGST_Details (AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE, ID, CUSTID, GSTNUMBER, ADDRESS, ADDRESSLINE1, ADDRESSLINE2, ADDRESSLINE3, ADDRESSLINE4, COUNTRYCODE, STATECODE, CITYCODE, PINCODE, PINCODEID, TIN, TINADDRESS, TINNAME, DEFAULTGST, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) SELECT AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE, ID, CUSTID, GSTNUMBER, GSTADDRESS, GSTADDRESS1, GSTADDRESS2, GSTADDRESS3, GSTADDRESS4, GSTCOUNTRY, GSTSTATE, GSTCITY, GSTPINCODE, GSTPINCODEID, GSTIN, GSTINADDRESS, GSTINNAME, GSTDEFAULT, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID FROM ADTGSTDETAILS;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#701.7" author="savitri.n">
+		<sql>
+			<![CDATA[
+				DROP TABLE ADTGSTDETAILS;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#354.1" author="kavya.n">
+	   <addColumn tableName="adtpresentmentdetails">
+		  <column name="UTR_Number" type="varchar(50)" />
+	   </addColumn>
+	</changeSet>
+	
+	<changeSet id="PSD#201401" author="Alekhya.T">
+		<modifyDataType tableName="ADTASSET_CLASS_SETUP_HEADER" columnName="repayhierarchy" newDataType="varchar(20)"/>
+	</changeSet>
+	
+	<changeSet id="1" author="Saikiran.n">
+		<addColumn tableName="AdtSecusers">
+			<column name="Deleted" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+</databaseChangeLog>

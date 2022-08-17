@@ -160,7 +160,14 @@
 													<label id="label_FinanceMainDialog_CustomerBankAcctNumbert" value="${c:l('label_FinanceMainDialog_CustomerBankAcctNumber.value')}"/>
 													<extendedcombobox id="customerBankAcct"/>
 												</row>
-												<row>
+												<row id="row_Isra" visible="false">
+													<label id="label_FinanceMainDialog_ISRA" value="${c:l('label_FinanceMainDialog_ISRA.value')}" />
+													<hbox id="hbox_ISRA">
+														<space spacing="2px" />
+														<checkbox id="isra" checked="false" />
+													</hbox>
+												</row>
+												<row  visible="false">
 													<label id="label_FinanceMainDialog_TDSApplicable" value="${c:l('label_FinanceMainDialog_TDSApplicable.value')}" />
 													<hbox id="hbox_tdsApplicable">
 														<space spacing="2px" />
@@ -309,6 +316,11 @@
 													<hbox>
 														<space id="space_ManualSchedule" spacing="2px" />
 														<checkbox id="manualSchedule" />
+													</hbox>
+													<label id="label_FinanceMainDialog_ScheduleType" value="${c:l('label_FinanceMainDialog_ScheduleType.value')}" />
+													<hbox>
+														<space id="space_manualSchdType" spacing="2px" />
+														<combobox id="manualSchdType" />
 													</hbox>
 												</row>
 												<row>

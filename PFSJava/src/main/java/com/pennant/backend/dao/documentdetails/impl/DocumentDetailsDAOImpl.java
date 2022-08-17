@@ -423,10 +423,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 				return dd;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in DocumentDetails{} for the specified DocId >> {}", id);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
 	}
 
 	@Override

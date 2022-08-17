@@ -124,7 +124,11 @@ public class AccountingEvent {
 	public static final String PART_CANCELATION = "PARTCAN";
 	public static final String NLRCPT = "NLRCPT";
 	public static final String MANSUB = "MANSUB";
+	public static final String CBRET = "CBRET";
+	public static final String COL2CSH = "COL2CSH";
+	public static final String CSH2BANK = "CSH2BANK";
 
+	public static final String NPACHNG = "NPACHNG";
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";
 	public static final String EVENTCTG_OVERDRAFT = "O";

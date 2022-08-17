@@ -585,7 +585,7 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		 */
 		if (isWorkFlowEnabled()) {
 
-			StringBuilder fileLocation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
+			StringBuilder fileLocation = new StringBuilder("/WEB-INF/pages/Finance/Cd/");
 			/*
 			 * if screen code is quick data entry (QDE) navigate to QDE screen otherwise navigate to Detail data entry
 			 * screen

@@ -48,11 +48,13 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
@@ -78,8 +80,8 @@ import com.pennant.backend.model.limit.LimitStructureDetail;
 import com.pennant.backend.model.limit.LimitTransactionDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerGroupService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -110,7 +112,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	private LimitDetailDAO limitDetailDAO;
 	private LimitTransactionDetailsDAO limitTransactionDetailDAO;
 	private LimitStructureDetailDAO limitStructureDetailDAO;
-	private CustomerDetailsService customerDetailsService;
 	private CurrencyService currencyService;
 	private CustomerGroupService customerGroupService;
 	private LimitManagement limitManagement;
@@ -125,6 +126,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	protected long userID;
 	private String userLangauge;
 	private NotificationService notificationService;
+	private CustomerDAO customerDAO;
+	private CustomerDataService customerDataService;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -485,7 +488,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			notification.setTemplateCode(NotificationConstants.LIMITHEADER_SUCCESS_NOTIFICATION_SMS);
 		}
 
-		CustomerDetails customerDetails = customerDetailsService.getCustomerChildDetails(imitHeader.getCustomerId(),
+		CustomerDetails customerDetails = customerDataService.getCustomerChildDetails(imitHeader.getCustomerId(),
 				"_AView");
 		if (customerDetails == null) {
 			return;
@@ -1567,7 +1570,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		// validate customer CIF
 		if (StringUtils.isNotBlank(custCIF)) {
-			Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
+			Customer customer = customerDAO.getCustomerByCIF(custCIF, "");
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custCIF;
@@ -1855,10 +1858,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		this.limitStructureDetailDAO = limitStructureDetailDAO;
 	}
 
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public void setCustomerGroupService(CustomerGroupService customerGroupService) {
 		this.customerGroupService = customerGroupService;
 	}
@@ -1914,4 +1913,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
+	}
+
 }

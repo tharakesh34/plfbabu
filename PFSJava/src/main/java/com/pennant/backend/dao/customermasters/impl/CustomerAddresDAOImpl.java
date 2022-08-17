@@ -524,4 +524,21 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 
 		return null;
 	}
+
+	@Override
+	public String getCustHighPriorityAddr(final long id) {
+		String sql = "Select CustAddrProvince From CustomerAddresses Where CustID = ? and CustAddrPriority = ?";
+
+		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, id, priority);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }

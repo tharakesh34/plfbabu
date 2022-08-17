@@ -27,7 +27,9 @@ package com.pennant.webui.finance.manualadvise;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +47,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
@@ -55,6 +58,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
@@ -64,9 +68,11 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -103,6 +109,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -186,6 +193,13 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private String selectMethodName = "onSelectTab";
 	private boolean isAccountingExecuted = false;
 
+	private Label label_Reason = null;
+	private Space space_Reason = null;
+	private Textbox reason = null;
+	protected A userActivityLog;
+
+	private String module = null;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -233,6 +247,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			BeanUtils.copyProperties(this.manualAdvise, manualAdvise);
 			this.manualAdvise.setBefImage(manualAdvise);
 
+			if (arguments.containsKey("module")) {
+				this.module = (String) arguments.get("module");
+			}
 			// Render the page and display the data.
 			doLoadWorkFlow(this.manualAdvise.isWorkflow(), this.manualAdvise.getWorkflowId(),
 					this.manualAdvise.getNextTaskId());
@@ -287,6 +304,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		this.sequence.setMaxlength(10);
 		this.remarks.setMaxlength(100);
+		this.reason.setMaxlength(250);
 		this.hbox_Sequence.setVisible(false);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.postDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -481,6 +499,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		String taxComp = (String) this.feeTypeID.getAttribute("TaxComponent");
 
 		if (taxApplicable) {
+			tabpanelBasicdetails.setHeight("100%");
 			this.gb_GSTDetails.setVisible(true);
 			tabpanelBasicdetails.setHeight("100%");
 			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinID(), "", false);
@@ -707,11 +726,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				PennantConstants.defaultCCYDecPos));
 		this.remarks.setValue(aManualAdvise.getRemarks());
 
+		Date appDate = SysParamUtil.getAppDate();
 		if (aManualAdvise.isNewRecord()) {
-			// this.finReference.setDescription("");
 			this.feeTypeID.setDescription("");
-			this.valueDate.setValue(DateUtility.getAppDate());
-			this.postDate.setValue(DateUtility.getAppDate());
+			this.valueDate.setValue(appDate);
+			this.postDate.setValue(appDate);
 
 		} else {
 			if (aManualAdvise.getFeeTypeCode() != null) {
@@ -733,6 +752,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} else {
 			this.adviseMovements.setVisible(false);
 		}
+
+		if (this.reason.isVisible()) {
+			this.reason.setValue(manualAdvise.getReason());
+		}
+
 		this.recordStatus.setValue(manualAdvise.getRecordStatus());
 
 		calculateGST();
@@ -743,11 +767,50 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				|| (this.enqiryModule)) {
 			com.pennant.backend.model.finance.FeeType feeType = manualAdvise.getFeeType();
 			if (feeType != null && feeType.isDueAccReq()) {
-				accountsetId = feeType.getDueAccSet();
-				appendAccountingDetailTab(manualAdvise, true);
+				if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+					if (!(manualAdvise.getValueDate().compareTo(appDate) > 0)) {
+						appendAccountingDetailTab(manualAdvise, true);
+					}
+				} else {
+					appendAccountingDetailTab(manualAdvise, true);
+				}
 			}
 		}
 		appendDocumentDetailTab();
+		if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+			if (this.enqiryModule) {
+				this.userActivityLog.setVisible(true);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$userActivityLog(Event event) throws Exception {
+		logger.debug(Literal.ENTERING + event.toString());
+		doUserActivityLog();
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	private void doUserActivityLog() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		map.put("label_FinanceMainDialog_FinType.value", financeMain.getFinType());
+		map.put("label_FinanceMainDialog_FinCcy.value", financeMain.getFinCcy());
+
+		if (StringUtils.isNotEmpty(financeMain.getScheduleMethod())) {
+			map.put("label_FinanceMainDialog_ScheduleMethod.value", financeMain.getScheduleMethod());
+		} else {
+			map.put("label_FinanceMainDialog_ScheduleMethod.value", "");
+		}
+		map.put("label_FinanceMainDialog_ProfitDaysBasis.value", financeMain.getProfitDaysBasis());
+		map.put("label_FinanceMainDialog_FinReference.value", financeMain.getFinReference());
+		map.put("label_FinanceMainDialog_CustShrtName.value", financeMain.getLovDescCustShrtName());
+
+		map.put("adviseID", manualAdvise.getAdviseID());
+
+		doShowActivityLog(financeMain.getFinReference(), map);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -921,6 +984,22 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} else {
 			aManualAdvise.setDocumentDetails(aManualAdvise.getDocumentDetails());
 		}
+		// Reason
+		try {
+			if (this.reason.isVisible()) {
+				aManualAdvise.setReason(this.reason.getValue());
+				aManualAdvise.setStatus(PennantConstants.MANUALADVISE_CANCEL);
+			} else {
+				aManualAdvise.setReason(null);
+				aManualAdvise.setStatus(null);
+			}
+			if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)) {
+				aManualAdvise.setStatus(PennantConstants.MANUALADVISE_MAINTAIN);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1004,6 +1083,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 					Labels.getLabel("label_ManualAdviseDialog_ValueDate.value"), true, null, null, true));
 		}
 
+		if (this.reason.isVisible()) {
+			this.reason.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_Reason.value"), null, true));
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1022,6 +1105,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.waivedAmount.setConstraint("");
 		this.remarks.setConstraint("");
 		this.valueDate.setConstraint("");
+
+		if (this.reason.isVisible()) {
+			this.reason.setConstraint("");
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1134,6 +1221,35 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 
+		if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)) {
+			if (!isReadOnly("ManualAdviseDialog_Reason")) {
+				readOnlyComponent(!isReadOnly("ManualAdviseDialog_FeeTypeID"), this.feeTypeID);
+				readOnlyComponent(!isReadOnly("ManualAdviseDialog_AdviseType"), this.adviseType);
+				readOnlyComponent(!isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
+				readOnlyComponent(!isReadOnly("ManualAdviseDialog_PaidAmount"), this.paidAmount);
+				readOnlyComponent(!isReadOnly("ManualAdviseDialog_WaivedAmount"), this.waivedAmount);
+				readOnlyComponent(!isReadOnly("ManualAdviseDialog_Sequence"), this.sequence);
+				readOnlyComponent(!isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
+				readOnlyComponent(!isReadOnly("ManualAdviseDialog_Remarks"), this.remarks);
+			}
+			label_Reason.setVisible(true);
+			space_Reason.setVisible(true);
+			reason.setVisible(true);
+			if (!enqiryModule) {
+				readOnlyComponent(isReadOnly("ManualAdviseDialog_Reason"), this.reason);
+			}
+		} else {
+			label_Reason.setVisible(false);
+			space_Reason.setVisible(false);
+			reason.setVisible(false);
+		}
+		if (enqiryModule && PennantConstants.MANUALADVISE_CANCEL.equals(manualAdvise.getStatus())) {
+			label_Reason.setVisible(true);
+			space_Reason.setVisible(true);
+			reason.setVisible(true);
+			readOnlyComponent(true, this.reason);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1152,6 +1268,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		readOnlyComponent(true, this.remarks);
 		readOnlyComponent(true, this.valueDate);
 		readOnlyComponent(true, this.postDate);
+
+		if (this.reason.isVisible()) {
+			readOnlyComponent(true, this.reason);
+		}
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1194,24 +1314,26 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		boolean isNew = false;
 
 		doSetValidation();
+
+		if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+			if (validateValueDate()) {
+				return;
+			}
+		}
 		doWriteComponentsToBean(aManualAdvise);
 
 		// Accounting Details Tab Addition
 		if (!StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
 			com.pennant.backend.model.finance.FeeType feeType = manualAdvise.getFeeType();
 			if (feeType != null && feeType.isDueAccReq()) {
-				boolean validate = false;
-				validate = validateAccounting(validate);
-				// Accounting Details Validations
-				if (validate) {
-					if (!isAccountingExecuted) {
-						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
-						return;
+				if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+					if (!(manualAdvise.getValueDate().compareTo(SysParamUtil.getAppDate()) > 0)) {
+						if (validateAccounting()) {
+							return;
+						}
 					}
-					if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save")
-							&& accountingDetailDialogCtrl.getDisbCrSum()
-									.compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
-						MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
+				} else {
+					if (validateAccounting()) {
 						return;
 					}
 				}
@@ -1264,6 +1386,67 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private boolean validateAccounting() {
+		boolean validate = false;
+		validate = validateAccounting(validate);
+		// Accounting Details Validations
+		if (validate) {
+			if (!isAccountingExecuted) {
+				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+				return true;
+			}
+			if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") && accountingDetailDialogCtrl
+					.getDisbCrSum().compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
+				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean validateValueDate() {
+		if (PennantConstants.RCD_STATUS_RESUBMITTED.equals(this.userAction.getSelectedItem().getValue())
+				|| PennantConstants.RCD_STATUS_REJECTED.equals(this.userAction.getSelectedItem().getValue())
+				|| PennantConstants.RCD_STATUS_CANCELLED.equals(this.userAction.getSelectedItem().getValue())) {
+			return false;
+		}
+
+		Date valueDate = this.valueDate.getValue();
+
+		if (DateUtil.compare(this.valueDate.getValue(), financeMain.getMaturityDate()) >= 0
+				&& financeMain.isFinIsActive()) {
+			if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)) {
+				MessageUtil.showError(
+						Labels.getLabel("label_ManualAdviseDialog_Cancel_DueDateCrossedMaturityInMtn.ErrMsg"));
+				return true;
+			} else if (PennantConstants.MANUALADVISE_CREATE_MODULE.equals(this.module)) {
+				MessageUtil.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_DueDateCrossedMaturity.ErrMsg"));
+				return true;
+			}
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+		if (DateUtil.compare(valueDate, appDate) != 0 && !financeMain.isFinIsActive()) {
+			MessageUtil.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_LoanClosed.ErrMsg"));
+			return true;
+		}
+
+		if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)
+				&& DateUtil.compare(valueDate, appDate) <= 0) {
+			MessageUtil.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_BackDate.ErrMsg"));
+			return true;
+		}
+
+		if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module) && appDate.compareTo(valueDate) >= 0) {
+			MessageUtil
+					.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_DueDateCrossedBeforeApprove.ErrMsg"));
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

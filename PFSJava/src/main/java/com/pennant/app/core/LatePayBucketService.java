@@ -54,6 +54,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.util.ProductUtil;
 
 public class LatePayBucketService extends ServiceHelper {
 
@@ -142,6 +143,11 @@ public class LatePayBucketService extends ServiceHelper {
 			totalPaid = totalPaid.add(excessBalAmt);
 		}
 
+		int odGrcDays = 0;
+		if (ProductUtil.isOverDraft(fm)) {
+			odGrcDays = overdrafLoanService.getGraceDays(fm);
+		}
+
 		// reallocate and find the first due date.
 		for (Entry<Date, BigDecimal> entry : reallocationMap.entrySet()) {
 			if (totalPaid.compareTo(entry.getValue()) >= 0) {
@@ -149,7 +155,7 @@ public class LatePayBucketService extends ServiceHelper {
 			} else {
 
 				if (firstDuedate == null) {
-					firstDuedate = entry.getKey();
+					firstDuedate = DateUtil.addDays(entry.getKey(), odGrcDays);
 				}
 				netSchdDue = netSchdDue.add(entry.getValue().subtract(totalPaid));
 				totalPaid = BigDecimal.ZERO;
@@ -162,7 +168,12 @@ public class LatePayBucketService extends ServiceHelper {
 			if (ImplementationConstants.LP_MARK_FIRSTDAY && eodEvent) {
 				odtCaldate = DateUtil.addDays(valueDate, 1);
 			}
-			newCurODDays = DateUtil.getDaysBetween(firstDuedate, odtCaldate);
+
+			if (odtCaldate.compareTo(firstDuedate) > 0) {
+				newCurODDays = DateUtil.getDaysBetween(firstDuedate, odtCaldate);
+			} else {
+				newCurODDays = 0;
+			}
 		}
 
 		// calculate DueBucket

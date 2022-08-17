@@ -188,6 +188,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.bankBranchID.setDescColumn("");
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "IFSC" });
+		this.bankBranchID.setFilterColumns(new String[] { "IFSC", "MICR" });
 
 		this.accHolderName.setMaxlength(50);
 		this.phoneNumber.setMaxlength(10);

@@ -42,6 +42,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -222,9 +223,8 @@ public class FinanceDataDefaulting {
 		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup) && StringUtils.isBlank(finBranch)) {
 			CustomerDetails cd = fd.getCustomerDetails();
 			Customer customer = cd.getCustomer();
-			String custBranch = customer.getCustDftBranch();
-			finBranch = custBranch;
-			fm.setFinBranch(custBranch);
+			finBranch = customer.getCustDftBranch();
+			fm.setFinBranch(finBranch);
 		}
 
 		if (StringUtils.isNotBlank(finBranch)) {
@@ -672,6 +672,7 @@ public class FinanceDataDefaulting {
 		// set default values from financeType
 		fm.setAllowGrcPftRvw(finType.isFinGrcIsRvwAlw());
 		fm.setAllowGrcCpz(finType.isFinGrcIsIntCpz());
+		fm.setEndGrcPeriodAftrFullDisb(finType.isGrcPeriodAftrFullDisb());
 
 		// Grace Rate Type
 		if (StringUtils.isBlank(fm.getGrcRateBasis())) {
@@ -914,7 +915,8 @@ public class FinanceDataDefaulting {
 
 		if (fm.isAllowRepayRvw()) {
 			if (StringUtils.isBlank(fm.getRepayRvwFrq()) && isValidRpyFrq) {
-				if (!StringUtils.startsWith(finType.getFinRvwFrq(), FrequencyCodeTypes.FRQ_DAILY)) {
+				if (!StringUtils.startsWith(finType.getFinRvwFrq(), FrequencyCodeTypes.FRQ_DAILY)
+						&& SysParamUtil.isAllowed(SMTParameterConstants.RESET_FREQUENCY_DATES_REQ)) {
 					String frq = new StringBuilder(5).append(finType.getFinRvwFrq().substring(0, 3))
 							.append(fm.getRepayFrq().substring(3, 5)).toString();
 					fm.setRepayRvwFrq(frq);

@@ -449,6 +449,11 @@
 														<uppercasebox id="transactionRef" width="180px" disabled="true" />
 													</hbox>
 												</row>
+												<row id="row_CustomerAccount" visible="false">
+													<label id="label_ReceiptDialog_CustAccount"
+														value="${c:l('label_ReceiptDialog_CustAccount.value')}" />
+													<extendedcombobox id="customerBankAcct" width="180px" />
+												</row>
 												<row id="row_ChequeAcNo" visible="false">
 													<label id="label_ReceiptDialog_ChequeAccountNo" value="${c:l('label_ReceiptDialog_ChequeAccountNo.value')}" />
 													<accountSelectionBox id="chequeAcNo" width="180px" />
@@ -487,7 +492,8 @@
 
 												<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}" align="right" sort="false"
 													hflex="min" />
-
+												<listheader
+													label="${c:l('listheader_ReceiptDialog_WaivedAmount.label')}" align="right" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 									</groupbox>

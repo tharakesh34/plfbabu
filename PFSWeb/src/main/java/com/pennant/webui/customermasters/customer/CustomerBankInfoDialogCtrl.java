@@ -110,6 +110,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -3288,11 +3289,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				this.bankBranchID.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_CustomerBankInfoDialog_BankBranchID.value"), null, true));
 			}
+		}
 
-			if (!this.accountHolderName.isReadonly()) {
-				this.accountHolderName.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_CustomerBankInfoDialog_AccountHolderName.value"), null, true));
-			}
+		if (!this.accountHolderName.isReadonly()) {
+			this.accountHolderName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerBankInfoDialog_AccountHolderName.value"),
+							PennantRegularExpressions.REGEX_ALPHA_SPACE, this.addToBenficiary.isChecked()));
 		}
 		if (!this.phoneNumber.isReadonly()) {
 			this.phoneNumber.setConstraint(
@@ -3304,6 +3306,17 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		if (!this.ccLimit.isReadonly()) {
 			this.ccLimit.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_CustomerBankInfoDialog_CCLimit.value"), null, this.ccLimit.isMandatory()));
+		}
+
+		if (!this.toDate.isDisabled()) {
+			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerBankInfoDialog_ToDate.value"),
+					false, this.fromDate.getValue(), null, false));
+		}
+
+		if (!this.fromDate.isDisabled()) {
+			this.fromDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerBankInfoDialog_FromDate.value"),
+							false, null, this.toDate.getValue(), false));
 		}
 
 		logger.debug("Leaving");

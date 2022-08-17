@@ -109,6 +109,7 @@ public class JVPostingEntry extends AbstractWorkflowEntity {
 	private JVPostingEntry befImage;
 	private LoggedInUser userDetails;
 	private String finSourceID;
+	private boolean tDSAdjReq;
 
 	public JVPostingEntry() {
 		super();
@@ -600,6 +601,14 @@ public class JVPostingEntry extends AbstractWorkflowEntity {
 
 	public void setFinSourceID(String finSourceID) {
 		this.finSourceID = finSourceID;
+	}
+
+	public boolean isTDSAdjReq() {
+		return tDSAdjReq;
+	}
+
+	public void setTDSAdjReq(boolean tDSAdjReq) {
+		this.tDSAdjReq = tDSAdjReq;
 	}
 
 }

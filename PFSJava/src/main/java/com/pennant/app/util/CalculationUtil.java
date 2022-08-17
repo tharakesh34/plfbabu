@@ -48,9 +48,12 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.finance.AdviseDueTaxDetail;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
@@ -881,6 +884,9 @@ public class CalculationUtil implements Serializable {
 	}
 
 	public static BigDecimal roundAmount(BigDecimal amount, String roundingMode, int roundingTarget) {
+		// Since we are getting more than 9 decimals,As per the product we are considering the 9 decimals only.
+		amount = amount.setScale(9, RoundingMode.HALF_UP);
+
 		if (StringUtils.isBlank(roundingMode)) {
 			roundingMode = RoundingMode.HALF_DOWN.name();
 		}
@@ -1066,5 +1072,62 @@ public class CalculationUtil implements Serializable {
 		totalPerc = totalPerc.add(rad.getPercCESS());
 
 		return totalPerc;
+	}
+	
+	public static BigDecimal getTotalPaidGST(ManualAdviseMovements mam) {
+		BigDecimal totPaidGSTAmount = BigDecimal.ZERO;
+		totPaidGSTAmount = totPaidGSTAmount.add(mam.getPaidCGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(mam.getPaidSGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(mam.getPaidUGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(mam.getPaidIGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(mam.getPaidCESS());
+
+		return totPaidGSTAmount;
+	}
+
+	public static BigDecimal getTotalWaivedGST(ManualAdviseMovements mam) {
+		BigDecimal totWaivedGSTAmount = BigDecimal.ZERO;
+		totWaivedGSTAmount = totWaivedGSTAmount.add(mam.getWaivedCGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(mam.getWaivedSGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(mam.getWaivedUGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(mam.getWaivedIGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(mam.getWaivedCESS());
+
+		return totWaivedGSTAmount;
+	}
+
+	public static BigDecimal getTotalGST(AdviseDueTaxDetail detail) {
+		BigDecimal totPaidGSTAmount = BigDecimal.ZERO;
+		totPaidGSTAmount = totPaidGSTAmount.add(detail.getCGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(detail.getSGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(detail.getUGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(detail.getIGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(detail.getCESS());
+
+		return totPaidGSTAmount;
+	}
+
+	public static BigDecimal getPenaltyBalance(FinODDetails od) {
+		BigDecimal penaltyBalance = BigDecimal.ZERO;
+		BigDecimal lpiBalance = BigDecimal.ZERO;
+
+		BigDecimal peanltyAmt = od.getTotPenaltyAmt();
+		BigDecimal peanltyReceived = BigDecimal.ZERO;
+		peanltyReceived = peanltyReceived.add(od.getTotPenaltyPaid());
+		peanltyReceived = peanltyReceived.add(od.getTotWaived());
+
+		BigDecimal lpiAmt = od.getLPIAmt();
+		BigDecimal lpiReceived = BigDecimal.ZERO;
+		lpiReceived = lpiReceived.add(od.getLPIPaid());
+		lpiReceived = lpiReceived.add(od.getLPIWaived());
+
+		penaltyBalance = penaltyBalance.add(peanltyAmt);
+		penaltyBalance = penaltyBalance.subtract(peanltyReceived);
+
+		lpiBalance = lpiBalance.add(lpiAmt);
+		lpiBalance = lpiBalance.subtract(lpiReceived);
+
+		return penaltyBalance.add(lpiBalance);
+
 	}
 }

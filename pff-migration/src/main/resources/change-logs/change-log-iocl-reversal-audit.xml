@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Gopal.p" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.1" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO ADTRMTFINANCETYPES FT 
+				USING (SELECT AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE, FINTYPE, TXNCHRGREQ, TXNCHRGCODE, EXTNSNODGRACEDAYS, COLLECCHRGCODEID FROM ADTRMTFINANCETYPES
+				) T1 ON (T1.FINTYPE = FT.FINTYPE AND T1.AUDITID = FT.AUDITID AND T1.AUDITDATE = FT.AUDITDATE AND T1.AUDITSEQ = FT.AUDITSEQ AND T1.AUDITIMAGE = FT.AUDITIMAGE)
+				WHEN MATCHED THEN UPDATE SET 
+					OVERDRAFTTXNCHRGREQ = T1.TXNCHRGREQ
+					, OVERDRAFTTXNCHRGFEETYPE = T1.TXNCHRGCODE
+					, OVERDRAFTEXTGRACEDAYS = T1.EXTNSNODGRACEDAYS
+					, OVERDRAFTCOLCHRGFEETYPE = T1.COLLECCHRGCODEID
+					, OVERDRAFTCOLAMT = T1.COLLECCHRGCODEID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.2" author="Gopal.p">
+		<dropColumn tableName="ADTRMTFINANCETYPES" columnName="TXNCHRGREQ" />
+		<dropColumn tableName="ADTRMTFINANCETYPES" columnName="TxnChrgCode" />
+		<dropColumn tableName="ADTRMTFINANCETYPES" columnName="ExtnsnODGraceDays" />
+		<dropColumn tableName="ADTRMTFINANCETYPES" columnName="CollecChrgCodeId" />
+		<dropColumn tableName="ADTRMTFINANCETYPES" columnName="CollectionAmt" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.3" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO ADTFINANCEMAIN FM
+				USING (SELECT AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE, FINREFERENCE, TXNCHRGREQ, ODCALCULATEDCHARGE, ODCHARGEAMTORPERC, ODCHARGECALON FROM ADTFINANCEMAIN
+				) T1 ON (T1.FINREFERENCE = FM.FINREFERENCE AND T1.AUDITID = FM.AUDITID AND T1.AUDITDATE = FM.AUDITDATE AND T1.AUDITSEQ = FM.AUDITSEQ AND T1.AUDITIMAGE = FM.AUDITIMAGE)
+				WHEN MATCHED THEN UPDATE SET 
+					FM.OVERDRAFTTXNCHRGREQ = T1.TXNCHRGREQ, 
+					FM.OVERDRAFTCALCCHRG = T1.ODCALCULATEDCHARGE, 
+					FM.OVERDRAFTCHRGAMTORPERC = T1.ODCHARGEAMTORPERC, 
+					FM.OVERDRAFTCHRCALON = T1.ODCHARGECALON;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.4" author="Gopal.p">
+		<dropColumn tableName="ADTFINANCEMAIN" columnName="TxnChrgReq" />
+		<dropColumn tableName="ADTFINANCEMAIN" columnName="ODCALCULATEDCHARGE" />
+		<dropColumn tableName="ADTFINANCEMAIN" columnName="ODCHARGEAMTORPERC" />
+		<dropColumn tableName="ADTFINANCEMAIN" columnName="ODCHARGECALON" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.5" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO ADTMANUALADVISE MA 
+				USING (SELECT  AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE, ADVISEID, PRESENTMENTDETAILID FROM ADTMANUALADVISE) T1 ON (T1.ADVISEID = MA.ADVISEID  AND T1.AUDITID = MA.AUDITID AND T1.AUDITDATE = MA.AUDITDATE AND T1.AUDITSEQ = MA.AUDITSEQ AND T1.AUDITIMAGE = MA.AUDITIMAGE)
+				WHEN MATCHED THEN UPDATE SET 
+				MA.PRESENTMENTID = T1.PRESENTMENTDETAILID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3220_100.6" author="Gopal.p">
+		<dropColumn tableName="ADTMANUALADVISE" columnName="PresentmentDetailId" />
+	</changeSet>
+
+	<changeSet id="ST#3220_100.7" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO ADTOVERDRAFT_LOAN_LIMITS (AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE, ID, FINID, FINREFERENCE, BLOCKLIMIT, BLOCKTYPE, VERSION, CREATEDBY, CREATEDON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTUALLIMIT, MONTHLYLIMIT, ACTUALLIMITBAL, MONTHLYLIMITBAL) SELECT AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE, ID, NULL, FINREFERENCE, BLOCKLIMIT, BLOCKTYPE, VERSION, LASTMNTBY, LASTMNTON, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, 0, 0, 0, 0 FROM ADTODLIMITHISTORYHEADER;
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#3220_100.8" author="Gopal.p">
+		<dropTable tableName="ADTODLIMITHISTORYHEADER" />
+		<dropTable tableName="ADTODLIMITHISTORYDETAIL" />
+	</changeSet>
+
+</databaseChangeLog>

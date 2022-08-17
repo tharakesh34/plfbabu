@@ -40,4 +40,8 @@ public interface LimitSoapService {
 
 	@WebResult(name = "limitSetup")
 	public WSReturnStatus unBlockLimit(@WebParam(name = "limitSetup") LimitHeader limitHeader) throws ServiceException;
+
+	@WebResult(name = "limitSetup")
+	public LimitHeader getInstitutionLimitSetup(@WebParam(name = "limitSetup") LimitHeader limitHeader)
+			throws ServiceException;
 }

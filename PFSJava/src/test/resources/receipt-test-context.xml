@@ -86,7 +86,7 @@
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
-		<property name="repayPostingUtil" ref="repayPostingUtil" />
+		<property name="repaymentPostingsUtil" ref="repaymentPostingsUtil" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />

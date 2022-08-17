@@ -23,6 +23,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -37,6 +38,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
+import com.pennant.webui.finance.additional.RestructureDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -87,6 +89,8 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	private boolean newRecord = false;
 	private boolean newFinStep = false;
 	private StepDetailDialogCtrl stepDetailDialogCtrl;
+	private RestructureDialogCtrl restructureDialogCtrl;
+
 	private List<FinanceStepPolicyDetail> finStepPolicyDetails;
 	private String moduleType = "";
 	private String userRole = "";
@@ -94,6 +98,8 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	private double totTenorPerc = 0.00;
 	private boolean alwDeletion = true;
 	private boolean alwManualStep = false;
+	private boolean fromRestructure = false;
+
 	private int rpySteps = 0;
 	private int grcSteps = 0;
 
@@ -101,6 +107,9 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	private FinScheduleData finScheduleData = null;
 	private FinanceMain financeMain = null;
 	private boolean isEnquiry = false;
+	private BigDecimal amount = BigDecimal.ZERO;
+	private int noOfInstallments = 0;
+	private Boolean IsNonStepLoan = false;
 
 	/**
 	 * default constructor.<br>
@@ -174,6 +183,10 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 			this.grcSteps = (int) arguments.get("grcSteps");
 		}
 
+		if (arguments.containsKey("fromRestructure")) {
+			this.fromRestructure = (boolean) arguments.get("fromRestructure");
+		}
+
 		if (arguments.containsKey("stepDetailDialogCtrl")) {
 
 			setStepDetailDialogCtrl((StepDetailDialogCtrl) arguments.get("stepDetailDialogCtrl"));
@@ -189,6 +202,22 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "FinStepPolicyDetailDialog");
 			}
+		} else if (arguments.containsKey("restructureDialogCtrl")) {
+
+			setRestructureDialogCtrl((RestructureDialogCtrl) arguments.get("restructureDialogCtrl"));
+			setNewFinStep(true);
+
+			if (arguments.containsKey("newRecord")) {
+				setNewRecord((Boolean) arg.get("newRecord"));
+			} else {
+				setNewRecord(getFinanceStepPolicyDetail().isNewRecord());
+			}
+
+			this.financeStepPolicyDetail.setWorkflowId(0);
+			if (arguments.containsKey("roleCode") && !isEnquiry) {
+				userRole = arguments.get("roleCode").toString();
+				getUserWorkspace().allocateRoleAuthorities(userRole, "FinStepPolicyDetailDialog");
+			}
 		}
 
 		doLoadWorkFlow(this.financeStepPolicyDetail.isWorkflow(), this.financeStepPolicyDetail.getWorkflowId(),
@@ -197,6 +226,18 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "FinStepPolicyDetailDialog");
+		}
+
+		if (arguments.containsKey("Amount")) {
+			this.amount = (BigDecimal) arguments.get("Amount");
+		}
+
+		if (arguments.containsKey("NoOfInstallments")) {
+			this.noOfInstallments = (int) arguments.get("NoOfInstallments");
+		}
+
+		if (arguments.containsKey("IsNonStepLoan")) {
+			this.IsNonStepLoan = (Boolean) arguments.get("IsNonStepLoan");
 		}
 		/* set components visible dependent of the users rights */
 		doCheckRights();
@@ -214,7 +255,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		logger.debug("Entering");
 
 		// Empty sent any required attributes
-		this.stepNumber.setMaxlength(2);
+		this.stepNumber.setMaxlength(3);
 		this.stepNumber.setStyle("text-align:right;");
 		this.stepFinTenor.setStyle("text-align:right;");
 		this.installments.setStyle("text-align:right;");
@@ -252,11 +293,18 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		this.btnEdit.setVisible(false);
 
 		if (alwDeletion) {
-			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinStepPolicyDetailDialog_btnDelete"));
+			if (getFinanceStepPolicyDetail().isDelete()) {
+				this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinStepPolicyDetailDialog_btnDelete"));
+			} else {
+				this.btnDelete.setVisible(false);
+			}
 		} else {
 			this.btnDelete.setVisible(false);
 		}
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinStepPolicyDetailDialog_btnSave"));
+		if (fromRestructure) {
+			this.btnSave.setVisible(true);
+		}
 		this.btnCancel.setVisible(false);
 		logger.debug(Literal.LEAVING);
 	}
@@ -350,8 +398,12 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	public void doWriteBeanToComponents(FinanceStepPolicyDetail aFinStepPolicy) {
 		logger.debug("Entering");
 		if (StringUtils.equals(aFinStepPolicy.getStepSpecifier(), PennantConstants.STEP_SPECIFIER_REG_EMI)) {
-			this.stepFinTenor
-					.setValue(getStepDetailDialogCtrl().getFinScheduleData().getFinanceMain().getNumberOfTerms());
+			if (getStepDetailDialogCtrl() != null) {
+				this.stepFinTenor
+						.setValue(getStepDetailDialogCtrl().getFinScheduleData().getFinanceMain().getNumberOfTerms());
+			} else {
+				this.stepFinTenor.setValue(3);
+			}
 		} else {
 			this.stepFinTenor.setValue(getStepDetailDialogCtrl().getFinScheduleData().getFinanceMain().getGraceTerms());
 		}
@@ -389,6 +441,12 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 			wve.add(we);
 		}
 		try {
+			if (fromRestructure && IsNonStepLoan && this.stepNumber.intValue() == 1
+					&& this.installments.getValue() != noOfInstallments) {
+				throw new WrongValueException(this.installments,
+						Labels.getLabel("Restructure_OverdueStep_Installments", new Object[] { noOfInstallments }));
+			}
+
 			aFinStepPolicy.setInstallments(this.installments.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -399,6 +457,13 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 			wve.add(we);
 		}
 		try {
+
+			if (fromRestructure && IsNonStepLoan && this.stepNumber.intValue() == 1 && PennantApplicationUtil
+					.unFormateAmount(this.steppedEMI.getActualValue(), ccyFormatter).compareTo(amount) != 0) {
+				throw new WrongValueException(this.steppedEMI, Labels.getLabel("Restructure_OverdueStep_Amount",
+						new Object[] { PennantApplicationUtil.amountFormate(amount, ccyFormatter) }));
+			}
+
 			aFinStepPolicy.setSteppedEMI(
 					PennantApplicationUtil.unFormateAmount(this.steppedEMI.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
@@ -504,6 +569,8 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	private void doSetValidation() {
 		logger.debug("Entering");
 
+		boolean zeroAmtAllow = !ImplementationConstants.ALLOW_ZERO_STEP_AMOUNT_PERC;
+
 		setValidationOn(true);
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -511,15 +578,16 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 				: financeType.getCalcOfSteps();
 		if (!this.stepNumber.isReadonly()) {
 			this.stepNumber.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_FinStepPolicyDialog_StepNumber.value"), true, false, 1, 100));
+					Labels.getLabel("label_FinStepPolicyDialog_StepNumber.value"), true, false, 1, 999));
 		}
 		if (!this.tenorSplitPerc.isDisabled()) {
 			this.tenorSplitPerc.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_FinStepPolicyDialog_EMIStepPerc.value"), 2, true, false, this.totTenorPerc));
 		}
+		// FIXME Max number of terms need to be reset.
 		if (!this.installments.isReadonly()) {
-			this.installments.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_FinStepPolicyDialog_Installments.value"), true, false));
+			this.installments.setConstraint(new PTNumberValidator("Total number of all step installments", true, false,
+					getFinanceStepPolicyDetail().getMinTerms(), 320));
 		}
 		if (!this.rateMargin.isDisabled()) {
 			this.rateMargin.setConstraint(new PTDecimalValidator(
@@ -528,7 +596,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		if (!this.eMIStepPerc.isDisabled()) {
 			if (StringUtils.equals(calcOfSteps, PennantConstants.STEPPING_CALC_PERC)) {
 				this.eMIStepPerc.setConstraint(new PTDecimalValidator(
-						Labels.getLabel("label_FinStepPolicyDialog_EMIStepPerc.value"), 2, true, false, 999));
+						Labels.getLabel("label_FinStepPolicyDialog_EMIStepPerc.value"), 2, zeroAmtAllow, false, 999));
 			} else {
 				this.eMIStepPerc.setConstraint(new PTDecimalValidator(
 						Labels.getLabel("label_FinStepPolicyDialog_EMIStepPerc.value"), 2, false, false, 999));
@@ -539,7 +607,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 			if (StringUtils.equals(financeStepPolicyDetail.getStepSpecifier(),
 					PennantConstants.STEP_SPECIFIER_REG_EMI)) {
 				this.steppedEMI.setConstraint(new PTDecimalValidator(
-						Labels.getLabel("label_FinStepPolicyDialog_SteppedEMI.value"), 2, true, false));
+						Labels.getLabel("label_FinStepPolicyDialog_SteppedEMI.value"), 2, zeroAmtAllow, false));
 			} else if (StringUtils.equals(financeStepPolicyDetail.getStepSpecifier(),
 					PennantConstants.STEP_SPECIFIER_GRACE)) {
 				this.steppedEMI.setConstraint(new PTDecimalValidator(
@@ -600,7 +668,11 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 				this.steppedEMI.setReadonly(true);
 				this.steppedEMI.setValue(BigDecimal.ZERO);
 			} else {
-				this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
+				if (getFinanceStepPolicyDetail().isEMIChange()) {
+					this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
+				} else {
+					this.steppedEMI.setReadonly(true);
+				}
 			}
 		} else if (getFinanceStepPolicyDetail() != null && StringUtils
 				.equals(getFinanceStepPolicyDetail().getStepSpecifier(), PennantConstants.STEP_SPECIFIER_GRACE)) {
@@ -611,12 +683,20 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 					this.steppedEMI.setReadonly(true);
 					this.steppedEMI.setValue(BigDecimal.ZERO);
 				} else {
-					this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
+					if (getFinanceStepPolicyDetail().isEMIChange()) {
+						this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
+					} else {
+						this.steppedEMI.setReadonly(true);
+					}
 				}
 			} else {
 				this.label_FinStepPolicyDialog_AutoCal.setVisible(false);
 				this.hbox_autoCal.setVisible(false);
-				this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
+				if (getFinanceStepPolicyDetail().isEMIChange()) {
+					this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
+				} else {
+					this.steppedEMI.setReadonly(true);
+				}
 				this.autoCal.setChecked(false);
 			}
 		}
@@ -674,10 +754,9 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		this.space_FinStepPolicyDialog_TenorSplitPerc.setSclass("");
 
 		if (alwManualStep) {
-			this.stepNumber.setReadonly(false);
+			this.stepNumber.setReadonly(isReadOnly("FinStepPolicyDetailDialog_StepNumber"));
 			this.tenorSplitPerc.setDisabled(true);
 		} else {
-			this.space_FinStepPolicyDialog_StepNumber.setSclass("");
 			this.space_FinStepPolicyDialog_StepNumber.setSclass("");
 			this.space_FinStepPolicyDialog_InstallMents.setSclass("");
 			this.space_FinStepPolicyDialog_EMIStepPerc.setSclass("");
@@ -822,12 +901,16 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 				auditHeader = ErrorControl.showErrorDetails(this.window_FinStepPolicyDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					if (aFinanceStepPolicyDetail.getStepSpecifier().equals(PennantConstants.STEP_SPECIFIER_GRACE)) {
-						stepDetailDialogCtrl.doFillStepDetaisForGrace(this.finStepPolicyDetails);
+					if (stepDetailDialogCtrl != null) {
+						if (aFinanceStepPolicyDetail.getStepSpecifier().equals(PennantConstants.STEP_SPECIFIER_GRACE)) {
+							stepDetailDialogCtrl.doFillStepDetaisForGrace(this.finStepPolicyDetails);
+						} else {
+							stepDetailDialogCtrl.doFillStepDetais(this.finStepPolicyDetails);
+						}
+						stepDetailDialogCtrl.setDataChanged(true);
 					} else {
-						stepDetailDialogCtrl.doFillStepDetais(this.finStepPolicyDetails);
+						restructureDialogCtrl.doFillStepDetails(this.finStepPolicyDetails);
 					}
-					stepDetailDialogCtrl.setDataChanged(true);
 					closeDialog();
 				}
 			}
@@ -875,21 +958,13 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		valueParm[0] = String.valueOf(aFinanceStepPolicyDetail.getStepNo());
 		errParm[0] = PennantJavaUtil.getLabel("label_StepNumber") + ":" + valueParm[0];
 
-		if (getStepDetailDialogCtrl().getFinStepPoliciesList() != null
+		if (getStepDetailDialogCtrl() != null && getStepDetailDialogCtrl().getFinStepPoliciesList() != null
 				&& !getStepDetailDialogCtrl().getFinStepPoliciesList().isEmpty()) {
 			for (int i = 0; i < getStepDetailDialogCtrl().getFinStepPoliciesList().size(); i++) {
 				FinanceStepPolicyDetail financeStepPolicyDetail = getStepDetailDialogCtrl().getFinStepPoliciesList()
 						.get(i);
-
 				if (financeStepPolicyDetail.getStepNo() == aFinanceStepPolicyDetail.getStepNo() && StringUtils.equals(
-						financeStepPolicyDetail.getStepSpecifier(), aFinanceStepPolicyDetail.getStepSpecifier())) { // Both
-																													// Current
-																													// and
-																													// Existing
-																													// list
-																													// Steps
-					// same
-
+						financeStepPolicyDetail.getStepSpecifier(), aFinanceStepPolicyDetail.getStepSpecifier())) {
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
@@ -899,23 +974,6 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 
 					if (tranType == PennantConstants.TRAN_DEL) {
 						recordAdded = true;
-						/*
-						 * if(aFinanceStepPolicyDetail.getRecordType().equals( PennantConstants.RECORD_TYPE_UPD)){
-						 * aFinanceStepPolicyDetail .setRecordType(PennantConstants.RECORD_TYPE_DEL); recordAdded=true;
-						 * finStepPolicyDetails.add(aFinanceStepPolicyDetail); }else
-						 * if(aFinanceStepPolicyDetail.getRecordType().equals (PennantConstants.RCD_ADD)){
-						 * recordAdded=true; }else if(aFinanceStepPolicyDetail.getRecordType().equals(
-						 * PennantConstants.RECORD_TYPE_NEW)){ aFinanceStepPolicyDetail
-						 * .setRecordType(PennantConstants.RECORD_TYPE_CAN); recordAdded=true;
-						 * finStepPolicyDetails.add(aFinanceStepPolicyDetail); }else
-						 * if(aFinanceStepPolicyDetail.getRecordType().equals (PennantConstants.RECORD_TYPE_CAN)){
-						 * recordAdded=true; for (int j = 0; j < getStepDetailDialogCtrl
-						 * ().getFinScheduleData().getStepPolicyDetails ().size(); j++) { FinanceStepPolicyDetail
-						 * policyDetail = getStepDetailDialogCtrl().getFinScheduleData ().getStepPolicyDetails().get(j);
-						 * if(policyDetail.getFinReference ().equals(aFinanceStepPolicyDetail.getFinReference()) &&
-						 * policyDetail.getStepNo() == aFinanceStepPolicyDetail.getStepNo()){
-						 * finStepPolicyDetails.add(policyDetail); } } }
-						 */
 					} else {
 						if (tranType != PennantConstants.TRAN_UPD) {
 							finStepPolicyDetails.add(financeStepPolicyDetail);
@@ -925,7 +983,36 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 					finStepPolicyDetails.add(financeStepPolicyDetail);
 				}
 			}
+		} else {
+			if (getRestructureDialogCtrl() != null && getRestructureDialogCtrl().getFinStepPolicyList() != null
+					&& !getRestructureDialogCtrl().getFinStepPolicyList().isEmpty()) {
+				for (int i = 0; i < getRestructureDialogCtrl().getFinStepPolicyList().size(); i++) {
+					FinanceStepPolicyDetail financeStepPolicyDetail = getRestructureDialogCtrl().getFinStepPolicyList()
+							.get(i);
+
+					if (financeStepPolicyDetail.getStepNo() == aFinanceStepPolicyDetail.getStepNo()
+							&& StringUtils.equals(financeStepPolicyDetail.getStepSpecifier(),
+									aFinanceStepPolicyDetail.getStepSpecifier())) {
+						if (isNewRecord()) {
+							auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+									getUserWorkspace().getUserLanguage()));
+							return auditHeader;
+						}
+						if (tranType == PennantConstants.TRAN_DEL) {
+							recordAdded = true;
+						} else {
+							if (tranType != PennantConstants.TRAN_UPD) {
+								finStepPolicyDetails.add(financeStepPolicyDetail);
+							}
+						}
+					} else {
+						finStepPolicyDetails.add(financeStepPolicyDetail);
+					}
+				}
+			}
 		}
+
 		if (!recordAdded) {
 			finStepPolicyDetails.add(aFinanceStepPolicyDetail);
 		}
@@ -1043,6 +1130,14 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
+	}
+
+	public RestructureDialogCtrl getRestructureDialogCtrl() {
+		return restructureDialogCtrl;
+	}
+
+	public void setRestructureDialogCtrl(RestructureDialogCtrl restructureDialogCtrl) {
+		this.restructureDialogCtrl = restructureDialogCtrl;
 	}
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {

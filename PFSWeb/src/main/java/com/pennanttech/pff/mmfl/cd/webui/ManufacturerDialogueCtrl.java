@@ -15,23 +15,34 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.Manufacturer;
-import com.pennanttech.pff.mmfl.cd.service.ManufacturerService;
+import com.pennanttech.pff.cd.model.Manufacturer;
+import com.pennanttech.pff.cd.service.ManufacturerService;
 
 public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 	private static final long serialVersionUID = 1L;
@@ -44,11 +55,24 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 	protected Window window_manufacturerDialogue;
 
 	protected Textbox name;
+	protected Longbox oemId;
 	protected Textbox description;
 	protected Button btnchannels;
 	protected Textbox txtchannel;
 	protected Checkbox active;
 	protected Manufacturer manufacturer;
+	protected Textbox addressLine1;
+	protected Textbox addressLine2;
+	protected Textbox addressLine3;
+	protected ExtendedCombobox country;
+	protected ExtendedCombobox city;
+	protected ExtendedCombobox state;
+	protected ExtendedCombobox pinCode;
+	protected Textbox manufacPAN;
+	protected Uppercasebox gstInNumber;
+	protected Textbox manfMobileNo;
+	protected Textbox manfEmailId;
+	protected Textbox manfacContactName;
 
 	private transient ManufacturerListCtrl manufacturerListCtrl;
 	private transient ManufacturerService manufacturerService;
@@ -118,7 +142,35 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
+		this.country.setMandatoryStyle(true);
+		this.country.setModuleName("Country");
+		this.country.setValueColumn("CountryCode");
+		this.country.setDescColumn("CountryDesc");
+		this.country.setValidateColumns(new String[] { "CountryCode" });
+
+		this.city.setMandatoryStyle(true);
+		this.city.setModuleName("City");
+		this.city.setValueColumn("PCCity");
+		this.city.setDescColumn("PCCityName");
+		this.city.setValidateColumns(new String[] { "PCCity" });
+
+		this.state.setMandatoryStyle(true);
+		this.state.setModuleName("Province");
+		this.state.setValueColumn("CPProvince");
+		this.state.setDescColumn("CPProvinceName");
+		this.state.setValidateColumns(new String[] { "CPProvince" });
+
+		this.pinCode.setMandatoryStyle(true);
+		this.pinCode.setModuleName("PinCode");
+		this.pinCode.setValueColumn("pinCodeId");
+		this.pinCode.setDescColumn("AreaName");
+		this.pinCode.setValueType(DataType.LONG);
+		this.pinCode.setValidateColumns(new String[] { "pinCodeId" });
+		// this.pinCode.setInputAllowed(false);
+
 		this.txtchannel.setMaxlength(20);
+		this.manufacPAN.setMaxlength(10);
+		this.gstInNumber.setMaxlength(15);
 		setStatusDetails();
 		logger.debug(Literal.LEAVING);
 	}
@@ -249,6 +301,9 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 		logger.debug(Literal.ENTERING);
 
 		this.name.setText(manufacturer.getName());
+		if (!manufacturer.isNewRecord()) {
+			this.oemId.setValue(manufacturer.getManufacturerId());
+		}
 		this.description.setText(manufacturer.getDescription());
 		this.active.setChecked(manufacturer.isActive());
 		if (manufacturer.isNewRecord() || (manufacturer.getRecordType() != null ? manufacturer.getRecordType() : "")
@@ -258,7 +313,28 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 		}
 		this.txtchannel.setText(manufacturer.getChannel());
 		this.recordStatus.setValue(manufacturer.getRecordStatus());
+		this.addressLine1.setText(manufacturer.getAddressLine1());
+		this.addressLine2.setText(manufacturer.getAddressLine2());
+		this.addressLine3.setText(manufacturer.getAddressLine3());
+		this.city.setValue(manufacturer.getCity());
+		this.city.setDescription(manufacturer.getLovDescCityName());
+		this.state.setValue(manufacturer.getState());
+		this.state.setDescription(manufacturer.getLovDescStateName());
+		this.country.setValue(manufacturer.getCountry());
+		this.country.setDescription(manufacturer.getLovDescCountryName());
+		this.manufacPAN.setText(manufacturer.getManufacPAN());
+		this.gstInNumber.setText(manufacturer.getGstInNumber());
+		this.manfMobileNo.setText(manufacturer.getManfMobileNo());
+		this.manfEmailId.setText(manufacturer.getManfEmailId());
+		this.manfacContactName.setText(manufacturer.getManfacContactName());
 
+		if (manufacturer.getPinCodeId() != null) {
+			this.pinCode.setAttribute("pinCodeId", manufacturer.getPinCodeId());
+		} else {
+			this.pinCode.setAttribute("pinCodeId", null);
+		}
+
+		this.pinCode.setValue(manufacturer.getPinCode(), manufacturer.getPinAreaDesc());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -292,6 +368,87 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 
 		try {
 			manufacturer.setChannel(this.txtchannel.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setAddressLine1(this.addressLine1.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setAddressLine2(this.addressLine2.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setAddressLine3(this.addressLine3.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setCountry(this.country.getValidatedValue());
+			manufacturer.setLovDescCountryName(this.country.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setState(this.state.getValidatedValue());
+			manufacturer.setLovDescStateName(this.state.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setCity(this.city.getValidatedValue());
+			manufacturer.setLovDescStateName(this.city.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			PinCode pinCode = (PinCode) this.pinCode.getObject();
+			if (pinCode != null) {
+				if (!StringUtils.isEmpty(pinCode.toString())) {
+					manufacturer.setPinCodeId(pinCode.getPinCodeId());
+				}
+			}
+			manufacturer.setPinCode(this.pinCode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setManufacPAN(this.manufacPAN.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setGstInNumber(this.gstInNumber.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setManfMobileNo(this.manfMobileNo.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setManfEmailId(this.manfEmailId.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			manufacturer.setManfacContactName(this.manfacContactName.getText());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -373,6 +530,74 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 			}
 		}
 
+		if (!this.addressLine1.isReadonly()) {
+			this.addressLine1
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManufacturerList_AddressLine1.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, true));
+		}
+
+		if (!this.addressLine2.isReadonly()) {
+			if (!this.addressLine2.getText().equals("")) {
+				this.addressLine2.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ManufacturerList_AddressLine2.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
+			}
+		}
+
+		if (!this.addressLine3.isReadonly()) {
+			if (!this.addressLine3.getText().equals("")) {
+				this.addressLine3.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ManufacturerList_AddressLine3.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
+			}
+		}
+
+		if (!this.country.isReadonly()) {
+			this.country.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManufacturerList_Country.value"), null, true, true));
+		}
+		if (!this.state.isReadonly()) {
+			this.state.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManufacturerList_State.value"), null, true, true));
+		}
+		if (!this.city.isReadonly()) {
+			this.city.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManufacturerList_City.value"), null, true, true));
+		}
+		if (!this.pinCode.isReadonly()) {
+			this.pinCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ManufacturerList_Pincode.value"), null, true, true));
+		}
+
+		if (!this.manufacPAN.isReadonly()) {
+			this.manufacPAN
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManufacturerList_PanNumber.value"),
+							PennantRegularExpressions.REGEX_PANNUMBER, true));
+		}
+
+		if (!this.gstInNumber.isReadonly()) {
+			this.gstInNumber
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManufacturerList_GSTINNumber.value"),
+							PennantRegularExpressions.REGEX_GSTIN, true));
+		}
+
+		if (!this.manfMobileNo.isReadonly()) {
+			this.manfMobileNo
+					.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_ManufacturerList_MobileNo.value"),
+							false, PennantRegularExpressions.REGEX_MOBILE));
+		}
+
+		if (!this.manfEmailId.isReadonly()) {
+			this.manfEmailId.setConstraint(
+					new PTEmailValidator(Labels.getLabel("label_ManufacturerList_EmailID.value"), false));
+		}
+
+		if (!this.manfacContactName.isReadonly()) {
+			this.manfacContactName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManufacturerList_ContactName.value"),
+							PennantRegularExpressions.REGEX_NAME, false));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -385,6 +610,18 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 		this.name.setConstraint("");
 		this.description.setConstraint("");
 		this.txtchannel.setConstraint("");
+		this.addressLine1.setConstraint("");
+		this.addressLine2.setConstraint("");
+		this.addressLine3.setConstraint("");
+		this.manufacPAN.setConstraint("");
+		this.gstInNumber.setConstraint("");
+		this.manfMobileNo.setConstraint("");
+		this.manfEmailId.setConstraint("");
+		this.manfacContactName.setConstraint("");
+		this.country.setConstraint("");
+		this.city.setConstraint("");
+		this.state.setConstraint("");
+		this.pinCode.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -431,6 +668,19 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 		readOnlyComponent(isReadOnly("CDManufacturersDialogue_Description"), this.description);
 		readOnlyComponent(isReadOnly("CDManufacturersDialogue_Channel"), this.active);
 		readOnlyComponent(isReadOnly("CDManufacturersDialogue_Active"), this.btnchannels);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_AddressLine1"), this.addressLine1);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_AddressLine2"), this.addressLine2);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_AddressLine3"), this.addressLine3);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_City"), this.city);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_State"), this.state);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_PinCode"), this.pinCode);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_Country"), this.country);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_PANNumber"), this.manufacPAN);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_GSTINNumber"), this.gstInNumber);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_MobileNumber"), this.manfMobileNo);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_EmailId"), this.manfEmailId);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_ContactName"), this.manfacContactName);
+		this.oemId.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -459,6 +709,18 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 		readOnlyComponent(true, this.description);
 		readOnlyComponent(true, this.txtchannel);
 		readOnlyComponent(true, this.active);
+		readOnlyComponent(true, this.addressLine1);
+		readOnlyComponent(true, this.addressLine2);
+		readOnlyComponent(true, this.addressLine3);
+		readOnlyComponent(true, this.city);
+		readOnlyComponent(true, this.state);
+		readOnlyComponent(true, this.country);
+		readOnlyComponent(true, this.pinCode);
+		readOnlyComponent(true, this.manufacPAN);
+		readOnlyComponent(true, this.gstInNumber);
+		readOnlyComponent(true, this.manfMobileNo);
+		readOnlyComponent(true, this.manfEmailId);
+		readOnlyComponent(true, this.manfacContactName);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -480,6 +742,19 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 		this.name.setValue("");
 		this.description.setValue("");
 		this.txtchannel.setValue("");
+		this.addressLine1.setValue("");
+		this.addressLine2.setValue("");
+		this.addressLine3.setValue("");
+		this.country.setValue("");
+		this.city.setValue("");
+		this.state.setValue("");
+		this.pinCode.setValue("");
+		this.manufacPAN.setValue("");
+		this.gstInNumber.setValue("");
+		this.manfMobileNo.setValue("");
+		this.manfEmailId.setValue("");
+		this.manfacContactName.setValue("");
+
 		this.active.setChecked(false);
 		logger.debug(Literal.LEAVING);
 	}
@@ -709,4 +984,208 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 
 	}
 
+	public void onFulfill$city(Event event) throws InterruptedException {
+		logger.debug("Entering");
+		doRemoveValidation();
+		doClearMessage();
+		Object dataObject = city.getObject();
+		String cityValue = null;
+		if (!(dataObject instanceof String)) {
+			City details = (City) dataObject;
+			if (details == null) {
+				fillPindetails(null, null);
+			}
+			if (details != null) {
+				this.state.setValue(details.getPCProvince());
+				this.state.setDescription(details.getLovDescPCProvinceName());
+				this.country.setValue(details.getPCCountry());
+				this.country.setDescription(details.getLovDescPCCountryName());
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				cityValue = details.getPCCity();
+				fillPindetails(cityValue, this.state.getValue());
+			} else {
+				this.city.setObject("");
+				this.pinCode.setObject("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				this.state.setErrorMessage("");
+				this.country.setErrorMessage("");
+				fillPindetails(null, this.state.getValue());
+			}
+		} else if ("".equals(dataObject)) {
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			this.state.setObject("");
+		}
+		logger.debug("Leaving");
+	}
+
+	private void fillPindetails(String id, String province) {
+		this.pinCode.setModuleName("PinCode");
+		this.pinCode.setValueColumn("pinCode");
+		this.pinCode.setDescColumn("AreaName");
+		this.pinCode.setValidateColumns(new String[] { "pinCode" });
+		Filter[] filters1 = new Filter[1];
+
+		if (id != null) {
+			filters1[0] = new Filter("City", id, Filter.OP_EQUAL);
+		} else if (province != null && !province.isEmpty()) {
+			filters1[0] = new Filter("PCProvince", province, Filter.OP_EQUAL);
+		} else {
+			filters1[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
+		}
+
+		this.pinCode.setFilters(filters1);
+	}
+
+	public void onFulfill$pinCode(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = pinCode.getObject();
+		if (dataObject instanceof String) {
+
+		} else {
+			PinCode details = (PinCode) dataObject;
+
+			if (details != null) {
+
+				this.country.setValue(details.getpCCountry());
+				this.country.setDescription(details.getLovDescPCCountryName());
+				this.city.setValue(details.getCity());
+				this.city.setDescription(details.getPCCityName());
+				this.state.setValue(details.getPCProvince());
+				this.state.setDescription(details.getLovDescPCProvinceName());
+				this.pinCode.setValue(details.getPinCode());
+				this.pinCode.setDescription(details.getAreaName());
+				this.city.setErrorMessage("");
+				this.state.setErrorMessage("");
+				this.country.setErrorMessage("");
+
+			}
+
+		}
+		Filter[] filters1 = new Filter[1];
+		if (this.city.getValue() != null && !this.city.getValue().isEmpty()) {
+			filters1[0] = new Filter("City", this.city.getValue(), Filter.OP_EQUAL);
+		} else {
+			filters1[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
+		}
+
+		this.pinCode.setFilters(filters1);
+
+		logger.debug("Leaving");
+	}
+
+	public void onFulfill$state(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = state.getObject();
+		String pcProvince = this.state.getValue();
+		if (dataObject instanceof String) {
+			this.city.setValue("");
+			this.city.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			fillPindetails(null, null);
+		} else if (!(dataObject instanceof String)) {
+			Province province = (Province) dataObject;
+			if (province == null) {
+				fillPindetails(null, null);
+			}
+			if (province != null) {
+				this.state.setErrorMessage("");
+				pcProvince = this.state.getValue();
+				this.country.setValue(province.getCPCountry());
+				this.country.setDescription(province.getLovDescCPCountryName());
+				this.city.setValue("");
+				this.city.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				fillPindetails(null, pcProvince);
+			} else {
+				this.city.setObject("");
+				this.pinCode.setObject("");
+				this.city.setValue("");
+				this.city.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+			}
+		}
+		fillCitydetails(pcProvince);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private void fillCitydetails(String state) {
+		logger.debug("Entering");
+
+		this.city.setModuleName("City");
+		this.city.setValueColumn("PCCity");
+		this.city.setDescColumn("PCCityName");
+		this.city.setValidateColumns(new String[] { "PCCity" });
+		Filter[] filters1 = new Filter[1];
+
+		if (state == null || state.isEmpty()) {
+			filters1[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
+		}
+
+		this.city.setFilters(filters1);
+	}
+
+	public void onFulfill$country(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = country.getObject();
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			this.state.setValue("");
+			this.state.setDescription("");
+			this.city.setValue("");
+			this.city.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			fillPindetails(null, null);
+		} else if (!(dataObject instanceof String)) {
+			Country country = (Country) dataObject;
+			if (country == null) {
+				fillProvinceDetails(null);
+			}
+			if (country != null) {
+				this.state.setErrorMessage("");
+				pcProvince = country.getCountryCode();
+				fillProvinceDetails(pcProvince);
+			} else {
+				this.state.setObject("");
+				this.city.setObject("");
+				this.pinCode.setObject("");
+				this.state.setValue("");
+				this.state.setDescription("");
+				this.city.setValue("");
+				this.city.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+			}
+			fillPindetails(null, null);
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private void fillProvinceDetails(String country) {
+		this.state.setMandatoryStyle(true);
+		this.state.setModuleName("Province");
+		this.state.setValueColumn("CPProvince");
+		this.state.setDescColumn("CPProvinceName");
+		this.state.setValidateColumns(new String[] { "CPProvince" });
+
+		Filter[] filters1 = new Filter[1];
+
+		if (country == null || country.equals("")) {
+			filters1[0] = new Filter("CPCountry", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("CPCountry", country, Filter.OP_EQUAL);
+		}
+
+		this.state.setFilters(filters1);
+	}
 }

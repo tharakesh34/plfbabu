@@ -83,4 +83,6 @@ public interface FinanceTypeDAO {
 	String getRepayHierarchy(String finType);
 
 	List<String> getAllowedOCRList();
+
+	String getFinDivsion(String finType);
 }

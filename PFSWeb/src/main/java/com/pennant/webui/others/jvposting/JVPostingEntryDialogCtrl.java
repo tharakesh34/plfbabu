@@ -38,6 +38,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
@@ -52,6 +53,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -121,6 +123,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	protected Hlayout hlayout_TotDebitsByBatchCcy;
 	protected Space space_TotDebitsByBatchCcy;
 	protected Decimalbox totDebitsByBatchCcy;
+	protected Row row13;
+	protected Label label_TdsAdjustmentRequired;
+	protected Hlayout hlayout_TdsAdjustmentRequired;
+	protected Space space_TdsAdjustmentRequired;
+	protected Checkbox tdsAdjustmentReq;
 
 	protected Label label_TotCreditsByBatchCcy;
 	protected Hlayout hlayout_TotCreditsByBatchCcy;
@@ -732,6 +739,10 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 
 		setComponentAccessType("JVPostingEntryDialog_Account", tempReadOnly, this.debitAccount, null,
 				this.label_DebitAccount, this.hlayout_DebitAccount, null);
+
+		setComponentAccessType("JVPostingEntryDialog_TdsAdjustmentRequired", tempReadOnly, this.tdsAdjustmentReq, null,
+				this.label_TdsAdjustmentRequired, this.hlayout_TdsAdjustmentRequired, null);
+
 		logger.debug("Leaving");
 	}
 
@@ -855,6 +866,12 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		this.debitAccount.setMandatoryStyle(true);
 
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
+
+		if (ImplementationConstants.ALLOW_TDS_CERTIFICATE_ADJUSTMENT) {
+			row13.setVisible(true);
+		} else
+			row13.setVisible(false);
+
 		logger.debug("Leaving");
 	}
 
@@ -917,6 +934,8 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		// calcJVPostings();
 		this.recordStatus.setValue(aJVPostingEntry.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aJVPostingEntry.getRecordType()));
+		this.tdsAdjustmentReq.setChecked(aJVPostingEntry.isTDSAdjReq());
+
 		logger.debug("Leaving");
 	}
 
@@ -1072,6 +1091,13 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			if (!aJVPostingEntry.isNewRecord() && isDataChanged()) {
 				aJVPostingEntry.setModifiedFlag(PennantConstants.YES);
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// TDSAdjustmentRequired
+		try {
+			aJVPostingEntry.setTDSAdjReq(this.tdsAdjustmentReq.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1287,6 +1313,8 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		this.narrLine2.setValue("");
 		this.narrLine3.setValue("");
 		this.narrLine4.setValue("");
+		this.tdsAdjustmentReq.setValue("");
+
 		logger.debug("Leaving");
 	}
 
@@ -1480,6 +1508,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 
 		if (!recordAdded) {
 			aJVPostingEntry.setTxnEntry(AccountConstants.TRANTYPE_CREDIT);
+			aJVPostingEntry.setTDSAdjReq(false);
 			jvPostingEntryList.add(aJVPostingEntry);
 
 			JVPostingEntry debitEntry = new JVPostingEntry();
@@ -1487,6 +1516,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			debitEntry.setTxnReference(aJVPostingEntry.getTxnReference() + 1);
 			debitEntry.setAccount(PennantApplicationUtil.unFormatAccountNumber(this.debitAccount.getValue()));
 			debitEntry.setTxnEntry(AccountConstants.TRANTYPE_DEBIT);
+			debitEntry.setTDSAdjReq(this.tdsAdjustmentReq.isChecked());
 			debitEntry.setTxnCode(this.debitTxnCode.getValidatedValue());
 			debitEntry.setTxnDesc(this.debitTxnCode.getDescription());
 			debitEntry.setDerivedTxnRef(aJVPostingEntry.getTxnReference());

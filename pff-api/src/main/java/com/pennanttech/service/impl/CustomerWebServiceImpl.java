@@ -54,6 +54,8 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
@@ -197,7 +199,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 
 		// call dedup service for customer duplication
 		if (customerDetails.isDedupReq()) {
-			List<CustomerDedup> dedupList = new ArrayList<CustomerDedup>(1);
+			List<CustomerDedup> dedupList = new ArrayList<>(1);
 			CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
 			List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER,
 					customerDedup.getCustCtgCode(), "");
@@ -223,7 +225,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 
 		// call dedup service for balck list customer
 		if (customerDetails.isBlackListReq()) {
-			List<BlackListCustomers> blackList = new ArrayList<BlackListCustomers>(1);
+			List<BlackListCustomers> blackList = new ArrayList<>(1);
 			BlackListCustomers balckListData = doSetBlackListCustomerData(customerDetails);
 			List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_BLACKLIST,
 					balckListData.getCustCtgCode(), "");
@@ -1845,7 +1847,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 				PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
 		AuditDetail auditDetail = customerBankInfoService.doValidations(customerBankInfoDetail.getCustomerBankInfo(),
-				PennantConstants.RECORD_TYPE_NEW);
+				PennantConstants.RECORD_TYPE_NEW, new AuditDetail());
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -1903,7 +1905,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 
 		// validate customer details as per the API specification
 		AuditDetail auditDetail = customerBankInfoService.doValidations(customerBankInfoDetail.getCustomerBankInfo(),
-				PennantConstants.RECORD_TYPE_UPD);
+				PennantConstants.RECORD_TYPE_UPD, new AuditDetail());
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -1997,10 +1999,11 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
 		CustomerBankInfo custBankInfo = customerBankInfoService
-				.getCustomerBankInfoById(customerBankInfoDetail.getBankId());
+				.getCustomerBankInfoById(customerBankInfoDetail.getCustomerBankInfo().getBankId());
 		if (custBankInfo != null) {
 			// call delete customer service
-			response = customerDetailsController.deleteCustomerBankingInformation(customerBankInfo);
+			response = customerDetailsController
+					.deleteCustomerBankingInformation(customerBankInfoDetail.getCustomerBankInfo());
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
@@ -2896,6 +2899,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		WSReturnStatus returnStatus = null;
 		if (customerDocument != null) {
 			// call update customer if there is no errors
+			customerDocumentDetail.getCustomerDocument().setID(customerDocument.getID());
 			returnStatus = customerDetailsController.updateCustomerDocument(
 					customerDocumentDetail.getCustomerDocument(), customerDocumentDetail.getCif());
 		} else {
@@ -3048,6 +3052,10 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		customerDedup.setCustResdCountry(customer.getCustResdCountry());
 		customerDedup.setMobileNumber(mobileNumber);
 		customerDedup.setCustEMail(mailId);
+
+		if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+			setUCIC(customerDetails, customerDedup);
+		}
 
 		logger.debug(Literal.LEAVING);
 		return customerDedup;
@@ -4058,6 +4066,21 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 			}
 		}
 		return returnStatus;
+	}
+
+	private void setUCIC(CustomerDetails customer, CustomerDedup dedup) {
+		if (customer.getExtendedDetails() == null) {
+			return;
+		}
+
+		for (ExtendedField details : customer.getExtendedDetails()) {
+			for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+				if ("UCIC".equalsIgnoreCase(extFieldData.getFieldName())) {
+					dedup.setUcic(extFieldData.getFieldValue().toString());
+					break;
+				}
+			}
+		}
 	}
 
 	@Autowired

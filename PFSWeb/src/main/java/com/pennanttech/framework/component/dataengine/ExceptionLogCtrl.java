@@ -41,6 +41,10 @@ public class ExceptionLogCtrl extends GFCBaseCtrl<DataEngineLog> {
 			ListModel<DataEngineLog> listModel = new ListModelList<DataEngineLog>(list);
 			listbox.setModel(listModel);
 		}
+
+		getBorderLayoutHeight();
+		this.listbox.setHeight(this.borderLayoutHeight - 200 + "px");
+		this.window.setHeight(this.borderLayoutHeight - 130 + "px");
 		setDialog(DialogType.MODAL);
 		logger.debug("Leaving" + event.toString());
 

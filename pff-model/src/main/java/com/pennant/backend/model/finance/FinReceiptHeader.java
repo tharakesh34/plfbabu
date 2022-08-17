@@ -92,6 +92,10 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private Date cancelDate;
 	private String lovDescRequestStage;
 
+	private Long custBankId;
+	private String custAcctNumber;
+	private String custAcctHolderName;
+
 	private BigDecimal lpiAmount = BigDecimal.ZERO;
 	private BigDecimal lppAmount = BigDecimal.ZERO;
 	private BigDecimal gstLpiAmount = BigDecimal.ZERO;
@@ -200,6 +204,12 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
 	private ExtendedFieldRender extendedFieldRender;
 	private String finCategory;
+	private BigDecimal recAdjAmt = BigDecimal.ZERO;
+	private String toState;
+	private String fromState;
+	private boolean isClosureWithFullWaiver = false;
+	private Map<String, BigDecimal> taxPercentages = new HashMap<>();
+	private String moduleType;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -338,6 +348,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		excludeFields.add("extendedFieldHeader");
 		excludeFields.add("extendedFieldRender");
 		excludeFields.add("finCategory");
+		excludeFields.add("toState");
+		excludeFields.add("fromState");
+		excludeFields.add("finType");
+		excludeFields.add("isClosureWithFullWaiver");
+		excludeFields.add("custAcctNumber");
+		excludeFields.add("custAcctHolderName");
+		excludeFields.add("taxPercentages");
+		excludeFields.add("moduleType");
 
 		return excludeFields;
 	}
@@ -530,6 +548,16 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		entity.setVersion(super.getVersion());
 		entity.setLastMntBy(super.getLastMntBy());
 		entity.setLastMntOn(super.getLastMntOn());
+		entity.setCustBankId(this.custBankId);
+		entity.setCustAcctNumber(this.custAcctNumber);
+		entity.setCustAcctHolderName(this.custAcctHolderName);
+		entity.setTaxPercentages(this.taxPercentages);
+		entity.setRecAdjAmt(this.recAdjAmt);
+		entity.setToState(this.toState);
+		entity.setFromState(this.fromState);
+		entity.setClosureWithFullWaiver(this.isClosureWithFullWaiver);
+		entity.setModuleType(this.moduleType);
+
 		return entity;
 	}
 
@@ -1897,6 +1925,78 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 
 	public void setFinCategory(String finCategory) {
 		this.finCategory = finCategory;
+	}
+
+	public BigDecimal getRecAdjAmt() {
+		return recAdjAmt;
+	}
+
+	public void setRecAdjAmt(BigDecimal recAdjAmt) {
+		this.recAdjAmt = recAdjAmt;
+	}
+
+	public String getToState() {
+		return toState;
+	}
+
+	public void setToState(String toState) {
+		this.toState = toState;
+	}
+
+	public String getFromState() {
+		return fromState;
+	}
+
+	public void setFromState(String fromState) {
+		this.fromState = fromState;
+	}
+
+	public boolean isClosureWithFullWaiver() {
+		return isClosureWithFullWaiver;
+	}
+
+	public void setClosureWithFullWaiver(boolean isClosureWithFullWaiver) {
+		this.isClosureWithFullWaiver = isClosureWithFullWaiver;
+	}
+
+	public String getCustAcctNumber() {
+		return custAcctNumber;
+	}
+
+	public void setCustAcctNumber(String custAcctNumber) {
+		this.custAcctNumber = custAcctNumber;
+	}
+
+	public String getCustAcctHolderName() {
+		return custAcctHolderName;
+	}
+
+	public void setCustAcctHolderName(String custAcctHolderName) {
+		this.custAcctHolderName = custAcctHolderName;
+	}
+
+	public Long getCustBankId() {
+		return custBankId;
+	}
+
+	public void setCustBankId(Long custBankId) {
+		this.custBankId = custBankId;
+	}
+
+	public Map<String, BigDecimal> getTaxPercentages() {
+		return taxPercentages;
+	}
+
+	public void setTaxPercentages(Map<String, BigDecimal> taxPercentages) {
+		this.taxPercentages = taxPercentages;
+	}
+
+	public String getModuleType() {
+		return moduleType;
+	}
+
+	public void setModuleType(String moduleType) {
+		this.moduleType = moduleType;
 	}
 
 }

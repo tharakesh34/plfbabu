@@ -137,11 +137,23 @@
 									<hbox>
 										<extendedcombobox id="city" width="300px" />
 									</hbox>
+									<label id="label_MerchantDetails_PanNumber"
+										value="${c:l('label_MerchantDetails_PanNumber.value')}" />
+									<hbox>
+										<space spacing="2px"/>
+										<textbox id="merchPAN" width="155px" maxlength="20" />
+									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_MerchantDetails_State.value')}" />
 									<hbox>
 										<extendedcombobox id="state" width="300px" />
+									</hbox>
+									<label id="label_MerchantDetails_GSTINNumber"
+										value="${c:l('label_MerchantDetails_GSTINNumber.value')}" />
+									<hbox>
+										<space spacing="2px" id="manf_taxNumber" />
+										<uppercasebox id="gstInNumber" width="155px" />
 									</hbox>
 								</row>
 								<row>
@@ -149,12 +161,24 @@
 									<hbox>
 										<extendedcombobox id="pincode" width="300px" />
 									</hbox>
+									<label id="label_MerchantDetails_MobileNo"
+										value="${c:l('label_MerchantDetails_MobileNo.value')}" />
+									<hbox>
+										<space spacing="2px" id="space_mobileNo" />
+										<textbox id="merchMobileNo" width="155px" maxlength="10" />
+									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_MerchantDetails_POSId.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<intbox id="posId" width="100px" maxlength="18" />
+									</hbox>
+									<label id="label_MerchantDetails_EmailID"
+										value="${c:l('label_MerchantDetails_EmailID.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="merchEmailId" maxlength="100" width="250px" />
 									</hbox>
 								</row>
 								<row>

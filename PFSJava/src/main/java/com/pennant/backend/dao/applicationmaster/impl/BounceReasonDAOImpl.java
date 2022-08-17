@@ -40,6 +40,7 @@ import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -304,5 +305,21 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		logger.debug(Literal.LEAVING);
 
 		return exists;
+	}
+
+	@Override
+	public Long getBounceIDByCode(String returnCode) {
+		String sql = "Select BounceID From BounceReasons Where ReturnCode = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				return JdbcUtil.getLong(rs.getObject(1));
+			}, returnCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 }

@@ -68,6 +68,7 @@ import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinNomineeDetail;
 import com.pennant.backend.model.financemanagement.StorageDetail;
+import com.pennant.backend.model.isradetail.ISRADetail;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -82,6 +83,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.spreadsheet.SpreadSheet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -290,6 +292,8 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private BigDecimal receiptProcessingAmt;
+	private long receiptTransactionId;
+	private String paymentMode;
 
 	// used for Interfaces
 	private Long usrID;
@@ -308,6 +312,8 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private List<LinkedFinances> linkedFinancesList;
 	private Map<String, BigDecimal> gstPercentages = new HashMap<>();
 	private ExtendedFieldExtension extendedFieldExtension = null;
+	private List<TanAssignment> tanAssignments = new ArrayList<>();
+	private ISRADetail israDetail = null;
 
 	public FinanceDetail() {
 		super();
@@ -319,6 +325,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 		excludeFields.add("receiptProcessingAmt");
 		excludeFields.add("isOrigination");
 		excludeFields.add("gstPercentages");
+		excludeFields.add("israDetail");
 
 		return excludeFields;
 	}
@@ -1620,4 +1627,35 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 		this.extendedFieldExtension = extendedFieldExtension;
 	}
 
+	public List<TanAssignment> getTanAssignments() {
+		return tanAssignments;
+	}
+
+	public void setTanAssignments(List<TanAssignment> tanAssignments) {
+		this.tanAssignments = tanAssignments;
+	}
+
+	public ISRADetail getIsraDetail() {
+		return israDetail;
+	}
+
+	public void setIsraDetail(ISRADetail israDetail) {
+		this.israDetail = israDetail;
+	}
+
+	public long getReceiptTransactionId() {
+		return receiptTransactionId;
+	}
+
+	public void setReceiptTransactionId(long receiptTransactionId) {
+		this.receiptTransactionId = receiptTransactionId;
+	}
+
+	public String getPaymentMode() {
+		return paymentMode;
+	}
+
+	public void setPaymentMode(String paymentMode) {
+		this.paymentMode = paymentMode;
+	}
 }

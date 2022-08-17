@@ -382,6 +382,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 			oncheckPDD();
 			onCheckOTC();
+			onCheckALwWaiver();
 
 			if (enqiryModule) {
 				this.btnNew.setVisible(false);
@@ -1123,7 +1124,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			}
 		}
 
-		if (!this.documentRecievedDate.isReadonly() && this.documentRecieved.isChecked()) {
+		if (!this.documentRecievedDate.isReadonly() && this.documentRecieved.isChecked()
+				&& !this.documentRecievedDate.isDisabled()) {
 			if (this.documentRecievedDate.getValue() == null) {
 				this.documentRecievedDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CovenantsDialog_DocumentRecievedDate.value"), true));
@@ -1137,9 +1139,17 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			if (this.extendedDate.getValue() == null) {
 				this.extendedDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CovenantDocumentDialog_ExtendedDate.value"), true));
-			} else if (DateUtility.compare(this.extendedDate.getValue(), appDate) > 0) {
-				throw new WrongValueException(this.extendedDate, Labels.getLabel("DATE_NO_FUTURE",
-						new String[] { Labels.getLabel("label_CovenantDocumentDialog_ExtendedDate.value") }));
+			} else if (DateUtility.compare(this.extendedDate.getValue(), receivableDate) <= 0
+					&& getComboboxValue(this.covenantFrequency).equals("#")
+					&& this.covenantNextFrequencyDate.getValue() == null) {
+				this.extendedDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_CovenantDocumentDialog_ExtendedDate.value"), true,
+								receivableDate, maturityDate, false));
+			} else if (DateUtility.compare(this.extendedDate.getValue(), receivableDate) <= 0 || DateUtility
+					.compare(this.extendedDate.getValue(), this.covenantNextFrequencyDate.getValue()) >= 0) {
+				this.extendedDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_CovenantDocumentDialog_ExtendedDate.value"), true,
+								receivableDate, this.covenantNextFrequencyDate.getValue(), false));
 			}
 		}
 
@@ -1173,6 +1183,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.covenantGraceDays.setConstraint("");
 		this.covenantNextFrequencyDate.setConstraint("");
 		this.documentRecievedDate.setConstraint("");
+		this.extendedDate.setConstraint("");
+		this.extendedDate.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1218,6 +1230,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.mandRole.setErrorMessage("");
 		this.receivableDate.setErrorMessage("");
 		this.additionalRemarks.setErrorMessage("");
+		this.extendedDate.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1276,6 +1289,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		final Covenant aFinCovenantType = new Covenant();
 		BeanUtils.copyProperties(getCovenant(), aFinCovenantType);
 		boolean isNew = false;
+		doClearMessage();
 
 		if (isWorkFlowEnabled()) {
 			aFinCovenantType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -1732,6 +1746,23 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.btnCovenantReceived.setDisabled(true);
 			this.alertsRequired.setChecked(false);
 			this.alertType.setSelectedIndex(0);
+		} else if (enqiryModule) {
+			this.pdd.setDisabled(true);
+			this.otc.setDisabled(true);
+			readOnlyComponent(true, this.receivableDate);
+			this.documentRecieved.setDisabled(true);
+			this.covenantFrequency.setDisabled(true);
+			this.covenantGraceDays.setDisabled(true);
+			this.notifyTo.setButtonDisabled(true);
+			this.alertDays.setDisabled(true);
+			this.standardValue.setDisabled(true);
+			this.actualValue.setDisabled(true);
+			this.allowPostponment.setDisabled(true);
+			this.mandRole.setButtonDisabled(true);
+			readOnlyComponent(true, this.extendedDate);
+			this.btnCovenantReceived.setDisabled(true);
+			this.alertsRequired.setChecked(false);
+			this.alertType.setSelectedIndex(0);
 		}
 	}
 
@@ -1834,15 +1865,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			return;
 		}
 
-		Date frequencyDate = this.loanStartDate.getValue();
-
+		Date frequencyDate = this.receivableDate.getValue();
 		if (strFrequencyType == null || frequencyDate == null) {
 			return;
-		}
-		Date appDate = SysParamUtil.getAppDate();
-
-		if (DateUtility.compare(appDate, frequencyDate) < 0) {
-			frequencyDate = DateUtil.addMonths(frequencyDate, 1);
 		}
 
 		enableFrequencyFields();
@@ -1867,6 +1892,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				disablePDD();
 				disablePDDDetailsGroup();
 			}
+		} else if ("B".equals(strFrequencyType)) {
+			frequencyDate = DateUtil.addYears(frequencyDate, 2);
+		} else if ("5".equals(strFrequencyType)) {
+			frequencyDate = DateUtil.addYears(frequencyDate, 5);
+		} else if ("8".equals(strFrequencyType)) {
+			frequencyDate = DateUtil.addYears(frequencyDate, 8);
 		}
 
 		if (frequencyDate != null) {
@@ -1970,6 +2001,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		map.put("nextFrequecnyDate", this.covenantNextFrequencyDate.getValue());
 		map.put("loanStartDate", loanStartDt);
 		map.put("loanMaturityDate", maturityDate);
+		map.put("receivableDate", this.receivableDate.getValue());
 		map.put("originalDocument", covenantDocument.isOriginalDocument());
 
 		try {
@@ -2177,6 +2209,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			onCheckOTC();
 		} else if ("PDD".equals(covenantTypeObject.getCovenantType())) {
 			this.pdd.setChecked(true);
+			this.allowPostponment.setChecked(covenantTypeObject.isAllowPostPonement());
 			onCheckAllowPostponement(covenantTypeObject.isAllowPostPonement());
 			oncheckPDD();
 			onCheckOTC();

@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -118,7 +119,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 	private FinanceRepayPriorityDAO financeRepayPriorityDAO;
 	private FinRepayQueueDAO finRepayQueueDAO;
-	private RepaymentPostingsUtil repayPostingUtil;
+	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private AccountingSetDAO accountingSetDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private LimitInterfaceDAO limitInterfaceDAO;
@@ -438,7 +439,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		// Process Updations For Postings
 		if (!fm.isWorkflow()) {
-			repayPostingUtil.UpdateScreenPaymentsProcess(fm, schedules, profitDetail, finRepayQueues, linkedTranId,
+			repaymentPostingsUtil.UpdateScreenPaymentsProcess(fm, schedules, profitDetail, finRepayQueues, linkedTranId,
 					partialPay, aeAmountCodes);
 
 			financeRepaymentsDAO.saveFinRepayHeader(rph, tableType);
@@ -632,7 +633,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Repayment Postings Details Process
-		returnList = repayPostingUtil.UpdateScreenPaymentsProcess(fm, schedules, profitDetail, finRepayQueues,
+		returnList = repaymentPostingsUtil.UpdateScreenPaymentsProcess(fm, schedules, profitDetail, finRepayQueues,
 				linkedTranId, partialPay, aeAmountCodes);
 
 		// Finance Main Updation
@@ -836,7 +837,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			totalsMap.put("schFeePay", totSchdFee);
 
 			// Repayments Process For Schedule Repay List
-			returnList = repayPostingUtil.postingsScreenRepayProcess(fm, schedules, profitDetail, finRepayQueues,
+			returnList = repaymentPostingsUtil.postingsScreenRepayProcess(fm, schedules, profitDetail, finRepayQueues,
 					totalsMap, eventCodeRef, feeRuleDetailsMap, finDivision);
 
 			if ((Boolean) returnList.get(0)) {
@@ -1113,16 +1114,17 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain fm = schdData.getFinanceMain();
 
 		String finReference = fm.getFinReference();
-		List<FeeRule> feeRuleList = schdData.getFeeRules();
 
-		if (feeRuleList != null && feeRuleList.size() > 0) {
-			for (int i = 0; i < feeRuleList.size(); i++) {
-				feeRuleList.get(i).setFinReference(finReference);
-				feeRuleList.get(i).setFinEvent(finEvent);
-			}
-
-			finFeeChargesDAO.saveChargesBatch(feeRuleList, false, tableType);
+		if (CollectionUtils.isEmpty(schdData.getFeeRules())) {
+			return;
 		}
+
+		for (FeeRule feeRule : schdData.getFeeRules()) {
+			feeRule.setFinReference(finReference);
+			feeRule.setFinEvent(finEvent);
+		}
+
+		finFeeChargesDAO.saveCharges(schdData.getFeeRules(), false, tableType);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1398,12 +1400,12 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		this.financeRepayPriorityDAO = financeRepayPriorityDAO;
 	}
 
-	public void setFinRepayQueueDAO(FinRepayQueueDAO finRepayQueueDAO) {
-		this.finRepayQueueDAO = finRepayQueueDAO;
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
 	}
 
-	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
-		this.repayPostingUtil = repayPostingUtil;
+	public void setFinRepayQueueDAO(FinRepayQueueDAO finRepayQueueDAO) {
+		this.finRepayQueueDAO = finRepayQueueDAO;
 	}
 
 	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {

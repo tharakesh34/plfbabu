@@ -113,6 +113,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox fundingAccount;
 	protected Datebox receivedDate;
 	protected Textbox remarks;
+	protected Textbox externalRef;
 
 	protected Row row_favourNo;
 	protected Row row_BankCode;
@@ -696,7 +697,9 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// Excess / EMI In Advance Settlement Amount
 		if (StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EXCESS)
-				|| StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EMIINADV)) {
+				|| StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EMIINADV)
+				|| StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.RECEIPTMODE_CASHCLT)
+				|| StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.RECEIPTMODE_DSF)) {
 			item = new Listitem();
 			lc = new Listcell(PennantApplicationUtil.getLabelDesc(getReceiptHeader().getExcessAdjustTo(),
 					PennantStaticListUtil.getExcessAdjustmentTypes()) + " Adjustment");

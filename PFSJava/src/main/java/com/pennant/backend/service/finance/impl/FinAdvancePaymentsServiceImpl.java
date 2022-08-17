@@ -47,15 +47,12 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
-import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -69,7 +66,6 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.GenericService;
@@ -81,7 +77,6 @@ import com.pennant.backend.service.payment.PaymentsProcessService;
 import com.pennant.backend.service.pennydrop.PennyDropService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -95,6 +90,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
+import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 
 /**
  * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
@@ -104,13 +100,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		implements FinAdvancePaymentsService {
 	private static final Logger logger = LogManager.getLogger(FinAdvancePaymentsServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;
-	private PostingsDAO postingsDAO;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;
 	private LimitCheckDetails limitCheckDetails;
 	private PartnerBankService partnerBankService;
-	private MandateDAO mandateDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private CovenantsService covenantsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
@@ -121,6 +114,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private DocumentDetailsDAO documentDetailsDAO;
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
+	private OverdrafLoanService overdrafLoanService;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -220,7 +214,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				recordStatus = fap.getRecordStatus();
 				fap.setRecordType("");
 				fap.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				if (!StringUtils.equals(fap.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
+				if (!DisbursementConstants.STATUS_AWAITCON.equals(fap.getStatus())) {
 					fap.setStatus(DisbursementConstants.STATUS_APPROVED);
 				}
 				fap.setpOIssued(true);
@@ -237,6 +231,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			if (saveRecord) {
 				if (approveRec) {
 					fap.setOnlineProcReq(true);
+					overdrafLoanService.createDisbursement(fap);
 				}
 				finAdvancePaymentsDAO.save(fap, tableType);
 				if (fap.getDocImage() != null) {
@@ -590,32 +585,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 						new ErrorDetail(PennantConstants.KEY_FIELD, "65038", errParam, valueParm), usrLanguage));
 			}
 
-		}
-
-		// for Overdraft loan types checking for mandate is approved or not. and validate for Expiry date.
-		if (isOverDraft && StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ADDDISB)
-				&& fm.getMandateID() != null) {
-
-			Mandate mandate = new Mandate();
-			Long mandateID = fm.getMandateID();
-
-			mandate = mandateDAO.getMandateStatusById(finReference, mandateID);
-			if (mandate != null && !StringUtils.isEmpty(mandate.getStatus())
-					&& !StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())) {
-				String[] errParam = new String[1];
-				errParam[0] = String.valueOf(mandateID);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "ADM001", errParam, valueParm), usrLanguage));
-			}
-
-			if (mandate != null && StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-					&& mandate.getExpiryDate() != null
-					&& DateUtility.compare(SysParamUtil.getAppDate(), mandate.getExpiryDate()) > 0) {
-				String[] errParam = new String[1];
-				errParam[0] = String.valueOf(mandateID);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "ADM002", errParam, valueParm), usrLanguage));
-			}
 		}
 
 		// Validation for Automatic Blocking of Add Disbursement after N due days from Overdue schedules.
@@ -1358,58 +1327,57 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		return finAdvancePaymentsDAO.getCountByPaymentId(finID, paymentId);
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
+	@Override
+	public int getStatusCountByFinRefrence(long finID) {
+		return finAdvancePaymentsDAO.getStatusCountByFinRefrence(finID);
 	}
 
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
-	}
-
+	@Autowired
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
 
+	@Autowired
 	public void setPayOrderIssueHeaderDAO(PayOrderIssueHeaderDAO payOrderIssueHeaderDAO) {
 		this.payOrderIssueHeaderDAO = payOrderIssueHeaderDAO;
 	}
 
+	@Autowired
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;
 	}
 
+	@Autowired
 	public void setPartnerBankService(PartnerBankService partnerBankService) {
 		this.partnerBankService = partnerBankService;
 	}
 
-	public void setMandateDAO(MandateDAO mandateDAO) {
-		this.mandateDAO = mandateDAO;
-	}
-
+	@Autowired
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
 
+	@Autowired
 	public void setCovenantsService(CovenantsService covenantsService) {
 		this.covenantsService = covenantsService;
 	}
 
+	@Autowired
 	public void setInstrumentwiseLimitService(InstrumentwiseLimitService instrumentwiseLimitService) {
 		this.instrumentwiseLimitService = instrumentwiseLimitService;
 	}
 
+	@Autowired
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
+	@Autowired
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
 		this.paymentsProcessService = paymentsProcessService;
 	}
 
+	@Autowired
 	public void setPennyDropService(PennyDropService pennyDropService) {
 		this.pennyDropService = pennyDropService;
 	}
@@ -1419,16 +1387,24 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.bankAccountValidationService = bankAccountValidationService;
 	}
 
+	@Autowired
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
+	@Autowired
 	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
 		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
 	}
 
+	@Autowired
 	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
 		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+
+	@Autowired
+	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
+		this.overdrafLoanService = overdrafLoanService;
 	}
 
 }

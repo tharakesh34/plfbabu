@@ -97,6 +97,7 @@
 								<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_FeeTypeID" label="${c:l('listheader_FeeTypeID.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_AdviseStatus" label="${c:l('listheader_AdviseStatus.label')}" sort="auto" hflex="min" visible="false"/>
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>

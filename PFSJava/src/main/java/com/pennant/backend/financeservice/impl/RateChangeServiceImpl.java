@@ -92,6 +92,10 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 			isCalSchedule = false;
 		}
 
+		if (financeMain.isManualSchedule()) {
+			isCalSchedule = false;
+		}
+
 		// if (StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(),
 		// CalculationConstants.RPYCHG_STEPINST)) {
 		if (StringUtils.isNotEmpty(moduleDefiner) && schdData.getFinanceMain().isStepFinance()) {
@@ -389,19 +393,32 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 	 * @param label
 	 * @return
 	 */
-	private AuditDetail checkIsValidRepayDate(AuditDetail auditDetail, FinanceScheduleDetail curSchd, String label) {
-		if (!((curSchd.isRepayOnSchDate()
-				|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
-				&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate()
-						&& !curSchd.isSchPftPaid())
-						|| (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
-								&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
-			String[] valueParm = new String[1];
-			valueParm[0] = label;
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90261", "", valueParm)));
-			return auditDetail;
+	private AuditDetail checkIsValidRepayDate(AuditDetail ad, FinanceScheduleDetail schedule, String label) {
+		String[] valueParm = new String[1];
+		valueParm[0] = label;
+
+		boolean isrepay = schedule.isRepayOnSchDate();
+
+		if (isrepay && (!schedule.isPftOnSchDate() || schedule.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0)) {
+			ad.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90261", "", valueParm)));
+			return ad;
 		}
-		return null;
+
+		boolean isPftPaid = schedule.getProfitSchd().compareTo(schedule.getSchdPftPaid()) >= 0;
+		boolean schPftPaid = schedule.isSchPftPaid();
+
+		if (isPftPaid && (!isrepay || !schPftPaid)) {
+			return null;
+		}
+
+		boolean isPrincipalPaid = schedule.getPrincipalSchd().compareTo(schedule.getSchdPriPaid()) >= 0;
+		boolean schPriPaid = schedule.isSchPriPaid();
+		if (isPrincipalPaid && (!isrepay || !schPriPaid)) {
+			return null;
+		}
+
+		ad.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90261", "", valueParm)));
+		return ad;
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {

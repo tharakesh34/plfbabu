@@ -407,10 +407,13 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 		manualAdvise.setUserDetails(uploadManualAdvise.getUserDetails());
 		manualAdvise.setFinSource(UploadConstants.FINSOURCE_ID_UPLOAD);
 		FeeType javaFeeType = feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID());
+		manualAdvise.setTaxApplicable(javaFeeType.isTaxApplicable());
+		manualAdvise.setTaxComponent(javaFeeType.getTaxComponent());
 		com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
 		BeanUtils.copyProperties(javaFeeType, modelFeeType);
 		manualAdvise.setFeeType(modelFeeType);
 		manualAdvise.setAdviseID(uploadManualAdvise.getAdviseId());
+		manualAdvise.setTaxComponent(modelFeeType.getTaxComponent());
 
 		logger.debug("Leaving");
 		return manualAdvise;

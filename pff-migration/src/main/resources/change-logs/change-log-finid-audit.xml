@@ -2588,4 +2588,93 @@
 		</addColumn>
 	</changeSet>
 	
+	<!-- changes moved 5.17 & 5.18 -->
+	
+	<changeSet id="73" author="murthy.y">
+		<addColumn tableName="AdtTAN_ASSIGNMENTS">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="73.1" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				Update AdtTAN_ASSIGNMENTS set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where AdtTAN_ASSIGNMENTS.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="73.1" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				Update AdtTAN_ASSIGNMENTS set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where AdtTAN_ASSIGNMENTS.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="73.1" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				Update AdtTAN_ASSIGNMENTS set FinID = (select m.FinID from FINID_MAPPING m where AdtTAN_ASSIGNMENTS.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="74" author="murthy.y">
+		<addColumn tableName="AdtDocument_Status">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="74.1" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				Update AdtDocument_Status set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where AdtDocument_Status.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="74.1" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				Update AdtDocument_Status set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where AdtDocument_Status.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="74.1" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				Update AdtDocument_Status set FinID = (select m.FinID from FINID_MAPPING m where AdtDocument_Status.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="75" author="murthy.y">
+		<addColumn tableName="AdtFeeWaiverUploads">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="75.1" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				Update AdtFeeWaiverUploads set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where AdtFeeWaiverUploads.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="75.1" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				Update AdtFeeWaiverUploads set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where AdtFeeWaiverUploads.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="75.1" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				Update AdtFeeWaiverUploads set FinID = (select m.FinID from FINID_MAPPING m where AdtFeeWaiverUploads.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

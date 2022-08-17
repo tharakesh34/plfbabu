@@ -18,6 +18,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -55,6 +56,7 @@ public class MandateController extends ExtendedTestClass {
 	private FinanceMainDAO financeMainDAO;
 	private PennyDropService pennyDropService;
 	private MandateStatusDAO mandateStatusDAO;
+	private AuditHeaderDAO auditHeaderDAO;
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -68,7 +70,7 @@ public class MandateController extends ExtendedTestClass {
 		BankAccountValidation bankAccountValidation = new BankAccountValidation();
 		try {
 			// setting required values which are not received from API
-			prepareRequiredData(mandate);
+			ErrorDetail aErrorDetail = prepareRequiredData(mandate);
 
 			// preparing PennyDropResult and storing into Database.
 			if (mandate.getPennyDropStatus() != null) {
@@ -96,6 +98,10 @@ public class MandateController extends ExtendedTestClass {
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			auditHeader = mandateService.doApprove(auditHeader);
+
+			if (aErrorDetail != null) {
+				auditHeader.getAuditDetail().getErrorDetails().add(aErrorDetail);
+			}
 
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -164,7 +170,7 @@ public class MandateController extends ExtendedTestClass {
 		WSReturnStatus response = new WSReturnStatus();
 		try {
 			// set the default values for mandate
-			prepareRequiredData(mandate);
+			ErrorDetail aErrorDetail = prepareRequiredData(mandate);
 
 			Mandate prvMandate = mandateService.getApprovedMandateById(mandate.getMandateID());
 			mandate.setCustID(prvMandate.getCustID());
@@ -186,6 +192,10 @@ public class MandateController extends ExtendedTestClass {
 
 			// call update service method
 			auditHeader = mandateService.doApprove(auditHeader);
+
+			if (aErrorDetail != null) {
+				auditHeader.getAuditDetail().getErrorDetails().add(aErrorDetail);
+			}
 
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -220,7 +230,7 @@ public class MandateController extends ExtendedTestClass {
 			// get the mandate by the mandateId
 			Mandate mandate = mandateService.getApprovedMandateById(mandateID);
 
-			prepareRequiredData(mandate);
+			ErrorDetail aErrorDetail = prepareRequiredData(mandate);
 			mandate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			mandate.setNewRecord(false);
 			mandate.setVersion(mandate.getVersion() + 1);
@@ -233,6 +243,11 @@ public class MandateController extends ExtendedTestClass {
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			auditHeader = mandateService.doApprove(auditHeader);
+
+			if (aErrorDetail != null) {
+				auditHeader.getAuditDetail().getErrorDetails().add(aErrorDetail);
+			}
+
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
@@ -395,7 +410,7 @@ public class MandateController extends ExtendedTestClass {
 		logger.debug(Literal.ENTERING);
 
 		// setting required values which are not received from API
-		prepareRequiredData(mandate);
+		ErrorDetail aErrorDetail = prepareRequiredData(mandate);
 
 		Customer customer = customerDetailsService.getCustomerByCIF(mandate.getCustCIF());
 
@@ -411,6 +426,10 @@ public class MandateController extends ExtendedTestClass {
 				.get(APIHeader.API_HEADER_KEY);
 		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
 
+		if (aErrorDetail != null) {
+			auditHeader.getAuditDetail().getErrorDetails().add(aErrorDetail);
+		}
+
 		// set the headerDetails to AuditHeader
 		auditHeader.setApiHeader(reqHeaderDetails);
 
@@ -424,14 +443,20 @@ public class MandateController extends ExtendedTestClass {
 	 * @param mandate
 	 * 
 	 */
-	private void prepareRequiredData(Mandate mandate) {
+	private ErrorDetail prepareRequiredData(Mandate mandate) {
 		logger.debug(Literal.ENTERING);
-		BankBranch bankBranch = new BankBranch();
-		if (StringUtils.isNotBlank(mandate.getIFSC())) {
-			bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
-		} else if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getBranchCode())) {
-			bankBranch = bankBranchService.getBankBrachByCode(mandate.getBankCode(), mandate.getBranchCode());
+
+		String ifsc = mandate.getIFSC();
+		String micr = mandate.getMICR();
+		String bankCode = mandate.getBankCode();
+		String branchCode = mandate.getBranchCode();
+
+		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+		if (bankBranch.getError() != null) {
+			return bankBranch.getError();
 		}
+
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		mandate.setUserDetails(userDetails);
 		if (StringUtils.isBlank(mandate.getPeriodicity())) {
@@ -446,6 +471,7 @@ public class MandateController extends ExtendedTestClass {
 		mandate.setSourceId(APIConstants.FINSOURCE_ID_API);
 		logger.debug(Literal.LEAVING);
 
+		return null;
 	}
 
 	/**
@@ -534,6 +560,35 @@ public class MandateController extends ExtendedTestClass {
 		return response;
 	}
 
+	public WSReturnStatus updateApprovedMandate(Mandate mandate) {
+		int count = 0;
+
+		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_HEADER_KEY);
+		AuditHeader ah = getAuditHeader(mandate, PennantConstants.TRAN_UPD);
+
+		ah.setApiHeader(reqHeaderDetails);
+
+		try {
+			if (mandateService.updateMandateStatus(mandate) <= 0) {
+				return APIErrorHandlerService.getFailedStatus();
+			}
+
+			auditHeaderDAO.addAudit(ah);
+
+			MandateStatus mandateStatus = new MandateStatus();
+			mandateStatus.setMandateID(mandate.getMandateID());
+			mandateStatus.setStatus(mandate.getStatus());
+			mandateStatus.setChangeDate(SysParamUtil.getAppDate());
+			mandateStatusDAO.save(mandateStatus, "");
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		return APIErrorHandlerService.getSuccessStatus();
+	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -584,4 +639,8 @@ public class MandateController extends ExtendedTestClass {
 		this.mandateStatusDAO = mandateStatusDAO;
 	}
 
+	@Autowired
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
 }

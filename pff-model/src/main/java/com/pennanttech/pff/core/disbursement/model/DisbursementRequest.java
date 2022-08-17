@@ -154,6 +154,13 @@ public class DisbursementRequest implements Serializable {
 	private String lei;
 	private String cityName;
 	private String provinceName;
+	private String printLocBranchDesc;
+
+	private String transactionTypeCode;
+	private String additionalField1;
+	private String accountNo;
+	private String pinCode;
+	private String finBranch;
 
 	public DisbursementRequest() {
 		super();
@@ -965,5 +972,53 @@ public class DisbursementRequest implements Serializable {
 
 	public void setProvinceName(String provinceName) {
 		this.provinceName = provinceName;
+	}
+
+	public String getPrintLocBranchDesc() {
+		return printLocBranchDesc;
+	}
+
+	public void setPrintLocBranchDesc(String printLocBranchDesc) {
+		this.printLocBranchDesc = printLocBranchDesc;
+	}
+
+	public String getTransactionTypeCode() {
+		return transactionTypeCode;
+	}
+
+	public void setTransactionTypeCode(String transactionTypeCode) {
+		this.transactionTypeCode = transactionTypeCode;
+	}
+
+	public String getAdditionalField1() {
+		return additionalField1;
+	}
+
+	public void setAdditionalField1(String additionalField1) {
+		this.additionalField1 = additionalField1;
+	}
+
+	public String getAccountNo() {
+		return accountNo;
+	}
+
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
+	}
+
+	public String getPinCode() {
+		return pinCode;
+	}
+
+	public void setPinCode(String pinCode) {
+		this.pinCode = pinCode;
+	}
+
+	public String getFinBranch() {
+		return finBranch;
+	}
+
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
 	}
 }

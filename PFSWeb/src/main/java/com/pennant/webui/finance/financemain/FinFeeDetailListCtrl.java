@@ -788,13 +788,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					finFeeDetail.setNetAmount(netAmountOriginal);
 
 					if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(),
-							CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-						finFeeDetail.setPaidAmountOriginal(finTypeFee.getAmount());
-						finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
-						finFeeDetail.setPaidAmount(finTypeFee.getAmount());
-					}
-
-					if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(),
 							CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
 						finFeeDetail.setWaivedAmount(finTypeFee.getAmount());
 					}
@@ -1957,8 +1950,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				// Remaining Fee schedule Method
 				lc = new Listcell();
-				String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
-						+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
+				String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ",";
 				String feeScheduleMethod = finFeeDetail.getFeeScheduleMethod();
 
 				if (finFeeDetail.isTaxApplicable()) {
@@ -1969,7 +1961,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						feeScheduleMethod = "";
 					}
 					excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
-							+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + "," + ","
 							+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + "," + ","
 							+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + "," + ","
 							+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ",";
@@ -1978,7 +1969,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (FinServiceEvent.RESTRUCTURE.equals(this.moduleDefiner)) {
 					excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
 							+ CalculationConstants.REMFEE_PART_OF_DISBURSE + "," + ","
-							+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + "," + ","
 							+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + "," + ","
 							+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + "," + ","
 							+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ",";
@@ -1987,8 +1977,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					finFeeDetail.setFeeScheduleMethod(feeScheduleMethod);
 				}
 
-				if (StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethod)
-						|| StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, feeScheduleMethod)) {
+				if (StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethod)) {
 					feeScheduleMethod = "";
 				}
 				Combobox feeSchdMethCombo = new Combobox();
@@ -2000,6 +1989,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						&& finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
 					feeSchdMthdDisable = readOnly;
 				}
+
+				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(feeScheduleMethod)) {
+					feeSchdMthdDisable = true;
+				}
+
 				feeSchdMethCombo.setDisabled(feeSchdMthdDisable);
 
 				if (finFeeDetail.isRestructureFee()
@@ -2377,8 +2371,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		String feeSchedule = getComboboxValue(feeSchdMthdBox);
 		if (StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
 			waiverBox.setValue(actualBox.getValue());
-		} else if (StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-			paidBox.setValue(actualBox.getValue());
 		} else {
 
 			String finCcy = financeMain.getFinCcy();
@@ -2505,12 +2497,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				paidBox.setDisabled(true);
 				waiverBox.setDisabled(true);
 				waiverBox.setValue(actualBox.getValue());
-			} else if (StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-				remFeeBox.setValue(BigDecimal.ZERO);
-				waiverBox.setValue(BigDecimal.ZERO);
-				waiverBox.setDisabled(true);
-				paidBox.setDisabled(true);
-				paidBox.setValue(actualBox.getValue());
 			}
 		}
 
@@ -2902,6 +2888,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			fee.setCalculatedAmount(feeResult);
 
+			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
+				feeResult = feeResult.subtract(fee.getNetTDS());
+			}
 			if (fee.isTaxApplicable()) {
 				if (StringUtils.equals(subventionFeeCode, fee.getFeeTypeCode())) {
 					this.finFeeDetailService.processGSTCalForRule(fee, feeResult, financeDetail,

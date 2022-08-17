@@ -13,14 +13,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.GSTCalculator;
-import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.CashBackDetailDAO;
@@ -32,11 +31,11 @@ import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
-import com.pennant.backend.dao.rmtmasters.GSTRateDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.dao.transactionmapping.TransactionMappingDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.CashBackDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -50,16 +49,18 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.RestructureCharge;
 import com.pennant.backend.model.finance.RestructureDetail;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
-import com.pennant.backend.model.rmtmasters.GSTRate;
 import com.pennant.backend.model.rmtmasters.Promotion;
-import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.CashBackProcessService;
+import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
@@ -67,17 +68,21 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
+import com.pennanttech.pff.cd.model.Manufacturer;
+import com.pennanttech.pff.cd.model.TransactionMapping;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennattech.pff.cd.dao.ManufacturerDAO;
 
 public class CashBackProcessServiceImpl implements CashBackProcessService {
 	private static final Logger logger = LogManager.getLogger(CashBackProcessServiceImpl.class);
@@ -95,25 +100,18 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 	private PaymentHeaderDAO paymentHeaderDAO;
 	private ReceiptService receiptService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private RuleDAO ruleDAO;
-	private GSTRateDAO gstRateDAO;
 	private FinODDetailsDAO finODDetailsDAO;
-	private FinanceRepaymentsDAO financeRepaymentsDAO;
-	private LatePayMarkingService latePayMarkingService;
+	private GSTInvoiceTxnService gstInvoiceTxnService;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private TransactionMappingDAO transactionMappingDAO;
+	private ManufacturerDAO manufacturerDAO;
 
 	private String tdsRoundMode = null;
 	private int tdsRoundingTarget = 0;
 	private BigDecimal tdsPerc = BigDecimal.ZERO;
 
-	private BigDecimal cgstPerc = BigDecimal.ZERO;
-	private BigDecimal sgstPerc = BigDecimal.ZERO;
-	private BigDecimal ugstPerc = BigDecimal.ZERO;
-	private BigDecimal igstPerc = BigDecimal.ZERO;
-	private BigDecimal cessPerc = BigDecimal.ZERO;
-	private BigDecimal tgstPerc = BigDecimal.ZERO;
-
 	@Override
-	public void createCashBackAdvice(FinanceMain fm, Promotion promotion, Date appDate) {
+	public void createCashBackAdvice(FinanceMain fm, Date appDate, FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
 		if (!StringUtils.equals(FinanceConstants.PRODUCT_CD, fm.getProductCategory())) {
@@ -122,7 +120,11 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		}
 
 		List<CashBackDetail> cashBackDetailList = new ArrayList<>();
+		TaxAmountSplit finTax = new TaxAmountSplit();
 		ManualAdvise manualAdvise = null;
+		Promotion promotion = fd.getPromotion();
+
+		BigDecimal retensionAmount = BigDecimal.ZERO;
 
 		switch (promotion.getCbPyt()) {
 
@@ -131,49 +133,74 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 			boolean dbdProcAvail = false;
 			BigDecimal dbdAmount = null;
 
-			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
+			if (promotion.isDbd()) {
 
 				dbdAmount = fm.getFinAmount().multiply(promotion.getDbdPerc()).divide(new BigDecimal(100), 0,
 						RoundingMode.HALF_DOWN);
 
-				// Payable Advise creation against cash back amount in Hold Status
-				// Hold is for to avoid usage in screens till Settlement process completed
-				manualAdvise = cashBackDueCreation(fm, promotion.getDbdFeeTypId(), dbdAmount, appDate);
+				if (!promotion.isDbdRtnd()) {
+					// Payable Advise creation against cash back amount in Hold Status
+					// Hold is for to avoid usage in screens till Settlement process completed
+					manualAdvise = cashBackDueCreation(fm, promotion.getDbdFeeTypId(), dbdAmount, appDate);
 
-				// Logging Cash back process details for future usage
-				cashBackDetailList.add(prepareCashbackLog(fm, manualAdvise, "DBD"));
+					// Logging Cash back process details for future usage
+					cashBackDetailList.add(prepareCashbackLog(fm, manualAdvise, PennantConstants.DBD_RETAINED,
+							BigDecimal.ZERO, finTax, null, 0));
 
-				dbdProcAvail = true;
+					dbdProcAvail = true;
+				} else {
+					retensionAmount = dbdAmount;
+					preparACDataSet(fm, retensionAmount, PennantConstants.DBD_RETAINED, cashBackDetailList, fd);
+					dbdProcAvail = true;
+				}
 			}
 
-			if (promotion.isMbd() && !promotion.isMbdRtnd()) {
+			if (promotion.isMbd()) {
 				BigDecimal mbdAmount = BigDecimal.ZERO;
 
-				// If DBD Available balance amount from Subvention will be MDB CashBack
-				// Total CashBack should not cross Subvention amount always
-				if (dbdProcAvail) {
-					mbdAmount = fm.getSvAmount().subtract(dbdAmount);
+				if (!promotion.isMbdRtnd()) {
+
+					// If DBD Available balance amount from Subvention will be MDB CashBack
+					// Total CashBack should not cross Subvention amount always
+					if (dbdProcAvail) {
+						mbdAmount = fm.getSvAmount().subtract(dbdAmount);
+					} else {
+						mbdAmount = fm.getSvAmount();
+					}
+
+					// Payable Advise creation against cash back amount in Hold Status
+					// Hold is for to avoid usage in screens till Settlement process completed
+					manualAdvise = cashBackDueCreation(fm, promotion.getMbdFeeTypId(), mbdAmount, appDate);
+
+					// Logging Cash back process details for future usage
+					cashBackDetailList.add(prepareCashbackLog(fm, manualAdvise, PennantConstants.MBD_RETAINED,
+							BigDecimal.ZERO, finTax, null, 0));
 				} else {
-					mbdAmount = fm.getSvAmount();
+
+					if (dbdProcAvail) {
+						retensionAmount = fm.getSvAmount().subtract(dbdAmount);
+					} else {
+						retensionAmount = fm.getSvAmount();
+					}
+					preparACDataSet(fm, retensionAmount, PennantConstants.MBD_RETAINED, cashBackDetailList, fd);
 				}
-
-				// Payable Advise creation against cash back amount in Hold Status
-				// Hold is for to avoid usage in screens till Settlement process completed
-				manualAdvise = cashBackDueCreation(fm, promotion.getMbdFeeTypId(), mbdAmount, appDate);
-
-				// Logging Cash back process details for future usage
-				cashBackDetailList.add(prepareCashbackLog(fm, manualAdvise, "MBD"));
 			}
 
 			break;
 		case PennantConstants.DBD_AND_MBD_TOGETHER:
+			if (promotion.isMbd() && promotion.isDbd() && (!promotion.isMbdRtnd() || !promotion.isDbdRtnd())) {
+				// Payable Advise creation against cash back amount in Hold Status
+				// Hold is for to avoid usage in screens till Settlement process completed
+				manualAdvise = cashBackDueCreation(fm, promotion.getDbdAndMbdFeeTypId(), fm.getSvAmount(), appDate);
 
-			// Payable Advise creation against cash back amount in Hold Status
-			// Hold is for to avoid usage in screens till Settlement process completed
-			manualAdvise = cashBackDueCreation(fm, promotion.getDbdAndMbdFeeTypId(), fm.getSvAmount(), appDate);
+				// Logging Cash back process details for future usage
 
-			// Logging Cash back process details for future usage
-			cashBackDetailList.add(prepareCashbackLog(fm, manualAdvise, "DBMBD"));
+				cashBackDetailList.add(prepareCashbackLog(fm, manualAdvise, PennantConstants.DBMBD_RETAINED,
+						BigDecimal.ZERO, finTax, null, 0));
+			} else {
+				retensionAmount = fm.getSvAmount();
+				preparACDataSet(fm, retensionAmount, PennantConstants.MBD_RETAINED, cashBackDetailList, fd);
+			}
 			break;
 
 		default:
@@ -188,15 +215,141 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private CashBackDetail prepareCashbackLog(FinanceMain finMain, ManualAdvise manualAdvise, String type) {
+	private AEEvent preparACDataSet(FinanceMain fm, BigDecimal retensionAmount, String type,
+			List<CashBackDetail> cbdList, FinanceDetail fd) {
+		logger.debug(Literal.ENTERING);
+
+		ExtendedFieldRender efr = fd.getExtendedFieldRender();
+
+		Map<String, BigDecimal> percentages = GSTCalculator.getManufacMerchTaxPercentages(fm.getFinID(),
+				fm.getFinBranch(), efr, type);
+
+		// Accounting process for Retension of Cashback Amounts
+		AEEvent aeEvent = new AEEvent();
+
+		aeEvent.setAccountingEvent(AccountingEvent.CBRET);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
+		if (amountCodes == null) {
+			amountCodes = new AEAmountCodes();
+		}
+
+		// Finance main
+		amountCodes.setFinType(fm.getFinType());
+
+		aeEvent.setPostingUserBranch(fm.getUserDetails().getBranchCode());
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
+		aeEvent.setPostDate(SysParamUtil.getAppDate());
+		aeEvent.setEntityCode(fm.getEntityCode());
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setCcy(fm.getFinCcy());
+		aeEvent.setFinReference(fm.getFinReference());
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
+		TaxAmountSplit finTax = GSTCalculator.getInclusiveGST(retensionAmount, percentages);
+
+		Map<String, Object> eventMapping = aeEvent.getDataMap();
+		eventMapping.put("cbret_cgst", finTax.getcGST());
+		eventMapping.put("cbret_sgst", finTax.getsGST());
+		eventMapping.put("cbret_ugst", finTax.getuGST());
+		eventMapping.put("cbret_igst", finTax.getiGST());
+		eventMapping.put("cbret_cess", finTax.getCess());
+
+		// GST parameters
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinID());
+		if (gstExecutionMap != null) {
+			for (String key : gstExecutionMap.keySet()) {
+				if (StringUtils.isNotBlank(key)) {
+					eventMapping.put(key, gstExecutionMap.get(key));
+				}
+			}
+		}
+
+		eventMapping.put("ae_cbret", retensionAmount);
+
+		if (type.equals(PennantConstants.MBD_RETAINED)) {
+			eventMapping.put("ae_mbd_cbret", retensionAmount);
+			eventMapping.put("mbd_cbret_cgst", finTax.getcGST());
+			eventMapping.put("mbd_cbret_sgst", finTax.getsGST());
+			eventMapping.put("mbd_cbret_ugst", finTax.getuGST());
+			eventMapping.put("mbd_cbret_igst", finTax.getiGST());
+			eventMapping.put("mbd_cbret_cess", finTax.getCess());
+		} else if (type.equals(PennantConstants.DBD_RETAINED)) {
+			eventMapping.put("ae_dbd_cbret", retensionAmount);
+			eventMapping.put("dbd_cbret_cgst", finTax.getcGST());
+			eventMapping.put("dbd_cbret_sgst", finTax.getsGST());
+			eventMapping.put("dbd_cbret_ugst", finTax.getuGST());
+			eventMapping.put("dbd_cbret_igst", finTax.getiGST());
+			eventMapping.put("dbd_cbret_cess", finTax.getCess());
+		}
+		aeEvent.setDataMap(eventMapping);
+		long accountsetId = AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.CBRET,
+				FinanceConstants.MODULEID_FINTYPE);
+		aeEvent.getAcSetIDList().add(accountsetId);
+
+		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
+
+		if (!aeEvent.isPostingSucess()) {
+			throw new InterfaceException("9998", "Cash Retension accounting postings failed.");
+		}
+
+		BigDecimal retensionAmountexcludeGST = retensionAmount.subtract(finTax.getcGST()).subtract(finTax.getsGST())
+				.subtract(finTax.getuGST()).subtract(finTax.getiGST()).subtract(finTax.getCess());
+		CashBackDetail cbDetail = prepareCashbackLog(fm, null, type, retensionAmountexcludeGST, finTax,
+				fd.getExtendedFieldRender(), aeEvent.getLinkedTranId());
+		cbdList.add(cbDetail);
+
+		// GST Invoice Preparation
+		if (gstInvoiceTxnService != null && aeEvent.getLinkedTranId() > 0 && CollectionUtils.isNotEmpty(cbdList)) {
+
+			// Normal Fees invoice preparation
+			// this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), fd, cbDetail,
+			// PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, percentages);
+		}
+		return aeEvent;
+
+	}
+
+	private CashBackDetail prepareCashbackLog(FinanceMain fm, ManualAdvise ma, String type,
+			BigDecimal retensionAmountexcludeGST, TaxAmountSplit finTax, ExtendedFieldRender aExtendedFieldRender,
+			long linkedTranId) {
 		logger.debug(Literal.ENTERING);
 
 		CashBackDetail cbDetail = new CashBackDetail();
-		cbDetail.setFinID(finMain.getFinID());
-		cbDetail.setFinReference(finMain.getFinReference());
+		if (aExtendedFieldRender != null) {
+			if (type.equals("DBD")) {
+				String mId = aExtendedFieldRender.getMapValues().get("MID").toString();
+				String tId = aExtendedFieldRender.getMapValues().get("TID").toString();
+				TransactionMapping tm = transactionMappingDAO.getDealerDetails(mId, tId);
+				cbDetail.setFeeTypeId(100);
+				cbDetail.setManfMerchId(String.valueOf(tm.getDealerCode()));
+				cbDetail.setStoreName(tm.getDealerName());
+			} else if (type.equals("MBD")) {
+				String oEMID = aExtendedFieldRender.getMapValues().get("OEMID").toString();
+				Manufacturer manfDetails = manufacturerDAO.getDetails(oEMID);
+				cbDetail.setFeeTypeId(200);
+				cbDetail.setManfMerchId(oEMID);
+				cbDetail.setStoreName(manfDetails.getName());
+			}
+		}
+
+		cbDetail.setFinReference(fm.getFinReference());
 		cbDetail.setType(type);
-		cbDetail.setAdviseId(manualAdvise.getAdviseID());
-		cbDetail.setAmount(manualAdvise.getAdviseAmount());
+		if (ma != null) {
+			cbDetail.setAdviseId(ma.getAdviseID());
+			cbDetail.setAmount(ma.getAdviseAmount());
+		} else {
+			cbDetail.setRetainedAmount(retensionAmountexcludeGST);
+			cbDetail.setLinkedTranId(linkedTranId);
+		}
+
+		cbDetail.setcGST(BigDecimal.ZERO);
+		cbDetail.setsGST(BigDecimal.ZERO);
+		cbDetail.setuGST(BigDecimal.ZERO);
+		cbDetail.setiGST(BigDecimal.ZERO);
+		cbDetail.setCess(BigDecimal.ZERO);
+		cbDetail.settGST(BigDecimal.ZERO);
 		cbDetail.setRefunded(false);
 
 		logger.debug(Literal.LEAVING);
@@ -467,9 +620,10 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 	}
 
 	private BigDecimal prepareLoanAlocList(long finID, Date valueDate, BigDecimal cashBackAmount) {
-
 		// Fetch all Schedules Dues (Principal + Interest) against all Loans by Date Order
 		List<FinanceScheduleDetail> schdList = financeScheduleDetailDAO.getDueSchedulesByFacilityRef(finID, valueDate);
+
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
 
 		for (FinanceScheduleDetail curSchd : schdList) {
 			BigDecimal priBal = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
@@ -507,8 +661,10 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 					continue;
 				}
 				BigDecimal lppBal = fod.getTotPenaltyBal();
-				if (StringUtils.equals(lppTaxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-					lppBal = lppBal.add(getGST(fod.getFinID(), fod.getTotPenaltyBal(), lppTaxType));
+				TaxAmountSplit tax = GSTCalculator.calculateGST(taxPercentages, lppTaxType, fod.getTotPenaltyBal());
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(lppTaxType)) {
+					lppBal = lppBal.add(tax.gettGST());
 				}
 				cashBackAmount = cashBackAmount.subtract(lppBal);
 
@@ -520,33 +676,33 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 		// Fetch all Bounce & Receivable Charges against all Loans by Date Order
 		if (cashBackAmount.compareTo(BigDecimal.ZERO) > 0) {
-			List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdviseByRef(finID, 1, "_AView");
-			if (adviseList != null && !adviseList.isEmpty()) {
+			List<ManualAdvise> adviseList = manualAdviseDAO.getReceivableAdvises(finID, "_AView");
 
-				String bounceTaxType = feeTypeDAO.getTaxCompByCode(RepayConstants.ALLOCATION_BOUNCE);
-				for (ManualAdvise adv : adviseList) {
+			String bounceTaxType = feeTypeDAO.getTaxCompByCode(RepayConstants.ALLOCATION_BOUNCE);
 
-					BigDecimal balAmt = adv.getAdviseAmount().subtract(adv.getPaidAmount())
-							.subtract(adv.getWaivedAmount());
-					if (balAmt.compareTo(BigDecimal.ZERO) <= 0) {
-						continue;
-					}
+			for (ManualAdvise adv : adviseList) {
 
-					// Bounce Amount
-					if (adv.getBounceID() > 0) {
-						if (StringUtils.equals(bounceTaxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-							balAmt = balAmt.add(getGST(adv.getFinID(), balAmt, bounceTaxType));
-						}
-					} else {
-						if (StringUtils.equals(adv.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-							balAmt = balAmt.add(getGST(adv.getFinID(), balAmt, adv.getTaxComponent()));
-						}
-					}
-					cashBackAmount = cashBackAmount.subtract(balAmt);
+				BigDecimal balAmt = adv.getAdviseAmount().subtract(adv.getPaidAmount()).subtract(adv.getWaivedAmount());
+				if (balAmt.compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
 
-					if (cashBackAmount.compareTo(BigDecimal.ZERO) <= 0) {
-						break;
-					}
+				String taxComponent = adv.getTaxComponent();
+
+				if (adv.getBounceID() > 0) {
+					taxComponent = bounceTaxType;
+				}
+
+				TaxAmountSplit tax = GSTCalculator.calculateGST(taxPercentages, taxComponent, balAmt);
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+					balAmt = balAmt.add(tax.gettGST());
+				}
+
+				cashBackAmount = cashBackAmount.subtract(balAmt);
+
+				if (cashBackAmount.compareTo(BigDecimal.ZERO) <= 0) {
+					break;
 				}
 			}
 		}
@@ -560,115 +716,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
 		tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
 		return tds;
-	}
-
-	private BigDecimal getGST(long finID, BigDecimal amount, String taxType) {
-
-		// No AMount to calculate Tax
-		if (amount.compareTo(BigDecimal.ZERO) == 0) {
-			return BigDecimal.ZERO;
-		}
-
-		// No Tax calculation required
-		if (StringUtils.isBlank(taxType) || StringUtils.equals(taxType, PennantConstants.List_Select)) {
-			return BigDecimal.ZERO;
-		}
-
-		// Fetch and store Tax percentages one time
-		if (tgstPerc.compareTo(BigDecimal.ZERO) == 0) {
-			setTaxPercValues(finID);
-		}
-
-		if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-			return getInclusiveGST(amount);
-		} else if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-			return getExclusiveGST(amount);
-		}
-
-		return BigDecimal.ZERO;
-	}
-
-	private void setTaxPercValues(long finID) {
-		Map<String, Object> dataMap = GSTCalculator.getGSTDataMap(finID);
-		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
-		String finCcy = SysParamUtil.getAppCurrency();
-
-		tgstPerc = BigDecimal.ZERO;
-		if (SysParamUtil.isAllowed(SMTParameterConstants.CALCULATE_GST_ON_GSTRATE_MASTER)) {
-
-			if (dataMap.containsKey("fromState") && dataMap.containsKey("toState")) {
-				String fromState = (String) dataMap.get("fromState");
-				String toState = (String) dataMap.get("toState");
-				if (StringUtils.isNotBlank(fromState) && StringUtils.isNotBlank(toState)) {
-					List<GSTRate> gstRateDetailList = gstRateDAO.getGSTRateByStates(fromState, toState, "_AView");
-					if (CollectionUtils.isNotEmpty(gstRateDetailList)) {
-						for (GSTRate gstRate : gstRateDetailList) {
-							if (StringUtils.equals(RuleConstants.CODE_CGST, gstRate.getTaxType())) {
-								cgstPerc = gstRate.getPercentage();
-								tgstPerc = tgstPerc.add(cgstPerc);
-							} else if (StringUtils.equals(RuleConstants.CODE_IGST, gstRate.getTaxType())) {
-								igstPerc = gstRate.getPercentage();
-								tgstPerc = tgstPerc.add(igstPerc);
-							} else if (StringUtils.equals(RuleConstants.CODE_SGST, gstRate.getTaxType())) {
-								sgstPerc = gstRate.getPercentage();
-								tgstPerc = tgstPerc.add(sgstPerc);
-							} else if (StringUtils.equals(RuleConstants.CODE_UGST, gstRate.getTaxType())) {
-								ugstPerc = gstRate.getPercentage();
-								tgstPerc = tgstPerc.add(ugstPerc);
-							} else if (StringUtils.equals(RuleConstants.CODE_CESS, gstRate.getTaxType())) {
-								cessPerc = gstRate.getPercentage();
-								tgstPerc = tgstPerc.add(cessPerc);
-							}
-						}
-					}
-				}
-
-			}
-		} else {
-
-			for (Rule rule : rules) {
-				if (StringUtils.equals(RuleConstants.CODE_CGST, rule.getRuleCode())) {
-					cgstPerc = RuleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
-					tgstPerc = tgstPerc.add(cgstPerc);
-				} else if (StringUtils.equals(RuleConstants.CODE_IGST, rule.getRuleCode())) {
-					igstPerc = RuleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
-					tgstPerc = tgstPerc.add(igstPerc);
-				} else if (StringUtils.equals(RuleConstants.CODE_SGST, rule.getRuleCode())) {
-					sgstPerc = RuleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
-					tgstPerc = tgstPerc.add(sgstPerc);
-				} else if (StringUtils.equals(RuleConstants.CODE_UGST, rule.getRuleCode())) {
-					ugstPerc = RuleExecutionUtil.getRuleResult(rule.getSQLRule(), dataMap, finCcy);
-					tgstPerc = tgstPerc.add(ugstPerc);
-				}
-			}
-		}
-	}
-
-	private BigDecimal getExclusiveGST(BigDecimal taxableAmount) {
-		BigDecimal totalGST = BigDecimal.ZERO;
-		totalGST = GSTCalculator.getExclusiveTax(taxableAmount, cgstPerc);
-		totalGST = totalGST.add(GSTCalculator.getExclusiveTax(taxableAmount, sgstPerc));
-		totalGST = totalGST.add(GSTCalculator.getExclusiveTax(taxableAmount, ugstPerc));
-		totalGST = totalGST.add(GSTCalculator.getExclusiveTax(taxableAmount, igstPerc));
-		totalGST = totalGST.add(GSTCalculator.getExclusiveTax(taxableAmount, cessPerc));
-		return totalGST;
-	}
-
-	private BigDecimal getInclusiveGST(BigDecimal taxableAmount) {
-		BigDecimal netAmount = GSTCalculator.getInclusiveAmount(taxableAmount, tgstPerc);
-
-		BigDecimal totalGST = BigDecimal.ZERO;
-		totalGST = GSTCalculator.getExclusiveTax(taxableAmount, cgstPerc);
-		totalGST = totalGST.add(GSTCalculator.getExclusiveTax(netAmount, sgstPerc));
-		totalGST = totalGST.add(GSTCalculator.getExclusiveTax(netAmount, ugstPerc));
-		totalGST = totalGST.add(GSTCalculator.getExclusiveTax(netAmount, igstPerc));
-		totalGST = totalGST.add(GSTCalculator.getExclusiveTax(netAmount, cessPerc));
-
-		if (netAmount.add(totalGST).compareTo(taxableAmount) != 0) {
-			BigDecimal diff = taxableAmount.subtract(netAmount.add(totalGST));
-			totalGST = totalGST.add(diff);
-		}
-		return totalGST;
 	}
 
 	private AuditHeader getAuditHeader(ManualAdvise aManualAdvise, String tranType) {
@@ -765,6 +812,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		fsi.setReqType(RepayConstants.REQTYPE_POST);
 		fsi.setRecalType(rd.getRecalculationType());
 		fsi.setBpiAmount(bpiAmount);
+		fsi.setFromDate(rd.getRestructureDate());
 
 		FinReceiptDetail rcd = new FinReceiptDetail();
 		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
@@ -778,84 +826,103 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		rcd.setReceiptPurpose(FinServiceEvent.RESTRUCTURE);
 		fsi.setReceiptDetail(rcd);
 		fsi.setExcldTdsCal(true);
-
+		fsi.setOldShedules(fm.getOldSchedules());
 		fsi.setReceiptPurpose(ReceiptPurpose.RESTRUCTURE.code());
+
+		receiptService = (ReceiptService) SpringBeanUtil.getBean("receiptService");
 		FinanceDetail detail = receiptService.receiptTransaction(fsi);
 		if (detail.getReturnStatus() != null) {
 			throw new AppException("AppException", detail.getReturnStatus().getReturnText());
 		}
 	}
 
+	@Autowired
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
 	}
 
+	@Autowired
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
 	}
 
-	public void setCashBackDetailDAO(CashBackDetailDAO cashBackDetailDAO) {
-		this.cashBackDetailDAO = cashBackDetailDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
+	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
 
+	@Autowired
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
 	}
 
+	@Autowired
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
 	}
 
+	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
+	@Autowired
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
 		this.paymentHeaderService = paymentHeaderService;
 	}
 
+	@Autowired
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
 	}
 
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
 	public void setPaymentHeaderDAO(PaymentHeaderDAO paymentHeaderDAO) {
 		this.paymentHeaderDAO = paymentHeaderDAO;
 	}
 
+	@Autowired
+	public void setCashBackDetailDAO(CashBackDetailDAO cashBackDetailDAO) {
+		this.cashBackDetailDAO = cashBackDetailDAO;
+	}
+
+	@Autowired
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
 	}
 
+	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
-	}
-
-	public void setGstRateDAO(GSTRateDAO gstRateDAO) {
-		this.gstRateDAO = gstRateDAO;
-	}
-
+	@Autowired
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
-	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
-		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	@Autowired
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
-	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
-		this.latePayMarkingService = latePayMarkingService;
+	@Autowired
+	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
+		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
+	@Autowired
+	public void setManufacturerDAO(ManufacturerDAO manufacturerDAO) {
+		this.manufacturerDAO = manufacturerDAO;
+	}
+
+	@Autowired
+	public void setTransactionMappingDAO(TransactionMappingDAO transactionMappingDAO) {
+		this.transactionMappingDAO = transactionMappingDAO;
+	}
 }

@@ -23,6 +23,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.finance.RepayInstruction;
@@ -33,9 +34,11 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.ProductUtil;
 
 public class LoadFinanceData extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(LoadFinanceData.class);
@@ -46,10 +49,13 @@ public class LoadFinanceData extends ServiceHelper {
 
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 
+		Date eodDate = custEODEvent.getEodValueDate();
+
 		logger.info("Total Finances >> {}", custFinMains.size());
 
 		for (FinanceMain fm : custFinMains) {
 			long finID = fm.getFinID();
+			Date matDate = fm.getMaturityDate();
 
 			logger.info("Loading finance details for the FinID >> {} started...", finID);
 
@@ -80,6 +86,19 @@ public class LoadFinanceData extends ServiceHelper {
 
 			if (fm.isAllowSubvention()) {
 				finEODEvent.setSubventionDetail(subventionDetailDAO.getSubventionDetail(finID, ""));
+			}
+
+			finEODEvent.setNpaStage(assetClassificationService.isEffNpaStage(finID));
+
+			if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+				finEODEvent.setCancelManualAdvises(manualAdviseDAO.getAdvisesByMaturityDate(finID, matDate));
+				finEODEvent.setPostingManualAdvises(manualAdviseDAO.getAdvisesByValueDate(finID, eodDate));
+				finEODEvent.getPostingManualAdvises()
+						.forEach(ma -> ma.setFeeType(feeTypeDAO.getFeeTypeById(ma.getFeeTypeID(), "_AView")));
+			}
+
+			if (ProductUtil.isOverDraft(fm)) {
+				finEODEvent.setOverDraftFM(overdraftLoanDAO.getLoanDetails(finID));
 			}
 
 			setEventFlags(custEODEvent, finEODEvent);
@@ -126,8 +145,8 @@ public class LoadFinanceData extends ServiceHelper {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		long finID = fm.getFinID();
 
-		boolean provisionExists = provisionDAO.isProvisionExists(finID, TableType.MAIN_TAB);
 		boolean isAmountDue = false;
+		String custBranch = custEODEvent.getCustomer().getCustAddrProvince();
 
 		// Place schedule dates to Map
 		for (int i = 0; i < schedules.size(); i++) {
@@ -170,11 +189,6 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 			}
 
-			// Is Provision exists
-			if (custEODEvent.isDueExist() && ImplementationConstants.ALLOW_NPA_PROVISION && provisionExists) {
-				finEODEvent.getFinProfitDetail().setProvision(true);
-			}
-
 			// Date Rollover Setting
 			if (schd.getSchDate().compareTo(businessDate) == 0) {
 				setDateRollover(custEODEvent, finEODEvent, schd.getSchDate(), i);
@@ -196,11 +210,20 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 			}
 
-			isAmountDue = isOldestDueOverDue(schd);
+			if (ImplementationConstants.ALLOW_OLDEST_DUE) {
+				isAmountDue = isOldestDueOverDue(schd);
+			}
+
+			BigDecimal balanceAmount = BigDecimal.ZERO;
+			if (ProductUtil.isOverDraftChargeReq(fm)) {
+				balanceAmount = overdrafLoanService.calculateODAmounts(fm, schd.getSchDate(), custBranch)
+						.getCurOverdraftTxnChrg();
+			}
 
 			// Paid Principal OR Paid Interest Less than scheduled amounts
 			if (schd.getSchdPriPaid().compareTo(schd.getPrincipalSchd()) < 0
-					|| schd.getSchdPftPaid().compareTo(schd.getProfitSchd()) < 0) {
+					|| schd.getSchdPftPaid().compareTo(schd.getProfitSchd()) < 0
+					|| balanceAmount.compareTo(BigDecimal.ZERO) > 0) {
 				isAmountDue = true;
 			}
 
@@ -333,7 +356,8 @@ public class LoadFinanceData extends ServiceHelper {
 			if (changeGraceEnd) {
 				logger.info("Updating FinanceMain for change grace end.");
 				fm.setVersion(fm.getVersion() + 1);
-				financeMainDAO.update(fm, TableType.MAIN_TAB, false);
+				fm.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				financeMainDAO.updateFinanceForGraceEndInEOD(fm);
 
 				logger.info("Logging Fin Log Entry Detail into FinLogEntryDetail table...");
 				long logKey = saveFinLogEntryDetail(fm);
@@ -344,6 +368,13 @@ public class LoadFinanceData extends ServiceHelper {
 				listDeletion(finEODEvent, FinServiceEvent.CHGGRCEND, "");
 
 				listSave(finEODEvent, "", 0);
+
+				List<FinanceStepPolicyDetail> spdList = finEODEvent.getStepPolicyDetails();
+				if (fm.isStepFinance() && PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())
+						&& CollectionUtils.isNotEmpty(spdList) && fm.getNoOfGrcSteps() > 0) {
+					financeStepDetailDAO.deleteList(finID, false, "");
+					financeStepDetailDAO.saveList(spdList, false, "");
+				}
 			}
 
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
@@ -356,20 +387,42 @@ public class LoadFinanceData extends ServiceHelper {
 					}
 				}
 				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
+				Date odSchDateIncGrc = odschd.getSchDate();
+				Date appDate = fm.getEventProperties().getAppDate();
+				String productCategory = fm.getProductCategory();
+
+				int extnODGrcDays = 0;
+				if (ProductUtil.isOverDraft(productCategory)) {
+					extnODGrcDays = finODPenaltyRateDAO.getExtnODGrcDays(fm.getFinID());
+				}
 
 				if (odschd != null) {
-					List<FinODDetails> listSave = new ArrayList<FinODDetails>();
-					List<FinODDetails> listupdate = new ArrayList<FinODDetails>();
-					for (FinODDetails finODDetails : odDetails) {
-						if (finODDetails.getFinODSchdDate().compareTo(odschd.getSchDate()) < 0) {
+					List<FinODDetails> listSave = new ArrayList<>();
+					List<FinODDetails> listupdate = new ArrayList<>();
+					for (FinODDetails od : odDetails) {
+						if (ProductUtil.isOverDraft(productCategory)) {
+							int odGraceDays = od.getODGraceDays();
+
+							if (!od.isODIncGrcDays()) {
+								odGraceDays = odGraceDays + extnODGrcDays;
+							}
+
+							odSchDateIncGrc = DateUtil.addDays(odschd.getSchDate(), odGraceDays);
+
+							if (appDate.compareTo(odSchDateIncGrc) < 0) {
+								continue;
+							}
+						}
+
+						if (od.getFinODSchdDate().compareTo(odschd.getSchDate()) < 0) {
 							continue;
 						}
 
-						boolean exists = checkExsistInList(finODDetails, odDetailsLBD);
+						boolean exists = checkExsistInList(od, odDetailsLBD);
 						if (exists) {
-							listupdate.add(finODDetails);
+							listupdate.add(od);
 						} else {
-							listSave.add(finODDetails);
+							listSave.add(od);
 						}
 					}
 
@@ -520,16 +573,24 @@ public class LoadFinanceData extends ServiceHelper {
 				List<ProvisionAmount> oldAmounts = provisionDAO.getProvisionAmounts(oldProvision.getId(),
 						TableType.MAIN_TAB);
 				List<ProvisionAmount> provisionAmounts = provision.getProvisionAmounts();
+				List<ProvisionAmount> newprovisionAmounts = new ArrayList<>(provisionAmounts);
+
 				for (ProvisionAmount oldAmount : oldAmounts) {
 					for (ProvisionAmount provisionAmount : provisionAmounts) {
 						if (StringUtils.equals(oldAmount.getProvisionType(), provisionAmount.getProvisionType())) {
 							provisionAmount.setId(oldAmount.getId());
+							newprovisionAmounts.remove(provisionAmount);
 						}
 					}
 				}
 				logger.warn("Updating Old provision Amounts in PROVISION_AMOUNTS table..");
 				count = provisionDAO.updateAmounts(provisionAmounts, TableType.MAIN_TAB);
 				logger.warn("{} ProvisionAmounts updated in PROVISION_AMOUNTS table..", count);
+
+				if (CollectionUtils.isNotEmpty(newprovisionAmounts)) {
+					provisionDAO.saveAmounts(newprovisionAmounts, TableType.MAIN_TAB, false);
+				}
+
 			} else {
 				logger.warn("Saving provision Amounts in PROVISION_AMOUNTS table..");
 				count = provisionDAO.saveAmounts(list, TableType.MAIN_TAB, false);

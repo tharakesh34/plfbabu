@@ -58,4 +58,13 @@ public interface CovenantsDAO {
 
 	void deleteDocumentByDocumentId(Long documentId, String tableType);
 
+	List<Covenant> getCovenants(List<String> list, TableType tableType);
+
+	List<CovenantDocument> getCovenantDocuments(List<Long> covList, TableType tableType);
+
+	void updateCovenantDocuments(List<CovenantDocument> cdList, TableType tableType);
+
+	List<Covenant> getCovenantsId(List<Long> list, TableType tableType);
+
+	boolean getCovenantsWithOtc(String finRef);
 }

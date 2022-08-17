@@ -111,6 +111,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	private boolean isFinOptionNew = false;
 	private boolean newCustomer;
 	private boolean fromLoan;
+	private boolean isFinanceProcess = false;
 	private FinOption finOption;
 	private String moduleDefiner;
 
@@ -163,6 +164,10 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		if (arguments.get("moduleDefiner") != null) {
 			moduleDefiner = (String) arguments.get("moduleDefiner");
+		}
+
+		if (arguments.get("isFinanceProcess") != null) {
+			isFinanceProcess = (boolean) arguments.get("isFinanceProcess");
 		}
 
 		if (module.equals("Maintanance")) {
@@ -219,7 +224,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	}
 
 	public void onClick$btnNotes(Event event) {
-		if (this.finMaintainInstruction != null) {
+		if (!isFinanceProcess) {
 			doShowNotes(this.finMaintainInstruction);
 		}
 	}

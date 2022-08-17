@@ -8,7 +8,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
+import com.pennanttech.pff.cd.model.SchemeProductGroup;
 
 public class SchemeProductGroupModelItemRenderer implements ListitemRenderer<SchemeProductGroup>, Serializable {
 	private static final long serialVersionUID = 1L;
@@ -25,7 +25,7 @@ public class SchemeProductGroupModelItemRenderer implements ListitemRenderer<Sch
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(schemeDealerGroup.getProductGroupCode()));
 		lc.setParent(item);
-		lc = new Listcell(schemeDealerGroup.isPosVendor() ? "1" : "0");
+		lc = new Listcell(schemeDealerGroup.isPOSVendor() ? "1" : "0");
 		lc.setParent(item);
 		if (schemeDealerGroup.isActive()) {
 			lc = new Listcell("1");

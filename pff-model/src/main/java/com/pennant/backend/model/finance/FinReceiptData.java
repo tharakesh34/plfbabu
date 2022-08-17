@@ -69,6 +69,7 @@ public class FinReceiptData implements Serializable {
 	private boolean isEnquiry = false;
 
 	private Date valueDate;
+	private Date dueDate;
 
 	private boolean isDueAdjusted = true;
 	private boolean isFCDueChanged = false;
@@ -84,7 +85,9 @@ public class FinReceiptData implements Serializable {
 
 	private BigDecimal totalPastDues = BigDecimal.ZERO;
 	private boolean isPresentment = false;
+	private boolean isRepresentment = false;
 	private boolean isForeClosure = false;
+	private Date presentmentSchDate;
 	private BigDecimal actualReceiptAmount = BigDecimal.ZERO;
 	private List<ReceiptAllocationDetail> allocList = new ArrayList<>();
 	private FinanceProfitDetail orgFinPftDtls;
@@ -113,6 +116,10 @@ public class FinReceiptData implements Serializable {
 	private List<Long> inProcessReceipts = new ArrayList<>();
 	private BigDecimal actualOdPaid = BigDecimal.ZERO;
 	private int rcdIdx = -1;
+	private BigDecimal intTdsUnpaid = BigDecimal.ZERO;
+	private List<FinDueData> dueDataList = new ArrayList<>();
+	private FinDueData dueData;
+	private boolean isClosrMaturedLAN = false;
 
 	public FinReceiptData() {
 		super();
@@ -205,6 +212,15 @@ public class FinReceiptData implements Serializable {
 		}
 
 		entity.setFinanceDetail(fd);
+		entity.setIntTdsUnpaid(this.intTdsUnpaid);
+		entity.setClosrMaturedLAN(this.isClosrMaturedLAN);
+		entity.setDueData(this.dueData);
+		entity.setRepresentment(this.isRepresentment);
+		entity.setPresentmentSchDate(this.presentmentSchDate);
+		entity.setIntTdsUnpaid(this.intTdsUnpaid);
+		entity.setDueDataList(this.dueDataList);
+		entity.setDueData(this.dueData);
+		entity.setClosrMaturedLAN(this.isClosrMaturedLAN);
 
 		return entity;
 	}
@@ -695,6 +711,62 @@ public class FinReceiptData implements Serializable {
 
 	public void setActualOdPaid(BigDecimal actualOdPaid) {
 		this.actualOdPaid = actualOdPaid;
+	}
+
+	public Date getPresentmentSchDate() {
+		return presentmentSchDate;
+	}
+
+	public void setPresentmentSchDate(Date presentmentSchDate) {
+		this.presentmentSchDate = presentmentSchDate;
+	}
+
+	public boolean isRepresentment() {
+		return isRepresentment;
+	}
+
+	public void setRepresentment(boolean isRepresentment) {
+		this.isRepresentment = isRepresentment;
+	}
+
+	public BigDecimal getIntTdsUnpaid() {
+		return intTdsUnpaid;
+	}
+
+	public void setIntTdsUnpaid(BigDecimal intTdsUnpaid) {
+		this.intTdsUnpaid = intTdsUnpaid;
+	}
+
+	public List<FinDueData> getDueDataList() {
+		return dueDataList;
+	}
+
+	public void setDueDataList(List<FinDueData> dueDataList) {
+		this.dueDataList = dueDataList;
+	}
+
+	public Date getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
+	}
+
+	public FinDueData getDueData() {
+		return dueData;
+	}
+
+	public void setDueData(FinDueData dueData) {
+		this.dueData = dueData;
+	}
+
+	public boolean isClosrMaturedLAN() {
+		return isClosrMaturedLAN;
+	}
+
+	public void setClosrMaturedLAN(boolean isClosrMaturedLAN) {
+		this.isClosrMaturedLAN = isClosrMaturedLAN;
 	}
 
 }

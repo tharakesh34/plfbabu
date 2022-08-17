@@ -44,6 +44,18 @@
 			<column name="InstructionUID" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="296.1" author="saikiran.n">
+			<dropUniqueConstraint constraintName="SYS_C003002541" tableName="ADTREASONS" />
+	</changeSet>
+	
+	<changeSet id="296.2" author="saikiran.n">
+			<dropUniqueConstraint constraintName="SYS_C003002543" tableName="ADTREASONS" />
+	</changeSet>
+	
+	<changeSet id="296.3" author="saikiran.n">
+			<dropUniqueConstraint constraintName="SYS_C003002544" tableName="ADTREASONS" />
+	</changeSet>
 
 </databaseChangeLog>
 	

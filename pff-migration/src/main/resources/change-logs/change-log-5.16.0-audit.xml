@@ -43,10 +43,25 @@
 		<dropDefaultValue columnDataType="boolean" columnName="actypeISActive" tableName="AdtRMTAccountTypes" />
 	</changeSet>
 
+	<changeSet id="2.2.0_pre" author="ADARSH">
+		<dropNotNullConstraint tableName="AdtRMTAccountTypes"
+			columnName="actypeISActive" columnDataType="number(5,0)" />
+	</changeSet>
+	
 	<changeSet id="2.2_pre" author="saisandeep.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'adtrmtaccounttypes');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="2.2_pre" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				alter table AdtRMTAccountTypes add actypeISActive1 number(5,0);
+				update AdtRMTAccountTypes set actypeISActive1=actypeISActive;
+				Update AdtRMTAccountTypes set actypeISActive = null;
 			]]>
 		</sql>
 	</changeSet>
@@ -62,10 +77,35 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="2.2_post" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update AdtRMTAccountTypes set actypeISActive=actypeISActive1;
+				alter table AdtRMTAccountTypes drop column actypeISActive1;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="2.2.1_post" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				alter table AdtRMTAccountTypes modify actypeISActive DEFAULT NULL NOT NULL ENABLE;
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="2.3" author="saisandeep.b">
+	<changeSet id="2.3" author="saisandeep.b" dbms ="postgres, oracle">
 		<addDefaultValue columnDataType="smallint" columnName="actypeISActive" defaultValueNumeric="1"
 			tableName="AdtRMTAccountTypes" />
+	</changeSet>
+	
+	<changeSet id="2.3" author="saisandeep.b" dbms ="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtRMTAccountTypes ADD CONSTRAINT DF_ADTRMTAT_ACTYPEISACTIVE DEFAULT 0 FOR actypeISActive;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#556.1" author="Siva.M">

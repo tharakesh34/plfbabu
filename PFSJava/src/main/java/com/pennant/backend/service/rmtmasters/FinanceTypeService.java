@@ -28,6 +28,7 @@ package com.pennant.backend.service.rmtmasters;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -84,4 +85,5 @@ public interface FinanceTypeService {
 
 	FinanceType getFinanceType(String finType);
 
+	List<ValueLabel> provisionRules();
 }

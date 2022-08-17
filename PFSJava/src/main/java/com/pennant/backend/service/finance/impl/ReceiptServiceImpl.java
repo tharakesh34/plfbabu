@@ -40,6 +40,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -70,20 +72,23 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepaymentProcessUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
+import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.InstrumentwiseLimitDAO;
 import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
 import com.pennant.backend.dao.finance.FeeWaiverHeaderDAO;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
-import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadHeaderDAO;
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
@@ -98,6 +103,8 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.applicationmaster.BounceReason;
+import com.pennant.backend.model.applicationmaster.ClosureType;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -111,6 +118,8 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
+import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinDueData;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -152,6 +161,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.extendedfieldsExtension.ExtendedFieldExtensionService;
 import com.pennant.backend.service.finance.FeeReceiptService;
@@ -160,8 +170,10 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptRealizationService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.manual.schedule.ManualScheduleService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.CashManagementConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -173,6 +185,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -186,10 +199,14 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.ProductUtil;
+import com.pennanttech.pff.npa.service.AssetClassificationService;
+import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
@@ -209,7 +226,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private ReceiptAllocationDetailDAO allocationDetailDAO;
-	private RepaymentProcessUtil repayProcessUtil;
+	private RepaymentProcessUtil repaymentProcessUtil;
 	private OverdraftScheduleDetailDAO overdraftScheduleDetailDAO;
 	private LatePayMarkingService latePayMarkingService;
 	private DepositDetailsDAO depositDetailsDAO;
@@ -231,7 +248,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private FeeWaiverHeaderDAO feeWaiverHeaderDAO;
 	private FeeReceiptService feeReceiptService;
 	private FinFeeConfigService finFeeConfigService;
+	private BounceReasonDAO bounceReasonDAO;
+	private RuleService ruleService;
+	private ManualScheduleService manualScheduleService;
 	private PostValidationHook postValidationHook;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private AssetClassificationService assetClassificationService;
+	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private ExtendedFieldExtensionService extendedFieldExtensionService;
 	private BankDetailDAO bankDetailDAO;
@@ -303,6 +326,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_View"));
 		}
 
+		List<FinFeeDetail> paidFeeList = new ArrayList<>();
+		if (StringUtils.isBlank(rch.getExtReference())) {
+			paidFeeList = feeReceiptService.getPaidFinFeeDetails(rch.getReference(), receiptID, "_View");
+		} else {
+			paidFeeList = feeReceiptService.getPaidFinFeeDetails(rch.getExtReference(), receiptID, "_View");
+
+			FinReceiptHeader frh = finReceiptHeaderDAO.getFinTypeByReceiptID(rch.getReceiptID());
+			if (frh != null) {
+				rch.setFinType(frh.getFinType());
+				rch.setFinTypeDesc(frh.getFinTypeDesc());
+				rch.setFinCcy(frh.getFinCcy());
+				rch.setFinCcyDesc(frh.getFinCcyDesc());
+			}
+		}
+
+		rch.setPaidFeeList(paidFeeList);
+
 		if (StringUtils.isBlank(rch.getExtReference())) {
 			rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(rch.getReference(), receiptID, "_View"));
 		} else {
@@ -322,8 +362,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	@Override
-	public FinReceiptData getFinReceiptDataById(String finReference, String eventCode, String procEdtEvent,
-			String userRole) {
+	public FinReceiptData getFinReceiptDataById(String finReference, Date valueDate, String eventCode,
+			String procEdtEvent, String userRole) {
 		logger.debug(Literal.ENTERING);
 
 		FinReceiptData receiptData = new FinReceiptData();
@@ -366,7 +406,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		schdData.setFinanceType(financeType);
 
 		if (fm.isStepFinance()) {
-			schdData.setStepPolicyDetails(financeStepDetailDAO.getFinStepDetailListByFinRef(finID, "_AView", false));
+			schdData.setStepPolicyDetails(financeStepDetailDAO.getFinStepDetailListByFinRef(finID, "_AView", false),
+					true);
 		}
 
 		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false));
@@ -410,8 +451,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		rch.setExcessAmounts(finExcessAmountDAO.getExcessAmountsByRef(finID));
 
-		rch.setPayableAdvises(
-				manualAdviseDAO.getManualAdviseByRef(finID, FinanceConstants.MANUAL_ADVISE_PAYABLE, "_AView"));
+		rch.setPayableAdvises(manualAdviseDAO.getPaybleAdvises(finID, valueDate, "_AView"));
 
 		// Fee Details ( Fetch Fee Details for event fee only)
 		String type = "_View";
@@ -453,6 +493,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		fd.setJointAccountDetailList(jointAccountDetailService.getJoinAccountDetail(finID, "_AView"));
 
 		fd.setGurantorsDetailList(guarantorDetailService.getGuarantorDetail(finID, "_AView"));
+
+		// Manual Schedule Details
+		if (fm.isManualSchedule()) {
+			schdData.setManualScheduleHeader(this.manualScheduleService.getManualScheduleDetails(finID,
+					FinServiceEvent.RECEIPT, TableType.TEMP_TAB));
+		}
 
 		// Multi Receipts: Get In Process Receipts
 		getInProcessReceiptData(receiptData);
@@ -507,7 +553,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		fd.setFinFeeConfigList(finFeeConfigService.getFinFeeConfigList(finID, eventCode, false, "_View"));
 
 		if (FinanceConstants.PRODUCT_ODFACILITY.equals(productCategory)) {
-			schdData.setOverdraftScheduleDetails(overdraftScheduleDetailDAO.getOverdraftScheduleForLMSEvent(finID));
+			schdData.setOverdraftScheduleDetails(
+					overdraftScheduleDetailDAO.getOverdraftScheduleDetails(finID, "", false));
 		}
 
 		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementForLMSEvent(finID));
@@ -696,6 +743,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.debug(Literal.ENTERING);
 
 		FinReceiptData rcData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinScheduleData scheduleData = rcData.getFinanceDetail().getFinScheduleData();
+		FinanceMain financeMain = scheduleData.getFinanceMain();
 
 		long serviceUID = Long.MIN_VALUE;
 		if (rcData.getFinanceDetail().getExtendedFieldRender() != null) {
@@ -760,7 +809,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (rch.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		// financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
+		// financeMain.setRcdMaintainSts(FinServiceEvent.RECEIPT);
 		if (tableType == TableType.MAIN_TAB) {
 			rch.setRcdMaintainSts(null);
 		}
@@ -926,9 +975,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 
 				if (payableReserve == null) {
-
+					BigDecimal payAdv = BigDecimal.ZERO;
+					List<ManualAdvise> payableAdvises = rch.getPayableAdvises();
+					for (ManualAdvise ma : payableAdvises) {
+						if (rcd.getPayAgainstID() == ma.getAdviseID()) {
+							payAdv = ma.getBalanceAmt();
+							break;
+						}
+					}
 					// Update Payable Amount in Reserve
-					manualAdviseDAO.updatePayableReserve(rcd.getPayAgainstID(), payableAmt);
+					manualAdviseDAO.updatePayableReserve(rcd.getPayAgainstID(), payAdv);
 
 					// Save Payable Reserve Log Amount
 					manualAdviseDAO.savePayableReserveLog(receiptSeqID, rcd.getPayAgainstID(), payableAmt);
@@ -1085,6 +1141,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					tableType);
 
 			auditDetails.addAll(details);
+		}
+
+		// Saving ManualscheduleDetails
+		if (financeMain.isManualSchedule()) {
+			this.manualScheduleService.saveOrUpdate(rcData.getFinanceDetail(), FinServiceEvent.RECEIPT, tableType);
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), rch.getExcludeFields());
@@ -1407,7 +1468,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			// Excess Amount Reserve
 			if (StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EXCESS)
 					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.EMIINADV)
-					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.ADVINT)) {
+					|| StringUtils.equals(receiptDetail.getPaymentType(), ReceiptMode.ADVINT)
+					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVEMI)
+					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CASHCLT)
+					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DSF)) {
 
 				// Excess Amount make utilization
 				FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(receiptSeqID,
@@ -1508,6 +1572,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			auditDetails.addAll(details);
 		}
 
+		if (fm.isManualSchedule()) {
+			this.manualScheduleService.doReject(rd.getFinanceDetail());
+		}
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.getAuditDetail().setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditModule("Receipt");
@@ -1538,12 +1606,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinReceiptHeader rch = rd.getReceiptHeader();
 
-		Date appDate = fm.getAppDate();
-
-		if (appDate == null) {
-			appDate = SysParamUtil.getAppDate();
-		}
-
 		long finID = fm.getFinID();
 
 		String receiptMode = rch.getReceiptMode();
@@ -1565,7 +1627,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditHeader.getAuditDetail().setBefImage(befRch);
 
 		String rmStatus = rch.getReceiptModeStatus();
-		if (RepayConstants.PAYSTATUS_BOUNCE.equals(rmStatus) || RepayConstants.PAYSTATUS_CANCEL.equals(rmStatus)) {
+		// checking if receipt upload with bounce for new receipt
+		FinServiceInstruction fsi = rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction();
+
+		if (fsi != null && fsi.isNewReceipt() && (fsi.getCancelReason() != null || fsi.getBounceReason() != null)) {
+			// do nothing, this is just to stop the bounce process before creating a
+			// new receipt from receipt upload with bounce for new receipt
+		} else if (RepayConstants.PAYSTATUS_BOUNCE.equals(rch.getReceiptModeStatus())
+				|| RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus())) {
 			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
 				FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), "");
 				rcd.setRepayHeader(rph);
@@ -1630,6 +1699,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		long serviceUID = Long.MIN_VALUE;
+		long lastMntBy = receiptHeader.getLastMntBy();
 
 		BigDecimal restructBpiAmount = BigDecimal.ZERO;
 		if (rd.getFinanceDetail().getExtendedFieldRender() != null) {
@@ -1699,6 +1769,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setRoleCode(roleCode);
 		rch.setNextRoleCode(nextRoleCode);
 		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+		String status = "";
+		if (fsi != null) {
+
+			status = fsi.getStatus();
+		}
+		if (RepayConstants.PAYSTATUS_BOUNCE.equals(status) || RepayConstants.PAYSTATUS_CANCEL.equals(status)) {
+			rch.setReceiptModeStatus(status);
+		}
 
 		if (StringUtils.equals(FinanceConstants.DEPOSIT_APPROVER, rch.getRoleCode()) || rd.isPresentment()) {
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
@@ -1711,7 +1789,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		finReceiptHeaderDAO.generatedReceiptID(rch);
 		rch.setPostBranch(auditHeader.getAuditBranchCode());
-		rch.setReceiptDate(appDate);
+		rch.setReceiptDate(SysParamUtil.getAppDate());
 		rch.setRcdMaintainSts(null);
 		rch.setRoleCode("");
 		rch.setNextRoleCode("");
@@ -1720,7 +1798,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setWorkflowId(0);
 		rch.setActFinReceipt(fm.isFinIsActive());
 		rch.setValueDate(rd.getValueDate());
-		rch.setReceiptDate(appDate);
 
 		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
 			rch.setSubReceiptMode(rch.getReceiptMode());
@@ -1734,7 +1811,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			scheduleData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false));
 		}
 
-		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
+		boolean schRmv = false;
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())
+				&& FinServiceEvent.EARLYSETTLE.equals(receiptHeader.getReceiptPurpose())) {
+			schRmv = true;
+		}
+
+		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory()) || schRmv) {
 			if (!fm.isSanBsdSchdle()) {
 				schedules = scheduleData.getFinanceScheduleDetails();
 				int size = schedules.size();
@@ -1752,7 +1835,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		Date curBusDate = appDate;
+		Date curBusDate = SysParamUtil.getAppDate();
 		Date valueDate = rch.getValueDate();
 
 		List<FinanceScheduleDetail> schdList = schedules;
@@ -1766,14 +1849,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			pfd.setTotalSvnAmount(subVentionAmt);
 		}
 
-		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
-			for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
-				FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(i);
-				receiptDetail.getRepayHeader().setRepayID(financeRepaymentsDAO.getNewRepayID());
-			}
+		if (CollectionUtils.isNotEmpty(rch.getReceiptDetails())) {
+			rch.getReceiptDetails().forEach(l1 -> l1.getRepayHeader().setRepayID(financeRepaymentsDAO.getNewRepayID()));
 		}
 
-		List<Object> returnList = repayProcessUtil.doProcessReceipts(fm, schdList, pfd, rch,
+		List<Object> returnList = repaymentProcessUtil.doProcessReceipts(fm, schdList, pfd, rch,
 				scheduleData.getFinFeeDetailList(), scheduleData, valueDate, curBusDate, fd);
 		schdList = (List<FinanceScheduleDetail>) returnList.get(0);
 
@@ -1799,25 +1879,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			schdList = schedules;
 		}
 
-		scheduleData.setFinanceScheduleDetails(schdList);
-		Date reqMaxODDate = curBusDate;
-		List<FinODDetails> overdueList = null;
-
-		if (StringUtils.equals(FinServiceEvent.EARLYSETTLE, rch.getReceiptPurpose())) {
-			reqMaxODDate = rch.getValueDate();
-		}
-
-		if (!ImplementationConstants.LPP_CALC_SOD) {
-			reqMaxODDate = DateUtil.addDays(valueDate, -1);
-		}
-
-		overdueList = finODDetailsDAO.getFinODBalByFinRef(finID);
-
-		overdueList = calPenalty(scheduleData, rd, reqMaxODDate, overdueList);
-		if (overdueList != null && !overdueList.isEmpty()) {
-			finODDetailsDAO.updateList(overdueList);
-		}
-
 		String tranType = PennantConstants.TRAN_UPD;
 		rch.setRecordType("");
 
@@ -1830,8 +1891,29 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setNextTaskId("");
 		rch.setWorkflowId(0);
 
-		repayProcessUtil.doSaveReceipts(rch, scheduleData.getFinFeeDetailList(), true);
+		repaymentProcessUtil.doSaveReceipts(rch, scheduleData.getFinFeeDetailList(), true);
 		long receiptID = rch.getReceiptID();
+
+		// Overdue Details updation , if Value Date is Back dated.
+		scheduleData.setFinanceScheduleDetails(schdList);
+		Date reqMaxODDate = curBusDate;
+		List<FinODDetails> overdueList = null;
+		List<FinODDetails> repayODList = new ArrayList<FinODDetails>();
+
+		if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			reqMaxODDate = rch.getValueDate();
+		}
+
+		if (!ImplementationConstants.LPP_CALC_SOD) {
+			reqMaxODDate = DateUtil.addDays(valueDate, -1);
+		}
+		overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
+
+		overdueList = calPenalty(scheduleData, rd, reqMaxODDate, overdueList);
+
+		if (!repayODList.isEmpty()) {
+			finODDetailsDAO.updatePaidPenalties(repayODList);
+		}
 
 		if (rch.getUserDetails() == null && SessionUserDetails.getLogiedInUser() != null) {
 			rch.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
@@ -1849,8 +1931,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
+		isPresentProc = presentmentDetailDAO.isPresentmentInProcess(finID);
+
 		boolean finIsActive = fm.isFinIsActive();
-		repayProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose(),
+		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose(),
 				isPresentProc);
 		if (finIsActive && !fm.isFinIsActive() && receiptPurpose == ReceiptPurpose.SCHDRPY
 				&& (RepayConstants.PAYSTATUS_DEPOSITED.equals(rmStatus))) {
@@ -1877,9 +1961,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		User logiedInUser = SessionUserDetails.getLogiedInUser();
 		if (logiedInUser != null) {
 			fm.setLastMntBy(logiedInUser.getUserId());
-			fm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		}
 
+		fm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		financeMainDAO.updateFromReceipt(fm, TableType.MAIN_TAB);
 
 		listDeletion(finID, "");
@@ -1967,6 +2051,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		}
 
+		// Save ManualUploadScheduleHeader and Details
+		if (fm.isManualSchedule()) {
+			this.manualScheduleService.doApprove(rd.getFinanceDetail());
+		}
+
 		String[] rFields = PennantJavaUtil.getFieldDetails(new FinReceiptDetail(),
 				rd.getReceiptHeader().getReceiptDetails().get(0).getExcludeFields());
 		for (int i = 0; i < rd.getReceiptHeader().getReceiptDetails().size(); i++) {
@@ -1979,11 +2068,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditHeader.setAuditDetail(
 				new AuditDetail(auditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1], null, rch));
 
+		rch.setRoleCode(roleCode);
+		rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(tempAuditDetailList);
 		auditHeader.setAuditModule("Receipt");
 		auditHeaderDAO.addAudit(auditHeader);
 		auditHeader.getAuditDetail().setModelData(rd);
+		rch.setRoleCode("");
 
 		if (ard.getReceiptHeader().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			tranType = PennantConstants.TRAN_ADD;
@@ -2047,6 +2139,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
 			advancePaymentService.setAdvancePaymentDetails(scheduleData.getFinanceMain(), scheduleData);
+		}
+
+		if (ImplementationConstants.ALLOW_NPA && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			assetClassificationService.doProcessEarlySettlement(fm.getFinID());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2278,7 +2374,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptHeader.setWorkflowId(0);
 
 		// save Receipt Details
-		repayProcessUtil.doSaveReceipts(receiptHeader, null, false);
+		repaymentProcessUtil.doSaveReceipts(receiptHeader, null, false);
 		long receiptID = receiptHeader.getReceiptID();
 
 		// Bounce reason Code
@@ -2525,7 +2621,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		// Dedup Check
-		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(repayData.getReceiptHeader().getReceiptModeStatus())
+		if (!(repayData.isForeClosure())
+				&& !RepayConstants.PAYSTATUS_BOUNCE.equals(repayData.getReceiptHeader().getReceiptModeStatus())
 				&& !RepayConstants.PAYSTATUS_CANCEL.equals(repayData.getReceiptHeader().getReceiptModeStatus())
 				&& rch.isDedupCheckRequired()) {
 			FinServiceInstruction fsi = new FinServiceInstruction();
@@ -2533,13 +2630,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fsi.setFinID(rch.getFinID());
 			fsi.setFinReference(rch.getReference());
 			fsi.setValueDate(rch.getValueDate());
+			fsi.setRecordStatus(rch.getRecordStatus());
 			fsi.setAmount(rch.getReceiptAmount());
 			fsi.setTransactionRef(finReceiptDetail.getTransactionRef());
 			fsi.setFavourNumber(finReceiptDetail.getFavourNumber());
 			fsi.setPaymentMode(rch.getReceiptMode());
-			List<ErrorDetail> errors = dedupCheck(fsi);
-			if (CollectionUtils.isNotEmpty(errors)) {
-				auditHeader.setErrorDetails(errors.get(0));
+			if (StringUtils.isNotEmpty(finReceiptDetail.getPaymentRef())) {
+				List<ErrorDetail> errors = dedupCheck(fsi);
+				if (CollectionUtils.isNotEmpty(errors)) {
+					auditHeader.setErrorDetails(errors.get(0));
+				}
 			}
 		}
 
@@ -2649,6 +2749,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (isPending) {
 				valueParm[0] = "Not allowed to do Early Settlement due to previous Presentments/Receipts are in process";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("EXT001", valueParm)));
+			}
+		}
+
+		if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())
+				&& ReceiptMode.RTRNGDS.equals(rch.getSubReceiptMode())) {
+			FinanceProfitDetail fpt = rd.getFinanceDetail().getFinScheduleData().getFinPftDeatil();
+			if (fpt.getODPrincipal().add(fpt.getODProfit()).compareTo(BigDecimal.ZERO) > 0) {
+				valueParm[0] = "Not allowed to do partial cancellation because loan has due amount";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 			}
 		}
 
@@ -3079,6 +3188,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return;
 		}
 
+		if (fsi.isReceiptUpload() && FinServiceEvent.EARLYRPY.equals(fsi.getReceiptPurpose())) {
+			boolean isManual = schdData.getFinanceMain().isManualSchedule();
+			if (isManual) {
+				String[] valueParm = new String[4];
+				valueParm[0] = "Partial Settlement";
+				valueParm[1] = "not allowed";
+				valueParm[2] = "for finreference: " + fsi.getFinReference();
+				valueParm[3] = "due to loan created by manual schedule ";
+				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("21005", valueParm)));
+			}
+			if (schdData.getErrorDetails() != null) {
+				logger.debug("Leaving");
+				return;
+			}
+		}
+
 		String excessAdjustTo = rch.getExcessAdjustTo();
 		if (receiptPurpose == ReceiptPurpose.SCHDRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
 			validateExcessAdjustTo(schdData, excessAdjustTo);
@@ -3351,6 +3476,25 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return;
 		}
 
+		if (ReceiptMode.ONLINE.equals(receiptMode) && ReceiptMode.ESCROW.equals(subReceiptMode)) {
+			if (fsi.getCustBankId() == null) {
+				setError(schdData, "90502", "CustBankId");
+				return;
+			} else {
+				long custId = financeMainDAO.getCustomerIdByFin(fsi.getFinReference());
+				int count = financeMainDAO.getCustomerBankCountById(fsi.getCustBankId(), custId);
+				if (count <= 0) {
+					setError(schdData, "90405", "CustBankId");
+					return;
+				}
+			}
+		} else {
+			if (fsi.getCustBankId() != null) {
+				setError(schdData, "21005", "CustBankId is not Mandatory in the request");
+				return;
+			}
+		}
+
 		String receivedFrom = fsi.getReceivedFrom();
 		if (!RepayConstants.RECEIVED_CUSTOMER.equalsIgnoreCase(receivedFrom)
 				&& !RepayConstants.RECEIVED_GOVT.equalsIgnoreCase(receivedFrom)) {
@@ -3365,7 +3509,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return;
 		}
 
-		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
+		if (fsi.isNewReceipt() && (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode))) {
 			validateCheque(schdData, fsi.getReceiptDetail().getFavourNumber());
 		}
 
@@ -3387,6 +3531,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
+		if (StringUtils.isNotBlank(fsi.getModuleType()) && fsi.getModuleType().length() > 10) {
+			setError(schdData, "90300", " moduleType", " 10");
+			return;
+		}
+
 		if (requestSource == RequestSource.UPLOAD) {
 			validateUploadEvent(schdData, fsi, receiptMode);
 		} else {
@@ -3397,8 +3546,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			setError(schdData, "90502", "Status");
 		} else if (!RepayConstants.PAYSTATUS_APPROVED.equals(instructstatus)
 				&& !RepayConstants.PAYSTATUS_REALIZED.equals(instructstatus)) {
-			setError(schdData, "90298", "Status ",
-					RepayConstants.PAYSTATUS_APPROVED + "," + RepayConstants.PAYSTATUS_REALIZED);
+			String parm1 = "";
+			if ((fsi.getBounceReason() != null || fsi.getCancelReason() != null)
+					&& !RepayConstants.PAYSTATUS_BOUNCE.equals(instructstatus)
+					&& !RepayConstants.PAYSTATUS_CANCEL.equals(instructstatus)) {
+				parm1 = RepayConstants.PAYSTATUS_BOUNCE + "," + RepayConstants.PAYSTATUS_CANCEL + ",";
+				parm1 = parm1 + RepayConstants.PAYSTATUS_APPROVED + "," + RepayConstants.PAYSTATUS_REALIZED;
+				setError(schdData, "90298", "Status ", parm1);
+			}
 		} else if (!ReceiptMode.DD.equals(receiptMode) && !ReceiptMode.CHEQUE.equals(receiptMode)
 				&& (RepayConstants.PAYSTATUS_REALIZED.equals(instructstatus))) {
 			setError(schdData, "90298", "Status", RepayConstants.PAYSTATUS_APPROVED);
@@ -3418,16 +3573,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinReceiptDetail rcd = rd.getReceiptHeader().getReceiptDetails().get(0);
 
-		if (rcd.getFundingAc() <= 0 && ReceiptMode.isFundingAccountReq(receiptMode)
+		if (fsi.isNewReceipt() && rcd.getFundingAc() <= 0 && ReceiptMode.isFundingAccountReq(receiptMode)
 				|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
 						&& ReceiptMode.CASH.equals(receiptMode))) {
-			setError(schdData, "90502", "Funding Account");
-			logger.info(Literal.LEAVING);
-			return;
+			if (!"MOB".equals(fsi.getReceiptChannel())) {
+				setError(schdData, "90502", "Funding Account");
+				logger.info(Literal.LEAVING);
+				return;
+			}
 		}
 
-		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
-			validateChequeOrDD(schdData, rcd.getBankCode(), rd.getValueDate());
+		if (fsi.isNewReceipt() && ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
+			validateChequeOrDD(schdData, rcd.getBankCode(), rd.getValueDate(), fsi);
 		}
 
 		if (RepayConstants.REQTYPE_INQUIRY.equals(fsi.getReqType())) {
@@ -3443,18 +3600,19 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.info(Literal.LEAVING);
 	}
 
-	private void validateChequeOrDD(FinScheduleData schdData, String bankCode, Date valueDate) {
+	private void validateChequeOrDD(FinScheduleData schdData, String bankCode, Date valueDate,
+			FinServiceInstruction fsi) {
 		if (valueDate == null) {
 			setError(schdData, "90502", "ValueDate");
 			return;
 		}
 
-		if (StringUtils.isBlank(bankCode)) {
+		if (StringUtils.isBlank(bankCode) && !"MOB".equals(fsi.getReceiptChannel())) {
 			setError(schdData, "90502", "Bank Code");
 			return;
 		}
 
-		if (!bankDetailDAO.isBankCodeExits(bankCode)) {
+		if (StringUtils.isNotBlank(bankCode) && !bankDetailDAO.isBankCodeExits(bankCode)) {
 			setError(schdData, "90224", "Bank Code", bankCode);
 		}
 	}
@@ -3504,8 +3662,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		boolean alwCashMode = ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE;
 
-		if (!autoReceipt && !ReceiptMode.isFundingAccountReq(receiptMode)
-				|| (alwCashMode && ReceiptMode.CASH.equals(receiptMode))) {
+		if (!autoReceipt && fsi.isNewReceipt() && !ReceiptMode.isFundingAccountReq(receiptMode)
+				|| (alwCashMode && ReceiptMode.CASH.equals(receiptMode)) && fundingAccount > 0) {
 			String receipts = AccountConstants.PARTNERSBANK_RECEIPTS;
 			String finType = fm.getFinType();
 			if (finTypePartnerBankDAO.getPartnerBankCount(finType, receiptMode, receipts, fundingAccount) <= 0) {
@@ -3526,6 +3684,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fsi.setEntity(fm.getEntityCode());
 		}
 
+		if (RepayConstants.EXCESSADJUSTTO_EXCESS.equals(fsi.getExcessAdjustTo()) && ProductUtil.isOverDraft(fm)
+				&& FinServiceEvent.SCHDRPY.equals(fsi.getReceiptPurpose())) {
+			setError(schdData, "90281", "Excess Adjustment", "A");
+			return;
+		}
+
 		if (FinanceConstants.PRODUCT_GOLD.equals(fm.getProductCategory())) {
 			setError(schdData, "RU0002");
 			return;
@@ -3543,6 +3707,68 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				&& !PennantConstants.TDS_MANUAL.equalsIgnoreCase(fm.getTdsType()))) {
 			setError(schdData, "RU00060");
 			return;
+		}
+
+		// closure with full waiver
+		if (fsi != null && ("Post".equals(fsi.getReqType()) || "Inquiry".equals(fsi.getReqType()))
+				&& FinServiceEvent.EARLYSETTLE.equals(fsi.getReceiptPurpose()) && !fsi.isReceiptUpload()) {
+			List<UploadAlloctionDetail> alocDetails = fsi.getUploadAllocationDetails();
+
+			if (CollectionUtils.isNotEmpty(alocDetails)) {
+				BigDecimal waivedAmt = BigDecimal.ZERO;
+				BigDecimal paidAmt = BigDecimal.ZERO;
+				for (UploadAlloctionDetail upAlocDtl : alocDetails) {
+					if (upAlocDtl == null) {
+						continue;
+					}
+					waivedAmt = waivedAmt.add(upAlocDtl.getWaivedAmount());
+					paidAmt = paidAmt.add(upAlocDtl.getPaidAmount());
+				}
+				if (paidAmt.compareTo(BigDecimal.ZERO) <= 0 && StringUtils.isBlank(fsi.getClosureType())) {
+					setError(schdData, "90502", "Closure Type Code");
+				}
+
+				if (paidAmt.compareTo(BigDecimal.ZERO) <= 0 && waivedAmt.compareTo(BigDecimal.ZERO) >= 0) {
+					Date maturityDate = fm.getMaturityDate();
+					Date appDate = SysParamUtil.getAppDate();
+					String[] valueParm = new String[2];
+
+					if (fsi.getFromDate().compareTo(fsi.getReceiptDetail().getReceivedDate()) != 0) {
+						setError(schdData, "92021", "Received Date and From Date should be same ");
+					}
+					// for loans that crossed maturity date
+					if (maturityDate.compareTo(appDate) < 0) {
+						if (fsi.getFromDate().compareTo(maturityDate) < 0 || fsi.getFromDate().compareTo(appDate) > 0) {
+							setError(schdData, "92021",
+									"From Date cannot be before " + maturityDate + " or after " + fsi.getFromDate());
+						}
+					} else {
+						// for loans that didn't crossed maturity
+						if (fsi.getFromDate().compareTo(appDate) <= 0) {
+							Date lastReceivedDate = finReceiptDetailDAO.getMaxValueDate(fm.getFinID(),
+									fsi.getReceiptPurpose().code());
+							if (lastReceivedDate != null && fsi.getFromDate().compareTo(lastReceivedDate) < 0) {
+								valueParm[0] = DateUtil.formatToLongDate(fsi.getFromDate());
+								valueParm[1] = DateUtil.formatToLongDate(lastReceivedDate);
+								setError(schdData, "RU0011", valueParm[0], valueParm[1]);
+							}
+						} else {
+							valueParm[0] = DateUtil.formatToLongDate(appDate);
+							setError(schdData, "92021", "From Date cannot be greater than app date " + valueParm[0]);
+						}
+					}
+					ClosureType closureType = finReceiptHeaderDAO.getClosureType(fsi.getClosureType());
+					FinReceiptHeader rch = rd.getReceiptHeader();
+					if (closureType != null) {
+						rd.setForeClosure(true);
+						rch.setClosureWithFullWaiver(true);
+						rch.setClosureTypeId(closureType.getId());
+						rch.setClosureTypeDesc(closureType.getDescription());
+					} else {
+						setError(schdData, "92021", "Invalid Closure Type Code " + fsi.getClosureType());
+					}
+				}
+			}
 		}
 
 		validateDual(rd);
@@ -3715,7 +3941,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		if (!AllocationType.AUTO.equals(allocationType) && !isAllocationFound) {
+		if (fsi.isNewReceipt() && !AllocationType.AUTO.equals(allocationType) && !isAllocationFound) {
 			setError(schdData, "90502", "Manual Allocations");
 			logger.info(Literal.LEAVING);
 			return;
@@ -3848,7 +4074,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		allocatedAmount = allocatedAmount.subtract(totalWaivedAmt);
 
-		if (allocatedAmount.compareTo(receiptAmount) != 0 && receiptPurpose != ReceiptPurpose.EARLYSETTLE) {
+		if (fsi.isNewReceipt() && allocatedAmount.compareTo(receiptAmount) != 0
+				&& receiptPurpose != ReceiptPurpose.EARLYSETTLE) {
 			String parm0 = PennantApplicationUtil.amountFormate(receiptAmount, 2);
 			String parm1 = PennantApplicationUtil.amountFormate(allocatedAmount, 2);
 
@@ -3977,7 +4204,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (receiptPurpose == ReceiptPurpose.EARLYRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
 			Date befEomDate = DateUtil.addDays(DateUtil.getMonthStart(appDate), -1);
-			if (valueDate.compareTo(befEomDate) < 0) {
+			if (valueDate.compareTo(befEomDate) <= 0
+					&& (!rd.isForeClosure() || appDate.compareTo(fm.getMaturityDate()) < 0)) {
 				setError(schdData, "RU0010", valueDateFormat, DateUtil.formatToLongDate(befEomDate));
 				return;
 			}
@@ -4519,10 +4747,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (finID == null) {
 			setErrorToRUD(rud, "RU0004", reference);
+			return fsi;
 		} else {
 			rud.setFinID(finID);
 		}
-		fsi.setFinID(rud.getFinID());
+		fsi.setFinID(finID);
 		fsi.setFinReference(reference);
 		fsi.setExternalReference(rud.getExtReference());
 		fsi.setModule("Receipts");
@@ -4542,13 +4771,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		fsi.setBankCode(rud.getBankCode());
 		fsi.setChequeNo(chequeNo);
 		fsi.setTransactionRef(rud.getTransactionRef());
-		fsi.setStatus(rud.getStatus());
+		String status = rud.getStatus();
+		fsi.setStatus(status);
 		fsi.setDepositDate(rud.getDepositDate());
 		fsi.setRealizationDate(rud.getRealizationDate());
 		fsi.setInstrumentDate(rud.getInstrumentDate());
 		fsi.setReceivedDate(rud.getReceivedDate());
 		fsi.setRemarks(rud.getRemarks());
-		fsi.setPaymentMode(rud.getReceiptMode());
+		String receiptMode = rud.getReceiptMode();
+		fsi.setPaymentMode(receiptMode);
 		fsi.setExcessAdjustTo(rud.getExcessAdjustTo());
 		fsi.setUploadAllocationDetails(rud.getListAllocationDetails());
 		fsi.setEntity(entity);
@@ -4558,25 +4789,37 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		fsi.setReceivedFrom(rud.getReceivedFrom());
 		fsi.setPanNumber(rud.getPanNumber());
 		fsi.setUploadDetailId(rud.getUploadDetailId());
+		fsi.setBckdtdWthOldDues(rud.isBckdtdWthOldDues());
 		fsi.setTdsAmount(rud.getTdsAmount());
 		fsi.setLoggedInUser(rud.getLoggedInUser());
 
-		if ("A".equals(rud.getStatus())) {
+		boolean bounceOrCancel = RepayConstants.PAYSTATUS_BOUNCE.equals(status)
+				|| RepayConstants.PAYSTATUS_CANCEL.equals(status);
+		boolean chequeOrDD = RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(receiptMode)
+				|| RepayConstants.RECEIPTMODE_DD.equalsIgnoreCase(receiptMode);
+
+		String receiptPurpose = rud.getReceiptPurpose();
+		if ("A".equals(status)) {
 			fsi.setReceiptdetailExits(false);
 		} else {
-			String mode = rud.getReceiptMode();
-			if ((ReceiptMode.CHEQUE.equalsIgnoreCase(mode) || ReceiptMode.DD.equalsIgnoreCase(mode))
-					&& RepayConstants.PAYSTATUS_REALIZED.equalsIgnoreCase(rud.getStatus())) {
-
-				String type = "";
-				if (!"SP".equalsIgnoreCase(rud.getReceiptPurpose())) {
-					type = "_Temp";
-				}
-
-				if (finReceiptHeaderDAO.isReceiptDetailsExits(reference, mode, chequeNo, favourNumber, type)) {
-					fsi.setReceiptdetailExits(true);
+			if (chequeOrDD && (RepayConstants.PAYSTATUS_REALIZED.equalsIgnoreCase(status) || bounceOrCancel)) {
+				if ("SP".equalsIgnoreCase(receiptPurpose)) {
+					fsi.setReceiptdetailExits(finReceiptHeaderDAO.isReceiptExists(rud, ""));
+				} else {
+					fsi.setReceiptdetailExits(finReceiptHeaderDAO.isReceiptExists(rud, "_Temp"));
 				}
 			}
+		}
+
+		if (bounceOrCancel) {
+			fsi.setCancelReason(rud.getCancelReason());
+			fsi.setBounceDate(rud.getBounceDate());
+			fsi.setBounceReason(rud.getBounceReason());
+			fsi.setReceiptId(rud.getReceiptId());
+			fsi.setNewReceipt(rud.isNewReceipt());
+			fsi.setNewReceipt(rud.getReceiptId() == 0);
+		} else {
+			fsi.setNewReceipt(true);
 		}
 
 		FinReceiptDetail rcd = new FinReceiptDetail();
@@ -4595,12 +4838,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (StringUtils.isNotEmpty(rud.getFundingAc())) {
 			rcd.setFundingAc(Long.parseLong(rud.getFundingAc()));
 		}
+
 		rcd.setReceivedDate(rud.getReceivedDate());
-		rcd.setStatus(fsi.getStatus());
+		rcd.setStatus(status);
 		rcd.setRemarks(rud.getRemarks());
 		rcd.setReference(reference);
 
-		String receiptPurpose = null;
+		receiptPurpose = getReceiptPurpose(receiptPurpose);
+
+		fsi.setReceiptPurpose(receiptPurpose);
+		rcd.setReceiptPurpose(receiptPurpose);
+
 		switch (rud.getReceiptPurpose()) {
 		case "SP":
 			receiptPurpose = FinServiceEvent.SCHDRPY;
@@ -4623,6 +4871,24 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fsi.setFinID(rud.getFinID() == null ? 0 : rud.getFinID());
 		}
 		return fsi;
+	}
+
+	private String getReceiptPurpose(String receiptPurpose) {
+		switch (receiptPurpose) {
+		case "SP":
+			receiptPurpose = FinServiceEvent.SCHDRPY;
+			break;
+		case "EP":
+			receiptPurpose = FinServiceEvent.EARLYRPY;
+			break;
+		case "ES":
+			receiptPurpose = FinServiceEvent.EARLYSETTLE;
+			break;
+		default:
+			break;
+		}
+
+		return receiptPurpose;
 	}
 
 	public void setErrorToRUD(ReceiptUploadDetail rud, String errorCode, String parm0) {
@@ -4688,6 +4954,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rcdList = finReceiptDetailDAO.getReceiptHeaderByID(receiptId, "_View");
 		}
 
+		for (FinReceiptDetail frd : rcdList) {
+			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(frd.getFundingAc(), "");
+			if (partnerBank != null && frd.getFundingAc() > 0 && frd.getFundingAcCode() == null) {
+				frd.setFundingAcCode(partnerBank.getPartnerBankCode());
+				frd.setFundingAcDesc(partnerBank.getPartnerBankName());
+				frd.setPartnerBankAcType(partnerBank.getAcType());
+			}
+		}
+
 		rch.setReceiptDetails(rcdList);
 
 		int size = rcdList.size();
@@ -4697,7 +4972,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setValueDate(rcd.getValueDate());
 			// PSD#165780 Setting realization date to Value date irrespective of receipt purpose
 			/*
-			 * if (finReceiptHeader.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) &&
+			 * if (finReceiptHeader.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE) &&
 			 * finReceiptHeader.getRealizationDate() != null) {
 			 */
 			if (rch.getRealizationDate() != null) {
@@ -4778,7 +5053,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Step Policy Details List from main view
 		if (fm.isStepFinance()) {
-			schdData.setStepPolicyDetails(financeStepDetailDAO.getFinStepDetailListByFinRef(finID, "_AView", false));
+			schdData.setStepPolicyDetails(financeStepDetailDAO.getFinStepDetailListByFinRef(finID, "_AView", false),
+					true);
 		}
 
 		fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(), eventCode, "_AView", false,
@@ -4818,8 +5094,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setExcessAmounts(finExcessAmountDAO.getExcessAmountsByRef(finID));
 
 		// Fetch Payable Advise Amount Details
-		rch.setPayableAdvises(
-				manualAdviseDAO.getManualAdviseByRef(finID, FinanceConstants.MANUAL_ADVISE_PAYABLE, "_AView"));
+		rch.setPayableAdvises(manualAdviseDAO.getPaybleAdvises(finID, rch.getValueDate(), "_AView"));
 
 		// Fee Details ( Fetch Fee Details for event fee only)
 		List<FinFeeDetail> feesList = finFeeDetailService.getFinFeeDetailsByReferenceId(receiptId, eventCode, "_TView");
@@ -4871,6 +5146,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finID, "_View"));
 		}
 
+		// Manual Schedule Details
+		if (fm.isManualSchedule()) {
+			schdData.setManualScheduleHeader(
+					manualScheduleService.getManualScheduleDetails(finID, FinServiceEvent.RECEIPT, TableType.TEMP_TAB));
+		}
+
 		logger.debug(Literal.ENTERING);
 		return rd;
 
@@ -4889,6 +5170,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		schdData.setFinODDetails(receiptData.getFinanceDetail().getFinScheduleData().getFinODDetails());
 		FinanceMain aFinanceMain = fd.getFinScheduleData().getFinanceMain();
 		schdData.setFinFeeDetailList(receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
+
+		if (fd.getFinScheduleData().getFinanceMain().isManualSchedule()) {
+			if (fd.getFinScheduleData() != null) {
+				schdData.setManualScheduleHeader(fd.getFinScheduleData().getManualScheduleHeader());
+			}
+		}
 		receiptData.getFinanceDetail().setFinScheduleData(schdData);
 		RepayMain repayMain = receiptData.getRepayMain();
 
@@ -4940,8 +5227,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Calculation of Schedule Changes for Early Payment to change
 		// Schedule Effects Depends On Method
 		schdData.getFinanceMain().setReceiptPurpose(rch.getReceiptPurpose());
-		schdData = ScheduleCalculator.recalEarlyPaySchedule(schdData, repayMain.getEarlyPayOnSchDate(), null,
-				repayMain.getEarlyPayAmount(), method);
+		schdData.setMethod(method);
+		schdData = ScheduleCalculator.recalEarlyPaySchedule(schdData, repayMain.getEarlyPayOnSchDate(),
+				repayMain.getEarlyPayNextSchDate(), repayMain.getEarlyPayAmount(), method);
 
 		receiptData.getFinanceDetail().setFinScheduleData(schdData);
 		receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setEntityDesc(entityDesc);
@@ -5003,7 +5291,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Schedule details
 		scheduleData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
 
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
+		if (ProductUtil.isOverDraft(fm)) {
 			scheduleData.setOverdraftScheduleDetails(
 					overdraftScheduleDetailDAO.getOverdraftScheduleDetails(finID, "", false));
 		}
@@ -5136,6 +5424,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rd.setForeClosure(rd.isForeClosure());
 		rd.setActualOdPaid(BigDecimal.ZERO);
 
+		prepareFinDueData(rd);
+
 		if (!AllocationType.MANUAL.equals(rch.getAllocationType())) {
 			rd = receiptCalculator.recalAutoAllocation(rd, false);
 		}
@@ -5154,7 +5444,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		if (peceiptPurpose == ReceiptPurpose.EARLYRPY && !fm.isSimulateAccounting()) {
+		if (peceiptPurpose != ReceiptPurpose.SCHDRPY && !fm.isSimulateAccounting()) {
 			recalEarlyPay(rd);
 		}
 
@@ -5289,7 +5579,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setAllocationType(fsi.getAllocationType());
 		rch.setReceiptAmount(fsi.getAmount());
 		rch.setReceiptMode(fsi.getPaymentMode());
+		rch.setCustBankId(fsi.getCustBankId());
 		rch.setSubReceiptMode(fsi.getSubReceiptMode());
+		rch.setModuleType(fsi.getModuleType());
 		rch.setReceiptChannel(fsi.getReceiptChannel());
 		rch.setExtReference(fsi.getExternalReference());
 		rch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -5316,6 +5608,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			if (derivedDate != null) {
 				rch.setValueDate(derivedDate);
+				rch.setReceiptDate(derivedDate);
 			}
 		}
 
@@ -5341,16 +5634,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setRemarks(rcd.getRemarks());
 		rch.setSource(PennantConstants.FINSOURCE_ID_API);
 
-		if (fsi.isReceiptUpload()) {
-			rch.setReceiptDate(rcd.getReceivedDate());
-			rch.setPanNumber(fsi.getPanNumber());
-			rch.setExtReference(fsi.getExternalReference());
-			rch.setReceivedDate(fsi.getReceivedDate());
-		} else {
-			rcd.setValueDate(rcd.getReceivedDate());
-			rch.setReceivedDate(rcd.getReceivedDate());
-			rch.setReceiptDate(fm.getAppDate());
-			rch.setRealizationDate(fsi.getRealizationDate());
+		if (!fsi.isBckdtdWthOldDues()) {
+			if (fsi.isReceiptUpload()) {
+				rch.setReceiptDate(rcd.getReceivedDate());
+				rch.setPanNumber(fsi.getPanNumber());
+				rch.setExtReference(fsi.getExternalReference());
+				rch.setReceivedDate(fsi.getReceivedDate());
+			} else {
+				rcd.setValueDate(rcd.getReceivedDate());
+				rch.setReceivedDate(rcd.getReceivedDate());
+				rch.setReceiptDate(fm.getAppDate());
+				rch.setRealizationDate(fsi.getRealizationDate());
+			}
 		}
 
 		if (rch.getReceiptMode() != null && (rch.getSubReceiptMode() == null || rch.getSubReceiptMode().isEmpty())) {
@@ -5398,6 +5693,75 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (StringUtils.equals(rcd.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
 				rch.setRealizationDate(fsi.getRealizationDate());
 				rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+			} else if ((fsi.getBounceReason() != null || fsi.getCancelReason() != null)
+					&& RepayConstants.PAYSTATUS_BOUNCE.equals(rcd.getStatus())) {
+				rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
+				// FIXME:: Gopal.p
+				// rch.setBounceReason(fsi.getBounceReason());
+				BounceReason bounce = bounceReasonDAO.getBounceReasonByReturnCode(fsi.getBounceReason(), "");
+				rch.setBounceId(bounce.getBounceID());
+				rch.setReceiptID(fsi.getReceiptId());
+
+				ManualAdvise ma = new ManualAdvise();
+				ma.setNewRecord(true);
+				FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+				ma.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+				ma.setFinReference(rch.getReference());
+				ma.setFeeTypeID(feeType.getFeeTypeID());
+				ma.setSequence(0);
+				ma.setDueCreation(true);
+				Rule rule = ruleService.getRuleById(bounce.getRuleID(), "");
+				Map<String, Object> executeMap = bounce.getDeclaredFieldValues();
+				BigDecimal bounceAmt = BigDecimal.ZERO;
+				if (rule != null) {
+					int dpdCount = 0;
+					executeMap.put("br_finType", fm.getFinType());
+					if (ImplementationConstants.BOUNCE_CHARGE_ON_DPD_COUNT) {
+						dpdCount = rd.getFinanceDetail().getFinScheduleData().getFinPftDeatil().getActualODDays();
+						executeMap.put("br_dpdcount", dpdCount);
+					}
+					bounceAmt = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(), executeMap,
+							fm.getFinCcy(), RuleReturnType.DECIMAL);
+					// unFormating BounceAmt
+					bounceAmt = PennantApplicationUtil.unFormateAmount(bounceAmt,
+							CurrencyUtil.getFormat(fm.getFinCcy()));
+				}
+				ma.setAdviseAmount(bounceAmt);
+				ma.setPaidAmount(BigDecimal.ZERO);
+				ma.setWaivedAmount(BigDecimal.ZERO);
+				ma.setValueDate(rch.getValueDate());
+				ma.setPostDate(SysParamUtil.getPostDate());
+				ma.setReceiptID(rch.getReceiptID());
+				ma.setBounceID(bounce.getBounceID());
+
+				rch.setManualAdvise(ma);
+
+			} else if (StringUtils.equals(rcd.getStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
+				rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_CANCEL);
+				rch.setCancelReason(fsi.getCancelReason());
+				rch.setReceiptID(fsi.getReceiptId());
+			}
+			if (fsi.isNewReceipt()) {
+				rch.setNewRecord(true);
+				rch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			} else {
+				rch.setNewRecord(false);
+				rch.setRecordType("");
+			}
+			rch.setBounceDate(fsi.getBounceDate());
+
+			FinReceiptHeader rctHdr = getFinReceiptHeaderById(rch.getReceiptID(), false, "");
+			if (rctHdr != null) {
+				for (FinReceiptDetail rctDtl : rch.getReceiptDetails()) {
+					for (FinReceiptDetail aRctDetail : rctHdr.getReceiptDetails()) {
+						if (rctDtl.getReceiptID() <= 0) {
+							rctDtl.setReceiptID(aRctDetail.getReceiptID());
+						}
+						if (rctDtl.getReceiptSeqID() <= 0) {
+							rctDtl.setReceiptSeqID(aRctDetail.getReceiptSeqID());
+						}
+					}
+				}
 			}
 
 			rch.setRemarks(fsi.getRemarks());
@@ -5568,6 +5932,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return fd;
 		}
 
+		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE
+				&& finAdvancePaymentsDAO.getStatusCountByFinRefrence(finID) > 0) {
+			setError(schdData, "90508", finReference);
+			return fd;
+		}
 		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE && !isValidEarlySettleReason(fsi.getEarlySettlementReason())) {
 			setError(schdData, "90501", "earlySettlementReason");
 			logger.info(Literal.LEAVING);
@@ -5663,7 +6032,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rd = receiptCalculator.recalAutoAllocation(rd, false);
 		}
 
-		checkInprocessReceipts(schdData, receiptPurpose);
+		if (RequestSource.UPLOAD != requestSource) {
+			checkInprocessReceipts(schdData, receiptPurpose);
+		}
 
 		if (AllocationType.MANUAL.equals(allocateMthd)) {
 			if (requestSource == RequestSource.API && receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
@@ -5965,6 +6336,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
 			rch.getReceiptDetails().clear();
 			createXcessRCD(rd);
+			rcd.setPayOrder(rch.getReceiptDetails().size() + 1);
 			rch.getReceiptDetails().add(rcd);
 		}
 
@@ -6043,6 +6415,33 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (fsi.isNonStp()) {
 			auditHeader = doApprove(auditHeader);
+
+			// checking if receipt upload with bounce for new receipt
+			if (fsi.isNewReceipt() && fsi.isReceiptUpload() && (RepayConstants.PAYSTATUS_BOUNCE.equals(fsi.getStatus())
+					|| RepayConstants.PAYSTATUS_CANCEL.equals(fsi.getStatus()))) {
+				FinReceiptData rcptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+				FinReceiptHeader receiptHeader = rcptData.getReceiptHeader();
+				receiptHeader.setNewRecord(false);
+				if (receiptHeader.getManualAdvise() != null) {
+					receiptHeader.getManualAdvise().setReceiptID(receiptHeader.getReceiptID());
+				}
+
+				FinReceiptHeader aRch = rcptData.getReceiptHeader();
+				for (FinReceiptDetail rcDtl : aRch.getReceiptDetails()) {
+					FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcDtl.getReceiptSeqID(), "");
+					rcd.setRepayHeader(rph);
+					if (rph != null) {
+						List<RepayScheduleDetail> rpySchdList = financeRepaymentsDAO.getRpySchdList(rph.getRepayID(),
+								"");
+						rph.setRepayScheduleDetails(rpySchdList);
+					}
+				}
+				receiptCancellationService.doApprove(auditHeader);
+				if (rch.getReceiptID() <= 0) {
+					rch.setReceiptID(receiptHeader.getReceiptID());
+				}
+				auditHeader.getAuditDetail().setModelData(rd);
+			}
 		} else {
 			setWorkflowDetails(rd);
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
@@ -6224,10 +6623,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rd.setDueAdjusted(false);
 		}
 
-		if (RequestSource.UPLOAD != fsi.getRequestSource()) {
-			return;
-		}
-
 		if (!rd.isDueAdjusted()) {
 			setError(schdData, "90330", receiptPurpose.code(), "");
 			return;
@@ -6265,27 +6660,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 
-		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(receiptData.getReceiptHeader().getReceiptPurpose());
-
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		List<XcessPayables> xcessPayables = rch.getXcessPayables();
 		for (int i = 0; i < xcessPayables.size(); i++) {
 			XcessPayables payable = xcessPayables.get(i);
 			if (rcMode.equals(payable.getPayableType()) && id == payable.getPayableID()) {
-				if (receiptPurposeCtg == 2 && (StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
-						FinanceConstants.RECEIPT_MAKER)
-						|| StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
-								FinanceConstants.RECEIPT_APPROVER))) {
-					payable.setTotPaidNow(receiptData.getExcessAvailable());
-				} else if (receiptPurposeCtg == 2 && (StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
-						FinanceConstants.CLOSURE_MAKER)
-						|| StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
-								FinanceConstants.CLOSURE_APPROVER))) {
-					payable.setTotPaidNow(amount);
-				} else {
-					payable.setTotPaidNow(amount);
-				}
+				payable.setTotPaidNow(amount);
 				break;
+
+				/*
+				 * if (receiptPurposeCtg == 2 && (StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
+				 * FinanceConstants.RECEIPT_MAKER) || StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
+				 * FinanceConstants.RECEIPT_APPROVER))) { payable.setTotPaidNow(receiptData.getExcessAvailable()); }
+				 * else if (receiptPurposeCtg == 2 && (StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
+				 * FinanceConstants.CLOSURE_MAKER) || StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
+				 * FinanceConstants.CLOSURE_APPROVER))) { payable.setTotPaidNow(amount); } else {
+				 * payable.setTotPaidNow(amount); } break;
+				 */
 			}
 		}
 		return receiptData;
@@ -6346,6 +6737,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			recalEarlyPay(rd);
 
 			rd.setBuildProcess("I");
+			BigDecimal unpaidTdsAmount = BigDecimal.ZERO;
+			if (AdvanceType.hasAdvInterest(fm) && fm.istDSApplicable()
+					&& rd.getIntTdsUnpaid().compareTo(BigDecimal.ZERO) == 0) {
+				unpaidTdsAmount = financeScheduleDetailDAO.getUnpaidTdsAmount(fm.getFinReference());
+				rd.setIntTdsUnpaid(unpaidTdsAmount);
+			}
 			rd = receiptCalculator.initiateReceipt(rd, false);
 
 			rd.setActualReceiptAmount(rch.getReceiptAmount().subtract(rd.getExcessAvailable()));
@@ -6360,6 +6757,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 			}
 		}
+
+		prepareFinDueData(rd);
 
 		logger.info(Literal.LEAVING);
 		return rd;
@@ -6423,7 +6822,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			BigDecimal excessAvailable = receiptData.getExcessAvailable();
 			BigDecimal totalDues = pastDues.add(totalBounces).add(totalRcvAdvises).add(totalFees)
 					.subtract(excessAvailable).subtract(totalWaivedAmt).add(excessPaid);
-			if (totalDues.compareTo(fsi.getAmount()) != 0) {
+			if (totalDues.compareTo(fsi.getAmount()) != 0
+					&& !receiptData.getReceiptHeader().isClosureWithFullWaiver()) {
 				parm0 = "Invalid receipt amount. It should equal to total due :" + totalDues.toString();
 				setError(finScheduleData, "30550", parm0);
 				return receiptData;
@@ -6557,7 +6957,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	@Override
 	public List<ErrorDetail> dedupCheck(FinServiceInstruction fsi) {
-		List<Long> receiptIdList = finReceiptHeaderDAO.isDedupReceiptExists(fsi);
+		if ((RepayConstants.PAYSTATUS_CANCEL.equals(fsi.getStatus())
+				|| RepayConstants.PAYSTATUS_BOUNCE.equals(fsi.getStatus()))) {
+			return new ArrayList<>();
+		}
+
+		List<Long> receiptIdList = new ArrayList<>();
+
+		if (!ImplementationConstants.RECEIPT_DUPLICATE_CHECK_STOP) {
+			receiptIdList = finReceiptHeaderDAO.isDedupReceiptExists(fsi);
+		}
 
 		if (receiptIdList.isEmpty()) {
 			return new ArrayList<>();
@@ -6565,7 +6974,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		StringBuilder message = new StringBuilder();
 		message.append("Receipt for the Fin Reference {0} , Value Date {1}, Receipt Amount {2} ");
-		if (fsi.getTransactionRef() != null) {
+		if (StringUtils.trimToNull(fsi.getTransactionRef()) != null) {
 			message.append(" and Transaction Reference");
 		}
 		message.append("{3} already exists with Receipt Id {4} .");
@@ -6816,7 +7225,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		Date monthStart = DateUtil.getMonthStart(appDate);
-		if (valueDate != null && valueDate.compareTo(monthStart) < 0) {
+		if (valueDate != null && valueDate.compareTo(monthStart) < 0 && !receiptData.isForeClosure()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = DateUtil.formatToLongDate(valueDate);
 			valueParm[1] = DateUtil.formatToLongDate(monthStart);
@@ -6841,7 +7250,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			FinScheduleData schdData = fd.getFinScheduleData();
 			FinanceMain fm = schdData.getFinanceMain();
 
-			if (diff.compareTo(new BigDecimal(100)) < 0) {
+			if (!FinanceConstants.PRODUCT_ODFACILITY.equals(fm.getProductCategory())
+					&& diff.compareTo(new BigDecimal(100)) < 0) {
 				String[] valueParm = new String[2];
 				int formatee = CurrencyUtil.getFormat(fm.getFinCcy());
 				BigDecimal formateAmount = PennantApplicationUtil.formateAmount(closingBal, formatee);
@@ -6918,6 +7328,153 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		finReceiptHeaderDAO.updateMultiReceiptLog(finReceiptQueue);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	public FinReceiptData prepareFinDueData(FinReceiptData rd) {
+		Date valueDate = rd.getValueDate();
+		FinReceiptHeader rch = rd.getReceiptHeader();
+		FinanceDetail fd = rd.getFinanceDetail();
+		FinScheduleData fsd = fd.getFinScheduleData();
+		List<FinanceScheduleDetail> schedules = fsd.getFinanceScheduleDetails();
+
+		FinanceMain fm = fsd.getFinanceMain();
+		String repayHierarchy = assetClassificationService.getNpaRepayHierarchy(fm.getFinID());
+
+		List<FinDueData> duesList = new ArrayList<>();
+
+		duesList.addAll(repaymentProcessUtil.addAllocations(new FinReceiptData(), valueDate, new FinReceiptHeader(),
+				schedules));
+		duesList.addAll(addFeeAllocations(rch));
+		duesList.addAll(addLatePayAllocations(fsd, valueDate));
+
+		if (CollectionUtils.isEmpty(duesList)) {
+			return rd;
+		}
+
+		duesList = duesList.stream().sorted((d1, d2) -> DateUtil.compare(d1.getDueDate(), d2.getDueDate()))
+				.collect(Collectors.toList());
+
+		if ("".equals(repayHierarchy)) {
+			repayHierarchy = fsd.getFinanceType().getRpyHierarchy();
+		}
+
+		repaymentProcessUtil.setFinDueDataByHierarchy(duesList, repayHierarchy);
+
+		duesList = sortDueDetailsByRelHierarchy(duesList);
+		rd.setDueDataList(duesList);
+
+		return rd;
+	}
+
+	private List<FinDueData> addLatePayAllocations(FinScheduleData fsd, Date valueDate) {
+		List<FinDueData> duesList = new ArrayList<>();
+
+		int schdIdx = 0;
+		for (FinODDetails fod : fsd.getFinODDetails()) {
+			BigDecimal lpiBal = fod.getLPIBal();
+			BigDecimal lppBal = fod.getTotPenaltyBal();
+
+			if (DateUtil.compare(valueDate, fod.getFinODSchdDate()) >= 0) {
+				if (lppBal.compareTo(BigDecimal.ZERO) > 0) {
+					FinDueData dueData = new FinDueData();
+					dueData.setAllocType(RepayConstants.DUETYPE_ODC);
+					dueData.setDueDate(fod.getFinODSchdDate());
+					dueData.setDueAmount(lppBal);
+					dueData.setSchdIdx(schdIdx);
+
+					duesList.add(dueData);
+				}
+				if (lpiBal.compareTo(BigDecimal.ZERO) > 0) {
+					FinDueData dueData = new FinDueData();
+					dueData.setAllocType(RepayConstants.DUETYPE_LPFT);
+					dueData.setDueDate(fod.getFinODSchdDate());
+					dueData.setDueAmount(lpiBal);
+					dueData.setSchdIdx(schdIdx);
+
+					duesList.add(dueData);
+				}
+			}
+
+			schdIdx++;
+		}
+
+		return duesList;
+	}
+
+	private List<FinDueData> addFeeAllocations(FinReceiptHeader rch) {
+		List<FinDueData> duesList = new ArrayList<>();
+		for (ReceiptAllocationDetail rad : rch.getAllocations()) {
+			if (rad.getAllocationTo() == 0) {
+				continue;
+			}
+
+			String allocationType = rad.getAllocationType();
+			FinDueData dueData = new FinDueData();
+
+			switch (allocationType) {
+			case RepayConstants.ALLOCATION_MANADV:
+				dueData.setAllocType(RepayConstants.DUETYPE_MANUALADVISE);
+				dueData.setAdviseId(rad.getAllocationTo());
+				dueData.setDueDate(rad.getValueDate());
+				dueData.setDueAmount(rad.getTotalDue());
+
+				duesList.add(dueData);
+				break;
+			case RepayConstants.ALLOCATION_BOUNCE:
+				dueData.setAllocType(RepayConstants.DUETYPE_BOUNCE);
+				dueData.setAdviseId(rad.getAllocationTo());
+				dueData.setDueDate(rad.getValueDate());
+				dueData.setDueAmount(rad.getTotalDue());
+
+				duesList.add(dueData);
+				break;
+			case RepayConstants.ALLOCATION_FEE:
+				dueData.setAllocType(RepayConstants.DUETYPE_FEES);
+				dueData.setFeeTypeCode(rad.getFeeTypeCode());
+				dueData.setDueDate(rad.getValueDate());
+				dueData.setDueAmount(rad.getTotalDue());
+
+				duesList.add(dueData);
+				break;
+			default:
+				break;
+			}
+		}
+
+		return duesList;
+	}
+
+	public static List<FinDueData> sortDueDetailsByRelHierarchy(List<FinDueData> dueDetails) {
+		if (CollectionUtils.isEmpty(dueDetails)) {
+			return dueDetails;
+		}
+
+		Collections.sort(dueDetails, new Comparator<FinDueData>() {
+			@Override
+			public int compare(FinDueData detail1, FinDueData detail2) {
+				int i = detail1.getRelativeHierarchy() - detail2.getRelativeHierarchy();
+
+				if (i != 0)
+					return i;
+				i = detail1.getDueDate().compareTo(detail2.getDueDate());
+				if (i != 0)
+					return i;
+
+				return Integer.compare(detail1.getHierarchy(), detail2.getHierarchy());
+			}
+		});
+
+		return dueDetails;
+	}
+
+	@Override
+	public BigDecimal getReceiptAmountPerMonthByFinreference(Date receiptDate, List<String> finreference) {
+		return finReceiptDetailDAO.getReceiptAmountPerMonthByFinreference(receiptDate, finreference);
+	}
+
+	@Override
+	public FinReceiptHeader getInititatedReceipts(String reference) {
+		return finReceiptHeaderDAO.getInititatedReceipts(reference, "_Temp", FinServiceEvent.EARLYRPY);
 	}
 
 	@Override
@@ -7273,8 +7830,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	@Autowired
-	public void setRepayProcessUtil(RepaymentProcessUtil repayProcessUtil) {
-		this.repayProcessUtil = repayProcessUtil;
+	public void setRepaymentProcessUtil(RepaymentProcessUtil repaymentProcessUtil) {
+		this.repaymentProcessUtil = repaymentProcessUtil;
 	}
 
 	@Autowired
@@ -7382,6 +7939,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		this.finFeeConfigService = finFeeConfigService;
 	}
 
+	@Autowired
+	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
+		this.bounceReasonDAO = bounceReasonDAO;
+	}
+
+	@Autowired
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+
+	@Autowired
+	public void setManualScheduleService(ManualScheduleService manualScheduleService) {
+		this.manualScheduleService = manualScheduleService;
+	}
+
 	@Autowired(required = false)
 	@Qualifier("receiptDetailPostValidationHook")
 	public void setPostValidationHook(PostValidationHook postValidationHook) {
@@ -7389,8 +7961,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	@Autowired
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	@Autowired
+	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
+		this.assetClassificationService = assetClassificationService;
+	}
+
+	@Autowired
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
 		this.finTypeFeesDAO = finTypeFeesDAO;
+	}
+
+	@Autowired
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 
 	@Autowired

@@ -209,6 +209,10 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal dueCharges = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal overDueAmount = BigDecimal.ZERO;
+	private BigDecimal totalDueAmt = BigDecimal.ZERO;
+	private BigDecimal totalOutStandCharges = BigDecimal.ZERO;
+	private BigDecimal OutStandIncludeCharges = BigDecimal.ZERO;
+	private BigDecimal availableAmtExcludeCharges = BigDecimal.ZERO;
 
 	public FinanceSummary() {
 		super();
@@ -319,6 +323,10 @@ public class FinanceSummary implements Serializable {
 		entity.setAvailableAmt(this.availableAmt);
 		entity.setDueCharges(this.dueCharges);
 		entity.setOverDueAmount(this.overDueAmount);
+		entity.setTotalDueAmt(this.totalDueAmt);
+		entity.setTotalOutStandCharges(this.totalOutStandCharges);
+		entity.setOutStandIncludeCharges(this.OutStandIncludeCharges);
+		entity.setAvailableAmtExcludeCharges(this.availableAmtExcludeCharges);
 
 		return entity;
 	}
@@ -1121,6 +1129,38 @@ public class FinanceSummary implements Serializable {
 
 	public void setAssetCode(String assetCode) {
 		this.assetCode = assetCode;
+	}
+
+	public BigDecimal getTotalDueAmt() {
+		return totalDueAmt;
+	}
+
+	public void setTotalDueAmt(BigDecimal totalDueAmt) {
+		this.totalDueAmt = totalDueAmt;
+	}
+
+	public BigDecimal getTotalOutStandCharges() {
+		return totalOutStandCharges;
+	}
+
+	public void setTotalOutStandCharges(BigDecimal totalOutStandCharges) {
+		this.totalOutStandCharges = totalOutStandCharges;
+	}
+
+	public BigDecimal getOutStandIncludeCharges() {
+		return OutStandIncludeCharges;
+	}
+
+	public void setOutStandIncludeCharges(BigDecimal outStandIncludeCharges) {
+		OutStandIncludeCharges = outStandIncludeCharges;
+	}
+
+	public BigDecimal getAvailableAmtExcludeCharges() {
+		return availableAmtExcludeCharges;
+	}
+
+	public void setAvailableAmtExcludeCharges(BigDecimal availableAmtExcludeCharges) {
+		this.availableAmtExcludeCharges = availableAmtExcludeCharges;
 	}
 
 }

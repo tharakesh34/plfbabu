@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -201,7 +202,9 @@ public class AuditHeader implements java.io.Serializable {
 		}
 		if (this.overideMap != null) {
 			auditHeader.setOverideMap(new HashMap<String, List<ErrorDetail>>());
-			BeanUtils.copyProperties(this.overideMap, auditHeader.overideMap);
+			for (Entry<String, List<ErrorDetail>> moveMap : this.overideMap.entrySet()) {
+				auditHeader.overideMap.put(moveMap.getKey(), moveMap.getValue());
+			}
 		}
 		if (this.auditDetails != null) {
 			auditHeader.setAuditDetails(new ArrayList<AuditDetail>());

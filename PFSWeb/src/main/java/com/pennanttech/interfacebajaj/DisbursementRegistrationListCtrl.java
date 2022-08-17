@@ -545,6 +545,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("channel");
 		searchObject.addField("providerId");
 		searchObject.addField("PaymentDetail");
+		searchObject.addField("partnerBankAcType");
+		searchObject.addField("llDate");
+		searchObject.addField("disbCCy");
 		searchObject.addTabelName(this.tableName);
 
 		// Internal Settlements Payment Type details not allowed to Download

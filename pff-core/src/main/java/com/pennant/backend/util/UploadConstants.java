@@ -83,4 +83,9 @@ public class UploadConstants {
 	public static final String UPLOAD_APPROVER_STAGE = "TRANS_CHECKER";
 	public static final String RATE_CHANGE_UPLOAD = "RATE_CHANGE_UPLOAD";
 
+	public static final String MODULE_FEE_WAIVER = "FeeWaiverUpload";
+
+	// Waiver Stages
+	public static final String FEE_WAIVER_MAKER = "FeeWaiverMaker";
+	public static final String FEE_WAIVER_APPROVER = "FeeWaiverApprover";
 }

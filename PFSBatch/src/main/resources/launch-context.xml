@@ -37,9 +37,10 @@
 	</bean>
 
 	<bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
-	
+
 	<!-- FIXME Murthy the below bean needs to be deleted -->
-	<bean id="serializer" class="org.springframework.batch.core.repository.dao.Jackson2ExecutionContextStringSerializer">
+	<bean id="serializer"
+		class="org.springframework.batch.core.repository.dao.Jackson2ExecutionContextStringSerializer">
 		<constructor-arg>
 			<list>
 				<value>java.util.ArrayList</value>

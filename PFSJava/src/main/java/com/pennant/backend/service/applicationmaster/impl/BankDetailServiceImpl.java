@@ -360,6 +360,11 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	}
 
 	@Override
+	public BankDetail getAccNoLengths(String bankCode) {
+		return bankDetailDAO.getAccNoLengths(bankCode);
+	}
+
+	@Override
 	public String getBankCodeByName(String bankName) {
 		return bankDetailDAO.getBankCodeByName(bankName);
 	}

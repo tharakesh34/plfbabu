@@ -51,9 +51,11 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -85,6 +87,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 	private StatementOfAccount statementOfAccount = new StatementOfAccount();
 	private transient SOAReportGenerationService soaReportGenerationService;
+	private SOAReportGenerationDAO soaReportGenerationDAO;
 
 	public SOAReportGenerationDialogCtrl() {
 		super();
@@ -224,8 +227,17 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 					ReportsUtil.generatePDF("FINENQ_StatementOfAccount_FinType_Hybrid", this.statementOfAccount, list,
 							userName, null);
 				} else {
-					ReportsUtil.generatePDF("FINENQ_StatementOfAccount", this.statementOfAccount, list, userName, null);
+					FinanceMain financeMain = null;
+					if (StringUtils.isNotEmpty(this.finReference.getValue())) {
+						financeMain = soaReportGenerationDAO.getFinanceMain(this.finReference.getValue());
+					}
 
+					String reportName = "FINENQ_StatementOfAccount";
+					if (FinanceConstants.PRODUCT_PL.equals(financeMain.getFinCategory())) {
+						reportName = "PL_FINENQ_StatementOfAccount";
+					}
+
+					ReportsUtil.generatePDF(reportName, this.statementOfAccount, list, userName, null);
 				}
 			} catch (Exception e) {
 				MessageUtil.showError(e);
@@ -419,5 +431,9 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
 		this.soaReportGenerationService = soaReportGenerationService;
+	}
+
+	public void setSoaReportGenerationDAO(SOAReportGenerationDAO soaReportGenerationDAO) {
+		this.soaReportGenerationDAO = soaReportGenerationDAO;
 	}
 }

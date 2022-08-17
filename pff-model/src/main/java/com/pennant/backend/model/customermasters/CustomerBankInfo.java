@@ -112,6 +112,7 @@ public class CustomerBankInfo extends AbstractWorkflowEntity {
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	@XmlElement
 	private boolean addToBenficiary;
+	@XmlElement
 	private Long bankBranchID;
 	@XmlElement(name = "ifsc")
 	private String iFSC;

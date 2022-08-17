@@ -498,6 +498,12 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				return false;
 			}
 
+			if (fsHeaderKeys == null || !(fsHeaderKeys.contains("BOUNCE/CANCELDATE")
+					&& fsHeaderKeys.contains("RECEIPTID") && fsHeaderKeys.contains("BOUNCE/CANCELREASON"))) {
+				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_NotAllowed.value"));
+				return false;
+			}
+
 			// Validate Second Sheet Header Keys
 			List<String> shHeaderKeys = getRowValuesByIndex(this.workbook, 1, 0);
 			if (shHeaderKeys == null || !(shHeaderKeys.contains("<ROOT>_id") && shHeaderKeys.contains("ALLOCATIONTYPE")

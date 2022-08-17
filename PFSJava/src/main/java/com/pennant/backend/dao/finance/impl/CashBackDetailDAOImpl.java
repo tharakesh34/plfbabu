@@ -19,17 +19,18 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 
 	public void save(List<CashBackDetail> cbdList) {
 		StringBuilder sql = new StringBuilder("Insert Into CashBackDetails");
-		sql.append(" (FinID, FinReference, Type, AdviseId, Amount, Refunded)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?)");
+		sql.append(" (FinID, FinReference, Type, AdviseId, Amount, Refunded");
+		sql.append(", FeeTypeId, RetainedAmount, CGST, SGST, UGST, IGST, TGST, Cess");
+		sql.append(", ManfMerchId, StoreName, LinkedTranId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				CashBackDetail cbd = cbdList.get(i);
-
 				int index = 1;
 
 				ps.setLong(index++, cbd.getFinID());
@@ -38,6 +39,17 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 				ps.setLong(index++, cbd.getAdviseId());
 				ps.setBigDecimal(index++, cbd.getAmount());
 				ps.setBoolean(index++, cbd.isRefunded());
+				ps.setLong(index++, cbd.getFeeTypeId());
+				ps.setBigDecimal(index++, cbd.getRetainedAmount());
+				ps.setBigDecimal(index++, cbd.getcGST());
+				ps.setBigDecimal(index++, cbd.getsGST());
+				ps.setBigDecimal(index++, cbd.getuGST());
+				ps.setBigDecimal(index++, cbd.getiGST());
+				ps.setBigDecimal(index++, cbd.gettGST());
+				ps.setBigDecimal(index++, cbd.getCess());
+				ps.setString(index++, cbd.getManfMerchId());
+				ps.setString(index++, cbd.getStoreName());
+				ps.setLong(index++, cbd.getLinkedTranId());
 			}
 
 			@Override
@@ -77,14 +89,14 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 
 			return cbd;
 		}, 0);
-
 	}
 
 	@Override
 	public CashBackDetail getManualAdviseIdByFinReference(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AdviseId, FinID, FinReference, Amount");
-		sql.append(" From CashBackDetails");
+		sql.append(" AdviseId, FinID, FinReference, Amount, FeeTypeId, RetainedAmount, CGST, SGST");
+		sql.append(", UGST, IGST, TGST, Cess, ManfMerchId, StoreName, LinkedTranId");
+		sql.append(" from CashBackDetails");
 		sql.append(" Where FinID = ? and Type = ? and Refunded = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -92,12 +104,24 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CashBackDetail cbd = new CashBackDetail();
+
 				cbd.setAdviseId(rs.getLong("AdviseId"));
-				cbd.setFinID(rs.getLong("FinID"));
 				cbd.setFinReference(rs.getString("FinReference"));
 				cbd.setAmount(rs.getBigDecimal("Amount"));
+				cbd.setFeeTypeId(rs.getLong("FeeTypeId"));
+				cbd.setRetainedAmount(rs.getBigDecimal("RetainedAmount"));
+				cbd.setcGST(rs.getBigDecimal("CGST"));
+				cbd.setsGST(rs.getBigDecimal("SGST"));
+				cbd.setuGST(rs.getBigDecimal("UGST"));
+				cbd.setiGST(rs.getBigDecimal("IGST"));
+				cbd.settGST(rs.getBigDecimal("TGST"));
+				cbd.setCess(rs.getBigDecimal("Cess"));
+				cbd.setManfMerchId(rs.getString("ManfMerchId"));
+				cbd.setStoreName(rs.getString("StoreName"));
+				cbd.setLinkedTranId(rs.getLong("LinkedTranId"));
+
 				return cbd;
-			}, finID, type, 0);
+			}, finID, type, false);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -111,7 +135,7 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 		logger.debug(Literal.SQL + sql);
 
 		int recordCount = this.jdbcOperations.update(sql, ps -> {
-			ps.setInt(1, 1);
+			ps.setBoolean(1, true);
 			ps.setLong(2, adviseId);
 		});
 

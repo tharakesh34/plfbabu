@@ -30,7 +30,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -55,8 +54,6 @@ public interface FinanceTaxDetailService {
 
 	List<JointAccountDetail> getJointAccountDetailByFinRef(long finID, String type);
 
-	FinanceMain getFinanceDetailsForService(long finID, String type, boolean isWIF);
-
 	Customer getCustomerByID(long id);
 
 	AuditDetail gstNumbeValidation(AuditDetail auditDetail, FinanceTaxDetail financeTaxDetail);
@@ -70,5 +67,7 @@ public interface FinanceTaxDetailService {
 	int getFinanceTaxDetailsByCount(long finID);
 
 	CustomerAddres getHighPriorityCustAddr(long id);
+
+	Long getCustomerIdByFinRef(String finReference);
 
 }

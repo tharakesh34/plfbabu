@@ -1,0 +1,2840 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<!-- ST#3718 :: Auto-knock-off process moved from post EOD to Micro-EOD changes start -->
+	<changeSet id="ST#350.67" author="Gopal.p">
+		<comment>Staging table for auto knock-off processing</comment>
+		<createTable tableName="AUTO_KNOCKOFF_EXCESS_STAGE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmountType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BalanceAmount" type="decimal(18,0)" />
+			<column name="ExecutionDay" type="char(2)" />
+			<column name="ThresholdValue" type="varchar(1000)" />
+			<column name="UtilizedAmount" type="decimal(18,0)" />
+			<column name="ValueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProcessingFlag" type="smallint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.68" author="Gopal.p">
+		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS_STAGE" columnNames="ID" constraintName="PK_AUTO_KNFES_ID" />
+	</changeSet>
+
+	<changeSet id="ST#350.69" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS_STAGE" indexName="IDX_AUTOKNOCKOFF_ES_VDATE_PF">
+			<column name="ValueDate" type="datetime" />
+			<column name="ProcessingFlag" type="smallint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#350.70" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AUTO_KNOCKOFF_EXCESS_STAGE ADD CONSTRAINT DF_AUTO_KNOCKOFF_ES_PF DEFAULT 0 FOR ProcessingFlag;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#350.71" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessingFlag" tableName="AUTO_KNOCKOFF_EXCESS_STAGE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#350.72" author="Gopal.p">
+		<comment>Staging table for auto knock-off excess processing</comment>
+		<createTable tableName="AUTO_KNOCKOFF_EXCESS_DTL_STAGE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinTypeDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExecutionDays" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeCode" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypedesc" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="UtilizedAmnt" type="decimal(18,2)" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="Reason" type="varchar(1000)" />
+			<column name="FinCcy" type="varchar(10)" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.73" author="Gopal.p">
+		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS_DTL_STAGE" columnNames="ID"
+			constraintName="PK_AUTO_KNFEDS_ID" />
+	</changeSet>
+
+	<changeSet id="ST#350.74" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KNFES_EID"
+			referencedTableName="AUTO_KNOCKOFF_EXCESS_STAGE" referencedColumnNames="ID"
+			baseTableName="AUTO_KNOCKOFF_EXCESS_DTL_STAGE" baseColumnNames="ExcessID" />
+	</changeSet>
+
+	<changeSet id="ST#350.75" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS_DTL_STAGE" indexName="IDX_AUTOKNOCKOFF_EXD_STG_EID">
+			<column name="ExcessID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#350.76" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS_STAGE" indexName="IDX_AKOES_FR_VD">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="ValueDate" type="datetime" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#350.77" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS" indexName="IDX_AKO_E_FR_VD">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="ValueDate" type="datetime" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#350.77.1" author="Gopal.p">
+		<addColumn tableName="AUTO_KNOCKOFF_EXCESS_STAGE">
+			<column name="KnockOffID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#350.78" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO AUTO_KNOCKOFF_EXCESS_STAGE (FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG, KNOCKOFFID) SELECT FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG, ID FROM AUTO_KNOCKOFF_EXCESS;
+				INSERT INTO AUTO_KNOCKOFF_EXCESS_DTL_STAGE (EXCESSID, KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS) SELECT T2.ID, T1.KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS FROM AUTO_KNOCKOFF_EXCESS_DETAILS T1 INNER JOIN AUTO_KNOCKOFF_EXCESS_STAGE T2 ON T2.KNOCKOFFID = T1.EXCESSID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#350.78.2" author="Gopal.p">
+		<dropColumn tableName="AUTO_KNOCKOFF_EXCESS_STAGE" columnName="KnockOffID" />
+	</changeSet>
+
+	<changeSet id="ST#350.79.1" author="Gopal.p">
+		<dropTable tableName="AUTO_KNOCKOFF_EXCESS_DETAILS" />
+	</changeSet>
+
+	<changeSet id="ST#350.79.2" author="Gopal.p">
+		<dropTable tableName="AUTO_KNOCKOFF_EXCESS" />
+	</changeSet>
+
+	<changeSet id="ST#350.80" author="Gopal.p">
+		<comment>Tranaction table for auto knock-off processing</comment>
+		<createTable tableName="AUTO_KNOCKOFF_EXCESS">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmountType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BalanceAmount" type="decimal(18,0)" />
+			<column name="ExecutionDay" type="char(2)" />
+			<column name="ThresholdValue" type="varchar(1000)" />
+			<column name="UtilizedAmount" type="decimal(18,0)" />
+			<column name="ValueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProcessingFlag" type="smallint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.80.1" author="Gopal.p">
+		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS" columnNames="ID" constraintName="PK_AUTO_KNFE_ID" />
+	</changeSet>
+
+	<changeSet id="ST#350.80.2" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS" indexName="IDX_AUTOKNOCKOFF_E_VDATE_PF">
+			<column name="ValueDate" type="datetime" />
+			<column name="ProcessingFlag" type="smallint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#350.80.3" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AUTO_KNOCKOFF_EXCESS ADD CONSTRAINT DF_AUTO_KNOCKOFF_EXCESS_PF DEFAULT 0 FOR ProcessingFlag;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#350.80.3" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessingFlag" tableName="AUTO_KNOCKOFF_EXCESS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#350.81" author="Gopal.p">
+		<comment>Tranaction table for auto knock-off processing</comment>
+		<createTable tableName="AUTO_KNOCKOFF_EXCESS_DETAILS">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinTypeDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExecutionDays" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeCode" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypedesc" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="UtilizedAmnt" type="decimal(18,2)" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="Reason" type="varchar(1000)" />
+			<column name="FinCcy" type="varchar(10)" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#350.81.1" author="Gopal.p">
+		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS_DETAILS" columnNames="ID"
+			constraintName="PK_AUTO_KNFED_ID" />
+	</changeSet>
+
+	<changeSet id="ST#350.81.2" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KNFED_EID"
+			referencedTableName="AUTO_KNOCKOFF_EXCESS" referencedColumnNames="ID" baseTableName="AUTO_KNOCKOFF_EXCESS_DETAILS"
+			baseColumnNames="ExcessID" />
+	</changeSet>
+
+	<changeSet id="ST#350.81.3" author="Gopal.p">
+		<createIndex tableName="AUTO_KNOCKOFF_EXCESS_DETAILS" indexName="IDX_AUTOKNOCKOFF_EXD_EID">
+			<column name="ExcessID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#350.82" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO AUTO_KNOCKOFF_EXCESS (ID, FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG) SELECT ID, FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG FROM AUTO_KNOCKOFF_EXCESS_STAGE;
+				INSERT INTO AUTO_KNOCKOFF_EXCESS_DETAILS (ID, EXCESSID, KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS) SELECT ID, EXCESSID, KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS FROM AUTO_KNOCKOFF_EXCESS_DTL_STAGE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- ST#3718 :: Auto-knock-off process moved from post EOD to Micro-EOD changes end -->
+
+	<!-- ST#3546 :: NPA & Provision Enhancements changes start -->
+	<changeSet id="ST#3546.1" author="nagavamsi.p">
+		<createSequence sequenceName="SEQ_ASSET_CLASS_CODES" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="ST#3546.1.1" author="nagavamsi.p">
+		<createTable tableName="ASSET_CLASS_CODES_TEMP">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.1.2" author="nagavamsi.p">
+		<addPrimaryKey tableName="ASSET_CLASS_CODES_TEMP" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.1.3" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASS_CODES_TEMP" indexName="idx_asset_class_codes_t_code" unique="true">
+			<column name="Code" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.1.4" author="nagavamsi.p">
+		<createTable tableName="ASSET_CLASS_CODES">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.1.5" author="nagavamsi.p">
+		<addPrimaryKey tableName="ASSET_CLASS_CODES" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.1.6" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASS_CODES" indexName="idx_asset_class_codes_code" unique="true">
+			<column name="Code" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.1.7_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_class_codes_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.1.7" author="nagavamsi.p">
+		<createView replaceIfExists="true" viewName="ASSET_CLASS_CODES_VIEW">
+			<![CDATA[
+                 SELECT T1.ID,
+					T1.CODE, 
+					T1.DESCRIPTION,
+					T1.ACTIVE, 
+					T1.VERSION, 
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_CODES_TEMP T1
+				UNION ALL
+				SELECT T1.ID,
+					T1.CODE, 
+					T1.DESCRIPTION,
+					T1.ACTIVE, 
+					T1.VERSION, 
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_CODES T1
+        	 	WHERE NOT EXISTS (SELECT 1 FROM ASSET_CLASS_CODES_TEMP WHERE ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#3546.1.7_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_class_codes_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.1.8_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_class_codes_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.1.8" author="nagavamsi.p">
+		<createView replaceIfExists="true" viewName="ASSET_CLASS_CODES_AVIEW">
+			<![CDATA[
+                 SELECT T1.ID,
+					T1.CODE, 
+					T1.DESCRIPTION,
+					T1.ACTIVE, 
+					T1.VERSION, 
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_CODES T1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#3546.1.8_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_class_codes_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.2" author="nagavamsi.p">
+		<createSequence sequenceName="SEQ_ASSET_SUB_CLASS_CODES" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="ST#3546.2.1" author="nagavamsi.p">
+		<createTable tableName="ASSET_SUB_CLASS_CODES_TEMP">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AssetClassID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.2.2" author="nagavamsi.p">
+		<addPrimaryKey tableName="ASSET_SUB_CLASS_CODES_TEMP" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.2.3" author="nagavamsi.p">
+		<createIndex tableName="ASSET_SUB_CLASS_CODES_TEMP" indexName="idx_ascc_t_code" unique="true">
+			<column name="Code" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.2.4" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_ascc_t_acid"
+			referencedTableName="ASSET_CLASS_CODES" baseColumnNames="AssetClassID" baseTableName="ASSET_SUB_CLASS_CODES_TEMP"
+			referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.2.5" author="nagavamsi.p">
+		<createTable tableName="ASSET_SUB_CLASS_CODES">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AssetClassID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.2.6" author="nagavamsi.p">
+		<addPrimaryKey tableName="ASSET_SUB_CLASS_CODES" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.2.7" author="nagavamsi.p">
+		<createIndex tableName="ASSET_SUB_CLASS_CODES" indexName="idx_ascc_code" unique="true">
+			<column name="Code" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.2.8" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_ascc_acid" referencedTableName="ASSET_CLASS_CODES"
+			baseColumnNames="AssetClassID" baseTableName="ASSET_SUB_CLASS_CODES" referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.2.9_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_sub_class_codes_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.2.9" author="nagavamsi.p">
+		<createView replaceIfExists="true" viewName="ASSET_SUB_CLASS_CODES_VIEW">
+			<![CDATA[
+                 SELECT T1.ID,
+					T1.ASSETCLASSID,
+					T1.CODE,
+					T1.DESCRIPTION,
+					T2.CODE CLASSCODE,
+					T2.DESCRIPTION CLASSDESCRIPTION,
+					T1.ACTIVE, 
+					T1.VERSION,
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_SUB_CLASS_CODES_TEMP T1
+				INNER JOIN ASSET_CLASS_CODES T2 ON T2.ID = T1.ASSETCLASSID
+				UNION ALL
+				SELECT T1.ID,
+					T1.ASSETCLASSID,
+					T1.CODE,
+					T1.DESCRIPTION,
+					T2.CODE CLASSCODE,
+					T2.DESCRIPTION CLASSDESCRIPTION,
+					T1.ACTIVE, 
+					T1.VERSION, 
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_SUB_CLASS_CODES T1
+				INNER JOIN ASSET_CLASS_CODES T2 ON T2.ID = T1.ASSETCLASSID
+        	 	WHERE NOT EXISTS (SELECT 1 FROM ASSET_SUB_CLASS_CODES_TEMP WHERE ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#3546.2.9_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_sub_class_codes_view');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#3546.3_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_sub_class_codes_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.3" author="nagavamsi.p">
+		<createView replaceIfExists="true" viewName="ASSET_SUB_CLASS_CODES_AVIEW">
+			<![CDATA[
+                 SELECT T1.ID,
+					T1.ASSETCLASSID,
+					T1.CODE,
+					T1.DESCRIPTION,
+					T2.CODE CLASSCODE,
+					T2.DESCRIPTION CLASSDESCRIPTION,
+					T1.ACTIVE, 
+					T1.VERSION,
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_SUB_CLASS_CODES T1
+				INNER JOIN ASSET_CLASS_CODES T2 ON T2.ID = T1.ASSETCLASSID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#3546.3post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_sub_class_codes_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.3.1" author="nagavamsi.p">
+		<createSequence sequenceName="SEQ_ASSET_CLASS_SETUP_HEADER" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="ST#3546.3.2" author="nagavamsi.p">
+		<createTable tableName="ASSET_CLASS_SETUP_HEADER_TEMP">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RepayHierarchy" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.3.3" author="nagavamsi.p">
+		<addPrimaryKey tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.3.4" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASS_SETUP_HEADER_TEMP" indexName="idx_acsh_t_entitycode" unique="true">
+			<column name="EntityCode" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.3.5" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_acsh_t_entitycode" referencedTableName="Entity"
+			baseColumnNames="EntityCode" baseTableName="ASSET_CLASS_SETUP_HEADER_TEMP" referencedColumnNames="EntityCode" />
+	</changeSet>
+
+	<changeSet id="ST#3546.3.6" author="nagavamsi.p">
+		<createTable tableName="ASSET_CLASS_SETUP_HEADER">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RepayHierarchy" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.3.7" author="nagavamsi.p">
+		<addPrimaryKey tableName="ASSET_CLASS_SETUP_HEADER" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.3.8" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASS_SETUP_HEADER" indexName="idx_acsh_entitycode" unique="true">
+			<column name="EntityCode" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.3.9" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_acsh_entitycode" referencedTableName="Entity"
+			baseColumnNames="EntityCode" baseTableName="ASSET_CLASS_SETUP_HEADER" referencedColumnNames="EntityCode" />
+	</changeSet>
+
+	<changeSet id="ST#3546.4_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_class_setup_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.4" author="nagavamsi.p">
+		<createView replaceIfExists="true" viewName="ASSET_CLASS_SETUP_HEADER_VIEW">
+			<![CDATA[
+                 SELECT T1.ID,
+					T1.EntityCode,
+					T2.ENTITYDESC,
+					T1.REPAYHIERARCHY,
+					T1.VERSION,
+				    T1.CREATEDBY,
+				    T1.CREATEDON,
+				    T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_SETUP_HEADER_TEMP T1
+				INNER JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
+				UNION ALL
+				SELECT T1.ID,
+					T1.EntityCode,
+					T2.ENTITYDESC,
+					T1.REPAYHIERARCHY,
+					T1.VERSION,
+				    T1.CREATEDBY,
+				    T1.CREATEDON,
+				    T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_SETUP_HEADER T1
+				INNER JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
+        	 	WHERE NOT EXISTS (SELECT 1 FROM ASSET_CLASS_SETUP_HEADER_TEMP WHERE ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#3546.4_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_class_setup_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.5_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_class_setup_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.5" author="nagavamsi.p">
+		<createView replaceIfExists="true" viewName="ASSET_CLASS_SETUP_HEADER_AVIEW">
+			<![CDATA[
+                 SELECT T1.ID,
+					T1.ENTITYCODE,
+					T2.ENTITYDESC,
+					T1.REPAYHIERARCHY,
+					T1.VERSION,
+				    T1.CREATEDBY,
+				    T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_SETUP_HEADER T1
+				INNER JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#3546.5_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_class_setup_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#3546.5.1" author="nagavamsi.p">
+		<createSequence sequenceName="SEQ_ASSET_CLASS_SETUP_DETAILS" incrementBy="1" startValue="1"
+			minValue="1" maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="ST#3546.5.2" author="nagavamsi.p">
+		<createTable tableName="ASSET_CLASS_SETUP_DETAILS_TEMP">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SetupID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DPDMin" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DPDMax" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ClassID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SubClassID" type="bigint" />
+			<column name="NPAStage" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="NPAAge" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+
+	<changeSet id="ST#3546.5.3" author="nagavamsi.p">
+		<addPrimaryKey tableName="ASSET_CLASS_SETUP_DETAILS_TEMP" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.5.7" author="nagavamsi.p">
+		<createTable tableName="ASSET_CLASS_SETUP_DETAILS">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SetupID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DPDMin" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DPDMax" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ClassID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SubClassID" type="bigint" />
+			<column name="NPAStage" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="NPAAge" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+
+	<changeSet id="ST#3546.5.8" author="nagavamsi.p">
+		<addPrimaryKey tableName="ASSET_CLASS_SETUP_DETAILS" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.5.9" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_acsd_setupid"
+			referencedTableName="ASSET_CLASS_SETUP_HEADER" baseColumnNames="SetupID" baseTableName="ASSET_CLASS_SETUP_DETAILS"
+			referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.5.10" author="nagavamsi.p">
+		<createIndex tableName="Asset_Class_Setup_Details" indexName="idx_acsd_setupid">
+			<column name="SetupID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.5.11" author="nagavamsi.p">
+		<createIndex tableName="Asset_Class_Setup_Details" indexName="idx_acsd_classid">
+			<column name="ClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.5.12" author="nagavamsi.p">
+		<createIndex tableName="Asset_Class_Setup_Details" indexName="idx_acsd_subclassid">
+			<column name="SubClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.6" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_acsd_classid"
+			referencedTableName="ASSET_CLASS_CODES" baseColumnNames="ClassID" baseTableName="ASSET_CLASS_SETUP_DETAILS"
+			referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.6.1" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_acsd_t_subclassid"
+			referencedTableName="ASSET_SUB_CLASS_CODES" baseColumnNames="SubClassID" baseTableName="ASSET_CLASS_SETUP_DETAILS"
+			referencedColumnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#3546.7" author="nagavamsi.p">
+		<addColumn tableName="RMTFINANCETYPES">
+			<column name="RegProvRule" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3546.7.1" author="nagavamsi.p">
+		<addColumn tableName="RMTFINANCETYPES">
+			<column name="IntProvRule" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="ST#3546.7.1.1" author="nagavamsi.p">
+		<createIndex tableName="RMTFINANCETYPES" indexName="idx_rft_regprovrule">
+			<column name="RegProvRule" type="bigint" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.7.1.2" author="nagavamsi.p">
+		<createIndex tableName="RMTFINANCETYPES" indexName="idx_rft_intprovrule">
+			<column name="IntProvRule" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.7.2" author="nagavamsi.p">
+		<addColumn tableName="RMTFINANCETYPES_TEMP">
+			<column name="RegProvRule" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3546.7.3" author="nagavamsi.p">
+		<addColumn tableName="RMTFINANCETYPES_TEMP">
+			<column name="IntProvRule" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3546.8" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_VIEW');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_APPROVER');
+				
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_VIEW');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_APPROVER');
+				
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_VIEW'; 
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_APPROVER';
+				
+				DELETE FROM SECROLES WHERE ROLECD = 'ASSET_CLASS_CODES_VIEW'; 
+				DELETE FROM SECROLES WHERE ROLECD = 'ASSET_CLASS_CODES_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'ASSET_CLASS_CODES_APPROVER';
+								
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_AssetClassCodes';	
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_AssetClassCodes_Enquiry';
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassCodeList_New';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassCodeList_Print';
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassCodeDialog_btnNew';		
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassCodeDialog_btnEdit';		
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassCodeDialog_btnDelete';	
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassCodeDialog_btnSave';	
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetClassCodeDialog_Code';			
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetClassCodeDialog_Description';	
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetClassCodeDialog_Active';
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'ASSET_CLASS_CODES_VIEW', 			'Role For Asset Classification Codes View',		NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'ASSET_CLASS_CODES_MAKER', 		    'Role For Asset Classification Codes Maler',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'ASSET_CLASS_CODES_APPROVER', 		'Role For Asset Classification Codes Approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'ASSET_CLASS_CODES_VIEW', 		'Group For Asset Classification Codes View',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'ASSET_CLASS_CODES_MAKER', 		'Group For Asset Classification Codes Maler',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'ASSET_CLASS_CODES_APPROVER',  	'Group For Asset Classification Codes Approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 0, 'menuItem_AssetClassCodes',					'MENU',					0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 0, 'menuItem_AssetClassCodes_Enquiry',			'MENU',					0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 2, 'button_AssetClassCodeList_Print',			'AssetClassCodeList',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 2, 'button_AssetClassCodeList_New',				'AssetClassCodeList',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 2, 'button_AssetClassCodeDialog_btnNew',		'AssetClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 2, 'button_AssetClassCodeDialog_btnEdit',		'AssetClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 2, 'button_AssetClassCodeDialog_btnDelete',		'AssetClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 2, 'button_AssetClassCodeDialog_btnSave',		'AssetClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 3, 'AssetClassCodeDialog_Code',					'AssetClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 3, 'AssetClassCodeDialog_Description',			'AssetClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SecRights_View), 3, 'AssetClassCodeDialog_Active',				'AssetClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'menuItem_AssetClassCodes'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_APPROVER'), 	    (SELECT RightID FROM SecRights WHERE RightName = 'menuItem_AssetClassCodes'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_VIEW'), 		    (SELECT RightID FROM SecRights WHERE RightName = 'menuItem_AssetClassCodes_Enquiry'),		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassCodeList_Print'), 		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_APPROVER'), 	    (SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassCodeList_Print'), 		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassCodeList_New'), 			1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassCodeDialog_btnNew'),		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassCodeDialog_btnEdit'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassCodeDialog_btnDelete'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassCodeDialog_btnSave'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_APPROVER'), 	    (SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassCodeDialog_btnSave'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetClassCodeDialog_Code'), 				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetClassCodeDialog_Description'), 		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetClassCodeDialog_Active'),			1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGRPID) + 1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_MAKER'), 	   (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'),		0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGRPID) + 1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_CODES_APPROVER'),  (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'),	    0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.8.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'AssetClassCode';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('AssetClassCode', 'AssetClassCode', 'listheader_Code.label,listheader_Description.label', 'code,description', 'String,String', null, 'ReportList02', 'AssetClassCode', 'System Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+        	 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.9" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_VIEW');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_APPROVER');
+								
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_VIEW');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_APPROVER');
+								
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_VIEW'; 
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_APPROVER';
+								
+				DELETE FROM SECROLES WHERE ROLECD = 'ASSET_SUB_CLASS_CODES_VIEW'; 
+				DELETE FROM SECROLES WHERE ROLECD = 'ASSET_SUB_CLASS_CODES_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'ASSET_SUB_CLASS_CODES_APPROVER';
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_AssetSubClassCodes';	
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_AssetSubClassCodes_Enquiry';
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetSubClassCodeList_New';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetSubClassCodeList_Print';
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetSubClassCodeDialog_btnNew';		
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetSubClassCodeDialog_btnEdit';		
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetSubClassCodeDialog_btnDelete';	
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetSubClassCodeDialog_btnSave';
+								
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetSubClassCodeDialog_ClassCode';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetSubClassCodeDialog_Code';		
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetSubClassCodeDialog_Description';	
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetSubClassCodeDialog_Active';				
+								
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'ASSET_SUB_CLASS_CODES_VIEW', 		'Role For Asset Sub Classification Codes View',		NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0) ;
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'ASSET_SUB_CLASS_CODES_MAKER',   	'Role For Asset Sub Classification Codes Maler',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0) ;
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'ASSET_SUB_CLASS_CODES_APPROVER', 	'Role For Asset Sub Classification Codes Approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0) ;
+								
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'ASSET_SUB_CLASS_CODES_VIEW', 		'Group For Asset Sub Classification Codes View',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'ASSET_SUB_CLASS_CODES_MAKER', 		'Group For Asset Sub Classification Codes Maler',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'ASSET_SUB_CLASS_CODES_APPROVER',  	'Group For Asset Sub Classification Codes Approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 0, 'menuItem_AssetSubClassCodes',					'MENU',						0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 0, 'menuItem_AssetSubClassCodes_Enquiry',			'MENU',						0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetSubClassCodeList_Print',			'AssetSubClassCodeList',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetSubClassCodeList_New',			    'AssetSubClassCodeList',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetSubClassCodeDialog_btnNew',		    'AssetSubClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetSubClassCodeDialog_btnEdit',		'AssetSubClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetSubClassCodeDialog_btnDelete',	    'AssetSubClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetSubClassCodeDialog_btnSave',		'AssetSubClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 3, 'AssetSubClassCodeDialog_ClassCode',			    'AssetSubClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 3, 'AssetSubClassCodeDialog_Code',				    'AssetSubClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 3, 'AssetSubClassCodeDialog_Description',		    'AssetSubClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 3, 'AssetSubClassCodeDialog_Active',				'AssetSubClassCodeDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'menuItem_AssetSubClassCodes'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_APPROVER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'menuItem_AssetSubClassCodes'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);																																																													
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_VIEW'), 		(SELECT RightID FROM SecRights WHERE RightName = 'menuItem_AssetSubClassCodes_Enquiry'),		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetSubClassCodeDialog_btnNew'),		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetSubClassCodeDialog_btnEdit'),		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetSubClassCodeDialog_btnDelete'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetSubClassCodeDialog_btnSave'),		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_APPROVER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetSubClassCodeDialog_btnSave'),		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetSubClassCodeDialog_ClassCode'),			1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetSubClassCodeDialog_Code'), 				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetSubClassCodeDialog_Description'), 		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetSubClassCodeDialog_Active'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+																
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_MAKER'), 		(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'),		0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'ASSET_SUB_CLASS_CODES_APPROVER'), 	    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.9.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'AssetSubClassCode';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('AssetSubClassCode', 'AssetSubClassCode', 'listheader_Code.label,listheader_Description.label', 'code,description', 'String,String', null, 'ReportList02', 'AssetSubClassCode', 'System Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+        	 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.10" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_VIEW');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_APPROVER');
+								
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_VIEW');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_APPROVER');
+								
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_VIEW'; 
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_APPROVER';
+								
+				DELETE FROM SECROLES WHERE ROLECD = 'ASSET_CLASS_SETUP_VIEW'; 
+				DELETE FROM SECROLES WHERE ROLECD = 'ASSET_CLASS_SETUP_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'ASSET_CLASS_SETUP_APPROVER';
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_AssetClassSetup';	
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_AssetClassSetup_Enquiry';
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassSetupList_New';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassSetupList_Print';
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassSetupDialog_btnNew';		
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassSetupDialog_btnEdit';		
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassSetupDialog_btnDelete';	
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassSetupDialog_btnSave';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_AssetClassSetupDialog_btnAdd';
+								
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetClassSetupDialog_EntityCode';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetClassSetupDialog_RepayHierarchy';		
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AssetClassSetupDialog_Setup';				
+								
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'ASSET_CLASS_SETUP_VIEW', 			'Role For Asset Classification Setup View',		NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'ASSET_CLASS_SETUP_MAKER', 		    'Role For Asset Classification Setup Maler',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'ASSET_CLASS_SETUP_APPROVER', 		'Role For Asset Classification Setup Approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'ASSET_CLASS_SETUP_VIEW', 		'Group For Asset Classification Setup View',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'ASSET_CLASS_SETUP_MAKER', 		'Group Fro Asset Classification Setup Maler',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'ASSET_CLASS_SETUP_APPROVER',  	'Group For Asset Classification Setup Approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 0, 'menuItem_AssetClassSetup',						'MENU',						0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 0, 'menuItem_AssetClassSetup_Enquiry',				'MENU',						0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetClassSetupList_New',				'AssetClassSetupList',		0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetClassSetupList_Print',				'AssetClassSetupList',		0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetClassSetupDialog_btnNew',			'AssetClassSetupDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetClassSetupDialog_btnEdit',			'AssetClassSetupDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetClassSetupDialog_btnDelete',		'AssetClassSetupDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetClassSetupDialog_btnSave',			'AssetClassSetupDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_AssetClassSetupDialog_btnAdd',			'AssetClassSetupDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 3, 'AssetClassSetupDialog_EntityCode',				'AssetClassSetupDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 3, 'AssetClassSetupDialog_RepayHierarchy',			'AssetClassSetupDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 3, 'AssetClassSetupDialog_Setup',					'AssetClassSetupDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'menuItem_AssetClassSetup'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_APPROVER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'menuItem_AssetClassSetup'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);																																																													
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_VIEW'), 		(SELECT RightID FROM SecRights WHERE RightName = 'menuItem_AssetClassSetup_Enquiry'),		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassSetupDialog_btnNew'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassSetupDialog_btnEdit'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassSetupDialog_btnDelete'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassSetupDialog_btnAdd'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassSetupDialog_btnSave'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_APPROVER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'button_AssetClassSetupDialog_btnSave'),	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetClassSetupDialog_EntityCode'), 		1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetClassSetupDialog_RepayHierarchy'), 	1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'AssetClassSetupDialog_Setup'),			1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+												
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_MAKER'), 		(SELECT  ROLEID  FROM SecRoles WHERE ROLECD ='MSTGRP1_MAKER'),		0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'ASSET_CLASS_SETUP_APPROVER'),  	(SELECT  ROLEID  FROM SecRoles WHERE ROLECD ='MSTGRP1_APPROVER'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3546.10.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'AssetClassSetupHeader';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('AssetClassSetupHeader', 'AssetClassSetupHeader', 'listheader_AssetClassSetupList_Entity.label,listheader_AssetClassSetupList_NPARepaymentHierarchy.label', 'entitycode,repayhierarchy', 'String,String', null, 'ReportList02', 'AssetClassSetupHeader', 'System Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+        	 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.10.2.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECOPERATIONROLES WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MANUAL_PROVISION');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MANUAL_PROVISION');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION');
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION';
+				DELETE FROM SECROLES WHERE ROLECD = 'MANUAL_PROVISION';  
+				
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_MAKER');
+				
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_APPROVER');
+				
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION'; 
+							
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_MAKER'; 
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_APPROVER'; 
+								
+				DELETE FROM SECROLES WHERE ROLECD = 'MANUAL_PROVISION_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'MANUAL_PROVISION_APPROVER'; 
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_ManualProvisioning';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'ManualProvisioningDialog_ManProvsnPer';
+								
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'MANUAL_PROVISION_MAKER', 			'Role For manual provision maker',		NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'MANUAL_PROVISION_APPROVER', 		'Role For manual provision approver',		NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'MANUAL_PROVISION_MAKER', 		'Group For manual provision maker',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'MANUAL_PROVISION_APPROVER', 		'Group For manual provision approver',  	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 0, 'menu_Item_ManualProvisioning',				'MENU',						0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 3, 'ManualProvisioningDialog_ManProvsnPer',		'ManualProvisioningDialog',	0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'MANUAL_PROVISION_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'menu_Item_ManualProvisioning'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'MANUAL_PROVISION_APPROVER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'menu_Item_ManualProvisioning'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'MANUAL_PROVISION_MAKER'), 		(SELECT RightID FROM SecRights WHERE RightName = 'ManualProvisioningDialog_ManProvsnPer'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_MAKER'),  	(SELECT  ROLEID  FROM SecRoles WHERE ROLECD ='MANUAL_PROVISION_MAKER'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_APPROVER'),  	(SELECT  ROLEID  FROM SecRoles WHERE ROLECD ='MANUAL_PROVISION_APPROVER'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_MAKER'), 		(SELECT  ROLEID  FROM SecRoles WHERE ROLECD ='MSTGRP1_MAKER'),		0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'MANUAL_PROVISION_APPROVER'),  	(SELECT  ROLEID  FROM SecRoles WHERE ROLECD ='MSTGRP1_APPROVER'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.11" author="nagavamsi.p">
+		<createTable tableName="NPA_PROVISION_STAGE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="EodDate" type="datetime" />
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustCategoryCode" type="varchar(8)" />
+			<column name="FinType" type="varchar(8)" />
+			<column name="Product" type="varchar(8)" />
+			<column name="FinCcy" type="varchar(3)" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinAssetValue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinCurrAssetValue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OsPrincipal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OsProfit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FuturePrincipal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OdPrincipal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OdProfit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotPriBal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotPriPaid" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotPftPaid" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotPftAccrued" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmzTillLBDate" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TillDateSchdPri" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDate" type="datetime" />
+			<column name="EffFinID" type="bigint" />
+			<column name="EffFinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LinkedLoan" type="smallint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.11.1" author="nagavamsi.p">
+		<addPrimaryKey tableName="NPA_PROVISION_STAGE" columnNames="ID" />
+	</changeSet>
+	<changeSet id="ST#3546.11.2" author="nagavamsi.p">
+		<createIndex tableName="NPA_PROVISION_STAGE" indexName="idx_npa_provision_stage_ll_fr">
+			<column name="LinkedLoan" type="smallint" />
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.11.3" author="nagavamsi.p">
+		<createIndex tableName="NPA_PROVISION_STAGE" indexName="idx_npa_provision_stage_ll_fid">
+			<column name="LinkedLoan" type="smallint" />
+			<column name="FinID" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.11.4" author="gopal.p">
+		<createIndex tableName="NPA_PROVISION_STAGE" indexName="idx_npa_provsn_stage_finref">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.11.5" author="gopal.p">
+		<createIndex tableName="NPA_PROVISION_STAGE" indexName="idx_npa_provision_stage_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.11.6" author="gopal.p">
+		<createIndex tableName="NPA_PROVISION_STAGE" indexName="idx_npa_provsn_stage_efr">
+			<column name="EffFinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.11.7" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_FINASSETVALUE DEFAULT 0 FOR FINASSETVALUE;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_FINCURRASSETVALUE DEFAULT 0 FOR FINCURRASSETVALUE;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_OSPRINCIPAL DEFAULT 0 FOR OSPRINCIPAL;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_OSPROFIT DEFAULT 0 FOR OSPROFIT;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_FUTUREPRINCIPAL DEFAULT 0 FOR FUTUREPRINCIPAL;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_ODPRINCIPAL DEFAULT 0 FOR ODPRINCIPAL;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_ODPROFIT DEFAULT 0 FOR ODPROFIT;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_TOTPRIBAL DEFAULT 0 FOR TOTPRIBAL;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_TOTPRIPAID DEFAULT 0 FOR TOTPRIPAID;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_TOTPFTPAID DEFAULT 0 FOR TOTPFTPAID;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_TOTPFTACCRUED DEFAULT 0 FOR TOTPFTACCRUED;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_AMZTILLLBDATE DEFAULT 0 FOR AMZTILLLBDATE;
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPS_TILLDATESCHDPRI DEFAULT 0 FOR TILLDATESCHDPRI;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.11.7" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="FinAssetValue" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="FinCurrAssetValue" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="OsPrincipal" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="OsProfit" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="FuturePrincipal" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="OdPrincipal" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="OdProfit" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="TotPriBal" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="TotPriPaid" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="TotPftPaid" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="TotPftAccrued" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="AmzTillLBDate" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+		<addDefaultValue columnName="TillDateSchdPri" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#3546.12" author="nagavamsi.p">
+		<createTable tableName="ASSET_CLASSIFICATION_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="ThreadID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.12.1" author="nagavamsi.p">
+		<addPrimaryKey tableName="ASSET_CLASSIFICATION_QUEUE" columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#3546.12.2" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ASSET_CLASSIFICATION_QUEUE ADD CONSTRAINT DF_ASSET_CLSA_QUE_TID DEFAULT 0 FOR ThreadID;
+				ALTER TABLE ASSET_CLASSIFICATION_QUEUE ADD CONSTRAINT DF_ASSET_CLSA_QUE_PRO DEFAULT 0 FOR Progress;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.12.2" author="nagavamsi.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ThreadID" tableName="ASSET_CLASSIFICATION_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="Progress" tableName="ASSET_CLASSIFICATION_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#3546.12.3" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASSIFICATION_QUEUE" indexName="idx_ac_queue_tid">
+			<column name="ThreadID" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.12.4" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASSIFICATION_QUEUE" indexName="idx_ac_queue_id_progress">
+			<column name="ID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.12.5" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASSIFICATION_QUEUE" indexName="idx_ac_queue_cid_progress">
+			<column name="CustID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.12.6" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASSIFICATION_QUEUE" indexName="idx_ac_queue_fid_progress">
+			<column name="FinID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.12.7" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASSIFICATION_QUEUE" indexName="idx_ac_queue_fr_progress">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.12.8" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASSIFICATION_QUEUE" indexName="idx_ac_queue_progress">
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.12.9" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASSIFICATION_QUEUE" indexName="idx_ac_queue_fr">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.13" author="nagavamsi.p">
+		<createTable tableName="NPA_LOAN_INFO">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EffFinID" type="bigint" />
+			<column name="EffFinReference" type="varchar(20)" />
+			<column name="BusinessDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDate" type="datetime" />
+			<column name="NpaPastDueDays" type="int" />
+			<column name="NpaPastDueDate" type="datetime" />
+			<column name="NpaClassID" type="bigint" />
+			<column name="NpaStage" type="smallint" />
+			<column name="EffPastDueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="EffPastDueDate" type="datetime" />
+			<column name="EffNpaPastDueDays" type="int" />
+			<column name="EffNpaPastDueDate" type="datetime" />
+			<column name="EffNpaClassID" type="bigint" />
+			<column name="EffNpaStage" type="smallint" />
+			<column name="FinIsActive" type="boolean" />
+			<column name="LinkedTranID" type="bigint" />
+			<column name="ManualClassification" type="boolean" />
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="ST#3546.13.1" author="nagavamsi.p">
+		<addPrimaryKey tableName="NPA_LOAN_INFO" columnNames="ID" constraintName="pk_npa_loan_info"/>
+	</changeSet>
+	<changeSet id="ST#3546.13.2" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_info_cu_cid"
+			referencedTableName="Customers" baseColumnNames="CustID" baseTableName="NPA_LOAN_INFO" referencedColumnNames="CustID" />
+	</changeSet>
+	<changeSet id="ST#3546.13.3" author="nagavamsi.p">
+		<comment>ForeignKeyConstraint needs to be created on FinID</comment>
+	</changeSet>
+	<changeSet id="ST#3546.13.4" author="nagavamsi.p">
+		<comment>UK Index needs to be created on FinID</comment>
+	</changeSet>
+	<changeSet id="ST#3546.13.5" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_info_fm_fr"
+			referencedTableName="FinanceMain" baseColumnNames="FinReference" baseTableName="NPA_LOAN_INFO"
+			referencedColumnNames="FinReference" />
+	</changeSet>
+	<changeSet id="ST#3546.13.6" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO" indexName="idx_npa_loan_info_fr" unique="true">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.13.7" author="nagavamsi.p">
+		<comment>ForeignKeyConstraint needs to be created on EFFFinID</comment>
+	</changeSet>
+	<changeSet id="ST#3546.13.8" author="nagavamsi.p">
+		<comment>UK Index needs to be created on EFFFinID</comment>
+	</changeSet>
+	<changeSet id="ST#3546.13.9" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_info_fm_efr"
+			referencedTableName="FinanceMain" baseColumnNames="EffFinReference" baseTableName="NPA_LOAN_INFO"
+			referencedColumnNames="FinReference" />
+	</changeSet>
+	<changeSet id="ST#3546.13.10" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO" indexName="idx_npa_loan_info_efr">
+			<column name="EffFinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.13.11" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_info_acsd_nscid"
+			referencedTableName="ASSET_CLASS_SETUP_DETAILS" baseColumnNames="NpaClassID" baseTableName="NPA_LOAN_INFO"
+			referencedColumnNames="ID" />
+	</changeSet>
+	<changeSet id="ST#3546.13.12" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO" indexName="idx_npa_loan_info_acsd_ncid">
+			<column name="NpaClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.13.13" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO" indexName="idx_effnpa_loan_info_acsd_ncid">
+			<column name="EffNpaClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.13.14" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO" indexName="idx_npaloaninfo_fr_effr">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="EffFinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#3546.13.15" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE NPA_LOAN_INFO ADD CONSTRAINT DF_NPA_LI_EFFNPASTAGE DEFAULT 0 FOR EFFNPASTAGE;
+				ALTER TABLE NPA_LOAN_INFO ADD CONSTRAINT DF_NPA_LI_FINISACTIVE DEFAULT 0 FOR FINISACTIVE;
+				ALTER TABLE NPA_LOAN_INFO ADD CONSTRAINT DF_NPA_LI_MANUALCLASS DEFAULT 0 FOR MANUALCLASSIFICATION;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3546.13.15" author="nagavamsi.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="EffNpaStage" tableName="NPA_LOAN_INFO" defaultValue="0" />
+		<addDefaultValue columnName="FinIsActive" tableName="NPA_LOAN_INFO" defaultValue="0" />
+		<addDefaultValue columnName="ManualClassification" tableName="NPA_LOAN_INFO" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#3546.13.16" author="nagavamsi.p">
+		<createTable tableName="NPA_LOAN_INFO_TEMP">
+			<column name="ID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EffFinID" type="bigint" />
+			<column name="EffFinReference" type="varchar(20)" />
+			<column name="BusinessDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDate" type="datetime" />
+			<column name="NpaPastDueDays" type="int" />
+			<column name="NpaPastDueDate" type="datetime" />
+			<column name="NpaClassID" type="bigint" />
+			<column name="NpaStage" type="smallint" />
+			<column name="EffPastDueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="EffPastDueDate" type="datetime" />
+			<column name="EffNpaPastDueDays" type="int" />
+			<column name="EffNpaPastDueDate" type="datetime" />
+			<column name="EffNpaClassID" type="bigint" />
+			<column name="EffNpaStage" type="smallint" />
+			<column name="FinIsActive" type="boolean" />
+			<column name="LinkedTranID" type="bigint" />
+			<column name="ManualClassification" type="boolean" />
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="ST#3546.13.17" author="nagavamsi.p">
+		<addPrimaryKey tableName="NPA_LOAN_INFO_TEMP" columnNames="ID" constraintName="pk_npa_loan_info_temp"/>
+	</changeSet>
+	<changeSet id="ST#3546.13.18" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO_TEMP" indexName="idx_npa_loan_info_t_fr" unique="true">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.13.19" author="nagavamsi.p">
+		<comment>ForeignKeyConstraint needs to be created on EFFFinID</comment>
+	</changeSet>
+	<changeSet id="ST#3546.13.20" author="nagavamsi.p">
+		<comment>UK Index needs to be created on EFFFinID</comment>
+	</changeSet>
+	<changeSet id="ST#3546.13.21" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO_TEMP" indexName="idx_npa_loan_info_t_efr">
+			<column name="EffFinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.13.22" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO_TEMP" indexName="idx_npa_loan_info_t_acsd_ncid">
+			<column name="NpaClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.13.23" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO_TEMP" indexName="idx_efnpaloaninfo_t_acsd_ncid">
+			<column name="EffNpaClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.13.24" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO_TEMP" indexName="idx_npaloaninfo_t_fr_effr">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="EffFinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.13.25" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE NPA_LOAN_INFO_TEMP ADD CONSTRAINT DF_NPA_LI_T_EFFNPASTAGE DEFAULT 0 FOR EFFNPASTAGE;
+				ALTER TABLE NPA_LOAN_INFO_TEMP ADD CONSTRAINT DF_NPA_LI_T_FINISACTIVE DEFAULT 0 FOR FINISACTIVE;
+				ALTER TABLE NPA_LOAN_INFO_TEMP ADD CONSTRAINT DF_NPA_LI_T_MANUALCLASS DEFAULT 0 FOR MANUALCLASSIFICATION;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3546.13.25" author="nagavamsi.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="EffNpaStage" tableName="NPA_LOAN_INFO_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="FinIsActive" tableName="NPA_LOAN_INFO_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="ManualClassification" tableName="NPA_LOAN_INFO_TEMP" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#3546.14" author="nagavamsi.p">
+		<createTable tableName="NPA_LOAN_INFO_SNAPSHOT">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="LinkID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AppDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EffFinID" type="bigint" />
+			<column name="EffFinReference" type="varchar(20)" />
+			<column name="BusinessDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDate" type="datetime" />
+			<column name="NpaPastDueDays" type="int" />
+			<column name="NpaPastDueDate" type="datetime" />
+			<column name="NpaClassID" type="bigint" />
+			<column name="NpaStage" type="smallint" />
+			<column name="EffPastDueDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="EffPastDueDate" type="datetime" />
+			<column name="EffNpaPastDueDays" type="int" />
+			<column name="EffNpaPastDueDate" type="datetime" />
+			<column name="EffNpaClassID" type="bigint" />
+			<column name="EffNpaStage" type="smallint" />
+			<column name="FinIsActive" type="boolean" />
+			<column name="LinkedTranID" type="bigint" />
+			<column name="ManualClassification" type="boolean" />
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="ST#3546.14.1" author="nagavamsi.p">
+		<addPrimaryKey tableName="NPA_LOAN_INFO_SNAPSHOT" columnNames="ID" />
+	</changeSet>
+	<changeSet id="ST#3546.14.2" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_info_s_linkid"
+			referencedTableName="NPA_LOAN_INFO" baseColumnNames="LinkID" baseTableName="NPA_LOAN_INFO_SNAPSHOT"
+			referencedColumnNames="ID" />
+	</changeSet>
+	<changeSet id="ST#3546.14.3" author="nagavamsi.p">
+		<comment>ForeignKeyConstraint needs to be created on FinID</comment>
+	</changeSet>
+	<changeSet id="ST#3546.14.4" author="nagavamsi.p">
+		<comment>UK Index needs to be created on FinID</comment>
+	</changeSet>
+	<changeSet id="ST#3546.14.5" author="nagavamsi.p">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_info_s_fm_fr"
+			referencedTableName="FinanceMain" baseColumnNames="FinReference" baseTableName="NPA_LOAN_INFO_SNAPSHOT"
+			referencedColumnNames="FinReference" />
+	</changeSet>
+	<changeSet id="ST#3546.14.6" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO_SNAPSHOT" indexName="idx_npa_loan_s_info_fr">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.14.7" author="nagavamsi.p">
+		<createIndex tableName="NPA_LOAN_INFO_SNAPSHOT" indexName="idx_npaloan_s_fr_effr">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="EffFinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#3546.14.8" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE NPA_LOAN_INFO_SNAPSHOT ADD CONSTRAINT DF_NPA_LI_S_EFFNPASTAGE DEFAULT 0 FOR EFFNPASTAGE;
+				ALTER TABLE NPA_LOAN_INFO_SNAPSHOT ADD CONSTRAINT DF_NPA_LI_S_FINISACTIVE DEFAULT 0 FOR FINISACTIVE;
+				ALTER TABLE NPA_LOAN_INFO_SNAPSHOT ADD CONSTRAINT DF_NPA_LI_S_MANUALCLASS DEFAULT 0 FOR MANUALCLASSIFICATION;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.14.8" author="nagavamsi.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="EffNpaStage" tableName="NPA_LOAN_INFO_SNAPSHOT" defaultValue="0" />
+		<addDefaultValue columnName="FinIsActive" tableName="NPA_LOAN_INFO_SNAPSHOT" defaultValue="0" />
+		<addDefaultValue columnName="ManualClassification" tableName="NPA_LOAN_INFO_SNAPSHOT" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#3546.15.1" author="Gopal.p">
+		<createTable tableName="LOAN_PROVISIONS_TEMP">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProvisionDate" type="datetime" />
+			<column name="ManualProvision" type="smallint" />
+			<column name="RegProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegUnSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegUnSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotRegProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntUnSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntUnSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotIntProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ManProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ManProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDays" type="int" />
+			<column name="NpaPastDueDays" type="int" />
+			<column name="EffNpaPastDueDays" type="int" />
+			<column name="NpaAging" type="int" />
+			<column name="EffNpaAging" type="int" />
+			<column name="NpaClassID" type="bigint" />
+			<column name="EffNpaClassID" type="bigint" />
+			<column name="OsPrincipal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OSProfit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OdPrincipal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OdProfit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProfitAccruedAndDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProfitAccruedAndNotDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CollateralAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="InsuranceAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LinkedTranId" type="bigint" />
+			<column name="ChgLinkedTranId" type="bigint" />
+			<column name="ManualClassification" type="boolean" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.2" author="Gopal.p">
+		<addPrimaryKey tableName="LOAN_PROVISIONS_TEMP" columnNames="ID"
+			constraintName="pk_loan_provisions_temp" />
+	</changeSet>
+
+	<changeSet id="ST#3546.15.3" author="Gopal.p">
+		<comment>Unique constraint needs to be create on FinID</comment>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.4" author="Gopal.p">
+		<addUniqueConstraint tableName="LOAN_PROVISIONS_TEMP" columnNames="FinReference"
+			constraintName="uk_loan_provisions_temp_ref" />
+	</changeSet>
+
+	<changeSet id="ST#3546.15.5" author="Gopal.p">
+		<comment>Foreign constraint needs to be create on FinID</comment>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.6" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="fk_loan_provisions_temp_ref"
+			referencedTableName="FinanceMain" baseColumnNames="FinReference" baseTableName="LOAN_PROVISIONS_TEMP"
+			referencedColumnNames="FinReference" />
+	</changeSet>
+
+	<changeSet id="ST#3546.15.7" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_REGPROVSNAMT DEFAULT 0 FOR REGPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_REGSECPROVSNAMT DEFAULT 0 FOR REGSECPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_REGUNSECPROVSNAMT DEFAULT 0 FOR REGUNSECPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_TOTREGPROVSNAMT DEFAULT 0 FOR TOTREGPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_INTPROVSNAMT DEFAULT 0 FOR INTPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_INTSECPROVSNAMT DEFAULT 0 FOR INTSECPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_INTUNSECPROVSNAMT DEFAULT 0 FOR INTUNSECPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_TOTINTPROVSNAMT DEFAULT 0 FOR TOTINTPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_MANPROVSNAMT DEFAULT 0 FOR MANPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_OSPRINCIPAL DEFAULT 0 FOR OSPRINCIPAL;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_OSPROFIT DEFAULT 0 FOR OSPROFIT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_ODPRINCIPAL DEFAULT 0 FOR ODPRINCIPAL;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_ODPROFIT DEFAULT 0 FOR ODPROFIT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_PROFITACCRUEDANDDUE DEFAULT 0 FOR PROFITACCRUEDANDDUE;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_PROFITACCRUEDANDNOTDUE DEFAULT 0 FOR PROFITACCRUEDANDNOTDUE;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_COLLATERALAMT DEFAULT 0 FOR COLLATERALAMT;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_INSURANCEAMT DEFAULT 0 FOR INSURANCEAMT;
+				
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_PASTDUEDAYS DEFAULT 0 FOR PASTDUEDAYS;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_NPAAGING DEFAULT 0 FOR NPAAGING;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_EFFNPAAGING DEFAULT 0 FOR EFFNPAAGING;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_NPAPASTDUEDAYS DEFAULT 0 FOR NPAPASTDUEDAYS;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_EFFNPAPASTDUEDAYS DEFAULT 0 FOR EFFNPAPASTDUEDAYS;
+				
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_REGPROVSNPER DEFAULT 0 FOR REGPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_REGSECPROVSNPER DEFAULT 0 FOR REGSECPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_REGUNSECPROVSNPER DEFAULT 0 FOR REGUNSECPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_INTPROVSNPER DEFAULT 0 FOR INTPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_INTSECPROVSNPER DEFAULT 0 FOR INTSECPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_INTUNSECPROVSNPER DEFAULT 0 FOR INTUNSECPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_MANPROVSNPER DEFAULT 0 FOR MANPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS_TEMP ADD CONSTRAINT DF_LP_T_MANUALCLASSIFICATION DEFAULT 0 FOR MANUALCLASSIFICATION;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.7" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="RegProvsnAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="RegSecProvsnAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="RegUnSecProvsnAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="TotRegProvsnAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="IntProvsnAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="IntSecProvsnAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="IntUnSecProvsnAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="TotIntProvsnAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="ManProvsnAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="OsPrincipal" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="OSProfit" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="OdPrincipal" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="OdProfit" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="ProfitAccruedAndDue" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="ProfitAccruedAndNotDue" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="CollateralAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="InsuranceAmt" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+
+		<addDefaultValue columnName="PastDueDays" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="NpaAging" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="EffNpaAging" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="NpaPastDueDays" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="EffNpaPastDueDays" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+
+		<addDefaultValue columnName="RegProvsnPer" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="RegSecProvsnPer" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="RegUnSecProvsnPer" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="IntProvsnPer" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="IntSecProvsnPer" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="IntUnSecProvsnPer" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="ManProvsnPer" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="ManualClassification" tableName="LOAN_PROVISIONS_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#3546.15.8" author="Gopal.p">
+		<comment>Index needs to be create on FinID</comment>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.9" author="Gopal.p" dbms="postgresql, mssql">
+		<createIndex tableName="LOAN_PROVISIONS_TEMP" indexName="idx_loan_provision_t_ref">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.10" author="Gopal.p">
+		<createIndex tableName="LOAN_PROVISIONS_TEMP" indexName="idx_loan_provision_t_classid">
+			<column name="NpaClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.11" author="Gopal.p">
+		<createIndex tableName="LOAN_PROVISIONS_TEMP" indexName="idx_loan_provision_t_efclassid">
+			<column name="EffNpaClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.12" author="Gopal.p">
+		<createTable tableName="LOAN_PROVISIONS">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProvisionDate" type="datetime" />
+			<column name="ManualProvision" type="smallint" />
+			<column name="RegProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegUnSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RegUnSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotRegProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntUnSecProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="IntUnSecProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotIntProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ManProvsnPer" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ManProvsnAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PastDueDays" type="int" />
+			<column name="NpaPastDueDays" type="int" />
+			<column name="EffNpaPastDueDays" type="int" />
+			<column name="NpaAging" type="int" />
+			<column name="EffNpaAging" type="int" />
+			<column name="NpaClassID" type="bigint" />
+			<column name="EffNpaClassID" type="bigint" />
+			<column name="OsPrincipal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OSProfit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OdPrincipal" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OdProfit" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProfitAccruedAndDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProfitAccruedAndNotDue" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CollateralAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="InsuranceAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LinkedTranId" type="bigint" />
+			<column name="ChgLinkedTranId" type="bigint" />
+			<column name="ManualClassification" type="boolean" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.13" author="Gopal.p">
+		<addPrimaryKey tableName="LOAN_PROVISIONS" columnNames="ID" constraintName="pk_loan_provisions" />
+	</changeSet>
+
+	<changeSet id="ST#3546.15.14" author="Gopal.p">
+		<comment>Unique constraint needs to be create on FinID</comment>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.15" author="Gopal.p">
+		<addUniqueConstraint tableName="LOAN_PROVISIONS" columnNames="FinReference"
+			constraintName="uk_loan_provisions_ref" />
+	</changeSet>
+
+	<changeSet id="ST#3546.15.16" author="Gopal.p">
+		<comment>Foreign constraint needs to be create on FinID</comment>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.17" author="Gopal.p">
+		<addForeignKeyConstraint constraintName="fk_loan_provisions_ref"
+			referencedTableName="FinanceMain" baseColumnNames="FinReference" baseTableName="LOAN_PROVISIONS"
+			referencedColumnNames="FinReference" />
+	</changeSet>
+
+	<changeSet id="ST#3546.15.18" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_REGPROVSNAMT DEFAULT 0 FOR REGPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_REGSECPROVSNAMT DEFAULT 0 FOR REGSECPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_REGUNSECPROVSNAMT DEFAULT 0 FOR REGUNSECPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_TOTREGPROVSNAMT DEFAULT 0 FOR TOTREGPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_INTPROVSNAMT DEFAULT 0 FOR INTPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_INTSECPROVSNAMT DEFAULT 0 FOR INTSECPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_INTUNSECPROVSNAMT DEFAULT 0 FOR INTUNSECPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_TOTINTPROVSNAMT DEFAULT 0 FOR TOTINTPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_MANPROVSNAMT DEFAULT 0 FOR MANPROVSNAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_OSPRINCIPAL DEFAULT 0 FOR OSPRINCIPAL;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_OSPROFIT DEFAULT 0 FOR OSPROFIT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_ODPRINCIPAL DEFAULT 0 FOR ODPRINCIPAL;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_ODPROFIT DEFAULT 0 FOR ODPROFIT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_PROFITACCRUEDANDDUE DEFAULT 0 FOR PROFITACCRUEDANDDUE;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_PROFITACCRUEDANDNOTDUE DEFAULT 0 FOR PROFITACCRUEDANDNOTDUE;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_COLLATERALAMT DEFAULT 0 FOR COLLATERALAMT;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_INSURANCEAMT DEFAULT 0 FOR INSURANCEAMT;
+				
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_PASTDUEDAYS DEFAULT 0 FOR PASTDUEDAYS;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_NPAAGING DEFAULT 0 FOR NPAAGING;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_EFFNPAAGING DEFAULT 0 FOR EFFNPAAGING;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_NPAPASTDUEDAYS DEFAULT 0 FOR NPAPASTDUEDAYS;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_EFFNPAPASTDUEDAYS DEFAULT 0 FOR EFFNPAPASTDUEDAYS;
+				
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_REGPROVSNPER DEFAULT 0 FOR REGPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_REGSECPROVSNPER DEFAULT 0 FOR REGSECPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_REGUNSECPROVSNPER DEFAULT 0 FOR REGUNSECPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_INTPROVSNPER DEFAULT 0 FOR INTPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_INTSECPROVSNPER DEFAULT 0 FOR INTSECPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_INTUNSECPROVSNPER DEFAULT 0 FOR INTUNSECPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_MANPROVSNPER DEFAULT 0 FOR MANPROVSNPER;
+				ALTER TABLE LOAN_PROVISIONS ADD CONSTRAINT DF_LP_MANUALCLASSIFICATION DEFAULT 0 FOR MANUALCLASSIFICATION;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.18" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="RegProvsnAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="RegSecProvsnAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="RegUnSecProvsnAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="TotRegProvsnAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntProvsnAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntSecProvsnAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntUnSecProvsnAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="TotIntProvsnAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ManProvsnAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="OsPrincipal" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="OSProfit" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="OdPrincipal" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="OdProfit" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ProfitAccruedAndDue" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ProfitAccruedAndNotDue" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="CollateralAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="InsuranceAmt" tableName="LOAN_PROVISIONS" defaultValue="0" />
+
+		<addDefaultValue columnName="PastDueDays" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="NpaAging" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="EffNpaAging" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="NpaPastDueDays" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="EffNpaPastDueDays" tableName="LOAN_PROVISIONS" defaultValue="0" />
+
+		<addDefaultValue columnName="RegProvsnPer" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="RegSecProvsnPer" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="RegUnSecProvsnPer" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntProvsnPer" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntSecProvsnPer" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="IntUnSecProvsnPer" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ManProvsnPer" tableName="LOAN_PROVISIONS" defaultValue="0" />
+		<addDefaultValue columnName="ManualClassification" tableName="LOAN_PROVISIONS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#3546.15.19" author="Gopal.p">
+		<comment>Index needs to be create on FinID</comment>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.20" author="Gopal.p" dbms="postgresql, mssql">
+		<createIndex tableName="LOAN_PROVISIONS" indexName="idx_loan_provision_ref">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.21" author="Gopal.p">
+		<createIndex tableName="LOAN_PROVISIONS" indexName="idx_loan_provision_classid">
+			<column name="NpaClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.15.22" author="Gopal.p">
+		<createIndex tableName="LOAN_PROVISIONS" indexName="idx_loan_provision_efclassid">
+			<column name="EffNpaClassID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.16" author="nagavamsi.p">
+		<createTable tableName="PROVISION_CALC_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="ThreadID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#3546.16_post" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE PROVISION_CALC_QUEUE ADD CONSTRAINT DF_PROVISION_CALC_Q_THREADID DEFAULT 0 FOR ThreadID;
+				ALTER TABLE PROVISION_CALC_QUEUE ADD CONSTRAINT DF_PROVISION_CALC_Q_PROGRESS DEFAULT 0 FOR Progress;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.16_post" author="nagavamsi.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ThreadID" tableName="PROVISION_CALC_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="Progress" tableName="PROVISION_CALC_QUEUE" defaultValue="0" />
+	</changeSet>
+
+
+	<changeSet id="ST#3546.16.1" author="nagavamsi.p">
+		<addPrimaryKey tableName="PROVISION_CALC_QUEUE" columnNames="Id" />
+	</changeSet>
+	<changeSet id="ST#3546.16.2" author="nagavamsi.p">
+		<createIndex tableName="PROVISION_CALC_QUEUE" indexName="idx_pc_queue_tid">
+			<column name="ThreadID" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.16.3" author="nagavamsi.p">
+		<createIndex tableName="PROVISION_CALC_QUEUE" indexName="idx_pc_queue_id_progress">
+			<column name="ID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.16.4" author="nagavamsi.p">
+		<createIndex tableName="PROVISION_CALC_QUEUE" indexName="idx_pc_queue_fid_progress">
+			<column name="FinID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.16.5" author="nagavamsi.p">
+		<createIndex tableName="PROVISION_CALC_QUEUE" indexName="idx_pc_queue_fr_progress">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.16.6" author="nagavamsi.p">
+		<createIndex tableName="PROVISION_CALC_QUEUE" indexName="idx_pc_queue_progress">
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.16.7" author="nagavamsi.p">
+		<createIndex tableName="PROVISION_CALC_QUEUE" indexName="idx_pc_queue_id_threadid">
+			<column name="ID" type="bigint" />
+			<column name="ThreadID" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#3546.16.8" author="nagavamsi.p">
+		<createIndex tableName="PROVISION_CALC_QUEUE" indexName="idx_pc_queue_fr">
+			<column name="FinReference" type="varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#3546.20" author="nagavamsi.p">
+		<sql>
+		   <![CDATA[
+		   		DELETE FROM CATEGORYWISEEVENTS WHERE AEEVENTCODE= 'NPACHNG' AND  CATEGORYCODE= 'F';
+		   		DELETE 	FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='NPACHNG'; 
+				DELETE 	FROM BMTAEEVENTS WHERE AEEVENTCODE = 'NPACHNG';
+				
+				INSERT INTO CATEGORYWISEEVENTS VALUES('NPACHNG', 'F', 1, 0, (SELECT MAX(SEQORDER)+1 FROM CATEGORYWISEEVENTS WHERE CATEGORYCODE = 'F'));
+				
+				INSERT INTO BMTAEEVENTS(AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('NPACHNG', 'NPA PROVISION', 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0, 1);
+							
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NPACHNG', 0, 'ae_dAmz', 'Interest Income', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NPACHNG', 0, 'ae_insttot', 'EMI Receivable', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+		   ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3546.21" author="nagavamsi.p">
+		<sql>
+		   <![CDATA[
+		   		DELETE FROM CATEGORYWISEEVENTS WHERE AEEVENTCODE= 'NPACHNG' AND  CATEGORYCODE= 'F';
+		   		DELETE 	FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='NPACHNG'; 
+				DELETE 	FROM BMTAEEVENTS WHERE AEEVENTCODE = 'NPACHNG';
+				
+				INSERT INTO CATEGORYWISEEVENTS VALUES('NPACHNG', 'F', 1, 0, (SELECT MAX(SEQORDER)+1 FROM CATEGORYWISEEVENTS WHERE CATEGORYCODE = 'F'));
+				
+				INSERT INTO BMTAEEVENTS(AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('NPACHNG', 'NPA', 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0, 1);
+							
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NPACHNG', 0, 'ae_dAmz', 'Interest Income', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NPACHNG', 0, 'ae_insttot', 'EMI Receivable', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NPACHNG', 0, 'ae_totPriSchd', 'Total Principal Scheduled', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NPACHNG', 0, 'ae_tdSchdPri', 'Till Date Principal Scheduled', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+		   ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3546.22_pre" author="nagavamsi.p">
+		<comment>If there are any foreign key constraints remove the corresponding constraints</comment>
+		<sql>
+            <![CDATA[
+              	DELETE FROM Rules Where RuleModule = 'PROVSN';
+            ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.22.1" author="nagavamsi.p">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'PROVSN' and RBEVENT = 'PROVSN';
+              	
+              	INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'custCategory', 			'Customer Category', 						'nvarchar', 	8, 	'0', '1', 'CustomerCategory', 		'static,global,dbvalue', 	'CustomerCategory');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'npaClassCode', 			'Loan NPA Classification', 					'nvarchar', 	8, 	'0', '1', 'AssetClassCode', 		'static,global,dbvalue', 	'AssetClassCode');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'npaSubClassCode', 			'Loan NPA Sub-classification', 				'nvarchar', 	8, 	'0', '1', 'AssetSubClassCode',		'static,global,dbvalue', 	'AssetSubClassCode');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'pastDueDays', 				'Loan DPD', 								'int',			8, 	'0', '1', '', 						'static,global', 		 	'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'npaPastDueDays', 			'Loan NPA DPD', 							'int',			8, 	'0', '1', '', 						'static,global', 		 	'');
+			    INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'npaStage', 				'NPA Stage', 						        'nchar', 		1, 	'0', '1', '', 						'static,global', 			'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'effNpaStage', 				'Effective NPA Stage', 						'nchar', 		1, 	'0', '1', '', 						'static,global', 			'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'effNpaClassCode', 			'Effective Loan NPA Classification', 		'nvarchar', 	8, 	'0', '1', 'AssetClassCode', 		'static,global,dbvalue', 	'AssetClassCode');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'effNpaSubClassCode', 		'Effective Loan NPA Sub-Classification', 	'nvarchar', 	8, 	'0', '1', 'AssetSubClassCode', 		'static,global,dbvalue', 	'AssetSubClassCode');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'effNpaPastDueDays', 		'Effective Loan DPD', 						'int', 			8, 	'0', '1', '', 						'static,global', 			'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'productCategory', 			'Product Categoty', 						'nvarchar', 	8, 	'0', '1', 'Product', 				'static,global,dbvalue', 	'Product');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'finType', 					'Loan Type', 								'nvarchar', 	8, 	'0', '1', 'RMTFinanceTypes', 		'static,global,dbvalue', 	'FinanceType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'secured', 					'Secured/Unsecured', 						'nchar', 		1, 	'0', '1', '', 						'static,global', 			'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'collateralType', 			'Property Type', 							'nvarchar', 	8, 	'0', '1', 'CollateralStructure', 	'static,global,dbvalue', 	'CollateralStructure');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'insuranceAmount', 			'Insurance Amount', 						'decimal', 		18,	'0', '1', '', 						'static,global,dbvalue', 	'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'restrutureLoan', 			'Restructured Loan', 						'nchar', 		1, 	'0', '1', '', 						'static,global', 			'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'repossessedLoan', 			'Repossessed Loan ', 						'nchar', 		1, 	'0', '1', '', 						'static,global', 			'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'outstandingprincipal', 	'Outstanding principal',					'decimal', 		18, '0', '1', '', 						'static,global,dbvalue', 	'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'overdueEMI', 				'Overdue EMI', 								'decimal', 		18, '0', '1', '', 						'static,global,dbvalue', 	'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'loanAmount', 				'Loan Amount', 								'decimal', 		18, '0', '1', '', 						'static,global,dbvalue', 	'');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('PROVSN', 'PROVSN', 'disbursedAmount', 			'Disbursed Amount', 						'decimal', 		18, '0', '1', '', 						'static,global,dbvalue', 	'');
+            ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.23" author="nagavamsi.p">
+		<sql>
+		   <![CDATA[
+		   		DELETE FROM CATEGORYWISEEVENTS WHERE AEEVENTCODE= 'PROVSN' AND  CATEGORYCODE= 'F';
+		   		DELETE 	FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='PROVSN'; 
+				DELETE 	FROM BMTAEEVENTS WHERE AEEVENTCODE = 'PROVSN';
+				
+				INSERT INTO CATEGORYWISEEVENTS VALUES('PROVSN', 'F', 1, 0, (SELECT MAX(SEQORDER)+1 FROM CATEGORYWISEEVENTS WHERE CATEGORYCODE = 'F'));
+				INSERT INTO BMTAEEVENTS(AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('PROVSN', 'Provisioning Account', 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PROVSN', 0, 'ae_provsnAmt', 'Provisioning Amount', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PROVSN', 0, 'ae_npaClass', 'Asset Classification', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PROVSN', 0, 'ae_npaSubClass', 'Asset Sub Classification', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+		   ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#3546.24" author="nagavamsi.p">
+		<sql>
+		   <![CDATA[
+		   		DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='AMZ' and AMOUNTCODE = 'ae_npa'; 
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='INSTDATE' and AMOUNTCODE = 'ae_npa'; 
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='REPAY' and AMOUNTCODE = 'ae_npa'; 
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='EARLYPAY' and AMOUNTCODE = 'ae_npa'; 
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='EARLYSTL' and AMOUNTCODE = 'ae_npa'; 
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('AMZ'     , 0, 'ae_npa', 'NPA Stage ?', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('INSTDATE', 0, 'ae_npa', 'NPA Stage ?', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REPAY'   , 0, 'ae_npa', 'NPA Stage ?', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYPAY', 0, 'ae_npa', 'NPA Stage ?', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYSTL', 0, 'ae_npa', 'NPA Stage ?', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+		   ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.26" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+		    	DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY' AND AMOUNTCODE = 'ae_rpPftPr';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY' AND AMOUNTCODE = 'ae_rpTotPr';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY' AND AMOUNTCODE = 'ae_priPr';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY' AND AMOUNTCODE = 'ae_priSPr';
+				
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYPAY' AND AMOUNTCODE = 'ae_rpPftPr';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYPAY' AND AMOUNTCODE = 'ae_rpTotPr';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYPAY' AND AMOUNTCODE = 'ae_priPr';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYPAY' AND AMOUNTCODE = 'ae_priSPr';
+				
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYSTL' AND AMOUNTCODE = 'ae_rpPftPr';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYSTL' AND AMOUNTCODE = 'ae_rpTotPr';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYSTL' AND AMOUNTCODE = 'ae_priPr';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYSTL' AND AMOUNTCODE = 'ae_priSPr';
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REPAY',0,'ae_rpPftPr','Total Repay Interest now (P).',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REPAY',0,'ae_rpTotPr','Total Repay now (P+I).',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REPAY',0,'ae_priPr','Total Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REPAY',0,'ae_priSPr','Till Date Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYPAY',0,'ae_rpPftPr','Total Repay Interest now (P).',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYPAY',0,'ae_rpTotPr','Total Repay now (P+I).',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYPAY',0,'ae_priPr','Total Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYPAY',0,'ae_priSPr','Till Date Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYSTL',0,'ae_rpPftPr','Total Repay Interest now (P).',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYSTL',0,'ae_rpTotPr','Total Repay now (P+I).',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYSTL',0,'ae_priPr','Total Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYSTL',0,'ae_priSPr','Till Date Principal Scheduled.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.27.1.1" author="gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECOPERATIONROLES WHERE ROLEID IN  (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'NPA_REPORT');
+				
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NPA_REPORT');
+								
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NPA_REPORT');
+								
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'NPA_REPORT'; 
+								
+				DELETE FROM SECROLES WHERE ROLECD = 'NPA_REPORT'; 
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_NPA_Report';	
+								
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'NPA_REPORT', 			'Role For NPA Report',		NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'NPA_REPORT', 		'Group For NPA Report',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 0, 'menu_Item_NPA_Report',				'MENU',						0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'NPA_REPORT'), 		(SELECT RightID FROM SecRights WHERE RightName = 'menu_Item_NPA_Report'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'NPA_REPORT'),  	(SELECT  ROLEID  FROM SecRoles WHERE ROLECD ='NPA_REPORT'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_NPA_Report');
+				
+				DELETE FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_NPA_Report';
+				
+				INSERT INTO REPORTCONFIGURATION (REPORTID, REPORTNAME, REPORTHEADING, PROMPTREQUIRED, REPORTJASPERNAME, DATASOURCENAME, SHOWTEMPLIBRARY, MENUITEMCODE, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, ALWMULTIFORMAT, WHERECONDITION, SCHEDULEREQ) VALUES ((SELECT MAX(REPORTID)+1 FROM REPORTCONFIGURATION), 'Excel:NPAReport', 'NPA_Report', 1, 'NPA_Report', 'dataSource', 1, 'menu_Item_NPA_Report', 1, 1000, null, null, null, null, null, null, 0, CURRENT_TIMESTAMP, 0, 1, 0);
+				
+				INSERT INTO REPORTFILTERFIELDS  (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_NPA_Report'), 1, 'Entity', 'LOVSEARCH', 'Entity', 'sm.EntityCode', null, 'Entity', 'getEntityCode', 'getEntityDesc', 0, 0, 0, 0, 1, 1, '', '', '', '', 250, '0', '=', 1, 1000, 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, '');
+				INSERT INTO REPORTFILTERFIELDS  (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_NPA_Report'), 2, 'Customer CIF', 'LOVSEARCH', 'Customer CIF', 'CustCIF', null, 'Customer', 'getCustCIF', 'getCustShrtName', 0, 0, 0, 0, 2, 1, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, current_timestamp, ' ');
+				INSERT INTO REPORTFILTERFIELDS  (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_NPA_Report'), 3, 'FinType', 'LOVSEARCH', 'Loan Type', 'fm.FinType', null, 'FinanceType', 'getFinType', 'getFinTypeDesc', 0, 0, 0, 0, 3, 1, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, current_timestamp, ' ');
+				INSERT INTO REPORTFILTERFIELDS  (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_NPA_Report'), 4, 'FinBranch', 'LOVSEARCH', 'FinBranch', 'FinBranch', null, 'Branch', 'getBranchCode', 'getBranchDesc', 0, 0, 0, 0, 4, 1, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, current_timestamp, ' ');
+				INSERT INTO REPORTFILTERFIELDS  (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_NPA_Report'), 5, 'Finreference', 'LOVSEARCH', 'Finreference', 'npa.FinReference', null, 'FinanceMain', 'getFinReference', 'getFinReference', 0, 0, 0, 0, 5, 0, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, current_timestamp, ' ');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3546.27.2.1" author="gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECOPERATIONROLES WHERE ROLEID IN  (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'PROVISION_REPORT');
+				
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN  (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PROVISION_REPORT');
+								
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PROVISION_REPORT');
+								
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'PROVISION_REPORT'; 
+								
+				DELETE FROM SECROLES WHERE ROLECD = 'PROVISION_REPORT'; 
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_Provision_Report';	
+								
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'PROVISION_REPORT', 			'Role For Provision Report',		NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'PROVISION_REPORT', 		'Group For Provision Report',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 0, 'menu_Item_Provision_Report',				'MENU',						0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'PROVISION_REPORT'), 		(SELECT RightID FROM SecRights WHERE RightName = 'menu_Item_Provision_Report'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'PROVISION_REPORT'),  	(SELECT  ROLEID  FROM SecRoles WHERE ROLECD ='PROVISION_REPORT'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				
+				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_Provision_Report');
+				
+				DELETE FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_Provision_Report';
+				
+				INSERT INTO REPORTCONFIGURATION (REPORTID, REPORTNAME, REPORTHEADING, PROMPTREQUIRED, REPORTJASPERNAME, DATASOURCENAME, SHOWTEMPLIBRARY, MENUITEMCODE, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, ALWMULTIFORMAT, WHERECONDITION, SCHEDULEREQ) values ((SELECT MAX(REPORTID)+1 FROM REPORTCONFIGURATION), 'Excel:ProvisionReport', 'Provision_Report', 1, 'Provision_Report', 'dataSource', 1, 'menu_Item_Provision_Report', 1, 1000, NULL, NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 0, 1, 0);
+				INSERT INTO REPORTFILTERFIELDS (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_Provision_Report'), 1, 'Entity', 'LOVSEARCH', 'Entity', 'sm.EntityCode', null, 'Entity', 'getEntityCode', 'getEntityDesc', 0, 0, 0, 0, 1, 1, '', '', '', '', 250, '0', '=', 1, 1000, 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, '');
+				INSERT INTO REPORTFILTERFIELDS (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_Provision_Report'), 2, 'FinType', 'LOVSEARCH', 'Loan Type', 'fm.FinType', null, 'FinanceType', 'getFinType', 'getFinTypeDesc', 0, 0, 0, 0, 2, 0, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, current_timestamp, ' ');
+				INSERT INTO REPORTFILTERFIELDS (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_Provision_Report'), 3, 'Month-Year', 'DYNAMICLIST', 'Month-Year', 'lp.ProvisionDate', 'getNpaProvisionDates', 'LoanProvisions', ' ', ' ', 0, 0, 0, 0, 3, 1, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, current_timestamp, ' ');
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#3546.29.1" author="gopal.p">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'Provision';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('Provision', 'Provision', 'listheader_CIFNo.label,listheader_CustName.label,listheader_FinReference.label,listheader_FinType.label,listheader_ManualProvisioning.label,listheader_LoanClassification.label,listheader_EffectiveClassification.label,label.RecordStatus,label.RecordType', 'CustCIF,CustShrtName,finReference,finType,manualProvision,LoanClassification,EffectiveClassification,RECORDSTATUS,RECORDTYPE', 'long,String,String,String,boolean,String,String,String,String,String', null, 'ReportList09', 'Manual Provision Details', 'Enquiry', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+        	 ]]>
+		</sql>
+	</changeSet>
+
+	<!-- ST#3546 :: NPA & Provision Enhancements changes end -->
+</databaseChangeLog>

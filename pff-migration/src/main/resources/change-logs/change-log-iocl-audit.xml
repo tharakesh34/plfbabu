@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp1" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#62.1.1" author="kavya.n">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="BILLINGCHRGREQ" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.1.2" author="kavya.n">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="ODCALCULATEDCHARGE" type="Varchar(20)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.1.3" author="kavya.n">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="ODCHARGEAMTORPERC" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.1.4" author="kavya.n">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="ODCHARGECALON" type="Varchar(30)"/>
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="ST#62.2" author="kavya.n" >
+		<sql>
+			<![CDATA[	
+				UPDATE ADTFINANCEMAIN set BILLINGCHRGREQ=0;
+				UPDATE ADTFINANCEMAIN set ODCHARGEAMTORPERC=0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#62.3" author="kavya.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_AFM_BILLINGCHRGREQ DEFAULT 0 FOR BILLINGCHRGREQ;
+				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_AFM_ODCHARGEAMTORPERC DEFAULT 0 FOR ODCHARGEAMTORPERC;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#62.3" author="kavya.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="BILLINGCHRGREQ" tableName="ADTFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="ODCHARGEAMTORPERC" tableName="ADTFINANCEMAIN" defaultValue="0" />
+	</changeSet>
+    
+   	<changeSet id="ST#62.4" author="kavya.n">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="BILLINGCHRGREQ" type="smallint">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.5" author="kavya.n">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="BILLINGCHRGCODE" type="bigint">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.6" author="kavya.n" >
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET BILLINGCHRGREQ=0;
+				UPDATE ADTRMTFINANCETYPES SET BILLINGCHRGCODE=0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#62.7" author="kavya.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_BILLINGCHRGREQ DEFAULT 0 FOR BILLINGCHRGREQ;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_BILLINGCHRGCODE DEFAULT 0 FOR BILLINGCHRGCODE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#62.7" author="kavya.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="BILLINGCHRGREQ" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="BILLINGCHRGCODE" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#62.7_post" author="kavya.n">
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="BILLINGCHRGREQ" columnDataType="smallint" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="BILLINGCHRGCODE" columnDataType="bigint" />
+	</changeSet>
+	
+   
+   <changeSet id="ST#62.8" author="kavya.n">
+		<addColumn tableName="ADTPRESENTMENTDETAILS">
+			<column name="Charges" type="decimal(18,0)">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.9" author="kavya.n" >
+		<sql>
+			<![CDATA[	
+				UPDATE ADTPRESENTMENTDETAILS SET CHARGES=0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#62.10" author="kavya.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTPRESENTMENTDETAILS ADD CONSTRAINT DF_APD_CHARGES DEFAULT 0 FOR CHARGES;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#62.10" author="kavya.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="CHARGES" tableName="ADTPRESENTMENTDETAILS" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#62.10_post" author="kavya.n">
+		<addNotNullConstraint tableName="ADTPRESENTMENTDETAILS" columnName="Charges" columnDataType="decimal(18,0)" />
+	</changeSet>	
+
+	<changeSet id="ST#62.11" author="kavya.n">
+		<addColumn tableName="ADTMANUALADVISE">
+			<column name="PresentmentDetailId" type="bigint">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+		
+	<changeSet id="ST#62.12" author="kavya.n" >
+		<sql>
+			<![CDATA[	
+				UPDATE ADTMANUALADVISE set PRESENTMENTDETAILID=0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#62.13" author="kavya.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTMANUALADVISE ADD CONSTRAINT DF_AMA_PRESENTMENTDETAILID DEFAULT 0 FOR PRESENTMENTDETAILID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#62.13" author="kavya.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PRESENTMENTDETAILID" tableName="ADTMANUALADVISE" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#62.13_post" author="kavya.n">
+		<addNotNullConstraint tableName="ADTMANUALADVISE" columnName="PresentmentDetailId" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="ST#62.14" author="sampath.d">
+		<addColumn tableName="AdtRmtFinanceTypes">
+			<column name="ExtnsnODGraceDays" type="int">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.15" author="sampath.d">
+		<addColumn tableName="AdtRmtFinanceTypes">
+			<column name="CollecChrgCodeId" type="bigint">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.16" author="sampath.d">
+		<addColumn tableName="AdtRmtFinanceTypes">
+			<column name="CollectionAmt" type="decimal(18,0)">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.17" author="sampath.d" >
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET EXTNSNODGRACEDAYS=0;
+				UPDATE ADTRMTFINANCETYPES SET COLLECCHRGCODEID=0;
+				UPDATE ADTRMTFINANCETYPES SET COLLECTIONAMT=0;
+			]]>
+		</sql>
+	</changeSet>
+	
+		<changeSet id="ST#62.18" author="sampath.d" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_EXTNSNODGRACEDAYS DEFAULT 0 FOR EXTNSNODGRACEDAYS;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_COLLECCHRGCODEID DEFAULT 0 FOR COLLECCHRGCODEID;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_COLLECTIONAMT DEFAULT 0 FOR COLLECTIONAMT;
+			]]>
+		</sql>
+	</changeSet>	
+
+	<changeSet id="ST#62.18" author="sampath.d" dbms="postgresql, oracle">
+		<addDefaultValue columnName="EXTNSNODGRACEDAYS" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="COLLECCHRGCODEID" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="COLLECTIONAMT" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#62.19" author="sampath.d">
+		<createTable tableName="ADTLIMITBLOCK">
+		<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="Varchar2(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BlockingStatus" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReservedAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ActualAmt" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#62.20" author="sampath.d" >
+		<sql>
+			<![CDATA[	
+				UPDATE ADTLIMITBLOCK SET CUSTID=0;
+				UPDATE ADTLIMITBLOCK SET BLOCKINGSTATUS=0;
+				UPDATE ADTLIMITBLOCK SET RESERVEDAMT=0;
+				UPDATE ADTLIMITBLOCK SET ACTUALAMT=0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#62.21" author="sampath.d" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTLIMITBLOCK ADD CONSTRAINT DF_ALB_CUSTID DEFAULT 0 FOR CUSTID;
+				ALTER TABLE ADTLIMITBLOCK ADD CONSTRAINT DF_ALB_BLOCKINGSTATUS DEFAULT 0 FOR BLOCKING;
+				ALTER TABLE ADTLIMITBLOCK ADD CONSTRAINT DF_ALB_RESERVEDAMT DEFAULT 0 FOR RESERVEDAMT;
+				ALTER TABLE ADTLIMITBLOCK ADD CONSTRAINT DF_ALB_ACTUALAMT DEFAULT 0 FOR ACTUALAMT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#62.21" author="sampath.d" dbms="postgresql, oracle">
+		<addDefaultValue columnName="CUSTID" tableName="ADTLIMITBLOCK" defaultValue="0" />
+		<addDefaultValue columnName="BLOCKINGSTATUS" tableName="ADTLIMITBLOCK" defaultValue="0" />
+		<addDefaultValue columnName="RESERVEDAMT" tableName="ADTLIMITBLOCK" defaultValue="0" />
+		<addDefaultValue columnName="ACTUALAMT" tableName="ADTLIMITBLOCK" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="TK#429.1" author="sampath.d">
+		<createTable tableName="ADTODLIMITHISTORYHEADER">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="FinReference" type="Varchar2(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BlockLimit" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BlockType" type="Varchar2(10))">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#429.2" author="sampath.d">
+		<addPrimaryKey tableName="ADTODLIMITHISTORYHEADER" columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="PK_ADTODL_HSTRY_HDR" />
+	</changeSet>
+	
+	<changeSet id="TK#429.3" author="sampath.d">
+		<createTable tableName="ADTODLIMITHISTORYDETAIL">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="HeaderId" type="bigint" />
+			<column name="FinReference" type="Varchar2(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ActualLimit" type="decimal(18,0)" />
+			<column name="MonthlyLimit" type="decimal(18,0)" />
+			<column name="TransactionAmt" type="decimal(18,0)" />
+			<column name="TransactionType" type="Varchar2(20)" />
+			<column name="Narration" type="Varchar2(50)" />
+			<column name="ActualLmtBal" type="decimal(18,0)" />
+			<column name="MonthlyLmtBal" type="decimal(18,0)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#429.4" author="sampath.d">
+		<addPrimaryKey tableName="ADTODLIMITHISTORYDETAIL" columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="PK_ADTODL_HSTRY_DTL" />
+	</changeSet>
+	
+	<changeSet id="ST#167.1" author="sampath.d">
+		<addColumn tableName="ADTFinReceiptHeader">
+			<column name="FinType" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#62.22" author="kavya.n">
+		<renameColumn tableName="AdtRMTFinanceTypes" oldColumnName="BillingChrgReq" newColumnName="TxnChrgReq" />
+    </changeSet>
+    
+    <changeSet id="ST#62.23" author="kavya.n">
+		<renameColumn tableName="AdtRMTFinanceTypes" oldColumnName="BillingChrgCode" newColumnName="TxnChrgCode" />
+    </changeSet>
+    
+    <changeSet id="ST#62.24" author="kavya.n">
+		<renameColumn tableName="AdtFinanceMain" oldColumnName="BillingChrgReq" newColumnName="TxnChrgReq" />
+    </changeSet>
+
+	<changeSet id="ST#291.1" author="sampath.d">
+		<addColumn tableName="AdtManualAdvise">
+			<column name="Status" type="char(1)" />
+			<column name="Reason" type="varchar(250)" />
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>

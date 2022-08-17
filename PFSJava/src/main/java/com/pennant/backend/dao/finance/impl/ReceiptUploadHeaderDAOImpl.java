@@ -48,6 +48,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -71,9 +72,9 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { fileName }, Long.class) > 0;
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, fileName) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record does not exist in receiptUploadheader_view with Filename>> {}", fileName);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return false;
 		}
 	}
@@ -199,7 +200,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { uploadHeaderId }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				ReceiptUploadHeader ruh = new ReceiptUploadHeader();
 
 				ruh.setUploadHeaderId(rs.getLong("UploadHeaderId"));
@@ -222,11 +223,11 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 				ruh.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return ruh;
-			});
+			}, uploadHeaderId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info("Record not exists in ReceiptUploadHeader{}for the UploadHeaderId{}", type, uploadHeaderId);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -255,7 +256,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(" Set UploadProgress = ? ");
 		sql.append(" Where UploadHeaderId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -273,17 +274,15 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(" From ReceiptUploadheader_view");
 		sql.append(" Where UploadHeaderId = ? and UploadProgress= ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { uploadHeaderId, receiptDownloaded }, (rs, rowNum) -> rs.getInt(1)) > 0;
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), uploadHeaderId,
+					receiptDownloaded) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in receiptUploadheader_view for UploadHeaderId>>{} and UploadProgress>>{}",
-					uploadHeaderId, receiptDownloaded);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
 		}
-
-		return false;
 	}
 
 	@Override
@@ -360,10 +359,10 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 
 	@Override
 	public long setHeaderAttempNo(long id) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select count(HeaderId) From RECEIPT_UPLOAD_LOG Where HeaderId = ?");
+		String sql = "Select count(HeaderId) From RECEIPT_UPLOAD_LOG Where HeaderId = ?";
 
-		return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> rs.getLong(1));
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getLong(1), id);
 	}
-
 }

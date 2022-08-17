@@ -359,7 +359,7 @@ public class AccrualService extends ServiceHelper {
 			// -------------------------------------------------------------------------------------
 			// Cumulative Totals
 			// -------------------------------------------------------------------------------------
-			calCumulativeTotals(pfd, curSchd);
+			calCumulativeTotals(pfd, curSchd, fm.isManualSchedule());
 
 			// -------------------------------------------------------------------------------------
 			// Till Date and Future Date Totals
@@ -470,7 +470,8 @@ public class AccrualService extends ServiceHelper {
 		}
 	}
 
-	private static void calCumulativeTotals(FinanceProfitDetail pfd, FinanceScheduleDetail schd) {
+	private static void calCumulativeTotals(FinanceProfitDetail pfd, FinanceScheduleDetail schd, boolean isManualSchd) {
+
 		// profit
 		pfd.setTotalPftSchd(pfd.getTotalPftSchd().add(schd.getProfitSchd()));
 		pfd.setTotalPftCpz(pfd.getTotalPftCpz().add(schd.getCpzAmount()));
@@ -483,7 +484,7 @@ public class AccrualService extends ServiceHelper {
 		// Schedule Information
 		if ((schd.isRepayOnSchDate() || schd.isPftOnSchDate())) {
 			if ((schd.isFrqDate() && !isHoliday(schd.getBpiOrHoliday()))
-					|| schd.getSchDate().compareTo(pfd.getMaturityDate()) == 0) {
+					|| (schd.getSchDate().compareTo(pfd.getMaturityDate()) == 0) || isManualSchd) {
 				if (!StringUtils.equals(schd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 
 					// Installments, Paid and OD
@@ -650,7 +651,7 @@ public class AccrualService extends ServiceHelper {
 		pfd.setFinStartDate(pfd.getFinStartDate() == null ? fm.getFinStartDate() : pfd.getFinStartDate());
 		BigDecimal daysFactor = CalculationUtil.getInterestDays(pfd.getFinStartDate(), pfd.getMaturityDate(),
 				fm.getProfitDaysBasis());
-		if (calPart2.compareTo(BigDecimal.ZERO) > 0) {
+		if (calPart2.compareTo(BigDecimal.ZERO) > 0 && daysFactor.compareTo(BigDecimal.ZERO) > 0) {
 			pfd.setCurFlatRate(calPart1.divide((calPart2.multiply(new BigDecimal(100)).multiply(daysFactor)), 9,
 					RoundingMode.HALF_DOWN));
 		} else {
@@ -737,6 +738,8 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
+
+		aeAmountCodes.setNpa(finEODEvent.isNpaStage());
 
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);

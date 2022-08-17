@@ -342,22 +342,30 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 
 	@Override
 	public LimitFilterQuery getLimitRuleByQueryCode(String queryCode, String queryModule, String type) {
-		LimitFilterQuery dedupParm = new LimitFilterQuery();
-		dedupParm.setQueryCode(queryCode);
-		dedupParm.setQueryModule(queryModule);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select QueryId, QueryCode, QueryModule, QuerySubCode,QueryDesc, SQLQuery, ActualBlock, Active");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" QueryId, QueryCode, QueryModule, QuerySubCode");
+		sql.append(", QueryDesc, SQLQuery, ActualBlock, Active");
 		sql.append(" From LimitParams");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where QueryCode = :QueryCode and QueryModule = :QueryModule");
+		sql.append(" Where QueryCode = ? and QueryModule = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<LimitFilterQuery> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFilterQuery.class);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				LimitFilterQuery lfq = new LimitFilterQuery();
+
+				lfq.setQueryId(rs.getLong("QueryId"));
+				lfq.setQueryCode(rs.getString("QueryCode"));
+				lfq.setQueryModule(rs.getString("QueryModule"));
+				lfq.setQuerySubCode(rs.getString("QuerySubCode"));
+				lfq.setQueryDesc(rs.getString("QueryDesc"));
+				lfq.setSQLQuery(rs.getString("SQLQuery"));
+				lfq.setActualBlock(rs.getString("ActualBlock"));
+				lfq.setActive(rs.getBoolean("Active"));
+
+				return lfq;
+			}, queryCode, queryModule);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

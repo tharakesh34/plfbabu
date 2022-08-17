@@ -127,6 +127,7 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -285,6 +286,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Textbox knockOffRemark;
 	protected Combobox KnockEffectScheduleMthd;
 	protected Hbox hbox_KnockEffectScheduleMthd;
+
+	protected Row row_CustomerAccount;
+	protected ExtendedCombobox customerBankAcct;
 
 	protected Groupbox gb_TransactionDetails;
 	protected Label label_ReceiptDialog_favourNo;
@@ -641,6 +645,21 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.postBranch.setDescColumn("BranchDesc");
 		this.postBranch.setValidateColumns(new String[] { "BranchCode" });
 
+		// Customer Account Number
+		this.customerBankAcct.setMandatoryStyle(true);
+		this.customerBankAcct.setModuleName("CustomerBankInfoAccntNum");
+		this.customerBankAcct.setValueColumn("AccountNumber");
+		this.customerBankAcct.setDescColumn("AccountHolderName");
+		this.customerBankAcct.setValidateColumns(new String[] { "AccountNumber" });
+		this.customerBankAcct.setReadonly(true);
+
+		if (!FinanceConstants.CLOSURE_MAKER.equals(module) && !isKnockOff) {
+			if (DisbursementConstants.PAYMENT_TYPE_ONLINE.equals(receiptData.getReceiptHeader().getReceiptMode())
+					&& RepayConstants.RECEIPTMODE_ESCROW.equals(receiptData.getReceiptHeader().getSubReceiptMode())) {
+				this.row_CustomerAccount.setVisible(true);
+			}
+		}
+
 		// Cashier Branch
 		this.cashierBranch.setModuleName("Branch");
 		this.cashierBranch.setValueColumn("BranchCode");
@@ -816,8 +835,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.label_ReceiptDialog_favourNo.setValue(Labels.getLabel("label_ReceiptDialog_DDFavourNo.value"));
 
 					if (isUserAction) {
-						this.depositDate.setValue(SysParamUtil.getAppDate());
-						this.valueDate.setValue(SysParamUtil.getAppDate());
+						Date appDate = SysParamUtil.getAppDate();
+						this.depositDate.setValue(appDate);
+						this.valueDate.setValue(appDate);
 					}
 				}
 
@@ -1251,6 +1271,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 		fillComboBox(this.sourceofFund, rch.getSourceofFund(), sourceofFundList, "");
+		// Customer Bank Account number.
+		this.customerBankAcct.setValue(StringUtils.trimToEmpty(rch.getCustAcctNumber()),
+				StringUtils.trimToEmpty(rch.getCustAcctHolderName()));
 
 		setBalances();
 		checkByReceiptMode(rch.getReceiptMode(), false);
@@ -1331,6 +1354,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal sum = BigDecimal.ZERO;
 		BigDecimal paidAmount = BigDecimal.ZERO;
 		BigDecimal dueAmount = BigDecimal.ZERO;
+		BigDecimal totwaived = BigDecimal.ZERO;
+
 		for (int i = 0; i < allocationList.size(); i++) {
 			ReceiptAllocationDetail rad = allocationList.get(i);
 			if (Allocation.PP.equals(rad.getAllocationType())) {
@@ -1343,6 +1368,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			} else {
 				paidAmount = rad.getPaidAmount();
 				dueAmount = dueAmount.add(rad.getTotalDue());
+				totwaived = totwaived.add(rad.getWaivedAmount());
 			}
 			sum = sum.add(paidAmount);
 			Listitem item = new Listitem();
@@ -1360,6 +1386,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			BigDecimal totalDue = rad.getTotalDue();
 			addAmountCell(item, totalDue, ("AllocateDue_" + i), false);
 			addAmountCell(item, rad.getPaidAmount(), ("AllocatePaid_" + i), false);
+			addAmountCell(item, rad.getWaivedAmount(), ("AllocateWaivedAmount_" + i), false);
 
 			this.listBoxPastdues.appendChild(item);
 		}
@@ -1371,6 +1398,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		addAmountCell(item, dueAmount, null, true);
 		addAmountCell(item, sum, null, true);
+		addAmountCell(item, totwaived, null, true);
+
 		this.listBoxPastdues.appendChild(item);
 
 		BigDecimal receiptAmount = BigDecimal.ZERO;
@@ -1416,21 +1445,65 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		List<XcessPayables> xcessPayableList = receiptData.getReceiptHeader().getXcessPayables();
 		this.listBoxExcess.getItems().clear();
 
+		BigDecimal totalAmount = BigDecimal.ZERO;
 		for (int i = 0; i < xcessPayableList.size(); i++) {
-			createXcessPayableItem(xcessPayableList.get(i), i);
+			XcessPayables xcessPayable = xcessPayableList.get(i);
+
+			BigDecimal adjAmount = getPayableAdjustedAmount(xcessPayable.getPayableType(), receiptData);
+			if (adjAmount.compareTo(BigDecimal.ZERO) > 0) {
+				createXcessPayableItem(xcessPayable.getPayableDesc(), adjAmount, i);
+				totalAmount = totalAmount.add(adjAmount);
+			}
 		}
 		/* addXcessFooter(formatter); */
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void createXcessPayableItem(XcessPayables xcessPayable, int idx) {
+	private void createXcessPayableItem(String payableDesc, BigDecimal amount, int idx) {
 		// List Item
 		Listitem item = new Listitem();
-		Listcell lc = null;
-		// FIXME: PV: CODE REVIEW PENDING
-		addBoldTextCell(item, xcessPayable.getPayableDesc(), false, idx);
-		addAmountCell(item, xcessPayable.getAvailableAmt(), null, false);
+		addBoldTextCell(item, payableDesc, false, idx);
+		addAmountCell(item, amount, null, false);
 		this.listBoxExcess.appendChild(item);
+	}
+
+	private BigDecimal getPayableAdjustedAmount(String mode, FinReceiptData receiptData) {
+		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
+		// Bug Fix #143610 #2
+		if (CollectionUtils.isEmpty(receiptHeader.getAllocations())) {
+			if (StringUtils.equalsIgnoreCase(mode, receiptHeader.getExcessAdjustTo())) {
+				return receiptHeader.getReceiptAmount();
+			} else {
+				return BigDecimal.ZERO;
+			}
+		}
+
+		// #1
+		List<FinReceiptDetail> finReceiptDetails = receiptHeader.getReceiptDetails();
+		if (CollectionUtils.isNotEmpty(finReceiptDetails)) {
+			for (FinReceiptDetail finReceiptDetail : finReceiptDetails) {
+				if (StringUtils.equalsIgnoreCase(payType(mode), finReceiptDetail.getPaymentType())) {
+					return finReceiptDetail.getAmount();
+				}
+			}
+		}
+		return BigDecimal.ZERO;
+	}
+
+	private String payType(String mode) {
+		switch (mode) {
+		case RepayConstants.EXAMOUNTTYPE_EMIINADV:
+			return RepayConstants.RECEIPTMODE_EMIINADV;
+		case RepayConstants.EXAMOUNTTYPE_EXCESS:
+			return RepayConstants.RECEIPTMODE_EXCESS;
+		case RepayConstants.RECEIPTMODE_ADVEMI:
+		case RepayConstants.RECEIPTMODE_ADVINT:
+		case RepayConstants.RECEIPTMODE_CASHCLT:
+		case RepayConstants.RECEIPTMODE_DSF:
+			return mode;
+		default:
+			return mode;
+		}
 	}
 
 	public void onDetailsClick(ForwardEvent event) {
@@ -1625,6 +1698,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.panNumber.setConstraint("");
 		this.collectionAgentId.setConstraint("");
 		this.remarks.setConstraint("");
+		this.customerBankAcct.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1657,6 +1731,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.chequeAcNo.setErrorMessage("");
 		this.fundingAccount.setErrorMessage("");
 		this.remarks.setErrorMessage("");
+		this.customerBankAcct.setErrorMessage("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -2165,6 +2240,12 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			receipt.setReceiptNo(this.paymentRef.getValue());
 			receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
+			if (receiptMode.getSelectedItem().getLabel().toString().equals(DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
+				receipt.setSubReceiptMode(":" + this.subReceiptMode.getSelectedItem().getLabel().toString());
+			} else {
+				receipt.setSubReceiptMode("");
+			}
+
 			engine.mergeFields(receipt);
 
 			boolean isDirectPrint = false;

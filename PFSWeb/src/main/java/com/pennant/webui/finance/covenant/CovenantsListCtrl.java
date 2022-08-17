@@ -216,6 +216,8 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			if (arguments.containsKey("allowedRoles")) {
 				allowedRoles = (String) arguments.get("allowedRoles");
+			} else {
+				allowedRoles = "";
 			}
 
 			if (arguments.containsKey("moduleCode")) {

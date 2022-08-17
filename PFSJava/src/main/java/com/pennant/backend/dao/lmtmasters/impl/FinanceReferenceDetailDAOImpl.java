@@ -1128,4 +1128,32 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		return rd;
 	}
+
+	@Override
+	public List<FinanceReferenceDetail> getLMTFinRefDetails(String limitCode, String finType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" frd.MandInputInStage, frd.FinEvent");
+		sql.append(" From LMTFinRefDetail frd");
+		sql.append(" Inner Join LimitCodeDetail lcd on frd.FinRefID = lcd.LimitID and frd.FinRefType = 12");
+		sql.append(" Where lcd.LimitCode = ? and frd.FinType = ? and frd.IsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, limitCode);
+			ps.setString(index++, finType);
+			ps.setBoolean(index++, true);
+		}, (rs, rowNum) -> {
+			FinanceReferenceDetail frd = new FinanceReferenceDetail();
+
+			frd.setLovDescNamelov(limitCode);
+			frd.setFinType(finType);
+			frd.setMandInputInStage(rs.getString("MandInputInStage"));
+			frd.setFinEvent(rs.getString("FinEvent"));
+
+			return frd;
+		});
+	}
 }

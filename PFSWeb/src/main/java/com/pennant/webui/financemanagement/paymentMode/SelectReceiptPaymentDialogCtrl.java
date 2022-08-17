@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +51,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -69,6 +71,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -136,6 +139,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 	private transient CustomerDetailsService customerDetailsService;
 	private transient CustomerService customerService;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 	protected long custId = Long.MIN_VALUE;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	protected JdbcSearchObject<FinanceMain> searchObject;
@@ -153,6 +157,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private FinanceEnquiry financeEnquiry;
 	private Customer customer;
 	private FinanceMainDAO financeMainDAO;
+	private String productCategory;
 
 	// private DueData dueData;
 	private int daysBackValueAllowed, daysBackValue;
@@ -160,6 +165,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private int formatter = 2;
 	Date appDate = SysParamUtil.getAppDate();
 	protected FinanceRepaymentsDAO financeRepaymentsDAO;
+	private FinanceType finType;
+	private Label label_ReceiptPayment_ReceiptDate;
+	private Label label_ReceiptPayment_ValueDate;
 
 	/**
 	 * default constructor.<br>
@@ -331,7 +339,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.tDSAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 				CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 
-		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
+		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), ",PRESENT,");
 		fillComboBox(this.receiptChannel, "", PennantStaticListUtil.getReceiptChannels(), "");
 		fillComboBox(this.subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), "");
 		fillComboBox(this.sourceofFund, "", PennantAppUtil.getFieldCodeList("SOURCE"), "");
@@ -375,6 +383,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.row_receiptDues.setVisible(false);
 			this.row_ReceiptMode.setVisible(false);
 			this.row_ReceiptPurpose.setVisible(false);
+			this.label_ReceiptPayment_ValueDate.setValue("Closure Date");
+			this.label_ReceiptPayment_ReceiptDate.setValue("Closure Date");
 			fillComboBox(this.receiptPurpose, FinServiceEvent.EARLYSETTLE, PennantStaticListUtil.getReceiptPurpose(),
 					",FeePayment,SchdlRepayment,EarlyPayment,");
 		} else {
@@ -399,6 +409,16 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 
+		if (isForeClosure) {
+			Filter filter[] = new Filter[2];
+			filter[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+			filter[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_NOT_EQUAL);
+			this.finReference.setFilters(filter);
+		}
+
+		if (isForeClosure) {
+			this.finReference.setFilters((new Filter[] { new Filter("FinIsActive", 1, Filter.OP_EQUAL) }));
+		}
 	}
 
 	private void addFilter(Customer customer) {
@@ -450,6 +470,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			}
 			if (subReceiptPaymentModes != null) {
 				fillComboBox(subReceiptMode, "", subReceiptPaymentModes.getSubReceiptPaymentModes(), exlcudeValues);
+			} else if (!FinanceConstants.PRODUCT_CD.equals(productCategory)) {
+				fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",RTRNGDS,");
 			} else {
 				fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), exlcudeValues);
 			}
@@ -523,6 +545,16 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			receiptPurpose = ReceiptPurpose.purpose(this.receiptPurpose.getSelectedItem().getValue());
 		}
 
+		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
+			int count = finAdvancePaymentsService.getStatusCountByFinRefrence(finID);
+			if (count > 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = this.finReference.getValue();
+				MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("90508", valueParm)));
+				return;
+			}
+		}
+
 		if (receiptPurpose == ReceiptPurpose.EARLYRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
 			Date startDate = ((FinanceMain) this.finReference.getObject()).getFinStartDate();
 			errorDetail = financeMainService.rescheduleValidation(this.receiptDate.getValue(), finID, startDate);
@@ -531,6 +563,20 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		errorDetail = receiptService.getWaiverValidation(finID, this.receiptPurpose.getSelectedItem().getValue(),
 				valueDate.getValue());
+
+		FinanceMain fm = (FinanceMain) this.finReference.getObject();
+		if (FinServiceEvent.EARLYRPY.equals(receiptPurpose) && fm.isManualSchedule()) {
+
+			FinReceiptHeader frh = receiptService
+					.getInititatedReceipts(StringUtils.trimToEmpty(this.finReference.getValue()));
+			if (frh != null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Part payment has already been initiated for this loan number: " + frh.getReference()
+						+ ", Receipt ID: " + frh.getReceiptID() + ", Receipt Date: "
+						+ DateUtil.formatToShortDate(frh.getReceiptDate()) + ". Please process the initiated receipt.";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("92021", valueParm));
+			}
+		}
 
 		// Validate Loan is INPROGRESS in WRITEOFF or NOT ?
 		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
@@ -543,7 +589,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		/*
 		 * if (isKnockOff) { BigDecimal receiptDues = this.receiptDues.getActualValue(); BigDecimal knockOffAmount =
 		 * this.receiptAmount.getActualValue(); String rcptPurpose = this.receiptPurpose.getSelectedItem().getValue();
-		 * if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(rcptPurpose) && knockOffAmount.compareTo(receiptDues) > 0) {
+		 * if (FinServiceEvent.SCHDRPY.equals(rcptPurpose) && knockOffAmount.compareTo(receiptDues) > 0) {
 		 * MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff")); return; } }
 		 */
 
@@ -801,6 +847,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		receiptService.setFinanceData(receiptData);
 		receiptData.setEnquiry(isEnquiry);
+		boolean isMatured = (DateUtil.compare(fm.getMaturityDate(), appDate) < 0) && fm.isFinIsActive();
+		receiptData.setClosrMaturedLAN(isMatured && isForeClosure);
 		schdData.setFinServiceInstruction(new FinServiceInstruction());
 		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 		if (!fm.isFinIsActive()) {
@@ -962,6 +1010,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (dataObject instanceof String) {
 			this.finReference.setValue(dataObject.toString());
 			this.finReference.setDescription("");
+			this.receiptDate.setValue(appDate);
+			setFinType(null);
 		} else {
 			FinanceMain financeMain = (FinanceMain) dataObject;
 			if (financeMain != null) {
@@ -974,8 +1024,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					this.finReference.setDescription(financeMain.getFinType() + " - " + finIsActive);
 				}
 				this.custCIF.setValue(String.valueOf(financeMain.getCustCIF()));
-				if (financeMain.getMaturityDate().compareTo(appDate) <= 0) {
-					this.receiptDate.setDisabled(true);
+				if (isForeClosure && financeMain.getMaturityDate().compareTo(appDate) <= 0) {
+					this.receiptDate.setValue(financeMain.getMaturityDate());
 				}
 				resetDefaults(financeMain);
 				if (FinanceConstants.RECEIPT_MAKER.equals(this.module)
@@ -988,6 +1038,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
 				this.row_tDSAmount.setVisible(false);
 				this.tDSAmount.setValue(BigDecimal.ZERO);
+				this.receiptDate.setValue(appDate);
 			}
 		}
 
@@ -1110,7 +1161,15 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			return;
 		}
 
-		ArrayList<WrongValueException> wve = new ArrayList<>();
+		List<WrongValueException> wve = new ArrayList<>();
+		Object object = this.finReference.getObject();
+		boolean isMatured = false;
+		Date maturityDate = null;
+		if (isForeClosure && object != null) {
+			FinanceMain fm = (FinanceMain) object;
+			maturityDate = fm.getMaturityDate();
+			isMatured = DateUtil.compare(maturityDate, appDate) < 0;
+		}
 
 		// Back Value checking will be with Application Date
 		try {
@@ -1119,17 +1178,32 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 						Labels.getLabel("label_SchedulePayment_ReceiptDate.value"), appDate.toString() }));
 			}
 
-			daysBackValueAllowed = SysParamUtil.getValueAsInt("ALW_SP_BACK_DAYS");
-			daysBackValue = DateUtility.getDaysBetween(this.receiptDate.getValue(), appDate);
-			if (daysBackValue >= daysBackValueAllowed) {
-				throw new WrongValueException(this.receiptDate,
-						Labels.getLabel("DATE_ALLOWED_ON_AFTER",
-								new String[] { Labels.getLabel("label_SchedulePayment_ReceiptDate.value"),
-										DateUtility.addDays(appDate, -daysBackValueAllowed).toString() }));
+			if (!isMatured) {
+				daysBackValueAllowed = SysParamUtil.getValueAsInt("ALW_SP_BACK_DAYS");
+				daysBackValue = DateUtility.getDaysBetween(this.receiptDate.getValue(), appDate);
+				if (daysBackValue >= daysBackValueAllowed) {
+					throw new WrongValueException(this.receiptDate,
+							Labels.getLabel("DATE_ALLOWED_ON_AFTER",
+									new String[] { Labels.getLabel("label_SchedulePayment_ReceiptDate.value"),
+											DateUtility.addDays(appDate, -daysBackValueAllowed).toString() }));
+				}
 			}
-
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+
+		long finID = ComponentUtil.getFinID(finReference);
+
+		Date maxValueDate = financeRepaymentsDAO.getMaxValueDate(finID);
+
+		if (DateUtil.compare(maxValueDate, this.receiptDate.getValue()) > 0) {
+			throw new WrongValueException(this.receiptDate, Labels.getLabel("DATE_ALLOWED_ON_AFTER", new String[] {
+					Labels.getLabel("label_SchedulePayment_ReceiptDate.value"), maxValueDate.toString() }));
+		}
+
+		if (isMatured && maturityDate != null && DateUtil.compare(receiptDate.getValue(), maturityDate) < 0) {
+			throw new WrongValueException(this.receiptDate, Labels.getLabel("DATE_ALLOWED_ON_AFTER", new String[] {
+					Labels.getLabel("label_SchedulePayment_ReceiptDate.value"), maturityDate.toString() }));
 		}
 	}
 
@@ -1167,9 +1241,22 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.custCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptPayment_Customer.value"),
 				PennantRegularExpressions.REGEX_NUMERIC, true));
 
-		this.finReference
-				.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptPayment_LoanReference.value"),
-						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		FinanceType ft = getFinType();
+		if (ft == null) {
+			return;
+		}
+
+		if (ft.isFinIsGenRef()) {
+			this.finReference
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptPayment_LoanReference.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		} else {
+
+			this.finReference
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptPayment_LoanReference.value"),
+							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+		}
+
 		if (isKnockOff) {
 			this.referenceId
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_LoanClosurePayment_RefId.value"),
@@ -1213,22 +1300,35 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			String excludeFields = ",FeePayment,EarlySettlement,";
 			if (FinanceConstants.PRODUCT_CD.equals(financeMain.getProductCategory())) {
 				excludeFields = ",FeePayment,EarlySettlement,EarlyPayment,";
+			} else if (FinanceConstants.PRODUCT_ODFACILITY.equals(financeMain.getProductCategory())) {
+				excludeFields = ",FeePayment,EarlySettlement,";
 			}
 			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), excludeFields);
 		} else {
 			String excludeFields = ",FeePayment,";
 			if (FinanceConstants.PRODUCT_CD.equals(financeMain.getProductCategory())) {
-				excludeFields = ",FeePayment,EarlyPayment,";
+				excludeFields = ",FeePayment,";
+			} else if (FinanceConstants.PRODUCT_ODFACILITY.equals(financeMain.getProductCategory())) {
+				excludeFields = ",FeePayment,";
 			}
 			fillComboBox(receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), excludeFields);
 		}
 
 		FinanceType financeType = receiptService.getFinanceType(financeMain.getFinType());
 
+		setFinType(financeType);
+		productCategory = financeMain.getProductCategory();
+
 		if (financeType.isDeveloperFinance()) {
 			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), "");
+		} else if (!FinanceConstants.PRODUCT_CD.equals(financeMain.getProductCategory())) {
+			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",ESCROW,RTRNGDS,");
 		} else {
-			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",ESCROW,");
+			if ("EarlyPayment".equals(receiptPurpose.getValue())) {
+				fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",ESCROW,");
+			} else {
+				fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",ESCROW,RTRNGDS,");
+			}
 		}
 	}
 
@@ -1308,6 +1408,18 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
+	public FinanceType getFinType() {
+		return finType;
+	}
+
+	public void setFinType(FinanceType finType) {
+		this.finType = finType;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

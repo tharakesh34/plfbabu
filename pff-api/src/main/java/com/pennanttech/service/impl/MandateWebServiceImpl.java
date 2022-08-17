@@ -7,11 +7,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -47,6 +49,7 @@ import com.pennanttech.controller.MandateController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pffws.MandateRestService;
 import com.pennanttech.pffws.MandateSoapService;
 import com.pennanttech.util.APIConstants;
@@ -578,72 +581,32 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				return getErrorDetails("90207", valueParm);
 			}
 		}
-		boolean isValidBranch = true;
-		// validate Mandate fields
-		if (StringUtils.isNotBlank(mandate.getIFSC())) {
-			BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
-			if (bankBranch == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = mandate.getIFSC();
-				return getErrorDetails("90301", valueParm);
-			} else {
-				isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
-				if (returnStatus.getReturnCode() != null) {
-					return returnStatus;
-				}
-				if (StringUtils.equals(mandate.getMandateType(), MandateConstants.TYPE_EMANDATE)
-						&& !bankBranch.isEmandate()) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "EMANDATE";
-					valueParm[1] = "bankCode " + mandate.getBankCode();
-					return getErrorDetails("API002", valueParm);
-				}
-				mandate.setBankCode(bankBranch.getBankCode());
-				if (StringUtils.isBlank(mandate.getMICR())) {
-					mandate.setMICR(bankBranch.getMICR());
-				} else {
-					if (!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "MICR";
-						valueParm[1] = mandate.getMICR();
-						return getErrorDetails("90701", valueParm);
-					}
-				}
+
+		String ifsc = mandate.getIFSC();
+		String micr = mandate.getMICR();
+		String bankCode = mandate.getBankCode();
+		String branchCode = mandate.getBranchCode();
+
+		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+		if (bankBranch.getError() != null) {
+			WSReturnStatus status = new WSReturnStatus();
+			status.setReturnCode(bankBranch.getError().getCode());
+			status.setReturnText("");
+
+			ErrorDetail ed = ErrorUtil.getErrorDetailById(bankBranch.getError().getCode());
+
+			if (ed != null) {
+				status.setReturnText(ErrorUtil.getErrorMessage(ed.getMessage(), bankBranch.getError().getParameters()));
 			}
-		} else if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getBranchCode())) {
-			BankBranch bankBranch = bankBranchService.getBankBrachByCode(mandate.getBankCode(),
-					mandate.getBranchCode());
-			if (bankBranch == null) {
-				String[] valueParm = new String[2];
-				valueParm[0] = mandate.getBankCode();
-				valueParm[1] = mandate.getBranchCode();
-				return getErrorDetails("90302", valueParm);
-			} else {
-				isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
-				if (returnStatus.getReturnCode() != null) {
-					return returnStatus;
-				}
-				if (StringUtils.equals(mandate.getMandateType(), MandateConstants.TYPE_EMANDATE)
-						&& !bankBranch.isEmandate()) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "EMANDATE";
-					valueParm[1] = "bankCode " + mandate.getBankCode();
-					return getErrorDetails("API002", valueParm);
-				}
-				mandate.setBankCode(bankBranch.getBankCode());
-				if (StringUtils.isBlank(mandate.getMICR())) {
-					mandate.setMICR(bankBranch.getMICR());
-				} else {
-					if (!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "MICR";
-						valueParm[1] = mandate.getMICR();
-						return getErrorDetails("90701", valueParm);
-					}
-				}
-			}
+
+			return status;
 		}
-		if (!isValidBranch) {
+
+		mandate.setBankCode(bankBranch.getBankCode());
+		mandate.setMICR(bankBranch.getMICR());
+
+		if (!bankBranchService.validateBranchCode(bankBranch, mandate.getMandateType())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = mandate.getMandateType();
 			return getErrorDetails("90333", valueParm);
@@ -747,23 +710,6 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 		logger.debug("Leaving");
 
 		return returnStatus;
-	}
-
-	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
-		if (StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())) {
-			if (!bankBranch.isEcs()) {
-				isValidBranch = false;
-			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())) {
-			if (!bankBranch.isDda()) {
-				isValidBranch = false;
-			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())) {
-			if (!bankBranch.isNach()) {
-				isValidBranch = false;
-			}
-		}
-		return isValidBranch;
 	}
 
 	/**
@@ -1104,4 +1050,95 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	@Override
+	public WSReturnStatus updateApprovedMandate(Mandate mandate) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		String[] logFields = new String[2];
+		logFields[0] = String.valueOf(mandate.getMandateID());
+		logFields[1] = mandate.getMandateRef();
+		APIErrorHandlerService.logKeyFields(logFields);
+
+		WSReturnStatus returnStatus = validate(mandate);
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+
+		returnStatus = mandateController.updateApprovedMandate(copyBeforeImage(mandate));
+
+		logger.debug(Literal.LEAVING);
+		return APIErrorHandlerService.getSuccessStatus();
+	}
+
+	private Mandate copyBeforeImage(Mandate request) {
+		Mandate exMandate = mandateService.getApprovedMandateById(request.getMandateID());
+
+		Mandate mandate2 = new Mandate();
+		BeanUtils.copyProperties(exMandate, mandate2);
+		mandate2.setBefImage(exMandate);
+
+		if (StringUtils.isNotBlank(request.getMandateRef())) {
+			mandate2.setMandateRef(request.getMandateRef());
+		}
+
+		mandate2.setStatus(request.getStatus());
+		return mandate2;
+	}
+
+	private WSReturnStatus validate(Mandate request) {
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		Mandate aMandate = null;
+
+		if (request.getMandateID() == Long.MIN_VALUE) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "mandateID";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else {
+			aMandate = mandateService.getApprovedMandateById(request.getMandateID());
+			if (aMandate == null || !aMandate.isActive()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(request.getMandateID());
+				return APIErrorHandlerService.getFailedStatus("90303", valueParm);
+			}
+		}
+
+		if (StringUtils.isBlank(request.getStatus())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "status";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+
+		} else if (!StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, request.getStatus())
+				&& !StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, request.getStatus())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "status";
+			valueParm[1] = MandateConstants.STATUS_APPROVED + ", " + MandateConstants.STATUS_REJECTED;
+			returnStatus = APIErrorHandlerService.getFailedStatus("90281", valueParm);
+		} else if (MandateConstants.STATUS_APPROVED.equals(aMandate.getStatus())
+				|| MandateConstants.STATUS_REJECTED.equals(aMandate.getStatus())) {
+
+			String[] valueParm = new String[1];
+			valueParm[0] = "already " + aMandate.getStatus();
+			returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
+			return returnStatus;
+		}
+
+		if (StringUtils.isNotEmpty(request.getMandateRef())
+				&& StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, request.getStatus())) {
+
+			String[] valueParm = new String[1];
+			valueParm[0] = "For the Status REJECTED mandateRef is";
+			returnStatus = APIErrorHandlerService.getFailedStatus("RU0039", valueParm);
+			return returnStatus;
+
+		} else if (!StringUtils.isBlank(request.getMandateRef()) && request.getMandateRef().length() > 50) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "mandateRef";
+			valueParm[1] = "50";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90300", valueParm);
+			return returnStatus;
+		}
+
+		return returnStatus;
+	}
 }

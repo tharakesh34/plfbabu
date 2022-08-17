@@ -649,7 +649,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		sql.append(", TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1");
 		sql.append(", NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac");
 		sql.append(", ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
-		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, TDSAdjReq");
 		sql.append(", NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -711,6 +711,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			jve.setNextTaskId(rs.getString("NextTaskId"));
 			jve.setRecordType(rs.getString("RecordType"));
 			jve.setWorkflowId(rs.getLong("WorkflowId"));
+			jve.setTDSAdjReq(rs.getBoolean("TDSAdjReq"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				jve.setTxnDesc(rs.getString("TxnDesc"));

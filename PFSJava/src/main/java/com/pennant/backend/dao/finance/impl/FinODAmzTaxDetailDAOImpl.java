@@ -64,8 +64,8 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		StringBuilder sql = new StringBuilder("Insert Into FinODAmzTaxDetail(");
 		sql.append("TaxSeqId, FinID, FinReference, ValueDate, PostDate, TaxFor, Amount, TaxType");
-		sql.append(", CGST, SGST, UGST, IGST, TotalGST, PaidAmount, WaivedAmount, InvoiceID)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", CGST, SGST, UGST, IGST, CESS, TotalGST, PaidAmount, WaivedAmount, InvoiceID)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -84,10 +84,11 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 			ps.setBigDecimal(index++, oatd.getSGST());
 			ps.setBigDecimal(index++, oatd.getUGST());
 			ps.setBigDecimal(index++, oatd.getIGST());
+			ps.setBigDecimal(index++, oatd.getCESS());
 			ps.setBigDecimal(index++, oatd.getTotalGST());
 			ps.setBigDecimal(index++, oatd.getPaidAmount());
 			ps.setBigDecimal(index++, oatd.getWaivedAmount());
-			ps.setObject(index++, JdbcUtil.getLong(oatd.getInvoiceID()));
+			ps.setObject(index, oatd.getInvoiceID());
 		});
 
 		return oatd.getTaxSeqId();

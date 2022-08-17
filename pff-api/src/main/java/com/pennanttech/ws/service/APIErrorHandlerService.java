@@ -173,6 +173,10 @@ public class APIErrorHandlerService {
 		}
 	}
 
+	public static WSReturnStatus getWSReturnStatus(ErrorDetail exception) {
+		return getFailedStatus(exception.getCode(), exception.getParameters());
+	}
+
 	@Autowired
 	public void setErrorDetailService(ErrorDetailService errorDetailService) {
 		APIErrorHandlerService.errorDetailService = errorDetailService;

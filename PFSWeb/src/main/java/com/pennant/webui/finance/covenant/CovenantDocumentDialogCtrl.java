@@ -115,6 +115,8 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	private Date loanStartDate;
 	private Date loanMaturityDate;
 	private DMSService dMSService;
+	protected Date receivableDate;
+	protected Date nextFrequencyDate;
 
 	/**
 	 * default constructor.<br>
@@ -177,6 +179,14 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 
 			if (arguments.containsKey("frequency")) {
 				frequncy = arguments.get("frequency").toString();
+			}
+
+			if (arguments.containsKey("receivableDate")) {
+				receivableDate = (Date) arguments.get("receivableDate");
+			}
+
+			if (arguments.containsKey("nextFrequecnyDate")) {
+				nextFrequencyDate = (Date) arguments.get("nextFrequecnyDate");
 			}
 
 			// fillfrequencyDates();
@@ -434,14 +444,31 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		}
 
 		Date frequencyDate = aCovenantDocument.getFrequencyDate();
+		String key = DateUtil.format(receivableDate, DateFormat.LONG_DATE);
+		List<Property> list = new ArrayList<>();
+		if (receivableDate != null) {
+			list.add(new Property(receivableDate, key));
+		}
+		if (frequencyDate != null && nextFrequencyDate.compareTo(frequencyDate) > 0
+				&& receivableDate.compareTo(frequencyDate) != 0) {
+			list.add(new Property(frequencyDate, DateUtil.format(frequencyDate, DateFormat.LONG_DATE)));
+		}
 		if (frequncy.equals("M")) {
-			fillList(this.frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 1), frequencyDate);
+			list.addAll(getFrequency(nextFrequencyDate, loanMaturityDate, 1));
+			list = fillfrequencyDates(list, aCovenantDocument.isNewRecord(), aCovenantDocument.getRecordType());
+			fillList(this.frequencyBox, list, frequencyDate);
 		} else if (frequncy.equals("Q")) {
-			fillList(this.frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 3), frequencyDate);
+			list.addAll(getFrequency(nextFrequencyDate, loanMaturityDate, 3));
+			list = fillfrequencyDates(list, aCovenantDocument.isNewRecord(), aCovenantDocument.getRecordType());
+			fillList(this.frequencyBox, list, frequencyDate);
 		} else if (frequncy.equals("H")) {
-			fillList(this.frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 6), frequencyDate);
+			list.addAll(getFrequency(nextFrequencyDate, loanMaturityDate, 6));
+			list = fillfrequencyDates(list, aCovenantDocument.isNewRecord(), aCovenantDocument.getRecordType());
+			fillList(this.frequencyBox, list, frequencyDate);
 		} else if (frequncy.equals("A")) {
-			fillList(this.frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 12), frequencyDate);
+			list.addAll(getFrequency(nextFrequencyDate, loanMaturityDate, 12));
+			list = fillfrequencyDates(list, aCovenantDocument.isNewRecord(), aCovenantDocument.getRecordType());
+			fillList(this.frequencyBox, list, frequencyDate);
 		} else if (frequncy.equals("O")) {
 			this.rw_freqency.setVisible(false);
 		} else {
@@ -487,8 +514,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			this.convDocType.getValidatedValue();
-			// aCovenantDocument.setCovenantType("PDD");
+			aCovenantDocument.setCovenantType(this.convDocType.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -594,28 +620,37 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			this.docReceivedDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_CovenantDocumentDialog_ReceivedDate.value"), true));
 		}
-
-		if (this.frequencyBox.isVisible()) {
-			if (frequncy.equals("M")) {
-				this.frequencyBox
-						.setConstraint(new StaticListValidator(getFrequency(loanStartDate, loanMaturityDate, 1),
-								Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value")));
-			} else if (frequncy.equals("Q")) {
-				this.frequencyBox
-						.setConstraint(new StaticListValidator(getFrequency(loanStartDate, loanMaturityDate, 3),
-								Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value")));
-			} else if (frequncy.equals("H")) {
-				this.frequencyBox
-						.setConstraint(new StaticListValidator(getFrequency(loanStartDate, loanMaturityDate, 6),
-								Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value")));
-			} else if (frequncy.equals("A")) {
-				this.frequencyBox
-						.setConstraint(new StaticListValidator(getFrequency(loanStartDate, loanMaturityDate, 12),
-								Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value")));
-			}
+		if (this.frequencyBox.isVisible() && !this.frequencyBox.isDisabled()) {
+			setFrequencyValidation();
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	public void setFrequencyValidation() {
+		String key = DateUtil.format(receivableDate, DateFormat.LONG_DATE);
+		List<Property> list = new ArrayList<>();
+		if (receivableDate != null) {
+			list.add(new Property(receivableDate, key));
+		}
+		if (frequncy.equals("M")) {
+			list.addAll(getFrequency(nextFrequencyDate, loanMaturityDate, 1));
+			this.frequencyBox.setConstraint(
+					new StaticListValidator(list, Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value")));
+		} else if (frequncy.equals("Q")) {
+			list.addAll(getFrequency(nextFrequencyDate, loanMaturityDate, 3));
+			this.frequencyBox.setConstraint(
+					new StaticListValidator(list, Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value")));
+		} else if (frequncy.equals("H")) {
+			list.addAll(getFrequency(nextFrequencyDate, loanMaturityDate, 6));
+			this.frequencyBox.setConstraint(
+					new StaticListValidator(list, Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value")));
+		} else if (frequncy.equals("A")) {
+			list.addAll(getFrequency(nextFrequencyDate, loanMaturityDate, 12));
+			this.frequencyBox.setConstraint(
+					new StaticListValidator(list, Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value")));
+		}
+
 	}
 
 	/**
@@ -1011,18 +1046,24 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		this.covenantsDialogCtrl = covenantsDialogCtrl;
 	}
 
-	public void fillfrequencyDates() {
-		if ("M".equals(frequncy)) {
-			fillList(frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 1), PennantConstants.List_Select);
-		} else if ("A".equals(frequncy)) {
-			fillList(frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 12), PennantConstants.List_Select);
-		} else if ("H".equals(frequncy)) {
-			fillList(frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 6), PennantConstants.List_Select);
-		} else if ("Q".equals(frequncy)) {
-			fillList(frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 3), PennantConstants.List_Select);
-		} else {
-			frequencyBox.setDisabled(true);
+	public List<Property> fillfrequencyDates(List<Property> list, boolean isNewRecord, String recordType) {
+		if (isNewRecord && recordType == null) {
+			if (covenantsDialogCtrl.getCovenantDocuments() != null) {
+				for (CovenantDocument covDoc : covenantsDialogCtrl.getCovenantDocuments()) {
+					if (covDoc.getFrequencyDate() != null) {
+						// frequencies.add(new Property(covDoc.getFrequencyDate(), key));
+						for (int i = 0; i < list.size(); i++) {
+							if (list.get(i).getKey().equals(covDoc.getFrequencyDate())) {
+								list.remove(i);
+							}
+						}
+
+					}
+				}
+			}
+
 		}
+		return list;
 	}
 
 	public void onClick$btnDownload(Event event) {

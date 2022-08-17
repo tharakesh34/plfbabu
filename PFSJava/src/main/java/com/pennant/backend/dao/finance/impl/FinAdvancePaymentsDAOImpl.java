@@ -645,4 +645,18 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		}
 	}
+
+	@Override
+	public int getStatusCountByFinRefrence(long finID) {
+		String sql = "Select Count(FinReference) From FinAdvancePayments_view Where FinID = ? And Status = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, finID, "AC");
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
+	}
 }

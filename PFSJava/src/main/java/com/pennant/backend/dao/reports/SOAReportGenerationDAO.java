@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -53,11 +54,11 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.RestructureCharge;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.systemmasters.ApplicantDetail;
 import com.pennant.backend.model.systemmasters.OtherFinanceDetail;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 /**
  * DAO methods declaration for the <b>ReportConfiguration model</b> class.<br>
@@ -74,7 +75,7 @@ public interface SOAReportGenerationDAO {
 
 	List<FinODDetails> getFinODDetails(String finReference);
 
-	List<ManualAdvise> getManualAdvise(String finReference);
+	List<ManualAdvise> getManualAdvise(String finReference, Date valueDate);
 
 	StatementOfAccount getSOALoanDetails(String finReference);
 
@@ -141,4 +142,6 @@ public interface SOAReportGenerationDAO {
 	Map<Long, Integer> getInstNumber(String finReference);
 
 	List<RestructureCharge> getRestructureChargeList(String finReference);
+
+	AdviseDueTaxDetail getAdviseDueTaxDetails(long adviseId);
 }

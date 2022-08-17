@@ -36,6 +36,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.ChangeGraceEndService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
@@ -65,6 +67,8 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -74,6 +78,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -108,6 +113,22 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		financeDetail.setCustomerDetails(getCustomerDetails(fm));
 
 		finScheduleData.setFinServiceInstructions(finservInstList);
+
+		fm = finScheduleData.getFinanceMain();
+		if (fm.isStepFinance() && StringUtils.equals(fm.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
+			List<FinanceStepPolicyDetail> financeStepPolicyDetailList = financeStepDetailDAO
+					.getFinStepDetailListByFinRef(fm.getFinID(), "_View", false);
+			finScheduleData.setStepPolicyDetails(financeStepPolicyDetailList, true);
+		}
+
+		// Plan EMI Holiday Details
+		if (fm.isPlanEMIHAlw()) {
+			if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				finScheduleData.setPlanEMIHmonths(finPlanEmiHolidayDAO.getPlanEMIHMonthsByRef(finID, ""));
+			} else if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+				finScheduleData.setPlanEMIHDates(finPlanEmiHolidayDAO.getPlanEMIHDatesByRef(finID, ""));
+			}
+		}
 		financeDetail.setFinScheduleData(finScheduleData);
 
 		logger.debug(Literal.LEAVING);
@@ -193,13 +214,12 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 			}
 		}
 
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, PennantConstants.method_saveOrUpdate);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		FinScheduleData fsd = fd.getFinScheduleData();
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
@@ -221,6 +241,13 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 			financeMainDAO.save(fm, tableType, false);
 			finServiceInstructionDAO.save(fsi, tableType.getSuffix());
 
+			if (fm.isStepFinance() && CollectionUtils.isNotEmpty(fsd.getStepPolicyDetails())) {
+				financeStepDetailDAO.deleteList(fm.getFinID(), false, tableType.getSuffix());
+				saveStepDetailList(fsd, false, tableType.getSuffix());
+				List<AuditDetail> financeStepPolicyDetail = fd.getAuditDetailMap().get("FinanceStepPolicyDetail");
+				auditDetails.addAll(financeStepPolicyDetail);
+			}
+
 			auditHeader.setAuditReference(fm.getFinReference());
 			auditHeader.getAuditDetail().setModelData(fm);
 
@@ -229,6 +256,13 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 			finServiceInstructionDAO.deleteList(fm.getFinID(), rcdMaintainSts, tableType.getSuffix());
 			finServiceInstructionDAO.save(fsi, tableType.getSuffix());
+
+			if (fm.isStepFinance() && CollectionUtils.isNotEmpty(fsd.getStepPolicyDetails())) {
+				financeStepDetailDAO.deleteList(fm.getFinID(), false, tableType.getSuffix());
+				saveStepDetailList(fsd, false, tableType.getSuffix());
+				List<AuditDetail> financeStepPolicyDetail = fd.getAuditDetailMap().get("FinanceStepPolicyDetail");
+				auditDetails.addAll(financeStepPolicyDetail);
+			}
 
 		}
 
@@ -245,7 +279,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
-
+		auditHeader.setAuditDetails(auditDetails);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
 		auditHeader.setAuditDetail(
 				new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], fm.getBefImage(), fm));
@@ -269,6 +303,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		fd.setModuleDefiner(FinServiceEvent.LOANDOWNSIZING);
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(fd);
 
@@ -341,7 +376,12 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		financeMainDAO.delete(fm, TableType.TEMP_TAB, false, true);
 		finServiceInstructionDAO.deleteList(fm.getFinID(), FinServiceEvent.LOANDOWNSIZING, "_Temp");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		if (fm.isStepFinance() && CollectionUtils.isNotEmpty(fsd.getStepPolicyDetails())) {
+			financeStepDetailDAO.deleteList(fm.getFinID(), false, "");
+			saveStepDetailList(fsd, false, "");
+			List<AuditDetail> financeStepPolicyDetail = fd.getAuditDetailMap().get("FinanceStepPolicyDetail");
+			auditDetails.addAll(financeStepPolicyDetail);
+		}
 
 		// Extended field Render Details.
 		List<AuditDetail> details = fd.getAuditDetailMap().get("ExtendedFieldDetails");
@@ -455,6 +495,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 			return auditHeader;
 		}
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
@@ -462,11 +503,16 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		financeMainDAO.delete(fm, TableType.TEMP_TAB, false, true);
 		finServiceInstructionDAO.deleteList(fm.getFinID(), FinServiceEvent.LOANDOWNSIZING, "_Temp");
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
-		String auditTranType = auditHeader.getAuditTranType();
-		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, fields[0], fields[1], fm.getBefImage(), fm));
+		// Step Details
+		// =======================================
+		financeStepDetailDAO.deleteList(fm.getFinID(), false, "_Temp");
+		if (CollectionUtils.isNotEmpty(schdData.getStepPolicyDetails())) {
+			List<AuditDetail> financeStepPolicyDetail = fd.getAuditDetailMap().get("FinanceStepPolicyDetail");
+			auditDetails.addAll(financeStepPolicyDetail);
+		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
@@ -514,7 +560,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-
+		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader = nextProcess(auditHeader);
 
 		logger.debug(Literal.LEAVING);
@@ -538,6 +584,74 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		if (StringUtils.equals(PennantConstants.method_doApprove, method)
 				&& !PennantConstants.RECORD_TYPE_NEW.equals(fm.getRecordType())) {
 			auditDetail.setBefImage(financeMainDAO.getFinanceMainById(fm.getFinID(), "", false));
+		}
+
+		if (fm.isStepFinance() && StringUtils.equals(fm.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
+			FinServiceInstruction finServInst = fd.getFinScheduleData().getFinServiceInstructions().get(0);
+			BigDecimal revisedSanAmt = fm.getFinAssetValue().subtract(finServInst.getAmount());
+			BigDecimal totalAmt = fm.getTotalCpz().add(fm.getFinCurrAssetValue());
+			if ((totalAmt.compareTo(revisedSanAmt) > 0)) {
+				auditDetail.setErrorDetail(
+						ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "STP002", null, null)));
+			}
+
+			List<FinanceScheduleDetail> fsdList = fd.getFinScheduleData().getFinanceScheduleDetails();
+			List<FinanceStepPolicyDetail> spdList = fd.getFinScheduleData().getStepPolicyDetails();
+			List<FinanceStepPolicyDetail> rpyList = new ArrayList<>(1);
+			for (FinanceStepPolicyDetail financeStepPolicyDetail : spdList) {
+				if (StringUtils.equals(financeStepPolicyDetail.getStepSpecifier(),
+						PennantConstants.STEP_SPECIFIER_REG_EMI)) {
+					rpyList.add(financeStepPolicyDetail);
+				}
+			}
+
+			int idxStart = 0;
+			idxStart = idxStart + fm.getGraceTerms();
+
+			if (CollectionUtils.isNotEmpty(rpyList)) {
+				boolean isValidEMI = true;
+				Collections.sort(rpyList, (step1, step2) -> step1.getStepNo() > step2.getStepNo() ? 1
+						: step1.getStepNo() < step2.getStepNo() ? -1 : 0);
+				FinanceStepPolicyDetail lastStp = rpyList.get(rpyList.size() - 1);
+
+				if (revisedSanAmt.subtract(fm.getTotalCpz()).compareTo(fm.getFinCurrAssetValue()) == 0
+						&& fm.getMaturityDate().compareTo(lastStp.getStepEnd()) != 0) {
+					auditDetail.setErrorDetail(ErrorUtil
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "STP013", null, null)));
+					return auditDetail;
+				}
+				for (FinanceStepPolicyDetail spd : rpyList) {
+					if (fm.getNoOfSteps() != spd.getStepNo()) {
+						int instCount = 0;
+						for (int iFsd = idxStart; iFsd < fsdList.size(); iFsd++) {
+							FinanceScheduleDetail fsd = fsdList.get(iFsd);
+							if (fsd.isRepayOnSchDate()
+									&& StringUtils.equals(fsd.getSpecifier(), CalculationConstants.SCH_SPECIFIER_REPAY)
+									&& fsd.getSchDate().compareTo(spd.getStepStart()) >= 0) {
+								if (StringUtils.equals(fsd.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+									if (spd.getSteppedEMI().compareTo(BigDecimal.ZERO) > 0
+											&& fsd.getProfitCalc().compareTo(spd.getSteppedEMI()) > 0) {
+										auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+												new ErrorDetail(PennantConstants.KEY_FIELD, "STP003", null, null)));
+										isValidEMI = false;
+										break;
+									}
+								}
+								instCount = instCount + 1;
+							}
+
+							if (spd.getInstallments() == instCount) {
+								idxStart = iFsd + 1;
+								break;
+							}
+						}
+
+						if (!isValidEMI) {
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -592,7 +706,16 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 							financeDetail.getExtendedFieldHeader().getModuleName()));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
+
+		if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getStepPolicyDetails())) {
+			auditDetailMap.put("FinanceStepPolicyDetail",
+					setFinStepDetailAuditData(financeDetail.getFinScheduleData(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("FinanceStepPolicyDetail"));
+		}
+
 		financeDetail.setAuditDetailMap(auditDetailMap);
+		auditHeader.getAuditDetail().setModelData(financeDetail);
+		auditHeader.setAuditDetails(auditDetails);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}

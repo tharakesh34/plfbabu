@@ -59,7 +59,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -199,7 +199,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	int listRows;
 	private transient ProvisionService provisionService;
 	private transient FinanceDetailService financeDetailService;
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 
 	private String moduleDefiner = "";
 	private String buildedWhereCondition = "";
@@ -389,7 +389,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 				FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(provision.getFinID(),
 						"_View", false);
 				financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(false);
-				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
+				financeDetail.setCustomerDetails(customerDataService.getCustomerDetailsbyID(
 						financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
 				financeDetail.setDocumentDetailsList(getFinanceDetailService()
 						.getFinDocByFinRef(provision.getFinReference(), moduleDefiner, "_View"));
@@ -1020,11 +1020,4 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
 }

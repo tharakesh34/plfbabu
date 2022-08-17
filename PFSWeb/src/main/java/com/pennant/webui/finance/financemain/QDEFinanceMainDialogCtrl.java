@@ -82,6 +82,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -99,6 +100,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -169,7 +171,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
 	protected transient BigDecimal oldVar_downPaySupl;
-	Date startDate = DateUtility.addDays(DateUtility.getAppDate(), -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+	Date startDate = DateUtil.addDays(SysParamUtil.getAppDate(),
+			-SysParamUtil.getValueAsInt(SMTParameterConstants.LOAN_START_DATE_BACK_DAYS));
 	Date endDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 	int finFormatter = 0;
 

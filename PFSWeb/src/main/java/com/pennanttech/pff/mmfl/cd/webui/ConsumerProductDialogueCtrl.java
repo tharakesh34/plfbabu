@@ -36,8 +36,8 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.ConsumerProduct;
-import com.pennanttech.pff.mmfl.cd.service.ConsumerProductService;
+import com.pennanttech.pff.cd.model.ConsumerProduct;
+import com.pennanttech.pff.cd.service.ConsumerProductService;
 
 public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	private static final long serialVersionUID = 1L;
@@ -424,7 +424,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		if (!this.modelDescription.isReadonly()) {
 			this.modelDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelDescription.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true, 1, 20));
+							PennantRegularExpressions.REGEX_DESCRIPTION, true, 1, 50));
 		}
 
 		if (!this.txtNames.getText().equals("")) {
@@ -438,7 +438,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		if (!this.assetDescription.isReadonly()) {
 			this.assetDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_AssetDescription.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true, 1, 20));
+							PennantRegularExpressions.REGEX_DESCRIPTION, true, 1, 50));
 		}
 
 		if (!this.minAmount.isReadonly()) {

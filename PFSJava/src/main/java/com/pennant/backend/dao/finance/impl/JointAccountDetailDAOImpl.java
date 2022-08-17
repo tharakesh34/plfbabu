@@ -42,6 +42,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -609,6 +610,59 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			}
 
 		}, finID);
+	}
+
+	@Override
+	public List<Long> getCustIdsByFinID(long finID) {
+		String sql = "Select CustID From FinJointAccountDetails_View Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
+			return rs.getLong(1);
+		}, finID);
+	}
+
+	@Override
+	public List<FinanceEnquiry> getCoApplicantsFin(String custCif) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, fm.FinReference, fm.FinType, fm.FinStatus, fm.FinStartDate, fm.FinCcy, fm.FinAmount");
+		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue ");
+		sql.append(", fm.FinRepaymentAmount, fm.NumberOfTerms, ft.FintypeDesc as LovDescFinTypeName");
+		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount");
+		sql.append(" from FinanceMain fm");
+		sql.append(" inner join RMTfinanceTypes ft on ft.Fintype = fm.FinType");
+		sql.append(" left join (select FinID, (NSchdPri+NSchdPft) MaxInstAmount");
+		sql.append(" from FinPftdetails) t6 on t6.FinID = fm.FinID");
+		sql.append(" inner join FinJointAccountDetails  fja on fja.FinID = fm.FinID");
+		sql.append(" Where fja.custcif = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, custCif);
+		}, (rs, rowNum) -> {
+			FinanceEnquiry fm = new FinanceEnquiry();
+
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setFinStatus(rs.getString("FinStatus"));
+			fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+			fm.setFinCcy(rs.getString("FinCcy"));
+			fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+			fm.setDownPayment(rs.getBigDecimal("DownPayment"));
+			fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
+			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+			fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
+			fm.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));
+			fm.setCustomerType("Co Applicant");
+
+			return fm;
+		});
 	}
 
 	private StringBuilder sqlSelectQuery(String type) {

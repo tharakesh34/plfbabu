@@ -204,6 +204,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private byte[] imagebyte;
 
 	protected Textbox pennyDropResult;
+	protected Label label_pennyDropResult;
 	protected Textbox txnDetails;
 	protected Button btnPennyDropResult;
 	protected Button btnReason;
@@ -1261,7 +1262,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		 * if (SysParamUtil.isAllowed("MANDATE_EMANDATE_REQUIRED")) {
 		 * readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.umrNumber); }
 		 */
-		this.btnPennyDropResult.setVisible(!isReadOnly("button_MandateDialog_btnPennyDropResult"));
+
+		boolean isVisible = !isReadOnly("button_MandateDialog_btnPennyDropResult");
+
+		this.btnPennyDropResult.setVisible(isVisible);
+		this.pennyDropResult.setVisible(isVisible);
+		this.label_pennyDropResult.setVisible(isVisible);
+
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
 			if (this.finReference.getValue() == null) {

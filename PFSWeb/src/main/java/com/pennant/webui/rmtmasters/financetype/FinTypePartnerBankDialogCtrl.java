@@ -97,6 +97,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
 	List<ValueLabel> paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
 	private List<FinTypePartnerBank> finTypePartnerBankList;
+	protected boolean consumerDurable = false;
 
 	/**
 	 * default constructor.<br>
@@ -147,6 +148,10 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		if (arguments.containsKey("role")) {
 			userRole = arguments.get("role").toString();
 			getUserWorkspace().allocateRoleAuthorities(arguments.get("role").toString(), "FinTypePartnerBankDialog");
+		}
+
+		if (arguments.containsKey("consumerDurable")) {
+			this.consumerDurable = (Boolean) arguments.get("consumerDurable");
 		}
 
 		this.finTypePartnerBank.setWorkflowId(0);
@@ -342,7 +347,11 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		this.label_finTypeDesc.setValue(aFinTypePartnerBank.getFinTypeDesc());
 
 		fillComboBox(this.purpose, aFinTypePartnerBank.getPurpose(), purposeList, "");
-		fillComboBox(this.paymentMode, aFinTypePartnerBank.getPaymentMode(), paymentModesList, "");
+		if (!consumerDurable) {
+			fillComboBox(this.paymentMode, aFinTypePartnerBank.getPaymentMode(), paymentModesList, ",RTRNGDS,");
+		} else {
+			fillComboBox(this.paymentMode, aFinTypePartnerBank.getPaymentMode(), paymentModesList, "");
+		}
 
 		setPartnerBankProperties();
 
@@ -627,7 +636,11 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 			this.paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
 		}
 
-		fillComboBox(this.paymentMode, "", paymentModesList, "");
+		if (!consumerDurable) {
+			fillComboBox(this.paymentMode, "", paymentModesList, ",RTRNGDS,");
+		} else {
+			fillComboBox(this.paymentMode, "", paymentModesList, "");
+		}
 		setPartnerBankProperties();
 
 		logger.debug("Leaving" + event.toString());

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -53,6 +54,8 @@ import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.ProductAssetDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -79,6 +82,7 @@ import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -86,6 +90,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.ProductUtil;
 
 /**
  * Service implementation for methods that depends on <b>FinanceType</b>.<br>
@@ -118,6 +123,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 	@Autowired
 	private FeeTypeService feeTypeService;
+	@Autowired
+	private RuleDAO ruleDAO;
 
 	public FinanceTypeServiceImpl() {
 		super();
@@ -302,6 +309,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					getFinTypePartnerBankService().getFinTypePartnerBanksList(finType, "_View"));
 			financeType.setFinTypeExpenseList(getFinTypeExpenseService().getFinTypeExpenseById(finType));
 			financeType.setIrrFinanceTypeList(getIrrFinanceTypeDAO().getIRRFinanceTypeList(finType, "_View"));
+
+			if (ProductUtil.isOverDraft(financeType.getProductCategory())) {
+				financeType.setFeetype(feeTypeService.getApprovedFeeTypeById(financeType.getOverdraftTxnChrgFeeType()));
+			}
 		}
 
 		logger.debug("Leaving");
@@ -809,8 +820,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 					boolean feeTypeCode = subventionFeeCode.equals(fee.getFeeTypeCode());
 					boolean orgFee = fee.isOriginationFee() && fee.getModuleId() == moduleId;
+					boolean serfee = !fee.isOriginationFee() && fee.getModuleId() == moduleId;
 
-					if ((feeTypeOrg || feeTypeNonOrg) && feeTypeCode && orgFee) {
+					if ((feeTypeOrg || feeTypeNonOrg) && feeTypeCode && (orgFee || serfee)) {
 						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 					}
 				}
@@ -2188,6 +2200,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 	public FinTypeReceiptModesDAO getFinTypeReceiptModesDAO() {
 		return finTypeReceiptModesDAO;
+	}
+
+	@Override
+	public List<ValueLabel> provisionRules() {
+		return ruleDAO.getRuleByModuleAndEvent(RuleConstants.MODULE_PROVSN, RuleConstants.MODULE_PROVSN, "").stream()
+				.map(rule -> new ValueLabel(String.valueOf(rule.getId()), rule.getRuleCode()))
+				.collect(Collectors.toList());
 	}
 
 	public void setFinTypeReceiptModesDAO(FinTypeReceiptModesDAO finTypeReceiptModesDAO) {

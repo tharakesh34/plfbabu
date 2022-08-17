@@ -116,7 +116,28 @@ public class ErrorUtil implements Serializable {
 		return oldDetail;
 	}
 
-	public static void setErrorDetailService(ErrorDetailService errorDetailService) {
+	public static ErrorDetail getErrorDetailById(String errorCode) {
+		return errorDetailService.getErrorDetailById(errorCode);
+	}
+
+	public static String getErrorMessage(String errorMessage, String[] errorParameters) {
+		String error = StringUtils.trimToEmpty(errorMessage);
+
+		if (errorParameters != null) {
+			for (int i = 0; i < errorParameters.length; i++) {
+				String parameter = StringUtils.trimToEmpty(errorParameters[i]);
+				error = error.replace("{" + (i) + "}", parameter);
+			}
+		}
+
+		for (int i = 0; i < 5; i++) {
+			error = error.replace("{" + (i) + "}", "");
+		}
+
+		return error;
+	}
+
+	public void setErrorDetailService(ErrorDetailService errorDetailService) {
 		ErrorUtil.errorDetailService = errorDetailService;
 	}
 

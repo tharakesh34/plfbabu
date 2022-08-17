@@ -506,4 +506,104 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#1442.1" author="saranya.s">
+		<addColumn tableName="ADTBMTBANKDETAIL">
+			<column name="MinAccNoLength" type="int" defaultValue="0" />
+		</addColumn>
+	</changeSet> 
+	<changeSet id="17" author="santhoshi.k">
+		<modifyDataType tableName="ADTCD_PRODUCTS" columnName="MODELID" newDataType="varchar2(20)" />
+	</changeSet>
+	
+	<changeSet id="ST#108.1" author="naga.g">
+		<addColumn tableName="ADTTRANSACTIONMAPPING">
+			<column name="TID1" type="VARCHAR2(20)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#108.2" author="naga.g">
+		<sql>
+			<![CDATA[
+			          UPDATE ADTTRANSACTIONMAPPING SET TID1 = TID;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#108.3" author="naga.a">
+		<dropColumn tableName="ADTTRANSACTIONMAPPING" columnName="TID" />
+	</changeSet>
+
+	<changeSet id="ST#108.4" author="naga.g">
+		<renameColumn tableName="ADTTRANSACTIONMAPPING"
+			oldColumnName="TID1" newColumnName="TID" />
+	</changeSet>
+
+
+	<changeSet id="ST#108.5" author="naga.g">
+		<modifyDataType tableName="ADTLOAN_CD_ORG_ED"
+			columnName="TID" newDataType="VARCHAR2(20)" />
+	</changeSet>	
+	
+	<changeSet id="TK#208.1" author="sampath.d">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="AddressLine1" type="VARCHAR(50)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="AddressLine2" type="VARCHAR(50)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="AddressLine3" type="VARCHAR(50)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="City" type="VARCHAR(50)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="State" type="VARCHAR(8)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="Country" type="CHAR(2)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="PincodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#352.1" author="sampath.d">
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="ManufacPAN" type="VARCHAR(10)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="GstInNumber" type="VARCHAR(15)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="ManfMobileNo" type="VARCHAR(15)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="ManfEmailId" type="VARCHAR(50)" />
+		</addColumn>
+		<addColumn tableName="ADTCD_MANUFACTURERS">
+			<column name="ManfacContactName" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#352.2" author="sampath.d">
+		<addColumn tableName="AdtCD_Merchants">
+			<column name="MerchPAN" type="varchar(10)" />
+		</addColumn>
+		<addColumn tableName="AdtCD_Merchants">
+			<column name="GstInNumber" type="varchar(15)" />
+		</addColumn>
+		<addColumn tableName="AdtCD_Merchants">
+			<column name="MerchMobileNo" type="varchar(15)" />
+		</addColumn>
+		<addColumn tableName="AdtCD_Merchants">
+			<column name="MerchEmailId" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#192" author="sampath.d">
+		<modifyDataType tableName="ADTCD_PRODUCTS" columnName="MODELDESCRIPTION" newDataType="varchar2(50)" />
+		<modifyDataType tableName="ADTCD_PRODUCTS" columnName="ASSETDESCRIPTION" newDataType="varchar2(50)" />
+	</changeSet>
+
 </databaseChangeLog>	

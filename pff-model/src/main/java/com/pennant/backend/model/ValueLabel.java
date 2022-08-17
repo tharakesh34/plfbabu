@@ -41,9 +41,15 @@ public class ValueLabel implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String value;
 	private String label;
+	private Object object;
 
 	public ValueLabel(String newValue, String newLabel) {
 		this.value = newValue;
+		this.label = newLabel;
+	}
+
+	public ValueLabel(Object object, String newLabel) {
+		this.object = object;
 		this.label = newLabel;
 	}
 
@@ -66,5 +72,13 @@ public class ValueLabel implements Serializable {
 
 	public void setValue(String string) {
 		value = string;
+	}
+
+	public void setObject(String object) {
+		this.object = object;
+	}
+
+	public Object getObject() {
+		return object;
 	}
 }

@@ -192,7 +192,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	private Date fromDate;
 	@XmlElement
 	private Date toDate;
-
+	@XmlElement(name = "NetDisbursementAmount")
+	private BigDecimal netDisbAmt;
 	@XmlElement(name = "docName")
 	private String documentName;
 	@XmlElement(name = "docContent")
@@ -207,6 +208,9 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	private String downloadType;
 	@XmlElement
 	private String lei;
+
+	@XmlElement
+	private String micr;
 
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
@@ -317,6 +321,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 		entity.setVasProductCode(this.vasProductCode);
 		entity.setDisbResponseBatchId(this.disbResponseBatchId);
 		entity.setUserId(this.userId);
+		entity.setMicr(this.micr);
+		entity.setNetDisbAmt(this.netDisbAmt);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -382,7 +388,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 		excludeFields.add("disbResponseBatchId");
 		excludeFields.add("clearingStatus");
 		excludeFields.add("downloadType");
-
+		excludeFields.add("micr");
+		excludeFields.add("netDisbAmt");
 		return excludeFields;
 	}
 
@@ -1098,4 +1105,19 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 		this.lei = lei;
 	}
 
+	public String getMicr() {
+		return micr;
+	}
+
+	public void setMicr(String micr) {
+		this.micr = micr;
+	}
+
+	public BigDecimal getNetDisbAmt() {
+		return netDisbAmt;
+	}
+
+	public void setNetDisbAmt(BigDecimal netDisbAmt) {
+		this.netDisbAmt = netDisbAmt;
+	}
 }

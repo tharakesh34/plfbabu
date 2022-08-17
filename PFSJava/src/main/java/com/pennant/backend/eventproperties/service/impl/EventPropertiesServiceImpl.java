@@ -102,6 +102,7 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		ep.setGstInvOnDue(SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE));
 		ep.setEodThreadCount(SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT));
 		ep.setCovenantModule(SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE));
+		ep.setOverDraftMonthlyLimit(SysParamUtil.getValueAsInt(SMTParameterConstants.OVERDRAFT_LOANS_MONTHLY_LIMIT));
 
 		BigDecimal ignoringBucket = BigDecimal.ZERO;
 		Object object = SysParamUtil.getValue(SMTParameterConstants.IGNORING_BUCKET);

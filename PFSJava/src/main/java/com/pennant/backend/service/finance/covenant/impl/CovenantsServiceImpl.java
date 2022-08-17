@@ -34,6 +34,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
@@ -54,7 +55,7 @@ import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -77,8 +78,8 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private CustomerDetailsService customerDetailsService;
 	private DocumentDetailsDAO documentDetailsDAO;
+	private CustomerDataService customerDataService;
 
 	public CovenantsServiceImpl() {
 		super();
@@ -419,7 +420,8 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		return auditDetails;
 	}
 
-	private void processDocuments(List<AuditDetail> auditDetails, List<CovenantDocument> covenantDocuments,
+	@Override
+	public void processDocuments(List<AuditDetail> auditDetails, List<CovenantDocument> covenantDocuments,
 			TableType tableType, String tranType, boolean isApproveRcd) {
 		logger.debug(Literal.ENTERING);
 
@@ -770,8 +772,8 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 
 		// Finance Customer Details
 		if (schdData.getFinanceMain().getCustID() != 0 && schdData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
-			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(schdData.getFinanceMain().getCustID(),
-					true, "_View"));
+			fd.setCustomerDetails(
+					customerDataService.getCustomerDetailsbyID(schdData.getFinanceMain().getCustID(), true, "_View"));
 		}
 
 		List<Covenant> covenants = covenantsDAO.getCovenants(finreference, "Loan", TableType.VIEW);
@@ -855,14 +857,85 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		List<Covenant> list = covenantsDAO.getCovenants(finReference);
 
 		for (Covenant covenant : list) {
-			if (DateUtility.compare(appDate, covenant.getNextFrequencyDate()) > 0) {
-				List<CovenantDocument> covenantDocuments = covenantsDAO.getCovenantDocuments(covenant.getId(),
-						TableType.BOTH_TAB);
+			boolean oneTime = false;
+			if ("O".equals(covenant.getFrequency()) || StringUtils.equals(covenant.getFrequency(), null)) {
+				oneTime = true;
+			}
+			List<CovenantDocument> covenantDocuments = covenantsDAO.getCovenantDocuments(covenant.getId(),
+					TableType.BOTH_TAB);
+			if (covenant.isAllowPostPonement() && covenant.getExtendedDate() != null) {
+				if (DateUtil.compare(appDate, covenant.getExtendedDate()) >= 0) {
+					if (covenantDocuments.isEmpty()
+							|| !isReceived(covenantDocuments, covenant.getReceivableDate(), oneTime)) {
+						String[] errParam = new String[2];
+						errParam[0] = StringUtils.trimToEmpty(covenant.getDocTypeName());
+						errParam[1] = DateUtil.format(covenant.getExtendedDate(), DateFormat.LONG_DATE);
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("ADM004", errParam)));
+					}
+				}
+			} else if (DateUtil.compare(appDate, covenant.getReceivableDate()) >= 0) {
+				if (covenantDocuments.isEmpty()
+						|| !isReceived(covenantDocuments, covenant.getReceivableDate(), oneTime)) {
+					String[] errParam = new String[2];
+					errParam[0] = StringUtils.trimToEmpty(covenant.getDocTypeName());
+					errParam[1] = DateUtil.format(covenant.getReceivableDate(), DateFormat.LONG_DATE);
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("ADM004", errParam)));
+				}
+
+			} else if (covenant.getGraceDays() > 0) {
+				if (covenant.getGraceDueDate() != null && DateUtil.compare(appDate, covenant.getGraceDueDate()) >= 0) {
+					if (covenantDocuments.isEmpty()
+							|| !isReceived(covenantDocuments, covenant.getNextFrequencyDate(), oneTime)) {
+						String[] errParam = new String[2];
+						errParam[0] = StringUtils.trimToEmpty(covenant.getDocTypeName());
+						errParam[1] = DateUtil.format(covenant.getGraceDueDate(), DateFormat.LONG_DATE);
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("ADM004", errParam)));
+					}
+				}
+			} else if (covenant.getNextFrequencyDate() != null
+					&& DateUtil.compare(appDate, covenant.getNextFrequencyDate()) >= 0) {
 				if (covenantDocuments.isEmpty()) {
 					String[] errParam = new String[2];
 					errParam[0] = StringUtils.trimToEmpty(covenant.getDocTypeName());
 					errParam[1] = DateUtil.format(covenant.getNextFrequencyDate(), DateFormat.LONG_DATE);
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("ADM004", errParam)));
+				} else {
+					int count = 0;
+					for (CovenantDocument document : covenantDocuments) {
+
+						if (document.getFrequencyDate() == null) {
+							continue;
+						}
+
+						if (DateUtil.compare(covenant.getNextFrequencyDate(), document.getFrequencyDate()) == 0
+								&& document.getDocumentReceivedDate() != null) {
+							count++;
+							break;
+						}
+					}
+					if (count <= 0) {
+						String[] errParam = new String[2];
+						errParam[0] = StringUtils.trimToEmpty(covenant.getDocTypeName());
+						errParam[1] = DateUtil.format(covenant.getNextFrequencyDate(), DateFormat.LONG_DATE);
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("ADM004", errParam)));
+					}
+				}
+			}
+
+			for (CovenantDocument document : covenantDocuments) {
+				if (document.getFrequencyDate() != null && (DateUtil.compare(document.getFrequencyDate(),
+						covenant.getReceivableDate()) == 0
+						|| DateUtility.compare(document.getFrequencyDate(), covenant.getNextFrequencyDate()) == 0)) {
+					continue;
+				}
+				if (document.getFrequencyDate() != null
+						&& document.getFrequencyDate().compareTo(covenant.getNextFrequencyDate()) <= 0
+						&& document.getDocumentReceivedDate() == null) {
+					String[] errParam = new String[2];
+					errParam[0] = StringUtils.trimToEmpty(covenant.getDocTypeName());
+					errParam[1] = DateUtil.format(document.getFrequencyDate(), DateFormat.LONG_DATE);
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("ADM004", errParam)));
+					break;
 				}
 			}
 		}
@@ -872,6 +945,21 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 	@Override
 	public void deleteDocumentByDocumentId(Long documentId, String tableType) {
 		covenantsDAO.deleteDocumentByDocumentId(documentId, tableType);
+	}
+
+	private boolean isReceived(List<CovenantDocument> covenantDocuments, Date receivableDate, boolean oneTime) {
+		for (CovenantDocument covenantDocument : covenantDocuments) {
+			if (covenantDocument.getFrequencyDate() != null
+					&& covenantDocument.getFrequencyDate().compareTo(receivableDate) == 0) {
+				if (covenantDocument.getDocumentReceivedDate() != null) {
+					return true;
+				}
+			}
+			if (oneTime && covenantDocument.getDocumentReceivedDate() != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setCovenantsDAO(CovenantsDAO covenantsDAO) {
@@ -888,10 +976,6 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
 	}
 
 	public DocumentDetailsDAO getDocumentDetailsDAO() {
@@ -918,7 +1002,9 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		return financeScheduleDetailDAO;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
+
 }

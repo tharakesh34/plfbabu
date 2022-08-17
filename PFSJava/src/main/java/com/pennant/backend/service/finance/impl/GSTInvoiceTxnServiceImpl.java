@@ -15,6 +15,7 @@ import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.customermasters.GSTDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
@@ -25,6 +26,7 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.GSTDetail;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -62,6 +64,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	private BranchDAO branchDAO;
 	private FinanceMainDAO financeMainDAO;
 	private VehicleDealerDAO vehicleDealerDAO;
+	private GSTDetailDAO gstDetailDAO;
 
 	public GSTInvoiceTxnServiceImpl() {
 		super();
@@ -119,6 +122,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			if (!fee.isTaxApplicable() || StringUtils.isBlank(fee.getFeeTypeCode())) {
 				continue;
 			}
+
 			if (!origination && fee.isOriginationFee()) {
 				continue;
 			}
@@ -679,6 +683,11 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 		Branch fromBranch = branchDAO.getBranchById(fm.getFinBranch(), "_AView");
 
+		if (SysParamUtil.isAllowed(SMTParameterConstants.GST_DEFAULT_FROM_STATE)) {
+			String defaultFinBranch = SysParamUtil.getValueAsString(SMTParameterConstants.GST_DEFAULT_STATE_CODE);
+			fromBranch = branchDAO.getBranchById(defaultFinBranch, "");
+		}
+
 		if (fromBranch == null) {
 			logger.warn("Linked Transaction ID {}  & Invoice Type {} Branch details are Empty.", linkedTranId,
 					invoiceType);
@@ -750,12 +759,18 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		}
 
 		FinanceTaxDetail finTaxDetail = fd.getFinanceTaxDetail();
+		GSTDetail gstDetail = gstDetailDAO.getDefaultGSTDetailById(fm.getCustID(), "_AView");
+
 		Province customerProvince = null;
 		String country = "";
 		String province = "";
 
 		// If tax Details Exists on against Finance
-		if (finTaxDetail != null && !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())) {
+		if (finTaxDetail != null && finTaxDetail.getApplicableFor() != null
+				&& !PennantConstants.List_Select.equals(finTaxDetail.getApplicableFor())) {
+			if (StringUtils.isBlank(finTaxDetail.getCustShrtName()) && fd.getCustomerDetails() != null) {
+				finTaxDetail.setCustShrtName(fd.getCustomerDetails().getCustomer().getCustShrtName());
+			}
 			country = finTaxDetail.getCountry();
 			province = finTaxDetail.getProvince();
 			invoice.setCustomerID(finTaxDetail.getCustCIF());
@@ -763,52 +778,60 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			invoice.setCustomerGSTIN(finTaxDetail.getTaxNumber());
 			invoice.setCustomerAddress(getAddress(finTaxDetail));
 		} else {
-			CustomerAddres address = null;
-			if (fd.getCustomerDetails() != null) {
-				List<CustomerAddres> addresses = fd.getCustomerDetails().getAddressList();
-				if (CollectionUtils.isNotEmpty(addresses)) {
-					for (CustomerAddres ca : addresses) {
-						if (ca.getCustAddrPriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-							continue;
+			if (gstDetail != null) {
+				country = gstDetail.getCountryCode();
+				province = gstDetail.getStateCode();
+				invoice.setCustomerID(gstDetail.getCustCIF());
+				invoice.setCustomerName(gstDetail.getCustShrtName());
+				invoice.setCustomerGSTIN(gstDetail.getGstNumber());
+				invoice.setCustomerAddress(getAddress(gstDetail));
+			} else {
+				CustomerAddres address = null;
+				if (fd.getCustomerDetails() != null && fd.getCustomerDetails().getAddressList() != null) {
+					List<CustomerAddres> addresses = fd.getCustomerDetails().getAddressList();
+					if (CollectionUtils.isNotEmpty(addresses)) {
+						for (CustomerAddres ca : addresses) {
+							if (ca.getCustAddrPriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+								continue;
+							}
+							address = ca;
+							break;
 						}
-						address = ca;
-						break;
+					} else {
+						address = customerAddresDAO.getHighPriorityCustAddr(fm.getCustID(), "_AView");
 					}
 				} else {
 					address = customerAddresDAO.getHighPriorityCustAddr(fm.getCustID(), "_AView");
 				}
-			} else {
-				address = customerAddresDAO.getHighPriorityCustAddr(fm.getCustID(), "_AView");
+
+				if (address == null) {
+					logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+							+ " --> Customer Address Details are Empty.");
+					return null; // write this case as a error message
+				}
+
+				country = address.getCustAddrCountry();
+				province = address.getCustAddrProvince();
+
+				Customer cust = null;
+				if (fd.getCustomerDetails() != null && fd.getCustomerDetails().getCustomer() != null) {
+					cust = fd.getCustomerDetails().getCustomer();
+				}
+				if (cust == null) {
+					cust = this.customerDAO.checkCustomerByID(fm.getCustID(), "");
+				}
+
+				if (cust == null) {
+					logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
+							+ " --> Customer Details are Empty.");
+					return null; // write this case as a error message
+				}
+				invoice.setCustomerID(cust.getCustCIF());
+				invoice.setCustomerName(cust.getCustShrtName());
+
+				// Preparing customer Address
+				invoice.setCustomerAddress(prepareCustAddress(address));
 			}
-
-			if (address == null) {
-				logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
-						+ " --> Customer Address Details are Empty.");
-				return null; // write this case as a error message
-			}
-
-			country = address.getCustAddrCountry();
-			province = address.getCustAddrProvince();
-
-			Customer cust = null;
-			if (fd.getCustomerDetails() != null && fd.getCustomerDetails().getCustomer() != null) {
-				cust = fd.getCustomerDetails().getCustomer();
-			}
-			if (cust == null) {
-				cust = this.customerDAO.checkCustomerByID(fm.getCustID(), "");
-			}
-
-			if (cust == null) {
-				logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
-						+ " --> Customer Details are Empty.");
-				return null; // write this case as a error message
-			}
-			invoice.setCustomerID(cust.getCustCIF());
-			invoice.setCustomerName(cust.getCustShrtName());
-
-			// Preparing customer Address
-			invoice.setCustomerAddress(prepareCustAddress(address));
-
 		}
 
 		customerProvince = this.provinceDAO.getProvinceById(country, province, "_AView");
@@ -909,7 +932,12 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				entityCode);
 
 		if (companyProvince != null) {
-			String cpProvince = companyProvince.getCPProvince();
+			String cpProvince = companyProvince.getTaxStateCode();
+
+			if (StringUtils.isBlank(cpProvince)) {
+				cpProvince = companyProvince.getCPProvince();
+			}
+
 			String cpProvinceName = companyProvince.getCPProvinceName();
 			if (StringUtils.isBlank(cpProvince) || StringUtils.isBlank(cpProvinceName)) {
 				return null;
@@ -1038,6 +1066,17 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 	}
 
+	private String getAddress(GSTDetail gstDetail) {
+		String addrLine1 = StringUtils.trimToEmpty(gstDetail.getAddressLine1());
+		String addrLine2 = StringUtils.trimToNull(gstDetail.getAddressLine2());
+		String addrLine3 = StringUtils.trimToNull(gstDetail.getAddressLine3());
+		String addrLine4 = StringUtils.trimToNull(gstDetail.getAddressLine4());
+		String city = StringUtils.trimToNull(gstDetail.getCityCode());
+		String pinCode = StringUtils.trimToNull(gstDetail.getPinCode());
+
+		return getCommaSeperate(addrLine1, addrLine2, addrLine3, addrLine4, city, pinCode);
+	}
+
 	/**
 	 * Method for preparing Customer Address for Invoice Report Generation
 	 * 
@@ -1105,5 +1144,9 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 	public void setVehicleDealerDAO(VehicleDealerDAO vehicleDealerDAO) {
 		this.vehicleDealerDAO = vehicleDealerDAO;
+	}
+
+	public void setGstDetailDAO(GSTDetailDAO gstDetailDAO) {
+		this.gstDetailDAO = gstDetailDAO;
 	}
 }

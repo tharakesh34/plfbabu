@@ -138,7 +138,7 @@ public class ScheduleGenerator {
 
 				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
-					if (DateUtility.compare(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()) == 0) {
+					if (DateUtil.compare(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()) != 0) {
 						curSchd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
 					}
 				} else if (curSchd.getSchDate().compareTo(financeMain.getMaturityDate()) == 0) {
@@ -287,7 +287,7 @@ public class ScheduleGenerator {
 
 			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
 				// Bugfix:Removed '=' condition to fix ROI Issue in Change Moratorium at GraceEnd
-				if (DateUtility.compare(curSchd.getSchDate(), newSchdAfter) >= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), newSchdAfter) >= 0) {
 					if (prvSchd != null) {
 						curSchd.setActRate(prvSchd.getActRate());
 						curSchd.setBaseRate(prvSchd.getBaseRate());
@@ -336,11 +336,15 @@ public class ScheduleGenerator {
 					curSchd.setRepayOnSchDate(false);
 
 					// Set Profit on Schedule Flag
-					if (StringUtils.equals(CalculationConstants.SCHMTHD_GRCENDPAY, curSchd.getSchdMethod())) {
+					if (CalculationConstants.SCHMTHD_GRCENDPAY.equals(curSchd.getSchdMethod())) {
 						curSchd.setPftOnSchDate(true);
-					} else if (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, curSchd.getSchdMethod())
-							|| StringUtils.equals(CalculationConstants.SCHMTHD_PFTCAP, curSchd.getSchdMethod())
-							|| StringUtils.equals(CalculationConstants.SCHMTHD_PFTCPZ, curSchd.getSchdMethod())) {
+					} else if (CalculationConstants.SCHMTHD_PFT.equals(curSchd.getSchdMethod())
+							|| CalculationConstants.SCHMTHD_PFTCAP.equals(curSchd.getSchdMethod())
+							|| CalculationConstants.SCHMTHD_PRI_PFTC.equals(curSchd.getSchdMethod())
+							|| CalculationConstants.SCHMTHD_PFTCPZ.equals(curSchd.getSchdMethod())
+							|| (financeMain.isStepFinance()
+									&& PennantConstants.STEPPING_CALC_AMT.equals(financeMain.getCalcOfSteps())
+									&& CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod()))) {
 						if (FrequencyUtil.isFrqDate(financeMain.getGrcPftFrq(), financeMain.getGrcPeriodEndDate())) {
 							curSchd.setPftOnSchDate(true);
 							curSchd.setRepayOnSchDate(true);
@@ -393,13 +397,11 @@ public class ScheduleGenerator {
 				continue;
 			}
 
-			BigDecimal prvTermDisbAmount = BigDecimal.ZERO;
 			FinanceScheduleDetail schedule = new FinanceScheduleDetail();
 
 			if (finScheduleData.getScheduleMap() != null && finScheduleData.getScheduleMap().containsKey(disbDate)) {
 
 				schedule = finScheduleData.getScheduleMap().get(disbDate);
-				prvTermDisbAmount = schedule.getDisbAmount();
 			}
 
 			schedule.setDisbOnSchDate(true);
@@ -998,6 +1000,7 @@ public class ScheduleGenerator {
 							schedule.setPftOnSchDate(true);
 						} else if (financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFT)
 								|| financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFTCAP)
+								|| financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PRI_PFTC)
 								|| financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
 
 							// TODO : SATYA - Re Verification Required
@@ -1005,6 +1008,11 @@ public class ScheduleGenerator {
 								schedule.setPftOnSchDate(true);
 							}
 						}
+
+						schedule.setActRate(financeMain.getGrcPftRate());
+						schedule.setBaseRate(financeMain.getGraceBaseRate());
+						schedule.setSplRate(financeMain.getGraceSpecialRate());
+						schedule.setMrgRate(financeMain.getGrcMargin());
 
 						schedule.setRepayOnSchDate(false);
 
@@ -1211,13 +1219,6 @@ public class ScheduleGenerator {
 				errorParm2[0] = PennantJavaUtil.getLabel("label_NextGraceProfitDate");
 				errorParm2[1] = "";
 				return getErrorDetail("Schedule", "30101", errorParm2, new String[] { "" });
-			}
-
-			if (financeMain.getNextGrcPftDate().after(financeMain.getGrcPeriodEndDate())) {
-				errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextGrcPftDate());
-				errorParm2[1] = DateUtility.formatToShortDate(financeMain.getGrcPeriodEndDate());
-				// System is not allowing to do Add Disbursement in Grace period
-				// return getErrorDetail("Schedule", "90161", errorParm2, errorParm2);
 			}
 
 			if (financeMain.isAllowGrcPftRvw()) {

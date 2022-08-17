@@ -1219,7 +1219,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			if (StringUtils.equals(finEventValue, AccountingEvent.REPAY)
 					|| StringUtils.equals(finEventValue, AccountingEvent.EARLYPAY)
 					|| StringUtils.equals(finEventValue, AccountingEvent.EARLYSTL)) {
-				calOnExcludeFields = "";
+				calOnExcludeFields = ",";
 			}
 		}
 

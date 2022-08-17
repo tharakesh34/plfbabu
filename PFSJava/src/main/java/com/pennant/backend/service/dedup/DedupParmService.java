@@ -85,4 +85,6 @@ public interface DedupParmService {
 
 	List<CustomerDedup> doCustomerDedup(CustomerDetails customerDetails, LoggedInUser userDetails, String finType,
 			String role);
+
+	StringBuilder getSelectQuery(CustomerDedup dedup, boolean blackList);
 }

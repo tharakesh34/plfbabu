@@ -15,14 +15,16 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 @XmlAccessorType(XmlAccessType.NONE)
 public class Covenant extends CovenantType {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement
 	private String keyReference;
 	@XmlElement
 	private Date receivableDate;
 	private boolean documentReceived;
 	@XmlElement
 	private Date documentReceivedDate;
+	@XmlElement
 	private Date nextFrequencyDate;
+	@XmlElement
 	private Date graceDueDate;
 	@XmlElement
 	private boolean internalUse;
@@ -37,6 +39,7 @@ public class Covenant extends CovenantType {
 	private String additionalField2;
 	@XmlElement(name = "actualValue")
 	private String additionalField3;
+	@XmlElement
 	private String additionalField4;
 	@XmlElement
 	private String mandatoryRole;

@@ -124,6 +124,7 @@ public class LimitRebuildService implements LimitRebuild {
 		Set<String> set = fieldMap.get("fm_");
 		set.add("ClosingStatus");
 		set.add("RecordType");
+		set.add("FinAssetValue");
 
 		List<FinanceMain> financeMains = new ArrayList<>();
 		financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custID, set, false));

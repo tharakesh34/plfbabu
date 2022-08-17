@@ -1,5 +1,5 @@
 package com.pennanttech.explore;
-//Testing values
+// Testing values
 
 public enum CONSTANTS {
 	ChannelId("ChannelId"), User("User"), Device("Device"), AuthKey("Authorization"), Token("Token");

@@ -11,11 +11,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AutoKnockOffDAO;
+import com.pennant.backend.model.autoknockoff.AutoKnockOffExcessDetails;
 import com.pennant.backend.model.finance.AutoKnockOff;
+import com.pennant.backend.model.finance.AutoKnockOffExcess;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -275,7 +278,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 	@Override
 	public void logExcessForKnockOff(Date valueDate, String day, String thresholdValue) {
 		StringBuilder sql = new StringBuilder("Insert Into");
-		sql.append(" AUTO_kNOCKOFF_EXCESS");
+		sql.append(" AUTO_KNOCKOFF_EXCESS_STAGE");
 		sql.append(" (FinID, FinReference, AmountType, BalanceAmount, PayableID");
 		sql.append(", ValueDate, ExecutionDay, ThresholdValue)");
 		sql.append(" Select FinID, FinReference, AmountType, BalanceAmount, PayableID");
@@ -321,38 +324,24 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 	}
 
 	@Override
-	public void deleteKnockOffExcessLog(Date valueDate) {
-		StringBuilder sql = new StringBuilder("Delete");
-		sql.append(" From AUTO_KNOCKOFF_EXCESS_DETAILS");
-		sql.append(" Where ExcessId in (");
-		sql.append(" Select ID from AUTO_KNOCKOFF_EXCESS");
-		sql.append(" Where ValueDate = ?)");
+	public void truncateData() {
+		String sql = "DELETE FROM AUTO_KNOCKOFF_EXCESS_DTL_STAGE";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql.toString(), JdbcUtil.getDate(valueDate));
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
+		this.jdbcOperations.update(sql);
 
-		sql = new StringBuilder("Delete");
-		sql.append(" From AUTO_KNOCKOFF_EXCESS");
-		sql.append(" Where ValueDate = ?");
+		sql = "DELETE FROM AUTO_KNOCKOFF_EXCESS_STAGE";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.update(sql.toString(), JdbcUtil.getDate(valueDate));
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
+		this.jdbcOperations.update(sql);
 	}
 
 	@Override
 	public long logKnockOffDetails(Date valueDate, String day) {
 		StringBuilder sql = new StringBuilder("Insert Into");
-		sql.append(" AUTO_KNOCKOFF_EXCESS_DETAILS");
+		sql.append(" AUTO_KNOCKOFF_EXCESS_DTL_STAGE");
 		sql.append(" (KnockOffId, ExcessID, FinType, FinTypeDesc");
 		sql.append(", Code, Description, ExecutionDays, FinCcy, FeeTypeCode");
 		sql.append(", FeeTypeDesc, KnockOffOrder, FeeOrder)");
@@ -360,7 +349,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		sql.append(" ak.Id KnockOffId, ake.Id ExcessId, ft.FinType");
 		sql.append(", ft.FinTypeDesc, ak.Code, ak.Description, ak.ExecutionDays, fm.FinCcy");
 		sql.append(", fe.FeeTypeCode, fe.FeeTypedesc, akl.KnockOffOrder, akf.FeeOrder");
-		sql.append(" From AUTO_KNOCKOFF_EXCESS ake");
+		sql.append(" From AUTO_KNOCKOFF_EXCESS_STAGE ake");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ake.FinID");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.Fintype = fm.Fintype");
 		sql.append(" Inner Join Auto_KnockOff_LoanTypes akl on akl.Loantype = ft.Fintype");
@@ -385,5 +374,140 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
+	}
+
+	@Override
+	public List<AutoKnockOffExcess> getKnockOffExcess(long custID, Date valueDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ake.ID, ake.FinReference, ake.AmountType, ake.ValueDate");
+		sql.append(", ake.BalanceAmount, ake.ExecutionDay, ake.ThresholdValue, ake.PayableId");
+		sql.append(" From AUTO_KNOCKOFF_EXCESS_STAGE ake");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ake.FinReference and fm.FinIsActive = ?");
+		sql.append(" Where fm.CustId = ? and ValueDate = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setInt(index++, 1);
+			ps.setLong(index++, custID);
+			ps.setDate(index++, JdbcUtil.getDate(valueDate));
+		}, (rs, rowNum) -> {
+			AutoKnockOffExcess knockOff = new AutoKnockOffExcess();
+
+			knockOff.setID(rs.getLong("ID"));
+			knockOff.setFinReference(rs.getString("FinReference"));
+			knockOff.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+			knockOff.setBalanceAmount(rs.getBigDecimal("BalanceAmount"));
+			knockOff.setAmountType(rs.getString("AmountType"));
+			knockOff.setPayableID(rs.getLong("PayableId"));
+			knockOff.setExecutionDay(rs.getString("ExecutionDay"));
+			knockOff.setThresholdValue(rs.getString("ThresholdValue"));
+
+			return knockOff;
+		});
+	}
+
+	@Override
+	public List<AutoKnockOffExcessDetails> getKnockOffExcessDetails(long id) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" aked.ID, aked.ExcessID, aked.KnockOffID, aked.Code, aked.Description, aked.ExecutionDays");
+		sql.append(", aked.FinType, aked.FeeTypeCode, aked.KnockOffOrder, aked.FeeOrder");
+		sql.append(", aked.FinCcy");
+		sql.append(", coalesce(frhCount, 0) FrhCount");
+		sql.append(" From AUTO_KNOCKOFF_EXCESS_DTL_STAGE aked");
+		sql.append(" Inner Join AUTO_KNOCKOFF_EXCESS_STAGE ake on ake.ID = aked.ExcessID");
+		sql.append(" Left join (select count(*) frhcount, Reference from FinReceiptHeader_Temp rh");
+		sql.append(" Inner join FinReceiptDetail_Temp rd on rd.ReceiptId = rh.ReceiptId");
+		sql.append(" Group by Reference) rh on rh.Reference = ake.FinReference");
+		sql.append(" Where aked.ExcessID = ?");
+		sql.append(" order by aked.ID, aked.KnockOffOrder, aked.FeeOrder");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, id);
+		}, (rs, rowNum) -> {
+			AutoKnockOffExcessDetails excessDetails = new AutoKnockOffExcessDetails();
+			excessDetails.setID(rs.getLong("ID"));
+			excessDetails.setExcessID(rs.getLong("ExcessID"));
+			excessDetails.setKnockOffID(rs.getLong("KnockOffID"));
+			excessDetails.setCode(rs.getString("Code"));
+			excessDetails.setDescription(rs.getString("Description"));
+			excessDetails.setExecutionDays(rs.getString("ExecutionDays"));
+			excessDetails.setFinType(rs.getString("FinType"));
+			excessDetails.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			excessDetails.setKnockOffOrder(rs.getString("KnockOffOrder"));
+			excessDetails.setFeeOrder(rs.getInt("FeeOrder"));
+			excessDetails.setFinCcy(rs.getString("FinCcy"));
+			excessDetails.setFrhCount(rs.getInt("FrhCount"));
+
+			return excessDetails;
+		});
+	}
+
+	public void updateExcessData(AutoKnockOffExcess knockOff) {
+		String sql = "Update AUTO_KNOCKOFF_EXCESS_STAGE set ProcessingFlag = ?, UtilizedAmount = ?  Where ID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			jdbcOperations.update(sql, ps -> {
+				int index = 1;
+
+				ps.setInt(index++, 1);
+				ps.setBigDecimal(index++, knockOff.getTotalUtilizedAmnt());
+
+				ps.setLong(index, knockOff.getID());
+			});
+		} catch (DataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+	}
+
+	public void updateExcessDetails(List<AutoKnockOffExcessDetails> knockOffExcess) {
+		String sql = "Update AUTO_KNOCKOFF_EXCESS_DTL_STAGE Set ReceiptId = ?, Reason = ?, Status = ?, UtilizedAmnt = ? Where ID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					AutoKnockOffExcessDetails excessDetails = knockOffExcess.get(i);
+					int index = 1;
+
+					ps.setLong(index++, excessDetails.getReceiptID());
+					ps.setString(index++, excessDetails.getReason());
+					ps.setString(index++, excessDetails.getStatus());
+					ps.setBigDecimal(index++, excessDetails.getUtilizedAmnt());
+					ps.setLong(index, excessDetails.getID());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return knockOffExcess.size();
+				}
+			});
+		} catch (DataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+	}
+
+	@Override
+	public void backupExecutionData() {
+		String sql = "INSERT INTO AUTO_KNOCKOFF_EXCESS (ID, FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG) SELECT ID, FINID, FINREFERENCE, PAYABLEID, AMOUNTTYPE, BALANCEAMOUNT, EXECUTIONDAY, THRESHOLDVALUE, UTILIZEDAMOUNT, VALUEDATE, PROCESSINGFLAG FROM AUTO_KNOCKOFF_EXCESS_STAGE";
+
+		logger.debug(Literal.SQL + sql);
+
+		jdbcOperations.update(sql);
+
+		sql = "INSERT INTO AUTO_KNOCKOFF_EXCESS_DETAILS (ID, EXCESSID, KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS) SELECT ID, EXCESSID, KNOCKOFFID, FINTYPE, FINTYPEDESC, CODE, DESCRIPTION, EXECUTIONDAYS, FEETYPECODE, FEETYPEDESC, KNOCKOFFORDER, FEEORDER, UTILIZEDAMNT, RECEIPTID, REASON, FINCCY, STATUS FROM AUTO_KNOCKOFF_EXCESS_DTL_STAGE";
+
+		logger.debug(Literal.SQL + sql);
+
+		jdbcOperations.update(sql);
 	}
 }

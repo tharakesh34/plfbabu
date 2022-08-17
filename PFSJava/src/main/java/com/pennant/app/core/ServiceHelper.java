@@ -57,18 +57,21 @@ import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
+import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
-import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -91,6 +94,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.pff.npa.service.AssetClassificationService;
+import com.pennanttech.pff.overdraft.dao.OverdraftLoanDAO;
+import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 
 abstract public class ServiceHelper {
 	protected static Logger logger = LogManager.getLogger(ServiceHelper.class.getClass());
@@ -119,7 +125,6 @@ abstract public class ServiceHelper {
 	// over due
 	protected FinODDetailsDAO finODDetailsDAO;
 	protected ProvisionDAO provisionDAO;
-	protected ProvisionMovementDAO provisionMovementDAO;
 	protected ProjectedAmortizationDAO projectedAmortizationDAO;
 	protected RuleDAO ruleDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
@@ -127,10 +132,18 @@ abstract public class ServiceHelper {
 	protected FinExcessAmountDAO finExcessAmountDAO;
 	protected FinLogEntryDetailDAO finLogEntryDetailDAO;
 	protected SubventionDetailDAO subventionDetailDAO;
+	protected FinanceStepDetailDAO financeStepDetailDAO;
 
 	@Autowired
 	protected EODConfigDAO eodConfigDAO;
 	private static EODConfig eodConfig;
+	protected ManualAdviseDAO manualAdviseDAO;
+	protected FinODPenaltyRateDAO finODPenaltyRateDAO;
+	protected LatePayPenaltyService latePayPenaltyService;
+	protected OverdraftLoanDAO overdraftLoanDAO;
+	protected OverdrafLoanService overdrafLoanService;
+	protected AssetClassificationService assetClassificationService;
+	protected FeeTypeDAO feeTypeDAO;
 
 	public Long getAccountingID(FinanceMain main, String eventCode) {
 		// FIXME: PV: 28AUG19. No Separate Accounting for Promotion
@@ -370,12 +383,38 @@ abstract public class ServiceHelper {
 		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
 	}
 
-	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
-		this.provisionMovementDAO = provisionMovementDAO;
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
-	public void setSubventionDetailDAO(SubventionDetailDAO subventionDetailDAO) {
-		this.subventionDetailDAO = subventionDetailDAO;
+	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
+		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
+	public void setLatePayPenaltyService(LatePayPenaltyService latePayPenaltyService) {
+		this.latePayPenaltyService = latePayPenaltyService;
+	}
+
+	public void setOverdraftLoanDAO(OverdraftLoanDAO overdraftLoanDAO) {
+		this.overdraftLoanDAO = overdraftLoanDAO;
+	}
+
+	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
+		this.overdrafLoanService = overdrafLoanService;
+	}
+
+	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
+		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+
+	@Autowired
+	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
+		this.assetClassificationService = assetClassificationService;
+	}
+
+	@Autowired
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 
 }

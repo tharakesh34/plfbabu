@@ -28,15 +28,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.util.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.AccountProcessUtil;
@@ -315,61 +318,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		return auditHeader;
 	}
 
-	private void approveRecords(AuditHeader auditHeader, JVPosting jVPosting) {
-		logger.debug("Entering");
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String tranType = "";
-
-		// Checking if it is Re-Posting Process, If Yes then Update record in
-		// Main Table otherwise Insert.
-		JVPosting rePosting = jVPostingDAO.getJVPostingById(jVPosting.getBatchReference(), "_AView");
-		if (rePosting != null) {
-			jVPosting.setVersion(jVPosting.getVersion() + 1);
-			jVPostingDAO.update(jVPosting, "");
-		} else {
-			// Setting Work flow details Empty for Successfully Posted Records.
-			tranType = PennantConstants.TRAN_ADD;
-			jVPosting.setRoleCode("");
-			jVPosting.setNextRoleCode("");
-			jVPosting.setTaskId("");
-			jVPosting.setNextTaskId("");
-			jVPosting.setWorkflowId(0);
-			jVPosting.setRecordType("");
-			jVPosting.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
-			// Bug fix before main table saving delete data in temp table
-			jVPostingDAO.delete(jVPosting, "_Temp");
-			// Saving In main Table
-			jVPostingDAO.save(jVPosting, "");
-		}
-
-		if (jVPosting.getJVPostingEntrysList() != null && jVPosting.getJVPostingEntrysList().size() > 0) {
-			List<AuditDetail> details = jVPosting.getAuditDetailMap().get("JVPostingEntry");
-			details = processJVPostingEntry(details, "", jVPosting, false, true);
-			auditDetails.addAll(details);
-		}
-
-		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())
-				&& !UploadConstants.MISC_POSTING_UPLOAD.equals("MiscPostingUpload")) {
-			jVPostingDAO.delete(jVPosting, "_Temp");
-		}
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader
-				.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_Temp", auditHeader.getAuditTranType())));
-		auditHeader
-				.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting.getBefImage(), jVPosting));
-		auditHeaderDAO.addAudit(auditHeader);
-
-		auditHeader.setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(jVPosting);
-		auditHeader
-				.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting.getBefImage(), jVPosting));
-		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
-		// auditHeaderDAO.addAudit(auditHeader);
-		logger.debug("Leaving");
-	}
-
 	private class EntryComparator implements Comparator<JVPostingEntry> {
 		public EntryComparator() {
 			//
@@ -631,189 +579,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		}
 		logger.debug("Leaving");
 		return auditDetails;
-	}
-
-	private List<AuditDetail> processJVPostingEntry(List<AuditDetail> auditDetails, String type, JVPosting jVPosting,
-			boolean deleteUpdateFlag, boolean generateEntry) {
-		logger.debug("Entering");
-
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-
-			JVPostingEntry jVPostingEntry = (JVPostingEntry) auditDetails.get(i).getModelData();
-			jVPostingEntry.setAccount(PennantApplicationUtil.unFormatAccountNumber(jVPostingEntry.getAccount()));
-			jVPostingEntry.setBatchReference(jVPosting.getBatchReference());
-			jVPostingEntry.setRoleCode(jVPosting.getRoleCode());
-			jVPostingEntry.setNextRoleCode(jVPosting.getNextRoleCode());
-			jVPostingEntry.setTaskId(jVPosting.getTaskId());
-			jVPostingEntry.setNextTaskId(jVPosting.getNextTaskId());
-			jVPostingEntry.setWorkflowId(jVPosting.getWorkflowId());
-
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-			if (StringUtils.isEmpty(type)) {
-				approveRec = true;
-			}
-
-			if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (jVPostingEntry.isNewRecord()) {
-				saveRecord = true;
-				if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (jVPostingEntry.isNewRecord()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-
-			if (approveRec) {
-				rcdType = jVPostingEntry.getRecordType();
-				recordStatus = jVPostingEntry.getRecordStatus();
-				jVPostingEntry.setRecordType("");
-				jVPostingEntry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-
-			if (saveRecord) {
-				if (jVPostingEntry.isNewRecord()) {
-					jVPostingEntry.setTxnReference(0);
-				}
-				jVPostingEntryDAO.save(jVPostingEntry, type);
-				if (generateEntry) {
-					for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(jVPostingEntry,
-							jVPosting.getCurrency(), CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
-							CurrencyUtil.getFormat(jVPosting.getCurrency()), false)) {
-						entry.setTxnReference(jVPostingEntry.getTxnReference());
-						jVPostingEntryDAO.save(entry, type);
-					}
-				}
-			}
-
-			if (updateRecord) {
-				if (jVPostingEntry.getTxnAmount_Ac().compareTo(BigDecimal.ZERO) < 0) {
-					jVPostingEntry.setTxnAmount_Ac(jVPostingEntry.getTxnAmount_Ac().multiply(new BigDecimal(-1)));
-				}
-				if (deleteUpdateFlag) {
-					jVPostingEntryDAO.updateDeletedDetails(jVPostingEntry, type);
-				} else {
-					jVPostingEntryDAO.update(jVPostingEntry, type);
-					if (generateEntry) {
-						for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(jVPostingEntry,
-								jVPosting.getCurrency(), CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
-								CurrencyUtil.getFormat(jVPosting.getCurrency()), false)) {
-							entry.setTxnReference(jVPostingEntry.getTxnReference());
-							jVPostingEntryDAO.update(entry, type);
-						}
-					}
-				}
-			}
-
-			if (deleteRecord) {
-				jVPostingEntryDAO.delete(jVPostingEntry, type);
-				if (generateEntry) {
-					for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(jVPostingEntry,
-							jVPosting.getCurrency(), CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
-							CurrencyUtil.getFormat(jVPosting.getCurrency()), false)) {
-						entry.setTxnReference(jVPostingEntry.getTxnReference());
-						jVPostingEntryDAO.delete(entry, type);
-					}
-				}
-			}
-
-			if (approveRec) {
-				jVPostingEntry.setRecordType(rcdType);
-				jVPostingEntry.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(jVPostingEntry);
-		}
-
-		logger.debug("Leaving");
-		return auditDetails;
-
-	}
-
-	public List<AuditDetail> listDeletion(JVPosting jvPosting, String tableType, String auditTranType) {
-
-		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		List<JVPostingEntry> entryList = new ArrayList<JVPostingEntry>();
-		if (jvPosting.getJVPostingEntrysList() != null && jvPosting.getJVPostingEntrysList().size() > 0) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new JVPostingEntry(),
-					new JVPostingEntry().getExcludeFields());
-			for (int i = 0; i < jvPosting.getJVPostingEntrysList().size(); i++) {
-				JVPostingEntry jvEntry = jvPosting.getJVPostingEntrysList().get(i);
-				entryList.add(jvEntry);
-				entryList.addAll(postingsPreparationUtil.prepareJVPostingEntry(jvEntry, jvPosting.getCurrency(),
-						CurrencyUtil.getCcyNumber(jvPosting.getCurrency()),
-						CurrencyUtil.getFormat(jvPosting.getCurrency()), false));
-			}
-			for (int i = 0; i < entryList.size(); i++) {
-				JVPostingEntry jvEntry = entryList.get(i);
-				if (StringUtils.isNotEmpty(jvEntry.getRecordType()) || StringUtils.isEmpty(tableType)) {
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], jvEntry.getBefImage(),
-							jvEntry));
-				}
-				jVPostingEntryDAO.deleteByID(jvEntry, tableType);
-			}
-		}
-		return auditList;
-	}
-
-	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
-		logger.debug("Entering");
-		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
-
-		if (list != null && list.size() > 0) {
-			for (int i = 0; i < list.size(); i++) {
-
-				String transType = "";
-				String rcdType = "";
-				JVPostingEntry jVPostingEntry = (JVPostingEntry) ((AuditDetail) list.get(i)).getModelData();
-
-				rcdType = jVPostingEntry.getRecordType();
-
-				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					transType = PennantConstants.TRAN_ADD;
-				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					transType = PennantConstants.TRAN_DEL;
-				} else {
-					transType = PennantConstants.TRAN_UPD;
-				}
-
-				if (StringUtils.isNotEmpty(transType)) {
-					// check and change below line for Complete code
-					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
-							jVPostingEntry.getBefImage(), jVPostingEntry));
-				}
-			}
-		}
-		logger.debug("Leaving");
-		return auditDetailsList;
 	}
 
 	@Override
@@ -1122,35 +887,34 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	@Override
-	public AuditHeader processData(AuditHeader auditHeader, boolean postingSuccess) {
-
+	public void processData(AuditHeader auditHeader, boolean postingSuccess) {
 		JVPosting jVPosting = new JVPosting();
+
 		BeanUtils.copyProperties((JVPosting) auditHeader.getAuditDetail().getModelData(), jVPosting);
 
-		List<JVPostingEntry> dbList = new ArrayList<JVPostingEntry>();
+		List<JVPostingEntry> jvList = new ArrayList<>();
 
-		for (JVPostingEntry entry : jVPosting.getJVPostingEntrysList()) {
-			dbList.add(entry);
-			dbList.addAll(postingsPreparationUtil.prepareJVPostingEntry(entry, jVPosting.getCurrency(),
-					CurrencyUtil.getCcyNumber(jVPosting.getCurrency()), CurrencyUtil.getFormat(jVPosting.getCurrency()),
+		String ccyNumber = CurrencyUtil.getCcyNumber(jVPosting.getCurrency());
+		int format = CurrencyUtil.getFormat(jVPosting.getCurrency());
+
+		jVPosting.getJVPostingEntrysList().forEach(jv -> {
+			jvList.add(jv);
+			jvList.addAll(postingsPreparationUtil.prepareJVPostingEntry(jv, jVPosting.getCurrency(), ccyNumber, format,
 					false));
-		}
+		});
 
-		// Processing Account Postings from Approver level
-		Collections.sort(dbList, new EntryComparator());
+		List<JVPostingEntry> dbList = jvList.stream()
+				.sorted((jv1, jv2) -> Long.compare(jv1.getTxnReference(), jv2.getTxnReference()))
+				.collect(Collectors.toList());
+
 		long linkedTranId = Long.MIN_VALUE;
+
 		try {
 			List<ReturnDataSet> list = postingsPreparationUtil.processEntryList(dbList, jVPosting);
-			// Post and save
-			/*
-			 * postingsPreparationUtil.postingsExecProcess(list, jVPosting.getBranch(), DateUtility.getAppDate(), "Y",
-			 * false, false, linkedTranId, BigDecimal.ZERO, "", false);
-			 */
-
 			accountProcessUtil.procAccountUpdate(list);
 
-			if (list != null && list.size() > 0) {
-				ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+			if (CollectionUtils.isNotEmpty(list)) {
+				List<ErrorDetail> errorDetails = new ArrayList<>();
 				for (int i = 0; i < list.size(); i++) {
 					ReturnDataSet set = list.get(i);
 					if (!("0000".equals(set.getErrorId()) || StringUtils.isEmpty(set.getErrorId()))) {
@@ -1168,85 +932,328 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			}
 		} catch (InterfaceException e) {
 			postingSuccess = false;
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		if (postingSuccess) {
 			jVPosting.setJVPostingEntrysList(dbList);
-			// IF ALL THE ENTRIES ARE POSTED WITH SUCCESS OR FAIL THEN
-			// UPDATE
-			if (postingSuccess) {
-				// If All Entries got Success then Header status is success.
-				jVPosting.setBatchPostingStatus(PennantConstants.POSTSTS_SUCCESS);
-				for (JVPostingEntry entry : jVPosting.getJVPostingEntrysList()) {
-					entry.setPostingStatus(PennantConstants.POSTSTS_SUCCESS);
-					entry.setLinkedTranId(linkedTranId);
-					entry.setPostingDate(SysParamUtil.getAppDate());
-				}
+			jVPosting.setBatchPostingStatus(PennantConstants.POSTSTS_SUCCESS);
+			Date appDate = SysParamUtil.getAppDate();
+
+			for (JVPostingEntry entry : jVPosting.getJVPostingEntrysList()) {
+				entry.setPostingStatus(PennantConstants.POSTSTS_SUCCESS);
+				entry.setLinkedTranId(linkedTranId);
+				entry.setPostingDate(appDate);
 			}
+
 			try {
-				// Update Child Records Status
 				jVPostingEntryDAO.updateListPostingStatus(jVPosting.getJVPostingEntrysList(), "_Temp", true);
-				// Updating Header Status
 				jVPostingDAO.updateBatchPostingStatus(jVPosting, "_Temp");
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(Literal.EXCEPTION, e);
 			}
-			// Regular Approving Process moving total Batch into main table
-			// and remove from Temp Table.
+
 			approveRecords(auditHeader, jVPosting);
 		}
-		return auditHeader;
 	}
 
+	private void approveRecords(AuditHeader auditHeader, JVPosting jVPosting) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		JVPosting rePosting = jVPostingDAO.getJVPostingById(jVPosting.getBatchReference(), "_AView");
+		if (rePosting != null) {
+			jVPosting.setVersion(jVPosting.getVersion() + 1);
+			jVPostingDAO.update(jVPosting, "");
+		} else {
+			jVPosting.setRoleCode("");
+			jVPosting.setNextRoleCode("");
+			jVPosting.setTaskId("");
+			jVPosting.setNextTaskId("");
+			jVPosting.setWorkflowId(0);
+			jVPosting.setRecordType("");
+			jVPosting.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
+			jVPostingDAO.delete(jVPosting, "_Temp");
+			jVPostingDAO.save(jVPosting, "");
+		}
+
+		if (CollectionUtils.isNotEmpty(jVPosting.getJVPostingEntrysList())) {
+			auditDetails.addAll(processJVPostingEntry(jVPosting.getAuditDetailMap().get("JVPostingEntry"), "",
+					jVPosting, false, true));
+		}
+
+		if (!PennantConstants.FINSOURCE_ID_API.equals(jVPosting.getFinSourceID())
+				&& !UploadConstants.MISC_POSTING_UPLOAD.equals("MiscPostingUpload")) {
+			jVPostingDAO.delete(jVPosting, "_Temp");
+		}
+
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		auditHeader
+				.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_Temp", auditHeader.getAuditTranType())));
+		auditHeader
+				.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting.getBefImage(), jVPosting));
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.ENTERING);
+	}
+
+	private List<AuditDetail> processJVPostingEntry(List<AuditDetail> auditDetails, String type, JVPosting jVPosting,
+			boolean deleteUpdateFlag, boolean generateEntry) {
+		logger.debug(Literal.ENTERING);
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			JVPostingEntry jVPostingEntry = (JVPostingEntry) auditDetails.get(i).getModelData();
+
+			jVPostingEntry.setAccount(PennantApplicationUtil.unFormatAccountNumber(jVPostingEntry.getAccount()));
+			jVPostingEntry.setBatchReference(jVPosting.getBatchReference());
+			jVPostingEntry.setRoleCode(jVPosting.getRoleCode());
+			jVPostingEntry.setNextRoleCode(jVPosting.getNextRoleCode());
+			jVPostingEntry.setTaskId(jVPosting.getTaskId());
+			jVPostingEntry.setNextTaskId(jVPosting.getNextTaskId());
+			jVPostingEntry.setWorkflowId(jVPosting.getWorkflowId());
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+			}
+
+			if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (jVPostingEntry.isNewRecord()) {
+				saveRecord = true;
+				if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					jVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (jVPostingEntry.isNewRecord()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+
+			if (approveRec) {
+				rcdType = jVPostingEntry.getRecordType();
+				recordStatus = jVPostingEntry.getRecordStatus();
+				jVPostingEntry.setRecordType("");
+				jVPostingEntry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+
+			if (saveRecord) {
+				if (jVPostingEntry.isNewRecord()) {
+					jVPostingEntry.setTxnReference(0);
+				}
+				jVPostingEntryDAO.save(jVPostingEntry, type);
+				if (generateEntry) {
+					for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(jVPostingEntry,
+							jVPosting.getCurrency(), CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
+							CurrencyUtil.getFormat(jVPosting.getCurrency()), false)) {
+						entry.setTxnReference(jVPostingEntry.getTxnReference());
+						jVPostingEntryDAO.save(entry, type);
+					}
+				}
+			}
+
+			if (updateRecord) {
+				if (jVPostingEntry.getTxnAmount_Ac().compareTo(BigDecimal.ZERO) < 0) {
+					jVPostingEntry.setTxnAmount_Ac(jVPostingEntry.getTxnAmount_Ac().multiply(new BigDecimal(-1)));
+				}
+				if (deleteUpdateFlag) {
+					jVPostingEntryDAO.updateDeletedDetails(jVPostingEntry, type);
+				} else {
+					jVPostingEntryDAO.update(jVPostingEntry, type);
+					if (generateEntry) {
+						for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(jVPostingEntry,
+								jVPosting.getCurrency(), CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
+								CurrencyUtil.getFormat(jVPosting.getCurrency()), false)) {
+							entry.setTxnReference(jVPostingEntry.getTxnReference());
+							jVPostingEntryDAO.update(entry, type);
+						}
+					}
+				}
+			}
+
+			if (deleteRecord) {
+				jVPostingEntryDAO.delete(jVPostingEntry, type);
+				if (generateEntry) {
+					for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(jVPostingEntry,
+							jVPosting.getCurrency(), CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
+							CurrencyUtil.getFormat(jVPosting.getCurrency()), false)) {
+						entry.setTxnReference(jVPostingEntry.getTxnReference());
+						jVPostingEntryDAO.delete(entry, type);
+					}
+				}
+			}
+
+			if (approveRec) {
+				jVPostingEntry.setRecordType(rcdType);
+				jVPostingEntry.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(jVPostingEntry);
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+
+	}
+
+	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetailsList = new ArrayList<>();
+
+		if (CollectionUtils.isEmpty(list)) {
+			logger.debug(Literal.LEAVING);
+			return auditDetailsList;
+		}
+
+		for (AuditDetail ad : list) {
+			JVPostingEntry jVPostingEntry = (JVPostingEntry) ((AuditDetail) ad).getModelData();
+
+			String rcdType = jVPostingEntry.getRecordType();
+			String transType = "";
+
+			switch (rcdType) {
+			case PennantConstants.RECORD_TYPE_NEW:
+				transType = PennantConstants.TRAN_ADD;
+				break;
+			case PennantConstants.RECORD_TYPE_DEL:
+			case PennantConstants.RECORD_TYPE_CAN:
+				transType = PennantConstants.TRAN_DEL;
+				break;
+			default:
+				transType = PennantConstants.TRAN_UPD;
+				break;
+			}
+
+			auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) ad).getAuditSeq(),
+					jVPostingEntry.getBefImage(), jVPostingEntry));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return auditDetailsList;
+	}
+
+	public List<AuditDetail> listDeletion(JVPosting jvPosting, String tableType, String adtTran) {
+		List<AuditDetail> auditList = new ArrayList<>();
+		List<JVPostingEntry> list = jvPosting.getJVPostingEntrysList();
+
+		if (CollectionUtils.isEmpty(list)) {
+			return auditList;
+		}
+
+		List<JVPostingEntry> entryList = new ArrayList<>();
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new JVPostingEntry(),
+				new JVPostingEntry().getExcludeFields());
+
+		String currency = jvPosting.getCurrency();
+		String ccy = CurrencyUtil.getCcyNumber(currency);
+		int format = CurrencyUtil.getFormat(currency);
+
+		list.forEach(jv -> {
+			entryList.add(jv);
+			entryList.addAll(postingsPreparationUtil.prepareJVPostingEntry(jv, currency, ccy, format, false));
+		});
+
+		for (int i = 0; i < entryList.size(); i++) {
+			JVPostingEntry jvEntry = entryList.get(i);
+			if (StringUtils.isNotEmpty(jvEntry.getRecordType()) || StringUtils.isEmpty(tableType)) {
+				auditList.add(new AuditDetail(adtTran, i + 1, fields[0], fields[1], jvEntry.getBefImage(), jvEntry));
+			}
+
+			jVPostingEntryDAO.deleteByID(jvEntry, tableType);
+		}
+
+		return auditList;
+	}
+
+	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	@Autowired
 	public void setjVPostingDAO(JVPostingDAO jVPostingDAO) {
 		this.jVPostingDAO = jVPostingDAO;
 	}
 
+	@Autowired
 	public void setjVPostingEntryDAO(JVPostingEntryDAO jVPostingEntryDAO) {
 		this.jVPostingEntryDAO = jVPostingEntryDAO;
 	}
 
+	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
+	@Autowired
 	public void setLegalExpensesDAO(LegalExpensesDAO legalExpensesDAO) {
 		this.legalExpensesDAO = legalExpensesDAO;
 	}
 
+	@Autowired
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
 
+	@Autowired
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
 	}
 
+	@Autowired
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
 
+	@Autowired
 	public void setCurrencyService(CurrencyService currencyService) {
 		this.currencyService = currencyService;
 	}
 
+	@Autowired
 	public void setTransactionCodeService(TransactionCodeService transactionCodeService) {
 		this.transactionCodeService = transactionCodeService;
 	}
 
+	@Autowired
 	public void setAccountMappingService(AccountMappingService accountMappingService) {
 		this.accountMappingService = accountMappingService;
 	}
 
+	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	@Autowired
 	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
 		this.financeWriteoffDAO = financeWriteoffDAO;
 	}

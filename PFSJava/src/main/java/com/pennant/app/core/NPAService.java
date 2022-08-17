@@ -34,6 +34,7 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -164,6 +165,7 @@ public class NPAService extends ServiceHelper {
 			Provision provision) {
 		long finID = finEODEvent.getFinProfitDetail().getFinID();
 
+		FinanceMain fm = finEODEvent.getFinanceMain();
 		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain financeMain = finEODEvent.getFinanceMain();
 		Provision oldProvision = provisionDAO.getProvisionByFinId(finID, TableType.MAIN_TAB, false);
@@ -192,9 +194,8 @@ public class NPAService extends ServiceHelper {
 		provision.setOverDuePrincipal(pftDetail.getODPrincipal());
 		provision.setOverDueProfit(pftDetail.getODProfit());
 		provision.setFutureRpyPri(pftDetail.getFutureRpyPri());
-		provision.setCustCtgCode(financeMain.getLovDescCustCtgCode());
-		provision.setUnDisbursedAmount(financeMain.getFinAssetValue().subtract(financeMain.getFinCurrAssetValue()));
-
+		provision.setCustCtgCode(fm.getLovDescCustCtgCode());
+		provision.setUnDisbursedAmount(fm.getFinAssetValue().subtract(fm.getFinCurrAssetValue()));
 		Date lastFullypaid = pftDetail.getFullPaidDate();
 
 		if (lastFullypaid == null) {
@@ -256,7 +257,6 @@ public class NPAService extends ServiceHelper {
 		provisionedAmt = provisionedAmt.add(principalDue).add(profitAccruedAndDue);
 		provision.setClosingBalance(provisionedAmt);
 		provision.setProfitAccruedAndDue(profitAccruedAndDue);
-
 		Rule provRule = ruleDAO.getRuleByID(provision.getRuleId(), "");
 
 		Map<String, Object> dataMap = new HashMap<>();
@@ -267,7 +267,7 @@ public class NPAService extends ServiceHelper {
 		dataMap.put("Product", provision.getProduct());
 		dataMap.put("reqFinType", provision.getFinType());
 
-		dataMap.put("isSecuredLoan", provision.isSecured());
+		dataMap.put("SecuredLoan", provision.isSecured());
 		dataMap.put("AssetStage", provision.getAssetStageOrder());
 		dataMap.put("InsuranceAmount", provision.getInsuranceAmount());
 
@@ -276,9 +276,9 @@ public class NPAService extends ServiceHelper {
 		dataMap.put("OverduePrincipal", provision.getOverDuePrincipal());
 		dataMap.put("OverdueInterest", provision.getOverDueProfit());
 		dataMap.put("UndisbursedAmount", provision.getUnDisbursedAmount()); // FIX ME
+
 		getPropertyType(provision, dataMap);
 
-		// Calculating Provision Amount
 		Object result = RuleExecutionUtil.executeRule(provRule.getSQLRule(), dataMap, provision.getFinCcy(),
 				RuleReturnType.OBJECT);
 		RuleResult ruleResult = (RuleResult) result;
@@ -588,7 +588,7 @@ public class NPAService extends ServiceHelper {
 
 		Date eodDate = custEODEvent.getEodDate();
 		Date monthEnd = DateUtil.getMonthEnd(eodDate);
-		if (DateUtil.compare(eodDate, monthEnd) != 0) {
+		if (!(DateUtil.compare(eodDate, monthEnd) == 0)) {
 			return;
 		}
 
@@ -771,5 +771,4 @@ public class NPAService extends ServiceHelper {
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
-
 }

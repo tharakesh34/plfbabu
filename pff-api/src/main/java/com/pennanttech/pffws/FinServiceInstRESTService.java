@@ -18,11 +18,14 @@ import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.collection.CollectionAccountDetails;
+import com.pennanttech.ws.model.collection.CollectionAccountReq;
 import com.pennanttech.ws.model.covenantStatus.CovenantStatus;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.model.finance.FinAdvPaymentDetail;
+import com.pennanttech.ws.model.finance.ReceiptTransaction;
 
 @Produces("application/json")
 public interface FinServiceInstRESTService {
@@ -190,4 +193,20 @@ public interface FinServiceInstRESTService {
 	@Path("/loanInstructionService/processFeeWaiver")
 	public WSReturnStatus processFeeWaiver(FeeWaiverHeader feeWaiverHeader) throws ServiceException;
 
+	@POST
+	@Path("/loanInstructionService/reqCashierEntry")
+	public WSReturnStatus reqCashierEntry(CollectionAccountReq collectionAccountReq) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/reqCashDeposit")
+	public WSReturnStatus reqCashDeposit(CollectionAccountReq collectionAccountReq) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/saveCollectionDetais")
+	public WSReturnStatus saveCollectionDetais(CollectionAccountDetails collectionAccountDetails)
+			throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/updateUTRNum")
+	public WSReturnStatus updateUTRNum(ReceiptTransaction transactionRefUpdateRequest) throws ServiceException;
 }

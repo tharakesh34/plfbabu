@@ -7,7 +7,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public interface FinExcessAmountDAO {
 

@@ -79,6 +79,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.UploadConstants;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -357,8 +358,16 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		this.remarks.setValue(aFeeWaiverHeader.getRemarks());
 
 		if (isEnquiry) {
-			setFeeWaiverDetails(aFeeWaiverHeader.getFeeWaiverDetails());
-			doFillFeeWaiverEnqDetails(aFeeWaiverHeader.getFeeWaiverDetails());
+			List<FeeWaiverDetail> list = aFeeWaiverHeader.getFeeWaiverDetails();
+			setFeeWaiverDetails(list);
+
+			Map<String, FeeWaiverDetail> map = new HashMap<>();
+
+			list.forEach(wd -> {
+				map.put(wd.getFeeTypeCode(), wd);
+			});
+
+			doFillFeeWaiverEnqDetails(new ArrayList<>(map.values()));
 		} else {
 			doFillFeeWaiverDetails(aFeeWaiverHeader);
 		}
@@ -478,12 +487,13 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	public void doWriteComponentsToBean(FeeWaiverHeader aFeeWaiverHeader) {
 		logger.debug("Entering");
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> wve = new ArrayList<>();
 
 		aFeeWaiverHeader.setFinID(this.financeMain.getFinID());
 		aFeeWaiverHeader.setFinReference(this.financeMain.getFinReference());
 		aFeeWaiverHeader.setRemarks(this.remarks.getValue());
 		aFeeWaiverHeader.setEvent(this.moduleDefiner);
+		aFeeWaiverHeader.setFinSourceID(UploadConstants.FINSOURCE_ID_PFF);
 
 		savePaymentDetails(aFeeWaiverHeader);
 		aFeeWaiverHeader.setRecordStatus(this.recordStatus.getValue());

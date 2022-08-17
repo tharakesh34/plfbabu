@@ -45,6 +45,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
@@ -113,7 +114,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 	private boolean isMaintinence = false;
 	private String creditDivision = "";
-	int dateAppCurrentYear = DateUtility.getYear(DateUtility.getAppDate());
+	int dateAppCurrentYear = DateUtility.getYear(SysParamUtil.getAppDate());
 	int dateAppPrevYear = dateAppCurrentYear - 1;
 
 	/**
@@ -197,7 +198,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 		registerField("DetailId");
 		registerField("Division");
 		if ("CorpCreditAppReview".equals(moduleCode)) {
-			registerField("AuditPeriod");
+			registerField("AuditPeriod", listheader_AuditPeriod);
 		}
 		registerField("lovDescCustCIF", listheader_CreditCustCIF, SortOrder.ASC, custCIF, sortOperator_custCIF,
 				Operators.STRING);

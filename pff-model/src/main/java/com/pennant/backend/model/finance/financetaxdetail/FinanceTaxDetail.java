@@ -97,8 +97,10 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private String sezCertificateNo;
 	private Date sezValueDate;
 	private String addressDetail;
+	private boolean availCustTaxNum;
 	@XmlElement
 	private Long pinCodeId;
+	private boolean rcdDelReq;
 
 	public FinanceTaxDetail() {
 		super();
@@ -114,6 +116,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 		excludeFields.add("sourceId");
 		excludeFields.add("custShrtName");
 		excludeFields.add("returnStatus");
+		excludeFields.add("rcdDelReq");
 		return excludeFields;
 	}
 
@@ -351,6 +354,22 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	public void setPinCodeId(Long pinCodeId) {
 		this.pinCodeId = pinCodeId;
+	}
+
+	public boolean isAvailCustTaxNum() {
+		return availCustTaxNum;
+	}
+
+	public void setAvailCustTaxNum(boolean availCustTaxNum) {
+		this.availCustTaxNum = availCustTaxNum;
+	}
+
+	public boolean isRcdDelReq() {
+		return rcdDelReq;
+	}
+
+	public void setRcdDelReq(boolean rcdDelReq) {
+		this.rcdDelReq = rcdDelReq;
 	}
 
 }

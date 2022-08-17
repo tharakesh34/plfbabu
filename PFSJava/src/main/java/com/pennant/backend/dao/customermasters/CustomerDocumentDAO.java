@@ -50,6 +50,8 @@ public interface CustomerDocumentDAO {
 
 	DocumentDetails getCustDocByCustAndDocType(final long custId, String docType, String view);
 
+	DocumentDetails getCustDocByCustAndDocType(final long docId, String view);
+
 	List<DocumentDetails> getCustDocByCustId(long custId, String type);
 
 	List<DocumentDetails> getCustDocListByDocTypes(long custId, List<String> docTypeList, String type);
@@ -71,4 +73,6 @@ public interface CustomerDocumentDAO {
 	long save(ExternalDocument externalDocument, String type);
 
 	List<ExternalDocument> getExternalDocuments(long bankId, String type);
+
+	boolean getCustomerDocExists(long custId, String docType);
 }

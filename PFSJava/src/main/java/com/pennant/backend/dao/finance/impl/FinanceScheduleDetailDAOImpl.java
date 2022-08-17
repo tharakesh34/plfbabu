@@ -45,8 +45,10 @@ import org.springframework.jdbc.core.RowMapper;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceWriteoff;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.ScheduleDueTaxDetail;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
@@ -1208,5 +1210,71 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	@Override
 	public List<FinanceScheduleDetail> getSchedulesForLMSEvent(long finID) {
 		return getFinScheduleDetails(finID, "", false);
+	}
+
+	@Override
+	public BigDecimal getUnpaidTdsAmount(String finReference) {
+		String sql = "Select coalesce(sum(TdsAmount), 0) From FinScheduleDetails Where FinReference = ? and SchPftPaid = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finReference, 0);
+	}
+
+	@Override
+	public RestructureDetail getRestructureDetail(String finReference) {
+		String sql = "Select RestructureDate, PriHldEndDate, EmiHldEndDate, RestructureType From Restructure_Details_Temp Where FinReference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				RestructureDetail rd = new RestructureDetail();
+
+				rd.setRestructureDate(JdbcUtil.getDate(rs.getDate("RestructureDate")));
+				rd.setPriHldEndDate(JdbcUtil.getDate(rs.getDate("PriHldEndDate")));
+				rd.setEmiHldEndDate(JdbcUtil.getDate(rs.getDate("EmiHldEndDate")));
+				rd.setRestructureType(rs.getString("RestructureType"));
+
+				return rd;
+			}, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public FinanceProfitDetail getAmzTillLBD(String finReference) {
+		String sql = "Select AmzTillLBD From FinPftDetails Where finReference = ?";
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				FinanceProfitDetail fp = new FinanceProfitDetail();
+
+				fp.setAmzTillLBD(rs.getBigDecimal("AmzTillLBD"));
+
+				return fp;
+			}, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public void updateDueTaxDetail(long oldInvoiceId) {
+		String sql = "Update ScheduleDueTaxDetails set Reversal = ? Where InvoiceId = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, 1);
+			ps.setLong(2, oldInvoiceId);
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
 	}
 }

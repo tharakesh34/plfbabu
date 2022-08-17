@@ -64,6 +64,7 @@ public class APIConstants {
 	public static final String COB_SOURCE = "COB";
 
 	public static final String COVENANT_MODULE_NAME = "Loan";
+	public static final String RES_SERVICE_NOT_FOUND = "9997";
 
 	// verifications
 	public static final int FI = 1;

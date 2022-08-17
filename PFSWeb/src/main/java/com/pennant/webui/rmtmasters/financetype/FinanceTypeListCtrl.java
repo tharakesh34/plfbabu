@@ -162,7 +162,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 			code = this.finCategory.getValue().charAt(0) + this.finCategory.getValue().substring(1).toLowerCase()
 					+ "Type";
 		}
-
 		new PTListReportUtils(code, searchObject, -1);
 	}
 

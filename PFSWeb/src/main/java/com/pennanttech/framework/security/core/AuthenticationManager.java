@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -67,7 +68,9 @@ import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.security.ldap.ActiveDirectoryLdapAuthenticationProviderAdapter;
+import com.pennanttech.pennapps.core.security.user.AuthenticationError;
 import com.pennanttech.pennapps.core.security.user.ExternalAuthenticationProvider;
+import com.pennanttech.pennapps.core.security.user.UserAuthenticationException;
 
 import eu.bitwalker.useragentutils.UserAgent;
 
@@ -147,6 +150,12 @@ public class AuthenticationManager implements AuthenticationProvider {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			logAttempt(authentication, e.getMessage());
+
+			if (e instanceof BadCredentialsException) {
+				throw new UserAuthenticationException(AuthenticationError.INVALID_PASSWORD);
+			}
+
+			throw e;
 		}
 
 		if (result != null) {

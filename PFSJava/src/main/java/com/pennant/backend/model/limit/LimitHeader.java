@@ -50,7 +50,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "headerId", "custCIF", "custGrpCode", "customerName", "responsibleBranch",
 		"responsibleBranchName", "limitCcy", "ccyDesc", "limitExpiryDate", "limitRvwDate", "limitSetupRemarks",
-		"limitStructureCode", "structureName", "active", "customerLimitDetailsList", "returnStatus" })
+		"limitStructureCode", "structureName", "active", "customerLimitDetailsList", "institutionlimitDetail",
+		"returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "limitSetup")
 public class LimitHeader extends AbstractWorkflowEntity {
@@ -58,7 +59,7 @@ public class LimitHeader extends AbstractWorkflowEntity {
 
 	@XmlElement(name = "limitId")
 	private long headerId = Long.MIN_VALUE;
-
+	@XmlElement
 	private String ruleCode;
 	private String ruleValue;
 
@@ -132,7 +133,8 @@ public class LimitHeader extends AbstractWorkflowEntity {
 
 	@XmlElement(name = "limitDetail")
 	private List<LimitDetails> customerLimitDetailsList = null;
-
+	@XmlElement(name = "institutionlimitDetail")
+	private List<LimitDetails> institutionLimitDetailsList = null;
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	@XmlElement
@@ -393,6 +395,14 @@ public class LimitHeader extends AbstractWorkflowEntity {
 
 	public void setCustomerLimitDetailsList(List<LimitDetails> customerLimitDetailsList) {
 		this.customerLimitDetailsList = customerLimitDetailsList;
+	}
+
+	public List<LimitDetails> getInstitutionLimitDetailsList() {
+		return institutionLimitDetailsList;
+	}
+
+	public void setInstitutionLimitDetailsList(List<LimitDetails> institutionLimitDetailsList) {
+		this.institutionLimitDetailsList = institutionLimitDetailsList;
 	}
 
 	public String getStructureName() {

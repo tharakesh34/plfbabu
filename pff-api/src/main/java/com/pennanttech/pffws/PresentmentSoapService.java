@@ -1,10 +1,10 @@
 package com.pennanttech.pffws;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 import com.pennanttech.ws.model.presentment.PresentmentResponse;
 
 public interface PresentmentSoapService {

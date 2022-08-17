@@ -98,6 +98,7 @@ public class ExtendedFieldCtrl {
 
 	private List<Object> finBasicDetails = new ArrayList<>();
 	private ExtendedFieldExtension extendedFieldExtension;
+	private String userAction;
 
 	/**
 	 * Method for Rendering the Extended field details
@@ -228,6 +229,7 @@ public class ExtendedFieldCtrl {
 			return null;
 		}
 
+		StringBuilder tableName = new StringBuilder();
 		if (this.parentTab != null) {
 			generator.setParentTab(parentTab);
 		}
@@ -238,7 +240,20 @@ public class ExtendedFieldCtrl {
 			readOnly = true;
 		}
 
+		generator.setUserAction(getUserAction());
 		Map<String, Object> mapValues = generator.doSave(this.extendedFieldHeader.getExtendedFieldDetails(), readOnly);
+
+		tableName.append(extendedFieldHeader.getModuleName());
+		tableName.append("_");
+		tableName.append(extendedFieldHeader.getSubModuleName());
+		if (extendedFieldHeader.getEvent() != null) {
+			tableName.append("_");
+			tableName.append(
+					StringUtils.trimToEmpty(PennantStaticListUtil.getFinEventCode(extendedFieldHeader.getEvent())));
+		}
+		tableName.append("_ED");
+		this.extendedFieldRender.setTableName(tableName.toString());
+
 		this.extendedFieldRender.setMapValues(mapValues);
 		this.extendedFieldRender.setTypeCode(this.extendedFieldHeader.getSubModuleName());
 		mapValues.put("cd", customerDetails);
@@ -365,11 +380,14 @@ public class ExtendedFieldCtrl {
 	 * @param String reference
 	 **/
 	public ExtendedFieldRender getExtendedFieldRender(String reference) {
-		String tableName = getTableName();
+		if (extendedFieldHeader != null) {
+			String tableName = getTableName();
 
-		ExtendedFieldRender extendedFieldRender = getExtRenderData(reference, tableName, TableType.VIEW.getSuffix());
+			ExtendedFieldRender extendedFieldRender = getExtRenderData(reference, tableName,
+					TableType.VIEW.getSuffix());
 
-		this.extendedFieldRender = extendedFieldRender;
+			this.extendedFieldRender = extendedFieldRender;
+		}
 
 		return extendedFieldRender;
 	}
@@ -1014,6 +1032,14 @@ public class ExtendedFieldCtrl {
 
 	public void setExtendedFieldExtension(ExtendedFieldExtension extendedFieldExtension) {
 		this.extendedFieldExtension = extendedFieldExtension;
+	}
+
+	public String getUserAction() {
+		return userAction;
+	}
+
+	public void setUserAction(String userAction) {
+		this.userAction = userAction;
 	}
 
 }

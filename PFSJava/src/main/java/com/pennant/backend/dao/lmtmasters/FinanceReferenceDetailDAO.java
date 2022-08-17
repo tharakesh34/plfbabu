@@ -94,4 +94,6 @@ public interface FinanceReferenceDetailDAO {
 	List<FinanceReferenceDetail> getAgreemantsListByFinType(String finType);
 
 	List<SecurityUser> getUpLevelUsers(long usrId, String branch);
+
+	List<FinanceReferenceDetail> getLMTFinRefDetails(String limitCode, String finType);
 }

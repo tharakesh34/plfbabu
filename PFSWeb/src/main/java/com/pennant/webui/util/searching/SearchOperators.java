@@ -268,12 +268,14 @@ public class SearchOperators implements Serializable {
 		// list position 0
 		result.add(new SearchOperators(Filter.OP_EQUAL, "=", "equals"));
 		// list position 1
-		result.add(new SearchOperators(Filter.OP_LESS_THAN, "<", "less than"));
+		result.add(new SearchOperators(Filter.OP_NOT_EQUAL, "<>", "not equal"));
 		// list position 2
-		result.add(new SearchOperators(Filter.OP_GREATER_THAN, ">", "greater than"));
+		result.add(new SearchOperators(Filter.OP_LESS_THAN, "<", "less than"));
 		// list position 3
-		result.add(new SearchOperators(Filter.OP_LESS_OR_EQUAL, "<=", "less or equal"));
+		result.add(new SearchOperators(Filter.OP_GREATER_THAN, ">", "greater than"));
 		// list position 4
+		result.add(new SearchOperators(Filter.OP_LESS_OR_EQUAL, "<=", "less or equal"));
+		// list position 5
 		result.add(new SearchOperators(Filter.OP_GREATER_OR_EQUAL, ">=", "greater or equal"));
 
 		return result;

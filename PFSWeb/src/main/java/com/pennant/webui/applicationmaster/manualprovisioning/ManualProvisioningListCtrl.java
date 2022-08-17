@@ -3,7 +3,6 @@ package com.pennant.webui.applicationmaster.manualprovisioning;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -18,9 +17,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.financemanagement.Provision;
@@ -69,7 +66,6 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	private transient ProvisionService provisionService;
 	private transient FinanceDetailService financeDetailService;
 	private transient NPAProvisionHeaderService nPAProvisionHeaderService;
-	private transient CustomerDAO customerDAO;
 
 	public ManualProvisioningListCtrl() {
 		super();
@@ -116,10 +112,10 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		}
 
 		registerField("CustCIF", listheader_CIFNo, SortOrder.NONE, cifNo, sortOperator_CIFNo, Operators.STRING);
-		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("finType", listheader_FinType, SortOrder.NONE, finType, sortOperator_FinType, Operators.STRING);
+		// registerField("CustShrtName");
 		registerField("finIsActive");
 		registerField("CustShrtName", listheader_CustName);
 		registerField("manualProvision", listheader_ManualProvisioning);
@@ -187,7 +183,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		final Provision aProvision = (Provision) selectedItem.getAttribute("data");
 
 		String finType = null;
-		Provision provision = provisionService.getProvisionByFinId(aProvision.getFinID(), TableType.VIEW);
+		Provision provision = provisionService.getProvisionById(aProvision.getFinID(), TableType.VIEW);
 
 		if (provision == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -202,36 +198,27 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 				finType = finPftDetail.getFinType();
 
 			}
-			Customer customer = customerDAO.getCustomerByID(finPftDetail.getCustId());
-
-			if (customer != null) {
-				provision.setCustCtgCode(customer.getCustCtgCode());
-			}
-
 			provision.setFinType(finType);
 			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(false);
 			if (financeDetail != null) {
 				provision.setFinanceDetail(financeDetail);
 			}
 
-			List<NPAProvisionHeader> npaProvisionHeadersList = this.nPAProvisionHeaderService
+			List<NPAProvisionHeader> provisions = this.nPAProvisionHeaderService
 					.getNPAProvisionsListByFintype(provision.getFinType(), TableType.AVIEW);
 
-			for (NPAProvisionHeader npaProvisionHeader : npaProvisionHeadersList) {
-
-				if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_INT,
-						npaProvisionHeader.getNpaTemplateCode())) {
+			for (NPAProvisionHeader npaProvisionHeader : provisions) {
+				String npaTemplateCode = npaProvisionHeader.getNpaTemplateCode();
+				if (ProvisionConstants.PROVISION_BOOKS_INT.equals(npaTemplateCode)) {
 					provision.setNpaIntHeader(npaProvisionHeader);
 				}
 
-				if (StringUtils.equals(ProvisionConstants.PROVISION_BOOKS_REG,
-						npaProvisionHeader.getNpaTemplateCode())) {
+				if (ProvisionConstants.PROVISION_BOOKS_REG.equals(npaTemplateCode)) {
 					provision.setNpaRegHeader(npaProvisionHeader);
 				}
-
 			}
-
 		}
+
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  finreference = ");
 		whereCond.append(provision.getFinReference());
@@ -244,7 +231,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 				provision.setWorkflowId(getWorkFlowId());
 			}
 
-			Provision oldProvision = provisionService.getProvisionByFinId(aProvision.getFinID(), TableType.AVIEW);
+			Provision oldProvision = provisionService.getProvisionById(aProvision.getFinID(), TableType.AVIEW);
 			provision.setOldProvision(oldProvision);
 			doShowDialogPage(provision);
 		} else {
@@ -339,9 +326,5 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 
 	public void setnPAProvisionHeaderService(NPAProvisionHeaderService nPAProvisionHeaderService) {
 		this.nPAProvisionHeaderService = nPAProvisionHeaderService;
-	}
-
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
 	}
 }

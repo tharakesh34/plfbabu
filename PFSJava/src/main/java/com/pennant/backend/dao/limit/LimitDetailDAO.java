@@ -50,4 +50,5 @@ public interface LimitDetailDAO {
 
 	public BigDecimal getOsPriBal(String finReference);
 
+	BigDecimal getSanctionedAmtByCustId(long customerId, String type);
 }

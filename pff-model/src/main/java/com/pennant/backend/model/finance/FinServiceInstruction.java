@@ -54,6 +54,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String splRate;
 	@XmlElement
 	private BigDecimal margin = BigDecimal.ZERO;
+	@XmlElement
+	private String graceBaseRate;
+	@XmlElement
+	private String graceSpecialRate;
+	@XmlElement
+	private BigDecimal grcMargin = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal grcPftRate = BigDecimal.ZERO;
 	@XmlElement(name = "reCalType")
 	private String recalType;
 	@XmlElement(name = "reCalFromDate")
@@ -193,6 +201,9 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private int strtPrdHdays;
 
 	@XmlElement
+	private Long custBankId;
+
+	@XmlElement
 	private String subReceiptMode;
 	@XmlElement
 	private String receiptChannel;
@@ -211,6 +222,11 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	private Date initiatedDate;
 	private Date approvedDate;
+	private Map<String, BigDecimal> taxPercentages = new HashMap<>();
+	@XmlElement
+	private String moduleType;
+
+	private List<FinanceScheduleDetail> oldShedules = new ArrayList<>();
 
 	public String getRestructuringType() {
 		return restructuringType;
@@ -274,6 +290,10 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String fromBranch;
 	@XmlElement
 	private String toBranch;
+	@XmlElement
+	private String fromState;
+	@XmlElement
+	private String toState;
 
 	private long instructionUID = Long.MIN_VALUE;
 	private long linkedTranID = 0;
@@ -307,6 +327,42 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private long paymentId = Long.MIN_VALUE;
 	private Long logKey;
 	private RequestSource requestSource = RequestSource.UI;
+
+	@XmlElement
+	private String closureType;
+	private String bounceReason;
+	private String cancelReason;
+	private Date bounceDate;
+	private boolean isNewReceipt;
+
+	// Charge Details
+	@XmlElement(name = "txnChrgReq")
+	private boolean overdraftTxnChrgReq;
+	@XmlElement(name = "oDCalculatedCharge")
+	private String overdraftCalcChrg;
+	@XmlElement(name = "oDChargeCalOn")
+	private String overdraftChrCalOn;
+	@XmlElement(name = "oDChargeAmtOrPerc")
+	private BigDecimal overdraftChrgAmtOrPerc = BigDecimal.ZERO;
+
+	@XmlElement
+	private BigDecimal finAssetValue = BigDecimal.ZERO;
+	@XmlElement
+	private int numberOfTerms = 0;
+
+	private long custID;
+	@XmlElement(name = "cif")
+	private String custCIF;
+	@XmlElement
+	private BigDecimal tdsAmount = BigDecimal.ZERO;
+	@XmlElement
+	private String receiptSource;
+	@XmlElement
+	private String recAgainst;
+	@XmlElement
+	private String collectionAgency;
+	@XmlElement
+	private String division;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -474,6 +530,28 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		fsi.setLogKey(this.logKey);
 		fsi.setRequestSource(this.requestSource);
 
+		fsi.setGraceBaseRate(this.graceBaseRate);
+		fsi.setGraceSpecialRate(this.graceSpecialRate);
+		fsi.setGrcMargin(this.grcMargin);
+		fsi.setGrcPftRate(this.grcPftRate);
+		fsi.setCustBankId(this.custBankId);
+		fsi.setTaxPercentages(this.taxPercentages);
+		fsi.setModuleType(this.moduleType);
+		this.oldShedules.stream().forEach(e -> fsi.getOldShedules().add(e == null ? null : e.copyEntity()));
+		fsi.setFromState(this.fromState);
+		fsi.setToState(this.toState);
+		fsi.setClosureType(this.closureType);
+		fsi.setBounceReason(this.bounceReason);
+		fsi.setCancelReason(this.cancelReason);
+		fsi.setBounceDate(this.bounceDate);
+		fsi.setNewReceipt(this.isNewReceipt);
+		fsi.setOverdraftTxnChrgReq(this.overdraftTxnChrgReq);
+		fsi.setOverdraftCalcChrg(this.overdraftCalcChrg);
+		fsi.setOverdraftChrCalOn(this.overdraftChrCalOn);
+		fsi.setOverdraftChrgAmtOrPerc(this.overdraftChrgAmtOrPerc);
+		fsi.setFinAssetValue(this.finAssetValue);
+		fsi.setNumberOfTerms(this.numberOfTerms);
+
 		fsi.setRecordStatus(super.getRecordStatus());
 		fsi.setRoleCode(super.getRoleCode());
 		fsi.setNextRoleCode(super.getNextRoleCode());
@@ -487,20 +565,6 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		fsi.setLastMntOn(super.getLastMntOn());
 		return fsi;
 	}
-
-	private long custID;
-	@XmlElement(name = "cif")
-	private String custCIF;
-	@XmlElement
-	private BigDecimal tdsAmount = BigDecimal.ZERO;
-	@XmlElement
-	private String receiptSource;
-	@XmlElement
-	private String recAgainst;
-	@XmlElement
-	private String collectionAgency;
-	@XmlElement
-	private String division;
 
 	public long getFinID() {
 		return finID;
@@ -564,6 +628,38 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setMargin(BigDecimal margin) {
 		this.margin = margin;
+	}
+
+	public BigDecimal getGrcPftRate() {
+		return grcPftRate;
+	}
+
+	public void setGrcPftRate(BigDecimal grcPftRate) {
+		this.grcPftRate = grcPftRate;
+	}
+
+	public String getGraceBaseRate() {
+		return graceBaseRate;
+	}
+
+	public void setGraceBaseRate(String graceBaseRate) {
+		this.graceBaseRate = graceBaseRate;
+	}
+
+	public String getGraceSpecialRate() {
+		return graceSpecialRate;
+	}
+
+	public void setGraceSpecialRate(String graceSpecialRate) {
+		this.graceSpecialRate = graceSpecialRate;
+	}
+
+	public BigDecimal getGrcMargin() {
+		return grcMargin;
+	}
+
+	public void setGrcMargin(BigDecimal grcMargin) {
+		this.grcMargin = grcMargin;
 	}
 
 	public String getRecalType() {
@@ -826,6 +922,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		return remarks;
 	}
 
+	public Long getCustBankId() {
+		return custBankId;
+	}
+
+	public void setCustBankId(Long custBankId) {
+		this.custBankId = custBankId;
+	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
@@ -988,6 +1092,22 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setToBranch(String toBranch) {
 		this.toBranch = toBranch;
+	}
+
+	public String getFromState() {
+		return fromState;
+	}
+
+	public void setFromState(String fromState) {
+		this.fromState = fromState;
+	}
+
+	public String getToState() {
+		return toState;
+	}
+
+	public void setToState(String toState) {
+		this.toState = toState;
 	}
 
 	public BigDecimal getPftChg() {
@@ -1592,6 +1712,118 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setRequestSource(RequestSource requestSource) {
 		this.requestSource = requestSource;
+	}
+
+	public String getClosureType() {
+		return closureType;
+	}
+
+	public void setClosureType(String closureType) {
+		this.closureType = closureType;
+	}
+
+	public String getBounceReason() {
+		return bounceReason;
+	}
+
+	public void setBounceReason(String bounceReason) {
+		this.bounceReason = bounceReason;
+	}
+
+	public String getCancelReason() {
+		return cancelReason;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
+	}
+
+	public Date getBounceDate() {
+		return bounceDate;
+	}
+
+	public void setBounceDate(Date bounceDate) {
+		this.bounceDate = bounceDate;
+	}
+
+	public boolean isNewReceipt() {
+		return isNewReceipt;
+	}
+
+	public void setNewReceipt(boolean isNewReceipt) {
+		this.isNewReceipt = isNewReceipt;
+	}
+
+	public Map<String, BigDecimal> getTaxPercentages() {
+		return taxPercentages;
+	}
+
+	public void setTaxPercentages(Map<String, BigDecimal> taxPercentages) {
+		this.taxPercentages = taxPercentages;
+	}
+
+	public boolean isOverdraftTxnChrgReq() {
+		return overdraftTxnChrgReq;
+	}
+
+	public void setOverdraftTxnChrgReq(boolean overdraftTxnChrgReq) {
+		this.overdraftTxnChrgReq = overdraftTxnChrgReq;
+	}
+
+	public String getOverdraftCalcChrg() {
+		return overdraftCalcChrg;
+	}
+
+	public void setOverdraftCalcChrg(String overdraftCalcChrg) {
+		this.overdraftCalcChrg = overdraftCalcChrg;
+	}
+
+	public String getOverdraftChrCalOn() {
+		return overdraftChrCalOn;
+	}
+
+	public void setOverdraftChrCalOn(String overdraftChrCalOn) {
+		this.overdraftChrCalOn = overdraftChrCalOn;
+	}
+
+	public BigDecimal getOverdraftChrgAmtOrPerc() {
+		return overdraftChrgAmtOrPerc;
+	}
+
+	public void setOverdraftChrgAmtOrPerc(BigDecimal overdraftChrgAmtOrPerc) {
+		this.overdraftChrgAmtOrPerc = overdraftChrgAmtOrPerc;
+	}
+
+	public BigDecimal getFinAssetValue() {
+		return finAssetValue;
+	}
+
+	public void setFinAssetValue(BigDecimal finAssetValue) {
+		this.finAssetValue = finAssetValue;
+	}
+
+	public int getNumberOfTerms() {
+		return numberOfTerms;
+	}
+
+	public void setNumberOfTerms(int numberOfTerms) {
+		this.numberOfTerms = numberOfTerms;
+	}
+
+	public String getModuleType() {
+		return moduleType;
+	}
+
+	public void setModuleType(String moduleType) {
+		this.moduleType = moduleType;
+	}
+
+	public List<FinanceScheduleDetail> getOldShedules() {
+		return oldShedules;
+	}
+
+	public void setOldShedules(List<FinanceScheduleDetail> oldShedules) {
+		this.oldShedules = oldShedules;
 	}
 
 }

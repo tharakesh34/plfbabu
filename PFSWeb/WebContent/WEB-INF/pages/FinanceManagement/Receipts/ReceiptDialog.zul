@@ -510,6 +510,10 @@
 														<space id="space_transactionRef" spacing="2px" sclass="mandatory" />
 														<uppercasebox id="transactionRef" width="180px" />
 													</hbox>
+													</row>
+													<row id="row_CustomerAccount" visible="false">
+													<label id="label_ReceiptDialog_CustAccount" value="${c:l('label_ReceiptDialog_CustAccount.value')}" />
+														<extendedcombobox id="customerBankAcct" width="180px" />
 												</row>
 												<row id="row_ChequeAcNo" visible="false">
 													<label id="label_ReceiptDialog_ChequeAccountNo" value="${c:l('label_ReceiptDialog_ChequeAccountNo.value')}" />

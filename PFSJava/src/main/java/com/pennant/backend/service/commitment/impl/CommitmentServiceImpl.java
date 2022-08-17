@@ -36,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -68,14 +69,13 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.reports.AvailCommitment;
-import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.commitment.CommitmentService;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.CommitmentConstants;
@@ -97,8 +97,6 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 	// Service Classes
 	private CheckListDetailService checkListDetailService;
-	private CustomerDetailsService customerDetailsService;
-
 	// DAO Classes
 	private AuditHeaderDAO auditHeaderDAO;
 	private CommitmentDAO commitmentDAO;
@@ -122,6 +120,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	private DocumentDetailValidation documentDetailValidation;
 
 	private LimitManagement limitManagement;
+	private CustomerDataService customerDataService;
 
 	public CommitmentServiceImpl() {
 		super();
@@ -256,7 +255,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 			// Customer Details
 			commitment.setCustomerDetails(
-					getCustomerDetailsService().getCustomerDetailsById(commitment.getCustID(), true, "_View"));
+					customerDataService.getCustomerDetailsbyID(commitment.getCustID(), true, "_View"));
 
 			// Collateral Details
 			commitment.setCollateralAssignmentList(getCollateralAssignmentDAO()
@@ -266,7 +265,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			if (!isEnquiry) {
 				// Customer Details
 				commitment.setCustomerDetails(
-						getCustomerDetailsService().getCustomerDetailsById(commitment.getCustID(), true, "_View"));
+						customerDataService.getCustomerDetailsbyID(commitment.getCustID(), true, "_View"));
 
 				// Document Details
 				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(cmtReference,
@@ -884,7 +883,6 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 		try {
 			// Preparation for Commitment Postings
-			AEEvent aeEvent = new AEEvent();
 			Date dateAppDate = SysParamUtil.getAppDate();
 			if (AccountingEvent.MNTCMT.equals(event)) {
 				Commitment prvCommitment = getCommitmentDAO().getCommitmentById(commitment.getId(), "");
@@ -892,10 +890,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				Commitment tempCommitment = new Commitment();
 				BeanUtils.copyProperties(commitment, tempCommitment);
 				tempCommitment.setCmtAmount(diffAmount);
-				aeEvent = getPostingsPreparationUtil().processCmtPostingDetails(tempCommitment, dateAppDate, event);
+				getPostingsPreparationUtil().processCmtPostingDetails(tempCommitment, dateAppDate, event);
 				getLimitManagement().processCommitmentLimit(tempCommitment, false, LimitConstants.BLOCK);
 			} else {
-				aeEvent = getPostingsPreparationUtil().processCmtPostingDetails(commitment, dateAppDate, event);
+				getPostingsPreparationUtil().processCmtPostingDetails(commitment, dateAppDate, event);
 				getLimitManagement().processCommitmentLimit(commitment, false, LimitConstants.BLOCK);
 			}
 
@@ -2263,14 +2261,6 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		this.checkListDetailService = checkListDetailService;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public DocumentDetailsDAO getDocumentDetailsDAO() {
 		return documentDetailsDAO;
 	}
@@ -2342,4 +2332,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	public void setLimitManagement(LimitManagement limitManagement) {
 		this.limitManagement = limitManagement;
 	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
+	}
+
 }

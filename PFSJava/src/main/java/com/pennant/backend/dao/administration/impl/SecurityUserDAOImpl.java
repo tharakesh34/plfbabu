@@ -101,7 +101,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(", UsrEmail, UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits");
 		sql.append(", UsrAcExp, UsrAcExpDt, UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode");
 		sql.append(", UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, UsrDftAppCode");
-		sql.append(", PwdExpDt, UserType, BusinessVertical, LdapDomainName");
+		sql.append(", PwdExpDt, UserType, BusinessVertical, LdapDomainName, Deleted");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescUsrDftAppCode, LovDescUsrDftAppCodeName, LovDescUsrDeptCodeName");
@@ -200,14 +200,14 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrAcExpDt, UsrDesg, AuthType");
 		sql.append(", PwdExpDt, AccountUnLockedOn");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId, businessvertical, LDAPDomainName)");
+		sql.append(", RecordType, WorkflowId, businessvertical, LDAPDomainName, Deleted)");
 		sql.append(" Values(:UsrID, :UsrLogin, :UsrPwd, :UserStaffID, :UsrFName, :UsrMName, :UsrLName, :UsrMobile");
 		sql.append(", :UsrEmail, :UsrEnabled, :UsrCanSignonFrom, :UsrCanSignonTo, :UsrCanOverrideLimits, :UsrAcExp");
 		sql.append(", :UsrAcLocked, :UsrLanguage, :UsrDftAppId, :UsrDftAppCode, :UsrBranchCode, :UsrDeptCode");
 		sql.append(", :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries, :UsrAcExpDt, :UsrDesg, :AuthType");
 		sql.append(", :PwdExpDt, :AccountUnLockedOn");
 		sql.append(", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId, :businessVertical, :ldapDomainName)");
+		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId, :businessVertical, :ldapDomainName, :Deleted)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -748,4 +748,20 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		return su;
 	}
 
+	@Override
+	public void markAsDelete(SecurityUser seu, String type) {
+		StringBuilder sql = new StringBuilder("Update");
+		sql.append(" SecUsers");
+		sql.append(" Set UsrEnabled = ?, Deleted = ?");
+		sql.append(" Where Usrid = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setBoolean(index++, seu.isUsrEnabled());
+			ps.setBoolean(index++, seu.isDeleted());
+			ps.setLong(index++, seu.getUsrID());
+		});
+	}
 }

@@ -36,15 +36,17 @@ package com.pennant.webui.login;
 import java.util.Map;
 
 import org.apache.commons.collections4.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -52,8 +54,10 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.security.user.AuthenticationError;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.lic.exception.LicenseException;
+import com.pennapps.web.security.GoogleCaptcha;
 
 /**
  * This is the controller class for the /WEB-INF/loginDialog.zul file.
@@ -68,11 +72,19 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	protected Button btnReset;
 	protected Textbox txtbox_randomKey;
 
-	protected Row licenceMessageRow;
+	protected Div licenceMessageRow;
 	protected Label licenceMessage;
 	protected A licenceMessageIcon;
 	protected Label copyRight;
 	protected A copyRightInfo;
+
+	protected Label unauthorizedMessage;
+	protected Div unauthorizedMessageRow;
+
+	protected Div recaptcha;
+
+	protected Div loginError;
+	protected Label loginErrorMsg;
 
 	/**
 	 * Default constructor.
@@ -84,7 +96,21 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	public void onCreate$loginwin(Event event) {
 		logger.info(Literal.ENTERING);
 
-		// Invalidate the session if one exists.
+		String disclaimerMessage = Labels.getLabel("label_LoginDialog_disclaimer", new String[] { "" });
+
+		if (!StringUtils.isBlank(disclaimerMessage)) {
+			this.unauthorizedMessageRow.setVisible(true);
+			unauthorizedMessage.setValue(disclaimerMessage);
+		}
+
+		setLicenceMessage();
+
+		if (GoogleCaptcha.isRequired()) {
+			this.recaptcha.setVisible(true);
+			recaptcha.setClientAttribute("data-sitekey", GoogleCaptcha.getSiteKey());
+			recaptcha.setClientAttribute("data-callback", "onSuccess");
+		}
+
 		try {
 			SessionUserDetails.getLogiedInUser();
 			Sessions.getCurrent().invalidate();
@@ -102,7 +128,25 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 		}
 
 		txtbox_randomKey.setValue(randomKey);
-		setLicenceMessage();
+
+		String errorMsg = Executions.getCurrent().getParameter("login_error");
+
+		if (errorMsg == null) {
+			loginError.setVisible(false);
+
+			logger.info(Literal.LEAVING);
+
+			return;
+		}
+
+		loginError.setVisible(true);
+
+		if ("1".equals(errorMsg)) {
+			loginErrorMsg.setValue(AuthenticationError.DEFAULT.message());
+		} else {
+			loginErrorMsg.setValue(errorMsg);
+		}
+
 		logger.info(Literal.LEAVING);
 	}
 
@@ -158,7 +202,6 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 		} else {
 			copyRight.setValue(App.getVersion());
 		}
-
 	}
 
 	@Override

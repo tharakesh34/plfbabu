@@ -277,6 +277,10 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 					new PTDateValidator(Labels.getLabel("label_RescheduleMentReportDialog_FromDate.value"), true));
 		}
 
+		if (!this.toDate.isDisabled()) {
+			this.toDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_RescheduleMentReportDialog_ToDate.value"), true));
+		}
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -49,6 +49,7 @@ public class InterestCertificate {
 	private String schdPriPaidStr = "0.00";
 	private String totRepayAmount = "0.00";
 	private String totSchdAmount = "0.00";
+	private String finCurrassetValue = "0.00";
 	private String finCcy;
 	private String finStartDate;
 	private String finEndDate;
@@ -441,6 +442,14 @@ public class InterestCertificate {
 
 	public void setTotSchdAmount(String totSchdAmount) {
 		this.totSchdAmount = totSchdAmount;
+	}
+
+	public String getFinCurrassetValue() {
+		return finCurrassetValue;
+	}
+
+	public void setFinCurrassetValue(String finCurrassetValue) {
+		this.finCurrassetValue = finCurrassetValue;
 	}
 
 	public String getFinType() {

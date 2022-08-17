@@ -38,6 +38,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.model.applicationmaster.BankDetail;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -82,8 +84,8 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 	@Override
 	public BankDetail getBankDetailById(final String id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" BankCode, BankName, BankShortCode, Active, AccNoLength, MinAccNoLength, Version");
-		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(" BankCode, BankName, BankShortCode, Active, AccNoLength, MinAccNoLength, AllowMultipleIFSC");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
 		sql.append(" from BMTBankDetail");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -101,6 +103,7 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 				bd.setActive(rs.getBoolean("Active"));
 				bd.setAccNoLength(rs.getInt("AccNoLength"));
 				bd.setMinAccNoLength(rs.getInt("MinAccNoLength"));
+				bd.setAllowMultipleIFSC(rs.getBoolean("AllowMultipleIFSC"));
 				bd.setVersion(rs.getInt("Version"));
 				bd.setLastMntOn(rs.getTimestamp("LastMntOn"));
 				bd.setLastMntBy(rs.getLong("LastMntBy"));
@@ -163,10 +166,11 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTBankDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength,");
+		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength, AllowMultipleIFSC,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength, :MinAccNoLength,");
+		sql.append(
+				" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength, :MinAccNoLength, :AllowMultipleIFSC,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -192,8 +196,9 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		StringBuilder sql = new StringBuilder("update BMTBankDetail");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				" set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active, AccNoLength = :AccNoLength, MinAccNoLength = :MinAccNoLength,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+				" Set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active, AccNoLength = :AccNoLength, MinAccNoLength = :MinAccNoLength,");
+		sql.append(
+				" AllowMultipleIFSC = :AllowMultipleIFSC, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		sql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -330,4 +335,57 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 			return false;
 		}
 	}
+
+	@Override
+	public BankDetail getAccNoLengths(String bankCode) {
+		String length = "length";
+		if (App.DATABASE == Database.SQL_SERVER) {
+			length = "len";
+		}
+
+		StringBuilder sql = new StringBuilder("Select min(");
+		sql.append(length);
+		sql.append("(AccNo)) MinAccNoLength, max(");
+		sql.append(length);
+		sql.append("(AccNo)) MaxAccNoLength from (");
+		sql.append(" select BeneficiaryAccno AccNo, BankBranchId From FinAdvancePayments");
+		sql.append(" Union all");
+		sql.append(" Select BeneficiaryAccno AccNo, BankBranchId From FinAdvancePayments_Temp");
+		sql.append(" union all");
+		sql.append(" Select AccountNo  AccNo, BankBranchId From PaymentInstructions");
+		sql.append(" union all");
+		sql.append(" Select AccountNo  AccNo, BankBranchId From PaymentInstructions_Temp");
+		sql.append(" union all");
+		sql.append(" Select AccNumber  AccNo, BankBranchId From Mandates");
+		sql.append(" union all");
+		sql.append(" Select AccNumber  AccNo, BankBranchId From Mandates_Temp");
+		sql.append(" union all");
+		sql.append(" Select AccountNo  AccNo, BankBranchId From ChequeDetail");
+		sql.append(" union all");
+		sql.append(" Select AccountNo  AccNo, BankBranchId From ChequeDetail_Temp");
+		sql.append(" union all");
+		sql.append(" Select AccountNumber  AccNo, BankBranchId From CustomerBankInfo");
+		sql.append(" union all");
+		sql.append(" Select AccountNumber  AccNo, BankBranchId From CustomerBankInfo_Temp");
+		sql.append(" ) T");
+		sql.append(" Inner Join BankBranches bb on bb.BankBranchId = T.BankBranchId");
+		sql.append(" where bb.BankCode = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				BankDetail bc = new BankDetail();
+
+				bc.setMinAccNoLength(rs.getInt("MinAccNoLength"));
+				bc.setAccNoLength(rs.getInt("MaxAccNoLength"));
+
+				return bc;
+			}, bankCode);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }

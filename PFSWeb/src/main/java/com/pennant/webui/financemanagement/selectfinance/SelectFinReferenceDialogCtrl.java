@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -55,7 +56,7 @@ import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceFlagsService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -96,7 +97,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private LiabilityRequestListCtrl liabilityRequestListCtrl;
 	private String moduleDefiner = "";
 	protected String eventCode = "";
-	private CustomerDetailsService customerDetailsService;
+	private CustomerDataService customerDataService;
 	private FinanceDetailService financeDetailService;
 	private FinanceFlag financeFlag;
 	private transient FinanceFlagsListCtrl financeFlagsListCtrl;
@@ -332,7 +333,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			FinanceMain finMain = (FinanceMain) dataObject;
 			if (finMain != null) {
 				this.finReference.setValue(finMain.getFinReference());
-				custDetail = getCustomerDetailsService().getCustomerDetailsById(finMain.getCustID(), true, "_View");
+				custDetail = customerDataService.getCustomerDetailsbyID(finMain.getCustID(), true, "_View");
 				this.custCIF.setValue(String.valueOf(custDetail.getCustomer().getCustCIF()));
 
 				if (custDetail != null && custDetail.getCustomer() != null) {
@@ -525,14 +526,6 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.liabilityRequestListCtrl = liabilityRequestListCtrl;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
@@ -595,6 +588,11 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setPmayListCtrl(PMAYListCtrl pmayListCtrl) {
 		this.pmayListCtrl = pmayListCtrl;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
 	}
 
 }

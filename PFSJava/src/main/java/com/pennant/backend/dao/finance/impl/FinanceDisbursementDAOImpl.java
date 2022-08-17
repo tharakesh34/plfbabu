@@ -647,4 +647,24 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		return getFinanceDisbursementDetails(finID, "", false);
 	}
 
+	@Override
+	public FinanceDisbursement getFinanceDisbursementByInstId(final long instructionUID) {
+		String sql = "Select DisbAmount, DisbDate From FinDisbursementDetails Where InstructionUID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				FinanceDisbursement fd = new FinanceDisbursement();
+
+				fd.setDisbAmount(rs.getBigDecimal("DisbAmount"));
+				fd.setDisbDate(JdbcUtil.getDate(rs.getDate("DisbDate")));
+
+				return fd;
+			}, instructionUID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

@@ -33,8 +33,11 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -44,8 +47,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
-import com.pennanttech.pff.mmfl.cd.service.MerchantDetailsService;
+import com.pennanttech.pff.cd.model.MerchantDetails;
+import com.pennanttech.pff.cd.service.MerchantDetailsService;
 
 public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 	private static final long serialVersionUID = 1L;
@@ -77,6 +80,10 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 	protected ExtendedCombobox pincode;
 	protected Checkbox active;
 	protected Intbox posId;
+	protected Textbox merchPAN;
+	protected Uppercasebox gstInNumber;
+	protected Textbox merchMobileNo;
+	protected Textbox merchEmailId;
 
 	protected MerchantDetails merchantDetails;
 
@@ -343,7 +350,10 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		this.country.setDescription(merchantDetails.getCountryName());
 		this.pincode.setValue(merchantDetails.getPincode());
 		this.posId.setValue(merchantDetails.getPOSId());
-
+		this.merchPAN.setText(merchantDetails.getMerchPAN());
+		this.gstInNumber.setText(merchantDetails.getGstInNumber());
+		this.merchMobileNo.setText(merchantDetails.getMerchMobileNo());
+		this.merchEmailId.setText(merchantDetails.getMerchEmailId());
 		this.recordStatus.setValue(merchantDetails.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -486,6 +496,30 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 
 		try {
 			merchantDetails.setActive(this.active.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			merchantDetails.setMerchPAN(this.merchPAN.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			merchantDetails.setGstInNumber(this.gstInNumber.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			merchantDetails.setMerchMobileNo(this.merchMobileNo.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			merchantDetails.setMerchEmailId(this.merchEmailId.getText());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -645,6 +679,28 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 					new PTNumberValidator(Labels.getLabel("label_MerchantDetails_POSId.value"), true, false));
 		}
 
+		if (!this.merchPAN.isReadonly()) {
+			this.merchPAN.setConstraint(new PTStringValidator(Labels.getLabel("label_MerchantDetails_PanNumber.value"),
+					PennantRegularExpressions.REGEX_PANNUMBER, false));
+		}
+
+		if (!this.gstInNumber.isReadonly()) {
+			this.gstInNumber
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_MerchantDetails_GSTINNumber.value"),
+							PennantRegularExpressions.REGEX_GSTIN, false));
+		}
+
+		if (!this.merchMobileNo.isReadonly()) {
+			this.merchMobileNo
+					.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_MerchantDetails_MobileNo.value"),
+							false, PennantRegularExpressions.REGEX_MOBILE));
+		}
+
+		if (!this.merchEmailId.isReadonly()) {
+			this.merchEmailId
+					.setConstraint(new PTEmailValidator(Labels.getLabel("label_MerchantDetails_EmailID.value"), false));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -668,6 +724,10 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		this.country.setConstraint("");
 		this.state.setConstraint("");
 		this.pincode.setConstraint("");
+		this.merchPAN.setConstraint("");
+		this.gstInNumber.setConstraint("");
+		this.merchMobileNo.setConstraint("");
+		this.merchEmailId.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -733,6 +793,10 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		readOnlyComponent(isReadOnly("MerchantDialogue_RefundAllowed"), this.refundAllowed);
 		readOnlyComponent(isReadOnly("MerchantDialogue_Channel"), this.btnChannel);
 		// readOnlyComponent(isReadOnly("MerchantDialogue_POSId"), this.posId);
+		readOnlyComponent(isReadOnly("MerchantDialogue_PANNumber"), this.merchPAN);
+		readOnlyComponent(isReadOnly("MerchantDialogue_GSTINNumber"), this.gstInNumber);
+		readOnlyComponent(isReadOnly("MerchantDialogue_MobileNumber"), this.merchMobileNo);
+		readOnlyComponent(isReadOnly("MerchantDialogue_EmailId"), this.merchEmailId);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -775,6 +839,10 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		readOnlyComponent(true, this.refundAllowed);
 		readOnlyComponent(true, this.txtchannel);
 		readOnlyComponent(true, this.btnChannel);
+		readOnlyComponent(true, this.merchPAN);
+		readOnlyComponent(true, this.gstInNumber);
+		readOnlyComponent(true, this.merchMobileNo);
+		readOnlyComponent(true, this.merchEmailId);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -811,6 +879,10 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		this.refundAllowed.setChecked(false);
 		this.txtchannel.setValue("");
 		this.active.setChecked(false);
+		this.merchPAN.setValue("");
+		this.gstInNumber.setValue("");
+		this.merchMobileNo.setValue("");
+		this.merchEmailId.setValue("");
 		logger.debug(Literal.LEAVING);
 	}
 

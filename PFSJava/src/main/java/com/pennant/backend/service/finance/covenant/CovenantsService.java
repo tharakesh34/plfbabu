@@ -30,6 +30,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
@@ -61,4 +62,7 @@ public interface CovenantsService {
 	List<ErrorDetail> validatePDDDocuments(String finReference, List<ErrorDetail> errorDetails);
 
 	void deleteDocumentByDocumentId(Long documentId, String tableType);
+
+	void processDocuments(List<AuditDetail> auditDetails, List<CovenantDocument> covenantDocuments, TableType tableType,
+			String tranType, boolean isApproveRcd);
 }

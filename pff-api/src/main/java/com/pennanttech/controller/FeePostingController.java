@@ -409,8 +409,7 @@ public class FeePostingController extends ExtendedTestClass {
 		feePostings.setSourceId(APIConstants.FINSOURCE_ID_API);
 
 		if (FinanceConstants.POSTING_AGAINST_LOAN.equals(feePostings.getPostAgainst())) {
-			String finDivision = financeMainDAO.getLovDescFinDivisionByReference(feePostings.getReference());
-			feePostings.setPostingDivision(finDivision);
+			feePostings.setPostingDivision(financeMainDAO.getLovDescFinDivisionByReference(feePostings.getReference()));
 		}
 	}
 
@@ -441,5 +440,4 @@ public class FeePostingController extends ExtendedTestClass {
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-
 }

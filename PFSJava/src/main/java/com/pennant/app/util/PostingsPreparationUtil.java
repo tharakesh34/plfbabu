@@ -712,7 +712,8 @@ public class PostingsPreparationUtil implements Serializable {
 		List<ReturnDataSet> dataSetList = getReveralsByFinreference(reference);
 
 		for (ReturnDataSet returnDataSet : dataSetList) {
-			if (!AccountingEvent.FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {
+			if (!AccountingEvent.FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())
+					&& !AccountingEvent.INDAS.equalsIgnoreCase(returnDataSet.getFinEvent())) {
 				returnDataSets.add(returnDataSet);
 				linkedTranIds.add(returnDataSet.getLinkedTranId());
 			}

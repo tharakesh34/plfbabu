@@ -10,7 +10,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "applyODPenalty", "oDIncGrcDays", "oDGraceDays", "oDChargeType", "oDChargeCalOn",
-		"oDChargeAmtOrPerc", "oDAllowWaiver", "oDMaxWaiverPerc" })
+		"oDChargeAmtOrPerc", "oDAllowWaiver", "oDMaxWaiverPerc", "extensionODGrcDays", "collecChrgCodeId",
+		"collectionAmt" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinODPenaltyRate implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -36,6 +37,12 @@ public class FinODPenaltyRate implements Serializable {
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
 	private BigDecimal oDMinCapAmount = BigDecimal.ZERO;
 	private long logKey = 0;
+	@XmlElement(name = "extensionODGrcDays")
+	private int overDraftExtGraceDays;
+	@XmlElement(name = "collecChrgCodeId")
+	private long overDraftColChrgFeeType;
+	@XmlElement(name = "collectionAmt")
+	private BigDecimal overDraftColAmt = BigDecimal.ZERO;
 
 	private String oDRuleCode;
 	private boolean oDTDSReq;
@@ -65,6 +72,9 @@ public class FinODPenaltyRate implements Serializable {
 		entity.setLogKey(this.logKey);
 		entity.setODRuleCode(this.oDRuleCode);
 		entity.setoDTDSReq(this.oDTDSReq);
+		entity.setOverDraftExtGraceDays(this.overDraftExtGraceDays);
+		entity.setOverDraftColChrgFeeType(this.overDraftColChrgFeeType);
+		entity.setOverDraftColAmt(this.overDraftColAmt);
 		return entity;
 	}
 
@@ -194,5 +204,29 @@ public class FinODPenaltyRate implements Serializable {
 
 	public void setoDTDSReq(boolean oDTDSReq) {
 		this.oDTDSReq = oDTDSReq;
+	}
+
+	public int getOverDraftExtGraceDays() {
+		return overDraftExtGraceDays;
+	}
+
+	public void setOverDraftExtGraceDays(int overDraftExtGraceDays) {
+		this.overDraftExtGraceDays = overDraftExtGraceDays;
+	}
+
+	public long getOverDraftColChrgFeeType() {
+		return overDraftColChrgFeeType;
+	}
+
+	public void setOverDraftColChrgFeeType(long overDraftColChrgFeeType) {
+		this.overDraftColChrgFeeType = overDraftColChrgFeeType;
+	}
+
+	public BigDecimal getOverDraftColAmt() {
+		return overDraftColAmt;
+	}
+
+	public void setOverDraftColAmt(BigDecimal overDraftColAmt) {
+		this.overDraftColAmt = overDraftColAmt;
 	}
 }
