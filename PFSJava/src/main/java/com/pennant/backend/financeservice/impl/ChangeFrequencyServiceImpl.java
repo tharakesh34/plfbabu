@@ -30,10 +30,10 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
 
 public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruction>
 		implements ChangeFrequencyService {
@@ -42,38 +42,33 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceMainDAO financeMainDAO;
 
-	/**
-	 * Method for process schedule details and do change frequency action
-	 * 
-	 * @param scheduleData
-	 * @param finServiceInst
-	 * @return FinScheduleData
-	 */
-	public FinScheduleData doChangeFrequency(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst) {
-		logger.debug("Entering");
+	public FinScheduleData doChangeFrequency(FinScheduleData schdData, FinServiceInstruction fsi) {
+		logger.debug(Literal.ENTERING);
 
-		boolean isApplySanctionBasedSchedule = SanctionBasedSchedule.isApplySanctionBasedSchedule(finScheduleData);
-		FinScheduleData scheduleData = null;
-		Cloner cloner = new Cloner();
-		scheduleData = cloner.deepClone(finScheduleData);
+		boolean isApplySanctionBasedSchedule = SanctionBasedSchedule.isApplySanctionBasedSchedule(schdData);
 
-		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
-		String frequency = finServiceInst.getRepayFrq();
-		Date fromDate = finServiceInst.getFromDate();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		// Finance Main Details
-		FinanceMain financeMain = scheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> scheduleList = scheduleData.getFinanceScheduleDetails();
+		BigDecimal oldTotalPft = fm.getTotalGrossPft();
+		String frequency = fsi.getRepayFrq();
+		Date fromDate = fsi.getFromDate();
+
+		String recalType = fsi.getRecalType();
+		List<FinanceScheduleDetail> scheduleList = schdData.getFinanceScheduleDetails();
 
 		// Dates Modifications as per New Frequency Date Selection
-		Date prvSchdate = financeMain.getFinStartDate();
+		Date prvSchdate = fm.getFinStartDate();
 		FinanceScheduleDetail prvSchd = null;
 		Date eventFromdate = null;
 		Date appDate = SysParamUtil.getAppDate();
 		int day = Integer.parseInt(frequency.substring(3));
-		for (int i = 1; i < scheduleList.size(); i++) {
 
+		boolean additionalBPIAdded = false;
+		FinanceScheduleDetail additionalBPISchd = null;
+
+		for (int i = 1; i < scheduleList.size(); i++) {
 			FinanceScheduleDetail curSchd = scheduleList.get(i);
+
 			if (curSchd.getSchDate().compareTo(fromDate) <= 0) {
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0
 						|| StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())) {
@@ -84,7 +79,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			}
 
 			// Not Review Date
-			if (!curSchd.isRepayOnSchDate() && !financeMain.isFinRepayPftOnFrq() && !curSchd.isPftOnSchDate()) {
+			if (!curSchd.isRepayOnSchDate() && !fm.isFinRepayPftOnFrq() && !curSchd.isPftOnSchDate()) {
 				if (curSchd.isDisbOnSchDate()) {
 					curSchd.setDisbOnSchDate(false);
 					curSchd.setDisbAmount(BigDecimal.ZERO);
@@ -125,19 +120,18 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			}
 
 			// Check days Difference between earlier date and current newly calculated date
-			if (DateUtility.getDaysBetween(newDate.getTime(), prvSchdate) <= 15) {
-				if (!(DateUtility.compare(prvSchdate, financeMain.getGrcPeriodEndDate()) == 0
-						&& DateUtility.compare(oldDate, appDate) > 0)) {
+			if (DateUtil.getDaysBetween(newDate.getTime(), prvSchdate) <= 15) {
+				if (!(DateUtil.compare(prvSchdate, fm.getGrcPeriodEndDate()) == 0
+						&& DateUtil.compare(oldDate, appDate) > 0)) {
 					newDate.add(Calendar.MONTH, 1);
 				}
 			}
 
-			Date curSchDate = DateUtility
-					.getDBDate(DateUtility.format(newDate.getTime(), PennantConstants.DBDateFormat));
+			Date curSchDate = newDate.getTime();
+
 			while (prvSchdate.compareTo(curSchDate) >= 0) {
 				newDate.add(Calendar.MONTH, 1);
-				curSchDate = DateUtility
-						.getDBDate(DateUtility.format(newDate.getTime(), PennantConstants.DBDateFormat));
+				curSchDate = newDate.getTime();
 			}
 
 			curSchd.setSchDate(curSchDate);
@@ -146,16 +140,25 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			curSchd.setDisbAmount(BigDecimal.ZERO);
 			curSchd.setFeeChargeAmt(BigDecimal.ZERO);
 
-			String planEMIHM = financeMain.getPlanEMIHMethod();
+			if (additionalBPISchd != null) {
+				additionalBPIAdded = true;
+			}
+
+			if (!additionalBPIAdded && CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(recalType)
+					&& DateUtil.getDaysBetween(newDate.getTime(), prvSchdate) > 30) {
+				additionalBPISchd = prepareAddtionalBPISchd(schdData, curSchd);
+			}
+
+			String planEMIHM = fm.getPlanEMIHMethod();
 			String bpiOrHoliday = curSchd.getBpiOrHoliday();
 			if (FinanceConstants.FLAG_HOLIDAY.equals(bpiOrHoliday)
 					&& FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHM)) {
-				scheduleData.getPlanEMIHDates().removeIf(e -> (e.compareTo(oldDate) == 0));
-				scheduleData.getPlanEMIHDates().add(curSchd.getSchDate());
+				schdData.getPlanEMIHDates().removeIf(e -> (e.compareTo(oldDate) == 0));
+				schdData.getPlanEMIHDates().add(curSchd.getSchDate());
 			}
 
-			if (DateUtility.compare(oldDate, financeMain.getGrcPeriodEndDate()) == 0) {
-				financeMain.setGrcPeriodEndDate(curSchd.getSchDate());
+			if (DateUtil.compare(oldDate, fm.getGrcPeriodEndDate()) == 0) {
+				fm.setGrcPeriodEndDate(curSchd.getSchDate());
 			}
 
 			if (prvSchd != null && prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0) {
@@ -165,55 +168,67 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			}
 
 			if (eventFromdate == null) {
-				eventFromdate = curSchd.getSchDate();
-				finServiceInst.setFromDate(eventFromdate);
+				if (additionalBPISchd != null) {
+					eventFromdate = additionalBPISchd.getSchDate();
+				} else {
+					eventFromdate = curSchd.getSchDate();
+				}
+
+				fsi.setFromDate(eventFromdate);
 			}
 
 			// For Grace Period Date Selection check Repay Instruction Details
-			List<RepayInstruction> instructionList = scheduleData.getRepayInstructions();
+			List<RepayInstruction> instructionList = schdData.getRepayInstructions();
 			for (int ri = 0; ri < instructionList.size(); ri++) {
 				if (oldDate != null && oldDate.compareTo(instructionList.get(ri).getRepayDate()) == 0) {
 					instructionList.get(ri).setRepayDate(curSchd.getSchDate());
 				}
 			}
 
-			prvSchdate = curSchd.getSchDate();
-			prvSchd = curSchd;
+			if (!additionalBPIAdded && additionalBPISchd != null) {
+				prvSchdate = additionalBPISchd.getSchDate();
+				prvSchd = additionalBPISchd;
+				schdData.getFinanceScheduleDetails().add(additionalBPISchd);
+				schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
+			} else {
+				prvSchdate = curSchd.getSchDate();
+				prvSchd = curSchd;
+			}
+
 		}
 
 		boolean isDisbDateFoundInSD = false;
 		int disbIndex = 0;
-		List<FinanceScheduleDetail> finSchdDetails = scheduleData.getFinanceScheduleDetails();
+		List<FinanceScheduleDetail> finSchdDetails = schdData.getFinanceScheduleDetails();
 		int sdSize = finSchdDetails.size();
 
 		// Add Disbursement amount to existing record if found
-		List<FinanceDisbursement> finDisbDetails = scheduleData.getDisbursementDetails();
-		FinanceScheduleDetail curSchd = null;
-		Date schdDate = financeMain.getFinStartDate();
+		List<FinanceDisbursement> finDisbDetails = schdData.getDisbursementDetails();
+		Date schdDate = fm.getFinStartDate();
 		boolean disbMaturityCrossed = false;
-		for (int k = 0; k < finDisbDetails.size(); k++) {
 
-			FinanceDisbursement curDisb = finDisbDetails.get(k);
-			if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
+		for (FinanceDisbursement curDisb : finDisbDetails) {
+			if (FinanceConstants.DISB_STATUS_CANCEL.equals(curDisb.getDisbStatus())) {
 				continue;
 			}
+
 			Date curDisbDate = curDisb.getDisbDate();
 			isDisbDateFoundInSD = false;
-			if (curDisbDate.compareTo(fromDate) <= 0 || curDisbDate.compareTo(financeMain.getFinStartDate()) == 0) {
+			if (curDisbDate.compareTo(fromDate) <= 0 || curDisbDate.compareTo(fm.getFinStartDate()) == 0) {
 				continue;
 			}
 
 			// Existing Disbursement Date should be less than Newly calculated Maturity Term
-			if (curDisbDate.compareTo(financeMain.getMaturityDate()) >= 0) {
+			if (curDisbDate.compareTo(fm.getMaturityDate()) >= 0) {
 				disbMaturityCrossed = true;
 				String[] valueParm = new String[1];
 				valueParm[0] = DateUtility.formatToLongDate(curDisbDate);
-				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30575", "", valueParm), "EN"));
+				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30575", "", valueParm), "EN"));
 				break;
 			}
 
 			for (int i = 0; i < sdSize; i++) {
-				curSchd = finSchdDetails.get(i);
+				FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 				schdDate = curSchd.getSchDate();
 
 				// Schedule Date before event from date
@@ -238,10 +253,10 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 			// If new disbursement date add a record in schedule
 			if (!isDisbDateFoundInSD) {
-				scheduleData = addSchdRcd(scheduleData, curDisbDate, disbIndex);
+				schdData = addSchdRcd(schdData, curDisbDate, disbIndex);
 				prvSchd = finSchdDetails.get(disbIndex);
 				disbIndex = disbIndex + 1;
-				curSchd = scheduleData.getFinanceScheduleDetails().get(disbIndex);
+				FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(disbIndex);
 
 				curSchd.setDisbOnSchDate(true);
 				curSchd.setDisbAmount(curDisb.getDisbAmount());
@@ -249,54 +264,113 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				curSchd.setClosingBalance(
 						prvSchd.getClosingBalance().add(curDisb.getDisbAmount()).add(curDisb.getFeeChargeAmt()));
 			}
+
 		}
 
 		// If Existing Disbursement crossed newly calculated maturity Date
 		if (disbMaturityCrossed) {
-			return scheduleData;
+			return schdData;
 		}
 
 		// Setting Recalculation Type Method
-		scheduleData.getFinanceMain().setRecalFromDate(eventFromdate);
-		scheduleData.getFinanceMain().setEventFromDate(eventFromdate);
-		scheduleData.getFinanceMain().setEventToDate(finServiceInst.getRecalToDate());
-		scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getMaturityDate());
-		scheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
-		scheduleData.getFinanceMain().setPftIntact(finServiceInst.isPftIntact());
-		scheduleData.getFinanceMain().setProcMethod(FinServiceEvent.CHGFRQ);
+		fm.setRecalFromDate(eventFromdate);
+		fm.setEventFromDate(eventFromdate);
+		fm.setEventToDate(fsi.getRecalToDate());
+		fm.setRecalToDate(schdData.getFinanceMain().getMaturityDate());
+		fm.setRecalType(fsi.getRecalType());
+		fm.setPftIntact(fsi.isPftIntact());
+		fm.setProcMethod(FinServiceEvent.CHGFRQ);
 
 		// Schedule Recalculation Depends on Frequency Change
-		scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
+		schdData = ScheduleCalculator.reCalSchd(schdData, fm.getScheduleMethod());
 
 		// Plan EMI Holidays Resetting after Rescheduling
-		if (scheduleData.getFinanceMain().isPlanEMIHAlw()) {
-			scheduleData.getFinanceMain().setEventFromDate(eventFromdate);
-			scheduleData.getFinanceMain().setEventToDate(scheduleData.getFinanceMain().getCalMaturity());
-			scheduleData.getFinanceMain().setRecalFromDate(scheduleData.getFinanceMain().getCalMaturity());
-			scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getCalMaturity());
-			scheduleData.getFinanceMain().setRecalSchdMethod(scheduleData.getFinanceMain().getScheduleMethod());
+		if (fm.isPlanEMIHAlw()) {
+			fm.setEventFromDate(eventFromdate);
+			fm.setEventToDate(fm.getCalMaturity());
+			fm.setRecalFromDate(fm.getCalMaturity());
+			fm.setRecalToDate(fm.getCalMaturity());
+			fm.setRecalSchdMethod(fm.getScheduleMethod());
 
-			if (StringUtils.equals(scheduleData.getFinanceMain().getPlanEMIHMethod(),
-					FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-				scheduleData = ScheduleCalculator.getFrqEMIHoliday(scheduleData);
+			if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				schdData = ScheduleCalculator.getFrqEMIHoliday(schdData);
 			} else {
-				scheduleData = ScheduleCalculator.getAdhocEMIHoliday(scheduleData);
+				schdData = ScheduleCalculator.getAdhocEMIHoliday(schdData);
 			}
 		}
 
 		// Setting maturity Date
-		sdSize = scheduleData.getFinanceScheduleDetails().size();
+		sdSize = schdData.getFinanceScheduleDetails().size();
 		if (sdSize > 0) {
-			scheduleData.getFinanceMain()
-					.setMaturityDate(scheduleData.getFinanceScheduleDetails().get(sdSize - 1).getSchDate());
+			fm.setMaturityDate(schdData.getFinanceScheduleDetails().get(sdSize - 1).getSchDate());
 		}
 
-		BigDecimal newTotalPft = scheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal newTotalPft = fm.getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
-		scheduleData.setPftChg(pftDiff);
-		scheduleData.getFinanceMain().setScheduleRegenerated(true);
-		logger.debug("Leaving");
-		return scheduleData;
+
+		schdData.setPftChg(pftDiff);
+		fm.setScheduleRegenerated(true);
+
+		logger.debug(Literal.LEAVING);
+		return schdData;
+	}
+
+	private FinanceScheduleDetail prepareAddtionalBPISchd(FinScheduleData schdData, FinanceScheduleDetail curSchd) {
+		FinanceMain fm = schdData.getFinanceMain();
+		Date adtlBPIDate = DateUtility.addMonths(curSchd.getSchDate(), -1);
+
+		FinanceScheduleDetail sd = new FinanceScheduleDetail();
+		sd.setFinID(fm.getFinID());
+		sd.setFinReference(fm.getFinReference());
+		sd.setSchDate(adtlBPIDate);
+		sd.setDefSchdDate(adtlBPIDate);
+		sd.setBpiOrHoliday(FinanceConstants.FLAG_ADDTNL_BPI);
+		sd.setBalanceForPftCal(BigDecimal.ZERO);
+		sd.setNoOfDays(0);
+		sd.setDayFactor(BigDecimal.ZERO);
+		sd.setProfitCalc(BigDecimal.ZERO);
+		sd.setProfitSchd(BigDecimal.ZERO);
+		sd.setPrincipalSchd(BigDecimal.ZERO);
+		sd.setRepayAmount(BigDecimal.ZERO);
+		sd.setProfitBalance(BigDecimal.ZERO);
+		sd.setDisbAmount(BigDecimal.ZERO);
+		sd.setDownPaymentAmount(BigDecimal.ZERO);
+		sd.setCpzAmount(BigDecimal.ZERO);
+		sd.setCpzBalance(BigDecimal.ZERO);
+		sd.setClosingBalance(BigDecimal.ZERO);
+		sd.setProfitFraction(BigDecimal.ZERO);
+		sd.setBaseRate(curSchd.getBaseRate());
+		sd.setSplRate(curSchd.getSplRate());
+		sd.setMrgRate(curSchd.getMrgRate());
+		sd.setActRate(curSchd.getActRate());
+		sd.setCalculatedRate(curSchd.getCalculatedRate());
+
+		if (StringUtils.isNotEmpty(fm.getBpiPftDaysBasis())) {
+			sd.setPftDaysBasis(fm.getBpiPftDaysBasis());
+		} else {
+			sd.setPftDaysBasis(curSchd.getPftDaysBasis());
+		}
+
+		sd.setTDSApplicable(fm.isTDSApplicable());
+
+		if (DateUtil.compare(adtlBPIDate, fm.getGrcPeriodEndDate()) > 0) {
+			sd.setSchdMethod(fm.getScheduleMethod());
+		} else {
+			sd.setSchdMethod(fm.getGrcSchdMthd());
+		}
+
+		if (FinanceConstants.BPI_CAPITALIZE.equals(fm.getBpiTreatment())) {
+			sd.setPftOnSchDate(false);
+			sd.setCpzOnSchDate(true);
+		} else {
+			sd.setPftOnSchDate(true);
+			sd.setCpzOnSchDate(false);
+		}
+
+		sd.setRvwOnSchDate(false);
+		sd.setRepayOnSchDate(false);
+
+		return sd;
 	}
 
 	/**
@@ -422,23 +496,24 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 		boolean isValidFromDate = false;
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
-		if (schedules != null) {
-			for (FinanceScheduleDetail schDetail : schedules) {
-				if (DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
-					isValidFromDate = true;
-					if (checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
-						return auditDetail;
-					}
+
+		for (FinanceScheduleDetail schDetail : schedules) {
+			if (DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
+				isValidFromDate = true;
+				if (!FinanceConstants.FLAG_BPI.equals(schDetail.getBpiOrHoliday())
+						&& checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
+					return auditDetail;
 				}
 			}
-
-			if (!isValidFromDate) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(fsi.getFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
-			}
 		}
-		logger.debug("Leaving");
+
+		if (!isValidFromDate) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(fsi.getFromDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
+		}
+
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
