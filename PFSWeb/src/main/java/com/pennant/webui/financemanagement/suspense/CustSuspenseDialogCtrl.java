@@ -56,6 +56,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -269,7 +270,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		this.custSuspSts.setChecked(aCustomer.isCustSuspSts());
 		this.custSuspDate.setValue(aCustomer.getCustSuspDate());
 		if (aCustomer.getCustSuspDate() == null) {
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			this.custSuspDate.setValue(appDate);
 			this.custSuspSts.setChecked(true);
 		}
@@ -321,7 +322,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		}
 		try {
 			aCustomer.setCustSuspDate(this.custSuspDate.getValue());
-			Date appStartDate = DateUtility.getAppDate();
+			Date appStartDate = SysParamUtil.getAppDate();
 			if (DateUtility.compare(this.custSuspDate.getValue(), appStartDate) > 0) {
 				throw new WrongValueException(this.custSuspDate,
 						Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
@@ -790,7 +791,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 			this.custSuspSts.setDisabled(false);
 			this.custSuspRemarks.setDisabled(false);
 			this.custSuspSts.setChecked(true);
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			this.custSuspDate.setValue(appDate);
 		}
 	}

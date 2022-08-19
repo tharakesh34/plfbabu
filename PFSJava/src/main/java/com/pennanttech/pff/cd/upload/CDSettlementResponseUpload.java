@@ -120,10 +120,10 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 		status.setRemarks("initiated Settlement upload  file [ " + name + " ] processing..");
 
 		DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true,
-				DateUtility.getAppDate(), status);
+				SysParamUtil.getAppDate(), status);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
-		dataEngine.setValueDate(DateUtility.getAppDate());
+		dataEngine.setValueDate(SysParamUtil.getAppDate());
 		Map<String, Object> filterMap = new HashMap<>();
 		Map<String, Object> parametersMap = new HashMap<>();
 		dataEngine.setParameterMap(parametersMap);

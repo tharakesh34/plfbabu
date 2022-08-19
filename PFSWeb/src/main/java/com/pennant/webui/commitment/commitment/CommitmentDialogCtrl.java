@@ -392,7 +392,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	private Map<Long, Long> selectedAnsCountMap = null;
 
 	// Default Values
-	private Date appDate = DateUtility.getAppDate();
+	private Date appDate = SysParamUtil.getAppDate();
 	private Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 	private int defaultCCYDecPos = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 

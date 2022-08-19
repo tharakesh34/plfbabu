@@ -192,7 +192,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private Map<String, List<Listitem>> checkListDocTypeMap = null;
 	private List<DocumentDetails> documentDetailList = null;
 	private String userRole = "";
-	Date appStartDate = DateUtility.getAppDate();
+	Date appStartDate = SysParamUtil.getAppDate();
 	Date endDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	private boolean isFinanceProcess = false;

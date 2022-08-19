@@ -47,6 +47,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.FrequencyBox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -274,7 +275,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (financeScheduleDetails != null) {
 			// Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			FinanceScheduleDetail prvSchd = null;
 			boolean isPrvShcdAdded = false;
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {

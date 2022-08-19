@@ -46,6 +46,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.CancelDisbursementService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -231,7 +232,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			FinanceScheduleDetail curSchd = finScheduleDetails.get(i);
 			if (curSchd.isDisbOnSchDate()) {
 
-				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) >= 0) {
+				if (curSchd.getSchDate().compareTo(SysParamUtil.getAppDate()) >= 0) {
 
 					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0

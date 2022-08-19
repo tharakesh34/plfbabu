@@ -48,7 +48,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -139,7 +138,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private transient CustomerInterfaceService customerInterfaceService;
 
 	private String custCtgType = "";
-	Date appStartDate = DateUtility.getAppDate();
+	Date appStartDate = SysParamUtil.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
 	/**
