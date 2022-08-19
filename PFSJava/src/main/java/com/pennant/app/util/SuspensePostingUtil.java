@@ -132,7 +132,7 @@ public class SuspensePostingUtil implements Serializable {
 		}
 
 		// Postings Preparation
-		Date dateAppDate = DateUtility.getAppDate();
+		Date dateAppDate = SysParamUtil.getAppDate();
 		aeEvent.setAppDate(dateAppDate);
 		aeEvent.setAppValueDate(dateAppDate);
 		aeEvent.setValueDate(valueDate);

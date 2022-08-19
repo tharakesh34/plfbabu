@@ -6916,7 +6916,8 @@ public class FinanceDataValidation {
 							.trimToEmpty(detail.getCustomerDetails().getCustEmployeeDetail().getOtherIncome());
 					custOtherIncomeAmt = detail.getCustomerDetails().getCustEmployeeDetail().getAdditionalIncome();
 					int custMonthsofExp = DateUtility.getMonthsBetween(
-							detail.getCustomerDetails().getCustEmployeeDetail().getEmpFrom(), DateUtility.getAppDate());
+							detail.getCustomerDetails().getCustEmployeeDetail().getEmpFrom(),
+							SysParamUtil.getAppDate());
 					custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
 							RoundingMode.CEILING);
 				}
@@ -6957,7 +6958,7 @@ public class FinanceDataValidation {
 						}
 						if (custEmpFromDate != null) {
 							int custMonthsofExp = DateUtility.getMonthsBetween(custEmpFromDate,
-									DateUtility.getAppDate());
+									SysParamUtil.getAppDate());
 							custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
 									RoundingMode.CEILING);
 						}

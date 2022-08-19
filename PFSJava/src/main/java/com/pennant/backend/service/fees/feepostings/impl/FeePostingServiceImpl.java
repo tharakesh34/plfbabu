@@ -598,16 +598,16 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		}
 		// ValueDate
 		if (feePostings.getValueDate() == null) {
-			feePostings.setValueDate(DateUtility.getAppDate());
+			feePostings.setValueDate(SysParamUtil.getAppDate());
 		} else {
-			Date minReqPostingDate = DateUtility.addDays(DateUtility.getAppDate(),
+			Date minReqPostingDate = DateUtility.addDays(SysParamUtil.getAppDate(),
 					-SysParamUtil.getValueAsInt(SMTParameterConstants.FEE_POSTING_DATE_BACK_DAYS));
 			if (feePostings.getValueDate().before(minReqPostingDate)
-					|| feePostings.getValueDate().after(DateUtility.getAppDate())) {
+					|| feePostings.getValueDate().after(SysParamUtil.getAppDate())) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Value Date";
 				valueParm[1] = DateUtility.formatToLongDate(minReqPostingDate);
-				valueParm[2] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
 		}

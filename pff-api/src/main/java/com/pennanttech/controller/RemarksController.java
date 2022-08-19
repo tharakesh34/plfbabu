@@ -7,8 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.service.NotesService;
@@ -39,7 +39,7 @@ public class RemarksController extends ExtendedTestClass {
 			if (notes.getInDate() != null) {
 				notes.setInputDate(new Timestamp(notes.getInDate().getTime()));
 			} else {
-				notes.setInputDate(new Timestamp(DateUtility.getAppDate().getTime()));
+				notes.setInputDate(new Timestamp(SysParamUtil.getAppDate().getTime()));
 			}
 
 			if (notes.getAlignType().isEmpty()) {

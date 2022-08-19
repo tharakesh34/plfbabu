@@ -435,7 +435,7 @@ public final class DateUtility extends DateUtil {
 	 */
 	public static long getDateYYJDay() {
 		Calendar curCalendar = Calendar.getInstance();
-		curCalendar.setTime(getAppDate());
+		curCalendar.setTime(SysParamUtil.getAppDate());
 
 		return Long.parseLong(String.valueOf(curCalendar.get(Calendar.YEAR)).substring(2)
 				.concat(StringUtils.leftPad(String.valueOf(curCalendar.get(Calendar.DAY_OF_YEAR)), 3, "0")));
