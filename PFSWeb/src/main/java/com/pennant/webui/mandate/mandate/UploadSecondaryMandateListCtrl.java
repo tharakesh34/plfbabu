@@ -84,6 +84,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -549,7 +550,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 
 		// validate MandateType
 		if (StringUtils.isNotBlank(mandate.getMandateType())) {
-			List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
+			List<ValueLabel> mandateType = InstrumentTypes.list();
 			boolean mandateTypeSts = false;
 			for (ValueLabel value : mandateType) {
 				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {

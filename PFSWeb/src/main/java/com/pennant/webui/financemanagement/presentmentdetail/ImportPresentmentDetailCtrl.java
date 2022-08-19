@@ -54,8 +54,8 @@ import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -306,7 +306,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 		if (type.equals(PennantConstants.INSTRUMENT_TYPE)) {
-			fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
+			fillComboBox(this.instrumentType, "", InstrumentTypes.list(), "");
 			logger.debug(Literal.LEAVING);
 
 			if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
@@ -315,7 +315,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				this.btnSave.setDisabled(true);
 			}
 		} else if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)) {
-			fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
+			fillComboBox(this.instrumentType, "", InstrumentTypes.list(), "");
 			this.partnerBank.setMaxlength(21);
 			this.partnerBank.setModuleName("PresentMents_PartnerBank");
 			this.partnerBank.setValueColumn("PartnerBankCode");

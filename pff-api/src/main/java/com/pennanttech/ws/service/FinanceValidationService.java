@@ -61,6 +61,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.util.APIConstants;
@@ -713,7 +714,7 @@ public class FinanceValidationService {
 
 				// validate MandateType
 				if (StringUtils.isNotBlank(mandate.getMandateType())) {
-					List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
+					List<ValueLabel> mandateType = InstrumentTypes.list();
 					boolean mandateTypeSts = false;
 					for (ValueLabel value : mandateType) {
 						if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {

@@ -54,6 +54,7 @@ import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.webui.mandate.mandate.model.MandateListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -157,7 +158,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		registerButton(button_MandateList_MandateSearch);
 		registerButton(button_MandateList_NewMandate, "button_MandateList_NewMandate", true);
 
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.mandateType, "", InstrumentTypes.list(), "");
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
 		fillComboBox(this.status, "",
 				PennantStaticListUtil

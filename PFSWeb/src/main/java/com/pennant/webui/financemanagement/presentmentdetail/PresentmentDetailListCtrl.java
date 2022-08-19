@@ -55,6 +55,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.webui.financemanagement.presentmentheader.model.PresentmentHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -243,7 +244,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 
 		fillList(status, PennantStaticListUtil.getPresentmentBatchStatusList(), null);
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.mandateType, "", InstrumentTypes.list(), "");
 		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
 		this.presentmentDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.schdate.setFormat(DateFormat.SHORT_DATE.getPattern());

@@ -61,6 +61,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -144,7 +145,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.mandateType, "", InstrumentTypes.list(), "");
 		fillComboBox(this.presentmentType, PennantConstants.PROCESS_PRESENTMENT,
 				PennantStaticListUtil.getPresetmentTypeList(), "");
 
@@ -215,9 +216,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PresentmentDetailList_Product.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
-		this.mandateType
-				.setConstraint(new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
-						PennantStaticListUtil.getMandateTypeList(), true));
+		this.mandateType.setConstraint(new PTListValidator<>(
+				Labels.getLabel("label_PresentmentDetailList_MandateType.value"), InstrumentTypes.list(), true));
 		this.presentmentType.setConstraint(
 				new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_PresentmentType.value"),
 						PennantStaticListUtil.getPresetmentTypeList(), true));
@@ -413,7 +413,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private void doResetInitValues() {
 		logger.debug(Literal.ENTERING);
 
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.mandateType, "", InstrumentTypes.list(), "");
 		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
 		this.loanType.setErrorMessage("");
 		this.loanType.setValue("");

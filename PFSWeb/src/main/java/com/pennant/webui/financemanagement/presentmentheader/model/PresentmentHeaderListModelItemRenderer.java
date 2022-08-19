@@ -35,6 +35,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 /**
@@ -50,51 +51,50 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 	}
 
 	@Override
-	public void render(Listitem item, PresentmentHeader presentmentHeader, int count) {
+	public void render(Listitem item, PresentmentHeader ph, int count) {
 
 		Listcell lc;
-		lc = new Listcell(presentmentHeader.getReference());
+		lc = new Listcell(ph.getReference());
 		lc.setParent(item);
 
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentHeader.getPresentmentType(),
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(ph.getPresentmentType(),
 				PennantStaticListUtil.getPresetmentTypeList()));
 		lc.setParent(item);
 
-		lc = new Listcell(presentmentHeader.getEntityCode());
+		lc = new Listcell(ph.getEntityCode());
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getSchdate()));
+		lc = new Listcell(DateUtility.formatToLongDate(ph.getSchdate()));
 		lc.setParent(item);
 
-		if (StringUtils.trimToNull(presentmentHeader.getBankCode()) == null) {
+		if (StringUtils.trimToNull(ph.getBankCode()) == null) {
 			lc = new Listcell();
 		} else {
-			lc = new Listcell(presentmentHeader.getBankCode() + "-" + presentmentHeader.getBankName());
+			lc = new Listcell(ph.getBankCode() + "-" + ph.getBankName());
 		}
 		lc.setParent(item);
 
-		lc = new Listcell(presentmentHeader.getPartnerBankName());
+		lc = new Listcell(ph.getPartnerBankName());
 		lc.setParent(item);
 
 		lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getPresentmentBatchStatusList(),
-				presentmentHeader.getStatus()));
+				ph.getStatus()));
 
 		lc.setParent(item);
 
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentHeader.getMandateType(),
-				PennantStaticListUtil.getMandateTypeList()));
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(ph.getMandateType(), InstrumentTypes.list()));
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getPresentmentDate()));
+		lc = new Listcell(DateUtility.formatToLongDate(ph.getPresentmentDate()));
 		lc.setParent(item);
 
-		lc = new Listcell(presentmentHeader.getRecordStatus());
+		lc = new Listcell(ph.getRecordStatus());
 		lc.setParent(item);
 
-		lc = new Listcell(PennantJavaUtil.getLabel(presentmentHeader.getRecordType()));
+		lc = new Listcell(PennantJavaUtil.getLabel(ph.getRecordType()));
 		lc.setParent(item);
 
-		item.setAttribute("id", presentmentHeader.getId());
+		item.setAttribute("id", ph.getId());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPresentmentHeaderItemDoubleClicked");
 	}

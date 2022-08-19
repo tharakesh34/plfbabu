@@ -31,8 +31,8 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.financemanagement.PartnerBankModeConfigService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -157,7 +157,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			this.btnImport.setVisible(false);
 		}
 		if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
-			fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+			fillComboBox(this.mandateType, "", InstrumentTypes.list(), "");
 			this.partnerBank.setMaxlength(8);
 			this.partnerBank.setTextBoxWidth(135);
 			this.partnerBank.setMandatoryStyle(false);

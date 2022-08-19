@@ -34,6 +34,7 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -343,7 +344,7 @@ public class CustomizeFinanceDataValidation {
 
 				// validate MandateType
 				if (StringUtils.isNotBlank(mandate.getMandateType())) {
-					List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
+					List<ValueLabel> mandateType = InstrumentTypes.list();
 					boolean mandateTypeSts = false;
 					for (ValueLabel value : mandateType) {
 						if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {

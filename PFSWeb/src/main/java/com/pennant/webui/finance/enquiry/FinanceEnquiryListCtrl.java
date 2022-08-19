@@ -70,6 +70,7 @@ import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -787,7 +788,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 
 		this.searchObj.addSort("FinID", false);
 		if ("FINMANDENQ".equalsIgnoreCase(enquiryType.getValue())) {
-			List<ValueLabel> mandates = PennantStaticListUtil.getMandateTypeList();
+			List<ValueLabel> mandates = InstrumentTypes.list();
 			List<String> list = new ArrayList<String>(mandates.size());
 			for (ValueLabel valueLabel : mandates) {
 				list.add(valueLabel.getValue());

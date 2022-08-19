@@ -129,6 +129,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -210,7 +211,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinSamplingService finSamplingService;
 
 	private List<ValueLabel> enquiryList = PennantStaticListUtil.getEnquiryTypes();
-	private List<ValueLabel> mandateList = PennantStaticListUtil.getMandateTypeList();
+	private List<ValueLabel> mandateList = InstrumentTypes.list();
 	private FinanceEnquiryListCtrl financeEnquiryListCtrl = null;
 	private VASRecordingDialogCtrl vASRecordingDialogCtrl = null;
 	private FinScheduleData finScheduleData;

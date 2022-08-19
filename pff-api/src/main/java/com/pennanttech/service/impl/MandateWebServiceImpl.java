@@ -40,6 +40,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
@@ -49,7 +50,6 @@ import com.pennanttech.controller.MandateController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pffws.MandateRestService;
 import com.pennanttech.pffws.MandateSoapService;
 import com.pennanttech.util.APIConstants;
@@ -516,7 +516,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 
 		// validate MandateType
 		if (StringUtils.isNotBlank(mandate.getMandateType())) {
-			List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
+			List<ValueLabel> mandateType = InstrumentTypes.list();
 			boolean mandateTypeSts = false;
 			for (ValueLabel value : mandateType) {
 				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {

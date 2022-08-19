@@ -69,6 +69,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.mandate.InstrumentTypes;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.mandate.mandate.MandateListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -145,7 +146,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	// ServiceDAOs / Domain Classes
 	private transient MandateService mandateService;
 
-	private final List<ValueLabel> mandateTypeList = PennantStaticListUtil.getMandateTypeList();
+	private final List<ValueLabel> mandateTypeList = InstrumentTypes.list();
 	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
 	private final List<ValueLabel> statusTypeList = PennantStaticListUtil
 			.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));

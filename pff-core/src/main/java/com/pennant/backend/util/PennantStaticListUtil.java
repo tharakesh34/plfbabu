@@ -2630,30 +2630,6 @@ public class PennantStaticListUtil {
 		return schMthdList;
 	}
 
-	public static List<ValueLabel> getMandateTypeList() {
-		if (mandateTypeList == null) {
-			mandateTypeList = new ArrayList<ValueLabel>(4);
-			if (ImplementationConstants.ECS_ALLOWED) {
-				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_ECS, Labels.getLabel("label_Mandate_Ecs")));
-			}
-			if (ImplementationConstants.DDM_ALLOWED) {
-				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_DDM, Labels.getLabel("label_Mandate_DD")));
-			}
-			if (ImplementationConstants.NACH_ALLOWED) {
-				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_NACH, Labels.getLabel("label_Mandate_Nach")));
-			}
-			if (ImplementationConstants.PDC_ALLOWED) {
-				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_PDC, Labels.getLabel("label_Mandate_PDC")));
-			}
-			if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_EMANDATE_REQUIRED)) {
-				mandateTypeList
-						.add(new ValueLabel(MandateConstants.TYPE_EMANDATE, Labels.getLabel("label_Mandate_EMandate")));
-			}
-
-		}
-		return mandateTypeList;
-	}
-
 	public static List<ValueLabel> getPresentmentExclusionList() {
 		if (presentmentExclusionList == null) {
 			presentmentExclusionList = new ArrayList<ValueLabel>(11);
@@ -2721,7 +2697,7 @@ public class PennantStaticListUtil {
 				repayMethodList
 						.add(new ValueLabel(FinanceConstants.REPAYMTH_AUTO, Labels.getLabel("label_RepayMethod_Casa")));
 			}
-			repayMethodList.addAll(getMandateTypeList());
+			// repayMethodList.addAll(getMandateTypeList()); FIXME Murthy::
 		}
 		return repayMethodList;
 	}
