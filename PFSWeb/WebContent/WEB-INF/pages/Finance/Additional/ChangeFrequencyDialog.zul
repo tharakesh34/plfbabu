@@ -59,6 +59,13 @@
 								</hbox>
 							</row>
 							<row>
+								<label value="${c:l('label_ChangeFrequencyDialog_RecalculationType.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="recalType" width="144px" readonly="true" />
+								</hbox>
+							</row>
+							<row>
 								<label id="label_ChangeFrequencyDialog_ServiceReqNo" value="${c:l('label_ChangeFrequencyDialog_ServiceReqNo.value')}" />
 								<hbox>
 									<space spacing="2px" id="space_serviceReqNo" />

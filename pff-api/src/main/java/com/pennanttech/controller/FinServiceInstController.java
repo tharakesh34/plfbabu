@@ -1026,89 +1026,112 @@ public class FinServiceInstController extends SummaryDetailService {
 	public FinanceDetail doChangeFrequency(FinServiceInstruction fsi, String eventCode) {
 		logger.debug(Literal.ENTERING);
 
-		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(fsi, eventCode);
+		FinanceDetail fd = getFinanceDetails(fsi, eventCode);
 
-		if (financeDetail != null) {
-			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-			String repayFrq = finScheduleData.getFinanceMain().getRepayFrq();
-			String frqday = String.valueOf(fsi.getFrqDay());
-			frqday = frqday.length() == 1 ? "0".concat(frqday) : frqday;
-			fsi.setRepayFrq(StringUtils.substring(repayFrq, 0, repayFrq.length() - 2).concat(frqday));
+		if (fd == null) {
+			fd = new FinanceDetail();
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 
-			int rpyTermsCompleted = 0;
-			int adjRepayTerms = 0;
-			int totRepayTerms = 0;
-			boolean isFromDateFound = false;
-			Date fromDate = DateUtility.getDBDate(DateUtility.format(fsi.getFromDate(), PennantConstants.DBDateFormat));
-			fsi.setFromDate(fromDate);
-			List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
-			if (financeScheduleDetails != null) {
-				for (int i = 0; i < financeScheduleDetails.size(); i++) {
-					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-					if (curSchd.isRepayOnSchDate()
-							|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-						if (fromDate.compareTo(curSchd.getSchDate()) == 0) {
-							isFromDateFound = true;
-						}
-
-						totRepayTerms = totRepayTerms + 1;
-						if (!isFromDateFound) {
-							if (curSchd.getSchDate()
-									.compareTo(finScheduleData.getFinanceMain().getGrcPeriodEndDate()) > 0) {
-								rpyTermsCompleted = rpyTermsCompleted + 1;
-							}
-						}
-					}
-				}
-				adjRepayTerms = totRepayTerms - rpyTermsCompleted;
-			}
-
-			fsi.setAdjRpyTerms(adjRepayTerms);
-			finScheduleData.getFinanceMain().setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			finScheduleData.getFinanceMain().setRcdMaintainSts(FinServiceEvent.CHGFRQ);
-			fsi.setModuleDefiner(FinServiceEvent.CHGFRQ);
-			financeDetail.setModuleDefiner(FinServiceEvent.CHGFRQ);
-			try {
-				// execute fee charges
-				executeFeeCharges(financeDetail, fsi, eventCode);
-				if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
-					for (ErrorDetail errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
-						FinanceDetail response = new FinanceDetail();
-						doEmptyResponseObject(response);
-						response.setReturnStatus(
-								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-						return response;
-					}
-				}
-				// call change frequency service
-				finScheduleData = changeFrequencyService.doChangeFrequency(finScheduleData, fsi);
-				financeDetail.setFinScheduleData(finScheduleData);
-
-				// Get the response
-				financeDetail = getResponse(financeDetail, fsi);
-
-			} catch (InterfaceException ex) {
-				logger.error("InterfaceException", ex);
-				FinanceDetail response = new FinanceDetail();
-				doEmptyResponseObject(response);
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9998", ex.getMessage()));
-				return response;
-			} catch (Exception e) {
-				logger.error("Exception", e);
-				APIErrorHandlerService.logUnhandledException(e);
-				FinanceDetail response = new FinanceDetail();
-				doEmptyResponseObject(response);
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-				return response;
-			}
-		} else {
-			financeDetail = new FinanceDetail();
-			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			logger.debug(Literal.LEAVING);
+			return fd;
 		}
 
-		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		String repayFrq = fm.getRepayFrq();
+		String frqday = String.valueOf(fsi.getFrqDay());
+		frqday = frqday.length() == 1 ? "0".concat(frqday) : frqday;
+		frqday = StringUtils.substring(repayFrq, 0, repayFrq.length() - 2).concat(frqday);
+
+		fsi.setRepayFrq(frqday);
+
+		int rpyTermsCompleted = 0;
+		int adjRepayTerms = 0;
+		int totRepayTerms = 0;
+		boolean isFromDateFound = false;
+		Date fromDate = DateUtility.getDBDate(DateUtil.format(fsi.getFromDate(), PennantConstants.DBDateFormat));
+
+		fsi.setFromDate(fromDate);
+
+		if (fm.isAllowGrcPeriod() && DateUtil.compare(fromDate, fm.getGrcPeriodEndDate()) <= 0) {
+			repayFrq = fm.getGrcPftFrq();
+		}
+
+		int repayFrqDay = FrequencyUtil.getIntFrequencyDay(repayFrq);
+		int changeFrqDay = FrequencyUtil.getIntFrequencyDay(frqday);
+
+		boolean bpiRecal = CalculationConstants.RPYCHG_ADDITIONAL_BPI.equals(fsi.getRecalType());
+
+		if (bpiRecal && changeFrqDay < repayFrqDay) {
+			StringBuilder errMsg = new StringBuilder("");
+			errMsg.append("Additional BPI is not allowed from new frequency ");
+			errMsg.append(changeFrqDay);
+			errMsg.append(" to old frequency ");
+			errMsg.append(repayFrqDay);
+
+			return getAPIError("9998", errMsg.toString());
+		}
+
+		if (bpiRecal && fm.isStepFinance()) {
+			return getAPIError("9998", "Additional BPI is not allowed for step loans");
+		}
+
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		Date grcPrdEndDate = fm.getGrcPeriodEndDate();
+
+		for (FinanceScheduleDetail curSchd : schedules) {
+			if (curSchd.isRepayOnSchDate()
+					|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
+				if (fromDate.compareTo(curSchd.getSchDate()) == 0) {
+					isFromDateFound = true;
+				}
+
+				totRepayTerms = totRepayTerms + 1;
+				if (!isFromDateFound) {
+					if (curSchd.getSchDate().compareTo(grcPrdEndDate) > 0) {
+						rpyTermsCompleted = rpyTermsCompleted + 1;
+					}
+				}
+			}
+		}
+
+		adjRepayTerms = totRepayTerms - rpyTermsCompleted;
+
+		fsi.setAdjRpyTerms(adjRepayTerms);
+		fm.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+		fm.setRcdMaintainSts(FinServiceEvent.CHGFRQ);
+		fsi.setModuleDefiner(FinServiceEvent.CHGFRQ);
+		fd.setModuleDefiner(FinServiceEvent.CHGFRQ);
+
+		try {
+			// execute fee charges
+			executeFeeCharges(fd, fsi, eventCode);
+			List<ErrorDetail> errors = schdData.getErrorDetails();
+			if (CollectionUtils.isNotEmpty(errors)) {
+				ErrorDetail ed = errors.get(0);
+				return getAPIError(ed.getCode(), ed.getError());
+			}
+
+			// call change frequency service
+			fd.setFinScheduleData(changeFrequencyService.doChangeFrequency(schdData, fsi));
+
+			// Get the response
+			fd = getResponse(fd, fsi);
+
+		} catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
+			return getAPIError("9998", ex.getMessage());
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+
+		return fd;
 	}
 
 	/**
@@ -3730,6 +3753,13 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		logger.debug(Literal.LEAVING);
 		return finalChrgList;
+	}
+	
+	private FinanceDetail getAPIError(String code, String message) {
+		FinanceDetail response = new FinanceDetail();
+		doEmptyResponseObject(response);
+		response.setReturnStatus(APIErrorHandlerService.getFailedStatus(code, message));
+		return response;
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
