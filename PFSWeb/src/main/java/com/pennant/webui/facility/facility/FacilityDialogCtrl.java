@@ -74,6 +74,7 @@ import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -281,7 +282,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.collateralsFromEquation = collaterals;
 	}
 
-	Date appldate = DateUtility.getAppDate();
+	Date appldate = SysParamUtil.getAppDate();
 
 	int ccyFormat = 0;
 	private BigDecimal countryLimitEQ = BigDecimal.ZERO;

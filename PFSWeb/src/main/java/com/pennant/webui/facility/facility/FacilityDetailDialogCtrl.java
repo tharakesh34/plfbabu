@@ -52,8 +52,8 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -152,7 +152,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	private int ccyFormat = 0;
 	Commitment commitment = null;
 	String userRole = "";
-	Date appldate = DateUtility.getAppDate();
+	Date appldate = SysParamUtil.getAppDate();
 
 	/**
 	 * default constructor.<br>

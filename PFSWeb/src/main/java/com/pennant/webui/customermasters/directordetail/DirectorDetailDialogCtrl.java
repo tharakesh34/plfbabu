@@ -59,6 +59,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -749,7 +750,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 
 		try {
 			if (this.custAddrFrom.getValue() != null) {
-				Date appDate = DateUtility.getAppDate();
+				Date appDate = SysParamUtil.getAppDate();
 				if (appDate.compareTo(this.custAddrFrom.getValue()) != 1) {
 					throw new WrongValueException(this.custAddrFrom, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
 							Labels.getLabel("label_DirectorDetailDialog_CustAddrFrom.value"), "Application Date" }));
@@ -800,7 +801,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		try {
 			aDirectorDetail.setDob(this.dob.getValue());
 			if (this.dob.getValue() != null) {
-				if (DateUtility.compare(this.dob.getValue(), DateUtility.getAppDate()) != -1) {
+				if (DateUtility.compare(this.dob.getValue(), SysParamUtil.getAppDate()) != -1) {
 					throw new WrongValueException(this.dob, Labels.getLabel("DATE_FUTURE_TODAY",
 							new String[] { Labels.getLabel("label_DirectorDetailDialog_DOB.value") }));
 				}

@@ -655,8 +655,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.postingDivision.setValue(aFeePostings.getPostingDivision(), aFeePostings.getDivisionCodeDesc());
 		this.postingCcy.setValue(aFeePostings.getCurrency());
 		if (aFeePostings.isNewRecord()) {
-			this.postDate.setValue(DateUtility.getAppDate());
-			this.valueDate.setValue(DateUtility.getAppDate());
+			this.postDate.setValue(SysParamUtil.getAppDate());
+			this.valueDate.setValue(SysParamUtil.getAppDate());
 		} else {
 			this.postDate.setValue(aFeePostings.getPostDate());
 			this.valueDate.setValue(aFeePostings.getValueDate());
@@ -746,10 +746,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		try {
 			if (!enqModule) {
 				if ((this.valueDate.getValue().before(minReqPostingDate)
-						|| this.valueDate.getValue().after(DateUtility.getAppDate())) && !this.valueDate.isDisabled()) {
+						|| this.valueDate.getValue().after(SysParamUtil.getAppDate()))
+						&& !this.valueDate.isDisabled()) {
 
 					String minreqPostDate = DateUtility.formatToShortDate(minReqPostingDate);
-					String currentDate = DateUtility.formatToShortDate(DateUtility.getAppDate());
+					String currentDate = DateUtility.formatToShortDate(SysParamUtil.getAppDate());
 
 					throw new WrongValueException(this.valueDate,
 							Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
