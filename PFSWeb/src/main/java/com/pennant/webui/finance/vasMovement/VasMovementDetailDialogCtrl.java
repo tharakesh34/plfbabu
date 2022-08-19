@@ -852,22 +852,6 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		this.vASRecordingService = vASRecordingService;
 	}
 
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_VasMovementDetailDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-	}
-
 	public void onFulfill$vasReference(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = vasReference.getObject();

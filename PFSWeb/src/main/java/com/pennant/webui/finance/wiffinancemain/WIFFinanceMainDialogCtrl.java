@@ -2495,10 +2495,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		// fill the components with the data
 		doWriteBeanToComponents(afinanceDetail, true);
-		if (afinanceDetail.getFinScheduleData().getFinanceMain().isNewRecord()) {
-			// As per mail below code is commented
-			// changeFrequencies();
-		}
 
 		if (isEnquiry) {
 			doReadOnly();
@@ -4938,9 +4934,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void onChange$finStartDate(Event event) {
 		logger.debug("Entering");
 
-		// As per mail below functionality implemented
-		// changeFrequencies();
-
 		// Fee charge Calculations
 		if (this.finStartDate.getValue() != null) {
 
@@ -4973,35 +4966,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.graceTerms_Two.setValue(0);
 		}
 		logger.debug("Leaving" + event.toString());
-	}
-
-	private void changeFrequencies() {
-		logger.debug("Entering");
-		if (finStartDate.getValue() == null) {
-			this.finStartDate.setValue(appStartDate);
-		}
-		if (StringUtils.isNotBlank(this.gracePftFrq.getValue())) {
-			processFrqChange(this.gracePftFrq);
-		}
-		if (StringUtils.isNotBlank(this.gracePftRvwFrq.getValue())) {
-			processFrqChange(this.gracePftRvwFrq);
-		}
-		if (StringUtils.isNotBlank(this.graceCpzFrq.getValue())) {
-			processFrqChange(this.graceCpzFrq);
-		}
-		if (StringUtils.isNotBlank(this.repayPftFrq.getValue())) {
-			processFrqChange(this.repayPftFrq);
-		}
-		if (StringUtils.isNotBlank(this.repayRvwFrq.getValue())) {
-			processFrqChange(this.repayRvwFrq);
-		}
-		if (StringUtils.isNotBlank(this.repayCpzFrq.getValue())) {
-			processFrqChange(this.repayCpzFrq);
-		}
-		if (StringUtils.isNotBlank(this.repayFrq.getValue())) {
-			processFrqChange(this.repayFrq);
-		}
-		logger.debug("Leaving");
 	}
 
 	/**

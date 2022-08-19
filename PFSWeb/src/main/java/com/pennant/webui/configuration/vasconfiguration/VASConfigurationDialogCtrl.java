@@ -22,7 +22,6 @@
  * 29-11-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
-
 package com.pennant.webui.configuration.vasconfiguration;
 
 import java.math.BigDecimal;
