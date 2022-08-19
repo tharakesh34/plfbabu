@@ -988,7 +988,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 		}
 		// Payable Date
 		if (errorCount == 0 && (refundUpload.getPaymentDate() == null
-				|| (DateUtility.compare(refundUpload.getPaymentDate(), DateUtility.getAppDate())) < 0)) {
+				|| (DateUtility.compare(refundUpload.getPaymentDate(), SysParamUtil.getAppDate())) < 0)) {
 			errorCount++;
 			reason = "Payable Date is always current date or future date";
 		}

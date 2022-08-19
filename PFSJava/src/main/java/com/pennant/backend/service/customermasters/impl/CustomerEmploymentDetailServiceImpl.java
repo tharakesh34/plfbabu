@@ -350,7 +350,7 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					}
-					if (custEmpDetails.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil
+					if (custEmpDetails.getCustEmpTo().compareTo(SysParamUtil.getAppDate()) != -1 || SysParamUtil
 							.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpTo()) >= 0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "employment endDate"
@@ -363,7 +363,7 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 				}
 
 				if (custEmpDetails.getCustEmpFrom() != null
-						&& custEmpDetails.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1
+						&& custEmpDetails.getCustEmpFrom().compareTo(SysParamUtil.getAppDate()) != -1
 						|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE")
 								.compareTo(custEmpDetails.getCustEmpFrom()) >= 0) {
 

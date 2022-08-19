@@ -59,7 +59,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -658,9 +658,9 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 
 		if (!this.expiryDate.isReadonly()) {
 
-			Date date = DateUtil.getDatePart(DateUtility.getAppDate());
+			Date date = DateUtil.getDatePart(SysParamUtil.getAppDate());
 			if (startDate.getValue() == null || startDate.getValue().before(date)) {
-				date = DateUtil.getDatePart(DateUtility.getAppDate());
+				date = DateUtil.getDatePart(SysParamUtil.getAppDate());
 			} else {
 				date = startDate.getValue();
 			}
@@ -671,7 +671,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		if (!this.startDate.isReadonly()) {
 			this.startDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_StartDate.value"), true,
-							DateUtil.getDatePart(DateUtility.getAppDate()), null, true));
+							DateUtil.getDatePart(SysParamUtil.getAppDate()), null, true));
 		}
 
 		if (holdRow.isVisible()) {

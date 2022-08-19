@@ -39,6 +39,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustCardSales;
@@ -861,7 +862,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 					 */
 				} else {
 					monthYearValue.setDate(1);
-					if (DateUtility.compare(monthYearValue, DateUtility.getAppDate()) == 1) {
+					if (DateUtility.compare(monthYearValue, SysParamUtil.getAppDate()) == 1) {
 						throw new WrongValueException(monthYear,
 								Labels.getLabel("DATE_NO_FUTURE", new String[] { "Month" }));
 					}

@@ -17,6 +17,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
@@ -650,53 +651,53 @@ public class ExtendedFieldDetailsValidation {
 			break;
 		case "FUTURE_DAYS":
 			if (DateUtility.compare(dateValue,
-					DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1]))) > 0) {
+					DateUtility.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1]))) > 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + dateValue;
 				valueParm[1] = String
-						.valueOf(DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1])));
+						.valueOf(DateUtility.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1])));
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65027", "", valueParm)));
 			}
 			break;
 		case "PAST_DAYS":
 			if (DateUtility.compare(dateValue,
-					DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1])))) < 0) {
+					DateUtility.addDays(SysParamUtil.getAppDate(), -(Integer.parseInt(value[1])))) < 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + dateValue;
 				valueParm[1] = String
-						.valueOf(DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1]))));
+						.valueOf(DateUtility.addDays(SysParamUtil.getAppDate(), -(Integer.parseInt(value[1]))));
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
 			}
 			break;
 		case "FUTURE_TODAY":
-			if (DateUtility.compare(dateValue, DateUtility.getAppDate()) < 0) {
+			if (DateUtility.compare(dateValue, SysParamUtil.getAppDate()) < 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + dateValue;
-				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				valueParm[1] = String.valueOf(SysParamUtil.getAppDate());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
 			}
 			break;
 		case "PAST_TODAY":
-			if (DateUtility.compare(dateValue, DateUtility.getAppDate()) > 0) {
+			if (DateUtility.compare(dateValue, SysParamUtil.getAppDate()) > 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + DateUtility.formatToLongDate(dateValue);
-				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				valueParm[1] = String.valueOf(SysParamUtil.getAppDate());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65027", "", valueParm)));
 			}
 			break;
 		case "FUTURE":
-			if (DateUtility.compare(DateUtility.getAppDate(), dateValue) >= 0) {
+			if (DateUtility.compare(SysParamUtil.getAppDate(), dateValue) >= 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + DateUtility.formatToLongDate(dateValue);
-				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				valueParm[1] = String.valueOf(SysParamUtil.getAppDate());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
 			}
 			break;
 		case "PAST":
-			if (DateUtility.compare(DateUtility.getAppDate(), dateValue) <= 0) {
+			if (DateUtility.compare(SysParamUtil.getAppDate(), dateValue) <= 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + DateUtility.formatToLongDate(dateValue);
-				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				valueParm[1] = String.valueOf(SysParamUtil.getAppDate());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65027", "", valueParm)));
 			}
 			break;

@@ -519,7 +519,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			wve.add(we);
 		}
 		try {
-			if (DateUtility.compare(this.docReceivedDate.getValue(), DateUtility.getAppDate()) == 1) {
+			if (DateUtility.compare(this.docReceivedDate.getValue(), SysParamUtil.getAppDate()) == 1) {
 				throw new WrongValueException(this.docReceivedDate, Labels.getLabel("DATE_NO_FUTURE",
 						new String[] { Labels.getLabel("label_CovenantDocumentDialog_ReceivedDate.value") }));
 			}

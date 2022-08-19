@@ -46,15 +46,24 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.FrequencyBox;
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -78,6 +87,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Datebox nextGrcRepayDate;
 	protected Datebox nextRepayDate;
 	protected Checkbox pftIntact;
+	protected Combobox recalType;
 	protected Uppercasebox serviceReqNo;
 	protected Textbox remarks;
 
@@ -90,6 +100,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	private transient ChangeFrequencyService changeFrequencyService;
 	private boolean appDateValidationReq = false;
+	private List<ValueLabel> recalTypes = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -179,17 +190,13 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
-
-		// Empty sent any required attributes
 		this.grcPeriodEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.repayFrq.setMandatoryStyle(true);
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
-
-		logger.debug("Leaving");
+		this.recalTypes = PennantStaticListUtil.getRecalTypes();
 	}
 
 	/**
@@ -197,10 +204,8 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param event
 	 */
-	public void onClick$btnChangeFrq(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+	public void onClick$btnChangeFrq(Event event) {
 		doSave();
-		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -227,11 +232,9 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	public void doSave() throws InterruptedException {
-		logger.debug("Entering");
+	public void doSave() {
 		doWriteComponentsToBean();
 		this.window_ChangeFrequencyDialog.onClose();
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -242,13 +245,14 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 
-		FinanceMain aFinanceMain = aFinSchData.getFinanceMain();
+		FinanceMain fm = aFinSchData.getFinanceMain();
 
 		this.repayFrq.setDisableFrqCode(true);
 		this.repayFrq.setDisableFrqMonth(true);
 		this.repayFrq.setDisableFrqDay(false);
 		this.repayFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
-		this.repayFrq.setValue(aFinanceMain.getRepayFrq());
+		this.repayFrq.setValue(fm.getRepayFrq());
+
 		if (aFinSchData.getFinanceType().isFinPftUnChanged()) {
 			this.pftIntact.setChecked(true);
 			this.pftIntact.setDisabled(true);
@@ -256,14 +260,17 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.pftIntact.setDisabled(false);
 			this.pftIntact.setChecked(false);
 		}
+
 		fillSchFromDates(aFinSchData.getFinanceScheduleDetails());
+
+		doSetRecalType(this.repayFrq.getValue(), this.cbFrqFromDate.getSelectedItem().getValue());
 
 		logger.debug("Leaving");
 	}
 
 	/** To fill schedule dates */
 	public void fillSchFromDates(List<FinanceScheduleDetail> financeScheduleDetails) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.cbFrqFromDate.getItems().clear();
 		Comboitem comboitem = new Comboitem();
@@ -272,95 +279,97 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.cbFrqFromDate.appendChild(comboitem);
 		this.cbFrqFromDate.setSelectedItem(comboitem);
 
-		if (financeScheduleDetails != null) {
-			// Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
-			Date curBussDate = DateUtility.getAppDate();
-			FinanceScheduleDetail prvSchd = null;
-			boolean isPrvShcdAdded = false;
-			for (int i = 0; i < financeScheduleDetails.size(); i++) {
+		if (financeScheduleDetails == null) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
 
-				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				if (i == 0) {
-					prvSchd = curSchd;
-				}
+		// Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+		Date curBussDate = SysParamUtil.getAppDate();
+		FinanceScheduleDetail prvSchd = null;
+		boolean isPrvShcdAdded = false;
+		for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
-				// Not Allowing Grace Period Dates
-				/*
-				 * if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){ if(curSchd.getSchDate().compareTo(grcEndDate) ==
-				 * 0){ prvSchd = curSchd; } continue; }
-				 */
+			FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+			if (i == 0) {
+				prvSchd = curSchd;
+			}
 
-				// Not allow Before Current Business Date
-				if (appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
-					prvSchd = curSchd;
-					continue;
-				}
+			// Not Allowing Grace Period Dates
+			/*
+			 * if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){ if(curSchd.getSchDate().compareTo(grcEndDate) == 0){
+			 * prvSchd = curSchd; } continue; }
+			 */
 
-				// Change Frequency is not allowed for the schedule which has the presentment
-				if (curSchd.getPresentmentId() > 0) {
-					this.cbFrqFromDate.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					this.cbFrqFromDate.appendChild(comboitem);
-					prvSchd = curSchd;
-					isPrvShcdAdded = false;
-					continue;
-				}
-				// Not Review Date
-				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()
-						&& !curSchd.isPftOnSchDate()) {
-					prvSchd = curSchd;
-					continue;
-				}
+			// Not allow Before Current Business Date
+			if (appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+				prvSchd = curSchd;
+				continue;
+			}
 
-				// Only allowed if payment amount is greater than Zero
-				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0
-						&& StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
-					prvSchd = curSchd;
-					continue;
-				}
-
-				// Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
-						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
-					this.cbFrqFromDate.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					this.cbFrqFromDate.appendChild(comboitem);
-
-					prvSchd = curSchd;
-					continue;
-				}
-
-				if (i == financeScheduleDetails.size() - 1) {
-					continue;
-				}
-
-				if (prvSchd != null && !isPrvShcdAdded) {
-					comboitem = new Comboitem();
-					comboitem.setLabel(
-							DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
-					comboitem.setValue(prvSchd.getSchDate());
-					comboitem.setAttribute("fromSpecifier", prvSchd.getSpecifier());
-					this.cbFrqFromDate.appendChild(comboitem);
-					isPrvShcdAdded = true;
-				}
-
+			// Change Frequency is not allowed for the schedule which has the presentment
+			if (curSchd.getPresentmentId() > 0) {
+				this.cbFrqFromDate.getItems().clear();
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
-				comboitem.setValue(curSchd.getSchDate());
-				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
+				comboitem.setValue("#");
+				comboitem.setLabel(Labels.getLabel("Combo.Select"));
+				this.cbFrqFromDate.appendChild(comboitem);
+				prvSchd = curSchd;
+				isPrvShcdAdded = false;
+				continue;
+			}
+			// Not Review Date
+			if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()
+					&& !curSchd.isPftOnSchDate()) {
+				prvSchd = curSchd;
+				continue;
+			}
+
+			// Only allowed if payment amount is greater than Zero
+			if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0
+					&& StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
+				prvSchd = curSchd;
+				continue;
+			}
+
+			// Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+			if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				this.cbFrqFromDate.getItems().clear();
+				comboitem = new Comboitem();
+				comboitem.setValue("#");
+				comboitem.setLabel(Labels.getLabel("Combo.Select"));
 				this.cbFrqFromDate.appendChild(comboitem);
 
-				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
-					break;
-				}
+				prvSchd = curSchd;
+				continue;
+			}
+
+			if (i == financeScheduleDetails.size() - 1) {
+				continue;
+			}
+
+			if (prvSchd != null && !isPrvShcdAdded) {
+				comboitem = new Comboitem();
+				comboitem.setLabel(DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
+				comboitem.setValue(prvSchd.getSchDate());
+				comboitem.setAttribute("fromSpecifier", prvSchd.getSpecifier());
+				this.cbFrqFromDate.appendChild(comboitem);
+				isPrvShcdAdded = true;
+			}
+
+			comboitem = new Comboitem();
+			comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+			comboitem.setValue(curSchd.getSchDate());
+			comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
+			this.cbFrqFromDate.appendChild(comboitem);
+
+			if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
+				break;
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -368,24 +377,25 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param aFinanceMain
 	 */
-	public void doWriteComponentsToBean() throws InterruptedException {
+	public void doWriteComponentsToBean() {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		Date fromDate = null;
 		String frq = "";
 
-		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
+		FinanceMain fm = getFinScheduleData().getFinanceMain();
+		FinServiceInstruction fsi = new FinServiceInstruction();
 
 		try {
 			if (isValidComboValue(this.repayFrq.getFrqDayCombobox(), Labels.getLabel("label_FrqDay.value"))) {
 				frq = this.repayFrq.getValue() == null ? "" : this.repayFrq.getValue();
 			}
-			finServiceInstruction.setRepayFrq(this.repayFrq.getValue());
+			fsi.setRepayFrq(this.repayFrq.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		try {
 			if (isValidComboValue(this.cbFrqFromDate, Labels.getLabel("label_ChangeFrequencyDialog_FromDate.value"))) {
 				fromDate = (Date) this.cbFrqFromDate.getSelectedItem().getValue();
@@ -397,13 +407,13 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (this.row_GrcPeriodEndDate.isVisible()) {
 
 			try {
-				if (fromDate != null && fromDate.compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
+				if (fromDate != null && fromDate.compareTo(fm.getGrcPeriodEndDate()) <= 0) {
 					if (this.grcPeriodEndDate.getValue() == null) {
 						throw new WrongValueException(this.grcPeriodEndDate,
 								Labels.getLabel("FIELD_IS_MAND", new String[] {
 										Labels.getLabel("label_ChangeFrequencyDialog_GrcPeriodEndDate.value") }));
 					} else {
-						if (this.grcPeriodEndDate.getValue().compareTo(financeMain.getFinStartDate()) < 0) {
+						if (this.grcPeriodEndDate.getValue().compareTo(fm.getFinStartDate()) < 0) {
 							throw new WrongValueException(this.grcPeriodEndDate,
 									Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[] {
 											Labels.getLabel("label_ChangeFrequencyDialog_GrcPeriodEndDate.value"),
@@ -421,7 +431,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 		try {
-			finServiceInstruction.setNextGrcRepayDate(this.nextGrcRepayDate.getValue());
+			fsi.setNextGrcRepayDate(this.nextGrcRepayDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -434,7 +444,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									new String[] {
 											Labels.getLabel("label_ChangeFrequencyDialog_NextGrcRepayDate.value"),
 											Labels.getLabel("label_ChangeFrequencyDialog_GrcPeriodEndDate.value") }));
-				} else if (this.nextGrcRepayDate.getValue().compareTo(financeMain.getFinStartDate()) <= 0) {
+				} else if (this.nextGrcRepayDate.getValue().compareTo(fm.getFinStartDate()) <= 0) {
 					throw new WrongValueException(this.nextGrcRepayDate,
 							Labels.getLabel("DATE_ALLOWED_MINDATE",
 									new String[] {
@@ -483,19 +493,28 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		try {
-			finServiceInstruction.setNextRepayDate(this.nextRepayDate.getValue());
+			fsi.setNextRepayDate(this.nextRepayDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
+			if (isValidComboValue(this.recalType,
+					Labels.getLabel("label_ChangeFrequencyDialog_RecalculationType.value"))) {
+				fsi.setRecalType(this.recalType.getSelectedItem().getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			finServiceInstruction.setRemarks(this.remarks.getValue());
+			fsi.setServiceReqNo(this.serviceReqNo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			fsi.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -508,21 +527,21 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			throw new WrongValuesException(wvea);
 		}
 
-		finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
-		finServiceInstruction.setFinID(financeMain.getFinID());
-		finServiceInstruction.setFinReference(financeMain.getFinReference());
-		finServiceInstruction.setFinEvent(FinServiceEvent.CHGFRQ);
-		finServiceInstruction.setFromDate(fromDate);
-		finServiceInstruction.setRepayFrq(frq);
-		finServiceInstruction.setGrcPeriodEndDate(this.grcPeriodEndDate.getValue());
-		finServiceInstruction.setNextGrcRepayDate(this.nextGrcRepayDate.getValue());
-		finServiceInstruction.setNextRepayDate(this.nextRepayDate.getValue());
+		fsi.setPftIntact(this.pftIntact.isChecked());
+		fsi.setFinID(fm.getFinID());
+		fsi.setFinReference(fm.getFinReference());
+		fsi.setFinEvent(FinServiceEvent.CHGFRQ);
+		fsi.setFromDate(fromDate);
+		fsi.setRepayFrq(frq);
+		fsi.setGrcPeriodEndDate(this.grcPeriodEndDate.getValue());
+		fsi.setNextGrcRepayDate(this.nextGrcRepayDate.getValue());
+		fsi.setNextRepayDate(this.nextRepayDate.getValue());
 
 		// call change frequency method to calculate new schedules
-		setFinScheduleData(changeFrequencyService.doChangeFrequency(getFinScheduleData(), finServiceInstruction));
-		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
+		setFinScheduleData(changeFrequencyService.doChangeFrequency(getFinScheduleData(), fsi));
+		fsi.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
-		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+		getFinScheduleData().setFinServiceInstruction(fsi);
 
 		// Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
@@ -543,11 +562,70 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	public void onSelectDay$repayFrq(Event event) {
-		logger.debug("Entering" + event.toString());
 		this.nextGrcRepayDate.setText("");
 		this.nextRepayDate.setText("");
 		this.grcPeriodEndDate.setText("");
-		logger.debug("Leaving" + event.toString());
+
+		doSetRecalType(this.repayFrq.getValue(), this.cbFrqFromDate.getSelectedItem().getValue());
+	}
+
+	public void onSelect$cbFrqFromDate(Event event) {
+		doSetRecalType(this.repayFrq.getValue(), this.cbFrqFromDate.getSelectedItem().getValue());
+	}
+
+	private void doSetRecalType(String frequency, Object frqFromDate) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain fm = getFinScheduleData().getFinanceMain();
+		String repayFrq = fm.getRepayFrq();
+
+		String dftRecallType = CalculationConstants.RPYCHG_ADJMDT;
+
+		if (fm.isStepFinance()) {
+			doShowRecalType(dftRecallType, false);
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		if (!FrequencyCodeTypes.FRQ_MONTHLY.equals(FrequencyUtil.getFrequencyCode(repayFrq))) {
+			doShowRecalType(dftRecallType, false);
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		if (frequency == null) {
+			doShowRecalType(dftRecallType, false);
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		if (frqFromDate == null || PennantConstants.List_Select.equals(frqFromDate)) {
+			doShowRecalType(dftRecallType, false);
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		Date frqChangeDate = (Date) frqFromDate;
+
+		if (fm.isAllowGrcPeriod() && DateUtil.compare(frqChangeDate, fm.getGrcPeriodEndDate()) <= 0) {
+			repayFrq = fm.getGrcPftFrq();
+		}
+
+		int repayFrqDay = FrequencyUtil.getIntFrequencyDay(repayFrq);
+		int changeFrqDay = FrequencyUtil.getIntFrequencyDay(frequency);
+
+		if (changeFrqDay > repayFrqDay) {
+			doShowRecalType("", true);
+		} else {
+			doShowRecalType(dftRecallType, false);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doShowRecalType(String recalType, boolean allowChange) {
+		fillComboBox(this.recalType, recalType, this.recalTypes, "");
+		this.recalType.setDisabled(!allowChange);
 	}
 
 	// ******************************************************//

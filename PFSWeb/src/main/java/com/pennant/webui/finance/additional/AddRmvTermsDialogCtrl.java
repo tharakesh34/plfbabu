@@ -533,7 +533,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
 		boolean termsExist = false;
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 
 		if (financeScheduleDetails != null) {

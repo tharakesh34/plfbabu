@@ -42,6 +42,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.ChangeScheduleMethodService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -256,7 +257,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 		this.cbFrqFromDate.setSelectedItem(comboitem);
 
 		if (financeScheduleDetails != null) {
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			Date grcEndDate = finScheduleData.getFinanceMain().getGrcPeriodEndDate();
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 

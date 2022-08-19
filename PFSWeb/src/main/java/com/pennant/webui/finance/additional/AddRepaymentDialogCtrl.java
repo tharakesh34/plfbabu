@@ -52,6 +52,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SanctionBasedSchedule;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -404,7 +405,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
 
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {

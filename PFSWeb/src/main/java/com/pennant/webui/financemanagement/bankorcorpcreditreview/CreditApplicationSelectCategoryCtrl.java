@@ -107,7 +107,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 	private CreditApplicationReviewService creditApplicationReviewService;
 	private FinCreditRevSubCategoryService finCreditRevSubCategoryService;
 	private WIFCustomer wifcustomer = new WIFCustomer();
-	int currentYear = DateUtility.getYear(DateUtility.getAppDate());
+	int currentYear = DateUtility.getYear(SysParamUtil.getAppDate());
 	private List<FinCreditReviewDetails> finCreditReviewDetailsList = null;
 	List<Filter> filterList = null;
 	protected JdbcSearchObject<Customer> newSearchObject;
@@ -378,7 +378,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 		}
 
 		if (this.auditYear.intValue() != 0) {
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 			startDate = DateUtility.addDays(startDate, 1);
 			if (this.auditYear.intValue() > DateUtility.getYear(appDate)) {

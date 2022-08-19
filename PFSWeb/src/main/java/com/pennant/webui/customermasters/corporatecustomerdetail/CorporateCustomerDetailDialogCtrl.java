@@ -48,7 +48,6 @@ import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -135,7 +134,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	protected JdbcSearchObject<Customer> newSearchObject;
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
-	Date appStartDate = DateUtility.getAppDate();
+	Date appStartDate = SysParamUtil.getAppDate();
 
 	/**
 	 * default constructor.<br>

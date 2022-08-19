@@ -2043,7 +2043,7 @@ public class RepaymentPostingsUtil {
 		if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCIP)) {
 			if (totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0) {
 				financeMain.setFinIsActive(false);
-				financeMain.setClosedDate(DateUtility.getAppDate());
+				financeMain.setClosedDate(SysParamUtil.getAppDate());
 				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 			}
 		} else if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FIPC)
@@ -2051,7 +2051,7 @@ public class RepaymentPostingsUtil {
 			if (!isPenaltyAvail
 					&& totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0) {
 				financeMain.setFinIsActive(false);
-				financeMain.setClosedDate(DateUtility.getAppDate());
+				financeMain.setClosedDate(SysParamUtil.getAppDate());
 				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 			}
 		} else if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCPI)
@@ -2074,7 +2074,7 @@ public class RepaymentPostingsUtil {
 
 				if (pftFullyPaid) {
 					financeMain.setFinIsActive(false);
-					financeMain.setClosedDate(DateUtility.getAppDate());
+					financeMain.setClosedDate(SysParamUtil.getAppDate());
 					financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 				}
 			}

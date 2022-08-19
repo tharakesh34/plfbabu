@@ -2061,7 +2061,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			}
 
 			// expiry date
-			Date currAppDate = DateUtility.getAppDate();
+			Date currAppDate = SysParamUtil.getAppDate();
 			Date expiryDate = collateralSetup.getExpiryDate();
 			if (expiryDate != null) {
 				if (expiryDate.compareTo(currAppDate) <= 0

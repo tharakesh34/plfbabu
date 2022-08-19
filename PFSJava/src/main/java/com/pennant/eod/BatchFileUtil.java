@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.SysParamUtil;
 
 public class BatchFileUtil {
 
@@ -42,7 +43,7 @@ public class BatchFileUtil {
 	public static String getAutoPayReqFileName() {
 		StringBuilder filename = new StringBuilder();
 		filename.append("AccountPost_Daily_");
-		filename.append(DateUtility.format(DateUtility.getAppDate(), BatchFileUtil.DATE_FORMAT_YMd));
+		filename.append(DateUtility.format(SysParamUtil.getAppDate(), BatchFileUtil.DATE_FORMAT_YMd));
 		filename.append(FILE_EXT);
 		return filename.toString();
 	}
@@ -50,7 +51,7 @@ public class BatchFileUtil {
 	public static String getAutoPayResFileName() {
 		StringBuilder filename = new StringBuilder();
 		filename.append("AccountPost_Resp_Daily_");
-		filename.append(DateUtility.format(DateUtility.getAppDate(), BatchFileUtil.DATE_FORMAT_YMd));
+		filename.append(DateUtility.format(SysParamUtil.getAppDate(), BatchFileUtil.DATE_FORMAT_YMd));
 		filename.append(FILE_EXT);
 		return filename.toString();
 	}
@@ -59,7 +60,7 @@ public class BatchFileUtil {
 	public static String getSlaryPostingFileName() {
 		StringBuilder filename = new StringBuilder();
 		filename.append("Fin_Installments_Daily_");
-		filename.append(DateUtility.format(DateUtility.getAppDate(), BatchFileUtil.DATE_FORMAT_YMd));
+		filename.append(DateUtility.format(SysParamUtil.getAppDate(), BatchFileUtil.DATE_FORMAT_YMd));
 		filename.append(FILE_EXT);
 		return filename.toString();
 	}
@@ -68,7 +69,7 @@ public class BatchFileUtil {
 	public static String getLimitUtilFileName() {
 		StringBuilder filename = new StringBuilder();
 		filename.append("PFF_FIN_DTL_ACP_");
-		filename.append(DateUtility.format(DateUtility.getAppDate(), BatchFileUtil.DATE_FORMAT_DMYT));
+		filename.append(DateUtility.format(SysParamUtil.getAppDate(), BatchFileUtil.DATE_FORMAT_DMYT));
 		filename.append(FILE_EXT);
 		return filename.toString();
 	}
@@ -77,7 +78,7 @@ public class BatchFileUtil {
 	public static String getERPFileName() {
 		StringBuilder filename = new StringBuilder();
 		filename.append("PFF_ERP_FT_");
-		filename.append(DateUtility.format(DateUtility.getAppDate(), BatchFileUtil.DATE_FORMAT_DMYT));
+		filename.append(DateUtility.format(SysParamUtil.getAppDate(), BatchFileUtil.DATE_FORMAT_DMYT));
 		filename.append(FILE_EXT);
 		return "/" + filename.toString();
 	}
@@ -85,7 +86,7 @@ public class BatchFileUtil {
 	/********** Common Methods **********/
 
 	public static String getBatchReference() {
-		return DateUtility.format(DateUtility.getAppDate(), BatchFileUtil.DATE_FORMAT_YMd);
+		return DateUtility.format(SysParamUtil.getAppDate(), BatchFileUtil.DATE_FORMAT_YMd);
 	}
 
 	public static File getBatchFile(String fileName) throws IOException {

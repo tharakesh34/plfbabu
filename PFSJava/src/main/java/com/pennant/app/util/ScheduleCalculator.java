@@ -4106,7 +4106,8 @@ public class ScheduleCalculator {
 				curSchd.setSchdMethod(finScheduleDetails.get(i + 1).getSchdMethod());
 			}
 
-			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday()) && fm.isModifyBpi()) {
+			String bpiOrHoliday = curSchd.getBpiOrHoliday();
+			if (FinanceConstants.FLAG_BPI.equals(bpiOrHoliday) && fm.isModifyBpi()) {
 				fm.setBpiAmount(curSchd.getProfitSchd().subtract(curSchd.getTDSAmount()));
 			}
 
@@ -4130,8 +4131,9 @@ public class ScheduleCalculator {
 			}
 
 			if (((curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())
-					&& !StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI) && i != 0)
-					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_STRTPRDHLD)) {
+					&& !FinanceConstants.FLAG_BPI.equals(bpiOrHoliday)
+					&& !FinanceConstants.FLAG_ADDTNL_BPI.equals(bpiOrHoliday) && i != 0)
+					|| FinanceConstants.FLAG_STRTPRDHLD.equals(bpiOrHoliday)) {
 
 				// PSD Ticket : 133179, Partial Settlement Cases
 				// Removed the condition because for part payment installment no is setting for step loans.

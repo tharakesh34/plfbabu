@@ -174,7 +174,7 @@ public class RateUtil implements Serializable {
 		rate.setCurrency(currency);
 		rate.setSplRateCode(splRateCode);
 		rate.setMargin(margin);
-		rate.setValueDate(DateUtility.getAppDate());
+		rate.setValueDate(SysParamUtil.getAppDate());
 		rate = getRefRate(rate);
 		rate.setNetRefRateLoan(getEffRate(rate.getNetRefRateLoan(), minRate, maxRate));
 
@@ -316,7 +316,7 @@ public class RateUtil implements Serializable {
 		rate.setCurrency(currency);
 		rate.setSplRateCode(null);
 		rate.setMargin(BigDecimal.ZERO);
-		rate.setValueDate(DateUtility.getAppDate());
+		rate.setValueDate(SysParamUtil.getAppDate());
 		rate = getCofRefRate(rate);
 		rate.setNetRefRateLoan(getEffRate(rate.getNetRefRateLoan(), null, null));
 		return rate;

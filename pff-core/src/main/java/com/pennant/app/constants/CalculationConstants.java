@@ -114,6 +114,7 @@ public class CalculationConstants {
 	public static final String RPYCHG_STEPINST = "STEPINST";
 	public static final String RPYCHG_ADJTNR_STEP = "SADJTNR";
 	public static final String RPYCHG_ADJEMI_STEP = "SADJEMI";
+	public static final String RPYCHG_ADDITIONAL_BPI = "ADTL_BPI";
 
 	// Step Loan Recal Types
 	public static final String RPYCHG_STEPADJTNR = "SADJTNR";

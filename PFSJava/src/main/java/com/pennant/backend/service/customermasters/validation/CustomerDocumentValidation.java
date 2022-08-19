@@ -204,7 +204,7 @@ public class CustomerDocumentValidation {
 		}
 
 		if (customerDocument.getCustDocExpDate() != null
-				&& !customerDocument.getCustDocExpDate().after(DateUtility.getAppDate())) {
+				&& !customerDocument.getCustDocExpDate().after(SysParamUtil.getAppDate())) {
 			return new ErrorDetail(PennantConstants.KEY_FIELD, "30536",
 					new String[] { Labels.getLabel("DocumentDetails"),
 							Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),

@@ -114,7 +114,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 		// Application Deployment Date
 		Date startDate = getFormatDate(DateUtility.parseShortDate(AmortizationConstants.AMZ_RECALSTARTDATE));
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 
 		// Prepare 12 Months list From any Deployment Date to Application Date
 		this.datesList = PennantStaticListUtil.getMonthEndList(startDate, appDate, PennantConstants.SortOrder_DESC);

@@ -20506,11 +20506,6 @@ UNION ALL
 		<addPrimaryKey columnNames="SeqId" constraintName="pk_interfacelogdetails" tableName="INTERFACELOGDETAILS" />
 	</changeSet>
 
-	<changeSet id="ST#1627.17.6.1" author="kavya.n">
-		<addForeignKeyConstraint constraintName="FK_RCAL_ILD_MID" referencedTableName="INTERFACELOGDETAILS"
-			baseColumnNames="Message_Id" baseTableName="COLLECTION_MOB_AGENCY_LIMITS" referencedColumnNames="SeqId" />
-	</changeSet>
-
 	<changeSet id="ST#1627.24" author="kavya.n">
 		<sql>
 			<![CDATA[

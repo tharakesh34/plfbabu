@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.manualadviseupload.UploadManualAdviseDAO;
@@ -395,7 +395,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 		manualAdvise.setWaivedAmount(BigDecimal.ZERO);
 		manualAdvise.setRemarks(uploadManualAdvise.getRemarks());
 		manualAdvise.setValueDate(uploadManualAdvise.getValueDate());
-		manualAdvise.setPostDate(DateUtility.getAppDate());
+		manualAdvise.setPostDate(SysParamUtil.getAppDate());
 		manualAdvise.setReservedAmt(BigDecimal.ZERO);
 		manualAdvise.setBalanceAmt(uploadManualAdvise.getAdviseAmount());
 		manualAdvise.setVersion(1);

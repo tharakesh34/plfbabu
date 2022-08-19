@@ -176,7 +176,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	public List<FinCreditRevSubCategory> modifiedFinCreditRevSubCategoryList = new ArrayList<FinCreditRevSubCategory>();
 	public List<CreditReviewSubCtgDetails> creditReviewSubCtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
 	private WIFCustomer wifcustomer = new WIFCustomer();
-	int currentYear = DateUtility.getYear(DateUtility.getAppDate());
+	int currentYear = DateUtility.getYear(SysParamUtil.getAppDate());
 	private List<FinCreditReviewDetails> finCreditReviewDetailsList = null;
 	List<Filter> filterList = null;
 	private NotificationService notificationService;
@@ -185,7 +185,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	int currFormatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 	String amtFormat = PennantApplicationUtil.getAmountFormate(currFormatter);
 
-	Date date = DateUtility.getAppDate();
+	Date date = SysParamUtil.getAppDate();
 	static boolean isError = false;
 
 	Map<String, FinCreditReviewDetails> map = new HashMap<>();
@@ -647,7 +647,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				}
 				if (k >= 4) {
 					Calendar cal = Calendar.getInstance();
-					cal.setTime(DateUtility.getAppDate());
+					cal.setTime(SysParamUtil.getAppDate());
 					double year = cal.get(cal.YEAR);
 					plYearData = new HashSet<String>();
 					bsYearData = new HashSet<String>();

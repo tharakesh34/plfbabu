@@ -1129,7 +1129,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if (StringUtils.isNotEmpty(this.reviewFrequency.getValue())) {
 				if (this.nextReviewDate.getValue() == null) {
 					Date nextRDate = FrequencyUtil.getNextDate(this.reviewFrequency.getValue(), 1,
-							DateUtility.getAppDate(), HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
+							SysParamUtil.getAppDate(), HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
 					this.nextReviewDate.setValue(nextRDate);
 				} else {
 					if (DateUtility.compare(this.expiryDate.getValue(), this.nextReviewDate.getValue()) != 0
@@ -2073,7 +2073,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		final CollateralSetup aCollateralSetup = new CollateralSetup();
 		BeanUtils.copyProperties(getCollateralSetup(), aCollateralSetup);
 		boolean isNew = false;
-		boolean recSave = false;
 
 		if (isWorkFlowEnabled()) {
 			aCollateralSetup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -2634,7 +2633,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					avalUtiAmt = assignedvalue;
 					expired = true;
 				} else if (StringUtils.equals(assignmentDetail.getModule(), CommitmentConstants.MODULE_NAME)
-						&& DateUtility.compare(assignmentDetail.getCmtExpDate(), DateUtility.getAppDate()) < 0) {
+						&& DateUtility.compare(assignmentDetail.getCmtExpDate(), SysParamUtil.getAppDate()) < 0) {
 					avalUtiAmt = assignedvalue;
 					expired = true;
 				}

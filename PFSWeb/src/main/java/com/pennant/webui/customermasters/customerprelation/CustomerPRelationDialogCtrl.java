@@ -52,7 +52,6 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -156,7 +155,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	private transient String CUSTCIF_REGEX;
 	String parms[] = new String[4];
 	private String moduleType = "";
-	Date appStartDate = DateUtility.getAppDate();
+	Date appStartDate = SysParamUtil.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
 	/**

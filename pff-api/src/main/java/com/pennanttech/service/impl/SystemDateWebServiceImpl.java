@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -25,7 +26,7 @@ public class SystemDateWebServiceImpl extends ExtendedTestClass
 		APIErrorHandlerService.logReference("SystemDate");
 		SystemDate systemDate = new SystemDate();
 		try {
-			systemDate.setAppDate(DateUtility.getAppDate());
+			systemDate.setAppDate(SysParamUtil.getAppDate());
 			systemDate.setValueDate(DateUtility.getAppValueDate());
 			systemDate.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		} catch (Exception e) {

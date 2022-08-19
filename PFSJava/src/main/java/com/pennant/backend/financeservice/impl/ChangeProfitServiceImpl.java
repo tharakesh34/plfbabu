@@ -130,7 +130,7 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		}
 
 		// ToDate shouldn't be past date when compare to appdate
-		if (isToDateExists && fromDate.compareTo(DateUtility.getAppDate()) < 0) {
+		if (isToDateExists && fromDate.compareTo(SysParamUtil.getAppDate()) < 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));

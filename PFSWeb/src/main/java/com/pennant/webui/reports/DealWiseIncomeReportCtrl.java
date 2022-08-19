@@ -38,6 +38,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.DailyDownloadInterfaceService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -70,7 +71,7 @@ public class DealWiseIncomeReportCtrl extends GFCBaseCtrl<ReportConfiguration> {
 		try {
 			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent();
 
-			dateValueDate = DateUtility.getAppDate();
+			dateValueDate = SysParamUtil.getAppDate();
 
 			Date prvMnthStartDate = DateUtility
 					.getMonthStart(DateUtility.addDays(DateUtility.getMonthStart(dateValueDate), -1));

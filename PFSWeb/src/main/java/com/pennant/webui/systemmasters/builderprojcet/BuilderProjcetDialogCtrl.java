@@ -64,8 +64,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.PinCode;
@@ -907,7 +907,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 		if (!this.projectStartDate.isReadonly()) {
 			this.projectStartDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_BuilderProjectDialog_ProjectStartDate.value"), false,
-							null, DateUtility.getAppDate(), true));
+							null, SysParamUtil.getAppDate(), true));
 		}
 
 		if (!this.projectEndDate.isReadonly()) {

@@ -50,7 +50,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -546,7 +545,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 											Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpFrom.value"),
 											SysParamUtil.getValueAsString("APP_DFT_START_DATE") }));
 				}
-				if (this.custEmpFrom.getValue().compareTo(DateUtility.getAppDate()) != -1) {
+				if (this.custEmpFrom.getValue().compareTo(SysParamUtil.getAppDate()) != -1) {
 					throw new WrongValueException(this.custEmpFrom,
 							Labels.getLabel("DATE_FUTURE_TODAY",
 									new String[] {
@@ -569,7 +568,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 											Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpTo.value"),
 											SysParamUtil.getValueAsString("APP_DFT_START_DATE") }));
 				}
-				if (this.custEmpTo.getValue().compareTo(DateUtility.getAppDate()) != -1) {
+				if (this.custEmpTo.getValue().compareTo(SysParamUtil.getAppDate()) != -1) {
 					throw new WrongValueException(this.custEmpTo,
 							Labels.getLabel("DATE_FUTURE_TODAY",
 									new String[] {
