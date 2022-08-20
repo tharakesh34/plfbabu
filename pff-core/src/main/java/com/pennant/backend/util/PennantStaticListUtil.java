@@ -320,6 +320,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> DBDPercentageList;
 	private static List<ValueLabel> emiClearance;
 	private static List<ValueLabel> receiptModesIncludeRTRNGDS;
+	private static List<ValueLabel> recalTypes;
 
 	// EOD Automation
 	private static List<ValueLabel> encryptionTypeList;
@@ -5633,6 +5634,18 @@ public class PennantStaticListUtil {
 					new ValueLabel(FinanceConstants.OD_TRANCHE_AMOUNT, Labels.getLabel("label_OD_TRANCHE_AMOUNT")));
 		}
 		return chargeCalOnList;
+	}
+
+	public static List<ValueLabel> getRecalTypes() {
+		if (recalTypes == null) {
+			recalTypes = new ArrayList<>();
+			recalTypes
+					.add(new ValueLabel(CalculationConstants.RPYCHG_ADJMDT, Labels.getLabel("label_Adj_To_Maturity")));
+			recalTypes.add(new ValueLabel(CalculationConstants.RPYCHG_ADDITIONAL_BPI,
+					Labels.getLabel("label_Additional_BPI")));
+		}
+
+		return recalTypes;
 	}
 
 }

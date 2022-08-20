@@ -230,6 +230,7 @@ public class FinanceConstants {
 
 	// EMI holiday OR BPI marking flag in Schedule
 	public static final String FLAG_BPI = "B";
+	public static final String FLAG_ADDTNL_BPI = "I";
 	public static final String FLAG_HOLIDAY = "H";
 	public static final String FLAG_POSTPONE = "P";
 	public static final String FLAG_REAGE = "A";
