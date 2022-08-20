@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.1" author="saikiran.n">
+		<addColumn tableName="AdtMandates">
+			<column name="SwapEffectiveDate" type="datetime" />
+			<column name="Hold" type="boolean" />
+			<column name="HoldReasons" type="bigint" />
+			<column name="SecurityMandate" type="boolean" />
+			<column name="EmployeeID" type="bigint" />
+			<column name="EmployerName" type="varchar(200)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#76.2" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE ADTMANDATES SET HOLD = 0;
+				UPDATE ADTMANDATES SET SECURITYMANDATE = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#76.3" author="saikiran.n">
+		<addNotNullConstraint tableName="ADTMANDATES" columnName="HOLD" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ADTMANDATES" columnName="SECURITYMANDATE"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="ST#76.4" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Hold" tableName="ADTMANDATES" defaultValue="0" />
+		<addDefaultValue columnName="SecurityMandate" tableName="ADTMANDATES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#76.4" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMANDATES_HOLD DEFAULT 0 FOR HOLD;
+				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMANDATES_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#81" author="nagavamsi.p">
+		<addColumn tableName="ADTEMPLOYERDETAIL">
+			<column name="AllowDAS" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#81.1" author="nagavamsi.p">
+		<sql>
+		<![CDATA[  
+			UPDATE AdtEmployerDetail SET AllowDAS = 0 ;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#98" author="nagavamsi.p">
+		<addColumn tableName="ADTRMTBaseRates">
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#79" author="nagavamsi.p">
+		<addColumn tableName="ADTBounceReasons">
+			<column name="InstrumentType" type="varchar(8)" />
+			<column name="HoldMarkBounceCount" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#79.1" author="nagavamsi.p">
+		<sql>
+		<![CDATA[  
+			UPDATE AdtBounceReasons SET HoldMarkBounceCount = 0 ;
+		]]>
+		</sql>
+	</changeSet>
+
+</databaseChangeLog>
