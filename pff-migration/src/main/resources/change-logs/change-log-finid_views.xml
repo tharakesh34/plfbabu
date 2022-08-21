@@ -9544,7 +9544,7 @@
 				    T2.FINTYPE,
 				    T3.FINTYPEDESC,
         			CASE WHEN T2.FINTYPE IS NULL THEN ''
-        				 ELSE (T2.FINTYPE || '-') || T3.FINTYPEDESC
+        				 ELSE (T2.FINTYPE ${call.concatenate} '-') ${call.concatenate} T3.FINTYPEDESC
         			 END LOANTYPE,
     				'PERFORMING 0-90' CLASSIFICATIONS,
     				4 GRADEORDER,
@@ -9561,7 +9561,7 @@
 				    T2.FINTYPE,
 				    T3.FINTYPEDESC,
         			CASE WHEN T2.FINTYPE IS NULL THEN '' 
-        				ELSE (T2.FINTYPE || '-') || T3.FINTYPEDESC 
+        				ELSE (T2.FINTYPE ${call.concatenate} '-') ${call.concatenate} T3.FINTYPEDESC 
         			END LOANTYPE, 
             		'SUBSTANDARD 91-180' CLASSIFICATIONS,
     				3 GRADEORDER,
@@ -9578,7 +9578,7 @@
     				T2.FINTYPE,
     				T3.FINTYPEDESC,
         			CASE WHEN T2.FINTYPE IS NULL THEN ''
-        				ELSE  (T2.FINTYPE || '-') || T3.FINTYPEDESC 
+        				ELSE  (T2.FINTYPE ${call.concatenate} '-') ${call.concatenate} T3.FINTYPEDESC 
         			END LOANTYPE,
     				'DOUBTFUL 181-365' CLASSIFICATIONS,
     				2 GRADEORDER,
@@ -9595,7 +9595,7 @@
     				T2.FINTYPE,
     				T3.FINTYPEDESC,
         			CASE WHEN T2.FINTYPE IS NULL THEN '' 
-        				ELSE (T2.FINTYPE || '-') || T3.FINTYPEDESC 
+        				ELSE (T2.FINTYPE ${call.concatenate} '-') ${call.concatenate} T3.FINTYPEDESC 
         			END LOANTYPE,
     				'LOSS 365>' CLASSIFICATIONS,
     				1 GRADEORDER,

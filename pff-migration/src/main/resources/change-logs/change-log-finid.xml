@@ -5843,7 +5843,7 @@
 		</sql>
 	</changeSet>
 	<changeSet id="203.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_TAN_ASSIGNMENTS_finid"
+		<addForeignKeyConstraint constraintName="FK_DOCUMENT_STATUS_FINID"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="Document_Status"
 			referencedColumnNames="FinID" />
 	</changeSet>
