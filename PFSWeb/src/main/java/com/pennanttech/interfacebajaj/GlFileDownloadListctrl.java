@@ -346,7 +346,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 			try {
 				if (this.toDate != null
-						&& DateUtility.compare(this.toDate.getValue(), DateUtility.getLastBusinessdate()) > 0) {
+						&& DateUtility.compare(this.toDate.getValue(), SysParamUtil.getLastBusinessdate()) > 0) {
 					throw new WrongValueException(this.toDate, "To Date should be less than Last Business Date");
 				}
 			} catch (WrongValueException we) {

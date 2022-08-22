@@ -84,17 +84,6 @@ public final class DateUtility extends DateUtil {
 	}
 
 	/**
-	 * Returns a {@link java.util.Date} object that represents the Next business date.
-	 * 
-	 * @return A {@link java.util.Date} that represents the Next business date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getLastBusinessdate} instead.
-	 */
-	public static java.util.Date getLastBusinessdate() {
-		return SysParamUtil.getLastBusinessdate();
-	}
-
-	/**
 	 * Take String Date and return UTIL Date
 	 * 
 	 * @param date (Date)
