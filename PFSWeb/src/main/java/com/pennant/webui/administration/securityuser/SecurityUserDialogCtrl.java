@@ -1781,12 +1781,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	}
 
 	/**
-	 * This method displays passwordStatusMeter and label_PwdStatus
+	 * Displays the strength using meter for the specified status code.
 	 * 
-	 * @param pwdstatusCode (int)
+	 * @param statusCode The status code to display using meter.
 	 */
-	public void showPasswordStatusMeter(int pwdstatusCode) {
-		switch (pwdstatusCode) {
+	public void showPasswordStatusMeter(int statusCode) {
+		switch (statusCode) {
 		case 0:
 			this.div_PwdStatusMeter.setStyle("background-color:white");
 			this.label_PwdStatus.setValue("");
