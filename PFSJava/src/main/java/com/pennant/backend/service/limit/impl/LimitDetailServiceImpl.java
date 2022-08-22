@@ -1541,14 +1541,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 
 		// Validate ReviewDate
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		Date nextYear = DateUtility.addYears(appDate, 1);
 		if (limitHeader.getLimitRvwDate() != null) {
-			if (limitHeader.getLimitRvwDate().before(DateUtility.getAppDate())
+			if (limitHeader.getLimitRvwDate().before(SysParamUtil.getAppDate())
 					|| limitHeader.getLimitRvwDate().after(nextYear)) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Review date";
-				valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+				valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
 				valueParm[2] = DateUtility.formatToLongDate(nextYear);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
@@ -1556,11 +1556,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		// Validate ExpiryDate
 		if (limitHeader.getLimitExpiryDate() != null) {
-			if (limitHeader.getLimitExpiryDate().compareTo(DateUtility.getAppDate()) < 0
+			if (limitHeader.getLimitExpiryDate().compareTo(SysParamUtil.getAppDate()) < 0
 					|| limitHeader.getLimitExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Limit expiry date";
-				valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+				valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
 				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
@@ -1650,7 +1650,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 
 		List<LimitDetails> limitDetails = limitHeader.getCustomerLimitDetailsList();
-		Date lineMaxExpDate = DateUtility.getAppDate();
+		Date lineMaxExpDate = SysParamUtil.getAppDate();
 		Map<Long, Long> structureMap = new HashMap<Long, Long>();
 		if (limitDetails != null) {
 			for (LimitDetails detail : limitDetails) {
@@ -1671,11 +1671,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90803", "", valueParm)));
 				}
 				if (detail.getExpiryDate() != null) {
-					if (detail.getExpiryDate().compareTo(DateUtility.getAppDate()) < 0
+					if (detail.getExpiryDate().compareTo(SysParamUtil.getAppDate()) < 0
 							|| detail.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "Limit expiry date";
-						valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+						valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
 						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 						return auditDetail;

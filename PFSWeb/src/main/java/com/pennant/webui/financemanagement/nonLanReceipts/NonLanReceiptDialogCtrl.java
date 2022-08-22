@@ -76,7 +76,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
@@ -797,7 +796,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (isUserAction) {
 			this.receiptAmount.setValue(BigDecimal.ZERO);
 			this.favourNo.setValue("");
-			this.valueDate.setValue(DateUtility.getAppDate());
+			this.valueDate.setValue(SysParamUtil.getAppDate());
 			this.bankCode.setValue("");
 			this.bankCode.setDescription("");
 			this.bankCode.setObject(null);
@@ -846,9 +845,9 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							.setValue(Labels.getLabel("label_ReceiptDialog_ChequeFavourNo.value"));
 
 					if (isUserAction) {
-						this.depositDate.setValue(DateUtility.getAppDate());
+						this.depositDate.setValue(SysParamUtil.getAppDate());
 						// this.receivedDate.setValue(DateUtility.getAppDate());
-						this.valueDate.setValue(DateUtility.getAppDate());
+						this.valueDate.setValue(SysParamUtil.getAppDate());
 					}
 
 				} else {
@@ -856,8 +855,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.label_ReceiptDialog_favourNo.setValue(Labels.getLabel("label_ReceiptDialog_DDFavourNo.value"));
 
 					if (isUserAction) {
-						this.depositDate.setValue(DateUtility.getAppDate());
-						this.valueDate.setValue(DateUtility.getAppDate());
+						this.depositDate.setValue(SysParamUtil.getAppDate());
+						this.valueDate.setValue(SysParamUtil.getAppDate());
 					}
 				}
 
@@ -925,7 +924,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
 			this.bounceDate.setValue(rch.getBounceDate());
 			if (rch.getBounceDate() == null) {
-				this.bounceDate.setValue(DateUtility.getAppDate());
+				this.bounceDate.setValue(SysParamUtil.getAppDate());
 			}
 
 			ManualAdvise bounceReason = rch.getManualAdvise();
@@ -1435,7 +1434,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Entering");
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		Date fromDate = rch.getValueDate();
-		Date toDate = DateUtility.getAppDate();
+		Date toDate = SysParamUtil.getAppDate();
 		if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			fromDate = rch.getReceiptDate();
 		}
@@ -1496,7 +1495,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			if (!this.valueDate.isDisabled()) {
 				this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_ValueDate.value"),
-						true, this.receiptDate.getValue(), DateUtility.getAppDate(), true));
+						true, this.receiptDate.getValue(), SysParamUtil.getAppDate(), true));
 			}
 
 			if (!this.bankCode.isReadonly()) {
@@ -1512,7 +1511,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (!this.depositDate.isReadonly()) {
 				this.depositDate
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_DepositDate.value"),
-								true, this.receiptDate.getValue(), DateUtility.getAppDate(), true));
+								true, this.receiptDate.getValue(), SysParamUtil.getAppDate(), true));
 			}
 
 			if (!this.depositNo.isReadonly()) {

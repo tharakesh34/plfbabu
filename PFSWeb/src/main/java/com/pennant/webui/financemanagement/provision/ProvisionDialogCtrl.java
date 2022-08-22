@@ -582,7 +582,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			wve.add(we);
 		}
 		try {
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			aProvision.setProvisionDate(appDate);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1214,7 +1214,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		getProvision().setCustID(fm.getCustID());
 		getProvision().setCustCIF(fm.getLovDescCustCIF());
 		getProvision().setCustShrtName(fm.getLovDescCustShrtName());
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		getProvision().setDueFromDate(appDate);
 		getProvision().setFinCcy(fm.getFinCcy());
 

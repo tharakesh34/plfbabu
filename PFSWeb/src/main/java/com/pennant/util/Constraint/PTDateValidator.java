@@ -41,7 +41,7 @@ public class PTDateValidator implements Constraint {
 	public PTDateValidator(String fieldParm, boolean mandatory, boolean fromSystem, Date toDate, boolean equal) {
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
-		setFromDate(DateUtility.getAppDate());
+		setFromDate(SysParamUtil.getAppDate());
 		setToDate(toDate);
 		setEqual(equal);
 	}
@@ -50,7 +50,7 @@ public class PTDateValidator implements Constraint {
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
 		setFromDate(fromDate);
-		setToDate(DateUtility.getAppDate());
+		setToDate(SysParamUtil.getAppDate());
 		setEqual(equal);
 	}
 
