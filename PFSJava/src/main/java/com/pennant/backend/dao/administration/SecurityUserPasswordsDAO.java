@@ -14,8 +14,8 @@
  ********************************************************************************************
  * FILE HEADER *
  ********************************************************************************************
- * * FileName : SecurityUserPasswordsDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * *
- * Modified Date : 30-07-2011 * * Description : * *
+ * * FileName : SecurityUser***DAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 30-07-2011 * * Description : * *
  ********************************************************************************************
  * Date Author Version Comments *
  ********************************************************************************************
@@ -30,9 +30,26 @@ import com.pennant.backend.model.administration.SecurityUser;
 
 public interface SecurityUserPasswordsDAO {
 
+	/**
+	 * Saves the record.
+	 * 
+	 * @param securityUser The model object that contains the parameters.
+	 * @return Identity of the record.
+	 */
 	long save(SecurityUser securityUser);
 
+	/**
+	 * Gets the history of changes for the specified user in descending order.
+	 * 
+	 * @param secUser The model object that contains the parameters.
+	 * @return List of changes for the specified user with the recent change at the top.
+	 */
 	List<SecurityUser> getUserPreviousPasswords(SecurityUser secUser);
 
+	/**
+	 * Deletes the record.
+	 * 
+	 * @param securityUser The model object that contains the parameters.
+	 */
 	void delete(SecurityUser securityUser);
 }

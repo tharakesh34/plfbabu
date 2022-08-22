@@ -14,8 +14,8 @@
  ********************************************************************************************
  * FILE HEADER *
  ********************************************************************************************
- * * FileName : ChangePasswordModel.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-07-2011 * * Modified
- * Date : 30-07-2011 * * Description : * *
+ * * FileName : Change***Model.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-07-2011 * * Modified Date
+ * : 30-07-2011 * * Description : * *
  ********************************************************************************************
  * Date Author Version Comments *
  ********************************************************************************************

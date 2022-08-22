@@ -838,7 +838,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				if (exstDetails != null) {
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-						// setting password to agreements
+						// Protect the agreement as per the configuration.
 						exstDetails.setDocImage(engine.getDocumentInByteArrayWithPwd(reportName,
 								agreementDefinition.isPwdProtected(), financeDetail));
 					} else {
@@ -859,7 +859,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				details.setReferenceId(finReference);
 				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-					// setting password to agreements
+					// Protect the agreement as per the configuration.
 					details.setDocImage(engine.getDocumentInByteArrayWithPwd(reportName,
 							agreementDefinition.isPwdProtected(), financeDetail));
 				} else {

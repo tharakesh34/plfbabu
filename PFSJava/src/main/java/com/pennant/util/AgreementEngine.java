@@ -139,28 +139,27 @@ public class AgreementEngine {
 	}
 
 	/**
-	 * Return the binary data with password protected
+	 * Gets the byte array of the agreement.
 	 * 
 	 * @param reportName
-	 * @param isPwdProtected
+	 * @param secured
 	 * @param financeDetail
 	 * @return
 	 */
-	public byte[] getDocumentInByteArrayWithPwd(String reportName, boolean isPwdProtected,
-			FinanceDetail financeDetail) {
-		return getPasswordProtectedDocument(financeDetail, isPwdProtected);
+	public byte[] getDocumentInByteArrayWithPwd(String reportName, boolean secured, FinanceDetail financeDetail) {
+		return getPasswordProtectedDocument(financeDetail, secured);
 	}
 
 	/**
-	 * Return the binary data with password protected
+	 * Gets the byte array of the agreement.
 	 * 
 	 * @param financeDetail
-	 * @param isPwdProtected
+	 * @param secured
 	 * @return
 	 */
-	private byte[] getPasswordProtectedDocument(FinanceDetail financeDetail, boolean isPwdProtected) {
+	private byte[] getPasswordProtectedDocument(FinanceDetail financeDetail, boolean secured) {
 		try {
-			if (isPwdProtected) {
+			if (secured) {
 				Customer customer = financeDetail.getCustomerDetails().getCustomer();
 				if (customer != null) {
 					String password = ReferenceGenerator.generateAgreementPassword(customer);
@@ -179,7 +178,8 @@ public class AgreementEngine {
 					return stream.toByteArray();
 				}
 			}
-			// return byte array with out password
+
+			// Return unprotected byte array of the agreement.
 			return getDocumentInByteArray(SaveFormat.PDF);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION + " while doing document encryption");
