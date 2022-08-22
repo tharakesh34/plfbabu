@@ -193,7 +193,6 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 		FinanceMain aFinanceMain = getFinScheduleData().getFinanceMain();
 		FinanceType financeType = getFinScheduleData().getFinanceType();
-		String product = financeType.getFinCategory();
 
 		// Schedule Fee Details existis or not Checking
 		List<FeeRule> feeRuleList = getFinScheduleData().getFeeRules();
@@ -1823,7 +1822,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				Checkbox planEMIHDate = new Checkbox();
 
 				if (StringUtils.equals(getModuleDefiner(), FinServiceEvent.PLANNEDEMI)
-						&& DateUtility.compare(data.getSchDate(), DateUtility.getAppDate()) <= 0) {
+						&& DateUtility.compare(data.getSchDate(), SysParamUtil.getAppDate()) <= 0) {
 					planEMIHDate.setDisabled(true);
 				} else {
 					planEMIHDate.setDisabled(isEMIHEditable);

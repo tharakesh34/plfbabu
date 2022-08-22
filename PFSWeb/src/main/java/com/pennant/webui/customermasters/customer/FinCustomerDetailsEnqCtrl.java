@@ -45,6 +45,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.AgreementDetail;
@@ -162,7 +163,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 
 	public void loadData() {
 		try {
-			Date appldate = DateUtility.getAppDate();
+			Date appldate = SysParamUtil.getAppDate();
 			if (custid != 0) {
 				boolean isCustomerChanged = false;
 				if (custAgreementData == null) {
@@ -457,7 +458,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 			if (customerEmploymentDetail.isCurrentEmployer()) {
 				isCurrentEmp = true;
 				employer[0] = customerEmploymentDetail.getLovDesccustEmpName();
-				toDate = DateUtility.getAppDate();
+				toDate = SysParamUtil.getAppDate();
 			}
 			if (fromDate == null) {
 				fromDate = customerEmploymentDetail.getCustEmpFrom();

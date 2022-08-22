@@ -548,10 +548,10 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		// fill the header data
 		afinTaxUploadHeader.setFileName(this.fileName.getValue());
 		afinTaxUploadHeader.setNumberofRecords(Integer.parseInt(this.totalNoofRecords.getValue()));
-		afinTaxUploadHeader.setBatchCreatedDate(DateUtility.getAppDate());
+		afinTaxUploadHeader.setBatchCreatedDate(SysParamUtil.getAppDate());
 
 		if (StringUtils.equals(userAction, "Approve")) {
-			afinTaxUploadHeader.setBatchApprovedDate(DateUtility.getAppDate());
+			afinTaxUploadHeader.setBatchApprovedDate(SysParamUtil.getAppDate());
 		}
 		afinTaxUploadHeader.setStatus(this.status.getValue());
 		List<Listitem> Listitems = this.listBoxFileData.getItems();

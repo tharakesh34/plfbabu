@@ -286,7 +286,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 					mandateStatus.setMandateID(mandate.getMandateID());
 					mandateStatus.setStatus(mandate.getStatus());
 					mandateStatus.setReason(Labels.getLabel("Mandate_Rejected_In_Loan"));
-					mandateStatus.setChangeDate(DateUtility.getAppDate());
+					mandateStatus.setChangeDate(SysParamUtil.getAppDate());
 					mandateStatusDAO.save(mandateStatus, "");
 				}
 

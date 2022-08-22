@@ -72,7 +72,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -897,7 +896,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 			try {
 				if (this.writeoffDate.getValue() == null) {
-					this.writeoffDate.setValue(DateUtility.getAppDate());
+					this.writeoffDate.setValue(SysParamUtil.getAppDate());
 				}
 				aFinanceDetail.getFinwriteoffPayment().setWriteoffDate(this.writeoffDate.getValue());
 			} catch (WrongValueException we) {
@@ -1553,7 +1552,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (!this.writeoffDate.isDisabled()) {
 				this.writeoffDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_WriteoffDate.value"), false,
-								appStartDate, DateUtility.getAppDate(), true));
+								appStartDate, SysParamUtil.getAppDate(), true));
 			}
 
 			if (!this.finWriteoffPayAmount.isReadonly()) {

@@ -686,15 +686,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	}
 
 	/**
-	 * 
-	 * @param date
-	 * @return
-	 */
-	private static Date getFormatDate(Date date) {
-		return DateUtility.getDBDate(DateUtility.format(date, PennantConstants.DBDateFormat));
-	}
-
-	/**
 	 * Item renderer for listitems in the listbox.
 	 * 
 	 */
@@ -770,7 +761,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		SimpleDateFormat displayDateFormat = new SimpleDateFormat(DateFormat.LONG_MONTH.getPattern());
 
 		GregorianCalendar gc = null;
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		int month = DateUtil.getMonth(appDate);
 		int year = DateUtil.getYear(appDate);
 		Calendar startDate = new GregorianCalendar(2017, Calendar.AUGUST, 01);

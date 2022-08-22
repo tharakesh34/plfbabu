@@ -61,6 +61,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -431,7 +432,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		logger.debug("Entering" + event.toString());
 		FinanceDetail detail = null;
 		String finDivision = "";
-		Date date = DateUtility.getAppDate();
+		Date date = SysParamUtil.getAppDate();
 
 		try {
 			Object object = getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail")

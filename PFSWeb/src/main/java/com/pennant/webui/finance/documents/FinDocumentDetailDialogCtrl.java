@@ -783,7 +783,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate"), true));
-			if (DateUtility.compare(this.docReceivedDt.getValue(), DateUtility.getAppDate()) == 1) {
+			if (DateUtility.compare(this.docReceivedDt.getValue(), SysParamUtil.getAppDate()) == 1) {
 				throw new WrongValueException(this.docReceivedDt, Labels.getLabel("DATE_NO_FUTURE",
 						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate") }));
 			}

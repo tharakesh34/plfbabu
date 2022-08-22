@@ -516,7 +516,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.writeoffDate.setValue(financeWriteoff.getWriteoffDate());
 
 		if (financeWriteoff.getWriteoffDate() == null) {
-			Date curBDay = DateUtility.getAppDate();
+			Date curBDay = SysParamUtil.getAppDate();
 			this.writeoffDate.setValue(curBDay);
 		}
 
@@ -1604,7 +1604,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail) {
 
-		Date curBDay = DateUtility.getAppDate();
+		Date curBDay = SysParamUtil.getAppDate();
 
 		FinScheduleData finScheduleData = getFinanceDetail().getFinScheduleData();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
