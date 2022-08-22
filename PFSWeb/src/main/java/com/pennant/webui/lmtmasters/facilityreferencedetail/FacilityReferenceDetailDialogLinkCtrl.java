@@ -54,7 +54,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.CheckList;
 import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
 import com.pennant.backend.model.mail.MailTemplate;
@@ -67,7 +66,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -822,17 +820,6 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
-	}
-
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_FacilityReferenceDetailDialogLink, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
 	}
 
 	public void onClick$btnNotes(Event event) {

@@ -766,22 +766,6 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 				getOverideMap());
 	}
 
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_CourseDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-	}
-
 	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}

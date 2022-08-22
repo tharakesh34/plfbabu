@@ -1600,24 +1600,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 				aBlackListCustomers.getUserDetails(), getOverideMap());
 	}
 
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering");
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_BlacklistCustomerDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving");
-	}
-
 	public void onFulfill$employer(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = employer.getObject();
