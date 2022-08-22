@@ -866,24 +866,6 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		return getReturnedCheque().getCustCIF() + PennantConstants.KEY_SEPERATOR + getReturnedCheque().getChequeNo();
 	}
 
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering ");
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_ReturnedChequeDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving ");
-	}
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

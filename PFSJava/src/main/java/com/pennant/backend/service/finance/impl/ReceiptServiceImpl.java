@@ -100,7 +100,6 @@ import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BounceReason;
@@ -1699,7 +1698,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		long serviceUID = Long.MIN_VALUE;
-		long lastMntBy = receiptHeader.getLastMntBy();
 
 		BigDecimal restructBpiAmount = BigDecimal.ZERO;
 		if (rd.getFinanceDetail().getExtendedFieldRender() != null) {
@@ -6574,33 +6572,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setFinType(fm.getFinType());
 	}
 
-	private void doEmptyResponseObject(FinanceDetail fd) {
-		fd.setFinScheduleData(null);
-		fd.setDocumentDetailsList(null);
-		fd.setJointAccountDetailList(null);
-		fd.setGurantorsDetailList(null);
-		fd.setCollateralAssignmentList(null);
-		fd.setReturnDataSetList(null);
-		fd.setInterfaceDetailList(null);
-		fd.setFinFlagsDetails(null);
-		fd.setCustomerDetails(null);
-	}
-
-	private WSReturnStatus getWSReturnStatus(String code, String message) {
-		WSReturnStatus status = new WSReturnStatus();
-		status.setReturnCode(code);
-		status.setReturnText(message);
-
-		return status;
-	}
-
 	private void initiateReceipt(FinReceiptData rd, ReceiptPurpose receiptPurpose) {
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinReceiptHeader rch = rd.getReceiptHeader();
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
-		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 
 		BigDecimal earlyPayAmount = rd.getRemBal();
 		String recalType = rch.getEffectSchdMethod();

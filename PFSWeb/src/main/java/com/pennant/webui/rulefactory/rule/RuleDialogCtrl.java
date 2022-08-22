@@ -1452,18 +1452,6 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 				getOverideMap());
 	}
 
-	// Method for Show Error Message
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_RuleDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", e);
-		}
-	}
-
 	/**
 	 * Get the window for entering Notes
 	 * 

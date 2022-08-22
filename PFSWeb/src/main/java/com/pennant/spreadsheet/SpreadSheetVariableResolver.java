@@ -1,7 +1,5 @@
 package com.pennant.spreadsheet;
 
-import java.math.BigDecimal;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
@@ -13,7 +11,6 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.spreadsheet.SpreadSheet;
 import com.pennant.backend.service.customermasters.CustomerService;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 
 public class SpreadSheetVariableResolver implements VariableResolver {
@@ -45,14 +42,6 @@ public class SpreadSheetVariableResolver implements VariableResolver {
 		}
 
 		return null;
-	}
-
-	private BigDecimal unFormat(BigDecimal amount) {
-		if (amount == null) {
-			amount = BigDecimal.ZERO;
-		}
-
-		return PennantApplicationUtil.formateAmount(amount, finFormatter);
 	}
 
 	private void setCoApplicantData(SpreadSheet spreadSheet, FinanceDetail financeDetail) {

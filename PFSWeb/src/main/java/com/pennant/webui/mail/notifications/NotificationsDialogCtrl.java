@@ -1126,27 +1126,6 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	}
 
 	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering");
-
-		AuditHeader auditHeader = new AuditHeader();
-
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_NotificationsDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-
-		logger.debug("Leaving");
-	}
-
-	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	protected void refreshList() {

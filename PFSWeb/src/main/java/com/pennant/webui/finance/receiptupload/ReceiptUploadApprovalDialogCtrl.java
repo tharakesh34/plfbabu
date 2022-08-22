@@ -60,7 +60,6 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Entity;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
@@ -68,11 +67,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessorConstatnt;
-import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -768,26 +765,6 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 			logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);
 		}
 		return client;
-	}
-
-	// WorkFlow Components
-
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering");
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_ReceiptUploadApproval, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving");
 	}
 
 	// ******************************************************//

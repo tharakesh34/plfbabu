@@ -41,13 +41,9 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ReportsUtil;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -313,23 +309,4 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		this.fileName.setFilters(null);
 		logger.debug("Leaving");
 	}
-
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering");
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_ReceiptUploadReportDialogCtrl, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving");
-	}
-
 }
