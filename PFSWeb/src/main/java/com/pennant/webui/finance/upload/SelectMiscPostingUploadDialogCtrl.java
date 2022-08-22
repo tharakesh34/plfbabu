@@ -40,7 +40,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
@@ -607,7 +606,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 			}
 		}
 		uploadHeader.setTotalRecords(sheet.getPhysicalNumberOfRows() - 1);
-		uploadHeader.setTransactionDate(DateUtility.getAppDate());
+		uploadHeader.setTransactionDate(SysParamUtil.getAppDate());
 		uploadHeader.setMiscPostingUploads(miscPostingUploads);
 
 		logger.debug(Literal.LEAVING);
@@ -711,7 +710,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 				count++;
 			}
 			uploadHeader.setMiscPostingUploads(miscPostingUploads);
-			uploadHeader.setTransactionDate(DateUtility.getAppDate());
+			uploadHeader.setTransactionDate(SysParamUtil.getAppDate());
 			uploadHeader.setTotalRecords(count - 1);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

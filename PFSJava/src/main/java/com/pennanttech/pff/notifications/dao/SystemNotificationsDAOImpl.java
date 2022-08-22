@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notifications.SystemNotifications;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -45,7 +45,7 @@ public class SystemNotificationsDAOImpl extends SequenceDao<SystemNotifications>
 	@Override
 	public List<Map<String, Object>> executeTriggerQuery(String query) {
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("APP_DATE", DateUtility.getAppDate());
+		paramSource.addValue("APP_DATE", SysParamUtil.getAppDate());
 		return jdbcTemplate.queryForList(query, paramSource);
 	}
 

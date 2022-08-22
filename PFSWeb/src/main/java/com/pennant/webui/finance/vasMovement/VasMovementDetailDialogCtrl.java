@@ -47,7 +47,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -217,7 +217,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		this.modiftAmt.setMandatory(true);
 
 		this.modifyDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		this.modifyDate.setValue(DateUtility.getAppDate());
+		this.modifyDate.setValue(SysParamUtil.getAppDate());
 
 		// Empty sent any required attributes
 		if (isWorkFlowEnabled()) {
@@ -340,7 +340,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		this.modiftAmt.setValue(PennantApplicationUtil.formateAmount(aVasMovementDetail.getMovementAmt(),
 				PennantConstants.defaultCCYDecPos));
 		if (aVasMovementDetail.getMovementDate() == null) {
-			this.modifyDate.setValue(DateUtility.getAppDate());
+			this.modifyDate.setValue(SysParamUtil.getAppDate());
 		} else {
 			this.modifyDate.setValue(aVasMovementDetail.getMovementDate());
 		}
@@ -479,7 +479,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		if (!this.modifyDate.isDisabled()) {
 			this.modifyDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_VasMovementDetailDialog_modifyDate.value"), true, null,
-							DateUtility.getAppDate(), true));
+							SysParamUtil.getAppDate(), true));
 		}
 
 		if (!this.vasReference.isReadonly()) {

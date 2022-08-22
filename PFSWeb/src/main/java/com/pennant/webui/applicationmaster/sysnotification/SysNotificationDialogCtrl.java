@@ -60,6 +60,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.QueryBuilder;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Query;
 import com.pennant.backend.model.applicationmaster.SysNotification;
@@ -546,7 +547,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 
 		if (aSysNotification.isNewRecord()) {
 			aSysNotification.setLastMntBy(getUserWorkspace().getUserDetails().getUserId());
-			aSysNotification.setLastMntOn(DateUtility.getTimestamp(DateUtility.getAppDate()));
+			aSysNotification.setLastMntOn(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
 			aSysNotification.setRecordStatus("Approved");
 			aSysNotification.setVersion(1);
 			aSysNotification.setRoleCode("");

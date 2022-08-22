@@ -53,7 +53,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -249,7 +248,7 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.promotionCode.setValidateColumns(new String[] { "LovDescPromotionCode" });
 
 		Filter[] filters = new Filter[4];
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		filters[0] = new Filter("StartDate", appDate, Filter.OP_LESS_OR_EQUAL);
 		filters[1] = new Filter("EndDate", appDate, Filter.OP_GREATER_OR_EQUAL);
 		filters[2] = new Filter("Active", 1, Filter.OP_EQUAL);
@@ -509,7 +508,7 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				finTypeVASProductsList = financeTypeService.getFinTypeVasProducts(finType.getValue());
 			}
 
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 
 			List<VASRecording> vasRecordingList = new ArrayList<VASRecording>();
 			for (FinTypeVASProducts finTypeVASProducts : finTypeVASProductsList) {

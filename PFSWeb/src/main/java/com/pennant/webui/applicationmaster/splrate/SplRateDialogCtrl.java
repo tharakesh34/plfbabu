@@ -346,7 +346,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		aSplRate.setLastMdfDate(DateUtility.getAppDate());
+		aSplRate.setLastMdfDate(SysParamUtil.getAppDate());
 
 		doRemoveValidation();
 
@@ -367,7 +367,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 	 * Method for BaseRate Date Validation
 	 */
 	public void dateValidation() {
-		Date curBussniessDate = DateUtility.getAppDate();
+		Date curBussniessDate = SysParamUtil.getAppDate();
 		int daysBackward = SysParamUtil.getValueAsInt("BVRC");
 		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward * -1);
 

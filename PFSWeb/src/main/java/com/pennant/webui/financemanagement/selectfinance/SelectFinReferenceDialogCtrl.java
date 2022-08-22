@@ -289,7 +289,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		if (StringUtils.equals(eventCode, FinServiceEvent.REINSTATE)) {
 			int allowedDays = SysParamUtil.getValueAsInt("REINSTATE_FINANCE_ALLOWEDDAYS");
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			Date allowedDate = DateUtility.addDays(appDate, -allowedDays);
 			this.finReference.setFilters(new Filter[] { new Filter("LastMntOn", allowedDate, Filter.OP_GREATER_THAN),
 					new Filter("RcdMaintainSts", "", Filter.OP_EQUAL) });

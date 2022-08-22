@@ -519,7 +519,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<ValueLabel> profitDaysBasisList = PennantStaticListUtil.getProfitDaysBasis();
 	private List<ValueLabel> schMethodList = PennantStaticListUtil.getScheduleMethods();
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
-	Date appStartDate = DateUtility.getAppDate();
+	Date appStartDate = SysParamUtil.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	Date endDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 
@@ -5185,7 +5185,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			changeFrequencies();
 
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			if (this.finStartDate.getValue().compareTo(curBussDate) > 0) {
 				if (isPastDeal) {
 					getFinanceDetail().setFeeCharges(getFinanceDetailService().getFeeRuleDetails(
@@ -5731,7 +5731,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		int fddDays = getFinanceDetail().getFinScheduleData().getFinanceType().getFddLockPeriod();
 
 		if (this.finStartDate.getValue() == null) {
-			this.finStartDate.setValue(DateUtility.getAppDate());
+			this.finStartDate.setValue(SysParamUtil.getAppDate());
 		}
 
 		if (StringUtils.isEmpty(this.finCcy.getValue())) {

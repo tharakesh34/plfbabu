@@ -21,7 +21,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -448,7 +447,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	private void doSetValidation() {
 		logger.debug("Entering ");
 		setValidationOn(true);
-		Date appStartDate = DateUtility.getAppDate();
+		Date appStartDate = SysParamUtil.getAppDate();
 		Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 		if (!this.returnReason.isReadonly()) {
 			this.returnReason.setConstraint(

@@ -47,7 +47,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -120,7 +119,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				isCustomer360 = (boolean) arguments.get("customer360");
 				if (arguments.containsKey("finStartDate")) {
 					this.startDate.setValue((Date) arguments.get("finStartDate"));
-					this.endDate.setValue(DateUtility.getAppDate());
+					this.endDate.setValue(SysParamUtil.getAppDate());
 				}
 				this.finReference.setReadonly(true);
 			}

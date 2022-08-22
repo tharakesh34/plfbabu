@@ -59,7 +59,7 @@ import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -407,7 +407,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 		if (!this.realizationDate.isDisabled()) {
 			this.realizationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_ReceiptRealizationDialog_RealizationDate.value"), true,
-							aReceiptHeader.getReceiptDate(), DateUtility.getAppDate(), true));
+							aReceiptHeader.getReceiptDate(), SysParamUtil.getAppDate(), true));
 		}
 
 		try {

@@ -43,7 +43,6 @@ import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -445,7 +444,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private FinFeeDetailListCtrl finFeeDetailListCtrl = null;
 	private StepDetailDialogCtrl stepDetailDialogCtrl = null;
 	private IndicativeTermDetailDialogCtrl indicativeTermDetailDialogCtrl = null;
-	private Component childWindow = null;
 
 	// Bean Setters by application Context
 	private transient FinanceDetailService financeDetailService;
@@ -462,7 +460,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	Date endDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-	Date appStartDate = DateUtility.getAppDate();
+	Date appStartDate = SysParamUtil.getAppDate();
 
 	protected CurrencyBox finAssetValue;
 	protected CurrencyBox finCurrentAssetValue;
@@ -4937,7 +4935,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// Fee charge Calculations
 		if (this.finStartDate.getValue() != null) {
 
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			if (this.finStartDate.getValue().compareTo(curBussDate) > 0) {
 				if (isPastDeal) {
 					getFinanceDetail().setFeeCharges(getFinanceDetailService().getFeeRuleDetails(
@@ -5499,7 +5497,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// FinanceMain Details Tab ---> 1. Basic Details
 
 		if (this.finStartDate.getValue() == null) {
-			this.finStartDate.setValue(DateUtility.getAppDate());
+			this.finStartDate.setValue(SysParamUtil.getAppDate());
 		}
 
 		if (StringUtils.isEmpty(this.finCcy.getDescription())) {
