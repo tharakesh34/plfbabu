@@ -925,7 +925,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		}
 
 		// Effective Date
-		if (DateUtility.compare(assignmentUpload.getEffectiveDate(), DateUtility.getAppDate()) > 0) {
+		if (DateUtility.compare(assignmentUpload.getEffectiveDate(), SysParamUtil.getAppDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Effective date should be less than or equal to application date.";
@@ -949,7 +949,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		}
 
 		// Assignment Date
-		if (DateUtility.compare(assignmentUpload.getAssignmentDate(), DateUtility.getAppDate()) > 0) {
+		if (DateUtility.compare(assignmentUpload.getAssignmentDate(), SysParamUtil.getAppDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Assignment date should be less than or equal to application date";
@@ -1001,10 +1001,10 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		if (errorCount == 0) {
 			int assignmentMonth = DateUtility.getMonth(assignmentUpload.getAssignmentDate());
 			int effectiveMonth = DateUtility.getMonth(assignmentUpload.getEffectiveDate());
-			int appMonth = DateUtility.getMonth(DateUtility.getAppDate());
+			int appMonth = DateUtility.getMonth(SysParamUtil.getAppDate());
 			int assignmentYear = DateUtility.getYear(assignmentUpload.getAssignmentDate());
 			int effectiveYear = DateUtility.getYear(assignmentUpload.getEffectiveDate());
-			int appYear = DateUtility.getYear(DateUtility.getAppDate());
+			int appYear = DateUtility.getYear(SysParamUtil.getAppDate());
 
 			if (assignmentMonth != effectiveMonth) {
 				errorCount++;

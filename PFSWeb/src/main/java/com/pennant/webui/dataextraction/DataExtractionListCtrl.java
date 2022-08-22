@@ -33,6 +33,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -191,7 +192,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 		try {
 			int month = Integer.parseInt(processMonth);
 			Date processDate = DateUtility.getDate(month);
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			String msg = null;
 
 			if (DateUtility.compare(processDate, appDate) > 0) {
@@ -202,7 +203,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 			case "GST_TAXDOWNLOAD_DETAILS_TRANASCTION":
 				TaxDownlaodExtract trnPocess = new TaxDownlaodExtract((DataSource) SpringUtil.getBean("dataSource"),
 						getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
-						DateUtility.getAppDate(), DateUtility.getMonthStart(processDate),
+						SysParamUtil.getAppDate(), DateUtility.getMonthStart(processDate),
 						DateUtility.getMonthEnd(processDate));
 				if (isDownloadProcess) {
 					msg = downloadGstTransactionData(configName, trnPocess);
@@ -215,7 +216,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 			case "GST_TAXDOWNLOAD_DETAILS_SUMMARY":
 				TaxDownlaodExtract summProcess = new TaxDownlaodExtract((DataSource) SpringUtil.getBean("dataSource"),
 						getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
-						DateUtility.getAppDate(), DateUtility.getMonthStart(processDate),
+						SysParamUtil.getAppDate(), DateUtility.getMonthStart(processDate),
 						DateUtility.getMonthEnd(processDate));
 				if (isDownloadProcess) {
 					msg = downloadGstSummaryData(configName, summProcess);

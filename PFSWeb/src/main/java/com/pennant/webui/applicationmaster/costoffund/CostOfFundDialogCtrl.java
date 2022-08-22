@@ -382,7 +382,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 			wve.add(we);
 		}
 
-		aCostOfFund.setLastMdfDate(DateUtility.getAppDate());
+		aCostOfFund.setLastMdfDate(SysParamUtil.getAppDate());
 
 		doRemoveValidation();
 
@@ -516,7 +516,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	 * Method for CostOfFund Date Validation
 	 */
 	public void dateValidation() {
-		Date curBussniessDate = DateUtility.getAppDate();
+		Date curBussniessDate = SysParamUtil.getAppDate();
 		int daysBackward = SysParamUtil.getValueAsInt("BVRC");
 		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward * -1);
 

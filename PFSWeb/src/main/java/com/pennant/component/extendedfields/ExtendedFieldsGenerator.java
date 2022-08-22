@@ -100,6 +100,7 @@ import com.pennant.RateBox;
 import com.pennant.UserWorkspace;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
@@ -1199,11 +1200,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				break;
 			case "FUTURE_DAYS":
 				dateValidator = new PTDateValidator(label, isMandatory, null,
-						DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1])), true);
+						DateUtility.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1])), true);
 				break;
 			case "PAST_DAYS":
 				dateValidator = new PTDateValidator(label, isMandatory,
-						DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1]))), null, true);
+						DateUtility.addDays(SysParamUtil.getAppDate(), -(Integer.parseInt(value[1]))), null, true);
 				break;
 			case "FUTURE_TODAY":
 				dateValidator = new PTDateValidator(label, isMandatory, true, null, true);
@@ -1213,7 +1214,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					dateValidator = new PTDateValidator(label, isMandatory, null, true, true);
 				} else {
 					dateValidator = new PTDateValidator(label, isMandatory, null,
-							DateUtility.addDays(DateUtility.getAppDate(), 1), false);
+							DateUtility.addDays(SysParamUtil.getAppDate(), 1), false);
 				}
 				break;
 			case "FUTURE":
@@ -1731,7 +1732,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())) {
 
 				if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE, detail.getFieldDefaultValue())) {
-					datebox.setValue(DateUtility.getAppDate());
+					datebox.setValue(SysParamUtil.getAppDate());
 				} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 						detail.getFieldDefaultValue())) {
 					datebox.setValue(DateUtility.getSysDate());
@@ -2810,7 +2811,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATE, detail.getFieldType().trim())) {
 							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE,
 									detail.getFieldDefaultValue())) {
-								datebox.setValue(DateUtility.getAppDate());
+								datebox.setValue(SysParamUtil.getAppDate());
 							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 									detail.getFieldDefaultValue())) {
 								datebox.setValue(DateUtility.getSysDate());
@@ -3158,7 +3159,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			return 0;
 		}
 		int years = 0;
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		if (dob.compareTo(appDate) < 0) {
 			int months = DateUtility.getMonthsBetween(appDate, dob);
 			years = months / 12;

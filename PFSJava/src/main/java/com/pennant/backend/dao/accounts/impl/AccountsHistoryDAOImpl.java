@@ -35,7 +35,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.accounts.AccountsHistoryDAO;
 import com.pennant.backend.model.accounts.AccountHistoryDetail;
 import com.pennant.backend.model.accounts.AccountsHistory;
@@ -171,14 +171,14 @@ public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements
 		updateSql.append(" T1.BranchProvince, T1.ENTITYCODE, T1.TodayNet from AccountHistoryDetails T1  ");
 		updateSql.append(" INNER JOIN (Select T2.Accountid, BranchProvince, max(T2.postdate) Postdate, ");
 		updateSql.append(" PostBranch, Entitycode  from AccountHistoryDetails T2 where T2.postdate < ");
-		updateSql.append("'" + DateUtility.getAppDate() + "'");
+		updateSql.append("'" + SysParamUtil.getAppDate() + "'");
 		updateSql.append(" Group by T2.accountid, BranchProvince, EntityCode, PostBranch ) T2   ");
 		updateSql.append(" ON T1.accountid = T2.accountid and T1.postdate = T2.postdate And  ");
 		updateSql.append(
 				" T2.BranchProvince = T1.BranchProvince And T1.PostBranch = T2.PostBranch And T1.ENTITYCODE = T2.EntityCode )T4  ");
 		updateSql.append(" WHERE (T4.ACCOUNTID = T3.ACCOUNTID  And T4.BranchProvince = T3.BranchProvince And   ");
 		updateSql.append(" T4.PostBranch = T3.PostBranch and T4.EntityCode = T3. Entitycode  ");
-		updateSql.append(" And T3.PostDate = '" + DateUtility.getAppDate() + "')");
+		updateSql.append(" And T3.PostDate = '" + SysParamUtil.getAppDate() + "')");
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(accountHistDetails.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
@@ -190,7 +190,7 @@ public class AccountsHistoryDAOImpl extends BasicDao<AccountsHistory> implements
 		StringBuilder updSql = new StringBuilder("Update ACCOUNTHISTORYDETAILS set ");
 		updSql.append(" AcBalance = ( OpeningBal + TodayCredits + TodayDebits ) ,");
 		updSql.append(" TodayNet = ( TodayCredits + TodayDebits ) ");
-		updSql.append(" where PostDate = '" + DateUtility.getAppDate() + "'");
+		updSql.append(" where PostDate = '" + SysParamUtil.getAppDate() + "'");
 
 		SqlParameterSource beanParametrs = new BeanPropertySqlParameterSource(accountHistDetails);
 		this.jdbcTemplate.update(updSql.toString(), beanParametrs);

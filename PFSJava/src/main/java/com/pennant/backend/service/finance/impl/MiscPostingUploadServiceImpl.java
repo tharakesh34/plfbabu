@@ -15,7 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
@@ -243,7 +242,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 		AuditHeader auditHeaderJVPosting = new AuditHeader();
 		AuditDetail auditDetailJVPosting = new AuditDetail();
 		String currency = SysParamUtil.getValue("APP_DFT_CURR").toString();
-		Date postingDate = DateUtility.getAppDate();
+		Date postingDate = SysParamUtil.getAppDate();
 		JVPosting jVPosting = new JVPosting();
 		AccountMapping accountMapping;
 		BigDecimal creditAmount = BigDecimal.ZERO;

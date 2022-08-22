@@ -192,7 +192,7 @@ public class ProvisionCalculationUtil implements Serializable {
 				aeEvent.setAccountingEvent(AccountingEvent.PROVSN);
 				aeEvent.setValueDate(dateValueDate);
 				// aeEvent.setSchdDate(procProvision.getProvisionCalDate());
-				Date dateAppDate = DateUtility.getAppDate();
+				Date dateAppDate = SysParamUtil.getAppDate();
 				aeEvent.setAppDate(dateAppDate);
 
 				dataMap = new HashMap<String, Object>();

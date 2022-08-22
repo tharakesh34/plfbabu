@@ -554,7 +554,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				.setValue(PennantApplicationUtil.formateAmount(availableAmount, PennantConstants.defaultCCYDecPos));
 
 		if (depositMovements == null) {
-			this.transactionDate.setValue(DateUtility.getAppDate());
+			this.transactionDate.setValue(SysParamUtil.getAppDate());
 			depositMovements = new DepositMovements();
 			depositMovements.setRecordType(PennantConstants.RCD_ADD);
 			depositMovements.setTransactionType(CashManagementConstants.DEPOSIT_MOVEMENT_DEBIT);
@@ -1046,7 +1046,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 		if (!this.transactionDate.isReadonly()) {
 			this.transactionDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_DepositDetailsDialog_TransactionDate.value"), true,
-							DateUtility.getAppDate(), DateUtility.getAppDate(), true));
+							SysParamUtil.getAppDate(), SysParamUtil.getAppDate(), true));
 		}
 
 		logger.debug(Literal.LEAVING);

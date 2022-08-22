@@ -697,17 +697,6 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 				aStepPolicyDetail.getUserDetails(), getOverideMap());
 	}
 
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_StepPolicyDetailDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-	}
-
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.stepPolicyDetail);
 	}

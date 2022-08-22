@@ -23,6 +23,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.receiptuploadqueue.ReceiptUploadQueuing;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -42,7 +43,7 @@ public class ProjectedRUDAOImpl extends BasicDao<ReceiptUploadQueuing> implement
 
 		ReceiptUploadQueuing ruQueuing = new ReceiptUploadQueuing();
 		ruQueuing.setThreadId(0);
-		ruQueuing.setEodDate(DateUtility.getAppDate());
+		ruQueuing.setEodDate(SysParamUtil.getAppDate());
 		ruQueuing.setEodProcess(false);
 		ruQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 		ruQueuing.setUploadHeaderId(receiptUploadHeaderId);

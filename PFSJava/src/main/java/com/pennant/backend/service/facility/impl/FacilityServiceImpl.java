@@ -763,9 +763,9 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			customer = customerDAO.getCustomerByID(custID, "");
 		}
 		CustomerEligibilityCheck eligibilityCheck = new CustomerEligibilityCheck();
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		BeanUtils.copyProperties(customer, eligibilityCheck);
-		int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), DateUtility.getAppDate());
+		int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
 		BigDecimal age = new BigDecimal((dobMonths / 12) + "." + (dobMonths % 12));
 		eligibilityCheck.setCustAge(age);
 		// Minor Age Calculation

@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.dao.accounts.AccountsHistoryDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
@@ -196,7 +197,7 @@ public class CustomerAccountService extends ServiceHelper {
 				: accountType.getAcTypeDesc());
 		account.setInternalAc(accountType.isInternalAc());
 		account.setCustSysAc(!accountType.isInternalAc());
-		account.setAcOpenDate(DateUtility.getAppDate());
+		account.setAcOpenDate(SysParamUtil.getAppDate());
 		account.setAcLastCustTrnDate(account.getAcOpenDate());
 		account.setAcLastSysTrnDate(account.getAcOpenDate());
 		account.setAcActive(true);

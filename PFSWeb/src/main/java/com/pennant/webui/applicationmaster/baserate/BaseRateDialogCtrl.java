@@ -319,7 +319,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		}
 
 		if (aBaseRate.getBREffDate() != null
-				&& DateUtility.compare(aBaseRate.getBREffDate(), DateUtility.getAppDate()) < 0) {
+				&& DateUtility.compare(aBaseRate.getBREffDate(), SysParamUtil.getAppDate()) < 0) {
 			this.bRRate.setDisabled(true);
 		}
 
@@ -381,7 +381,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 			wve.add(we);
 		}
 
-		aBaseRate.setLastMdfDate(DateUtility.getAppDate());
+		aBaseRate.setLastMdfDate(SysParamUtil.getAppDate());
 
 		doRemoveValidation();
 
@@ -513,7 +513,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	 * Method for BaseRate Date Validation
 	 */
 	public void dateValidation() {
-		Date curBussniessDate = DateUtility.getAppDate();
+		Date curBussniessDate = SysParamUtil.getAppDate();
 		int daysBackward = SysParamUtil.getValueAsInt("BVRC");
 		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward * -1);
 

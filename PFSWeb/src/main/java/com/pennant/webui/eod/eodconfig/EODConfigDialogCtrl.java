@@ -54,6 +54,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -859,15 +860,15 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			String lable = Labels.getLabel("label_EODConfigDialog_MnthExtTo.value");
 			if (appRovedeodConfig != null && appRovedeodConfig.isInExtMnth()) {
 				// greater than today and less than current month
-				this.mnthExtTo.setConstraint(new PTDateValidator(lable, true, DateUtility.getAppDate(),
-						DateUtility.getMonthEnd(DateUtility.getAppDate()), true));
+				this.mnthExtTo.setConstraint(new PTDateValidator(lable, true, SysParamUtil.getAppDate(),
+						DateUtility.getMonthEnd(SysParamUtil.getAppDate()), true));
 			} else {
 				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(DateUtility.getAppDate());
+				calendar.setTime(SysParamUtil.getAppDate());
 				calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
 				// greater than current month end and less than next month end;
 				this.mnthExtTo.setConstraint(
-						new PTDateValidator(lable, true, DateUtility.getMonthEnd(DateUtility.getAppDate()),
+						new PTDateValidator(lable, true, DateUtility.getMonthEnd(SysParamUtil.getAppDate()),
 								DateUtility.getMonthEnd(calendar.getTime()), false));
 			}
 

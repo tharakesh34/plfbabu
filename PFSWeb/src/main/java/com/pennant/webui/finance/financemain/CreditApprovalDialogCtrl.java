@@ -34,6 +34,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -177,7 +178,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		FinanceType type = financeDetail.getFinScheduleData().getFinanceType();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
-		Date appldate = DateUtility.getAppDate();
+		Date appldate = SysParamUtil.getAppDate();
 		ccyFormatter = CurrencyUtil.getFormat(finMain.getFinCcy());
 
 		this.finCustSysref.setValue(finMain.getFinReference());

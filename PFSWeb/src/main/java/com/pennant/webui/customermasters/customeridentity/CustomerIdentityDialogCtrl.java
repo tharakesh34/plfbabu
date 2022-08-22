@@ -48,7 +48,6 @@ import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -118,7 +117,7 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 	private boolean newRecord = false;
 	private boolean newCustomer = false;
 	protected JdbcSearchObject<Customer> newSearchObject;
-	Date appStartDate = DateUtility.getAppDate();
+	Date appStartDate = SysParamUtil.getAppDate();
 	Date endDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 

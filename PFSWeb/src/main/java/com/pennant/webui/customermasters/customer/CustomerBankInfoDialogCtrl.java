@@ -2657,7 +2657,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 								Labels.getLabel("FIELD_IS_MAND", new String[] { "Month Year" }));
 					} else {
 						monthYearValue.setDate(1);
-						if (DateUtility.compare(monthYearValue, DateUtility.getAppDate()) == 1) {
+						if (DateUtility.compare(monthYearValue, SysParamUtil.getAppDate()) == 1) {
 							throw new WrongValueException(monthYear,
 									Labels.getLabel("DATE_NO_FUTURE", new String[] { "Month Year" }));
 						}

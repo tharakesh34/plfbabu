@@ -780,7 +780,7 @@ public class ExtFinanceUploadService {
 	 * @return BaseRate
 	 */
 	private BaseRate getBaseRate(String baseRate, String currency) {
-		Date dateValueDate = DateUtility.getAppDate();
+		Date dateValueDate = SysParamUtil.getAppDate();
 		return getBaseRateDAO().getBaseRateByType(baseRate, currency, dateValueDate);
 	}
 

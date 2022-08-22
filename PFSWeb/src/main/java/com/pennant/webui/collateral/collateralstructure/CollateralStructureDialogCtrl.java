@@ -1019,7 +1019,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 										Labels.getLabel("label_CollateralStructureDialog_ValuationFrequency.value") }));
 					}
 
-					Date appDate = DateUtility.getAppDate();
+					Date appDate = SysParamUtil.getAppDate();
 					Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 
 					if (this.nextValuationDate.getValue() == null || this.nextValuationDate.getValue().before(appDate)

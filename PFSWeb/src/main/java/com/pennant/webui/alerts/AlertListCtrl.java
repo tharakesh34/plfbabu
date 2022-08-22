@@ -41,6 +41,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.finance.putcall.FinOptionDAO;
 import com.pennant.backend.model.finance.covenant.Covenant;
@@ -115,7 +116,7 @@ public class AlertListCtrl extends GFCBaseListCtrl<Object> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window(Event event) {
-		Date appDate = DateUtil.getDatePart(DateUtility.getAppDate());
+		Date appDate = DateUtil.getDatePart(SysParamUtil.getAppDate());
 		if (module.equals("COVENANT")) {
 			setPageComponents(window, borderLayout, covenantListbox, paging);
 

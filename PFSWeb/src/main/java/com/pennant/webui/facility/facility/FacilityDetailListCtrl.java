@@ -51,6 +51,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.FacilityDetail;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.facility.Facility;
@@ -89,7 +90,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	private boolean enqModule = false;
 	private String userRole;
 
-	Date appldate = DateUtility.getAppDate();
+	Date appldate = SysParamUtil.getAppDate();
 
 	// NEEDED for the ReUse in the SearchWindow
 	/**

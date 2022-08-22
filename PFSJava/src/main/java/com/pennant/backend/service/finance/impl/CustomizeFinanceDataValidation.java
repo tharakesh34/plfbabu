@@ -270,7 +270,7 @@ public class CustomizeFinanceDataValidation {
 					}
 				}
 				if (mandate.getStartDate() != null) {
-					Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),
+					Date mandbackDate = DateUtility.addDays(SysParamUtil.getAppDate(),
 							-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 					if (mandate.getStartDate().before(mandbackDate)
 							|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {

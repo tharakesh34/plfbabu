@@ -171,13 +171,13 @@ public class CustomerExtLiabilityValidation {
 		ErrorDetail errorDetail = new ErrorDetail();
 
 		// validate Master code with PLF system masters
-		if (liability.getFinDate().compareTo(DateUtility.getAppDate()) >= 0
+		if (liability.getFinDate().compareTo(SysParamUtil.getAppDate()) >= 0
 				|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(liability.getFinDate()) >= 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "FinDate";
 			valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
-			valueParm[2] = DateUtility.format(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
+			valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}

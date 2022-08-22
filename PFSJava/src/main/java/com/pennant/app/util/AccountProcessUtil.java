@@ -127,7 +127,7 @@ public class AccountProcessUtil implements Serializable {
 				: accountType.getAcTypeDesc());
 		account.setInternalAc(posting.isInternalAc());
 		account.setCustSysAc(!posting.isInternalAc());
-		account.setAcOpenDate(DateUtility.getAppDate());
+		account.setAcOpenDate(SysParamUtil.getAppDate());
 		account.setAcLastCustTrnDate(account.getAcOpenDate());
 		account.setAcLastSysTrnDate(account.getAcOpenDate());
 		account.setAcActive(true);
