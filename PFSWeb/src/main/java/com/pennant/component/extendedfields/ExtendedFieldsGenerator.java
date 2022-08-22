@@ -1740,7 +1740,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
 				if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE, detail.getFieldDefaultValue())) {
-					datebox.setText(DateUtility.getAppDate(DateFormat.SHORT_DATE_TIME.getPattern()));
+					datebox.setText(SysParamUtil.getAppDate(DateFormat.SHORT_DATE_TIME.getPattern()));
 				} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 						detail.getFieldDefaultValue())) {
 					datebox.setText(DateUtility.getSysDate(DateFormat.SHORT_DATE_TIME.getPattern()));
@@ -2821,7 +2821,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 								detail.getFieldType().trim())) {
 							if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_APPDATE,
 									detail.getFieldDefaultValue())) {
-								datebox.setText(DateUtility.getAppDate(DateFormat.SHORT_DATE_TIME.getPattern()));
+								datebox.setText(SysParamUtil.getAppDate(DateFormat.SHORT_DATE_TIME.getPattern()));
 							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 									detail.getFieldDefaultValue())) {
 								datebox.setText(DateUtility.getSysDate(DateFormat.SHORT_DATE_TIME.getPattern()));

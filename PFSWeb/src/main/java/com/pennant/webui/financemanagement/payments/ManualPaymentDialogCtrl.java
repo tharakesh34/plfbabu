@@ -2930,7 +2930,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		 */
 
 		if (financeMain != null) {
-			earlySettlement.setAppDate(DateUtility.getAppDate(DateFormat.SHORT_DATE));
+			earlySettlement.setAppDate(SysParamUtil.getAppDate(DateFormat.SHORT_DATE));
 			earlySettlement.setFinReference(financeMain.getFinReference());
 			earlySettlement.setFinType(financeMain.getFinType());
 			earlySettlement.setFinTypeDesc(getFinanceType().getFinTypeDesc());

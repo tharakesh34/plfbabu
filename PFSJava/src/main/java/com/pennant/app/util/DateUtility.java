@@ -61,30 +61,6 @@ public final class DateUtility extends DateUtil {
 	private static final Logger logger = LogManager.getLogger(DateUtility.class);
 
 	/**
-	 * Returns the string representation with the specified date format pattern of the application date.
-	 * 
-	 * @param dateFormat The format describing the date and time pattern.
-	 * @return The formatted date string of the application date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
-	 */
-	public static String getAppDate(DateFormat dateFormat) {
-		return SysParamUtil.getAppDate(dateFormat);
-	}
-
-	/**
-	 * Returns the string representation with the specified date format pattern of the application date.
-	 * 
-	 * @param dateFormat The format describing the date and time pattern.
-	 * @return The formatted date string of the application date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
-	 */
-	public static String getAppDate(String dateFormat) {
-		return SysParamUtil.getAppDate(dateFormat);
-	}
-
-	/**
 	 * Returns a {@link java.util.Date} object that represents the value date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the value date.
