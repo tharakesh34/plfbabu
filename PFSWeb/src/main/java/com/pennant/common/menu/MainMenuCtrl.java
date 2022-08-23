@@ -35,6 +35,7 @@
 package com.pennant.common.menu;
 
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.CreateEvent;
 import org.zkoss.zk.ui.event.Event;
@@ -63,6 +65,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.extension.Services;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -75,6 +78,8 @@ import com.pennanttech.pennapps.web.menu.MenuItem;
 import com.pennanttech.pennapps.web.menu.TreeMenuBuilder;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennapps.core.access.log.MenuAccess;
+import com.pennapps.core.access.log.MenuAccessDao;
 
 /**
  * Controller for the main menu.
@@ -92,6 +97,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 	private TreeMenuBuilder menuBuilder;
 	private transient UserWorkspace userWorkspace;
+
+	private MenuAccessDao menuAccessDao;
 
 	/**
 	 * Creates a new main menu controller.
@@ -342,6 +349,16 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return;
 		}
 
+		if (App.getBooleanProperty("menu.access.log.req")) {
+			MenuAccess menuAccess = new MenuAccess();
+			menuAccess.setMenuItem(menuItem.getId().replaceAll("menu_Item_", ""));
+			menuAccess.setAccessedOn(new Timestamp(System.currentTimeMillis()));
+			menuAccess.setAccessedIp(user.getIpAddress());
+			menuAccess.setAccessedBy(user.getUserId());
+
+			menuAccessDao.save(menuAccess);
+		}
+
 		try {
 			ComponentUtil.openMenuItem(menuItem.getId(), menuItem.getNavigateUrl(), true,
 					new MenuItemOnCloseListener());
@@ -362,6 +379,11 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 	public void setUserWorkspace(UserWorkspace userWorkspace) {
 		this.userWorkspace = userWorkspace;
+	}
+	
+	@Autowired
+	public void setMenuAccessDao(MenuAccessDao menuAccessDao) {
+		this.menuAccessDao = menuAccessDao;
 	}
 
 	@Override

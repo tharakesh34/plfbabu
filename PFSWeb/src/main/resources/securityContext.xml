@@ -172,6 +172,10 @@
 	<http-firewall ref="httpFirewall" />
 
 
-	<beans:bean id="googleCaptcha" class="com.pennapps.web.security.GoogleCaptcha"/>	
+	<beans:bean id="googleCaptcha" class="com.pennapps.web.security.GoogleCaptcha"/>
+	
+	<beans:bean  id="menuAccessDao" class="com.pennapps.core.access.log.MenuAccessDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</beans:bean >	
 
 </beans:beans>
