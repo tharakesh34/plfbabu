@@ -65,13 +65,13 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT distinct FINREFERENCE, CUSTNAME, CUSTADDRHNBR, CUSTADDRSTREET, COUNTRYDESC, CUSTADDRSTATE,");
-		sql.append("CUSTADDRCITY, CUSTADDRZIP, CUSTEMAIL, CUSTPHONENUMBER, FINTYPEDESC, FINASSETVALUE,");
-		sql.append("EFFECTIVERATE, ENTITYCODE, ENTITYDESC, ENTITYPANNUMBER, ENTITYADDRHNBR,");
-		sql.append("ENTITYFLATNBR, ENTITYADDRSTREET, ENTITYSTATE, ENTITYCITY, FINCCY, FinAmount, fintype,");
-		sql.append("custflatnbr, EntityZip, FINCURRASSETVALUE, CUSTSALUTATION ");
+		sql.append(" CUSTADDRCITY, CUSTADDRZIP, CUSTEMAIL, CUSTPHONENUMBER, FINTYPEDESC, FINASSETVALUE,");
+		sql.append(" EFFECTIVERATE, ENTITYCODE, ENTITYDESC, ENTITYPANNUMBER, ENTITYADDRHNBR,");
+		sql.append(" ENTITYFLATNBR, ENTITYADDRSTREET, ENTITYSTATE, ENTITYCITY, FINCCY, FinAmount, fintype,");
+		sql.append(" custflatnbr, EntityZip, FINCURRASSETVALUE, CUSTSALUTATION ");
 		sql.append(", TOTOUSTANDINGAMT, TOTALPFTBAL, TOTALPRIBAL");
-		sql.append("from INTERESTCERTIFICATE_VIEW ");
-		sql.append("Where FinReference =:FinReference");
+		sql.append(" from INTERESTCERTIFICATE_VIEW ");
+		sql.append(" Where FinReference =:FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
 
