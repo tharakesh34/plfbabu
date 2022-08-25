@@ -4301,7 +4301,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setCalcOfSteps(rs.getString("CalcOfSteps"));
 			fm.setNoOfGrcSteps(rs.getInt("NoOfGrcSteps"));
 			fm.setEntityCode(rs.getString("EntityCode"));
-			
+
 			return fm;
 
 		}
@@ -5828,13 +5828,23 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	private BigDecimal getTotalCharges(ResultSet rs) throws SQLException {
-		BigDecimal totChagrOved = BigDecimal.ZERO;
+		BigDecimal lppTillLastBusinessDate = rs.getBigDecimal("LPPTilllBD");
+		BigDecimal bounceAmt = rs.getBigDecimal("BounceAMt");
+		BigDecimal receivableAdvise = rs.getBigDecimal("ReceivableAdvise");
 
-		totChagrOved = totChagrOved.add(rs.getBigDecimal("LPPTilllBD"));
-		totChagrOved = totChagrOved.add(rs.getBigDecimal("BounceAMt"));
-		totChagrOved = totChagrOved.add(rs.getBigDecimal("ReceivableAdvise"));
+		if (lppTillLastBusinessDate == null) {
+			lppTillLastBusinessDate = BigDecimal.ZERO;
+		}
 
-		return totChagrOved;
+		if (bounceAmt == null) {
+			bounceAmt = BigDecimal.ZERO;
+		}
+
+		if (receivableAdvise == null) {
+			receivableAdvise = BigDecimal.ZERO;
+		}
+
+		return lppTillLastBusinessDate.add(bounceAmt).add(receivableAdvise);
 	}
 
 	@Override
@@ -6303,7 +6313,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, Long.class, finID);
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+
+		return null;
 	}
 
 	@Override

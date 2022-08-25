@@ -3638,7 +3638,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		} else {
 			this.effScheduleMethod.setVisible(true);
-			this.effScheduleMethod.setDisabled(true);
+
+			if (getFinanceMain().isManualSchedule()) {
+				this.effScheduleMethod.setDisabled(true);
+			} else {
+				this.effScheduleMethod.setDisabled(false);
+			}
+
 			this.excessAdjustTo.setVisible(false);
 			this.excessAdjustTo.setDisabled(true);
 			scheduleLabel.setValue(Labels.getLabel("label_ReceiptDialog_EffecScheduleMethod.value"));

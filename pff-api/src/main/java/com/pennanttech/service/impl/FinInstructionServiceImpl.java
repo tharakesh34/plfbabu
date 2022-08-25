@@ -1146,8 +1146,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return returnStatus;
 		}
 
-		FinanceMain fm = financeMainDAO.getFinBasicDetails(fsi.getFinID(), "");
-		FinODPenaltyRate finOd = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fsi.getFinID(), "");
+		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "");
+		FinODPenaltyRate finOd = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
 
 		FinODPenaltyRate odPenaltyRate = new FinODPenaltyRate();
 
@@ -1410,7 +1410,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		fsi.setFinID(finID);
 		fsi.setReceivedDate(rd.getReceivedDate());
 		fsi.setNewReceipt(true);
-		
+
 		String paymentMode = fsi.getPaymentMode();
 		if (FinServiceEvent.SCHDRPY.equals(fsi.getModuleDefiner()) && fsi.getRealizationDate() == null
 				&& ReceiptMode.CHEQUE.equals(paymentMode) || ReceiptMode.DD.equals(paymentMode)) {
