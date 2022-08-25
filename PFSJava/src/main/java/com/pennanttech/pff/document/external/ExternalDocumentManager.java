@@ -186,7 +186,6 @@ public class ExternalDocumentManager {
 			URL u = new URL(docUri);
 			URLConnection uc = u.openConnection();
 
-			// String password = StringUtils.trimToEmpty(details.getPassword());
 			pdfMerge.addSource(uc.getInputStream());
 		}
 

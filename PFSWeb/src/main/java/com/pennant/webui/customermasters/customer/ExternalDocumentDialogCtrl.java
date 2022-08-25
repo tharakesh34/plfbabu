@@ -402,7 +402,6 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 
 		try {
 			if (StringUtils.isNotEmpty(this.password.getValue())) {
-				// String pwdEncrypt = EncryptionUtil.encrypt(this.password.getValue());
 				aExternalDocument.setPassword(this.password.getValue());
 			} else {
 				aExternalDocument.setPassword(this.password.getValue());

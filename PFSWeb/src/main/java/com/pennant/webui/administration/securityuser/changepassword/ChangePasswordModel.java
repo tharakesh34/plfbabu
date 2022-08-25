@@ -34,9 +34,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.zkoss.spring.SpringUtil;
-import org.zkoss.util.resource.Labels;
-import org.zkoss.zul.Div;
-import org.zkoss.zul.Label;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserPasswordsDAO;
@@ -137,14 +134,15 @@ public class ChangePasswordModel {
 	 */
 	public boolean checkWithPreviousPasswords(SecurityUser aSecurityUser, String newPassword) {
 		logger.debug(Literal.ENTERING);
-		/* select all previous passwords for user */
+
+		// Fetch the history of changes for the user.
 		List<SecurityUser> secUserList = getSecurityUserPasswordsDAO().getUserPreviousPasswords(aSecurityUser);
-		/* maxPasswordsCheck is number that new passwords should not match with how many previous passwords */
+
 		int maxPasswordsCheck = SysParamUtil.getValueAsInt("USR_MAX_PRE_PWDS_CHECK");
 		SecurityUser securityUser;
-		/* check only when previous passwords contains for user */
+
 		if (secUserList.size() > 0) {
-			/* if previous passwords are less then "maxPasswordsCheck", compare with only available passwords */
+			// If the changes are less than max check, limit the comparison to the available.
 			if (secUserList.size() < maxPasswordsCheck) {
 				maxPasswordsCheck = secUserList.size();
 			}
@@ -167,49 +165,5 @@ public class ChangePasswordModel {
 
 	public static SecurityUserPasswordsDAO getSecurityUserPasswordsDAO() {
 		return securityUserPasswordsDAO;
-	}
-
-	/**
-	 * This method displays passwordStatusMeter and label_PwdStatus
-	 * 
-	 * @param pwdstatusCode (int)
-	 */
-	public static void showPasswordStatusMeter(Div divPwdStatusMeter, Label labelPwdStatus, int pwdstatusCode) {
-		switch (pwdstatusCode) {
-		case 0:
-			divPwdStatusMeter.setStyle("background-color:white");
-			labelPwdStatus.setValue("");
-			break;
-		case 1:
-			divPwdStatusMeter.setStyle("background-color:red");
-			divPwdStatusMeter.setWidth("50px");
-			labelPwdStatus.setStyle("color:red");
-			labelPwdStatus.setValue(Labels.getLabel("label_PwdStatus_Wrong.value"));
-			break;
-		case 2:
-			divPwdStatusMeter.setStyle("background-color:tan");
-			divPwdStatusMeter.setWidth("100px");
-			labelPwdStatus.setStyle("color:tan");
-			labelPwdStatus.setValue(Labels.getLabel("label_PwdStatus_Week.value"));
-			break;
-		case 3:
-			divPwdStatusMeter.setStyle("background-color:yellow");
-			divPwdStatusMeter.setWidth("150px");
-			labelPwdStatus.setStyle("color:yellow");
-			labelPwdStatus.setValue(Labels.getLabel("label_PwdStatus_Meadium.value"));
-			break;
-		case 4:
-			divPwdStatusMeter.setStyle("background-color:orange");
-			divPwdStatusMeter.setWidth("200px");
-			labelPwdStatus.setStyle("color:orange");
-			labelPwdStatus.setValue(Labels.getLabel("label_PwdStatus_Strong.value"));
-			break;
-		case 5:
-			divPwdStatusMeter.setStyle("background-color:green");
-			divPwdStatusMeter.setWidth("250px");
-			labelPwdStatus.setStyle("color:green");
-			labelPwdStatus.setValue(Labels.getLabel("label_PwdStatus_VStrong.value"));
-			break;
-		}
 	}
 }
