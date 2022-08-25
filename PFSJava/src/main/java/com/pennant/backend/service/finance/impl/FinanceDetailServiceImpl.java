@@ -3987,9 +3987,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				tranType = PennantConstants.TRAN_ADD;
 				fm.setRecordType("");
 
-				if (!isWIF) {
-					financeMainDAO.save(fm, TableType.MAIN_TAB, isWIF);
-				}
+				financeMainDAO.save(fm, TableType.MAIN_TAB, isWIF);
 
 				if (fm.getOldFinReference() != null && auditHeader.getApiHeader() != null
 						&& StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
