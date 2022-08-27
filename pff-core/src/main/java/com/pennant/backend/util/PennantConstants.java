@@ -932,4 +932,7 @@ public class PennantConstants {
 	public static final String MANUALADVISE_MAINTAIN_MODULE = "MA_MAINTAIN";
 	public static final String MANUALADVISE_CANCEL_MODULE = "MA_CANCEL";
 	public static final String BLOCK_LIMIT_TYPE = "AUTO";
+
+	public static final String MANDATETYPE_DAS = "DAS";
+
 }

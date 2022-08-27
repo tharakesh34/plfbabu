@@ -57,6 +57,9 @@ public enum InstrumentTypes {
 			case SI:
 				label = Labels.getLabel("label_Mandate_SI");
 				break;
+			case EMNDT:
+				label = Labels.getLabel("label_Mandate_EMNDT");
+				break;
 
 			default:
 				break;

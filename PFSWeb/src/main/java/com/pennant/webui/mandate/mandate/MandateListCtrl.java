@@ -223,7 +223,15 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		mandate.setWorkflowId(getWorkFlowId());
 
 		// Display the dialog page.
-		doShowDialogPage(mandate);
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("mandate", mandate);
+		arg.put("mandateListCtrl", this);
+		arg.put("enqModule", enqiryModule);
+		arg.put("fromLoan", false);
+
+		Executions.createComponents("/WEB-INF/pages/Mandate/SelectMandateDialogCtrl.zul", null, arg);
+
+		// doShowDialogPage(mandate);
 
 		logger.debug("Leaving");
 	}

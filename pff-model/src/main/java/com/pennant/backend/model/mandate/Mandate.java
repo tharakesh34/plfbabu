@@ -26,8 +26,10 @@
 package com.pennant.backend.model.mandate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -38,6 +40,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -193,6 +196,14 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String partnerBankName;
 	@XmlElement
 	private Boolean pennyDropStatus;
+
+	private Date swapEffectiveDate;
+	private boolean hold;
+	private Long holdReasons;
+	private boolean securityMandate;
+	private Long employeeID;
+	private String employerName;
+	private List<CustomerEmploymentDetail> employmentDetailsList = new ArrayList<CustomerEmploymentDetail>();
 
 	public Mandate() {
 		super();
@@ -966,5 +977,61 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void seteMandateReferenceNo(String eMandateReferenceNo) {
 		this.eMandateReferenceNo = eMandateReferenceNo;
+	}
+
+	public Date getSwapEffectiveDate() {
+		return swapEffectiveDate;
+	}
+
+	public void setSwapEffectiveDate(Date swapEffectiveDate) {
+		this.swapEffectiveDate = swapEffectiveDate;
+	}
+
+	public boolean isHold() {
+		return hold;
+	}
+
+	public void setHold(boolean hold) {
+		this.hold = hold;
+	}
+
+	public Long getHoldReasons() {
+		return holdReasons;
+	}
+
+	public void setHoldReasons(Long holdReasons) {
+		this.holdReasons = holdReasons;
+	}
+
+	public boolean isSecurityMandate() {
+		return securityMandate;
+	}
+
+	public void setSecurityMandate(boolean securityMandate) {
+		this.securityMandate = securityMandate;
+	}
+
+	public Long getEmployeeID() {
+		return employeeID;
+	}
+
+	public void setEmployeeID(Long employeeID) {
+		this.employeeID = employeeID;
+	}
+
+	public String getEmployerName() {
+		return employerName;
+	}
+
+	public void setEmployerName(String employerName) {
+		this.employerName = employerName;
+	}
+
+	public List<CustomerEmploymentDetail> getEmploymentDetailsList() {
+		return employmentDetailsList;
+	}
+
+	public void setEmploymentDetailsList(List<CustomerEmploymentDetail> employmentDetailsList) {
+		this.employmentDetailsList = employmentDetailsList;
 	}
 }

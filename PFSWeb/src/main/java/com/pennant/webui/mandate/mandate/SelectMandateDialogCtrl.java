@@ -1,0 +1,442 @@
+package com.pennant.webui.mandate.mandate;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
+
+import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.CustomerService;
+import com.pennant.backend.service.customermasters.impl.CustomerDataService;
+import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.MandateConstants;
+import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
+import com.pennant.webui.financemanagement.paymentMode.SelectReceiptPaymentDialogCtrl;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
+
+public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
+
+	private static final long serialVersionUID = 8556168885363682933L;
+	private static final Logger logger = LogManager.getLogger(SelectReceiptPaymentDialogCtrl.class);
+
+	protected Window window_SelectMandateDialogCtrl;
+	protected Textbox custCIF;
+	protected Combobox mandateTypes;
+	protected ExtendedCombobox entityCode;
+
+	protected Button btnProceed;
+	protected Row row_MandateTypes;
+	protected Label label_title;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	protected Label label_SelectMandate_CustomerName;
+	List<CustomerEmploymentDetail> employmentDetailsList = new ArrayList<CustomerEmploymentDetail>();
+
+	private boolean enqModule = false;
+	private boolean fromLoan = false;
+	private boolean registration = false;
+	private boolean maintain = false;
+	Tab parenttab = null;
+
+	private Object financeMainDialogCtrl = null;
+
+	FinanceDetail financeDetail;
+	private FinanceMain financemain;
+	protected Groupbox finBasicdetails;
+
+	private Mandate mandate;
+	private transient MandateListCtrl mandateListCtrl;
+
+	private transient SelectMandateDialogCtrl selectMandateDialogCtrl;
+	private CustomerDataService customerDataService;
+	protected long custId = Long.MIN_VALUE;
+	private CustomerDetailsService customerDetailsService;
+	private transient CustomerService customerService;
+
+	private final List<ValueLabel> mandateTypeList = InstrumentTypes.list();
+
+	private Customer customer;
+	Date appDate = SysParamUtil.getAppDate();
+
+	public void onCreate$window_SelectMandateDialogCtrl(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		setPageComponents(window_SelectMandateDialogCtrl);
+
+		try {
+			// READ OVERHANDED params !
+			if (arguments.containsKey("enqModule")) {
+				enqModule = (Boolean) arguments.get("enqModule");
+			}
+
+			if (arguments.containsKey("fromLoan")) {
+				fromLoan = (Boolean) arguments.get("fromLoan");
+			}
+
+			if (arguments.containsKey("registration")) {
+				registration = (Boolean) arguments.get("registration");
+			}
+			if (arguments.containsKey("maintain")) {
+				maintain = (Boolean) arguments.get("maintain");
+			}
+
+			// READ OVERHANDED params !
+			if (arguments.containsKey("mandate")) {
+				this.mandate = (Mandate) arguments.get("mandate");
+				Mandate befImage = new Mandate();
+				BeanUtils.copyProperties(this.mandate, befImage);
+				this.mandate.setBefImage(befImage);
+				setMandate(this.mandate);
+			} else {
+				setMandate(null);
+			}
+
+			// *****************************//
+
+			if (arguments.containsKey("mandateListCtrl")) {
+				setMandateListCtrl((MandateListCtrl) arguments.get("mandateListCtrl"));
+			}
+
+			// set Field Properties
+			doSetFieldProperties();
+			this.window_SelectMandateDialogCtrl.doModal();
+		} catch (Exception e) {
+			closeDialog();
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+
+		this.custCIF.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
+		customer = (Customer) nCustomer;
+		addFilter(customer);
+
+		logger.debug("Leaving ");
+	}
+
+	private void addFilter(Customer customer) {
+		logger.debug("Entering ");
+
+		if (customer != null && customer.getCustID() != 0) {
+			// this.custId = customer.getCustID();
+			this.custCIF.setValue(customer.getCustCIF());
+			this.label_SelectMandate_CustomerName.setValue(customer.getCustShrtName());
+		} else {
+			this.custCIF.setValue("");
+		}
+
+		logger.debug("Leaving ");
+	}
+
+	public void onChange$custCIF(Event event) {
+		customer = fetchCustomerDataByCIF();
+		addFilter(customer);
+	}
+
+	public Customer fetchCustomerDataByCIF() {
+
+		customer = new Customer();
+		this.custCIF.setConstraint("");
+		this.custCIF.setErrorMessage("");
+		this.custCIF.clearErrorMessage();
+		String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
+
+		if (this.custCIF.getValue().trim().isEmpty()) {
+			MessageUtil.showError("Invalid Customer Please Select valid Customer");
+			this.custId = 0;
+			label_SelectMandate_CustomerName.setValue("");
+		} else {
+			customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.MAIN_TAB.getSuffix());
+			if (customer != null) {
+				label_SelectMandate_CustomerName.setValue(customer.getCustShrtName());
+				this.custId = customer.getCustID();
+			} else {
+				MessageUtil.showError("Invalid Customer Please Select valid Customer");
+			}
+		}
+
+		return customer;
+	}
+
+	private void doSetFieldProperties() {
+		logger.debug("Entering");
+		fillComboBox(this.mandateTypes, "", mandateTypeList, "");
+		this.entityCode.setMaxlength(8);
+		this.entityCode.setDisplayStyle(2);
+		this.entityCode.setModuleName("Entity");
+		this.entityCode.setValueColumn("EntityCode");
+		this.entityCode.setDescColumn("EntityDesc");
+		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		this.entityCode.setFilters(filter);
+	}
+
+	@Override
+	protected void doSetProperties() {
+		super.pageRightName = "";
+
+	}
+
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering " + event.toString());
+		doClearMessage();
+		final Map<String, Object> map = new HashMap<String, Object>();
+		map.put("DialogCtrl", this);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug("Leaving " + event.toString());
+	}
+
+	public CustomerDetails fetchCustomerData() {
+		logger.debug("Entering");
+
+		// Get the data of Customer from Core Banking Customer
+		CustomerDetails customerDetails = null;
+		try {
+			this.custCIF.setConstraint("");
+			this.custCIF.setErrorMessage("");
+			this.custCIF.clearErrorMessage();
+			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
+
+			// If customer exist is checked
+			Customer customer = null;
+			if (StringUtils.isEmpty(cif)) {
+				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_CustomerDialog_CoreCustID.value") }));
+			} else {
+
+				// check Customer Data in LOCAL PFF system
+				customer = customerDataService.getCheckCustomerByCIF(cif);
+			}
+
+			if (customer != null) {
+				customerDetails = customerDataService.getCustomerDetailsbyID(customer.getId(), true, "_AView");
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return customerDetails;
+	}
+
+	public void onClick$btnProceed(Event event) {
+		logger.debug("Entering " + event.toString());
+
+		if (!doSetValidation()) {
+			return;
+		}
+		if (validCustomerDetails()) {
+			return;
+		}
+		doShowDialog();
+		logger.debug("Leaving " + event.toString());
+	}
+
+	private void doShowDialog() {
+		logger.debug("Entering");
+		try {
+			Map<String, Object> arg = getDefaultArguments();
+			arg.put("mandate", this.mandate);
+			arg.put("mandatedata", this);
+			arg.put("enqModule", enqiryModule);
+			arg.put("fromLoan", false);
+			arg.put("employmentdetails", employmentDetailsList);
+			arg.put("mandateListCtrl", this.mandateListCtrl);
+
+			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_AWAITCON)) {
+				arg.put("enqModule", true);
+			}
+
+			if (StringUtils.trimToEmpty(mandate.getStatus()).equalsIgnoreCase(MandateConstants.STATUS_APPROVED)
+					|| StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
+				arg.put("maintain", true);
+			}
+
+			String page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
+			if (enqiryModule) {
+				page = "/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul";
+			}
+
+			Executions.createComponents(page, null, arg);
+			this.window_SelectMandateDialogCtrl.onClose();
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving");
+	}
+
+	protected Map<String, Object> getDefaultArguments() {
+		Map<String, Object> aruments = new HashMap<>();
+
+		aruments.put("moduleCode", moduleCode);
+		aruments.put("enqiryModule", enqiryModule);
+
+		return aruments;
+	}
+
+	private boolean validCustomerDetails() {
+		CustomerDetails customerDetails = fetchCustomerData();
+		if (customerDetails == null) {
+			MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
+			return true;
+		}
+
+		mandate.setNewRecord(true);
+		mandate.setMandateType(this.mandateTypes.getValue());
+		mandate.setMandateType(getComboboxValue(this.mandateTypes));
+		mandate.setCustCIF(customerDetails.getCustomer().getCustCIF());
+		mandate.setCustShrtName(customerDetails.getCustomer().getCustShrtName());
+		mandate.setCustID(customerDetails.getCustomer().getCustID());
+
+		employmentDetailsList = customerDetails.getEmploymentDetailsList();
+
+		mandate.setEntityCode(this.entityCode.getValue());
+		mandate.setEntityDesc(this.entityCode.getDescription());
+		return false;
+	}
+
+	private boolean doSetValidation() {
+		doClearMessage();
+		doRemoveValidation();
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		try {
+			if (StringUtils.isEmpty(this.custCIF.getValue())) {
+				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_SelectCollateralTypeDialog_CustCIF.value") }));
+			}
+
+			if (!this.mandateTypes.isDisabled()) {
+				this.mandateTypes.setConstraint(new StaticListValidator(mandateTypeList,
+						Labels.getLabel("label_MandateDialog_MandateType.value")));
+			}
+
+			if (!this.entityCode.isReadonly()) {
+				this.entityCode.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_MandateDialog_EntityCode.value"), null, true, true));
+			}
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		return true;
+	}
+
+	private void doRemoveValidation() {
+		logger.debug("Entering");
+		this.custCIF.setConstraint("");
+		this.mandateTypes.setConstraint("");
+		logger.debug("Leaving");
+	}
+
+	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
+		logger.debug("Entering" + event.toString());
+		this.window_SelectMandateDialogCtrl.onClose();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public Mandate getMandate() {
+		return mandate;
+	}
+
+	public void setMandate(Mandate mandate) {
+		this.mandate = mandate;
+	}
+
+	public MandateListCtrl getMandateListCtrl() {
+		return mandateListCtrl;
+	}
+
+	public void setMandateListCtrl(MandateListCtrl mandateListCtrl) {
+		this.mandateListCtrl = mandateListCtrl;
+	}
+
+	public Object getFinanceMainDialogCtrl() {
+		return financeMainDialogCtrl;
+	}
+
+	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
+		this.financeMainDialogCtrl = financeMainDialogCtrl;
+	}
+
+	@Autowired
+	public void setCustomerDataService(CustomerDataService customerDataService) {
+		this.customerDataService = customerDataService;
+	}
+
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	public SelectMandateDialogCtrl getSelectMandateDialogCtrl() {
+		return selectMandateDialogCtrl;
+	}
+
+	public void setSelectMandateDialogCtrl(SelectMandateDialogCtrl selectMandateDialogCtrl) {
+		this.selectMandateDialogCtrl = selectMandateDialogCtrl;
+	}
+
+	public CustomerService getCustomerService() {
+		return customerService;
+	}
+
+	public void setCustomerService(CustomerService customerService) {
+		this.customerService = customerService;
+	}
+
+}

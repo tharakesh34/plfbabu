@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +48,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 /**
  * DAO methods implementation for the <b>Mandate model</b> class.<br>
@@ -157,9 +159,11 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId,  RecordType, WorkflowId");
 		sql.append(", OrgReference, BarCodeNumber, SwapIsActive, PrimaryMandateId, EntityCode, PartnerBankId");
-		sql.append(", DefaultMandate, EMandateSource, EMandateReferenceNo)");
+		sql.append(", DefaultMandate, EMandateSource, EMandateReferenceNo, Hold, HoldReasons");
+		sql.append(", SwapEffectiveDate, SecurityMandate,  employeeID, employerName)");
 		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(",? ,?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -211,6 +215,12 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
+			ps.setBoolean(index++, mdt.isHold());
+			ps.setLong(index++, mdt.getHoldReasons());
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
+			ps.setBoolean(index++, mdt.isSecurityMandate());
+			ps.setLong(index++, mdt.getEmployeeID());
+			ps.setString(index++, mdt.getEmployerName());
 		});
 
 		return mdt.getId();
@@ -228,7 +238,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", InputDate = ?, BarCodeNumber = ?, SwapIsActive = ?, PrimaryMandateId = ?, EntityCode = ?");
-		sql.append(", PartnerBankId = ?, DefaultMandate = ?, EMandateSource = ?, EMandateReferenceNo = ?");
+		sql.append(", PartnerBankId = ?, DefaultMandate = ?, EMandateSource = ?, EMandateReferenceNo = ?, Hold = ?");
+		sql.append(", HoldReasons = ?, SwapEffectiveDate = ?, SecurityMandate = ?, employeeID = ?, employerName = ?");
 		sql.append(" Where MandateID = ?");
 		if (!type.endsWith("_Temp")) {
 			sql.append(" and Version= ?");
@@ -283,6 +294,12 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
+			ps.setBoolean(index++, mdt.isHold());
+			ps.setLong(index++, mdt.getHoldReasons());
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
+			ps.setBoolean(index++, mdt.isSecurityMandate());
+			ps.setLong(index++, mdt.getEmployeeID());
+			ps.setString(index++, mdt.getEmployerName());
 
 			ps.setLong(index++, mdt.getMandateID());
 
@@ -307,8 +324,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", Active = ?, Reason = ?, MandateCcy = ?, DocumentName = ?, DocumentRef = ?, ExternalRef = ?");
 		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
-		sql.append(", BarCodeNumber = ?, SwapIsActive = ?, EntityCode = ?");
-		sql.append(", PartnerBankId = ?, DefaultMandate = ?, EMandateSource = ?, EMandateReferenceNo = ?");
+		sql.append(", BarCodeNumber = ?, SwapIsActive = ?, EntityCode = ?, PartnerBankId = ?, DefaultMandate = ?");
+		sql.append(", EMandateSource = ?, EMandateReferenceNo = ?, Hold = ?, HoldReasons = ?");
+		sql.append(", SwapEffectivedate = ?, SecurityMandate = ?, EmployeeID = ?, EmployerName = ?");
 		sql.append("  Where MandateID = ? and Status = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -357,6 +375,12 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
+			ps.setBoolean(index++, mdt.isHold());
+			ps.setLong(index++, mdt.getHoldReasons());
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
+			ps.setBoolean(index++, mdt.isSecurityMandate());
+			ps.setLong(index++, mdt.getEmployeeID());
+			ps.setString(index++, mdt.getEmployerName());
 
 			ps.setLong(index++, mdt.getMandateID());
 			ps.setString(index++, mdt.getStatus());
@@ -633,6 +657,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
 		sql.append(", NextTaskId, RecordType, WorkflowId, BarCodeNumber, SwapIsActive, PrimaryMandateId");
 		sql.append(", EntityCode, PartnerBankId, DefaultMandate, EMandateSource, EMandateReferenceNo");
+		sql.append(", Hold, HoldReasons, SwapEffectiveDate, SecurityMandate, EmployeeID, EmployerName");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", finType, CustCIF, CustShrtName, BankCode, BranchCode");
@@ -702,6 +727,12 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			mndts.setDefaultMandate(rs.getBoolean("DefaultMandate"));
 			mndts.seteMandateSource(rs.getString("EMandateSource"));
 			mndts.seteMandateReferenceNo(rs.getString("EMandateReferenceNo"));
+			mndts.setHold(rs.getBoolean("Hold"));
+			mndts.setHoldReasons(rs.getLong("HoldReasons"));
+			mndts.setSwapEffectiveDate(rs.getTimestamp("SwapEffectiveDate"));
+			mndts.setSecurityMandate(rs.getBoolean("SecurityMandate"));
+			mndts.setEmployeeID(rs.getLong("EmployeeID"));
+			mndts.setEmployerName(rs.getString("EmployerName"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				mndts.setFinType(rs.getString("finType"));
@@ -751,5 +782,34 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, mandateRef);
+	}
+
+	@Override
+	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status) {
+
+		// finreference ='1500AGR0013594' and mandateid ='1151' and status ='B'
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, PresentmentId, Finreference, FinId,  SchDate, MandateId,");
+		sql.append(" ExcludeReason, BounceId, Status from presentmentdetails");
+		sql.append(" Where finreference =? and mandateid =? and status =?");
+
+		logger.debug(Literal.SQL + sql);
+
+		List<PresentmentDetail> list = jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			PresentmentDetail detail = new PresentmentDetail();
+			detail.setId(rs.getLong("Id"));
+			detail.setHeaderId(rs.getLong("PresentmentId"));
+			detail.setFinReference(rs.getString("Finreference"));
+			detail.setFinID(rs.getLong("FinId"));
+			detail.setSchDate(rs.getDate("SchDate"));
+			detail.setMandateId(rs.getLong("MandateId"));
+			detail.setExcludeReason(rs.getInt("ExcludeReason"));
+			detail.setBounceID(rs.getLong("BounceId"));
+			detail.setStatus(rs.getString("Status"));
+
+			return detail;
+		}, finreference, mandateID, status);
+
+		return list.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId())).collect(Collectors.toList());
 	}
 }
