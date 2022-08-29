@@ -667,7 +667,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					if (!finFeeDetailDAO.isFinFeeDetailExists(finFeeDetail, TableType.MAIN_TAB.getSuffix())) {
 						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					}
-				} else if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(finFeeDetail.getRecordType())) {
+				}
+				if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					finFeeDetail.setNewRecord(true);
 				}
 			}

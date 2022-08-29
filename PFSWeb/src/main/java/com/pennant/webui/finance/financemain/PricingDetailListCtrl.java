@@ -685,7 +685,21 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 					Clients.clearWrongValue(rateBox);
 					rateBox.clearErrorMessage();
 					String roi = getValueFromComponent(listitem.getFellowIfAny("ROI_" + topup_label));
-					BigDecimal roiPerc = new BigDecimal(roi);
+
+					BigDecimal roiPerc = BigDecimal.ZERO;
+					if (roi == null) {
+						FinanceMainBaseCtrl ctrl = (FinanceMainBaseCtrl) financeMainDialogCtrl;
+						roiPerc = ctrl.repayRate.getEffRateValue();
+					} else {
+						roiPerc = new BigDecimal(roi);
+					}
+
+					if (roiPerc == null || roiPerc.compareTo(BigDecimal.ZERO) == 0) {
+						parenttab.setSelected(true);
+						throw new WrongValueException(rateBox,
+								Labels.getLabel("FIELD_IS_MAND", new String[] { "ROI %" }));
+					}
+
 					if (!this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
 						if (roiPerc.compareTo(new BigDecimal(4)) < 0
 								|| roiPerc.compareTo(new BigDecimal(99)) > 0 && (!rateBox.isReadonly())) {
@@ -694,13 +708,14 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 									Labels.getLabel("NUMBER_RANGE_EQ", new String[] { "ROI %", "4", "99" }));
 						}
 					}
-					finMain.setRepayProfitRate(new BigDecimal(roi));
+					finMain.setRepayProfitRate(roiPerc);
 
 					Intbox tenure = (Intbox) listitem.getFellowIfAny("Tenure_" + topup_label);
 					// Clients.clearWrongValue(tenure);
 					// tenure.clearErrorMessage();
 					try {
 						if (!tenure.isReadonly() && tenure.intValue() <= 0) {
+							parenttab.setSelected(true);
 							throw new WrongValueException(tenure,
 									Labels.getLabel("const_const_NO_NEGATIVE_ZERO", new String[] { "Tenure" }));
 						}
@@ -715,6 +730,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 					int minTerms = finType.getFinMinTerm();
 					int maxTerms = finType.getFinMaxTerm();
 					if (noOfTerms < minTerms || noOfTerms > maxTerms) {
+						parenttab.setSelected(true);
 						throw new WrongValueException(tenure,
 								Labels.getLabel("NUMBER_RANGE_EQ",
 										new String[] { Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"),

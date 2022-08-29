@@ -1729,7 +1729,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				// Till Date to Date Setting
-				if (fillAfter != null && curSchd.getSchDate().compareTo(fillAfter) < 0) {
+				if (fillAfter != null && curSchd.getSchDate().compareTo(fillAfter) <= 0) {
 					continue;
 				}
 
