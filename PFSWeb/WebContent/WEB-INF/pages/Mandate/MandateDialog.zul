@@ -325,8 +325,7 @@
 									</hbox>
 								</row>
 
-								<row visible="true" id="row_swap">
-
+								<row id="rowSwapMandate"visible="false">
 									<label id="label_SwapActive" value="${c:l('label_MandateDialog_SwapActive.value')}" />
 									<hbox>
 										<space spacing="2px" />

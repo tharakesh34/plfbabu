@@ -2698,6 +2698,7 @@ public class PennantStaticListUtil {
 				repayMethodList
 						.add(new ValueLabel(FinanceConstants.REPAYMTH_AUTO, Labels.getLabel("label_RepayMethod_Casa")));
 			}
+			repayMethodList.add(new ValueLabel(FinanceConstants.REPAYMTH_NACH, Labels.getLabel("label_Mandate_Nach")));
 			// repayMethodList.addAll(getMandateTypeList()); FIXME Murthy::
 		}
 		return repayMethodList;

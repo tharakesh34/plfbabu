@@ -4301,7 +4301,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setCalcOfSteps(rs.getString("CalcOfSteps"));
 			fm.setNoOfGrcSteps(rs.getInt("NoOfGrcSteps"));
 			fm.setEntityCode(rs.getString("EntityCode"));
-
+			
 			return fm;
 
 		}

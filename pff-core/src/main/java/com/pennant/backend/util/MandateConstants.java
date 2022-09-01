@@ -50,6 +50,8 @@ public class MandateConstants {
 	public static final String TYPE_NACH = "NACH";
 	public static final String TYPE_PDC = "PDC";
 	public static final String TYPE_EMANDATE = "EMNDT";
+	public static final String TYPE_SI = "SI";
+	public static final String TYPE_DAS = "Deduction Against Salary";
 
 	public static final String MANDATE_AC_TYPE_CA = "11";
 	public static final String MANDATE_AC_TYPE_SA = "10";
@@ -78,6 +80,9 @@ public class MandateConstants {
 	public static final List<String> skipRegistration() {
 		List<String> list = new ArrayList<String>(1);
 		list.add(TYPE_ECS);
+		list.add(TYPE_SI);
+		list.add(TYPE_DAS);
+
 		return list;
 
 	}

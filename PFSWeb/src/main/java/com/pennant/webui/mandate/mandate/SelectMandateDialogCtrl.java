@@ -14,7 +14,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -32,10 +31,8 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -47,16 +44,16 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.financemanagement.paymentMode.SelectReceiptPaymentDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
 public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
-
 	private static final long serialVersionUID = 8556168885363682933L;
 	private static final Logger logger = LogManager.getLogger(SelectReceiptPaymentDialogCtrl.class);
 
-	protected Window window_SelectMandateDialogCtrl;
+	protected Window window_SelectMandateDialog;
 	protected Textbox custCIF;
 	protected Combobox mandateTypes;
 	protected ExtendedCombobox entityCode;
@@ -66,18 +63,12 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Label label_title;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	protected Label label_SelectMandate_CustomerName;
-	List<CustomerEmploymentDetail> employmentDetailsList = new ArrayList<CustomerEmploymentDetail>();
 
-	private boolean enqModule = false;
-	private boolean fromLoan = false;
-	private boolean registration = false;
-	private boolean maintain = false;
 	Tab parenttab = null;
 
 	private Object financeMainDialogCtrl = null;
 
 	FinanceDetail financeDetail;
-	private FinanceMain financemain;
 	protected Groupbox finBasicdetails;
 
 	private Mandate mandate;
@@ -94,70 +85,49 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private Customer customer;
 	Date appDate = SysParamUtil.getAppDate();
 
-	public void onCreate$window_SelectMandateDialogCtrl(Event event) {
-		logger.debug("Entering" + event.toString());
+	public void onCreate$window_SelectMandateDialog(Event event) {
+		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_SelectMandateDialogCtrl);
+		setPageComponents(window_SelectMandateDialog);
 
+		if (arguments.containsKey("mandate")) {
+			this.mandate = (Mandate) arguments.get("mandate");
+			Mandate befImage = new Mandate();
+			BeanUtils.copyProperties(this.mandate, befImage);
+			this.mandate.setBefImage(befImage);
+			setMandate(this.mandate);
+		} else {
+			setMandate(null);
+		}
+
+		if (arguments.containsKey("mandateListCtrl")) {
+			setMandateListCtrl((MandateListCtrl) arguments.get("mandateListCtrl"));
+		}
 		try {
-			// READ OVERHANDED params !
-			if (arguments.containsKey("enqModule")) {
-				enqModule = (Boolean) arguments.get("enqModule");
-			}
-
-			if (arguments.containsKey("fromLoan")) {
-				fromLoan = (Boolean) arguments.get("fromLoan");
-			}
-
-			if (arguments.containsKey("registration")) {
-				registration = (Boolean) arguments.get("registration");
-			}
-			if (arguments.containsKey("maintain")) {
-				maintain = (Boolean) arguments.get("maintain");
-			}
-
-			// READ OVERHANDED params !
-			if (arguments.containsKey("mandate")) {
-				this.mandate = (Mandate) arguments.get("mandate");
-				Mandate befImage = new Mandate();
-				BeanUtils.copyProperties(this.mandate, befImage);
-				this.mandate.setBefImage(befImage);
-				setMandate(this.mandate);
-			} else {
-				setMandate(null);
-			}
-
-			// *****************************//
-
-			if (arguments.containsKey("mandateListCtrl")) {
-				setMandateListCtrl((MandateListCtrl) arguments.get("mandateListCtrl"));
-			}
-
-			// set Field Properties
 			doSetFieldProperties();
-			this.window_SelectMandateDialogCtrl.doModal();
+			this.window_SelectMandateDialog.doModal();
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 		customer = (Customer) nCustomer;
 		addFilter(customer);
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void addFilter(Customer customer) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		if (customer != null && customer.getCustID() != 0) {
 			// this.custId = customer.getCustID();
@@ -167,7 +137,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.custCIF.setValue("");
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$custCIF(Event event) {
@@ -201,16 +171,18 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
 		fillComboBox(this.mandateTypes, "", mandateTypeList, "");
+
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setDisplayStyle(2);
 		this.entityCode.setModuleName("Entity");
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
+
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+
 		this.entityCode.setFilters(filter);
 	}
 
@@ -220,19 +192,18 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	}
 
-	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+	public void onClick$btnSearchCustCIF(Event event) {
+		logger.debug(Literal.ENTERING);
 		doClearMessage();
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public CustomerDetails fetchCustomerData() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// Get the data of Customer from Core Banking Customer
 		CustomerDetails customerDetails = null;
 		try {
 			this.custCIF.setConstraint("");
@@ -240,14 +211,11 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.custCIF.clearErrorMessage();
 			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
 
-			// If customer exist is checked
 			Customer customer = null;
 			if (StringUtils.isEmpty(cif)) {
 				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_CustomerDialog_CoreCustID.value") }));
 			} else {
-
-				// check Customer Data in LOCAL PFF system
 				customer = customerDataService.getCheckCustomerByCIF(cif);
 			}
 
@@ -258,13 +226,12 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDetails;
 	}
 
 	public void onClick$btnProceed(Event event) {
-		logger.debug("Entering " + event.toString());
-
+		logger.debug(Literal.ENTERING);
 		if (!doSetValidation()) {
 			return;
 		}
@@ -272,18 +239,17 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			return;
 		}
 		doShowDialog();
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doShowDialog() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			Map<String, Object> arg = getDefaultArguments();
 			arg.put("mandate", this.mandate);
 			arg.put("mandatedata", this);
 			arg.put("enqModule", enqiryModule);
 			arg.put("fromLoan", false);
-			arg.put("employmentdetails", employmentDetailsList);
 			arg.put("mandateListCtrl", this.mandateListCtrl);
 
 			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_AWAITCON)) {
@@ -296,17 +262,14 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 
 			String page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
-			if (enqiryModule) {
-				page = "/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul";
-			}
 
 			Executions.createComponents(page, null, arg);
-			this.window_SelectMandateDialogCtrl.onClose();
+			this.window_SelectMandateDialog.onClose();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	protected Map<String, Object> getDefaultArguments() {
@@ -331,8 +294,6 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		mandate.setCustCIF(customerDetails.getCustomer().getCustCIF());
 		mandate.setCustShrtName(customerDetails.getCustomer().getCustShrtName());
 		mandate.setCustID(customerDetails.getCustomer().getCustID());
-
-		employmentDetailsList = customerDetails.getEmploymentDetailsList();
 
 		mandate.setEntityCode(this.entityCode.getValue());
 		mandate.setEntityDesc(this.entityCode.getDescription());
@@ -374,16 +335,12 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void doRemoveValidation() {
-		logger.debug("Entering");
 		this.custCIF.setConstraint("");
 		this.mandateTypes.setConstraint("");
-		logger.debug("Leaving");
 	}
 
 	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
-		logger.debug("Entering" + event.toString());
-		this.window_SelectMandateDialogCtrl.onClose();
-		logger.debug("Leaving" + event.toString());
+		this.window_SelectMandateDialog.onClose();
 	}
 
 	public Mandate getMandate() {

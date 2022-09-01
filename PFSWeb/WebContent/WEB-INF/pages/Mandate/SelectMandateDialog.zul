@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
-		<window id="window_SelectMandateDialogCtrl" apply="${selectMandateDialogCtrl}" width="55%" height="200px"
+		<window id="window_SelectMandateDialog" apply="${selectMandateDialogCtrl}" width="55%" height="200px"
 			style="align:start;" sizable="false" closable="true">
 
 			<borderlayout id="borderLayout_SelectMandate">
