@@ -61,7 +61,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.smtmasters.PFSParameter;
@@ -74,16 +73,13 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.MandateProcesses;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
-/**
- * Service implementation for methods that depends on <b>Mandate</b>.<br>
- * 
- */
 public class MandateServiceImpl extends GenericService<Mandate> implements MandateService {
 	private static final Logger logger = LogManager.getLogger(MandateServiceImpl.class);
 
@@ -99,26 +95,16 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private MandateProcesses defaultMandateProcess;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Mandates/Mandates_Temp by using
-	 * MandateDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
-	 * MandateDAO's update method 3) Audit the record in to AuditHeader and AdtMandates by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+
 		String tableType = "";
 		Mandate mandate = (Mandate) auditHeader.getAuditDetail().getModelData();
 
@@ -128,23 +114,23 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		if (mandate.isNewRecord()) {
 			getDocument(mandate);
-			mandate.setId(getMandateDAO().save(mandate, tableType));
+			mandate.setId(mandateDAO.save(mandate, tableType));
 			auditHeader.getAuditDetail().setModelData(mandate);
 			auditHeader.setAuditReference(String.valueOf(mandate.getMandateID()));
 		} else {
 			getDocument(mandate);
-			getMandateDAO().update(mandate, tableType);
+			mandateDAO.update(mandate, tableType);
 			if (StringUtils.trimToEmpty(mandate.getModule()).equals(MandateConstants.MODULE_REGISTRATION)) {
-				MandateStatus mandateStatus = new MandateStatus();
+				com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 				mandateStatus.setMandateID(mandate.getMandateID());
 				mandateStatus.setStatus(mandate.getStatus());
 				mandateStatus.setReason(mandate.getReason());
 				mandateStatus.setChangeDate(mandate.getInputDate());
-				getMandateStatusDAO().save(mandateStatus, "");
+				mandateStatusDAO.save(mandateStatus, "");
 			}
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
@@ -170,9 +156,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		Mandate mandate = (Mandate) auditHeader.getAuditDetail().getModelData();
-		getMandateDAO().delete(mandate, "");
+		mandateDAO.delete(mandate, "");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -187,12 +173,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	@Override
 	public Mandate getMandateById(long id) {
-		return getMandateDAO().getMandateById(id, "_View");
+		return mandateDAO.getMandateById(id, "_View");
 	}
 
 	@Override
 	public Mandate getMandateStatusUpdateById(long id, String status) {
-		return getMandateDAO().getMandateByStatus(id, status, "_View");
+		return mandateDAO.getMandateByStatus(id, status, "_View");
 	}
 
 	/**
@@ -204,19 +190,18 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 */
 
 	public Mandate getApprovedMandateById(long id) {
-		return getMandateDAO().getMandateById(id, "_AView");
+		return mandateDAO.getMandateById(id, "_AView");
 	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getMandateDAO().delete with parameters
-	 * mandate,"" b) NEW Add new record in to main table by using getMandateDAO().save with parameters mandate,"" c)
-	 * EDIT Update record in the main table by using getMandateDAO().update with parameters mandate,"" 3) Delete the
-	 * record from the workFlow table by using getMandateDAO().delete with parameters mandate,"_Temp" 4) Audit the
-	 * record in to AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
-	 * Type.
+	 * following actions a) DELETE Delete the record from the main table by using mandateDAO.delete with parameters
+	 * mandate,"" b) NEW Add new record in to main table by using mandateDAO.save with parameters mandate,"" c) EDIT
+	 * Update record in the main table by using mandateDAO.update with parameters mandate,"" 3) Delete the record from
+	 * the workFlow table by using mandateDAO.delete with parameters mandate,"_Temp" 4) Audit the record in to
+	 * AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
@@ -236,14 +221,14 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			// For Mandate deletion is not required , so make it as inActive
-			getMandateDAO().updateActive(mandate.getMandateID(), MandateConstants.STATUS_CANCEL, false);
+			mandateDAO.updateActive(mandate.getMandateID(), com.pennant.pff.mandate.MandateStatus.CANCEL, false);
 
-			MandateStatus mandateStatus = new MandateStatus();
+			com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 			mandateStatus.setMandateID(mandate.getMandateID());
-			mandateStatus.setStatus(MandateConstants.STATUS_CANCEL);
+			mandateStatus.setStatus(MandateStatus.CANCEL);
 			mandateStatus.setReason(mandate.getReason());
 			mandateStatus.setChangeDate(mandate.getInputDate());
-			getMandateStatusDAO().save(mandateStatus, "");
+			mandateStatusDAO.save(mandateStatus, "");
 
 		} else {
 			mandate.setRoleCode("");
@@ -253,37 +238,34 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			mandate.setWorkflowId(0);
 
 			boolean isApproved = false;
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_APPROVED)) {
+
+			if (MandateStatus.isApproved(mandate.getStatus())) {
 				isApproved = true;
 			}
 
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_RELEASE)) {
-				mandate.setStatus(MandateConstants.STATUS_APPROVED);
-			} else if (!StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
-				mandate.setStatus(MandateConstants.STATUS_NEW);
+			if (MandateStatus.isRelease(mandate.getStatus())) {
+				mandate.setStatus(MandateStatus.APPROVED);
+			} else if (!MandateStatus.isHold(mandate.getStatus())) {
+				mandate.setStatus(MandateStatus.NEW);
 			}
 
 			if (isApproved) {
-				mandate.setStatus(MandateConstants.STATUS_APPROVED);
-			}
-
-			if (isApproved) {
-				mandate.setStatus(MandateConstants.STATUS_APPROVED);
+				mandate.setStatus(MandateStatus.APPROVED);
 			}
 
 			if (StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
 				if (mandate.isApproveMandate()) {
-					mandate.setStatus(MandateConstants.STATUS_APPROVED);
+					mandate.setStatus(MandateStatus.APPROVED);
 				} else {
-					mandate.setStatus(MandateConstants.STATUS_NEW);
+					mandate.setStatus(MandateStatus.NEW);
 				}
 			}
 
 			if (InstrumentType.isEMandate(mandate.getMandateType())) {
 				if (StringUtils.isNotBlank(mandate.getMandateRef())) {
-					mandate.setStatus(MandateConstants.STATUS_APPROVED);
+					mandate.setStatus(MandateStatus.APPROVED);
 				} else {
-					mandate.setStatus(MandateConstants.STATUS_AWAITCON);
+					mandate.setStatus(MandateStatus.AWAITCON);
 				}
 			}
 
@@ -292,21 +274,21 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				mandate.setRecordType("");
-				mandate.setMandateID(getMandateDAO().save(mandate, ""));
+				mandate.setMandateID(mandateDAO.save(mandate, ""));
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				mandate.setRecordType("");
-				getMandateDAO().update(mandate, "");
+				mandateDAO.update(mandate, "");
 				mandate.setModificationDate(new Timestamp(System.currentTimeMillis()));
 			}
 
-			MandateStatus mandateStatus = new MandateStatus();
+			com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 			mandateStatus.setMandateID(mandate.getMandateID());
 			mandateStatus.setStatus(mandate.getStatus());
 			mandateStatus.setReason(mandate.getReason());
 			mandateStatus.setChangeDate(mandate.getInputDate());
 
-			getMandateStatusDAO().save(mandateStatus, "");
+			mandateStatusDAO.save(mandateStatus, "");
 
 			// Mandate Registration purpose
 
@@ -328,14 +310,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 				boolean register = getMandateProcess().registerMandate(mandate);
 				if (register) {
-					mandate.setStatus(MandateConstants.STATUS_INPROCESS);
-					getMandateDAO().updateStatusAfterRegistration(mandate.getMandateID(),
-							MandateConstants.STATUS_INPROCESS);
+					mandate.setStatus(MandateStatus.INPROCESS);
+					mandateDAO.updateStatusAfterRegistration(mandate.getMandateID(), MandateStatus.INPROCESS);
 					mandateStatus.setMandateID(mandate.getMandateID());
 					mandateStatus.setStatus(mandate.getStatus());
 					mandateStatus.setReason(mandate.getReason());
 					mandateStatus.setChangeDate(mandate.getInputDate());
-					getMandateStatusDAO().save(mandateStatus, "");
+					mandateStatusDAO.save(mandateStatus, "");
 				}
 
 			} catch (Exception e) {
@@ -346,30 +327,20 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		if ((!StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)
 				&& !mandate.isSecondaryMandate())) {
-			getMandateDAO().delete(mandate, "_Temp");
+			mandateDAO.delete(mandate, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getAuditHeaderDAO().addAudit(auditHeader);
+			auditHeaderDAO.addAudit(auditHeader);
 		}
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(mandate);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
 	}
-
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getMandateDAO().delete with parameters mandate,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
@@ -381,22 +352,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		Mandate mandate = (Mandate) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getMandateDAO().delete(mandate, "_Temp");
+		mandateDAO.delete(mandate, "_Temp");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
 	}
-
-	/**
-	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
-	 * assign the to auditHeader 3) identify the nextprocess
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
@@ -452,7 +414,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	/**
 	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
 	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getMandateDAO().getErrorDetail with Error ID and language as
+	 * mismatch conditions Fetch the error details from mandateDAO.getErrorDetail with Error ID and language as
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader (auditHeader)
@@ -467,9 +429,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		Mandate tempMandate = null;
 		if (mandate.isWorkflow()) {
-			tempMandate = getMandateDAO().getMandateById(mandate.getId(), "_Temp");
+			tempMandate = mandateDAO.getMandateById(mandate.getId(), "_Temp");
 		}
-		Mandate befMandate = getMandateDAO().getMandateById(mandate.getId(), "");
+		Mandate befMandate = mandateDAO.getMandateById(mandate.getId(), "");
 
 		Mandate oldMandate = mandate.getBefImage();
 
@@ -581,7 +543,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 						new ErrorDetail(PennantConstants.KEY_FIELD, "90405", errParm1, valueParm1), usrLanguage));
 			}
 			/*
-			 * //BarCode Unique Validation int count = getMandateDAO().getBarCodeCount(barCode, mandate.getMandateID(),
+			 * //BarCode Unique Validation int count = mandateDAO.getBarCodeCount(barCode, mandate.getMandateID(),
 			 * "_View"); if (count > 0) { auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
 			 * ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm1, valueParm1), usrLanguage)); }
 			 */
@@ -595,12 +557,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			auditDetail.setBefImage(befMandate);
 		}
 
-		if (!StringUtils.equals(mandate.getRecordType(), PennantConstants.RECORD_TYPE_NEW) && !((StringUtils
-				.equals(mandate.getStatus(), MandateConstants.STATUS_APPROVED)
-				|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_REJECTED)
-						|| (StringUtils.equals(mandate.getStatus(), PennantConstants.List_Select)
-								|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_HOLD))))))) {
-			boolean exists = getMandateDAO().checkMandateStatus(mandate.getMandateID());
+		String status = mandate.getStatus();
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(mandate.getRecordType()) && !((MandateStatus.isApproved(status)
+				|| (MandateStatus.isRejected(status))
+				|| (StringUtils.equals(status, PennantConstants.List_Select) || (MandateStatus.isHold(status)))))) {
+			boolean exists = mandateDAO.checkMandateStatus(mandate.getMandateID());
+
 			if (exists) {
 				String[] valueParm1 = new String[1];
 				valueParm1[0] = String.valueOf(mandate.getMandateID());
@@ -609,20 +571,16 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		}
 
-		if (StringUtils.equals(mandate.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
-				&& StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_INPROCESS)) {
+		if (PennantConstants.RECORD_TYPE_DEL.equals(mandate.getRecordType()) && MandateStatus.isInprocess(status)) {
 			String[] valueParm3 = new String[1];
 			valueParm3[0] = String.valueOf(mandate.getMandateID());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41023", valueParm3)));
 		}
 
-		if (!StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_INPROCESS)
-				&& !StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_NEW)
-				&& !mandate.isSecondaryMandate()
-				&& !((StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_APPROVED)
-						|| (StringUtils.equals(mandate.getStatus(), MandateConstants.STATUS_REJECTED))))
+		if (!MandateStatus.isInprocess(status) && !MandateStatus.isNew(status) && !mandate.isSecondaryMandate()
+				&& !((MandateStatus.isApproved(status) || (MandateStatus.isRejected(status))))
 				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
-			boolean exists = getMandateDAO().checkMandates(mandate.getOrgReference(), mandate.getMandateID());
+			boolean exists = mandateDAO.checkMandates(mandate.getOrgReference(), mandate.getMandateID());
 			if (exists) {
 				String[] valueParm2 = new String[1];
 				valueParm2[0] = String.valueOf(mandate.getOrgReference());
@@ -662,7 +620,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		// Business Validation for Default Mandate
 		if (mandate.isDefaultMandate()) {
-			if (getMandateDAO().getMandateCount(mandate.getCustID(), mandate.getMandateID()) >= 1) {
+			if (mandateDAO.getMandateCount(mandate.getCustID(), mandate.getMandateID()) >= 1) {
 				valueParm[0] = String.valueOf(mandate.getCustID());
 				errParm[0] = PennantJavaUtil.getLabel("label_MandateDialog_DefaultMandate.value") + ":" + valueParm[0];
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -692,65 +650,68 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	public void processDownload(Mandate mandate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		getMandateDAO().updateStatus(mandate.getMandateID(), MandateConstants.STATUS_AWAITCON, mandate.getMandateRef(),
-				mandate.getApprovalID(), "");
-		MandateStatus mandateStatus = new MandateStatus();
-		mandateStatus.setMandateID(mandate.getMandateID());
-		mandateStatus.setStatus(MandateConstants.STATUS_AWAITCON);
+		long mandateID = mandate.getMandateID();
+		String approvalID = mandate.getApprovalID();
+
+		mandateDAO.updateStatus(mandateID, MandateStatus.AWAITCON, mandate.getMandateRef(), approvalID, "");
+		com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
+		mandateStatus.setMandateID(mandateID);
+		mandateStatus.setStatus(MandateStatus.AWAITCON);
 		mandateStatus.setReason("");
 		mandateStatus.setChangeDate(SysParamUtil.getAppDate());
-		getMandateStatusDAO().save(mandateStatus, "");
-		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_UPD);
-		getAuditHeaderDAO().addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		mandateStatusDAO.save(mandateStatus, "");
+		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_UPD);
+
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void processFileUpload(Mandate mandate, String status, String reasons, long fileID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		getMandateDAO().updateStatus(mandate.getMandateID(), status, mandate.getMandateRef(), mandate.getApprovalID(),
-				"");
-		MandateStatus mandateStatus = new MandateStatus();
+		mandateDAO.updateStatus(mandate.getMandateID(), status, mandate.getMandateRef(), mandate.getApprovalID(), "");
+
+		com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 		mandateStatus.setMandateID(mandate.getMandateID());
 		mandateStatus.setStatus(status);
 		mandateStatus.setReason(reasons);
 		mandateStatus.setFileID(fileID);
 		mandateStatus.setChangeDate(SysParamUtil.getAppDate());
-		getMandateStatusDAO().save(mandateStatus, "");
+
+		mandateStatusDAO.save(mandateStatus, "");
+
 		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_UPD);
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public long processStatusSave(MandateStatusUpdate mandateStatusUpdate) {
-		return getMandateStatusUpdateDAO().save(mandateStatusUpdate, "");
+		return mandateStatusUpdateDAO.save(mandateStatusUpdate, "");
 	}
 
 	public void processStatusUpdate(MandateStatusUpdate mandateStatusUpdate) {
-		getMandateStatusUpdateDAO().update(mandateStatusUpdate, "");
+		mandateStatusUpdateDAO.update(mandateStatusUpdate, "");
 	}
 
 	public List<FinanceEnquiry> getMandateFinanceDetailById(long id) {
-		return getMandateDAO().getMandateFinanceDetailById(id);
+		return mandateDAO.getMandateFinanceDetailById(id);
 	}
 
 	public int getFileCount(String fileName) {
-		return getMandateStatusUpdateDAO().getFileCount(fileName);
+		return mandateStatusUpdateDAO.getFileCount(fileName);
 	}
 
 	@Override
 	public List<Mandate> getApprovedMandatesByCustomerId(long custID) {
-		return getMandateDAO().getApprovedMandatesByCustomerId(custID, "_AView");
+		return mandateDAO.getApprovedMandatesByCustomerId(custID, "_AView");
 	}
 
-	/**
-	 * @param aAuthorizedSignatoryRepository
-	 * @param tranType
-	 * @return
-	 */
 	private AuditHeader getAuditHeader(Mandate aMandate, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMandate.getBefImage(), aMandate);
 		return new AuditHeader(String.valueOf(aMandate.getMandateID()), null, null, null, auditDetail,
@@ -789,8 +750,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	@Override
 	public MandateCheckDigit getLookUpValueByCheckDigit(int rem) {
-
-		return getMandateCheckDigitDAO().getMandateCheckDigit(rem, "_View");
+		return mandateCheckDigitDAO.getMandateCheckDigit(rem, "_View");
 	}
 
 	private int checkSum(String barCode) {
@@ -858,114 +818,16 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the mandateDAO
-	 */
-	public MandateDAO getMandateDAO() {
-		return mandateDAO;
-	}
-
-	/**
-	 * @param mandateDAO the mandateDAO to set
-	 */
-	public void setMandateDAO(MandateDAO mandateDAO) {
-		this.mandateDAO = mandateDAO;
-	}
-
-	/**
 	 * @return the mandate
 	 */
 	@Override
 	public Mandate getMandate() {
-		return getMandateDAO().getMandate();
-	}
-
-	/**
-	 * @return the mandateStatusDAO
-	 */
-	public MandateStatusDAO getMandateStatusDAO() {
-		return mandateStatusDAO;
-	}
-
-	/**
-	 * @param mandateStatusDAO the mandateStatusDAO to set
-	 */
-	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
-		this.mandateStatusDAO = mandateStatusDAO;
-	}
-
-	/**
-	 * mandateCheckDigitDAO
-	 * 
-	 * @return
-	 */
-	public MandateCheckDigitDAO getMandateCheckDigitDAO() {
-		return mandateCheckDigitDAO;
-	}
-
-	/**
-	 * 
-	 * @param mandateCheckDigitDAO
-	 */
-	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
-		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
-	}
-
-	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
-		this.partnerBankDAO = partnerBankDAO;
+		return mandateDAO.getMandate();
 	}
 
 	@Override
 	public int getSecondaryMandateCount(long mandateID) {
 		return mandateDAO.getSecondaryMandateCount(mandateID);
-	}
-
-	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
-		this.bankBranchDAO = bankBranchDAO;
-	}
-
-	private MandateProcesses getMandateProcess() {
-		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
-	}
-
-	public MandateStatusUpdateDAO getMandateStatusUpdateDAO() {
-		return mandateStatusUpdateDAO;
-	}
-
-	public void setMandateStatusUpdateDAO(MandateStatusUpdateDAO mandateStatusUpdateDAO) {
-		this.mandateStatusUpdateDAO = mandateStatusUpdateDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired(required = false)
-	@Qualifier(value = "mandateProcesses")
-	public void setMandateProces(MandateProcesses mandateProcesses) {
-		this.mandateProcesses = mandateProcesses;
-	}
-
-	@Autowired
-	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
-		this.defaultMandateProcess = defaultMandateProcess;
 	}
 
 	@Override
@@ -995,17 +857,74 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return mandateDAO.getPresentmentDetailsList(finreference, mandateID, status);
 	}
 
-	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
-		return finTypePartnerBankDAO;
+	@Override
+	public int getMandateByMandateRef(String mandateRef) {
+		return mandateDAO.getMandateByMandateRef(mandateRef);
 	}
 
+	@Autowired(required = false)
+	@Qualifier(value = "mandateProcesses")
+	public void setMandateProces(MandateProcesses mandateProcesses) {
+		this.mandateProcesses = mandateProcesses;
+	}
+
+	@Autowired
+	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
+		this.defaultMandateProcess = defaultMandateProcess;
+	}
+
+	@Autowired
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+	@Autowired
+	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
+		this.mandateStatusDAO = mandateStatusDAO;
+	}
+
+	@Autowired
+	public void setMandateStatusUpdateDAO(MandateStatusUpdateDAO mandateStatusUpdateDAO) {
+		this.mandateStatusUpdateDAO = mandateStatusUpdateDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
+		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
+	}
+
+	@Autowired
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	@Autowired
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
+	}
+
+	@Autowired
+	public void setMandateProcesses(MandateProcesses mandateProcesses) {
+		this.mandateProcesses = mandateProcesses;
+	}
+
+	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
 
-	@Override
-	public int getMandateByMandateRef(String mandateRef) {
-		return mandateDAO.getMandateByMandateRef(mandateRef);
+	private MandateProcesses getMandateProcess() {
+		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
 	}
 
 }

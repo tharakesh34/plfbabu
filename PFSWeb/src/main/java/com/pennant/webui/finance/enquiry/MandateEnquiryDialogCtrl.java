@@ -64,7 +64,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -147,8 +146,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private transient MandateService mandateService;
 
 	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
-	private final List<ValueLabel> statusTypeList = PennantStaticListUtil
-			.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+	private final List<ValueLabel> statusTypeList = MandateUtil.getMandateStatus();
 
 	protected Listbox listBoxMandateFinExposure;
 	public transient int ccyFormatter = 0;
@@ -520,8 +518,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.finReference.setValue(aMandate.getOrgReference());
 		this.swapIsActive.setChecked(aMandate.isSwapIsActive());
 		this.amountInWords.setValue(AmtInitialCap());
-		this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil
-				.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
+		this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), MandateUtil.getMandateStatus()));
 
 		// Entity
 		this.entityCode.setValue(aMandate.getEntityCode(), aMandate.getEntityDesc());

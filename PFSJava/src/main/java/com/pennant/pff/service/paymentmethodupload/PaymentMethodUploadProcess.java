@@ -32,6 +32,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUpload;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUploadHeader;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -250,7 +251,8 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 				// validations for Status()
 				error = "Mandate status is not approved with mandate Id :" + mandate.getMandateID();
-				if (StringUtils.equals(MandateConstants.STATUS_REJECTED, mandate.getStatus())) {
+
+				if (MandateStatus.isRejected(mandate.getStatus())) {
 					setErrorDeatils(pmu, remarks, error, "CPU002");
 					continue;
 				}

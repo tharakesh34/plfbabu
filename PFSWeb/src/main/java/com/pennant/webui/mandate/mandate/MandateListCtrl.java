@@ -29,7 +29,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -47,13 +46,12 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.mandate.mandate.model.MandateListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -140,7 +138,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		super.doAddFilters();
 		if (!enqiryModule && !searchObject.getFilters().isEmpty()) {
 			searchObject.addFilterEqual("active", 1);
-			searchObject.addFilterNotEqual("Status", MandateConstants.STATUS_FIN);
+			searchObject.addFilterNotEqual("Status", MandateStatus.FIN);
 		}
 	}
 
@@ -161,10 +159,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
-		fillComboBox(this.status, "",
-				PennantStaticListUtil
-						.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)),
-				Collections.singletonList(MandateConstants.STATUS_FIN));
+		fillComboBox(this.status, "", MandateUtil.getMandateStatus(), Collections.singletonList(MandateStatus.FIN));
 
 		registerField("mandateID", listheader_MandateId, SortOrder.ASC, mandateID, sortOperator_MandateID,
 				Operators.NUMERIC);
@@ -289,12 +284,11 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 			arg.put("enqModule", enqiryModule);
 			arg.put("fromLoan", false);
 
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_AWAITCON)) {
+			if (MandateStatus.isAwaitingConf(mandate.getStatus())) {
 				arg.put("enqModule", true);
 			}
 
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equalsIgnoreCase(MandateConstants.STATUS_APPROVED)
-					|| StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
+			if (MandateStatus.isApproved(mandate.getStatus()) || MandateStatus.isHold(mandate.getStatus())) {
 				arg.put("maintain", true);
 			}
 

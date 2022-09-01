@@ -56,7 +56,6 @@ import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
@@ -758,8 +757,7 @@ public class FinanceValidationService {
 
 				// validate status
 				if (StringUtils.isNotBlank(mandate.getStatus())) {
-					List<ValueLabel> status = PennantStaticListUtil
-							.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+					List<ValueLabel> status = MandateUtil.getMandateStatus();
 					boolean sts = false;
 					for (ValueLabel value : status) {
 						if (StringUtils.equals(value.getValue(), mandate.getStatus())) {

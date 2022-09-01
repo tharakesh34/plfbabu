@@ -38,7 +38,11 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.util.JdbcSearchObject;
+<<<<<<< HEAD
+import com.pennant.pff.mandate.MandateStatus;
+=======
 import com.pennant.backend.util.MandateConstants;
+>>>>>>> branch 'feature/Mandates' of http://gitserver/pennapps/plf/core/plf-core.git
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -252,12 +256,11 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			arg.put("fromLoan", false);
 			arg.put("mandateListCtrl", this.mandateListCtrl);
 
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_AWAITCON)) {
+			if (MandateStatus.isAwaitingConf(mandate.getStatus())) {
 				arg.put("enqModule", true);
 			}
 
-			if (StringUtils.trimToEmpty(mandate.getStatus()).equalsIgnoreCase(MandateConstants.STATUS_APPROVED)
-					|| StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
+			if (MandateStatus.isApproved(mandate.getStatus()) || MandateStatus.isHold(mandate.getStatus())) {
 				arg.put("maintain", true);
 			}
 

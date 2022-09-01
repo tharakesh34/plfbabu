@@ -593,13 +593,7 @@
 	</bean>
 
 	<!-- FinMandate service -->
-	<bean id="finMandateService" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl">
-		<property name="mandateDAO" ref="mandateDAO" />
-		<property name="mandateStatusDAO" ref="mandateStatusDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="dMSService" ref="dMSService" />
-		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
-	</bean>
+	<bean id="finMandateService" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl"/>
 
 	<bean id="abstractInterface" class="com.pennanttech.pff.external.AbstractInterface" abstract="true">
 		<property name="dataSource" ref="dataSource" />

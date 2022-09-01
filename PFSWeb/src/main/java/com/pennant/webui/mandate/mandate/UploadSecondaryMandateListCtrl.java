@@ -80,11 +80,11 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.mandate.UploadSecondaryMandateService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -619,8 +619,8 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		if (errors != null && !errors.isEmpty()) {
 			remarks.append("Invalid BarCode,");
 		}
-		// validate the primary mnadte status
-		if (!StringUtils.equals(preMandate.getStatus(), MandateConstants.STATUS_AWAITCON)) {
+
+		if (!MandateStatus.isAwaitingConf(preMandate.getStatus())) {
 			remarks.append("Invalid Status,");
 		}
 		// Upload will not be allowed if there is an active secondary mandate

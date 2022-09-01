@@ -27,7 +27,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -37,6 +36,7 @@ import com.pennant.backend.service.pennydrop.PennyDropService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -89,7 +89,7 @@ public class MandateController extends ExtendedTestClass {
 			mandate.setActive(true);
 			mandate.setVersion(1);
 			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
-			mandate.setStatus(MandateConstants.STATUS_NEW);
+			mandate.setStatus(com.pennant.pff.mandate.MandateStatus.NEW);
 			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -179,7 +179,7 @@ public class MandateController extends ExtendedTestClass {
 			mandate.setVersion(prvMandate.getVersion() + 1);
 			mandate.setActive(true);
 			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
-			mandate.setStatus(MandateConstants.STATUS_NEW);
+			mandate.setStatus(com.pennant.pff.mandate.MandateStatus.NEW);
 			// copy properties
 			BeanUtils.copyProperties(mandate, prvMandate);
 
@@ -353,7 +353,7 @@ public class MandateController extends ExtendedTestClass {
 		AuditHeader auditHeader = null;
 		// set status
 		mandate.setApproveMandate(true);
-		mandate.setStatus(MandateConstants.STATUS_APPROVED);
+		mandate.setStatus(MandateStatus.APPROVED);
 
 		// set mandate detail and get audit header detail
 		auditHeader = doSetMandateDefault(mandate);
@@ -517,47 +517,49 @@ public class MandateController extends ExtendedTestClass {
 	public WSReturnStatus updateMandateStatus(Mandate mandate) {
 		logger.debug(Literal.ENTERING);
 
-		int count = 0;
-		WSReturnStatus response = null;
 		try {
-			count = mandateService.updateMandateStatus(mandate);
-			if (count > 0) {
-				MandateStatus mandateStatus = new MandateStatus();
-				long mandateID = mandate.getMandateID();
-				mandateStatus.setMandateID(mandateID);
-				mandateStatus.setStatus(mandate.getStatus());
-				mandateStatus.setReason(mandate.getReason());
-				mandateStatus.setChangeDate(SysParamUtil.getAppDate());
-				mandateStatusDAO.save(mandateStatus, "");
-				if ((StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-						|| StringUtils.equals("Accepted", mandate.getStatus())) && mandate.isSwapIsActive()) {
-					String type = "";
-					Long finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
+			int count = mandateService.updateMandateStatus(mandate);
 
-					if (finID != null) {
-						type = "";
-					} else if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
-						finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.TEMP_TAB);
-						if (finID != null) {
-							type = "_Temp";
-						}
-					}
-
-					String mandateType = mandate.getMandateType();
-					financeMainService.loanMandateSwapping(finID, mandateID, mandateType, type);
-				}
-				response = APIErrorHandlerService.getSuccessStatus();
-			} else {
-				response = APIErrorHandlerService.getFailedStatus();
+			if (count == 0) {
+				logger.error(Literal.LEAVING);
+				return APIErrorHandlerService.getFailedStatus();
 			}
+
+			com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
+			long mandateID = mandate.getMandateID();
+			mandateStatus.setMandateID(mandateID);
+			mandateStatus.setStatus(mandate.getStatus());
+			mandateStatus.setReason(mandate.getReason());
+			mandateStatus.setChangeDate(SysParamUtil.getAppDate());
+			mandateStatusDAO.save(mandateStatus, "");
+
+			if ((MandateStatus.isApproved(mandate.getStatus()) || MandateStatus.isAccepted(mandate.getStatus()))
+					&& mandate.isSwapIsActive()) {
+				String type = "";
+				Long finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
+
+				if (finID != null) {
+					type = "";
+				} else if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+					finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.TEMP_TAB);
+					if (finID != null) {
+						type = "_Temp";
+					}
+				}
+
+				String mandateType = mandate.getMandateType();
+				financeMainService.loanMandateSwapping(finID, mandateID, mandateType, type);
+			}
+
+			logger.debug(Literal.LEAVING);
+			return APIErrorHandlerService.getSuccessStatus();
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
-			response = APIErrorHandlerService.getFailedStatus();
+			return APIErrorHandlerService.getFailedStatus();
 		}
 
-		logger.debug(Literal.LEAVING);
-		return response;
 	}
 
 	public WSReturnStatus updateApprovedMandate(Mandate mandate) {
@@ -576,7 +578,8 @@ public class MandateController extends ExtendedTestClass {
 
 			auditHeaderDAO.addAudit(ah);
 
-			MandateStatus mandateStatus = new MandateStatus();
+			com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
+
 			mandateStatus.setMandateID(mandate.getMandateID());
 			mandateStatus.setStatus(mandate.getStatus());
 			mandateStatus.setChangeDate(SysParamUtil.getAppDate());

@@ -93,7 +93,7 @@ public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements Man
 	 * This method Deletes the Record from the MandatesStatus or MandatesStatus_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete MandateStatus by key MandateID
 	 * 
-	 * @param MandateStatus (mandateStatus)
+	 * @param Mandate_Status (mandateStatus)
 	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
@@ -128,7 +128,7 @@ public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements Man
 	 *
 	 * save MandateStatus
 	 * 
-	 * @param MandateStatus (mandateStatus)
+	 * @param Mandate_Status (mandateStatus)
 	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
@@ -162,7 +162,7 @@ public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements Man
 	 * This method updates the Record MandatesStatus or MandatesStatus_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update MandateStatus by key MandateID and Version
 	 * 
-	 * @param MandateStatus (mandateStatus)
+	 * @param Mandate_Status (mandateStatus)
 	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException

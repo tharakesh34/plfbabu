@@ -26,7 +26,6 @@
 package com.pennant.webui.mandate.mandate.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listbox;
@@ -36,13 +35,11 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.PennantAppUtil;
 
 /**
@@ -53,9 +50,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 
 	private static final long serialVersionUID = 1L;
 	boolean multiselect = false;
-	private List<ValueLabel> statusTypeList = PennantStaticListUtil
-			.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
-	String customMandateStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
+	// String customMandateStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
 
 	public MandateListModelItemRenderer(boolean multiselect) {
 		super();
@@ -91,7 +86,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 		lc.setParent(item);
 
-		String status = PennantAppUtil.getlabelDesc(mandate.getStatus(), statusTypeList);
+		String status = PennantAppUtil.getlabelDesc(mandate.getStatus(), MandateUtil.getMandateStatus());
 
 		// FIXME: Showing Custom Mandate status when Status is not there. Have To check with respective module Owner.
 		/*

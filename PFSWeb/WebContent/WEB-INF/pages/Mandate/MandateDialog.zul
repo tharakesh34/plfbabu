@@ -236,7 +236,7 @@
 									<label id="label_Status" value="${c:l('label_MandateDialog_Status.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<combobox id="status" readonly="true" disabled="true" />
+										<combobox id="mandateStatus" readonly="true" disabled="true" />
 										<button id="btnReason" label="view"></button>
 									</hbox>
 									<label id="label_Reason" value="${c:l('label_MandateStatusDialog_Reason.value')}" />
@@ -309,7 +309,7 @@
 									</hbox>
 								</row>
 
-								<row visible="true" id="row_hold">
+								<row id="rowHold" visible="true">
 									<label id="label_MandateDialog_Hold"
 										value="${c:l('label_MandateDialog_Hold.value')}" />
 									<hbox>
@@ -325,7 +325,7 @@
 									</hbox>
 								</row>
 
-								<row id="rowSwapMandate"visible="false">
+								<row id="rowSwapMandate" visible="false">
 									<label id="label_SwapActive" value="${c:l('label_MandateDialog_SwapActive.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -341,7 +341,7 @@
 
 								</row>
 
-								<row visible="true" id="row_employee">
+								<row id="rowEmployee" visible="false">
 									<label id="label_MandateDialog_EmployeeID"
 										value="${c:l('label_MandateDialog_EmployeeID.value')}" />
 									<hbox>

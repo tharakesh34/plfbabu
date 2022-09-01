@@ -83,13 +83,13 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -212,10 +212,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
-		fillComboBox(this.status, "",
-				PennantStaticListUtil
-						.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS)),
-				Collections.singletonList(MandateConstants.STATUS_FIN));
+		fillComboBox(this.status, "", MandateUtil.getMandateStatus(), Collections.singletonList(MandateStatus.FIN));
 
 		registerField("inputDate");
 
@@ -463,8 +460,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(), PennantStaticListUtil
-					.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
+			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getStatus(), MandateUtil.getMandateStatus()));
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
 			lc.setParent(item);

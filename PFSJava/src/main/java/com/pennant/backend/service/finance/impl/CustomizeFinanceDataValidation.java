@@ -390,8 +390,7 @@ public class CustomizeFinanceDataValidation {
 
 				// validate status
 				if (StringUtils.isNotBlank(mandate.getStatus())) {
-					List<ValueLabel> status = PennantStaticListUtil
-							.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+					List<ValueLabel> status = MandateUtil.getMandateStatus();
 					boolean sts = false;
 					for (ValueLabel value : status) {
 						if (StringUtils.equals(value.getValue(), mandate.getStatus())) {

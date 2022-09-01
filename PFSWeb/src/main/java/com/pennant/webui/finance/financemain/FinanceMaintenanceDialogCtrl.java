@@ -111,6 +111,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -3499,7 +3500,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			whereCaluse.append(" AND MANDATEREF IS NOT NULL ");
 		} else {
 			whereCaluse.append(" AND STATUS != '");
-			whereCaluse.append(MandateConstants.STATUS_REJECTED);
+			whereCaluse.append(MandateStatus.REJECTED);
 			whereCaluse.append("'");
 		}
 

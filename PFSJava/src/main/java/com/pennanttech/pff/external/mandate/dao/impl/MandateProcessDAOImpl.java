@@ -24,7 +24,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.MandateConstants;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -383,7 +383,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MANDATEID", Arrays.asList(result));
-		paramMap.addValue("AC", MandateConstants.STATUS_AWAITCON);
+		paramMap.addValue("AC", MandateStatus.AWAITCON);
 
 		this.jdbcTemplate.update(sql.toString(), paramMap);
 

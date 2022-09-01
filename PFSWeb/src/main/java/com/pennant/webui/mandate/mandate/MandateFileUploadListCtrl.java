@@ -47,7 +47,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennant.backend.service.mandate.MandateService;
-import com.pennant.backend.util.MandateConstants;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.util.MediaUtil;
@@ -167,7 +167,7 @@ public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> implemen
 				String[] record = line.split("[|]");
 				// get mandate whose status is awaiting confirmation
 				Mandate mandate = mandateService.getMandateStatusUpdateById(
-						Long.parseLong(StringUtils.trimToEmpty(record[0])), MandateConstants.STATUS_AWAITCON);
+						Long.parseLong(StringUtils.trimToEmpty(record[0])), MandateStatus.AWAITCON);
 				mandate.setMandateRef(record[10]);
 				mandate.setApprovalID(record[12]);
 				mandate.setUserDetails(getUserWorkspace().getLoggedInUser());

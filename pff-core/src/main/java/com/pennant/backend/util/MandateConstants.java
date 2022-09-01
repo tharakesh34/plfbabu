@@ -53,17 +53,6 @@ public class MandateConstants {
 
 	public static final String MANDATE_DEFAULT_FRQ = "M0001";
 
-	public static final String STATUS_FIN = "FINANCE";
-	public static final String STATUS_NEW = "NEW";
-	public static final String STATUS_AWAITCON = "AC";
-	public static final String STATUS_APPROVED = "APPROVED";
-	public static final String STATUS_REJECTED = "REJECTED";
-	public static final String STATUS_HOLD = "HOLD";
-	public static final String STATUS_RELEASE = "RELEASE";
-	public static final String STATUS_CANCEL = "CANCEL";
-	public static final String STATUS_INPROCESS = "INPROCESS";
-	public static final String MANDATE_STATUS_ACKNOWLEDGE = "ACK";
-
 	public static final String MODULE_REGISTRATION = "REGISTRATION";
 	public static final String MODULE_STATUSUPLOAD = "STATUSUPLOAD";
 

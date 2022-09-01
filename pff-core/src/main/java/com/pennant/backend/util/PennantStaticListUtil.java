@@ -73,7 +73,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> revRateAppPeriods;
 	private static List<ValueLabel> screenCodesList;
 	private static List<ValueLabel> accTypeList;
-	private static List<ValueLabel> statusTypeList;
 	private static List<ValueLabel> reportNameList;
 	private static List<ValueLabel> waiverDeciders;
 	private static List<ValueLabel> schCalOnList;
@@ -2662,32 +2661,6 @@ public class PennantStaticListUtil {
 		return accTypeList;
 	}
 
-	public static List<ValueLabel> getStatusTypeList(String customMandateStatus) {
-		statusTypeList = getStatusTypeList();
-		// Added custom mandate status to the list if sysprams contains
-		// custom mandate Status.
-		if (StringUtils.isNotBlank(customMandateStatus)) {
-			statusTypeList
-					.add(new ValueLabel(customMandateStatus, Labels.getLabel("label_Mandate_" + customMandateStatus)));
-		}
-		return statusTypeList;
-	}
-
-	public static List<ValueLabel> getStatusTypeList() {
-		statusTypeList = new ArrayList<ValueLabel>(7);
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_NEW, Labels.getLabel("label_Mandate_NEW")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_APPROVED, Labels.getLabel("label_Mandate_APPROVED")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_REJECTED, Labels.getLabel("label_Mandate_REJECTED")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_HOLD, Labels.getLabel("label_Mandate_HOLD")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_RELEASE, Labels.getLabel("label_Mandate_RELEASE")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_FIN, Labels.getLabel("label_Mandate_FINANCE")));
-		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL, Labels.getLabel("label_Mandate_CANCEL")));
-		statusTypeList
-				.add(new ValueLabel(MandateConstants.STATUS_INPROCESS, Labels.getLabel("label_Mandate_INPROCESS")));
-		return statusTypeList;
-	}
-
 	public static List<ValueLabel> getProductCategories() {
 		if (productCategories == null) {
 			productCategories = new ArrayList<ValueLabel>(15);
@@ -3518,15 +3491,6 @@ public class PennantStaticListUtil {
 			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_AccountMapping_Discrepancy")));
 		}
 		return accountMapping;
-	}
-
-	public static List<ValueLabel> getMandateStatusTypeList() {
-		if (statusTypeList == null) {
-			statusTypeList = new ArrayList<ValueLabel>(7);
-			statusTypeList
-					.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
-		}
-		return statusTypeList;
 	}
 
 	public static List<ValueLabel> getUploadLevelsList() {

@@ -41,6 +41,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
@@ -150,62 +151,68 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 
 	@Override
 	public WSReturnStatus updateMandate(Mandate mandate) throws ServiceException {
-		logger.debug("Entering");
-		// beanValidation
+		logger.debug(Literal.ENTERING);
+
 		validationUtility.validate(mandate, UpdateValidationGroup.class);
 
-		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = mandate.getCustCIF();
 		logFields[1] = mandate.getAccNumber();
 		logFields[2] = mandate.getAccHolderName();
 		APIErrorHandlerService.logKeyFields(logFields);
 
-		Mandate mandateDetails = mandateService.getApprovedMandateById(mandate.getMandateID());
 		WSReturnStatus returnStatus = null;
-		if (mandateDetails != null) {
-			// for logging purpose
-			APIErrorHandlerService.logReference(String.valueOf(mandate.getMandateID()));
 
-			if (MandateConstants.STATUS_APPROVED.equals(mandateDetails.getStatus())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Approved";
-				returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
-				return returnStatus;
-			}
+		long mandateID = mandate.getMandateID();
 
-			returnStatus = doMandateValidation(mandate);
-			if (StringUtils.isNotBlank(mandate.getMandateRef())) {
-				String[] paramValue = new String[2];
-				paramValue[0] = "mandateRef";
-				paramValue[1] = "updateMandate";
-				returnStatus = APIErrorHandlerService.getFailedStatus("90329", paramValue);
-				return returnStatus;
-			}
-			if (StringUtils.isBlank(returnStatus.getReturnCode())) {
-				if (StringUtils.equals(MandateConstants.STATUS_AWAITCON, mandateDetails.getStatus())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Awaiting Confirmation";
-					returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
-					return returnStatus;
-				}
-				if (StringUtils.equals(MandateConstants.STATUS_HOLD, mandateDetails.getStatus())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Hold";
-					returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
-					return returnStatus;
-				}
-				returnStatus = mandateController.updateMandate(mandate);
-			} else {
-				return returnStatus;
-			}
-		} else {
-			returnStatus = new WSReturnStatus();
+		Mandate mandateDetails = mandateService.getApprovedMandateById(mandateID);
+
+		if (mandateDetails == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandate.getMandateID());
-			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
+			valueParm[0] = String.valueOf(mandateID);
+			return APIErrorHandlerService.getFailedStatus("90303", valueParm);
 		}
-		logger.debug("Leaving");
+
+		APIErrorHandlerService.logReference(String.valueOf(mandateID));
+
+		String mandateStatus = mandateDetails.getStatus();
+
+		if (MandateStatus.isApproved(mandateStatus)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Approved";
+			return APIErrorHandlerService.getFailedStatus("90345", valueParm);
+		}
+
+		returnStatus = doMandateValidation(mandate);
+
+		if (StringUtils.isNotBlank(mandate.getMandateRef())) {
+			String[] paramValue = new String[2];
+			paramValue[0] = "mandateRef";
+			paramValue[1] = "updateMandate";
+			return APIErrorHandlerService.getFailedStatus("90329", paramValue);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+
+		if (MandateStatus.isAwaitingConf(mandateStatus)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Awaiting Confirmation";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
+			return returnStatus;
+		}
+
+		if (MandateStatus.isHold(mandateStatus)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Hold";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
+			return returnStatus;
+		}
+
+		returnStatus = mandateController.updateMandate(mandate);
+
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -387,7 +394,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				return returnStatus;
 			}
 		// validations for Status
-		if (StringUtils.equals(MandateConstants.STATUS_REJECTED, newMandate.getStatus())) {
+		if (MandateStatus.isRejected(newMandate.getStatus())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(newMandateId);
 			returnStatus = APIErrorHandlerService.getFailedStatus("90306", valueParm);
@@ -556,8 +563,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 		}
 		// validate status
 		if (StringUtils.isNotBlank(mandate.getStatus())) {
-			List<ValueLabel> status = PennantStaticListUtil
-					.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+			List<ValueLabel> status = MandateUtil.getMandateStatus();
 			boolean sts = false;
 			for (ValueLabel value : status) {
 				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
@@ -862,7 +868,9 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			}
 		}
 
-		if (StringUtils.isBlank(mandate.getStatus())) {
+		String status = mandate.getStatus();
+
+		if (StringUtils.isBlank(status)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "status";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
@@ -874,8 +882,8 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				mandateStatus = mandateRegStatus;
 			}
 
-			if (StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())) {
-				mandate.setStatus(mandate.getStatus().toUpperCase());
+			if (StringUtils.equalsIgnoreCase(mandateStatus, status)) {
+				mandate.setStatus(status.toUpperCase());
 				if (StringUtils.isNotBlank(aMandate.getMandateRef())) {
 					// String[] valueParm = new String[1];
 					// valueParm[0] = "mandateRef is already exist";
@@ -884,20 +892,17 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				}
 			}
 
-			if (!StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())
-					&& !StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus())
-					&& !StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE,
-							mandate.getStatus())) {
+			if (!StringUtils.equalsIgnoreCase(mandateStatus, status) && !MandateStatus.isRejected(status)
+					&& !MandateStatus.isAcknowledge(status)) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "status";
 				valueParm[1] = mandateRegStatus + ", " + PennantConstants.RCD_STATUS_REJECTED + ", "
-						+ MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
+						+ MandateStatus.ACKNOWLEDGE;
 				returnStatus = APIErrorHandlerService.getFailedStatus("90281", valueParm);
 				return returnStatus;
 			}
 
-			if (StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, mandate.getStatus())
-					&& !StringUtils.equals(MandateConstants.STATUS_AWAITCON, aMandate.getStatus())) {
+			if (MandateStatus.isAcknowledge(status) && !MandateStatus.isAcknowledge(status)) {
 				// String[] valueParm = new String[2];
 				// valueParm[0] = "Mandate current status is " + aMandate.getStatus();
 				// valueParm[1] = " not allowed to pass " + MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
@@ -905,8 +910,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				// return returnStatus;
 			}
 
-			if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-					|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus()))
+			if ((MandateStatus.isApproved(status) || MandateStatus.isAccepted(status))
 					&& StringUtils.isBlank(mandate.getMandateRef())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "mandateRef/UMRNNo";
@@ -914,29 +918,26 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				return returnStatus;
 			}
 
-			if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-					|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus())
-					|| StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus()))
-					&& StringUtils.isNotBlank(mandate.getMandateRef()) && !StringUtils
-							.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, aMandate.getStatus())) {
+			if ((MandateStatus.isApproved(status) || MandateStatus.isAccepted(status)
+					|| MandateStatus.isRejected(status)) && StringUtils.isNotBlank(mandate.getMandateRef())
+					&& !MandateStatus.isAcknowledge(aMandate.getStatus())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Mandate will Approve/Reject only when it is Acknowledged.";
 				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				return returnStatus;
 			}
-			if (StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus())
-					&& StringUtils.isBlank(mandate.getReason())) {
+
+			if (MandateStatus.isRejected(status) && StringUtils.isBlank(mandate.getReason())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "reason";
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				return returnStatus;
 			}
 
-			if (StringUtils.isNotBlank((mandateRegStatus))
-					&& StringUtils.equalsIgnoreCase(mandate.getStatus(), mandateRegStatus)) {
+			if (StringUtils.isNotBlank((mandateRegStatus)) && StringUtils.equalsIgnoreCase(status, mandateRegStatus)) {
 				mandate.setStatus("APPROVED");
 			} else {
-				mandate.setStatus(mandate.getStatus().toUpperCase());
+				mandate.setStatus(status.toUpperCase());
 			}
 		}
 
@@ -955,8 +956,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			mandate.setOrgReference(aMandate.getOrgReference());
 		}
 
-		if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
-				|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus())) && aMandate.isSwapIsActive()) {
+		if ((MandateStatus.isApproved(status) || MandateStatus.isAccepted(status)) && aMandate.isSwapIsActive()) {
 			mandate.setSwapIsActive(aMandate.isSwapIsActive());
 			mandate.setMandateType(aMandate.getMandateType());
 			// FinanceMain finMain =
@@ -1108,24 +1108,19 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			valueParm[0] = "status";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 
-		} else if (!StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, request.getStatus())
-				&& !StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, request.getStatus())) {
+		} else if (!MandateStatus.isApproved(request.getStatus()) && !MandateStatus.isRejected(request.getStatus())) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "status";
-			valueParm[1] = MandateConstants.STATUS_APPROVED + ", " + MandateConstants.STATUS_REJECTED;
+			valueParm[1] = MandateStatus.APPROVED + ", " + MandateStatus.REJECTED;
 			returnStatus = APIErrorHandlerService.getFailedStatus("90281", valueParm);
-		} else if (MandateConstants.STATUS_APPROVED.equals(aMandate.getStatus())
-				|| MandateConstants.STATUS_REJECTED.equals(aMandate.getStatus())) {
-
+		} else if (MandateStatus.isApproved(aMandate.getStatus()) || MandateStatus.isRejected(aMandate.getStatus())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "already " + aMandate.getStatus();
 			returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
 			return returnStatus;
 		}
 
-		if (StringUtils.isNotEmpty(request.getMandateRef())
-				&& StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, request.getStatus())) {
-
+		if (StringUtils.isNotEmpty(request.getMandateRef()) && MandateStatus.isRejected(request.getStatus())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "For the Status REJECTED mandateRef is";
 			returnStatus = APIErrorHandlerService.getFailedStatus("RU0039", valueParm);

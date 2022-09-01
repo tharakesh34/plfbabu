@@ -27,11 +27,9 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -403,8 +401,7 @@ public class MandateUploadToDownloadCtrl extends GFCBaseCtrl<Configuration> {
 		logger.debug(Literal.ENTERING);
 		// validate status
 		if (StringUtils.isNotBlank(status)) {
-			List<ValueLabel> statusList = PennantStaticListUtil
-					.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
+			List<ValueLabel> statusList = MandateUtil.getMandateStatus();
 			boolean sts = false;
 			for (ValueLabel value : statusList) {
 				if (StringUtils.equals(value.getValue(), status)) {
