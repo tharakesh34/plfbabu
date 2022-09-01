@@ -111,10 +111,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.pff.mandate.InstrumentType;
-<<<<<<< HEAD
 import com.pennant.pff.mandate.MandateStatus;
-=======
->>>>>>> branch 'feature/Mandates' of http://gitserver/pennapps/plf/core/plf-core.git
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -542,14 +539,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.employerName.setValue("EmpName");
 		this.employeeID.setValidateColumns(new String[] { "EmployerId" });
 
-<<<<<<< HEAD
-=======
-		this.hold.setDisabled(!maintain);
-		this.holdReasons.setReadonly(!maintain);
-
-		this.row_employee.setVisible(InstrumentType.isDAS(mandateType.getSelectedItem().getValue()));
-
->>>>>>> branch 'feature/Mandates' of http://gitserver/pennapps/plf/core/plf-core.git
 		String recordType = this.mandate.getRecordType();
 		this.rowSwapMandate.setVisible(PennantConstants.RECORD_TYPE_NEW.equals(recordType) || enqiryModule);
 
