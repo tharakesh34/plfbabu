@@ -38,11 +38,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.util.JdbcSearchObject;
-<<<<<<< HEAD
 import com.pennant.pff.mandate.MandateStatus;
-=======
-import com.pennant.backend.util.MandateConstants;
->>>>>>> branch 'feature/Mandates' of http://gitserver/pennapps/plf/core/plf-core.git
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;

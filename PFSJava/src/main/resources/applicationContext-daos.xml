@@ -6288,16 +6288,7 @@
 		</property>
 	</bean>
 
-	<bean name="finMandateServiceTarget" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl">
-		<property name="mandateDAO" ref="mandateDAO" />
-		<property name="mandateStatusDAO" ref="mandateStatusDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="bankBranchService" ref="bankBranchService" />
-		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
-		<property name="bankBranchDAO" ref="bankBranchDAO" />
-		<property name="dMSService" ref="dMSService" />
-	</bean>
+	<bean name="finMandateServiceTarget" class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl"/>
 
 	<bean id="rateChangeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">

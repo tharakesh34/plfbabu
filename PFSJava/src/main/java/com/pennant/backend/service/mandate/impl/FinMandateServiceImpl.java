@@ -654,10 +654,6 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		return remainder;
 	}
 
-	private MandateProcesses getMandateProcess() {
-		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
-	}
-
 	@Autowired(required = false)
 	@Qualifier(value = "mandateProcesses")
 	public void setMandateProces(MandateProcesses mandateProcesses) {
@@ -667,6 +663,45 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	@Autowired
 	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
 		this.defaultMandateProcess = defaultMandateProcess;
+	}
+
+	@Autowired
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+	@Autowired
+	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
+		this.mandateStatusDAO = mandateStatusDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setBankBranchService(BankBranchService bankBranchService) {
+		this.bankBranchService = bankBranchService;
+	}
+
+	@Autowired
+	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
+		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
+	}
+
+	@Autowired
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	private MandateProcesses getMandateProcess() {
+		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
 	}
 
 }
