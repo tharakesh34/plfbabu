@@ -72,6 +72,9 @@ public class MandateConstants {
 	public static final List<String> skipRegistration() {
 		List<String> list = new ArrayList<String>(1);
 		// list.add(TYPE_ECS);
+		// list.add(TYPE_SI);
+		// list.add(TYPE_DAS);
+
 		return list;
 
 	}

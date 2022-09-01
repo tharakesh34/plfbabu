@@ -78,6 +78,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.MandateProcesses;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 /**
  * Service implementation for methods that depends on <b>Mandate</b>.<br>
@@ -989,6 +990,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return mandateDAO.updateMandateStatus(mandate);
 	}
 
+	@Override
+	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status) {
+		return mandateDAO.getPresentmentDetailsList(finreference, mandateID, status);
+	}
+
 	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
 		return finTypePartnerBankDAO;
 	}
@@ -1001,4 +1007,5 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	public int getMandateByMandateRef(String mandateRef) {
 		return mandateDAO.getMandateByMandateRef(mandateRef);
 	}
+
 }

@@ -72,7 +72,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> mathOperators;
 	private static List<ValueLabel> revRateAppPeriods;
 	private static List<ValueLabel> screenCodesList;
-	private static List<ValueLabel> mandateTypeList;
 	private static List<ValueLabel> accTypeList;
 	private static List<ValueLabel> statusTypeList;
 	private static List<ValueLabel> reportNameList;

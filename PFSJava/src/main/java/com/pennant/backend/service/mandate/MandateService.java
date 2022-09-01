@@ -33,6 +33,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public interface MandateService {
 
@@ -83,4 +84,6 @@ public interface MandateService {
 	int updateMandateStatus(Mandate mandate);
 
 	int getMandateByMandateRef(String mandateRef);
+
+	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status);
 }
