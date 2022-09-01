@@ -90,7 +90,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -210,7 +210,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		// Register buttons and fields.
 		registerButton(button_MandateList_MandateSearch);
 
-		fillComboBox(this.mandateType, "", InstrumentTypes.list(), "");
+		fillComboBox(this.mandateType, "", MandateUtil.getInstrumentTypes(), "");
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
 		fillComboBox(this.status, "",
 				PennantStaticListUtil

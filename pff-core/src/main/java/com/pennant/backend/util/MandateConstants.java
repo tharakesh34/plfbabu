@@ -45,12 +45,6 @@ public class MandateConstants {
 		super();
 	}
 
-	public static final String TYPE_ECS = "ECS";
-	public static final String TYPE_DDM = "DDM";
-	public static final String TYPE_NACH = "NACH";
-	public static final String TYPE_PDC = "PDC";
-	public static final String TYPE_EMANDATE = "EMNDT";
-
 	public static final String MANDATE_AC_TYPE_CA = "11";
 	public static final String MANDATE_AC_TYPE_SA = "10";
 	public static final String MANDATE_AC_TYPE_CC = "12";
@@ -77,7 +71,7 @@ public class MandateConstants {
 
 	public static final List<String> skipRegistration() {
 		List<String> list = new ArrayList<String>(1);
-		list.add(TYPE_ECS);
+		// list.add(TYPE_ECS);
 		return list;
 
 	}

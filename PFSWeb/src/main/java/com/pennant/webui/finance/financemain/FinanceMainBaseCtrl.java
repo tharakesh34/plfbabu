@@ -303,6 +303,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.util.ErrorControl;
@@ -3667,7 +3668,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			String[] rpMthds = financeType.getAlwdRpyMethods().trim().split(",");
 			if (rpMthds.length > 0) {
 				List<String> list = Arrays.asList(rpMthds);
-				for (ValueLabel rpyMthd : PennantStaticListUtil.getRepayMethods()) {
+				for (ValueLabel rpyMthd : MandateUtil.getRepayMethods()) {
 					if (list.contains(rpyMthd.getValue().trim())) {
 						rpyMethodList.add(rpyMthd);
 					}
@@ -16051,7 +16052,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				String[] rpMthds = financeType.getAlwdRpyMethods().trim().split(",");
 				if (rpMthds.length > 0) {
 					List<String> list = Arrays.asList(rpMthds);
-					for (ValueLabel rpyMthd : PennantStaticListUtil.getRepayMethods()) {
+					for (ValueLabel rpyMthd : MandateUtil.getRepayMethods()) {
 						if (list.contains(rpyMthd.getValue().trim())) {
 							rpyMethodList.add(rpyMthd);
 						}

@@ -44,9 +44,9 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
@@ -571,18 +571,25 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	}
 
 	public boolean validateBranchCode(BankBranch bankBranch, String mandateType) {
-		switch (mandateType) {
-		case MandateConstants.TYPE_ECS:
+
+		InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
+
+		if (instrumentType == null) {
+			return false;
+		}
+
+		switch (instrumentType) {
+		case ECS:
 			if (!bankBranch.isEcs()) {
 				return false;
 			}
 			break;
-		case MandateConstants.TYPE_DDM:
+		case DDM:
 			if (!bankBranch.isDda()) {
 				return false;
 			}
 			break;
-		case MandateConstants.TYPE_NACH:
+		case NACH:
 			if (!bankBranch.isNach()) {
 				return false;
 			}

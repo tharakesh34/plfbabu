@@ -52,10 +52,10 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PartnerBankModeConfigService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -283,17 +283,15 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	private String getConfigByPartnerBank(String instType, String partnerBank) {
-		Boolean isPDC = false;
 		if (PennantConstants.List_Select.equals(instType)) {
 			return null;
 		}
+
 		if (StringUtils.isEmpty(partnerBank)) {
 			return null;
 		}
-		if (StringUtils.equals(instType, MandateConstants.TYPE_PDC)) {
-			isPDC = true;
-		}
 
+		boolean isPDC = InstrumentType.isPDC(instType);
 		long partnerBankId = Long.valueOf(partnerBank);
 
 		return partnerBankModeConfigService.getConfigName(instType, partnerBankId, DataEngineConstants.PRESENTMENT,
@@ -306,7 +304,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 		if (type.equals(PennantConstants.INSTRUMENT_TYPE)) {
-			fillComboBox(this.instrumentType, "", InstrumentTypes.list(), "");
+			fillComboBox(this.instrumentType, "", MandateUtil.getInstrumentTypes(), "");
 			logger.debug(Literal.LEAVING);
 
 			if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
@@ -315,7 +313,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				this.btnSave.setDisabled(true);
 			}
 		} else if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)) {
-			fillComboBox(this.instrumentType, "", InstrumentTypes.list(), "");
+			fillComboBox(this.instrumentType, "", MandateUtil.getInstrumentTypes(), "");
 			this.partnerBank.setMaxlength(21);
 			this.partnerBank.setModuleName("PresentMents_PartnerBank");
 			this.partnerBank.setValueColumn("PartnerBankCode");

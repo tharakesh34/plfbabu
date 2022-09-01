@@ -84,7 +84,8 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -550,9 +551,8 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 
 		// validate MandateType
 		if (StringUtils.isNotBlank(mandate.getMandateType())) {
-			List<ValueLabel> mandateType = InstrumentTypes.list();
 			boolean mandateTypeSts = false;
-			for (ValueLabel value : mandateType) {
+			for (ValueLabel value : MandateUtil.getInstrumentTypes()) {
 				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
 					mandateTypeSts = true;
 					break;
@@ -610,7 +610,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		// Mandate Type in the upload should match with the mandate type
 		// available against the mandate ID.
 		if (StringUtils.equals(mandate.getMandateType(), preMandate.getMandateType())) {
-			mandate.setMandateType(MandateConstants.TYPE_ECS);
+			mandate.setMandateType(InstrumentType.ECS.name());
 		} else {
 			remarks.append("Invalid Mandate Type,");
 		}

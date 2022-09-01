@@ -40,7 +40,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
@@ -89,7 +90,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 
 		WSReturnStatus returnStatus = doMandateValidation(mandate);
 		if (StringUtils.isNotBlank(mandate.getMandateRef())) {
-			if (!MandateConstants.TYPE_EMANDATE.equals(mandate.getMandateType())) {
+			if (!InstrumentType.isEMNDT(mandate.getMandateType())) {
 				response = new Mandate();
 				String[] paramValue = new String[2];
 				paramValue[0] = "mandateRef";
@@ -516,9 +517,8 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 
 		// validate MandateType
 		if (StringUtils.isNotBlank(mandate.getMandateType())) {
-			List<ValueLabel> mandateType = InstrumentTypes.list();
 			boolean mandateTypeSts = false;
-			for (ValueLabel value : mandateType) {
+			for (ValueLabel value : MandateUtil.getInstrumentTypes()) {
 				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
 					mandateTypeSts = true;
 					break;
@@ -688,7 +688,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			}
 		}
 
-		if (StringUtils.equals(mandate.getMandateType(), MandateConstants.TYPE_EMANDATE)) {
+		if (InstrumentType.isEMNDT(mandate.getMandateType())) {
 			if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
 				String[] valueParm1 = new String[1];
 				valueParm1[0] = "eMandateReferenceNo";

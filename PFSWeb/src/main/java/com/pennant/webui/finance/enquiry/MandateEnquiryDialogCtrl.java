@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.mandate.mandate.MandateListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -146,7 +146,6 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	// ServiceDAOs / Domain Classes
 	private transient MandateService mandateService;
 
-	private final List<ValueLabel> mandateTypeList = InstrumentTypes.list();
 	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
 	private final List<ValueLabel> statusTypeList = PennantStaticListUtil
 			.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
@@ -475,7 +474,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.mandateRef.setValue(String.valueOf(aMandate.getMandateID()),
 					StringUtils.trimToEmpty(aMandate.getMandateRef()));
 		}
-		fillComboBox(this.mandateType, aMandate.getMandateType(), mandateTypeList, "");
+		fillComboBox(this.mandateType, aMandate.getMandateType(), MandateUtil.getInstrumentTypes(), "");
 
 		if (aMandate.getBankBranchID() != Long.MIN_VALUE && aMandate.getBankBranchID() != 0) {
 			this.bankBranchID.setAttribute("bankBranchID", aMandate.getBankBranchID());

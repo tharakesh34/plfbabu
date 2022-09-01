@@ -20,9 +20,9 @@ import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.PresentmentServiceController;
@@ -164,9 +164,7 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 	}
 
 	private boolean isValidPaymentMode(String mandateType) {
-		return MandateConstants.TYPE_DDM.equals(mandateType) || MandateConstants.TYPE_ECS.equals(mandateType)
-				|| MandateConstants.TYPE_NACH.equals(mandateType) || MandateConstants.TYPE_PDC.equals(mandateType)
-				|| MandateConstants.TYPE_EMANDATE.equals(mandateType);
+		return InstrumentType.isValid(mandateType);
 	}
 
 	@Override

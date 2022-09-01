@@ -29,6 +29,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -142,13 +143,13 @@ public class PresentmentDetailExtractService {
 
 		presentmentDetailDAO.updateSchdWithPresentmentId(includeList);
 
-		if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+		if (InstrumentType.isPDC(ph.getMandateType())) {
 			chequeDetailDAO.updateChequeStatus(includeList);
 		}
 	}
 
 	private boolean isGroupByPartnerBank(PresentmentHeader ph) {
-		if (ph.isGroupByPartnerBank() && !MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+		if (ph.isGroupByPartnerBank() && !InstrumentType.isPDC(ph.getMandateType())) {
 			return true;
 		}
 		return false;
@@ -564,7 +565,7 @@ public class PresentmentDetailExtractService {
 			return;
 		}
 
-		boolean isECSMandate = MandateConstants.TYPE_ECS.equals(pd.getMandateType());
+		boolean isECSMandate = InstrumentType.isECS(pd.getMandateType());
 		if (!isECSMandate) {
 			if (!MandateConstants.STATUS_APPROVED.equals(mandateStatus)) {
 				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);

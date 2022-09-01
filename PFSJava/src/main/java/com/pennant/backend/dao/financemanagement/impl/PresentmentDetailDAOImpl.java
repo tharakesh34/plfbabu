@@ -54,11 +54,11 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtractService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.core.presentment.PresentmentResponseRowmapper;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -255,8 +255,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(" AND ((SCHDATE >= ? AND SCHDATE <= ? OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?))) ");
 
 		if (StringUtils.trimToNull(ph.getMandateType()) != null) {
-			if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, ph.getMandateType())
-					&& StringUtils.isNotEmpty(ph.getEmandateSource())) {
+			if (InstrumentType.isEMNDT(ph.getMandateType()) && StringUtils.isNotEmpty(ph.getEmandateSource())) {
 				sql.append(" AND (T4.MANDATETYPE = ?) AND (T4.EMANDATESOURCE = ?) ");
 			} else {
 				sql.append(" AND (T4.MANDATETYPE = ?) ");
@@ -318,8 +317,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	private boolean isGroupByPartnerBank(PresentmentHeader ph) {
-		return (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK
-				&& !MandateConstants.TYPE_PDC.equals(ph.getMandateType()));
+		return (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK && !InstrumentType.isPDC(ph.getMandateType()));
+
 	}
 
 	@Override
@@ -340,8 +339,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			if (StringUtils.trimToNull(ph.getMandateType()) != null) {
 				index = index + 1;
 				ps.setString(index, ph.getMandateType());
-				if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, ph.getMandateType())
-						&& StringUtils.isNotEmpty(ph.getEmandateSource())) {
+
+				if (InstrumentType.isEMNDT(ph.getMandateType()) && StringUtils.isNotEmpty(ph.getEmandateSource())) {
 					index = index + 1;
 					ps.setString(index, ph.getEmandateSource());
 				}

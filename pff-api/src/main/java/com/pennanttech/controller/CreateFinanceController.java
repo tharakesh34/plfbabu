@@ -159,7 +159,6 @@ import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
@@ -167,6 +166,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
 import com.pennanttech.framework.security.core.User;
@@ -1713,7 +1713,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// set's the default chequeHeader to the financeDetail if chequeCapture
 		// is required.
-		if (MandateConstants.TYPE_PDC.equals(fm.getFinRepayMethod()) || finType.isChequeCaptureReq()) {
+		if (InstrumentType.isPDC(fm.getFinRepayMethod()) || finType.isChequeCaptureReq()) {
 			doSetDefaultChequeHeader(fd, moveLoanStage);
 		}
 		doProcessOCRDetails(fd, userDetails);

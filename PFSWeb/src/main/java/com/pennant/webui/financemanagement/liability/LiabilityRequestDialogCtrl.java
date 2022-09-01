@@ -96,6 +96,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
@@ -1123,9 +1124,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		this.finCcy.setValue(aFinanceMain.getFinCcy());
 		fillComboBox(this.cbProfitDaysBasis, aFinanceMain.getProfitDaysBasis(),
 				PennantStaticListUtil.getProfitDaysBasis(), "");
-		fillComboBox(this.finRepayMethod, aFinanceMain.getFinRepayMethod(), PennantStaticListUtil.getRepayMethods(),
-				"");
-		fillComboBox(this.advStage, aFinanceMain.getAdvStage(), PennantStaticListUtil.getRepayMethods(), "");
+		fillComboBox(this.finRepayMethod, aFinanceMain.getFinRepayMethod(), MandateUtil.getRepayMethods(), "");
+		fillComboBox(this.advStage, aFinanceMain.getAdvStage(), MandateUtil.getRepayMethods(), "");
 		this.offerId.setValue(aFinanceMain.getOfferId());
 		this.finIsRateRvwAtGrcEnd.setChecked(aFinanceMain.isFinIsRateRvwAtGrcEnd());
 		this.allowDrawingPower.setChecked(aFinanceMain.isAllowDrawingPower());
@@ -1197,7 +1197,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		if (StringUtils.isEmpty(repayMethod)) {
 			repayMethod = FinanceConstants.REPAYMTH_AUTO;
 		}
-		fillComboBox(this.finRepayMethod, repayMethod, PennantStaticListUtil.getRepayMethods(), "");
+		fillComboBox(this.finRepayMethod, repayMethod, MandateUtil.getRepayMethods(), "");
 
 		this.commitmentRef.setValue(aFinanceMain.getFinCommitmentRef(),
 				StringUtils.trimToEmpty(aFinanceMain.getFinCommitmentRef()));

@@ -101,7 +101,6 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
@@ -143,6 +142,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -1915,8 +1915,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.finCcy.setValue(aFinanceMain.getFinCcy());
 		fillComboBox(this.cbProfitDaysBasis, aFinanceMain.getProfitDaysBasis(),
 				PennantStaticListUtil.getProfitDaysBasis(), "");
-		fillComboBox(this.finRepayMethod, aFinanceMain.getFinRepayMethod(), PennantStaticListUtil.getRepayMethods(),
-				"");
+		fillComboBox(this.finRepayMethod, aFinanceMain.getFinRepayMethod(), MandateUtil.getRepayMethods(), "");
 
 		this.finBranch.setValue(aFinanceMain.getFinBranch());
 		if (customer != null) {
@@ -5516,8 +5515,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (getComboboxValue(this.finRepayMethod).equals(PennantConstants.List_Select)) {
-			fillComboBox(this.finRepayMethod, financeType.getFinRepayMethod(), PennantStaticListUtil.getRepayMethods(),
-					"");
+			fillComboBox(this.finRepayMethod, financeType.getFinRepayMethod(), MandateUtil.getRepayMethods(), "");
 			setRepayAccMandatory();
 		}
 

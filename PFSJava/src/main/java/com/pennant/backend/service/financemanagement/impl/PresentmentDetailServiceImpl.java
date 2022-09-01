@@ -75,9 +75,9 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -218,7 +218,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	@Override
 	public String savePresentmentDetails(PresentmentHeader ph) {
-		if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+		if (InstrumentType.isPDC(ph.getMandateType())) {
 			return savePDCPresentments(ph);
 		}
 		return savePresentments(ph);
@@ -396,8 +396,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 						excessAmountList = new ArrayList<>();
 					}
 				}
-
-				if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+				if (InstrumentType.isPDC(ph.getMandateType())) {
 					chequeStatusList.add(item.getMandateId());
 
 					if (chequeStatusList.size() == PennantConstants.CHUNK_SIZE) {
@@ -432,7 +431,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			updatePresentmentIdAsZero(pd.getId());
 
 			String paymentMode = this.presentmentDetailDAO.getPaymenyMode(pd.getPresentmentRef());
-			if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
+			if (InstrumentType.isPDC(paymentMode)) {
 				updateChequeStatus(pd.getMandateId(), PennantConstants.CHEQUESTATUS_NEW);
 			}
 
@@ -545,7 +544,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		try {
 			String presentmentRef = presentmentHeader.getReference();
 			String bankAccNo = presentmentHeader.getPartnerAcctNumber();
-			boolean isPDC = MandateConstants.TYPE_PDC.equals(presentmentHeader.getMandateType());
+			boolean isPDC = InstrumentType.isPDC(presentmentHeader.getMandateType());
 
 			getPresentmentRequest().sendReqest(idList, idExcludeEmiList, headerId, isError, isPDC, presentmentRef,
 					bankAccNo);

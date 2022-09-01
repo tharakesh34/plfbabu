@@ -2689,20 +2689,6 @@ public class PennantStaticListUtil {
 		return statusTypeList;
 	}
 
-	public static List<ValueLabel> getRepayMethods() {
-		if (repayMethodList == null) {
-			repayMethodList = new ArrayList<ValueLabel>(3);
-			repayMethodList
-					.add(new ValueLabel(FinanceConstants.REPAYMTH_MANUAL, Labels.getLabel("label_RepayMethod_Manual")));
-			if (ImplementationConstants.AUTO_ALLOWED) {
-				repayMethodList
-						.add(new ValueLabel(FinanceConstants.REPAYMTH_AUTO, Labels.getLabel("label_RepayMethod_Casa")));
-			}
-			// repayMethodList.addAll(getMandateTypeList()); FIXME Murthy::
-		}
-		return repayMethodList;
-	}
-
 	public static List<ValueLabel> getProductCategories() {
 		if (productCategories == null) {
 			productCategories = new ArrayList<ValueLabel>(15);
@@ -3575,16 +3561,6 @@ public class PennantStaticListUtil {
 			monthMapping.add(new ValueLabel("12", Labels.getLabel("label_DataExtraction_Dec")));
 		}
 		return monthMapping;
-	}
-
-	public static List<ValueLabel> getMandateMapping() {
-
-		if (mandateMapping == null) {
-			mandateMapping = new ArrayList<ValueLabel>(2);
-			mandateMapping.add(new ValueLabel(MandateConstants.TYPE_DDM, Labels.getLabel("label_Mandate_DD")));
-			mandateMapping.add(new ValueLabel(MandateConstants.TYPE_NACH, Labels.getLabel("label_Mandate_Nach")));
-		}
-		return mandateMapping;
 	}
 
 	public static List<ValueLabel> getPresentmentMapping() {

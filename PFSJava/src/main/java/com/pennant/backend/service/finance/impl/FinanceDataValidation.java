@@ -169,7 +169,8 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
@@ -1792,7 +1793,7 @@ public class FinanceDataValidation {
 
 			// finRepay method
 			if (StringUtils.isNotBlank(repayMethod)) {
-				List<ValueLabel> repayMethods = PennantStaticListUtil.getRepayMethods();
+				List<ValueLabel> repayMethods = MandateUtil.getRepayMethods();
 				boolean repayMehodSts = false;
 				for (ValueLabel value : repayMethods) {
 					if (StringUtils.equals(value.getValue(), repayMethod)) {
@@ -2938,7 +2939,7 @@ public class FinanceDataValidation {
 
 				// validate MandateType
 				if (StringUtils.isNotBlank(mandate.getMandateType())) {
-					List<ValueLabel> mandateType = InstrumentTypes.list();
+					List<ValueLabel> mandateType = MandateUtil.getInstrumentTypes();
 					boolean mandateTypeSts = false;
 					for (ValueLabel value : mandateType) {
 						if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
@@ -3054,7 +3055,7 @@ public class FinanceDataValidation {
 					}
 				}
 			}
-			if (StringUtils.equals(mandate.getMandateType(), MandateConstants.TYPE_EMANDATE)) {
+			if (InstrumentType.isEMNDT(mandate.getMandateType())) {
 				if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
 					String[] valueParm1 = new String[1];
 					valueParm1[0] = "eMandateReferenceNo";
@@ -3286,15 +3287,17 @@ public class FinanceDataValidation {
 	}
 
 	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
-		if (StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())) {
+		String mandateType = mandate.getMandateType();
+
+		if (InstrumentType.isECS(mandateType)) {
 			if (!bankBranch.isEcs()) {
 				isValidBranch = false;
 			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())) {
+		} else if (InstrumentType.isDD(mandateType)) {
 			if (!bankBranch.isDda()) {
 				isValidBranch = false;
 			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())) {
+		} else if (InstrumentType.isNACH(mandateType)) {
 			if (!bankBranch.isNach()) {
 				isValidBranch = false;
 			}
@@ -3744,7 +3747,7 @@ public class FinanceDataValidation {
 		}
 
 		if (StringUtils.isNotBlank(repayMethod)) {
-			List<ValueLabel> repayMethods = PennantStaticListUtil.getRepayMethods();
+			List<ValueLabel> repayMethods = MandateUtil.getRepayMethods();
 			boolean repayMehodSts = false;
 			for (ValueLabel value : repayMethods) {
 				if (StringUtils.equals(value.getValue(), repayMethod)) {

@@ -35,7 +35,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 /**
@@ -82,7 +82,7 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 
 		lc.setParent(item);
 
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(ph.getMandateType(), InstrumentTypes.list()));
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(ph.getMandateType(), MandateUtil.getInstrumentTypes()));
 		lc.setParent(item);
 
 		lc = new Listcell(DateUtility.formatToLongDate(ph.getPresentmentDate()));

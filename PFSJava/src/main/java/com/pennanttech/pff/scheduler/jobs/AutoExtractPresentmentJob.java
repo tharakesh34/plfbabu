@@ -14,8 +14,8 @@ import org.quartz.PersistJobDataAfterExecution;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.financemanagement.impl.PresentmentJobService;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -47,10 +47,10 @@ public class AutoExtractPresentmentJob extends AbstractJob {
 			for (FinanceType loanType : loanTypes) {
 				for (String mandateType : mandateTypes) {
 					PresentmentHeader presentmentHeader = new PresentmentHeader();
-					if (mandateType.equals(MandateConstants.TYPE_NACH)) {
+					if (InstrumentType.isNACH(mandateType)) {
 						toDate = DateUtil.addDays(appDate, nachDateFreq);
 						fromDate = DateUtil.addDays(appDate, nachDateFreq);
-					} else if (mandateType.equals(MandateConstants.TYPE_PDC)) {
+					} else if (InstrumentType.isPDC(mandateType)) {
 						toDate = DateUtil.addDays(appDate, pdcDateFreq);
 						fromDate = DateUtil.addDays(appDate, pdcDateFreq);
 						presentmentHeader.setLoanType(loanType.getFinType());
@@ -78,8 +78,8 @@ public class AutoExtractPresentmentJob extends AbstractJob {
 
 	public List<String> getMandateTypeList() {
 		List<String> mandateTypes = new ArrayList<String>();
-		mandateTypes.add(MandateConstants.TYPE_NACH);
-		mandateTypes.add(MandateConstants.TYPE_PDC);
+		mandateTypes.add(InstrumentType.NACH.name());
+		mandateTypes.add(InstrumentType.PDC.name());
 		return mandateTypes;
 	}
 

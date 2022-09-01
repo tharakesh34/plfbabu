@@ -69,6 +69,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -311,12 +312,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 	private boolean checkRepayMethod(FinanceMain finmain) {
 		String rpymentod = StringUtils.trimToEmpty(finmain.getFinRepayMethod());
-		if (rpymentod.equals(MandateConstants.TYPE_ECS) || rpymentod.equals(MandateConstants.TYPE_DDM)
-				|| rpymentod.equals(MandateConstants.TYPE_NACH) || rpymentod.equals(MandateConstants.TYPE_EMANDATE)) {
-			return true;
-		} else {
-			return false;
-		}
+		return InstrumentType.isValid(rpymentod);
 	}
 
 	private Mandate checkExistingMandate(long mandateID) {
@@ -510,8 +506,10 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 					String mandateType = StringUtils.trimToEmpty(mandate.getMandateType());
 					// prompt for Auto Debit
-					if ((MandateConstants.TYPE_ECS.equals(mandateType)
-							|| MandateConstants.TYPE_NACH.equals(mandateType)) && bankBranch.isDda()) {
+
+					InstrumentType.isECS(mandateType);
+					if ((InstrumentType.isECS(mandateType) || InstrumentType.isNACH(mandateType))
+							&& bankBranch.isDda()) {
 
 						String[] errParmBranch = new String[1];
 						String[] valueParmBranch = new String[1];
@@ -521,8 +519,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "65016", errParmBranch, valueParmBranch),
 								""));
-
-					} else if (StringUtils.equals(mandateType, MandateConstants.TYPE_ECS) && bankBranch.isNach()) {
+					} else if (InstrumentType.isECS(mandateType) && bankBranch.isNach()) {
 
 						String[] errParmBranch = new String[1];
 						String[] valueParmBranch = new String[1];

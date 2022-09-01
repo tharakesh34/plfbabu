@@ -104,7 +104,8 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -229,7 +230,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	// ServiceDAOs / Domain Classes
 	private transient MandateService mandateService;
 
-	private final List<ValueLabel> mandateTypeList = InstrumentTypes.list();
+	private final List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
 	private final List<ValueLabel> statusTypeList = PennantStaticListUtil
 			.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
@@ -969,25 +970,26 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void onChangeMandateType(String str) {
+		InstrumentType instrumentType = InstrumentType.valueOf(str);
+
 		Filter filter[] = new Filter[1];
-		switch (str) {
-		case MandateConstants.TYPE_ECS:
+		switch (instrumentType) {
+		case ECS:
 			filter[0] = new Filter("ECS", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			this.umrNumber.setReadonly(true);
 			break;
-		case MandateConstants.TYPE_DDM:
+		case DDM:
 			filter[0] = new Filter("DDA", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			this.umrNumber.setReadonly(true);
 			break;
-		case MandateConstants.TYPE_NACH:
+		case NACH:
 			filter[0] = new Filter("NACH", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			this.umrNumber.setReadonly(true);
 			break;
-		case MandateConstants.TYPE_EMANDATE:
-
+		case EMANDATE:
 			filter[0] = new Filter("EMANDATE", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			this.row_MandateSource.setVisible(true);
@@ -1404,7 +1406,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.btnFetchAccountDetails.setDisabled(false);
 		}
 		List<String> excludelist = new ArrayList<String>(1);
-		excludelist.add(MandateConstants.TYPE_PDC);
+		excludelist.add(InstrumentType.PDC.name());
 		fillComboBox(this.mandateType, aMandate.getMandateType(), mandateTypeList, excludelist);
 		List<String> excludeList = new ArrayList<String>();
 		if (registration) {
@@ -1876,7 +1878,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			wve.add(we);
 		}
 		// EmandateReferenceNo
-		if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, aMandate.getMandateType())) {
+		if (InstrumentType.isEMNDT(aMandate.getMandateType())) {
 			try {
 				aMandate.seteMandateReferenceNo(this.eMandateReferenceNo.getValue());
 			} catch (WrongValueException we) {
@@ -2597,7 +2599,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.parenttab.setVisible(false);
 		String val = StringUtils.trimToEmpty(mandateType);
 
-		if (!MandateConstants.TYPE_PDC.equals(val)) {
+		if (!InstrumentType.isPDC(val)) {
 			for (ValueLabel valueLabel : mandateTypeList) {
 				if (val.equals(valueLabel.getValue())) {
 					this.parenttab.setVisible(true);

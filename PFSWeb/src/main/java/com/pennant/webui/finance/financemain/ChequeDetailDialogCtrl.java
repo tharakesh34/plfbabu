@@ -93,12 +93,12 @@ import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.service.pennydrop.PennyDropService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -1361,7 +1361,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				cheqDetails.setAccHolderName(this.accHolderName.getValue());
 				cheqDetails.setAccountType(this.accountType.getSelectedItem().getValue().toString());
 				cheqDetails.setChequeStatus(this.chequeStatus.getSelectedItem().getValue().toString());
-				if (MandateConstants.TYPE_PDC.equals(cheqDetails.getChequeType())) {
+
+				if (InstrumentType.isPDC(cheqDetails.getChequeType())) {
 					emiNum = getEmiNumber(emiNum);
 					cheqDetails.seteMIRefNo(emiNum);
 				}
@@ -1626,7 +1627,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				// Due Date
 				listcell = new Listcell();
 				Combobox emiReference = getCombobox(String.valueOf(detail.geteMIRefNo()));
-				if (!MandateConstants.TYPE_PDC.equals(detail.getChequeType())) {
+				if (!InstrumentType.isPDC(detail.getChequeType())) {
 					readOnlyComponent(true, emiReference);
 				} else {
 					readOnlyComponent(isReadOnly, emiReference);
@@ -2497,9 +2498,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		boolean isChqCaptureReq = financeDetail.getFinScheduleData().getFinanceType().isChequeCaptureReq();
 
 		this.parenttab.setVisible(false);
-		if (isChqCaptureReq || isContainPrvsCheques || MandateConstants.TYPE_PDC.equals(mandateType)) {
+		if (isChqCaptureReq || isContainPrvsCheques || InstrumentType.isPDC(mandateType)) {
 			this.parenttab.setVisible(true);
-			if (MandateConstants.TYPE_PDC.equals(mandateType)) {
+			if (InstrumentType.isPDC(mandateType)) {
 				fillComboBox(this.chequeType, mandateType, chequeTypeList, "");
 			} else {
 				fillComboBox(this.chequeType, FinanceConstants.REPAYMTH_UDC, chequeTypeList, "");

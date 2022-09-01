@@ -51,6 +51,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -456,13 +457,13 @@ public class ApprovalScreenEventHistory {
 			Listitem item = new Listitem();
 			Listcell lc;
 			String currentRpyMthd = PennantStaticListUtil.getlabelDesc(financeMains.get(0).getFinRepayMethod(),
-					PennantStaticListUtil.getRepayMethods());
+					MandateUtil.getRepayMethods());
 			lc = new Listcell(StringUtils.equals(currentRpyMthd, "") ? "N/A" : currentRpyMthd);
 			lc.setParent(item);
 			lc = new Listcell(String.valueOf(financeMains.get(0).getMandateID()));
 			lc.setParent(item);
 			lc = new Listcell(PennantStaticListUtil.getlabelDesc(finScheduleData.getFinanceMain().getFinRepayMethod(),
-					PennantStaticListUtil.getRepayMethods()));
+					MandateUtil.getRepayMethods()));
 			lc.setParent(item);
 			lc = new Listcell(String.valueOf(finScheduleData.getFinanceMain().getMandateID()));
 			lc.setParent(item);

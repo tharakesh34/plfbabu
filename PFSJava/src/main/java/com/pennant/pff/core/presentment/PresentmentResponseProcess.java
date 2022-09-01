@@ -51,11 +51,11 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
@@ -221,11 +221,11 @@ public class PresentmentResponseProcess implements Runnable {
 				rh = getFinReceiptHeader(receiptID);
 			}
 
-			if (MandateConstants.TYPE_PDC.equals(mandateType)) {
+			if (InstrumentType.isPDC(mandateType)) {
 				checkStatus = PennantConstants.CHEQUESTATUS_REALISED;
 			}
 		} else {
-			if (MandateConstants.TYPE_PDC.equals(mandateType)) {
+			if (InstrumentType.isPDC(mandateType)) {
 				if (StringUtils.trimToNull(pd.getErrorDesc()) == null) {
 					checkStatus = PennantConstants.CHEQUESTATUS_BOUNCE;
 				} else {
@@ -260,7 +260,7 @@ public class PresentmentResponseProcess implements Runnable {
 				presentmentDetailDAO.updatePresentmentIdAsZero(pd.getId());
 			}
 
-			if (MandateConstants.TYPE_PDC.equals(mandateType) && checkStatus != null) {
+			if (InstrumentType.isPDC(mandateType) && checkStatus != null) {
 				presentmentDetailDAO.updateChequeStatus(mandateID, checkStatus);
 			}
 

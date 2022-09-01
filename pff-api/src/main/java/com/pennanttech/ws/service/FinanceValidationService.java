@@ -61,7 +61,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.util.APIConstants;
@@ -292,7 +292,7 @@ public class FinanceValidationService {
 
 			// finRepay method
 			if (StringUtils.isNotBlank(financeMain.getFinRepayMethod())) {
-				List<ValueLabel> repayMethods = PennantStaticListUtil.getRepayMethods();
+				List<ValueLabel> repayMethods = MandateUtil.getRepayMethods();
 				boolean repayMehodSts = false;
 				for (ValueLabel value : repayMethods) {
 					if (StringUtils.equals(value.getValue(), financeMain.getFinRepayMethod())) {
@@ -714,7 +714,7 @@ public class FinanceValidationService {
 
 				// validate MandateType
 				if (StringUtils.isNotBlank(mandate.getMandateType())) {
-					List<ValueLabel> mandateType = InstrumentTypes.list();
+					List<ValueLabel> mandateType = MandateUtil.getInstrumentTypes();
 					boolean mandateTypeSts = false;
 					for (ValueLabel value : mandateType) {
 						if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {

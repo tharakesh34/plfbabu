@@ -73,6 +73,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -276,7 +277,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 					mandate.setStatus(MandateConstants.STATUS_NEW);
 				}
 			}
-			if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, mandate.getMandateType())) {
+
+			if (InstrumentType.isEMNDT(mandate.getMandateType())) {
 				if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 					mandate.setStatus(MandateConstants.STATUS_APPROVED);
 				} else {

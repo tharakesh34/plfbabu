@@ -31,6 +31,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUpload;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUploadHeader;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -331,7 +332,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			paymentMethodUploadDAO.updateFinRepaymethod(changePayment);
 			paymentMethodUploadDAO.updateChangePaymentDetails(changePayment);
 
-			if (MandateConstants.TYPE_PDC.equals(changePayment.getFinRepayMethod())) {
+			if (InstrumentType.isPDC(changePayment.getFinRepayMethod())) {
 				if (!chequeHeaderDAO.isChequeDetilsExists(changePayment.getFinID())) {
 					ChequeHeader ch = new ChequeHeader();
 					ch.setRoleCode("");
