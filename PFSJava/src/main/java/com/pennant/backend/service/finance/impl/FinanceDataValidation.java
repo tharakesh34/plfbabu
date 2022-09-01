@@ -3055,7 +3055,7 @@ public class FinanceDataValidation {
 					}
 				}
 			}
-			if (InstrumentType.isEMNDT(mandate.getMandateType())) {
+			if (InstrumentType.isEMandate(mandate.getMandateType())) {
 				if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
 					String[] valueParm1 = new String[1];
 					valueParm1[0] = "eMandateReferenceNo";

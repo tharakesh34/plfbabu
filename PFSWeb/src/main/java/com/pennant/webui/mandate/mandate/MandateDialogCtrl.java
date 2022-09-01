@@ -112,7 +112,8 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -271,7 +272,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private int ccyFormatter = 0;
 	protected int maxAccNoLength;
 	protected int minAccNoLength;
-	private final List<ValueLabel> mandateTypeList = InstrumentTypes.list();
+
+	private final List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
 	private final List<ValueLabel> statusTypeList = PennantStaticListUtil
 			.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
@@ -337,11 +339,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void onCreateFromMandate() {
 		setMandateRegistrationListCtrl((MandateRegistrationListCtrl) arguments.get("mandateRegistrationListCtrl"));
 
-		this.custID.setValue(this.mandate.getCustCIF());
-
-		this.entityCode.setDescColumn(this.mandate.getEntityDesc());
-		this.entityCode.setValue(this.mandate.getEntityCode());
-
 		fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
 
 		this.mandateType.setDisabled(true);
@@ -397,6 +394,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} else {
 			onCreateFromMandate();
 		}
+
+		this.custID.setValue(this.mandate.getCustCIF());
+
+		this.entityCode.setDescColumn(this.mandate.getEntityDesc());
+		this.entityCode.setValue(this.mandate.getEntityCode());
 
 		try {
 
@@ -489,7 +491,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setDisplayStyle(2);
-		this.entityCode.setTextBoxWidth(200);
+		this.entityCode.setTextBoxWidth(150);
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
 			this.label_PartnerBank.setVisible(true);
@@ -540,7 +542,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.hold.setDisabled(!maintain);
 		this.holdReasons.setReadonly(!maintain);
 
-		this.row_employee.setVisible(InstrumentTypes.isDAS(mandateType.getSelectedItem().getValue()));
+		this.row_employee.setVisible(InstrumentType.isDAS(mandateType.getSelectedItem().getValue()));
 
 		String recordType = this.mandate.getRecordType();
 		this.rowSwapMandate.setVisible(PennantConstants.RECORD_TYPE_NEW.equals(recordType) || enqiryModule);
@@ -809,7 +811,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.btnUploadDoc);
 			readOnlyComponent(true, this.barCodeNumber);
 			readOnlyComponent(true, swapIsActive);
-			readOnlyComponent(true, this.entityCode);
 			readOnlyComponent(true, this.pennyDropResult);
 			readOnlyComponent(true, this.txnDetails);
 			readOnlyComponent(true, this.defaultMandate);
@@ -908,25 +909,30 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void onChangeMandateType(String str) {
+		InstrumentType instrumentType = InstrumentType.valueOf(str);
+
+		if (instrumentType == null) {
+			return;
+		}
+
 		Filter filter[] = new Filter[1];
-		switch (str) {
-		case MandateConstants.TYPE_ECS:
+		switch (instrumentType) {
+		case ECS:
 			filter[0] = new Filter("ECS", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			this.umrNumber.setReadonly(true);
 			break;
-		case MandateConstants.TYPE_DDM:
+		case DDM:
 			filter[0] = new Filter("DDA", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			this.umrNumber.setReadonly(true);
 			break;
-		case MandateConstants.TYPE_NACH:
+		case NACH:
 			filter[0] = new Filter("NACH", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			this.umrNumber.setReadonly(true);
 			break;
-		case MandateConstants.TYPE_EMANDATE:
-
+		case EMANDATE:
 			filter[0] = new Filter("EMANDATE", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
 			this.row_MandateSource.setVisible(true);
@@ -940,7 +946,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	public void doShowDialog(Mandate aMandate) {
 		logger.debug(Literal.ENTERING);
 
-		// set ReadOnly mode accordingly if the object is new or not.
 		if (aMandate.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			Date appDate = SysParamUtil.getAppDate();
@@ -1065,7 +1070,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.approvalID);
 			readOnlyComponent(true, this.barCodeNumber);
 			readOnlyComponent(true, this.swapIsActive);
-			readOnlyComponent(true, this.entityCode);
 			readOnlyComponent(true, this.pennyDropResult);
 			readOnlyComponent(true, this.txnDetails);
 			readOnlyComponent(true, this.defaultMandate);
@@ -1149,8 +1153,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.reason.setVisible(false);
 
 			readOnlyComponent(true, this.finReference);
-			readOnlyComponent(true, this.entityCode);
-
 		}
 
 		if (StringUtils.isNotEmpty(getMandate().getOrgReference())
@@ -1192,7 +1194,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} else {
 			this.mandateType.setReadonly(true);
 			this.custID.setReadonly(true);
-			this.entityCode.setReadonly(true);
 		}
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_MANDATE_ACCT_DET_READONLY)) {
@@ -1335,7 +1336,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.barCodeNumber);
 		readOnlyComponent(true, this.swapIsActive);
-		readOnlyComponent(true, this.entityCode);
 		readOnlyComponent(true, this.pennyDropResult);
 		readOnlyComponent(true, this.txnDetails);
 		readOnlyComponent(true, this.defaultMandate);
@@ -1383,8 +1383,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.btnFetchAccountDetails.setDisabled(false);
 		}
 		List<String> excludelist = new ArrayList<String>(1);
-		excludelist.add(MandateConstants.TYPE_PDC);
+
 		fillComboBox(this.mandateType, aMandate.getMandateType(), mandateTypeList, excludelist);
+
 		List<String> excludeList = new ArrayList<String>();
 		if (registration) {
 			excludeList.add(MandateConstants.STATUS_FIN);
@@ -1843,7 +1844,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			wve.add(we);
 		}
 
-		if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, aMandate.getMandateType())) {
+		if (InstrumentType.isEMandate(aMandate.getMandateType())) {
 			try {
 				aMandate.seteMandateReferenceNo(this.eMandateReferenceNo.getValue());
 			} catch (WrongValueException we) {
@@ -2062,7 +2063,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.reason.setConstraint("");
 		this.barCodeNumber.setConstraint("");
 		this.finReference.setConstraint("");
-		this.entityCode.setConstraint("");
 		this.eMandateReferenceNo.setConstraint("");
 		this.eMandateSource.setConstraint("");
 
@@ -2096,7 +2096,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.documentName.setErrorMessage("");
 		this.barCodeNumber.setErrorMessage("");
 		this.finReference.setErrorMessage("");
-		this.entityCode.setErrorMessage("");
 
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			this.partnerBank.setErrorMessage("");
@@ -2521,7 +2520,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.parenttab.setVisible(false);
 		String val = StringUtils.trimToEmpty(mandateType);
 
-		if (!MandateConstants.TYPE_PDC.equals(val)) {
+		if (!InstrumentType.isPDC(val)) {
 			for (ValueLabel valueLabel : mandateTypeList) {
 				if (val.equals(valueLabel.getValue())) {
 					this.parenttab.setVisible(true);

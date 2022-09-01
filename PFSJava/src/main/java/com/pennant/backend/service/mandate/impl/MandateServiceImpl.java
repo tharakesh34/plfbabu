@@ -279,7 +279,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				}
 			}
 
-			if (InstrumentType.isEMNDT(mandate.getMandateType())) {
+			if (InstrumentType.isEMandate(mandate.getMandateType())) {
 				if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 					mandate.setStatus(MandateConstants.STATUS_APPROVED);
 				} else {

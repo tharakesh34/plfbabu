@@ -39,7 +39,7 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.MandateConstants;
-import com.pennant.pff.mandate.InstrumentTypes;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.financemanagement.paymentMode.SelectReceiptPaymentDialogCtrl;
@@ -80,7 +80,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private CustomerDetailsService customerDetailsService;
 	private transient CustomerService customerService;
 
-	private final List<ValueLabel> mandateTypeList = InstrumentTypes.list();
+	private final List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 
 	private Customer customer;
 	Date appDate = SysParamUtil.getAppDate();

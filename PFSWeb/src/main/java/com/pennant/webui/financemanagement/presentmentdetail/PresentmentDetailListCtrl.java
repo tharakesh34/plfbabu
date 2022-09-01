@@ -159,7 +159,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 			this.help.setVisible(false);
 		}
 
-		if (InstrumentType.isEMNDT(mandateType.getSelectedItem().getValue())) {
+		if (InstrumentType.isEMandate(mandateType.getSelectedItem().getValue())) {
 			if (!this.emandateSource.getValidatedValue().isEmpty()) {
 				this.searchObject.addFilterIn("EMANDATESOURCE", this.emandateSource.getValidatedValue());
 			}
@@ -263,7 +263,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 
 		String code = mandateType.getSelectedItem().getValue();
 
-		if (InstrumentType.isEMNDT(code)) {
+		if (InstrumentType.isEMandate(code)) {
 			this.emandateSource.setValue("");
 			this.emandateSource.setDescColumn("");
 			emandateSource.setVisible(true);

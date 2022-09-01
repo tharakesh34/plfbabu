@@ -90,7 +90,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 
 		WSReturnStatus returnStatus = doMandateValidation(mandate);
 		if (StringUtils.isNotBlank(mandate.getMandateRef())) {
-			if (!InstrumentType.isEMNDT(mandate.getMandateType())) {
+			if (!InstrumentType.isEMandate(mandate.getMandateType())) {
 				response = new Mandate();
 				String[] paramValue = new String[2];
 				paramValue[0] = "mandateRef";
@@ -688,7 +688,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			}
 		}
 
-		if (InstrumentType.isEMNDT(mandate.getMandateType())) {
+		if (InstrumentType.isEMandate(mandate.getMandateType())) {
 			if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
 				String[] valueParm1 = new String[1];
 				valueParm1[0] = "eMandateReferenceNo";

@@ -27,24 +27,31 @@ public class MandateUtil {
 
 			String label = null;
 			switch (item) {
+			case NACH:
+				label = Labels.getLabel("label_Mandate_Nach");
+				break;
 			case ECS:
 				label = Labels.getLabel("label_Mandate_Ecs");
 				break;
-			case DDM:
-				label = Labels.getLabel("label_Mandate_DD");
+			case ENACH:
+				label = Labels.getLabel("label_Mandate_ENach");
 				break;
-			case NACH:
-				label = Labels.getLabel("label_Mandate_Nach");
+			case EMANDATE:
+				label = Labels.getLabel("label_Mandate_EMandate");
 				break;
 			case PDC:
 				label = Labels.getLabel("label_Mandate_PDC");
 				break;
-			case DAS:
-				label = Labels.getLabel("label_Mandate_DAS");
+			case DDM:
+				label = Labels.getLabel("label_Mandate_DD");
 				break;
 			case SI:
 				label = Labels.getLabel("label_Mandate_SI");
 				break;
+			case DAS:
+				label = Labels.getLabel("label_Mandate_DAS");
+				break;
+
 			default:
 				continue;
 			}

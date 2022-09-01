@@ -255,7 +255,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(" AND ((SCHDATE >= ? AND SCHDATE <= ? OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?))) ");
 
 		if (StringUtils.trimToNull(ph.getMandateType()) != null) {
-			if (InstrumentType.isEMNDT(ph.getMandateType()) && StringUtils.isNotEmpty(ph.getEmandateSource())) {
+			if (InstrumentType.isEMandate(ph.getMandateType()) && StringUtils.isNotEmpty(ph.getEmandateSource())) {
 				sql.append(" AND (T4.MANDATETYPE = ?) AND (T4.EMANDATESOURCE = ?) ");
 			} else {
 				sql.append(" AND (T4.MANDATETYPE = ?) ");
@@ -340,7 +340,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				index = index + 1;
 				ps.setString(index, ph.getMandateType());
 
-				if (InstrumentType.isEMNDT(ph.getMandateType()) && StringUtils.isNotEmpty(ph.getEmandateSource())) {
+				if (InstrumentType.isEMandate(ph.getMandateType()) && StringUtils.isNotEmpty(ph.getEmandateSource())) {
 					index = index + 1;
 					ps.setString(index, ph.getEmandateSource());
 				}

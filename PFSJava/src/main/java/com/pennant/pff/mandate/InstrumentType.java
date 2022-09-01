@@ -8,6 +8,10 @@ public enum InstrumentType {
 
 	ECS,
 
+	ENACH,
+
+	EMANDATE,
+
 	DDM,
 
 	NACH,
@@ -15,8 +19,6 @@ public enum InstrumentType {
 	PDC,
 
 	UDC,
-
-	EMANDATE,
 
 	DAS,
 
@@ -46,7 +48,7 @@ public enum InstrumentType {
 		return st == null ? false : st == InstrumentType.PDC;
 	}
 
-	public static boolean isEMNDT(String instrumentType) {
+	public static boolean isEMandate(String instrumentType) {
 		InstrumentType st = InstrumentType.valueOf(instrumentType);
 
 		return st == null ? false : st == InstrumentType.EMANDATE;

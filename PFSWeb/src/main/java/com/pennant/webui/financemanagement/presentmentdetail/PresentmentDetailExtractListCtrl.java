@@ -273,7 +273,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		}
 
 		try {
-			if (InstrumentType.isEMNDT(mandateType.getSelectedItem().getValue())) {
+			if (InstrumentType.isEMandate(mandateType.getSelectedItem().getValue())) {
 				detailHeader.setEmandateSource(StringUtils.trimToNull(this.emandateSource.getValidatedValue()));
 			}
 		} catch (WrongValueException we) {
@@ -468,7 +468,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			Clients.clearWrongValue(loanType);
 		}
 
-		if (InstrumentType.isEMNDT(code)) {
+		if (InstrumentType.isEMandate(code)) {
 			this.emandateSource.setValue("");
 			this.emandateSource.setDescColumn("");
 			emandateSource.setVisible(true);
