@@ -631,8 +631,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	}
 
 	/**
-	 * List of authentication types, based on the selection visible the password rows. if authentication type is DAO
-	 * then visible the password rows.
+	 * Set the required components access based on the authentication type selection.
 	 */
 	public void onChange$authType(Event event) {
 		setPasswordRowVisibility(this.authType.getSelectedItem().getValue().toString());
@@ -645,8 +644,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	}
 
 	/**
-	 * Setting the password row visibility based on the authentication type.
-	 * 
+	 * Set the required components access based on the authentication type.
 	 */
 	private void setPasswordRowVisibility(String authType) {
 		boolean isDAO = AuthenticationType.DAO.name().equals(authType);
@@ -655,8 +653,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	}
 
 	/**
-	 * Setting the password row visibility based on the authentication type.
-	 * 
+	 * Set the required components help access based on the authentication type.
 	 */
 	private void setPasswordInstructionsVisibility(String authType) {
 		boolean isDAO = AuthenticationType.DAO.name().equals(authType);
@@ -724,7 +721,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				}
 
 				try {
-					/* Check Password and confirm password are same or not */
+					// Check whether the confirmed input matches with the actual.
 					if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
 						if (StringUtils.isNotBlank(this.txtbox_Password1.getValue())
 								&& StringUtils.isNotBlank(this.txtbox_confirm_Password1.getValue())) {
@@ -975,7 +972,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			int size = tab1.size();
 			WrongValueException[] wvea = new WrongValueException[size];
 
-			/* if any Exception Occurs make password and new password Fields empty */
+			// Clear the fields on exception.
 			this.txtbox_Password.setValue("");
 			this.txtbox_confirm_Password.setValue("");
 			/* this.div_PwdStatusMeter.setStyle("background-color:white"); */
@@ -1227,10 +1224,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	}
 
 	/**
-	 * This validate method is custom validation for password field Validates the password field whether password
-	 * following Defined criteria by calling ChangePasswordModel's validate() method if password not following criteria
-	 * it throws WrongValueException.
-	 * 
+	 * Extended to enforce policy restrictions.
 	 */
 	@Override
 	public void validate(Component comp, Object value) {
@@ -1464,11 +1458,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} else {
 			aSecurityUser.setVersion(aSecurityUser.getVersion() + 1);
 			if (isNew) {
-				/*
-				 * set userActExp Date one day before the system date(i.e already expired date) for new record for get
-				 * change password dialog when user first login
-				 */
-
+				// Force user to change on his/her first login.
 				aSecurityUser.setUsrAcExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), -1));
 				tranType = PennantConstants.TRAN_ADD;
 				aSecurityUser.setRecordType("");
@@ -1713,9 +1703,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	}
 
 	/**
-	 * This is onChanging EventListener class for password field . This class do the following 1)While entering password
-	 * it checks whether password following defined criteria by calling ChangePasswordModel's methods 2)According to
-	 * satisfied conditions it assigns pwdstatusCode and calls showPasswordStatusMeter() for view passwordStatusMeter.
+	 * Event listener to set the status code based on strength.
 	 */
 	final class OnChanging implements EventListener<Event> {
 		public OnChanging() {
@@ -1744,26 +1732,20 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 						StringUtils.trimToEmpty(pwd))) {
 					pwdstatusCode = 1;
 				}
-				/* if criteria matched and password length less than PennantConstants.PWD_STATUSBAR_CHAR_LENGTH */
+				// Check whether criteria matched.
 				if ((!changePasswordModel.checkPasswordCriteria(
 						StringUtils.trimToEmpty(SecurityUserDialogCtrl.this.usrLogin.getValue()),
 						StringUtils.trimToEmpty(pwd))) && (StringUtils.trimToEmpty(pwd).length() < pwdMinLenght)) {
 					pwdstatusCode = 2;
 				}
-				/*
-				 * if criteria matched and password length greater than PennantConstants.PWD_STATUSBAR_CHAR_LENGTH and
-				 * special character count less than PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT
-				 */
+				// Check whether the minimum required characters available.
 				if ((!changePasswordModel.checkPasswordCriteria(
 						StringUtils.trimToEmpty(SecurityUserDialogCtrl.this.usrLogin.getValue()),
 						StringUtils.trimToEmpty(pwd)))
 						&& (StringUtils.trimToEmpty(pwd).length() >= pwdMinLenght && splCharCount < specialCharCount)) {
 					pwdstatusCode = 3;
 				}
-				/*
-				 * if criteria matched and password length greater than PennantConstants.PWD_STATUSBAR_CHAR_LENGTH and
-				 * special character count PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT or more
-				 */
+				// Check whether the minimum required special characters available.
 				if ((!changePasswordModel.checkPasswordCriteria(
 						StringUtils.trimToEmpty(SecurityUserDialogCtrl.this.usrLogin.getValue()),
 						StringUtils.trimToEmpty(pwd)))

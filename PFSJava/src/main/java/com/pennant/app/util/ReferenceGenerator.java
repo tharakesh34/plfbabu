@@ -229,7 +229,7 @@ public class ReferenceGenerator implements Serializable {
 	}
 
 	/**
-	 * This method will return Agreement Password by using customer details
+	 * Get the token for protecting the agreement by using customer details.
 	 * 
 	 * @param customer
 	 * @return

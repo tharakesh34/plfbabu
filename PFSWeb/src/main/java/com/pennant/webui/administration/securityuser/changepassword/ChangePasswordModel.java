@@ -46,14 +46,12 @@ public class ChangePasswordModel {
 	private static final String DEFAULT_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=[^\\s]+$)(?=.*[!@#$%^&*_-])";
 
 	/**
-	 * This method checking whether EncriptedPassword and raw password are same or not by calling PasswordEncoderImpl's
-	 * isPasswordValid() method
+	 * Compares whether both the parameters are same or not.
 	 * 
-	 * @param oldPassword //encrypted Old password
-	 * @param password    //newPassword or oldPassword depend on method call
+	 * @param oldPassword Protected
+	 * @param password    Unprotected
 	 * @return boolean
 	 */
-
 	public boolean isPaswordsSame(String encriptedPassword, String password) {
 		logger.debug(Literal.ENTERING);
 
@@ -68,8 +66,7 @@ public class ChangePasswordModel {
 	}
 
 	/**
-	 * This method validates password with conditions 1)Whether it is following Defined pattern or not 2)It checks
-	 * whether password contains any three sequence letters in userName
+	 * Check the criteria as per the policy.
 	 * 
 	 * @param username
 	 * @param password
@@ -120,13 +117,7 @@ public class ChangePasswordModel {
 	}
 
 	/**
-	 * This method do the following. <br>
-	 * 1)Selects list of records from SecUserPasswords table as <code>List< SecurityUser > </code> by calling
-	 * SecurityUserDAO's getUserRecentPasswords(SecurityUser aSecurityUser) <br>
-	 * 2)Compare the newPassword with each SecurityUser Object's UsrPwd property by
-	 * calling<code> IsPaswordsSame()</code> <br>
-	 * 3)if Password matches <code>@returns true
-	 *       <br>  else<br> @return false</Code>
+	 * Check against the history of the changes.
 	 * 
 	 * @param aSecurityUser (SecurityUser )
 	 * @param newPassword   (String)

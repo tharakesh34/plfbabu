@@ -14,8 +14,8 @@
  ********************************************************************************************
  * FILE HEADER *
  ********************************************************************************************
- * * FileName : PasswordDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 1-07-2011 * * Modified
- * Date : 21-10-2011 * * Description : * *
+ * * FileName : ***DialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 1-07-2011 * * Modified Date :
+ * 21-10-2011 * * Description : * *
  ********************************************************************************************
  * Date Author Version Comments *
  ********************************************************************************************
@@ -66,7 +66,7 @@ import com.pennanttech.pennapps.core.util.AESCipherUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /PFSWeb/WebContent/WEB-INF/pages/PasswordReset/changePwd.zul file.
+ * This is the controller class for the /PFSWeb/WebContent/WEB-INF/pages/***Reset/change***.zul file.
  */
 public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	private static final long serialVersionUID = -2314266107249438945L;
@@ -180,7 +180,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 			int expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS");
 			getSecurityUser().setPwdExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), expDays));
 
-			// update the password by calling securityUserService's changePassword method.
+			// Generate the audit header and request for update.
 			auditHeader = getAuditHeader(getSecurityUser(), PennantConstants.TRAN_UPD);
 			getsecurityUserService().changePassword(auditHeader);
 			Executions.sendRedirect("/csrfLogout.zul");
@@ -228,8 +228,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		}
 
 		try {
-			// checking for newPassword following defined password criteria by calling changePasswordModel's validate()
-			// method
+			// Check policy restrictions.
 			if (StringUtils.isNotBlank(this.newPassword1.getValue())) {
 				if ((changePasswordModel.checkPasswordCriteria(getSecurityUser().getUsrLogin(),
 						StringUtils.trimToEmpty(
@@ -243,8 +242,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 			wve.add(we);
 		}
 		try {
-			// checking new password and retype password are same
-
+			// Check whether the confirmed input matches with the actual.
 			if (StringUtils.isNotBlank(this.newPassword1.getValue())
 					&& StringUtils.isNotBlank(this.retypeNewPassword1.getValue())) {
 				if (!StringUtils.equals(this.newPassword1.getValue(), this.retypeNewPassword1.getValue())) {
@@ -260,8 +258,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 
 		try {
 			if (StringUtils.isNotBlank(this.newPassword1.getValue())) {
-				// checking for is new password and old passwords are same by calling changePasswordModel's
-				// checkWithLastPasswords() method
+				// Check against the history.
 				if (changePasswordModel.checkWithPreviousPasswords(getSecurityUser(),
 						AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue()))) {
 					throw new WrongValueException(this.newPassword, Labels.getLabel("label_Oldpwd_Newpwd_Same",
@@ -273,8 +270,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		}
 		try {
 			if (StringUtils.isNotBlank(this.password1.getValue())) {
-				// checking for old password entered by user is Correct Old password by calling changePasswordModel's
-				// IsPaswordsSame() method
+				// Authenticate the user.
 				if (!changePasswordModel.isPaswordsSame(getSecurityUser().getUsrPwd(),
 						AESCipherUtil.decrypt(this.password1.getValue(), txtbox_randomKey.getValue()))) {
 					throw new WrongValueException(this.password, Labels.getLabel("label_Incorrect_Oldpassword"));
@@ -322,7 +318,6 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		this.userName.setReadonly(true);
 		this.password.setMaxlength(pwdMaxLenght);
 		this.password.setAutofocus(true); // set focus
-		// this.newPassword.addEventListener("onChanging", new OnChanging());
 		this.newPassword.setMaxlength(pwdMaxLenght);
 		this.retypeNewPassword.setMaxlength(pwdMaxLenght);
 		logger.debug("Leaving ");
@@ -349,10 +344,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	}
 
 	/**
-	 * This is onChanging EventListener class for newPassword field . This class do the following 1)While entering
-	 * password it checks whether password following defined criteria by calling ChangePasswordModel's methods
-	 * 2)According to satisfied conditions it assigns pwdstatusCode and calls showPasswordStatusMeter() for view
-	 * passwordStatusMeter.
+	 * Event listener to set the status code based on strength.
 	 */
 	final class OnChanging implements EventListener<Event> {
 		public OnChanging() {
@@ -381,24 +373,18 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 					StringUtils.trimToEmpty(pwd))) {
 				pwdstatusCode = 1;
 			}
-			/* if criteria matched and password length less than PennantConstants.PWD_STATUSBAR_CHAR_LENGTH */
+			// Check whether criteria matched.
 			if ((!changePasswordModel.checkPasswordCriteria(getSecurityUser().getUsrLogin(),
 					StringUtils.trimToEmpty(pwd))) && StringUtils.trimToEmpty(pwd).length() < pwdMinLenght) {
 				pwdstatusCode = 2;
 			}
-			/*
-			 * if criteria matched and password length greater than PennantConstants.PWD_STATUSBAR_CHAR_LENGTH and
-			 * special character count less than PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT
-			 */
+			// Check whether the minimum required characters available.
 			if ((!changePasswordModel.checkPasswordCriteria(getSecurityUser().getUsrLogin(),
 					StringUtils.trimToEmpty(pwd)))
 					&& (StringUtils.trimToEmpty(pwd).length() >= pwdMinLenght && splCharCount < specialCharCount)) {
 				pwdstatusCode = 3;
 			}
-			/*
-			 * if criteria matched and password length greater than PennantConstants.PWD_STATUSBAR_CHAR_LENGTH and
-			 * special character count PennantConstants.PWD_STATUSBAR_SPLCHAR_COUNT or more
-			 */
+			// Check whether the minimum required special characters available.
 			if (!changePasswordModel.checkPasswordCriteria(getSecurityUser().getUsrLogin(),
 					StringUtils.trimToEmpty(pwd))
 					&& (StringUtils.trimToEmpty(pwd).length() >= pwdMinLenght && splCharCount >= specialCharCount)) {
@@ -412,12 +398,12 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	}
 
 	/**
-	 * This method displays passwordStatusMeter and label_PwdStatus
+	 * Displays the strength using meter for the specified status code.
 	 * 
-	 * @param pwdstatusCode (int)
+	 * @param statusCode The status code to display using meter.
 	 */
-	public void showPasswordStatusMeter(int pwdstatusCode) {
-		switch (pwdstatusCode) {
+	public void showPasswordStatusMeter(int statusCode) {
+		switch (statusCode) {
 		case 0:
 			this.div_PwdStatusMeter.setStyle("background-color:white");
 			this.label_PwdStatus.setValue("");

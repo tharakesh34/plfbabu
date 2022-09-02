@@ -347,7 +347,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		// Read the next token and based on the channel it can be user name or token.
 		if (tokenizer.hasMoreTokens()) {
 			userName = tokenizer.nextToken();
-			// if userid then read the password.
+			// Get next token for user authentication.
 			if (tokenizer.hasMoreTokens()) {
 				password = tokenizer.nextToken();
 			}
@@ -362,7 +362,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			} else if (flag != 1) {
 				getErrorDetails("92004", null);
 			}
-			// if the channel is user and has password.
+			// if the channel is user and has token.
 		} else if (CHANNEL_USER.equals(channel) && !userName.equals("") && !password.equals("")) {
 
 			WebAuthenticationDetails authDetails = new WebAuthenticationDetails((HttpServletRequest) request);
@@ -517,9 +517,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	}
 
 	/**
-	 * Method to decrypt the password if requied and validate against the actual password.
-	 * 
-	 * Validating password userPassword = dbPassword ,loginPassword = password given by user
+	 * Validates the authorization token.
 	 * 
 	 * @param encPass
 	 * @param rawPass
