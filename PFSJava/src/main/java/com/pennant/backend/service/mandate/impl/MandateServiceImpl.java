@@ -77,6 +77,7 @@ import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.external.MandateProcesses;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
@@ -921,6 +922,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
+	}
+
+	@Autowired
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 	private MandateProcesses getMandateProcess() {

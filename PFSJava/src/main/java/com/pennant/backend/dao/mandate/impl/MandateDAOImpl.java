@@ -216,10 +216,10 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
 			ps.setBoolean(index++, mdt.isHold());
-			ps.setLong(index++, mdt.getHoldReasons());
+			ps.setObject(index++, mdt.getHoldReasons());
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
 			ps.setBoolean(index++, mdt.isSecurityMandate());
-			ps.setLong(index++, mdt.getEmployeeID());
+			ps.setObject(index++, mdt.getEmployeeID());
 			ps.setString(index++, mdt.getEmployerName());
 		});
 
@@ -295,10 +295,10 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
 			ps.setBoolean(index++, mdt.isHold());
-			ps.setLong(index++, mdt.getHoldReasons());
+			ps.setObject(index++, mdt.getHoldReasons());
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
 			ps.setBoolean(index++, mdt.isSecurityMandate());
-			ps.setLong(index++, mdt.getEmployeeID());
+			ps.setObject(index++, mdt.getEmployeeID());
 			ps.setString(index++, mdt.getEmployerName());
 
 			ps.setLong(index++, mdt.getMandateID());
@@ -376,10 +376,10 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
 			ps.setBoolean(index++, mdt.isHold());
-			ps.setLong(index++, mdt.getHoldReasons());
+			ps.setObject(index++, mdt.getHoldReasons());
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
 			ps.setBoolean(index++, mdt.isSecurityMandate());
-			ps.setLong(index++, mdt.getEmployeeID());
+			ps.setObject(index++, mdt.getEmployeeID());
 			ps.setString(index++, mdt.getEmployerName());
 
 			ps.setLong(index++, mdt.getMandateID());
@@ -728,10 +728,10 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			mndts.seteMandateSource(rs.getString("EMandateSource"));
 			mndts.seteMandateReferenceNo(rs.getString("EMandateReferenceNo"));
 			mndts.setHold(rs.getBoolean("Hold"));
-			mndts.setHoldReasons(rs.getLong("HoldReasons"));
+			mndts.setHoldReasons(JdbcUtil.getLong(rs.getObject("HoldReasons")));
 			mndts.setSwapEffectiveDate(rs.getTimestamp("SwapEffectiveDate"));
 			mndts.setSecurityMandate(rs.getBoolean("SecurityMandate"));
-			mndts.setEmployeeID(rs.getLong("EmployeeID"));
+			mndts.setEmployeeID(JdbcUtil.getLong(rs.getObject("EmployeeID")));
 			mndts.setEmployerName(rs.getString("EmployerName"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {

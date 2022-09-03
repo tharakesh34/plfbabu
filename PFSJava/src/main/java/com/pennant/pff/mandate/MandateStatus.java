@@ -176,7 +176,13 @@ public enum MandateStatus {
 	}
 
 	private static MandateStatus getStatus(String mandateStatus) {
-		return MandateStatus.valueOf(StringUtils.upperCase(mandateStatus));
+		mandateStatus = "_" + mandateStatus;
+		try {
+			return MandateStatus.valueOf(StringUtils.upperCase(mandateStatus));
+		} catch (Exception e) {
+			//
+		}
+		return null;
 	}
 
 }

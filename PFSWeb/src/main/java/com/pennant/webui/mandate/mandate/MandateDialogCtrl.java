@@ -339,8 +339,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.mandateType.setDisabled(true);
 
-		getFinReferences();
-
 		this.btnFetchAccountDetails.setDisabled(false);
 		Filter[] filtersProvince = new Filter[1];
 		filtersProvince[0] = new Filter("CustId", this.mandate.getCustCIF(), Filter.OP_EQUAL);
@@ -392,7 +390,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		this.custID.setValue(this.mandate.getCustCIF());
-
 		this.entityCode.setDescColumn(this.mandate.getEntityDesc());
 		this.entityCode.setValue(this.mandate.getEntityCode());
 
@@ -411,6 +408,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			ccyFormatter = CurrencyUtil.getFormat(this.mandate.getMandateCcy());
 
 			doSetFieldProperties();
+
+			if (!fromLoan) {
+				getFinReferences();
+			}
 
 			doShowDialog(getMandate());
 
@@ -1165,17 +1166,16 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.btnCancel.setVisible(false);
 			this.custID.setReadonly(false);
 			this.label_RegStatus.setVisible(false);
-			// readOnlyComponent(false, finReference);
 		} else {
 			this.btnCancel.setVisible(true);
 			this.custID.setReadonly(true);
 			this.label_RegStatus.setVisible(true);
 		}
-		// readOnlyComponent(true, finReference);
+
+		readOnlyComponent(true, finReference);
 
 		if (fromLoan) {
 			readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType);
-
 		} else {
 			this.mandateType.setReadonly(true);
 			this.custID.setReadonly(true);
@@ -1857,7 +1857,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			String empId = this.employeeID.getValue();
+			String empId = StringUtils.trimToNull(employeeID.getValue());
 			aMandate.setEmployeeID(empId == null ? null : Long.valueOf(empId));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2672,7 +2672,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		Filter[] filter = new Filter[2];
 		filter[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
-		filter[1] = new Filter("CustID", Long.valueOf(this.mandate.getCustID()), Filter.OP_EQUAL);
+		filter[1] = new Filter("CustID", this.mandate.getCustID(), Filter.OP_EQUAL);
 		this.finReference.setFilters(filter);
 	}
 
