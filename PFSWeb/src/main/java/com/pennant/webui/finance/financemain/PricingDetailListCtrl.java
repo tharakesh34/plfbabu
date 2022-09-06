@@ -708,7 +708,9 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 									Labels.getLabel("NUMBER_RANGE_EQ", new String[] { "ROI %", "4", "99" }));
 						}
 					}
-					finMain.setRepayProfitRate(roiPerc);
+					if (StringUtils.isEmpty(finMain.getRepayBaseRate())) {
+						finMain.setRepayProfitRate(roiPerc);
+					}
 
 					Intbox tenure = (Intbox) listitem.getFellowIfAny("Tenure_" + topup_label);
 					// Clients.clearWrongValue(tenure);

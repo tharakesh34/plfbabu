@@ -101,7 +101,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private int verificationCategory;
 
 	private String documentName;
-	private long documentRef;
+	private Long documentRef;
 	@XmlElement(name = "docContent")
 	private byte[] docImage;
 	private String loanType;
@@ -470,11 +470,11 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		this.verificationCategory = verificationCategory;
 	}
 
-	public long getDocumentRef() {
+	public Long getDocumentRef() {
 		return documentRef;
 	}
 
-	public void setDocumentRef(long documentRef) {
+	public void setDocumentRef(Long documentRef) {
 		this.documentRef = documentRef;
 	}
 

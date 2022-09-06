@@ -662,10 +662,12 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				if (fm == null) {
 					reason.append("Loan Reference doesn't exist.");
 					error = true;
+				} else {
+					adviseUpload.setFinID(fm.getFinID());
 				}
 			}
 		}
-		adviseUpload.setFinID(fm.getFinID());
+
 		adviseUpload.setFinReference(finReference);
 
 		// Advise Type

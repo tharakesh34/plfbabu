@@ -21,6 +21,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -44,9 +45,11 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -98,6 +101,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 	private boolean isvalidData = true;
 	private FinanceMainDAO financeMainDAO;
+	private PinCodeDAO pinCodeDAO;
 
 	@Override
 	protected void doSetProperties() {
@@ -273,6 +277,13 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			fintaxDetail.setPinCodeID(Long.valueOf(pinCodeID));
 		}
 
+		PinCode pincode = pinCodeDAO.getPinCodeById(fintaxDetail.getPinCodeID(), "_AView");
+
+		if (pincode == null) {
+			MessageUtil.showError("Pin Code ID is in valid.");
+			return fintaxDetail;
+		}
+
 		finTaxUploadDetail.add(fintaxDetail);
 		return fintaxDetail;
 	}
@@ -294,7 +305,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		case NUMERIC:
 			value = String.valueOf(cell.getNumericCellValue());
 			if (value.contains(".0")) {
-				isvalidData = false;
+				value = value.replace(".0", "");
 			}
 			break;
 		default:
@@ -848,6 +859,11 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
 	}
 
 }
