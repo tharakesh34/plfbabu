@@ -986,21 +986,6 @@
 															<datebox id="sanctionedDate" width="125px" readonly="true" />
 														</hbox>
 													</row>
-													<row visible="false">
-														<label id="label_FinanceMainDialog_RSA"
-															value="${c:l('label_FinanceMainDialog_RSA.value')}" />
-														<hbox>
-															<space spacing="2px" />
-															<checkbox id="rsa" width="180px" />
-														</hbox>
-														<label id="label_FinanceMainDialog_Verification"
-															value="${c:l('label_FinanceMainDialog_Verification.value')}" visible="false" />
-														<hbox id="hbox_Verification">
-															<space spacing="2px" id="space_Verification"
-																visible="false" />
-															<combobox id="verification" visible="false" />
-														</hbox>
-													</row>
 												</rows>
 											</grid>
 										</groupbox>
