@@ -5867,6 +5867,9 @@
 		class="com.pennanttech.pff.subvension.web.SubventionProcessUploadDialogCtrl" parent="basisListCtrl" scope="prototype" />
 	<bean id="subventionUploadDialogCtrl" class="com.pennanttech.pff.subvension.web.SubventionUploadDialogCtrl"
 		parent="basisCtrl" scope="prototype" />
+    <!-- CD Loan -->
+	<bean id="subventionResponceUpload" class="com.pennanttech.pff.subvention.upload.SubventionResponceUpload"
+		parent="basicDao" />
 
 	<!-- CD Loan -->
 	<bean id="cdSettlementDownloadCtrl" class="com.pennanttech.pff.cd.web.CDSettlementDownloadCtrl"
