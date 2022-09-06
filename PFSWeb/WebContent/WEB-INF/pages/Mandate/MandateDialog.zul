@@ -44,84 +44,79 @@
 			</north>
 			<center border="none" autoscroll="true">
 				<div>
-					<groupbox id="finBasicdetails" zclass="null"></groupbox>
+					<groupbox id="finBasicdetails" zclass="null" />
 					<groupbox id="gb_basicDetails" sclass="gb-dialog">
 						<caption label="Basic Details" />
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:10px;">
 							<columns>
 								<column width="220px" />
-								<column width="360px" />
+								<column />
 								<column width="220px" />
-								<column width="360px" />
+								<column />
 							</columns>
+
 							<rows>
-								<row id="mandateRow" visible="false">
-									<label id="label_UseExisting"
-										value="${c:l('label_MandateDialog_UseExisting.value')}" />
-									<checkbox id="useExisting" />
+								<row>
+									<label value="${c:l('label_MandateDialog_EntityCode.value')}" />
+									<extendedcombobox id="entityCode" readonly="true" />
+									<label value="${c:l('label_MandateDialog_CustID.value')}" />
+									<hbox>
+										<textbox id="custID" readonly="true" />
+										<button id="btnSearchCustCIF" image="/images/icons/more.png" />
+									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_MandateRef" value="${c:l('label_MandateDialog_MandateRef.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_FinReference.value')}" />
+									<extendedcombobox id="finReference" />
+									<label value="${c:l('label_MandateDialog_UseExisting.value')}" />
+									<checkbox id="useExisting" disabled="true" />
+								</row>
+
+								<row>
+									<label value="${c:l('label_MandateDialog_MandateRef.value')}" />
 									<hbox>
 										<extendedcombobox id="mandateRef" />
 										<button id="btnPennyDropResult"
 											tooltiptext="${c:l('label_PennyDropResult.tooltiptext')}" label="${c:l('label_PennyDropResult')}"
 											sclass="z-toolbarbutton" />
 									</hbox>
-									<label id="label_CustID" value="${c:l('label_MandateDialog_CustID.value')}" />
-									<hbox>
-										<textbox id="custID" readonly="true" />
-										<button id="btnSearchCustCIF"
-											tooltiptext="${c:l('label_MandateDialog_CustID.value')}" image="/images/icons/more.png"
-											 />
-									</hbox>
-								</row>
-								<row visible="true">
-									<label id="label_EntityCode" value="${c:l('label_MandateDialog_EntityCode.value')}" />
-									<extendedcombobox id="entityCode" readonly="true"/>
-									<label id="label_FinanceReference"
-										value="${c:l('label_MandateDialog_FinReference.value')}" />
-									<extendedcombobox id="finReference" />
-								</row>
-								<row visible="true">
-									<label id="label_MandateType"
-										value="${c:l('label_MandateDialog_MandateType.value')}" />
+									<label value="${c:l('label_MandateDialog_MandateType.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<combobox id="mandateType" width="200px" readonly="true" />
 									</hbox>
-									<label id="label_BankBranchID"
-										value="${c:l('label_MandateDialog_BankBranchID.value')}" />
-									<extendedcombobox id="bankBranchID" />
 								</row>
-								<row id="row_MandateSource" visible="true">
-									<label id="label_MandateDialog_E-Mandate_Source"
-										value="${c:l('label_MandateDialog_E-Mandate_Source.value')}" />
+								<row id="emandateRow" visible="false">
+									<label value="${c:l('label_MandateDialog_E-Mandate_Source.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<extendedcombobox id="eMandateSource" width="200px" />
 									</hbox>
-									<label id="label_MandateDialog_E-Mandate_Reference_No"
-										value="${c:l('label_MandateDialog_E-Mandate_Reference_No.value')}" />
+									<label value="${c:l('label_MandateDialog_E-Mandate_Reference_No.value')}" />
 									<hbox>
 										<space sclass="mandatory" spacing="2px" />
 										<textbox id="eMandateReferenceNo" />
 									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_bank" value="${c:l('label_MandateDialog_Bank.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_BankBranchID.value')}" />
+									<extendedcombobox id="bankBranchID" />
+								</row>
+
+								<row>
+									<label value="${c:l('label_MandateDialog_Bank.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="bank" maxlength="50" width="200px" readonly="true" />
 									</hbox>
-									<label id="label_city" value="${c:l('label_MandateDialog_city.value')}" />
+									<label value="${c:l('label_MandateDialog_city.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="city" maxlength="50" width="200px" readonly="true" />
 										<label id="cityName" />
 									</hbox>
 								</row>
-								<row visible="true">
+								<row>
 									<label value="${c:l('label_MandateDialog_Micr.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -133,174 +128,155 @@
 										<textbox id="ifsc" maxlength="50" width="200px" readonly="true" />
 									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_AccNumber" value="${c:l('label_MandateDialog_AccNumber.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_AccNumber.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<textbox id="accNumber" width="200px" />
 										<button id="btnFetchAccountDetails"
 											tooltiptext="${c:l('label_FetchAccountDetails.tooltiptext')}" image="/images/icons/more.png" />
 									</hbox>
-									<label id="label_AccHolderName"
-										value="${c:l('label_MandateDialog_AccHolderName.value')}" />
+									<label value="${c:l('label_MandateDialog_AccHolderName.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<textbox id="accHolderName" maxlength="100" width="200px" />
 									</hbox>
 								</row>
-								<row visible="true">
-
-									<label id="label_JointAccHolderName"
-										value="${c:l('label_MandateDialog_JointAccHolderName.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_JointAccHolderName.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="jointAccHolderName" maxlength="50" width="200px" />
 									</hbox>
-									<label id="label_AccType" value="${c:l('label_MandateDialog_AccType.value')}" />
-									<hbox id="hlayout_AccType">
+									<label value="${c:l('label_MandateDialog_AccType.value')}" />
+									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<combobox id="accType" width="200px" />
 									</hbox>
 								</row>
-								<row visible="true">
-
-									<label id="label_MaxLimit" value="${c:l('label_MandateDialog_MaxLimit.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_MaxLimit.value')}" />
 									<hbox>
 										<currencyBox id="maxLimit" />
 									</hbox>
-									<label id="label_AmountInWords"
-										value="${c:l('label_MandateDialog_AmtInWords.value')}" />
+									<label value="${c:l('label_MandateDialog_AmtInWords.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<label id="amountInWords" style="font-weight:bold;" />
 									</hbox>
 								</row>
 								<row>
-									<label id="label_OpenMandate"
-										value="${c:l('label_MandateDialog_OpenMandate.value')}" />
+									<label value="${c:l('label_MandateDialog_OpenMandate.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="openMandate" checked="false" />
 									</hbox>
-									<label id="label_StartDate" value="${c:l('label_MandateDialog_StartDate.value')}" />
+									<label value="${c:l('label_MandateDialog_StartDate.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<datebox id="startDate" width="200px" />
 									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_ExpiryDate" value="${c:l('label_MandateDialog_ExpiryDate.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_ExpiryDate.value')}" />
 									<hbox>
 										<space id="space_Expirydate" spacing="2px" sclass="mandatory" />
 										<datebox id="expiryDate" width="200px" />
 									</hbox>
-									<label id="label_Periodicity"
-										value="${c:l('label_MandateDialog_Periodicity.value')}" />
+									<label value="${c:l('label_MandateDialog_Periodicity.value')}" />
 									<frequencybox id="periodicity" />
 								</row>
-								<row visible="true">
-									<label id="label_PhoneCountryCode"
-										value="${c:l('label_MandateDialog_PhoneCountryCode.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_PhoneCountryCode.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="phoneNumber" />
 									</hbox>
-									<label id="label_InputDate" value="${c:l('label_MandateDialog_InputDate.value')}" />
+									<label value="${c:l('label_MandateDialog_InputDate.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<datebox id="inputDate" width="200px"/>
+										<datebox id="inputDate" width="200px" />
 									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_PartnerBank"
-										value="${c:l('label_MandateDialog_PartnerBank.value')}" visible="false" />
+								<row>
+									<label value="${c:l('label_MandateDialog_PartnerBank.value')}" visible="false" />
 									<hbox>
 										<space spacing="2px" />
-										<extendedcombobox visible="false" id="partnerBank" />
+										<extendedcombobox id="partnerBank" />
 									</hbox>
-									<label id="label_Active" value="${c:l('label_MandateDialog_Active.value')}" />
+									<label value="${c:l('label_MandateDialog_Active.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="active" checked="true" />
 									</hbox>
 								</row>
-								<row visible="false" id="row_defaultmandate">
-									<label id="label_DefaultActive"
-										value="${c:l('label_MandateDialog_DefaultMandate.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_DefaultMandate.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="defaultMandate" checked="false" />
 									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_Status" value="${c:l('label_MandateDialog_Status.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_Status.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<combobox id="mandateStatus" readonly="true" disabled="true" />
 										<button id="btnReason" label="view"></button>
 									</hbox>
-									<label id="label_Reason" value="${c:l('label_MandateStatusDialog_Reason.value')}" />
+									<label value="${c:l('label_MandateStatusDialog_Reason.value')}" />
 									<hbox>
-										<space id="space_Reason" spacing="2px" />
+										<space spacing="2px" />
 										<textbox id="reason" maxlength="200" width="200px" multiline="true" rows="3" />
 									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_BarCodeNumber"
-										value="${c:l('label_MandateDialog_BarCodeNumber.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_BarCodeNumber.value')}" />
 									<hbox>
 										<space spacing="2px" id="space_barCodeNumber" />
 										<uppercasebox id="barCodeNumber" width="200px" />
 									</hbox>
-									<label id="label_ExternalMandate"
-										value="${c:l('label_MandateDialog_ExternalMandate.value') }" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="externalMandate" checked="false" />
-									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_UmrNumber" value="${c:l('label_MandateDialog_UmrNumber.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="umrNumber" maxlength="50" width="200px" readonly="true" />
-									</hbox>
-									<label id="label_MandateDialog_SecurityMandate"
-										value="${c:l('label_MandateDialog_SecurityMandate.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_ExternalMandate.value') }" />
+									<checkbox id="externalMandate" checked="false" />
+									<label value="${c:l('label_MandateDialog_UmrNumber.value')}" />
+									<textbox id="umrNumber" maxlength="50" width="200px" />
+								</row>
+
+								<row>
+									<label value="${c:l('label_MandateDialog_SecurityMandate.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="securityMandate" checked="false" />
 									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_RegStatus" value="${c:l('label_MandateDialog_RegStatus.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_RegStatus.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<label id="regStatus" style="font-weight:bold;" />
 									</hbox>
-									<label id="label_pennyDropResult"
-										value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
+									<label value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="pennyDropResult" maxlength="50" width="200px"/>
+										<textbox id="pennyDropResult" maxlength="50" width="200px" />
 									</hbox>
 								</row>
-								<row visible="false">
-									<label id="label_ApprovalID" value="${c:l('label_MandateDialog_ApprovalID.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_ApprovalID.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="approvalID" maxlength="50" width="200px" readonly="true" />
 									</hbox>
 								</row>
-								<row visible="true">
-									<label id="label_TransactionDetails"
-										value="${c:l('label_MandateDialog_TransactionDetails.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_TransactionDetails.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="txnDetails" maxlength="50" width="200px" />
 									</hbox>
-									<label id="label_MandateDialog_MandateDoc"
-										value="${c:l('label_MandateDialog_MandateDoc.value')}" />
+									<label value="${c:l('label_MandateDialog_MandateDoc.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="documentName" width="150px" maxlength="200" readonly="true" />
@@ -309,48 +285,43 @@
 									</hbox>
 								</row>
 
-								<row id="rowHold" visible="true">
-									<label id="label_MandateDialog_Hold"
-										value="${c:l('label_MandateDialog_Hold.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_Hold.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="hold" checked="false" />
 									</hbox>
 
-									<label id="label_MandateDialog_HoldReasons"
-										value="${c:l('label_MandateDialog_HoldReasons.value')}" />
+									<label value="${c:l('label_MandateDialog_HoldReasons.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<extendedcombobox id="holdReasons" width="200px" />
 									</hbox>
 								</row>
 
-								<row id="rowSwapMandate" visible="false">
-									<label id="label_SwapActive" value="${c:l('label_MandateDialog_SwapActive.value')}" />
+								<row>
+									<label value="${c:l('label_MandateDialog_SwapActive.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<checkbox id="swapIsActive" />
+										<checkbox id="swapMandate" />
 									</hbox>
 
-									<label id="label_MandateDialog_SwapEffectiveDate"
-										value="${c:l('label_MandateDialog_SwapEffectiveDate.value')}" />
+									<label value="${c:l('label_MandateDialog_SwapEffectiveDate.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<datebox id="swapEffectiveDate" width="200px"/>
+										<datebox id="swapEffectiveDate" width="200px" />
 									</hbox>
 
 								</row>
 
-								<row id="rowEmployee" visible="false">
-									<label id="label_MandateDialog_EmployeeID"
-										value="${c:l('label_MandateDialog_EmployeeID.value')}" />
+								<row id="dasRow">
+									<label value="${c:l('label_MandateDialog_EmployeeID.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<extendedcombobox id="employeeID" width="200px"/>
+										<extendedcombobox id="employeeID" width="200px" />
 									</hbox>
 
-									<label id="label_MandateDialog_EmployerName"
-										value="${c:l('label_MandateDialog_EmployerName.value')}" />
+									<label value="${c:l('label_MandateDialog_EmployerName.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="employerName" />
@@ -360,6 +331,7 @@
 							</rows>
 						</grid>
 					</groupbox>
+
 					<groupbox id="mandateDocGroupBox">
 						<iframe id="mandatedoc" width="100%" />
 					</groupbox>
@@ -371,8 +343,7 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_MandateDialog_RecordStatus" value="${c:l('label.RecordStatus.dialog')}"
-							sclass="label-status" />
+						<label value="${c:l('label.RecordStatus.dialog')}" sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>

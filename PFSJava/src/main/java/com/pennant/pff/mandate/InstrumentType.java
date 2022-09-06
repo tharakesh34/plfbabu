@@ -2,27 +2,43 @@ package com.pennant.pff.mandate;
 
 public enum InstrumentType {
 
-	MANUAL,
+	NACH("NACH", "National Automated Clearing House"),
 
-	CASA,
+	ECS("ECS", "Electronic Clearing Service"),
 
-	ECS,
+	ENACH("E-NACH", "E-NACH"),
 
-	ENACH,
+	EMANDATE("E-MANDATE", "E-Mandate"),
 
-	EMANDATE,
+	PDC("PDC", "Post Dated Cheque"),
 
-	DDM,
+	SI("SI", "SI"),
 
-	NACH,
+	SII("SII", "SI-Internal"),
 
-	PDC,
+	DAS("DAS", "DAS"),
 
-	UDC,
+	MANUAL("MANUAL", "Manual Payment"),
 
-	DAS,
+	DDM("DAS", "DAS"),
 
-	SI;
+	UDC("DAS", "DAS");
+
+	private String code;
+	private String description;
+
+	private InstrumentType(String code, String description) {
+		this.code = code;
+		this.description = code;
+	}
+
+	public String code() {
+		return code;
+	}
+
+	public String description() {
+		return description;
+	}
 
 	public static boolean isECS(String instrumentType) {
 		InstrumentType st = InstrumentType.valueOf(instrumentType);

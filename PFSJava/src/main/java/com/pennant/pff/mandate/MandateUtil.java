@@ -24,42 +24,20 @@ public class MandateUtil {
 		instrumentTypes = new ArrayList<ValueLabel>(4);
 
 		for (InstrumentType item : InstrumentType.values()) {
-			if (!isEanbled(item)) {
-				continue;
-			}
-
-			String label = null;
 			switch (item) {
 			case NACH:
-				label = Labels.getLabel("label_Mandate_Nach");
-				break;
 			case ECS:
-				label = Labels.getLabel("label_Mandate_Ecs");
-				break;
 			case ENACH:
-				label = Labels.getLabel("label_Mandate_ENach");
-				break;
 			case EMANDATE:
-				label = Labels.getLabel("label_Mandate_EMandate");
-				break;
 			case PDC:
-				label = Labels.getLabel("label_Mandate_PDC");
-				break;
-			case DDM:
-				label = Labels.getLabel("label_Mandate_DD");
-				break;
 			case SI:
-				label = Labels.getLabel("label_Mandate_SI");
-				break;
 			case DAS:
-				label = Labels.getLabel("label_Mandate_DAS");
+				instrumentTypes.add(new ValueLabel(item.name(), item.code()));
 				break;
 
 			default:
 				continue;
 			}
-
-			instrumentTypes.add(new ValueLabel(item.name(), label));
 		}
 
 		return instrumentTypes;
@@ -72,13 +50,25 @@ public class MandateUtil {
 
 		repaymentMethods = new ArrayList<ValueLabel>(4);
 
-		repaymentMethods.add(new ValueLabel(InstrumentType.MANUAL.name(), Labels.getLabel("label_RepayMethod_Manual")));
-
-		if (!isEanbled(InstrumentType.CASA)) {
-			repaymentMethods.add(new ValueLabel(InstrumentType.CASA.name(), Labels.getLabel("label_RepayMethod_Casa")));
+		for (InstrumentType item : InstrumentType.values()) {
+			switch (item) {
+			case NACH:
+			case ECS:
+			case ENACH:
+			case EMANDATE:
+			case PDC:
+			case SI:
+			case SII:
+			case DAS:
+				repaymentMethods.add(new ValueLabel(item.name(), item.code()));
+				break;
+			case MANUAL:
+				repaymentMethods.add(new ValueLabel(item.name(), item.description()));
+				break;
+			default:
+				continue;
+			}
 		}
-
-		repaymentMethods.addAll(getInstrumentTypes());
 
 		return repaymentMethods;
 	}
