@@ -1625,20 +1625,21 @@ public class RepaymentProcessUtil {
 				if (payAgainstID != 0) {
 
 					if (isApproval) {
-
 						BigDecimal payableAmt = rcd.getAmount();
 						if (rcd.getPayAdvMovement() != null) {
-
 							TaxHeader taxHeader = rcd.getPayAdvMovement().getTaxHeader();
-							List<Taxes> taxDetails = taxHeader.getTaxDetails();
-							if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
-								for (Taxes taxes : taxDetails) {
-									if (StringUtils.equals(taxes.getTaxType(),
-											FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-										payableAmt = payableAmt.subtract(taxes.getPaidTax());
+							if (taxHeader != null) {
+								List<Taxes> taxDetails = taxHeader.getTaxDetails();
+								if (CollectionUtils.isNotEmpty(taxDetails)) {
+									for (Taxes taxes : taxDetails) {
+										if (StringUtils.equals(taxes.getTaxType(),
+												FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+											payableAmt = payableAmt.subtract(taxes.getPaidTax());
+										}
 									}
 								}
 							}
+
 						}
 
 						BigDecimal payAdv = BigDecimal.ZERO;
