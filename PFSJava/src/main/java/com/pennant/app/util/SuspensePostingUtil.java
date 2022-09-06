@@ -42,8 +42,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,7 +58,6 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class SuspensePostingUtil implements Serializable {
@@ -138,12 +135,7 @@ public class SuspensePostingUtil implements Serializable {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setPostDate(dateAppDate);
 
-		try {
-			aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
-		} catch (AccountNotFoundException e) {
-			// TODO Auto-generated catch block
-			logger.error(Literal.EXCEPTION, e);
-		}
+		aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
 
 		isPostingSuccess = aeEvent.isPostingSucess();
 		long linkedTranId = aeEvent.getLinkedTranId();
@@ -261,11 +253,7 @@ public class SuspensePostingUtil implements Serializable {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setPostDate(dateAppDate);
 
-		try {
-			aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
-		} catch (AccountNotFoundException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
 
 		long linkedTranId = aeEvent.getLinkedTranId();
 

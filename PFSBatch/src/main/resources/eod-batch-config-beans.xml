@@ -123,8 +123,6 @@
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
 
 	<bean id="commitmentDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentDAOImpl" parent="basicDao" />

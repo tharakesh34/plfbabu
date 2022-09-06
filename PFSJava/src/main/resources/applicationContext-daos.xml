@@ -5136,8 +5136,6 @@
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="divisionDetailDAO" ref="divisionDetailDAO" />
 	</bean>
 

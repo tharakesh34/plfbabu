@@ -54,8 +54,6 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
-import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.commitment.Commitment;
@@ -77,9 +75,6 @@ public class PostingsPreparationUtil implements Serializable {
 	private AccountProcessUtil accountProcessUtil;
 	private CommitmentDAO commitmentDAO;
 	private CommitmentMovementDAO commitmentMovementDAO;
-	// private FinanceCancellationProcess financeCancellationProcess;
-	private FinanceTypeDAO financeTypeDAO;
-	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private DivisionDetailDAO divisionDetailDAO;
 
 	public PostingsPreparationUtil() {
@@ -141,7 +136,7 @@ public class PostingsPreparationUtil implements Serializable {
 	// ****************** Process Methods *******************//
 	// ******************************************************//
 
-	public AEEvent processPostingDetails(AEEvent aeEvent) throws AccountNotFoundException, InterfaceException {
+	public AEEvent processPostingDetails(AEEvent aeEvent) throws InterfaceException {
 		// Preparation for Commitment Postings
 		long linkedTranId = postingsDAO.getLinkedTransId();
 		aeEvent.setLinkedTranId(linkedTranId);
@@ -755,16 +750,7 @@ public class PostingsPreparationUtil implements Serializable {
 		this.commitmentMovementDAO = commitmentMovementDAO;
 	}
 
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
-		this.finTypeAccountingDAO = finTypeAccountingDAO;
-	}
-
 	public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
 		this.divisionDetailDAO = divisionDetailDAO;
 	}
-
 }

@@ -1093,11 +1093,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				Date dateAppDate = SysParamUtil.getAppDate();
 				aeEvent.setPostDate(dateAppDate);
 				aeEvent.setValueDate(valueDate);
-				try {
-					aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
-				} catch (AccountNotFoundException e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
+
+				aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
 
 				isPostingSuccess = aeEvent.isPostingSucess();
 				linkedTranId = aeEvent.getLinkedTranId();

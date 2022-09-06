@@ -43,8 +43,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -1941,13 +1939,7 @@ public class RepaymentPostingsUtil {
 				aeEvent.setDataMap(dataMap);
 
 				// Reset AEAmount Code Details Bean and send for Accounting Execution.
-				try {
-					postingsPreparationUtil.processPostingDetails(aeEvent);
-				} catch (AccountNotFoundException e) {
-					// TODO Auto-generated catch block
-					logger.error(Literal.EXCEPTION, e);
-				}
-
+				postingsPreparationUtil.processPostingDetails(aeEvent);
 			}
 		}
 
