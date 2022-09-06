@@ -914,11 +914,11 @@ public class Mandate extends AbstractWorkflowEntity {
 		this.approveMandate = approveMandate;
 	}
 
-	public long getPartnerBankId() {
+	public Long getPartnerBankId() {
 		return partnerBankId;
 	}
 
-	public void setPartnerBankId(long partnerBankId) {
+	public void setPartnerBankId(Long partnerBankId) {
 		this.partnerBankId = partnerBankId;
 	}
 

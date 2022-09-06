@@ -599,8 +599,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
-			if (mandate.getPartnerBankId() <= 0) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)
+				&& !(InstrumentType.isDAS(mandate.getMandateType()) || InstrumentType.isSI(mandate.getMandateType()))) {
+			if (mandate.getPartnerBankId() == null || mandate.getPartnerBankId() <= 0) {
 				String[] valueParm1 = new String[1];
 				valueParm1[0] = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value") + "Id";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm1)));

@@ -86,6 +86,12 @@
 										<combobox id="mandateType" width="200px" readonly="true" />
 									</hbox>
 								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_ExternalMandate.value') }" />
+									<checkbox id="externalMandate" checked="false" />
+									<label value="${c:l('label_MandateDialog_UmrNumber.value')}" />
+									<textbox id="umrNumber" maxlength="50" width="200px" />
+								</row>
 								<row id="emandateRow" visible="false">
 									<label value="${c:l('label_MandateDialog_E-Mandate_Source.value')}" />
 									<hbox>
@@ -99,8 +105,54 @@
 									</hbox>
 								</row>
 								<row>
+									<label value="${c:l('label_MandateDialog_OpenMandate.value')}" />
+									<checkbox id="openMandate" checked="false" />
+									<label value="${c:l('label_MandateDialog_DefaultMandate.value')}" />
+									<checkbox id="defaultMandate" checked="false" />
+								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_SwapActive.value')}" />
+									<checkbox id="swapMandate" />
+									<label value="${c:l('label_MandateDialog_SwapEffectiveDate.value')}" />
+									<datebox id="swapEffectiveDate" width="200px" />
+								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_InputDate.value')}" />
+									<datebox id="inputDate" width="200px" />
+									<label value="${c:l('label_MandateDialog_StartDate.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="startDate" width="200px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_ExpiryDate.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="expiryDate" width="200px" />
+									</hbox>
+									<label value="${c:l('label_MandateDialog_Periodicity.value')}" />
+									<frequencybox id="periodicity" />
+								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_MaxLimit.value')}" />
+									<hbox>
+										<currencyBox id="maxLimit" />
+									</hbox>
+									<label value="${c:l('label_MandateDialog_AmtInWords.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<label id="amountInWords" style="font-weight:bold;" />
+									</hbox>
+								</row>
+								<row>
 									<label value="${c:l('label_MandateDialog_BankBranchID.value')}" />
 									<extendedcombobox id="bankBranchID" />
+									<label value="${c:l('label_MandateDialog_PartnerBank.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<extendedcombobox id="partnerBank" />
+									</hbox>
 								</row>
 
 								<row>
@@ -155,66 +207,14 @@
 									</hbox>
 								</row>
 								<row>
-									<label value="${c:l('label_MandateDialog_MaxLimit.value')}" />
-									<hbox>
-										<currencyBox id="maxLimit" />
-									</hbox>
-									<label value="${c:l('label_MandateDialog_AmtInWords.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<label id="amountInWords" style="font-weight:bold;" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_OpenMandate.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="openMandate" checked="false" />
-									</hbox>
-									<label value="${c:l('label_MandateDialog_StartDate.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<datebox id="startDate" width="200px" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_ExpiryDate.value')}" />
-									<hbox>
-										<space id="space_Expirydate" spacing="2px" sclass="mandatory" />
-										<datebox id="expiryDate" width="200px" />
-									</hbox>
-									<label value="${c:l('label_MandateDialog_Periodicity.value')}" />
-									<frequencybox id="periodicity" />
-								</row>
-								<row>
 									<label value="${c:l('label_MandateDialog_PhoneCountryCode.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="phoneNumber" />
-									</hbox>
-									<label value="${c:l('label_MandateDialog_InputDate.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<datebox id="inputDate" width="200px" />
-									</hbox>
+									<textbox id="phoneNumber" />
 								</row>
 								<row>
-									<label value="${c:l('label_MandateDialog_PartnerBank.value')}" visible="false" />
-									<hbox>
-										<space spacing="2px" />
-										<extendedcombobox id="partnerBank" />
-									</hbox>
 									<label value="${c:l('label_MandateDialog_Active.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="active" checked="true" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_DefaultMandate.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="defaultMandate" checked="false" />
 									</hbox>
 								</row>
 								<row>
@@ -235,20 +235,6 @@
 									<hbox>
 										<space spacing="2px" id="space_barCodeNumber" />
 										<uppercasebox id="barCodeNumber" width="200px" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_ExternalMandate.value') }" />
-									<checkbox id="externalMandate" checked="false" />
-									<label value="${c:l('label_MandateDialog_UmrNumber.value')}" />
-									<textbox id="umrNumber" maxlength="50" width="200px" />
-								</row>
-
-								<row>
-									<label value="${c:l('label_MandateDialog_SecurityMandate.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="securityMandate" checked="false" />
 									</hbox>
 								</row>
 								<row>
@@ -298,22 +284,6 @@
 										<extendedcombobox id="holdReasons" width="200px" />
 									</hbox>
 								</row>
-
-								<row>
-									<label value="${c:l('label_MandateDialog_SwapActive.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="swapMandate" />
-									</hbox>
-
-									<label value="${c:l('label_MandateDialog_SwapEffectiveDate.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<datebox id="swapEffectiveDate" width="200px" />
-									</hbox>
-
-								</row>
-
 								<row id="dasRow">
 									<label value="${c:l('label_MandateDialog_EmployeeID.value')}" />
 									<hbox>
@@ -327,7 +297,13 @@
 										<textbox id="employerName" />
 									</hbox>
 								</row>
-
+								<row visible="false">
+									<label value="${c:l('label_MandateDialog_SecurityMandate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="securityMandate" checked="false" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>
