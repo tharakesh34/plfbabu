@@ -382,7 +382,44 @@
 													<space spacing="2px" />
 													<checkbox id="tDSApplicable" checked="false" />
 												</hbox>
+												<label id="label_FinanceTypeDialog_TDSType"
+													value="${c:l('label_FinanceTypeDialog_TDSType.value')}" />
+												<hbox>
+													<combobox id="cbTdsType" width="180px" readonly="true"
+														visible="false" />
+												</hbox>
 											</row>
+											<row id="row_AllowLoanTypes" visible="true">
+												<label id="label_FinanceMainDialog_AllowLoanSplit"
+													value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="alwLoanSplit" checked="false" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_SplitLoanType"
+													value="${c:l('label_FinanceTypeDialog_SplitLoanType.value')}" />
+												<hbox id="hbox_splitLoanType">
+													<space id="space_splitLoanType" spacing="2px" sclass="mandatory" />
+													<textbox id="splitLoanType" width="175px" readonly="true" />
+													<button id="btnSearchSplitLoanType"
+														image="/images/icons/LOVSearch.png" />
+												</hbox>
+											</row>
+											<row id="row_InstBasedSchd">
+												<label id="label_FinanceTypeDialog_InstBasedSchd"
+													value="${c:l('label_FinanceTypeDialog_InstBasedSchd.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="instBasedSchd" checked="false" />
+												</hbox>
+											
+											<label id="label_FinanceMainDialog_ParentLoanReference"
+													value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<extendedcombobox id="parentLoanReference" />
+												</hbox>
+												</row>
 										</rows>
 									</grid>
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
@@ -671,11 +708,14 @@
 												</hbox>
 											</row>
 											<row>
-												<label id="label_FinanceTypeDialog_AlwEarlyPayMethods" value="${c:l('label_FinanceTypeDialog_AlwEarlyPayMethods.value')}" />
+												<label id="label_FinanceTypeDialog_AlwEarlyPayMethods"
+													value="${c:l('label_FinanceTypeDialog_AlwEarlyPayMethods.value')}" />
 												<hbox>
-													<space id="space_alwEarlyPayMethods" spacing="2px" sclass="mandatory" />
+													<space id="space_alwEarlyPayMethods" spacing="2px"
+														sclass="mandatory" />
 													<textbox id="alwEarlyPayMethods" width="175px" readonly="true" />
-													<button id="btnSearchAlwEarlyMethod" image="/images/icons/LOVSearch.png" />
+													<button id="btnSearchAlwEarlyMethod"
+														image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
 										</rows>
@@ -1562,12 +1602,14 @@
 												<space spacing="2px" />
 												<checkbox id="stepFinance" />
 											</hbox>
-											<label visible="false" id="label_FinanceTypeDialog_StepsAppliedFor" value="${c:l('label_FinanceTypeDialog_StepsAppliedFor.value')}" />
+											<label visible="false" id="label_FinanceTypeDialog_StepsAppliedFor"
+												value="${c:l('label_FinanceTypeDialog_StepsAppliedFor.value')}" />
 											<hbox id="hbox_stepsAppliedFor" visible="false">
 												<space spacing="2px" id="space_stepsAppliedFor" />
 												<combobox id="stepsAppliedFor" width="155px" />
 											</hbox>
-											<label visible="false" id="label_FinanceTypeDialog_AllowedStepPolicies" value="${c:l('label_CDFinanceTypeDialog_AllowedStepPolicies.value')}" />
+											<label visible="false" id="label_FinanceTypeDialog_AllowedStepPolicies"
+												value="${c:l('label_CDFinanceTypeDialog_AllowedStepPolicies.value')}" />
 											<hbox id="hbox_alwdStepPolicies">
 												<space id="sp_alwdStepPolices" spacing="2px" />
 												<hbox>
@@ -1582,7 +1624,8 @@
 											</hbox>
 										</row>
 										<row id="row_CalcOfSteps" visible="false">
-											<label id="label_FinanceTypeDialog_CalcOfSteps" value="${c:l('label_FinanceTypeDialog_CalcOfSteps.value')}" />
+											<label id="label_FinanceTypeDialog_CalcOfSteps"
+												value="${c:l('label_FinanceTypeDialog_CalcOfSteps.value')}" />
 											<hbox>
 												<space spacing="2px" id="space_calcOfSteps" />
 												<combobox id="calcOfSteps" width="155px" />
@@ -1671,31 +1714,101 @@
 								</grid>
 							</groupbox>
 							<groupbox id="gb_ProvisionRules" visible="false" height="auto">
-									<caption label="${c:l('label_FinanceTypeDialog_ProvisionRules')}" />
-									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="260px" />
-											<column />
-											<column width="260px" />
-											<column />
-										</columns>
-										<rows>
-											<row visible="true">
-												<label value="${c:l('label_FinanceTypeDialog_FinTypeRegProvRule.value')}" />
-												<hbox>
-													<space id="space_RegProvRule" spacing="2px" />
-													<combobox id="regProvRule" disabled="false" />
-												</hbox>
-												<label value="${c:l('label_FinanceTypeDialog_FinTypeIntProvRule.value')}" />
-												<hbox>
-													<space id="space_IntProvRule" spacing="2px" />
-													<combobox id="intProvRule" disabled="false" />
-												</hbox>
-											</row>
-										</rows>
-									</grid>
-								</groupbox>
+								<caption label="${c:l('label_FinanceTypeDialog_ProvisionRules')}" />
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="260px" />
+										<column />
+										<column width="260px" />
+										<column />
+									</columns>
+									<rows>
+										<row visible="true">
+											<label value="${c:l('label_FinanceTypeDialog_FinTypeRegProvRule.value')}" />
+											<hbox>
+												<space id="space_RegProvRule" spacing="2px" />
+												<combobox id="regProvRule" disabled="false" />
+											</hbox>
+											<label value="${c:l('label_FinanceTypeDialog_FinTypeIntProvRule.value')}" />
+											<hbox>
+												<space id="space_IntProvRule" spacing="2px" />
+												<combobox id="intProvRule" disabled="false" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox id="gb_OCRCheck" height="auto">
+								<caption label="${c:l('label_FinanceTypeDialog_OCRCheck')}" />
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="260px" />
+										<column />
+										<column width="260px" />
+										<column />
+									</columns>
+									<rows>
+										<row visible="true">
+											<label id="label_FinanceTypeDialog_OCRRequired"
+												value="${c:l('label_FinanceTypeDialog_OCRRequired.value')}" />
+											<hbox>
+												<space spacing="2px" id="space_OCRRequired" />
+												<checkbox id="ocrRequired" width="200px" />
+											</hbox>
+											<hbox visible="false" id="labelAllowedOcr">
+												<label id="label_FinanceTypeDialog_AllowedOCRs"
+													value="${c:l('label_FinanceTypeDialog_AllowedOCRs.value')}" />
+											</hbox>
+											<hbox visible="false" id="hboxAllowedOCRS">
+												<space spacing="2px" id="spaceAllowedOCRs" sclass="mandatory" />
+												<textbox id="allowedOCRS" width="170px" readonly="true" />
+												<button id="btnAlwOcr" image="/images/icons/LOVSearch.png" />
+											</hbox>
+										</row>
+										<row id="rowDefaultOCR" visible="false">
+											<hbox>
+												<label id="label_FinanceTypeDialog_DefaultOCR"
+													value="${c:l('label_FinanceTypeDialog_DefaultOCR.value')}" />
+											</hbox>
+											<hbox>
+												<extendedcombobox id="defaultOCR" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox id="gbLoanPurpose" height="auto">
+								<caption label="${c:l('label_FinanceTypeDialog_LoanPurpose_Details.value')}" />
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="260px" />
+										<column />
+										<column width="260px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label id="labelFinanceTypeDialogLoanPurpose"
+												value="${c:l('label_FinanceTypeDialog_LoanPurpose.value')}" />
+											<hbox>
+												<space spacing="2px" id="spaceLoanPurpose" sclass="mandatory" />
+												<combobox id="allowedLoanPurposes" width="200px" />
+											</hbox>
+											<hbox visible="false" id="hboxSpecificLoanPurposes">
+												<label
+													value="${c:l('label_FinanceTypeDialog_SpecificLoanPurpose.value')}" />
+											</hbox>
+											<hbox visible="false" id="hboxSpecificLoanPurposesTwo">
+												<space spacing="2px" sclass="mandatory" />
+												<textbox id="specificLoanPurposes" width="170px" readonly="true" />
+												<button id="btnSpcLoanPurposes" image="/images/icons/LOVSearch.png" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
 						</tabpanel>
+
 						<tabpanel>
 							<groupbox>
 								<ptCKeditor id="remarks" width="99%" height="75px" />
@@ -1703,7 +1816,6 @@
 						</tabpanel>
 					</tabpanels>
 				</tabbox>
-
 			</center>
 			<south sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%" closable="false">
