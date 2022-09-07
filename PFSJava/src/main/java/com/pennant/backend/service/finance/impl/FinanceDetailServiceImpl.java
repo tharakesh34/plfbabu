@@ -3652,12 +3652,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
-	 * @throws JaxenException
-	 * @throws DatatypeConfigurationException
-	 * @throws AccountNotFoundException
+	 * @throws InterfaceException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, JaxenException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
@@ -5475,7 +5473,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.trace(Literal.LEAVING);
 	}
 
-	private AuditHeader save(String operation, AuditHeader auditHeader, String recordType) throws Exception {
+	private AuditHeader save(String operation, AuditHeader auditHeader, String recordType) {
 		logger.trace(Literal.ENTERING);
 
 		switch (Operation.methodOf(operation)) {

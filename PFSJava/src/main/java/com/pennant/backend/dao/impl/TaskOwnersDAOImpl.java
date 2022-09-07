@@ -123,22 +123,13 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 
 	@Override
 	public void saveOrUpdateList(List<TaskOwners> taskOwners) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		for (TaskOwners taskOwner : taskOwners) {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwner);
 			if (taskOwner.isNewRecord()) {
-				/*
-				 * StringBuilder insertSql = new StringBuilder(" INSERT INTO Task_Owners " );
-				 * insertSql.append(" (Reference, RoleCode, ActualOwner, CurrentOwner, Processed)");
-				 * insertSql.append(" Values(  :Reference, :RoleCode, :ActualOwner, :CurrentOwner, :Processed)");
-				 * logger.debug("insertSql: " + insertSql.toString());
-				 * 
-				 * this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-				 */
 				syncRecord(taskOwner);
-
 			} else {
-				logger.debug("Update");
 				StringBuilder updateSql = new StringBuilder(" UPDATE Task_Owners SET Processed=:Processed,");
 				updateSql.append(" CurrentOwner=:CurrentOwner,ActualOwner=:ActualOwner");
 				updateSql.append(" WHERE Reference=:Reference AND RoleCode=:RoleCode");
@@ -150,7 +141,8 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 				}
 			}
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void syncRecord(TaskOwners taskOwner) {

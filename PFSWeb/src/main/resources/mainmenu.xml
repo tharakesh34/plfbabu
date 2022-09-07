@@ -1413,8 +1413,6 @@
 			rightName="menu_Item_TdsReceivablesTxnCancel" />
 	</menu>
 
-	<!-- TODO -->
-
 	<menu id="menu_Category_CIBIL">
 		<menuItem id="menu_Item_CIBILFileDownloads"
 			zulNavigation="/WEB-INF/pages/InterfaceBajaj/CIBILFileDownloadList.zul" rightName="menu_Item_CIBILFileDownloads" />

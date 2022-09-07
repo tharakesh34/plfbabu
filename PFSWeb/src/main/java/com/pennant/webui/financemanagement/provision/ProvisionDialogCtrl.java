@@ -683,11 +683,9 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	// CRUD operations
 
 	/**
-	 * Deletes a Provision object from database.<br>
-	 * 
-	 * @throws InterruptedException
+	 * Deletes a Provision object from database.
 	 */
-	private void doDelete() throws InterruptedException {
+	private void doDelete() {
 		//
 	}
 

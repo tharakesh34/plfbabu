@@ -98,10 +98,7 @@ public final class UpdateAttributeServiceTask {
 			key = StringUtils.trimToEmpty(args[0]);
 		}
 
-		// Prepare the property.
-		Property property = new Property(key, value);
-
-		return property;
+		return new Property(key, value);
 	}
 
 	public static String getPropertyValue(String parameter, String value, FinanceDetail financeDetail) {
