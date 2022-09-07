@@ -48,7 +48,7 @@
 	<changeSet id="1.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtagreementfielddetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtagreementfielddetails.FinReference = m.FinReference);
+				Update adtagreementfielddetails set FinID = (select m.FinID from FINID_MAPPING m where adtagreementfielddetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -57,7 +57,7 @@
 	<changeSet id="1.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtagreementfielddetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtagreementfielddetails.FinReference = m.FinReference);
+				Update adtagreementfielddetails set FinID = (select m.FinID from FINID_MAPPING m where adtagreementfielddetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -84,7 +84,7 @@
 	<changeSet id="2.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtadviseuploads set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtadviseuploads.FinReference = m.FinReference);
+				Update adtadviseuploads set FinID = (select m.FinID from FINID_MAPPING m where adtadviseuploads.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -92,7 +92,7 @@
 	<changeSet id="2.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtadviseuploads set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtadviseuploads.FinReference = m.FinReference);
+				Update adtadviseuploads set FinID = (select m.FinID from FINID_MAPPING m where adtadviseuploads.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -119,7 +119,7 @@
 	<changeSet id="3.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinscheduledetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinscheduledetails.FinReference = m.FinReference);
+				Update adtfinscheduledetails set FinID = (select m.FinID from FINID_MAPPING m where adtfinscheduledetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -127,7 +127,7 @@
 	<changeSet id="3.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinscheduledetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinscheduledetails.FinReference = m.FinReference);
+				Update adtfinscheduledetails set FinID = (select m.FinID from FINID_MAPPING m where adtfinscheduledetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -154,7 +154,7 @@
 	<changeSet id="4.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfindefermentheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfindefermentheader.FinReference = m.FinReference);
+				Update adtfindefermentheader set FinID = (select m.FinID from FINID_MAPPING m where adtfindefermentheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -162,7 +162,7 @@
 	<changeSet id="4.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfindefermentheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfindefermentheader.FinReference = m.FinReference);
+				Update adtfindefermentheader set FinID = (select m.FinID from FINID_MAPPING m where adtfindefermentheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -189,7 +189,7 @@
 	<changeSet id="5.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtbulkprocessdetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtbulkprocessdetails.FinReference = m.FinReference);
+				Update adtbulkprocessdetails set FinID = (select m.FinID from FINID_MAPPING m where adtbulkprocessdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -197,7 +197,7 @@
 	<changeSet id="5.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtbulkprocessdetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtbulkprocessdetails.FinReference = m.FinReference);
+				Update adtbulkprocessdetails set FinID = (select m.FinID from FINID_MAPPING m where adtbulkprocessdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -224,7 +224,7 @@
 	<changeSet id="6.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtbulkratechangedetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtbulkratechangedetails.FinReference = m.FinReference);
+				Update adtbulkratechangedetails set FinID = (select m.FinID from FINID_MAPPING m where adtbulkratechangedetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -232,7 +232,7 @@
 	<changeSet id="6.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtbulkratechangedetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtbulkratechangedetails.FinReference = m.FinReference);
+				Update adtbulkratechangedetails set FinID = (select m.FinID from FINID_MAPPING m where adtbulkratechangedetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -259,7 +259,7 @@
 	<changeSet id="7.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtchequeheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtchequeheader.FinReference = m.FinReference);
+				Update adtchequeheader set FinID = (select m.FinID from FINID_MAPPING m where adtchequeheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -267,7 +267,7 @@
 	<changeSet id="7.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtchequeheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtchequeheader.FinReference = m.FinReference);
+				Update adtchequeheader set FinID = (select m.FinID from FINID_MAPPING m where adtchequeheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -295,7 +295,7 @@
 	<changeSet id="8.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinjointaccountdetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinjointaccountdetails.FinReference = m.FinReference);
+				Update adtfinjointaccountdetails set FinID = (select m.FinID from FINID_MAPPING m where adtfinjointaccountdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -303,7 +303,7 @@
 	<changeSet id="8.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinjointaccountdetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinjointaccountdetails.FinReference = m.FinReference);
+				Update adtfinjointaccountdetails set FinID = (select m.FinID from FINID_MAPPING m where adtfinjointaccountdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -331,7 +331,7 @@
 	<changeSet id="9.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtmanualadvise set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtmanualadvise.FinReference = m.FinReference);
+				Update adtmanualadvise set FinID = (select m.FinID from FINID_MAPPING m where adtmanualadvise.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -339,7 +339,7 @@
 	<changeSet id="9.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtmanualadvise set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtmanualadvise.FinReference = m.FinReference);
+				Update adtmanualadvise set FinID = (select m.FinID from FINID_MAPPING m where adtmanualadvise.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -366,7 +366,7 @@
 	<changeSet id="10.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinguarantorsdetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinguarantorsdetails.FinReference = m.FinReference);
+				Update adtfinguarantorsdetails set FinID = (select m.FinID from FINID_MAPPING m where adtfinguarantorsdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -374,7 +374,7 @@
 	<changeSet id="10.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinguarantorsdetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinguarantorsdetails.FinReference = m.FinReference);
+				Update adtfinguarantorsdetails set FinID = (select m.FinID from FINID_MAPPING m where adtfinguarantorsdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -401,7 +401,7 @@
 	<changeSet id="11.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtcollateralsetup set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtcollateralsetup.FinReference = m.FinReference);
+				Update adtcollateralsetup set FinID = (select m.FinID from FINID_MAPPING m where adtcollateralsetup.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -409,7 +409,7 @@
 	<changeSet id="11.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtcollateralsetup set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtcollateralsetup.FinReference = m.FinReference);
+				Update adtcollateralsetup set FinID = (select m.FinID from FINID_MAPPING m where adtcollateralsetup.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -436,7 +436,7 @@
 	<changeSet id="12.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtcommitmentmovements set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtcommitmentmovements.FinReference = m.FinReference);
+				Update adtcommitmentmovements set FinID = (select m.FinID from FINID_MAPPING m where adtcommitmentmovements.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -444,7 +444,7 @@
 	<changeSet id="12.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtcommitmentmovements set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtcommitmentmovements.FinReference = m.FinReference);
+				Update adtcommitmentmovements set FinID = (select m.FinID from FINID_MAPPING m where adtcommitmentmovements.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -472,7 +472,7 @@
 	<changeSet id="13.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtcustomerdedupdetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtcustomerdedupdetail.FinReference = m.FinReference);
+				Update adtcustomerdedupdetail set FinID = (select m.FinID from FINID_MAPPING m where adtcustomerdedupdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -480,7 +480,7 @@
 	<changeSet id="13.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtcustomerdedupdetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtcustomerdedupdetail.FinReference = m.FinReference);
+				Update adtcustomerdedupdetail set FinID = (select m.FinID from FINID_MAPPING m where adtcustomerdedupdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -508,7 +508,7 @@
 	<changeSet id="14.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinancedeviations set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinancedeviations.FinReference = m.FinReference);
+				Update adtfinancedeviations set FinID = (select m.FinID from FINID_MAPPING m where adtfinancedeviations.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -516,7 +516,7 @@
 	<changeSet id="14.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinancedeviations set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinancedeviations.FinReference = m.FinReference);
+				Update adtfinancedeviations set FinID = (select m.FinID from FINID_MAPPING m where adtfinancedeviations.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -543,7 +543,7 @@
 	<changeSet id="15.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtpresentmentdetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtpresentmentdetails.FinReference = m.FinReference);
+				Update adtpresentmentdetails set FinID = (select m.FinID from FINID_MAPPING m where adtpresentmentdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -551,7 +551,7 @@
 	<changeSet id="15.1" author="murthy.y"   dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtpresentmentdetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtpresentmentdetails.FinReference = m.FinReference);
+				Update adtpresentmentdetails set FinID = (select m.FinID from FINID_MAPPING m where adtpresentmentdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -578,7 +578,7 @@
 	<changeSet id="16.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtdue_diligences set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtdue_diligences.FinReference = m.FinReference);
+				Update adtdue_diligences set FinID = (select m.FinID from FINID_MAPPING m where adtdue_diligences.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -586,7 +586,7 @@
 	<changeSet id="16.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtdue_diligences set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtdue_diligences.FinReference = m.FinReference);
+				Update adtdue_diligences set FinID = (select m.FinID from FINID_MAPPING m where adtdue_diligences.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -614,7 +614,7 @@
 	<changeSet id="17.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfeewaiverheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfeewaiverheader.FinReference = m.FinReference);
+				Update adtfeewaiverheader set FinID = (select m.FinID from FINID_MAPPING m where adtfeewaiverheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -622,7 +622,7 @@
 	<changeSet id="17.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfeewaiverheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfeewaiverheader.FinReference = m.FinReference);
+				Update adtfeewaiverheader set FinID = (select m.FinID from FINID_MAPPING m where adtfeewaiverheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -649,7 +649,7 @@
 	<changeSet id="18.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinancechecklistref set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinancechecklistref.FinReference = m.FinReference);
+				Update adtfinancechecklistref set FinID = (select m.FinID from FINID_MAPPING m where adtfinancechecklistref.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -657,7 +657,7 @@
 	<changeSet id="18.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinancechecklistref set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinancechecklistref.FinReference = m.FinReference);
+				Update adtfinancechecklistref set FinID = (select m.FinID from FINID_MAPPING m where adtfinancechecklistref.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -685,7 +685,7 @@
 	<changeSet id="19.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinanceeligibilitydetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinanceeligibilitydetail.FinReference = m.FinReference);
+				Update adtfinanceeligibilitydetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinanceeligibilitydetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -693,7 +693,7 @@
 	<changeSet id="19.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinanceeligibilitydetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinanceeligibilitydetail.FinReference = m.FinReference);
+				Update adtfinanceeligibilitydetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinanceeligibilitydetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -721,7 +721,7 @@
 	<changeSet id="20.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfincontributordetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfincontributordetail.FinReference = m.FinReference);
+				Update adtfincontributordetail set FinID = (select m.FinID from FINID_MAPPING m where adtfincontributordetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -729,7 +729,7 @@
 	<changeSet id="20.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfincontributordetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfincontributordetail.FinReference = m.FinReference);
+				Update adtfincontributordetail set FinID = (select m.FinID from FINID_MAPPING m where adtfincontributordetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -757,7 +757,7 @@
 	<changeSet id="21.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfincontractorastdtls set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfincontractorastdtls.FinReference = m.FinReference);
+				Update adtfincontractorastdtls set FinID = (select m.FinID from FINID_MAPPING m where adtfincontractorastdtls.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -765,7 +765,7 @@
 	<changeSet id="21.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfincontractorastdtls set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfincontractorastdtls.FinReference = m.FinReference);
+				Update adtfincontractorastdtls set FinID = (select m.FinID from FINID_MAPPING m where adtfincontractorastdtls.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -792,7 +792,7 @@
 	<changeSet id="22.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfincontributorheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfincontributorheader.FinReference = m.FinReference);
+				Update adtfincontributorheader set FinID = (select m.FinID from FINID_MAPPING m where adtfincontributorheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -800,7 +800,7 @@
 	<changeSet id="22.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfincontributorheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfincontributorheader.FinReference = m.FinReference);
+				Update adtfincontributorheader set FinID = (select m.FinID from FINID_MAPPING m where adtfincontributorheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -828,7 +828,7 @@
 	<changeSet id="23.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfindedupdetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfindedupdetail.FinReference = m.FinReference);
+				Update adtfindedupdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfindedupdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -836,7 +836,7 @@
 	<changeSet id="23.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfindedupdetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfindedupdetail.FinReference = m.FinReference);
+				Update adtfindedupdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfindedupdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -864,7 +864,7 @@
 	<changeSet id="24.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinflagsheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinflagsheader.FinReference = m.FinReference);
+				Update adtfinflagsheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinflagsheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -872,7 +872,7 @@
 	<changeSet id="24.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinflagsheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinflagsheader.FinReference = m.FinReference);
+				Update adtfinflagsheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinflagsheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -900,7 +900,7 @@
 	<changeSet id="25.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinrepayinstruction set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinrepayinstruction.FinReference = m.FinReference);
+				Update adtfinrepayinstruction set FinID = (select m.FinID from FINID_MAPPING m where adtfinrepayinstruction.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -908,7 +908,7 @@
 	<changeSet id="25.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinrepayinstruction set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinrepayinstruction.FinReference = m.FinReference);
+				Update adtfinrepayinstruction set FinID = (select m.FinID from FINID_MAPPING m where adtfinrepayinstruction.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -936,7 +936,7 @@
 	<changeSet id="26.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfintaxdetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfintaxdetail.FinReference = m.FinReference);
+				Update adtfintaxdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfintaxdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -944,7 +944,7 @@
 	<changeSet id="26.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfintaxdetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfintaxdetail.FinReference = m.FinReference);
+				Update adtfintaxdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfintaxdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -972,7 +972,7 @@
 	<changeSet id="27.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtholddisbursement set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtholddisbursement.FinReference = m.FinReference);
+				Update adtholddisbursement set FinID = (select m.FinID from FINID_MAPPING m where adtholddisbursement.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -980,7 +980,7 @@
 	<changeSet id="27.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtholddisbursement set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtholddisbursement.FinReference = m.FinReference);
+				Update adtholddisbursement set FinID = (select m.FinID from FINID_MAPPING m where adtholddisbursement.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1008,7 +1008,7 @@
 	<changeSet id="28.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtlinkedfinances set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtlinkedfinances.FinReference = m.FinReference);
+				Update adtlinkedfinances set FinID = (select m.FinID from FINID_MAPPING m where adtlinkedfinances.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1016,7 +1016,7 @@
 	<changeSet id="28.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtlinkedfinances set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtlinkedfinances.FinReference = m.FinReference);
+				Update adtlinkedfinances set FinID = (select m.FinID from FINID_MAPPING m where adtlinkedfinances.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1044,14 +1044,14 @@
 	<changeSet id="29.1" author="murthy.y" dbms="mssql"> 
 		<sql> 
 			<![CDATA[ 	
-				Update adtlmtcommidityloanheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtlmtcommidityloanheader.LoanRefNumber = m.FinReference); ]]> 
+				Update adtlmtcommidityloanheader set FinID = (select m.FinID from FINID_MAPPING m where adtlmtcommidityloanheader.LoanRefNumber = m.FinReference); ]]> 
 		</sql> 
 	</changeSet>
 	
 	<changeSet id="29.1" author="murthy.y" dbms="oracle">
 		<sql> 
 			<![CDATA[ 	
-				Update adtlmtcommidityloanheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtlmtcommidityloanheader.LoanRefNumber = m.FinReference); ]]> 
+				Update adtlmtcommidityloanheader set FinID = (select m.FinID from FINID_MAPPING m where adtlmtcommidityloanheader.LoanRefNumber = m.FinReference); ]]> 
 		</sql> 
 	</changeSet>
 	
@@ -1077,7 +1077,7 @@
 	<changeSet id="30.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtlowertaxdeduction set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtlowertaxdeduction.FinReference = m.FinReference);
+				Update adtlowertaxdeduction set FinID = (select m.FinID from FINID_MAPPING m where adtlowertaxdeduction.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1085,7 +1085,7 @@
 	<changeSet id="30.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtlowertaxdeduction set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtlowertaxdeduction.FinReference = m.FinReference);
+				Update adtlowertaxdeduction set FinID = (select m.FinID from FINID_MAPPING m where adtlowertaxdeduction.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1113,7 +1113,7 @@
 	<changeSet id="31.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtpsldetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtpsldetail.FinReference = m.FinReference);
+				Update adtpsldetail set FinID = (select m.FinID from FINID_MAPPING m where adtpsldetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1121,7 +1121,7 @@
 	<changeSet id="31.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtpsldetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtpsldetail.FinReference = m.FinReference);
+				Update adtpsldetail set FinID = (select m.FinID from FINID_MAPPING m where adtpsldetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1149,7 +1149,7 @@
 	<changeSet id="32.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtquerydetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtquerydetail.FinReference = m.FinReference);
+				Update adtquerydetail set FinID = (select m.FinID from FINID_MAPPING m where adtquerydetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1157,7 +1157,7 @@
 	<changeSet id="32.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtquerydetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtquerydetail.FinReference = m.FinReference);
+				Update adtquerydetail set FinID = (select m.FinID from FINID_MAPPING m where adtquerydetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1185,7 +1185,7 @@
 	<changeSet id="33.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtrestructure_details set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtrestructure_details.FinReference = m.FinReference);
+				Update adtrestructure_details set FinID = (select m.FinID from FINID_MAPPING m where adtrestructure_details.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1193,7 +1193,7 @@
 	<changeSet id="33.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtrestructure_details set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtrestructure_details.FinReference = m.FinReference);
+				Update adtrestructure_details set FinID = (select m.FinID from FINID_MAPPING m where adtrestructure_details.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1221,7 +1221,7 @@
 	<changeSet id="34.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtsanction_conditions set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtsanction_conditions.FinReference = m.FinReference);
+				Update adtsanction_conditions set FinID = (select m.FinID from FINID_MAPPING m where adtsanction_conditions.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1229,7 +1229,7 @@
 	<changeSet id="34.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtsanction_conditions set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtsanction_conditions.FinReference = m.FinReference);
+				Update adtsanction_conditions set FinID = (select m.FinID from FINID_MAPPING m where adtsanction_conditions.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1257,7 +1257,7 @@
 	<changeSet id="35.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtsubventiondetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtsubventiondetails.FinReference = m.FinReference);
+				Update adtsubventiondetails set FinID = (select m.FinID from FINID_MAPPING m where adtsubventiondetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1265,7 +1265,7 @@
 	<changeSet id="35.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtsubventiondetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtsubventiondetails.FinReference = m.FinReference);
+				Update adtsubventiondetails set FinID = (select m.FinID from FINID_MAPPING m where adtsubventiondetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1293,7 +1293,7 @@
 	<changeSet id="36.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtsubventionscheduledetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtsubventionscheduledetail.FinReference = m.FinReference);
+				Update adtsubventionscheduledetail set FinID = (select m.FinID from FINID_MAPPING m where adtsubventionscheduledetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1301,7 +1301,7 @@
 	<changeSet id="36.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtsubventionscheduledetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtsubventionscheduledetail.FinReference = m.FinReference);
+				Update adtsubventionscheduledetail set FinID = (select m.FinID from FINID_MAPPING m where adtsubventionscheduledetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1329,7 +1329,7 @@
 	<changeSet id="37.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtsynopsisdetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtsynopsisdetails.FinReference = m.FinReference);
+				Update adtsynopsisdetails set FinID = (select m.FinID from FINID_MAPPING m where adtsynopsisdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1337,7 +1337,7 @@
 	<changeSet id="37.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtsynopsisdetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtsynopsisdetails.FinReference = m.FinReference);
+				Update adtsynopsisdetails set FinID = (select m.FinID from FINID_MAPPING m where adtsynopsisdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1365,7 +1365,7 @@
 	<changeSet id="38.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtvasmovementdetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtvasmovementdetails.FinReference = m.FinReference);
+				Update adtvasmovementdetails set FinID = (select m.FinID from FINID_MAPPING m where adtvasmovementdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1373,7 +1373,7 @@
 	<changeSet id="38.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtvasmovementdetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtvasmovementdetails.FinReference = m.FinReference);
+				Update adtvasmovementdetails set FinID = (select m.FinID from FINID_MAPPING m where adtvasmovementdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1401,7 +1401,7 @@
 	<changeSet id="39.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtvasmovement set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtvasmovement.FinReference = m.FinReference);
+				Update adtvasmovement set FinID = (select m.FinID from FINID_MAPPING m where adtvasmovement.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1409,7 +1409,7 @@
 	<changeSet id="39.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtvasmovement set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtvasmovement.FinReference = m.FinReference);
+				Update adtvasmovement set FinID = (select m.FinID from FINID_MAPPING m where adtvasmovement.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1437,7 +1437,7 @@
 	<changeSet id="40.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinadvancepayments set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinadvancepayments.FinReference = m.FinReference);
+				Update adtfinadvancepayments set FinID = (select m.FinID from FINID_MAPPING m where adtfinadvancepayments.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1445,7 +1445,7 @@
 	<changeSet id="40.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinadvancepayments set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinadvancepayments.FinReference = m.FinReference);
+				Update adtfinadvancepayments set FinID = (select m.FinID from FINID_MAPPING m where adtfinadvancepayments.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1473,7 +1473,7 @@
 	<changeSet id="41.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfindisbursementdetails set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfindisbursementdetails.FinReference = m.FinReference);
+				Update adtfindisbursementdetails set FinID = (select m.FinID from FINID_MAPPING m where adtfindisbursementdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1481,7 +1481,7 @@
 	<changeSet id="41.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfindisbursementdetails set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfindisbursementdetails.FinReference = m.FinReference);
+				Update adtfindisbursementdetails set FinID = (select m.FinID from FINID_MAPPING m where adtfindisbursementdetails.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1509,7 +1509,7 @@
 	<changeSet id="42.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfindefermentdetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfindefermentdetail.FinReference = m.FinReference);
+				Update adtfindefermentdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfindefermentdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1517,7 +1517,7 @@
 	<changeSet id="42.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfindefermentdetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfindefermentdetail.FinReference = m.FinReference);
+				Update adtfindefermentdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfindefermentdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1546,7 +1546,7 @@
 	<changeSet id="43.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfincollaterals set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfincollaterals.FinReference = m.FinReference);
+				Update adtfincollaterals set FinID = (select m.FinID from FINID_MAPPING m where adtfincollaterals.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1554,7 +1554,7 @@
 	<changeSet id="43.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfincollaterals set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfincollaterals.FinReference = m.FinReference);
+				Update adtfincollaterals set FinID = (select m.FinID from FINID_MAPPING m where adtfincollaterals.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1582,7 +1582,7 @@
 	<changeSet id="44.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfin_options set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfin_options.FinReference = m.FinReference);
+				Update adtfin_options set FinID = (select m.FinID from FINID_MAPPING m where adtfin_options.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1590,7 +1590,7 @@
 	<changeSet id="44.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfin_options set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfin_options.FinReference = m.FinReference);
+				Update adtfin_options set FinID = (select m.FinID from FINID_MAPPING m where adtfin_options.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1618,7 +1618,7 @@
 	<changeSet id="45.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinsteppolicydetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinsteppolicydetail.FinReference = m.FinReference);
+				Update adtfinsteppolicydetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinsteppolicydetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1626,7 +1626,7 @@
 	<changeSet id="45.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinsteppolicydetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinsteppolicydetail.FinReference = m.FinReference);
+				Update adtfinsteppolicydetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinsteppolicydetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1655,7 +1655,7 @@
 	<changeSet id="46.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinprovisions set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinprovisions.FinReference = m.FinReference);
+				Update adtfinprovisions set FinID = (select m.FinID from FINID_MAPPING m where adtfinprovisions.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1663,7 +1663,7 @@
 	<changeSet id="46.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinprovisions set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinprovisions.FinReference = m.FinReference);
+				Update adtfinprovisions set FinID = (select m.FinID from FINID_MAPPING m where adtfinprovisions.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1691,7 +1691,7 @@
 	<changeSet id="47.1" author="murthy.y"  dbms="mssql">
 		<sql> 
 			<![CDATA[ 
-				Update adtlmtcommodityheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtlmtcommodityheader.LoanRefNumber = m.FinReference); 
+				Update adtlmtcommodityheader set FinID = (select m.FinID from FINID_MAPPING m where adtlmtcommodityheader.LoanRefNumber = m.FinReference); 
 			]]> 
 		</sql> 
 	</changeSet> 
@@ -1699,7 +1699,7 @@
 	<changeSet id="47.1" author="murthy.y"  dbms="oracle">
 		<sql> 
 			<![CDATA[ 
-				Update adtlmtcommodityheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtlmtcommodityheader.LoanRefNumber = m.FinReference); 
+				Update adtlmtcommodityheader set FinID = (select m.FinID from FINID_MAPPING m where adtlmtcommodityheader.LoanRefNumber = m.FinReference); 
 			]]> 
 		</sql> 
 	</changeSet> 
@@ -1727,7 +1727,7 @@
 	<changeSet id="48.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtpaymentheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtpaymentheader.FinReference = m.FinReference);
+				Update adtpaymentheader set FinID = (select m.FinID from FINID_MAPPING m where adtpaymentheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1735,7 +1735,7 @@
 	<changeSet id="48.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtpaymentheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtpaymentheader.FinReference = m.FinReference);
+				Update adtpaymentheader set FinID = (select m.FinID from FINID_MAPPING m where adtpaymentheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1763,7 +1763,7 @@
 	<changeSet id="49.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtrecommendation_notes set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtrecommendation_notes.FinReference = m.FinReference);
+				Update adtrecommendation_notes set FinID = (select m.FinID from FINID_MAPPING m where adtrecommendation_notes.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1771,7 +1771,7 @@
 	<changeSet id="49.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtrecommendation_notes set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtrecommendation_notes.FinReference = m.FinReference);
+				Update adtrecommendation_notes set FinID = (select m.FinID from FINID_MAPPING m where adtrecommendation_notes.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1799,7 +1799,7 @@
 	<changeSet id="50.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtprovisions set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtprovisions.FinReference = m.FinReference);
+				Update adtprovisions set FinID = (select m.FinID from FINID_MAPPING m where adtprovisions.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1807,7 +1807,7 @@
 	<changeSet id="50.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtprovisions set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtprovisions.FinReference = m.FinReference);
+				Update adtprovisions set FinID = (select m.FinID from FINID_MAPPING m where adtprovisions.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1835,7 +1835,7 @@
 	<changeSet id="51.1" author="murthy.y" dbms="mssql">
 		<sql> 
 			<![CDATA[ 
-				Update adtlmtcommidityloandetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtlmtcommidityloandetail.LoanRefNumber = m.FinReference); 
+				Update adtlmtcommidityloandetail set FinID = (select m.FinID from FINID_MAPPING m where adtlmtcommidityloandetail.LoanRefNumber = m.FinReference); 
 			]]> 
 			</sql> 
 	</changeSet> 
@@ -1843,7 +1843,7 @@
 	<changeSet id="51.1" author="murthy.y" dbms="oracle">
 		<sql> 
 			<![CDATA[ 
-				Update adtlmtcommidityloandetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtlmtcommidityloandetail.LoanRefNumber = m.FinReference); 
+				Update adtlmtcommidityloandetail set FinID = (select m.FinID from FINID_MAPPING m where adtlmtcommidityloandetail.LoanRefNumber = m.FinReference); 
 			]]> 
 			</sql> 
 	</changeSet> 
@@ -1871,7 +1871,7 @@
 	<changeSet id="52.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtcreditreviewdata set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtcreditreviewdata.FinReference = m.FinReference);
+				Update adtcreditreviewdata set FinID = (select m.FinID from FINID_MAPPING m where adtcreditreviewdata.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1879,7 +1879,7 @@
 	<changeSet id="52.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtcreditreviewdata set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtcreditreviewdata.FinReference = m.FinReference);
+				Update adtcreditreviewdata set FinID = (select m.FinID from FINID_MAPPING m where adtcreditreviewdata.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1907,7 +1907,7 @@
 	<changeSet id="53.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinagreementdetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinagreementdetail.FinReference = m.FinReference);
+				Update adtfinagreementdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinagreementdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1915,7 +1915,7 @@
 	<changeSet id="53.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinagreementdetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinagreementdetail.FinReference = m.FinReference);
+				Update adtfinagreementdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinagreementdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1943,7 +1943,7 @@
 	<changeSet id="54.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinancescoreheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinancescoreheader.FinReference = m.FinReference);
+				Update adtfinancescoreheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinancescoreheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1951,7 +1951,7 @@
 	<changeSet id="54.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinancescoreheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinancescoreheader.FinReference = m.FinReference);
+				Update adtfinancescoreheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinancescoreheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1979,7 +1979,7 @@
 	<changeSet id="55.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinassetevaluation set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinassetevaluation.FinReference = m.FinReference);
+				Update adtfinassetevaluation set FinID = (select m.FinID from FINID_MAPPING m where adtfinassetevaluation.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -1987,7 +1987,7 @@
 	<changeSet id="55.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinassetevaluation set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinassetevaluation.FinReference = m.FinReference);
+				Update adtfinassetevaluation set FinID = (select m.FinID from FINID_MAPPING m where adtfinassetevaluation.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2015,7 +2015,7 @@
 	<changeSet id="56.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinblacklistdetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinblacklistdetail.FinReference = m.FinReference);
+				Update adtfinblacklistdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinblacklistdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2023,7 +2023,7 @@
 	<changeSet id="56.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinblacklistdetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinblacklistdetail.FinReference = m.FinReference);
+				Update adtfinblacklistdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinblacklistdetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2051,7 +2051,7 @@
 	<changeSet id="57.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinchangecustomer set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinchangecustomer.FinReference = m.FinReference);
+				Update adtfinchangecustomer set FinID = (select m.FinID from FINID_MAPPING m where adtfinchangecustomer.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2059,7 +2059,7 @@
 	<changeSet id="57.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinchangecustomer set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinchangecustomer.FinReference = m.FinReference);
+				Update adtfinchangecustomer set FinID = (select m.FinID from FINID_MAPPING m where adtfinchangecustomer.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2087,7 +2087,7 @@
 	<changeSet id="58.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfincovenanttype set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfincovenanttype.FinReference = m.FinReference);
+				Update adtfincovenanttype set FinID = (select m.FinID from FINID_MAPPING m where adtfincovenanttype.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2095,7 +2095,7 @@
 	<changeSet id="58.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfincovenanttype set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfincovenanttype.FinReference = m.FinReference);
+				Update adtfincovenanttype set FinID = (select m.FinID from FINID_MAPPING m where adtfincovenanttype.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2123,7 +2123,7 @@
 	<changeSet id="59.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinfeerefundheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinfeerefundheader.FinReference = m.FinReference);
+				Update adtfinfeerefundheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinfeerefundheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2131,7 +2131,7 @@
 	<changeSet id="59.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinfeerefundheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinfeerefundheader.FinReference = m.FinReference);
+				Update adtfinfeerefundheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinfeerefundheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2159,7 +2159,7 @@
 	<changeSet id="60.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinfeedetail set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinfeedetail.FinReference = m.FinReference);
+				Update adtfinfeedetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinfeedetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2167,7 +2167,7 @@
 	<changeSet id="60.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinfeedetail set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinfeedetail.FinReference = m.FinReference);
+				Update adtfinfeedetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinfeedetail.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2195,7 +2195,7 @@
 	<changeSet id="61.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinlegalexpenses set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinlegalexpenses.FinReference = m.FinReference);
+				Update adtfinlegalexpenses set FinID = (select m.FinID from FINID_MAPPING m where adtfinlegalexpenses.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2203,7 +2203,7 @@
 	<changeSet id="61.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinlegalexpenses set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinlegalexpenses.FinReference = m.FinReference);
+				Update adtfinlegalexpenses set FinID = (select m.FinID from FINID_MAPPING m where adtfinlegalexpenses.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2231,7 +2231,7 @@
 	<changeSet id="62.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinliabilityreq set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinliabilityreq.FinReference = m.FinReference);
+				Update adtfinliabilityreq set FinID = (select m.FinID from FINID_MAPPING m where adtfinliabilityreq.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2239,7 +2239,7 @@
 	<changeSet id="62.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinliabilityreq set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinliabilityreq.FinReference = m.FinReference);
+				Update adtfinliabilityreq set FinID = (select m.FinID from FINID_MAPPING m where adtfinliabilityreq.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2267,7 +2267,7 @@
 	<changeSet id="63.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinmaintaininstructions set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinmaintaininstructions.FinReference = m.FinReference);
+				Update adtfinmaintaininstructions set FinID = (select m.FinID from FINID_MAPPING m where adtfinmaintaininstructions.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2275,7 +2275,7 @@
 	<changeSet id="63.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinmaintaininstructions set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinmaintaininstructions.FinReference = m.FinReference);
+				Update adtfinmaintaininstructions set FinID = (select m.FinID from FINID_MAPPING m where adtfinmaintaininstructions.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2303,7 +2303,7 @@
 	<changeSet id="64.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinocrcapture set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinocrcapture.FinReference = m.FinReference);
+				Update adtfinocrcapture set FinID = (select m.FinID from FINID_MAPPING m where adtfinocrcapture.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2311,7 +2311,7 @@
 	<changeSet id="64.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinocrcapture set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinocrcapture.FinReference = m.FinReference);
+				Update adtfinocrcapture set FinID = (select m.FinID from FINID_MAPPING m where adtfinocrcapture.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2339,7 +2339,7 @@
 	<changeSet id="65.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinocrheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinocrheader.FinReference = m.FinReference);
+				Update adtfinocrheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinocrheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2347,7 +2347,7 @@
 	<changeSet id="65.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinocrheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinocrheader.FinReference = m.FinReference);
+				Update adtfinocrheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinocrheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2375,7 +2375,7 @@
 	<changeSet id="66.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinwaiverheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinwaiverheader.FinReference = m.FinReference);
+				Update adtfinwaiverheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinwaiverheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2383,7 +2383,7 @@
 	<changeSet id="66.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinwaiverheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinwaiverheader.FinReference = m.FinReference);
+				Update adtfinwaiverheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinwaiverheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2411,7 +2411,7 @@
 	<changeSet id="67.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtfinancemain set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtfinancemain.FinReference = m.FinReference);
+				Update adtfinancemain set FinID = (select m.FinID from FINID_MAPPING m where adtfinancemain.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2419,7 +2419,7 @@
 	<changeSet id="67.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtfinancemain set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtfinancemain.FinReference = m.FinReference);
+				Update adtfinancemain set FinID = (select m.FinID from FINID_MAPPING m where adtfinancemain.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2447,7 +2447,7 @@
 	<changeSet id="68.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtpayorderissueheader set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtpayorderissueheader.FinReference = m.FinReference);
+				Update adtpayorderissueheader set FinID = (select m.FinID from FINID_MAPPING m where adtpayorderissueheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2455,7 +2455,7 @@
 	<changeSet id="68.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtpayorderissueheader set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtpayorderissueheader.FinReference = m.FinReference);
+				Update adtpayorderissueheader set FinID = (select m.FinID from FINID_MAPPING m where adtpayorderissueheader.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2483,7 +2483,7 @@
 	<changeSet id="69.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtpmay set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtpmay.FinReference = m.FinReference);
+				Update adtpmay set FinID = (select m.FinID from FINID_MAPPING m where adtpmay.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2491,7 +2491,7 @@
 	<changeSet id="69.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtpmay set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtpmay.FinReference = m.FinReference);
+				Update adtpmay set FinID = (select m.FinID from FINID_MAPPING m where adtpmay.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2519,7 +2519,7 @@
 	<changeSet id="70.1" author="murthy.y"  dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update adtrestructure set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where adtrestructure.FinReference = m.FinReference);
+				Update adtrestructure set FinID = (select m.FinID from FINID_MAPPING m where adtrestructure.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2527,7 +2527,7 @@
 	<changeSet id="70.1" author="murthy.y"  dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update adtrestructure set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where adtrestructure.FinReference = m.FinReference);
+				Update adtrestructure set FinID = (select m.FinID from FINID_MAPPING m where adtrestructure.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2555,7 +2555,7 @@
 	<changeSet id="71.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				UPDATE ADTFINRECEIPTHEADER SET FINID = (SELECT M.FINID FROM ${call.plfdb}FINID_MAPPING M WHERE ADTFINRECEIPTHEADER.REFERENCE = M.FINREFERENCE);
+				UPDATE ADTFINRECEIPTHEADER SET FINID = (SELECT M.FINID FROM FINID_MAPPING M WHERE ADTFINRECEIPTHEADER.REFERENCE = M.FINREFERENCE);
 			]]>
 		</sql>
 	</changeSet>
@@ -2563,7 +2563,7 @@
 	<changeSet id="71.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				UPDATE ADTFINRECEIPTHEADER SET FINID = (SELECT M.FINID FROM ${call.orcplfdb}FINID_MAPPING M WHERE ADTFINRECEIPTHEADER.REFERENCE = M.FINREFERENCE);
+				UPDATE ADTFINRECEIPTHEADER SET FINID = (SELECT M.FINID FROM FINID_MAPPING M WHERE ADTFINRECEIPTHEADER.REFERENCE = M.FINREFERENCE);
 			]]>
 		</sql>
 	</changeSet>
@@ -2590,7 +2590,7 @@
 	
 	<!-- changes moved 5.17 & 5.18 -->
 	
-	<changeSet id="73" author="murthy.y">
+	 <changeSet id="73" author="murthy.y">
 		<addColumn tableName="AdtTAN_ASSIGNMENTS">
 			<column name="FinID" type="bigint" />
 		</addColumn>
@@ -2598,7 +2598,7 @@
 	<changeSet id="73.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update AdtTAN_ASSIGNMENTS set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where AdtTAN_ASSIGNMENTS.FinReference = m.FinReference);
+				Update AdtTAN_ASSIGNMENTS set FinID = (select m.FinID from FINID_MAPPING m where AdtTAN_ASSIGNMENTS.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2606,7 +2606,7 @@
 	<changeSet id="73.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update AdtTAN_ASSIGNMENTS set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where AdtTAN_ASSIGNMENTS.FinReference = m.FinReference);
+				Update AdtTAN_ASSIGNMENTS set FinID = (select m.FinID from FINID_MAPPING m where AdtTAN_ASSIGNMENTS.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2627,7 +2627,7 @@
 	<changeSet id="74.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update AdtDocument_Status set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where AdtDocument_Status.FinReference = m.FinReference);
+				Update AdtDocument_Status set FinID = (select m.FinID from FINID_MAPPING m where AdtDocument_Status.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2635,7 +2635,7 @@
 	<changeSet id="74.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update AdtDocument_Status set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where AdtDocument_Status.FinReference = m.FinReference);
+				Update AdtDocument_Status set FinID = (select m.FinID from FINID_MAPPING m where AdtDocument_Status.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2652,11 +2652,11 @@
 		<addColumn tableName="AdtFeeWaiverUploads">
 			<column name="FinID" type="bigint" />
 		</addColumn>
-	</changeSet>
+	</changeSet> 
 	<changeSet id="75.1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				Update AdtFeeWaiverUploads set FinID = (select m.FinID from ${call.plfdb}FINID_MAPPING m where AdtFeeWaiverUploads.FinReference = m.FinReference);
+				Update AdtFeeWaiverUploads set FinID = (select m.FinID from FINID_MAPPING m where AdtFeeWaiverUploads.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
@@ -2664,7 +2664,7 @@
 	<changeSet id="75.1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				Update AdtFeeWaiverUploads set FinID = (select m.FinID from ${call.orcplfdb}FINID_MAPPING m where AdtFeeWaiverUploads.FinReference = m.FinReference);
+				Update AdtFeeWaiverUploads set FinID = (select m.FinID from FINID_MAPPING m where AdtFeeWaiverUploads.FinReference = m.FinReference);
 			]]>
 		</sql>
 	</changeSet>
