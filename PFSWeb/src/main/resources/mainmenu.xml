@@ -1099,9 +1099,9 @@
 				zulNavigation="/WEB-INF/pages/Finance/Overdraft/OverDraftSettlementDownload.zul"
 				rightName="menuItem_OD_Settlement_Process_Download" />
 			<!-- subvention -->
-			<menuItem id="menu_Item_DataEngine_SubventionProcessUpload"
+			<!-- <menuItem id="menu_Item_DataEngine_SubventionProcessUpload"
 				zulNavigation="/WEB-INF/pages/Finance/Subvension/SubventionProcessUpload.zul"
-				rightName="menuItem_Subvention_Process_Upload" />
+				rightName="menuItem_Subvention_Process_Upload" /> -->
 			<menuItem id="menu_Item_DataEngine_SubventionProcessUpload"
 				zulNavigation="/WEB-INF/pages/Finance/Subvension/SubventionUploadDialog.zul"
 				rightName="menuItem_Subvention_knockoff_Upload" />

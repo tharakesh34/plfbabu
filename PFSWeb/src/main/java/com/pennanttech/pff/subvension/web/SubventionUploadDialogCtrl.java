@@ -12,6 +12,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
@@ -20,7 +21,10 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.model.subvention.SubventionHeader;
+import com.pennant.pff.service.subvention.SubventionKnockOffUpload;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -30,7 +34,6 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.subvention.upload.SubventionResponceUpload;
 
 public class SubventionUploadDialogCtrl extends GFCBaseCtrl<Configuration> {
 	private static final Logger logger = LogManager.getLogger(SubventionUploadDialogCtrl.class);
@@ -41,6 +44,7 @@ public class SubventionUploadDialogCtrl extends GFCBaseCtrl<Configuration> {
 	protected Button btnFileUpload;
 	protected Rows panelRows;
 	protected Button btnImport;
+	protected Combobox entityType;
 
 	private Media media = null;
 	private File file = null;
@@ -48,26 +52,40 @@ public class SubventionUploadDialogCtrl extends GFCBaseCtrl<Configuration> {
 	protected Timer timer;
 
 	private long userId;
+	private String userBranch;
 	private DataEngineStatus SUBVENTION_REQUEST_UPLOAD = new DataEngineStatus(
 			PennantConstants.SUBVENTION_REQUEST_UPLOAD);
 
-	private DataEngineConfig dataEngineConfig;
-	private SubventionResponceUpload subventionResponceUpload;
+	protected DataEngineConfig dataEngineConfig;
+	private SubventionKnockOffUpload subventionKnockOffUpload;
+	private List<ValueLabel> defaultEntityType;
 
 	public SubventionUploadDialogCtrl() {
 		super();
 	}
 
-	public void onCreate$window_SubventionProcessUploadDialogueCtrl(Event event) throws Exception {
+	public void onCreate$window_subventionUploadDialogCtrl(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_subventionUploadDialogCtrl);
+		doSetFieldProperties();
 		this.userId = getUserWorkspace().getLoggedInUser().getUserId();
+		this.userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		getConfigData();
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetFieldProperties() {
+		defaultEntityType = new ArrayList<ValueLabel>(1);
+		List<Entity> entities = subventionKnockOffUpload.getEntites();
+		for (Entity entity : entities) {
+			defaultEntityType.add(new ValueLabel(entity.getEntityCode(), entity.getEntityDesc()));
+		}
+
+		fillComboBox(this.entityType, "", defaultEntityType, "");
 	}
 
 	private void doFillPanel(Configuration config, DataEngineStatus ds) {
@@ -109,6 +127,10 @@ public class SubventionUploadDialogCtrl extends GFCBaseCtrl<Configuration> {
 
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		this.btnImport.setDisabled(true);
+		if (getComboboxValue(this.entityType).equals(PennantConstants.List_Select)) {
+			MessageUtil.showError("Please Select Entity.");
+			return;
+		}
 		if (media == null) {
 			MessageUtil.showError("Please upload file.");
 			return;
@@ -116,7 +138,8 @@ public class SubventionUploadDialogCtrl extends GFCBaseCtrl<Configuration> {
 
 		try {
 			try {
-				Thread thread = new Thread(new ProcessData(this.userId, SUBVENTION_REQUEST_UPLOAD));
+				Thread thread = new Thread(
+						new ProcessData(this.userId, SUBVENTION_REQUEST_UPLOAD, this.userBranch, this.entityType));
 				thread.start();
 			} catch (Exception e) {
 				MessageUtil.showError(e);
@@ -132,17 +155,27 @@ public class SubventionUploadDialogCtrl extends GFCBaseCtrl<Configuration> {
 	public class ProcessData implements Runnable {
 		private long userId;
 		private DataEngineStatus status;
+		private String userBranch;
+		private Combobox entityType;
 
-		public ProcessData(long userId, DataEngineStatus status) {
+		public ProcessData(long userId, DataEngineStatus status, String userBranch, Combobox entityType) {
 			this.userId = userId;
 			this.status = status;
+			this.userBranch = userBranch;
+			this.entityType = entityType;
 		}
 
 		@Override
 		public void run() {
 			try {
-				subventionResponceUpload.subventionFileUploadProcessResponseFile(this.userId, status, file, media,
-						false);
+				SubventionHeader subventionHead = new SubventionHeader();
+				subventionHead.setUserId(this.userId);
+				subventionHead.setDeStatus(status);
+				subventionHead.setFile(file);
+				subventionHead.setMedia(media);
+				subventionHead.setUserBranch(this.userBranch);
+				subventionHead.setEntityCode(getComboboxValue(this.entityType));
+				subventionKnockOffUpload.importData(subventionHead);
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}
@@ -209,8 +242,8 @@ public class SubventionUploadDialogCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	@Autowired
-	public void setSubventionResponceUpload(SubventionResponceUpload subventionResponceUpload) {
-		this.subventionResponceUpload = subventionResponceUpload;
+	public void setSubventionKnockOffUpload(SubventionKnockOffUpload subventionKnockOffUpload) {
+		this.subventionKnockOffUpload = subventionKnockOffUpload;
 	}
 
 }

@@ -13373,7 +13373,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
 
-		if (!this.manualSchdType.isDisabled()) {
+		if (this.row_ManualSchedule.isVisible() && !this.manualSchdType.isDisabled()) {
 			try {
 				if (getComboboxValue(this.manualSchdType).equals(PennantConstants.List_Select)) {
 					throw new WrongValueException(this.manualSchdType, Labels.getLabel("STATIC_INVALID",
@@ -19963,59 +19963,60 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						manualScheduleDetailDialogCtrl.setSchRebuildReq(false);
 					}
 					return;
-				}
-			} else if (PennantConstants.MANUALSCHEDULETYPE_UPLOAD.equals(manualSchdType)) {
-				ManualScheduleHeader scheduleHeader = getFinanceDetail().getFinScheduleData().getManualScheduleHeader();
-				List<ManualScheduleDetail> details = scheduleHeader.getManualSchedules();
+				} else if (PennantConstants.MANUALSCHEDULETYPE_UPLOAD.equals(manualSchdType)) {
+					ManualScheduleHeader scheduleHeader = getFinanceDetail().getFinScheduleData()
+							.getManualScheduleHeader();
+					List<ManualScheduleDetail> details = scheduleHeader.getManualSchedules();
 
-				// Principal Amount And First Disb amount Should match
-				if (!(scheduleHeader.getTotPrincipleAmt().compareTo(this.finAmount.getValidateValue()) == 0)) {
-					financeTypeDetailsTab.setSelected(true);
-					MessageUtil.showError(Labels.getLabel("PRIAMT_FINAMT_NOTMATCH"));
-					return;
-				}
-				// No of instal sholud match
-				if (!(scheduleHeader.getNumberOfTerms() == this.numberOfTerms_two.getValue())) {
-					financeTypeDetailsTab.setSelected(true);
-
-					MessageUtil.showError(Labels.getLabel("NOOFINSTL_ROWS"));
-					return;
-				}
-				// First Repayment must be greather then the Loan Start Date
-				if (details.get(0).getSchDate().compareTo(this.finStartDate.getValue()) <= 0) {
-					getFinanceDetail().getFinScheduleData().setManualScheduleHeader(null);
-					Tab tab = getTab(AssetConstants.UNIQUE_ID_MANUALSCHEDULE);
-					if (tab != null) {
-						tab.setSelected(true);
+					// Principal Amount And First Disb amount Should match
+					if (!(scheduleHeader.getTotPrincipleAmt().compareTo(this.finAmount.getValidateValue()) == 0)) {
+						financeTypeDetailsTab.setSelected(true);
+						MessageUtil.showError(Labels.getLabel("PRIAMT_FINAMT_NOTMATCH"));
+						return;
 					}
-					String repaymentDate = "First Repayment Date : "
-							+ DateUtil.format(details.get(0).getSchDate(), DateFormat.LONG_DATE.getPattern());
-					String finStartDate = "Loan Start Date : "
-							+ DateUtil.format(this.finStartDate.getValue(), DateFormat.LONG_DATE.getPattern());
-					MessageUtil.showError(
-							Labels.getLabel("DATE_ALLOWED_MINDATE", new String[] { repaymentDate, finStartDate }));
-					return;
+					// No of instal sholud match
+					if (!(scheduleHeader.getNumberOfTerms() == this.numberOfTerms_two.getValue())) {
+						financeTypeDetailsTab.setSelected(true);
+
+						MessageUtil.showError(Labels.getLabel("NOOFINSTL_ROWS"));
+						return;
+					}
+					// First Repayment must be greather then the Loan Start Date
+					if (details.get(0).getSchDate().compareTo(this.finStartDate.getValue()) <= 0) {
+						getFinanceDetail().getFinScheduleData().setManualScheduleHeader(null);
+						Tab tab = getTab(AssetConstants.UNIQUE_ID_MANUALSCHEDULE);
+						if (tab != null) {
+							tab.setSelected(true);
+						}
+						String repaymentDate = "First Repayment Date : "
+								+ DateUtil.format(details.get(0).getSchDate(), DateFormat.LONG_DATE.getPattern());
+						String finStartDate = "Loan Start Date : "
+								+ DateUtil.format(this.finStartDate.getValue(), DateFormat.LONG_DATE.getPattern());
+						MessageUtil.showError(
+								Labels.getLabel("DATE_ALLOWED_MINDATE", new String[] { repaymentDate, finStartDate }));
+						return;
+					}
+
+					financeMain.setMaturityDate(details.get(details.size() - 1).getSchDate());
+					this.maturityDate.setValue(details.get(details.size() - 1).getSchDate());
+
+					// Manual Schedule calculation
+					getFinanceDetail().setFinScheduleData(
+							ScheduleCalculator.getCalManualSchd(getFinanceDetail().getFinScheduleData(), null));
+
+					getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
+					getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
+
+					// Fill Finance Schedule details List data into ListBox
+					if (getScheduleDetailDialogCtrl() != null) {
+						getScheduleDetailDialogCtrl().doFillScheduleList(getFinanceDetail().getFinScheduleData());
+						getScheduleDetailDialogCtrl().setPlanEMIHDateList(new ArrayList<Date>());
+					} else {
+						appendScheduleDetailTab(false, false);
+					}
+					// For Schedule Generation Checking
+					getFinanceDetail().getFinScheduleData().getManualScheduleHeader().setManualSchdChange(false);
 				}
-
-				financeMain.setMaturityDate(details.get(details.size() - 1).getSchDate());
-				this.maturityDate.setValue(details.get(details.size() - 1).getSchDate());
-
-				// Manual Schedule calculation
-				getFinanceDetail().setFinScheduleData(
-						ScheduleCalculator.getCalManualSchd(getFinanceDetail().getFinScheduleData(), null));
-
-				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
-				getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
-
-				// Fill Finance Schedule details List data into ListBox
-				if (getScheduleDetailDialogCtrl() != null) {
-					getScheduleDetailDialogCtrl().doFillScheduleList(getFinanceDetail().getFinScheduleData());
-					getScheduleDetailDialogCtrl().setPlanEMIHDateList(new ArrayList<Date>());
-				} else {
-					appendScheduleDetailTab(false, false);
-				}
-				// For Schedule Generation Checking
-				getFinanceDetail().getFinScheduleData().getManualScheduleHeader().setManualSchdChange(false);
 			} else if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
 					&& (StringUtils.isNotEmpty(financeMain.getDroplineFrq()) || StringUtils.isNotEmpty(moduleDefiner)
 							|| (finScheduleData.getFinanceType().isDroplineOD()
