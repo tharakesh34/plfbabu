@@ -171,6 +171,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 		registerField("receiptID");
 		registerField("finCcy");
+		registerField("Reference");
 		registerField("ExtReference", listheader_ReceiptCancellationReference, SortOrder.ASC, externalReference,
 				sortOperator_ReceiptCancellationReference, Operators.STRING);
 		registerField("custCIF", listheader_ReceiptCancellationCusomer, SortOrder.NONE, customer,
@@ -536,7 +537,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 				if (details != null) {
 					this.finBranch.setValue(details.getBranchCode());
 				}
-				
+
 			}
 		}
 		logger.debug("Leaving" + event.toString());

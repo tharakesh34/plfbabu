@@ -8012,7 +8012,7 @@ public class ScheduleCalculator {
 			// openSchd.setTDSApplicable(schedules.get(prvIndex + 2).isTDSApplicable());
 			Date maturityDate = fm.getMaturityDate();
 
-			if (maturityDate.compareTo(SysParamUtil.getAppDate()) < 0) {
+			if (maturityDate.compareTo(SysParamUtil.getAppDate()) <= 0) {
 				openSchd.setTDSApplicable(schedules.get(prvIndex + 1).isTDSApplicable());
 			} else {
 				openSchd.setTDSApplicable(schedules.get(prvIndex + 2).isTDSApplicable());

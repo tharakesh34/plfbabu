@@ -213,14 +213,15 @@ public class ChangeGraceEndService extends ServiceHelper {
 
 		nextGrcPftDate = formatDate(nextGrcPftDate);
 
-		if (nextGrcPftDate.compareTo(newGrcEndDate) > 0) {
+		if (DateUtil.compare(nextGrcPftDate, newGrcEndDate) > 0) {
 			nextGrcPftDate = newGrcEndDate;
 		}
 
 		fm.setNextGrcPftDate(nextGrcPftDate);
 
 		boolean includeStartDate = false;
-		if (fm.getFinStartDate().compareTo(nextGrcPftDate) < 0) {
+
+		if (DateUtil.compare(fm.getFinStartDate(), nextGrcPftDate) < 0) {
 			includeStartDate = true;
 		}
 

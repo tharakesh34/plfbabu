@@ -12126,6 +12126,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			tab = (Tab) this.tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_PRICING_DETAILS));
 		}
 
+		if (this.numberOfTerms.getValue() != null) {
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setNumberOfTerms(this.numberOfTerms.getValue());
+		}
+
 		if (this.alwLoanSplit.isChecked()) {
 			if (tab != null) {
 				tab.setVisible(true);
