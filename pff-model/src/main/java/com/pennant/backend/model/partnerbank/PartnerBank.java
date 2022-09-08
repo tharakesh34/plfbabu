@@ -253,6 +253,14 @@ public class PartnerBank extends AbstractWorkflowEntity {
 		this.acTypeName = acTypeName;
 	}
 
+	public void setId(long id) {
+		this.partnerBankId = id;
+	}
+
+	public long getId() {
+		return partnerBankId;
+	}
+
 	public long getPartnerBankId() {
 		return partnerBankId;
 	}

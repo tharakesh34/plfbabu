@@ -27,6 +27,7 @@ import net.sf.jasperreports.engine.JRScriptletException;
 
 public class NumberToEnglishWords extends JRDefaultScriptlet implements Serializable {
 	private static Logger logger = LogManager.getLogger(NumberToEnglishWords.class);
+	private static final long serialVersionUID = 1L;
 	private static CurrencyDAO currencyDAO;
 
 	static String[] wrdOnes = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
