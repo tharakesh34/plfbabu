@@ -267,9 +267,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private static final long serialVersionUID = -2030216591697935342L;
 	private static final Logger logger = LogManager.getLogger(AgreementGeneration.class);
 
-	public static final String refField = "SmartForm[0].LPOForm[0].txtrefno[0]";
-	public static final String statusField = "SmartForm[0].LPOForm[0].ddlIsActive[0]";
-	public static final String dealerId = "SmartForm[0].LPOForm[0].txtdealerid[0]";
 	ArrayList<ValueLabel> interestRateType = PennantStaticListUtil.getInterestRateType(true);
 
 	private NotesService notesService;
@@ -2177,7 +2174,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				agreement.setSanctionDetailsList(new ArrayList<>());
 			}
 			setNetFinanceAmount(agreement, detail);
-			
+
 			if (agreementGenerationService != null) {
 				agreementGenerationService.setAdditionalRequiredFields(agreement, detail);
 			}

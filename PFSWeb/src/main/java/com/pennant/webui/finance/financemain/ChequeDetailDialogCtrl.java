@@ -919,7 +919,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * 
 	 * @param aChequeDetail
 	 */
-	public ArrayList<WrongValueException> doWriteComponentsToBean(ChequeHeader chequeHeader, boolean isGenarate) {
+	public List<WrongValueException> doWriteComponentsToBean(ChequeHeader chequeHeader, boolean isGenarate) {
 		logger.debug(Literal.LEAVING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -1176,7 +1176,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * Writes the showErrorDetails method for .<br>
 	 * displaying exceptions if occured
 	 */
-	private void showErrorDetails(ArrayList<WrongValueException> wve) {
+	private void showErrorDetails(List<WrongValueException> wve) {
 		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
@@ -1222,7 +1222,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		doRemoveValidation();
 		doSetValidation();
-		ArrayList<WrongValueException> wve = doWriteComponentsToBean(aChequeHeader, false);
+		List<WrongValueException> wve = doWriteComponentsToBean(aChequeHeader, false);
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);
 		} else if (!this.btnGen.isDisabled()) {
