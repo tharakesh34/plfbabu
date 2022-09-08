@@ -50,7 +50,6 @@
 									<label id="label_SelectMandate_EntityCode" value="${c:l('label_SelectMandate_EntityCode.value')}"
 										style="padding-left:12px;" />
 									<hbox>
-										<space spacing="2px" sclass="mandatory" />
 										<extendedcombobox id="entityCode" width="250px" />
 									</hbox>
 								</row>

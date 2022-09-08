@@ -61,6 +61,14 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
 	private boolean allowMultipleIFSC;
+	private boolean cheque;
+	private boolean dd;
+	private boolean ecs;
+	private boolean nach;
+	private boolean dda;
+	private boolean emandate;
+	private String allowedSources;
+	private boolean UpdateBranches;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -193,5 +201,69 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 
 	public void setAllowMultipleIFSC(boolean allowMultipleIFSC) {
 		this.allowMultipleIFSC = allowMultipleIFSC;
+	}
+
+	public boolean isCheque() {
+		return cheque;
+	}
+
+	public boolean isDd() {
+		return dd;
+	}
+
+	public boolean isEcs() {
+		return ecs;
+	}
+
+	public boolean isNach() {
+		return nach;
+	}
+
+	public boolean isDda() {
+		return dda;
+	}
+
+	public boolean isEmandate() {
+		return emandate;
+	}
+
+	public String getAllowedSources() {
+		return allowedSources;
+	}
+
+	public void setCheque(boolean cheque) {
+		this.cheque = cheque;
+	}
+
+	public void setDd(boolean dd) {
+		this.dd = dd;
+	}
+
+	public void setEcs(boolean ecs) {
+		this.ecs = ecs;
+	}
+
+	public void setNach(boolean nach) {
+		this.nach = nach;
+	}
+
+	public void setDda(boolean dda) {
+		this.dda = dda;
+	}
+
+	public void setEmandate(boolean emandate) {
+		this.emandate = emandate;
+	}
+
+	public void setAllowedSources(String allowedSources) {
+		this.allowedSources = allowedSources;
+	}
+
+	public boolean isUpdateBranches() {
+		return UpdateBranches;
+	}
+
+	public void setUpdateBranches(boolean updateBranches) {
+		UpdateBranches = updateBranches;
 	}
 }

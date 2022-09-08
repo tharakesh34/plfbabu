@@ -819,6 +819,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return valFrq;
 	}
 
+	@Override
+	public List<FinanceMain> getValidFinreferences(long custId, String finRepayMethod) {
+		return mandateDAO.getLoansForMandate(custId, finRepayMethod);
+	}
+
 	/**
 	 * @return the mandate
 	 */

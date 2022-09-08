@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
@@ -89,4 +90,7 @@ public interface MandateDAO {
 	int getMandateByMandateRef(String mandateRef);
 
 	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status);
+
+	List<FinanceMain> getLoansForMandate(long custId, String finRepayMethod);
+
 }

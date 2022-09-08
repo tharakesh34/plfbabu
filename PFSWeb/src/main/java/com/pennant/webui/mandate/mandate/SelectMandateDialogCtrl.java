@@ -33,10 +33,12 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
+import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
@@ -79,6 +81,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected long custId = Long.MIN_VALUE;
 	private CustomerDetailsService customerDetailsService;
 	private transient CustomerService customerService;
+	private transient MandateService mandateService;
 
 	private final List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 
@@ -175,6 +178,7 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setDisplayStyle(2);
+		this.entityCode.setMandatoryStyle(true);
 		this.entityCode.setModuleName("Entity");
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
@@ -246,10 +250,15 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING);
 		try {
 			Map<String, Object> arg = getDefaultArguments();
+
+			List<FinanceMain> validFinreferences = mandateService.getValidFinreferences(this.mandate.getCustID(),
+					this.mandate.getMandateType());
+			this.mandate.setValidFinreferences(validFinreferences);
 			arg.put("mandate", this.mandate);
 			arg.put("mandatedata", this);
 			arg.put("enqModule", enqiryModule);
 			arg.put("fromLoan", false);
+			arg.put("validReferences", this.mandate.getValidFinreferences());
 			arg.put("mandateListCtrl", this.mandateListCtrl);
 
 			if (MandateStatus.isAwaitingConf(mandate.getStatus())) {

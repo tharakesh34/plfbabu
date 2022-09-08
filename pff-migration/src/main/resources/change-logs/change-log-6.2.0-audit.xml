@@ -116,5 +116,18 @@
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#94.1" author="saikiran.n">
+		<addColumn tableName="Adtbmtbankdetail">
+			<column name="Nach" type="boolean" />
+			<column name="Dd" type="boolean" />
+			<column name="Dda" type="boolean" />
+			<column name="Ecs" type="boolean" />
+			<column name="Cheque" type="boolean" />
+			<column name="Emandate" type="boolean" />
+			<column name="AllowedSources" type="varchar(50)" />
+			<column name="UpdateBranches" type="boolean" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

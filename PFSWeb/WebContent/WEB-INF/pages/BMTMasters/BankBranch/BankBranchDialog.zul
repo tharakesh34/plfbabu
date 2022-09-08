@@ -42,14 +42,14 @@
 					</div>
 				</north>
 				<center border="none" autoscroll="false">
-
+					<div id ="div_basicDetails">
 					<groupbox id="gb_basicDetails" sclass="gb-dialog">
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
-								<column width="15%" />
-								<column width="35%" />
-								<column width="15%" />
-								<column width="35%" />
+								<column width="20%" />
+								<column width="30%" />
+								<column width="20%" />
+								<column width="30%" />
 							</columns>
 							<rows>
 
@@ -93,6 +93,26 @@
 									</hbox>
 								</row>
 								<row visible="true">
+									<label id="label_Active" value="${c:l('label_BankBranchDialog_Active.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="active" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_instrumenttypes" sclass="gb-dialog" >
+					<caption label="${c:l('label_BankBranchDialog_Instrumenttypes')}"/>
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="20%" />
+								<column width="30%" />
+								<column width="20%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row visible="true">
 									<label id="label_ECS" value="${c:l('label_BankBranchDialog_ECS.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -120,6 +140,7 @@
 								<row visible="false" id="row_eMandate">
 									<label id="label_Emandate" value="${c:l('label_BankBranchDialog_EMandate.value')}" />
 									<hbox>
+										<space spacing="2px" />
 										<checkbox id="eMandate" />
 									</hbox>
 									<label id="label_AllowedSources" value="${c:l('label_BankBranchDialog_AllowedSources.value')}" />
@@ -135,15 +156,11 @@
 										<space spacing="2px" />
 										<checkbox id="dda" />
 									</hbox>
-									<label id="label_Active" value="${c:l('label_BankBranchDialog_Active.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="active" />
-									</hbox>
 								</row>
 							</rows>
 						</grid>
 					</groupbox>
+					</div>
 				</center>
 				<south sclass="south-dialog">
 					<groupbox id="groupboxWf" width="99%" closable="false">

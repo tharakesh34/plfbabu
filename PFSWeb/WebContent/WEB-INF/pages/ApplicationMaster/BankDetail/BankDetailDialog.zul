@@ -2,7 +2,8 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_BankDetailDialog" border="normal" apply="${bankDetailDialogCtrl}" width="100%" height="100%"
@@ -16,17 +17,23 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNew"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnEdit" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnEdit"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnEdit.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnDelete" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnDelete"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnSave" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnSave"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnCancel" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnCancel"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -37,9 +44,10 @@
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
 							<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-							<button id="btnClose" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
+							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
@@ -47,65 +55,139 @@
 			</north>
 
 			<center border="none" autoscroll="false">
+				<div id="basicDetailDiv">
+					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="20%" />
+								<column width="30%" />
+								<column width="20%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row visible="true">
+									<label id="label_BankDetailDialog_bankCode"
+										value="${c:l('label_BankDetailDialog_BankCode.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<uppercasebox id="bankCode" maxlength="8" width="72px" />
+									</hbox>
 
-				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-						<columns>
-							<column width="15%" />
-							<column width="35%" />
-							<column width="15%" />
-							<column width="35%" />
-						</columns>
-						<rows>
-							<row visible="true">
-								<label id="label_BankDetailDialog_bankCode" value="${c:l('label_BankDetailDialog_BankCode.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<uppercasebox id="bankCode" maxlength="8" width="72px" />
-								</hbox>
-
-								<label id="label_BankDetailDialog_BankName" value="${c:l('label_BankDetailDialog_BankName.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<textbox id="bankName" maxlength="50" width="200px" />
-								</hbox>
-							</row>
-							<row visible="true">
-								<label id="label_BankDetailDialog_MinimumAccNoLength" value="${c:l('label_BankDetailDialog_MinimumAccNoLength.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<intbox id="minAccNoLength" />
-								</hbox>
-
-								<label id="label_BankDetailDialog_BankShortCode" value="${c:l('label_BankDetailDialog_BankShortCode.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<textbox id="bankShortCode" maxlength="20" width="200px" />
-								</hbox>
-							</row>
-							<row visible="true">
-								<label id="label_BankDetailDialog_accNoLength" value="${c:l('label_BankDetailDialog_AccNoLength.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<intbox id="accNoLength" />
-								</hbox>
-								
-								<label id="label_BankDetailDialog_Active" value="${c:l('label_BankDetailDialog_Active.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="active" checked="false" />
-								</hbox>
+									<label id="label_BankDetailDialog_BankName"
+										value="${c:l('label_BankDetailDialog_BankName.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="bankName" maxlength="50" width="300px" />
+									</hbox>
 								</row>
-								<row>
-								<label id="label_BankDetailDialog_AllowMultipleIFSC" value="${c:l('label_BankDetailDialog_AllowMultipleIFSC.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="allowMultipleIFSC" checked="false" />
-								</hbox>
-							</row>
-						</rows>
-					</grid>
-				</groupbox>
+								
+								<row visible="true">
+									<label id="label_BankDetailDialog_BankShortCode"
+										value="${c:l('label_BankDetailDialog_BankShortCode.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="bankShortCode" maxlength="20" width="200px" />
+									</hbox>
+									
+									<label id="label_BankDetailDialog_AllowMultipleIFSC"
+										value="${c:l('label_BankDetailDialog_AllowMultipleIFSC.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="allowMultipleIFSC" checked="false" />
+									</hbox>
+									
+								</row>
+								
+								<row visible="true">
+									<label id="label_BankDetailDialog_MinimumAccNoLength"
+										value="${c:l('label_BankDetailDialog_MinimumAccNoLength.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<intbox id="minAccNoLength" />
+									</hbox>
+
+									<label id="label_BankDetailDialog_accNoLength"
+										value="${c:l('label_BankDetailDialog_AccNoLength.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<intbox id="accNoLength" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label id="label_BankDetailDialog_Active"
+										value="${c:l('label_BankDetailDialog_Active.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="active" checked="false" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_instrumenttypes" sclass="gb-dialog">
+						<caption label="${c:l('label__BankDetailDialog_Instrumenttypes')}" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="20%" />
+								<column width="30%" />
+								<column width="20%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row visible="true">
+									<label id="label_ECS" value="${c:l('label_BankDetailDialog_ECS.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="ecs" />
+									</hbox>
+									<label id="label_Nach" value="${c:l('label_BankDetailDialog_Nach.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="nach" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label id="label_DD" value="${c:l('label_BankDetailDialog_DD.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="dd" />
+									</hbox>
+									<label id="label_Cheque" value="${c:l('label_BankDetailDialog_Cheque.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="cheque" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label id="label_Emandate" value="${c:l('label_BankDetailDialog_EMandate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="eMandate" />
+									</hbox>
+									<label id="label_AllowedSources"
+										value="${c:l('label_BankDetailDialog_AllowedSources.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<uppercasebox id="allowedSources" />
+										<button id="btnMultiSource" image="/images/icons/LOVSearch.png" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label id="label_DDA" value="${c:l('label_BankDetailDialog_DDA.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="dda" />
+									</hbox>
+									<label id="label_UpdateBranches" value="${c:l('label_BankDetailDialog_UpdateBranches.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="updateBranches" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
 			</center>
 
 			<south sclass="south-dialog">
@@ -113,7 +195,8 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="75%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_BankDetailDialog_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+						<label id="label_BankDetailDialog_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>

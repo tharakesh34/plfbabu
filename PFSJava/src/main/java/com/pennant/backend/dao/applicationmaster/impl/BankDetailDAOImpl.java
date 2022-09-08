@@ -84,9 +84,10 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 	@Override
 	public BankDetail getBankDetailById(final String id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" BankCode, BankName, BankShortCode, Active, AccNoLength, MinAccNoLength, AllowMultipleIFSC");
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId");
+		sql.append(" BankCode, BankName, BankShortCode, Active, AccNoLength, MinAccNoLength");
+		sql.append(", AllowMultipleIFSC, Nach, Dd, Dda, Ecs, Cheque, Emandate, AllowedSources");
+		sql.append(", UpdateBranches, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" from BMTBankDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where BankCode = ?");
@@ -104,6 +105,14 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 				bd.setAccNoLength(rs.getInt("AccNoLength"));
 				bd.setMinAccNoLength(rs.getInt("MinAccNoLength"));
 				bd.setAllowMultipleIFSC(rs.getBoolean("AllowMultipleIFSC"));
+				bd.setNach(rs.getBoolean("Nach"));
+				bd.setDd(rs.getBoolean("Dd"));
+				bd.setDda(rs.getBoolean("Dda"));
+				bd.setEcs(rs.getBoolean("Ecs"));
+				bd.setCheque(rs.getBoolean("Cheque"));
+				bd.setEmandate(rs.getBoolean("Emandate"));
+				bd.setAllowedSources(rs.getString("AllowedSources"));
+				bd.setUpdateBranches(rs.getBoolean("UpdateBranches"));
 				bd.setVersion(rs.getInt("Version"));
 				bd.setLastMntOn(rs.getTimestamp("LastMntOn"));
 				bd.setLastMntBy(rs.getLong("LastMntBy"));
@@ -166,13 +175,14 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTBankDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength, AllowMultipleIFSC,");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(
-				" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength, :MinAccNoLength, :AllowMultipleIFSC,");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength");
+		sql.append(", AllowMultipleIFSC, Nach, Dd, Dda, Ecs, Cheque, Emandate, AllowedSources");
+		sql.append(", UpdateBranches, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength, :MinAccNoLength");
+		sql.append(", :AllowMultipleIFSC, :Nach, :Dd, :Dda, :Ecs, :Cheque, :Emandate, :AllowedSources");
+		sql.append(",:UpdateBranches, :Version, :LastMntBy, :LastMntOn, :RecordStatus");
+		sql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -195,14 +205,15 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update BMTBankDetail");
 		sql.append(tableType.getSuffix());
+		sql.append(" Set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active");
 		sql.append(
-				" Set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active, AccNoLength = :AccNoLength, MinAccNoLength = :MinAccNoLength,");
-		sql.append(
-				" AllowMultipleIFSC = :AllowMultipleIFSC, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		sql.append(
-				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where BankCode =:BankCode ");
+				", AccNoLength = :AccNoLength, MinAccNoLength = :MinAccNoLength, AllowMultipleIFSC = :AllowMultipleIFSC");
+		sql.append(", Nach = :Nach, Dd = :Dd, Dda = :Dda, Ecs = :Ecs, Cheque = :Cheque, Emandate = :Emandate");
+		sql.append(", AllowedSources = :AllowedSources, UpdateBranches = :UpdateBranches, Version = :Version");
+		sql.append(", LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
+		sql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId");
+		sql.append(", NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" where BankCode = :BankCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.

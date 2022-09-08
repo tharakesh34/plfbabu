@@ -40,6 +40,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -811,5 +812,25 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		}, finreference, mandateID, status);
 
 		return list.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId())).collect(Collectors.toList());
+	}
+
+	public List<FinanceMain> getLoansForMandate(long custId, String finRepayMethod) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, fm.FinRepayMethod FinRepayMethod");
+		sql.append(" From FinanceMain fm");
+		sql.append("Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append("Where fm.FinIsActive = ? and fm.CustId = ? and fm.FinRepayMethod = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
+
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
+
+			return fm;
+		}, 1, custId, finRepayMethod);
 	}
 }

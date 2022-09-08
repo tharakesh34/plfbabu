@@ -27,6 +27,9 @@ package com.pennant.backend.dao.bmtmasters.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
@@ -37,6 +40,7 @@ import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -499,7 +503,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		sql.append(" Where Ifsc = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-		
+
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				return rs.getInt("Count");
@@ -546,5 +550,86 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public int updateInstruments(String bankcode, Map<InstrumentType, Boolean> instrumenttype, String emnadeSource) {
+		StringBuilder sql = new StringBuilder("Update BankBranches set ");
+
+		StringBuilder update = new StringBuilder();
+		for (Entry<InstrumentType, Boolean> item : instrumenttype.entrySet()) {
+			if (update.length() > 0) {
+				update.append(", ");
+			}
+			update.append(item.getKey().name());
+			update.append(" = ?");
+		}
+
+		if (emnadeSource != null) {
+			update.append(", AllowedSources = ?");
+		}
+
+		sql.append(update.toString());
+
+		return jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			for (Entry<InstrumentType, Boolean> item : instrumenttype.entrySet()) {
+				ps.setBoolean(index++, item.getValue());
+			}
+
+			if (emnadeSource != null) {
+				ps.setString(index++, emnadeSource);
+			}
+		});
+	}
+
+	@Override
+	public List<BankBranch> getBrancesByCode(String bankCode) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR");
+		sql.append(", IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		sql.append(", ParentBranch, ParentBranchDesc, Emandate, AllowedSources");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from BankBranches");
+		sql.append(" Where BankCode = ?");
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, bankCode);
+		}, (rs, rowNum) -> {
+			BankBranch bb = new BankBranch();
+
+			bb.setBankBranchID(rs.getLong("BankBranchID"));
+			bb.setBankCode(rs.getString("BankCode"));
+			bb.setBranchCode(rs.getString("BranchCode"));
+			bb.setBranchDesc(rs.getString("BranchDesc"));
+			bb.setCity(rs.getString("City"));
+			bb.setMICR(rs.getString("MICR"));
+			bb.setIFSC(rs.getString("IFSC"));
+			bb.setAddOfBranch(rs.getString("AddOfBranch"));
+			bb.setNach(rs.getBoolean("Nach"));
+			bb.setDd(rs.getBoolean("Dd"));
+			bb.setDda(rs.getBoolean("Dda"));
+			bb.setEcs(rs.getBoolean("Ecs"));
+			bb.setCheque(rs.getBoolean("Cheque"));
+			bb.setActive(rs.getBoolean("Active"));
+			bb.setParentBranch(rs.getString("ParentBranch"));
+			bb.setParentBranchDesc(rs.getString("ParentBranchDesc"));
+			bb.setEmandate(rs.getBoolean("Emandate"));
+			bb.setAllowedSources(rs.getString("AllowedSources"));
+			bb.setVersion(rs.getInt("Version"));
+			bb.setLastMntBy(rs.getLong("LastMntBy"));
+			bb.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			bb.setRecordStatus(rs.getString("RecordStatus"));
+			bb.setRoleCode(rs.getString("RoleCode"));
+			bb.setNextRoleCode(rs.getString("NextRoleCode"));
+			bb.setTaskId(rs.getString("TaskId"));
+			bb.setNextTaskId(rs.getString("NextTaskId"));
+			bb.setRecordType(rs.getString("RecordType"));
+			bb.setWorkflowId(rs.getLong("WorkflowId"));
+			return bb;
+		});
 	}
 }

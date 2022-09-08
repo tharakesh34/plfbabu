@@ -3481,6 +3481,7 @@
 		scope="prototype" >
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="customerService" ref="customerServiceTarget" />
+		<property name="mandateService" ref="mandateService" />
 		
 		</bean>
 	

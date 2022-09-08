@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <include file="change-logs/change-log-5.0.5-audit.xml" />
+    <!-- <include file="change-logs/change-log-5.0.5-audit.xml" />
 	<include file="change-logs/change-log-5.3.0-audit.xml" />
 	<include file="change-logs/change-log-5.4.0-audit.xml" />
 	<include file="change-logs/change-log-5.5.0-audit.xml" />
@@ -28,6 +28,7 @@
 	<include file="change-logs/change-log-finid-audit.xml" />
 	<include file="change-logs/change-log-6.0.0-pt-audit.xml" />
 	<include file="change-logs/change-log-db-cleanup-audit.xml" />
-	<include file="change-logs/change-log-6.1.0-audit.xml" /> 
+	<include file="change-logs/change-log-6.1.0-audit.xml" />  -->
+	<include file="change-logs/change-log-6.2.0-audit.xml" /> 
 	
 </databaseChangeLog>

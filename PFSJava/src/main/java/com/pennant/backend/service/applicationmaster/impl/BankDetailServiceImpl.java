@@ -25,6 +25,12 @@
 
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -43,10 +49,12 @@ import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -56,7 +64,6 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class BankDetailServiceImpl extends GenericService<BankDetail> implements BankDetailService {
-
 	private static Logger logger = LogManager.getLogger(BankDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -201,23 +208,8 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 		return getBankDetailDAO().getAccNoLengthByCode(bankCode, "_View");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getBankDetailDAO().delete with
-	 * parameters bankDetail,"" b) NEW Add new record in to main table by using getBankDetailDAO().save with parameters
-	 * bankDetail,"" c) EDIT Update record in the main table by using getBankDetailDAO().update with parameters
-	 * bankDetail,"" 3) Delete the record from the workFlow table by using getBankDetailDAO().delete with parameters
-	 * bankDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTBankDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTBankDetail by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader);
@@ -226,13 +218,19 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+
 		BankDetail bankDetail = new BankDetail();
-		BeanUtils.copyProperties((BankDetail) auditHeader.getAuditDetail().getModelData(), bankDetail);
 
-		getBankDetailDAO().delete(bankDetail, TableType.TEMP_TAB);
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
 
+		BeanUtils.copyProperties((BankDetail) auditDetail.getModelData(), bankDetail);
+
+		bankDetailDAO.delete(bankDetail, TableType.TEMP_TAB);
+
+		BankDetail beforeImage = null;
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(bankDetail.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(bankDetailDAO.getBankDetailById(bankDetail.getBankCode(), ""));
+			beforeImage = bankDetailDAO.getBankDetailById(bankDetail.getBankCode(), "");
+			auditDetail.setBefImage(beforeImage);
 		}
 
 		if (bankDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -252,7 +250,16 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				bankDetail.setRecordType("");
-				getBankDetailDAO().update(bankDetail, TableType.MAIN_TAB);
+
+				bankDetailDAO.update(bankDetail, TableType.MAIN_TAB);
+				if (bankDetail.isUpdateBranches()) {
+
+					List<AuditDetail> updateBranchInstruments = updateBranchInstruments(bankDetail, beforeImage,
+							tranType);
+
+					auditHeader.setAuditDetails(updateBranchInstruments);
+				}
+
 			}
 		}
 
@@ -260,12 +267,114 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(bankDetail);
+		auditDetail.setAuditTranType(tranType);
+		auditDetail.setModelData(bankDetail);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private Map<InstrumentType, Boolean> getChangedInstuments(BankDetail bd, BankDetail beforeImage) {
+		Map<InstrumentType, Boolean> map = new HashMap<>();
+
+		if (bd.isEcs() != beforeImage.isEcs()) {
+			map.put(InstrumentType.ECS, bd.isEcs());
+		}
+
+		if (bd.isNach() != beforeImage.isNach()) {
+			map.put(InstrumentType.NACH, bd.isNach());
+		}
+
+		if (bd.isEmandate() != beforeImage.isEmandate()) {
+			map.put(InstrumentType.EMANDATE, bd.isEmandate());
+		}
+
+		if (bd.isCheque() != beforeImage.isCheque()) {
+			map.put(InstrumentType.CHEQUE, bd.isCheque());
+		}
+
+		if (bd.isDd() != beforeImage.isDd()) {
+			map.put(InstrumentType.DD, bd.isDd());
+		}
+
+		if (bd.isDda() != beforeImage.isDda()) {
+			map.put(InstrumentType.DDA, bd.isDda());
+		}
+
+		if (bd.isCheque() != beforeImage.isCheque()) {
+			map.put(InstrumentType.CHEQUE, bd.isCheque());
+		}
+
+		return map;
+	}
+
+	private List<AuditDetail> updateBranchInstruments(BankDetail bd, BankDetail beforeImage, String tranType) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		Map<InstrumentType, Boolean> map = getChangedInstuments(bd, beforeImage);
+
+		if (map.isEmpty()) {
+			return auditDetails;
+		}
+
+		String emnadeSource = null;
+
+		if (map.containsKey(InstrumentType.EMANDATE)) {
+			emnadeSource = bd.getAllowedSources();
+		}
+
+		bankBranchDAO.updateInstruments(bd.getBankCode(), map, emnadeSource);
+
+		List<AuditDetail> branchAuditDetails = getBranchAuditDetails(bd.getBankCode(), map, tranType);
+		if (!branchAuditDetails.isEmpty()) {
+			auditDetails.addAll(branchAuditDetails);
+		}
+
+		return auditDetails;
+	}
+
+	private List<AuditDetail> getBranchAuditDetails(String bankCode, Map<InstrumentType, Boolean> map,
+			String tranType) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		List<BankBranch> list = bankBranchDAO.getBrancesByCode(bankCode);
+
+		Set<InstrumentType> keySet = map.keySet();
+		int i = 0;
+		for (BankBranch bankBranch : list) {
+			BankBranch befImage = new BankBranch();
+			BeanUtils.copyProperties(bankBranch, befImage);
+
+			for (InstrumentType instrumentType : keySet) {
+				switch (instrumentType) {
+				case ECS:
+					bankBranch.setEcs(map.get(InstrumentType.ECS));
+					break;
+				case NACH:
+					bankBranch.setNach(map.get(InstrumentType.NACH));
+					break;
+				case DDA:
+					bankBranch.setDda(map.get(instrumentType.DDA));
+					break;
+				case DD:
+					bankBranch.setDd(map.get(instrumentType.DD));
+					break;
+				case CHEQUE:
+					bankBranch.setCheque(map.get(instrumentType.CHEQUE));
+					break;
+				case EMANDATE:
+					bankBranch.setEmandate(map.get(instrumentType.EMANDATE));
+					break;
+				default:
+					break;
+				}
+			}
+
+			auditDetails.add(new AuditDetail(tranType, ++i, befImage, bankBranch));
+		}
+
+		return auditDetails;
 	}
 
 	/**

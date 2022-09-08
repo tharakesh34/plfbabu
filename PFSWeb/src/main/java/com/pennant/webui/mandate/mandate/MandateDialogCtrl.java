@@ -256,6 +256,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private int ccyFormatter = 0;
 	protected int maxAccNoLength;
 	protected int minAccNoLength;
+	List<FinanceMain> validFinreferences = new ArrayList<FinanceMain>();
 
 	private final List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
@@ -365,6 +366,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			setMandateListCtrl((MandateListCtrl) arguments.get("mandateListCtrl"));
 		}
 
+		if (arguments.containsKey("validReferences")) {
+			validFinreferences = (List<FinanceMain>) arguments.get("validReferences");
+		}
+
 		this.useExisting.setDisabled(!fromLoan);
 
 		if (fromLoan) {
@@ -405,6 +410,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
+
+		this.finReference.setList(validFinreferences);
 
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(130);
@@ -479,6 +486,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.partnerBank.setVisible(true);
 		this.partnerBank.setMaxlength(8);
 		this.partnerBank.setDisplayStyle(2);
+		this.partnerBank.setMandatoryStyle(true);
 		this.partnerBank.setWidth("200px");
 		this.partnerBank.setModuleName("FinTypePartnerBank_Mandates");
 		this.partnerBank.setValueColumn("PartnerBankCode");
@@ -892,7 +900,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		switch (instrumentType) {
 		case ECS:
-		case DDM:
+		case DD:
 		case NACH:
 		case EMANDATE:
 			readOnlyComponent(false, this.finReference);

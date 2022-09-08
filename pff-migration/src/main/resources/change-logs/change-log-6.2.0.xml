@@ -1210,5 +1210,338 @@
         	 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#94.1" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='MANDATE_EMANDATE_REQUIRED';
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="ST#94.2.1" author="saikiran.n">
+		<addColumn tableName="BMTBankDetail_Temp">
+			<column name="Nach" type="boolean" />
+			<column name="Dd" type="boolean" />
+			<column name="Dda" type="boolean" />
+			<column name="Ecs" type="boolean" />
+			<column name="Cheque" type="boolean" />
+			<column name="Emandate" type="boolean" />
+			<column name="AllowedSources" type="varchar(50)" />
+			<column name="UpdateBranches" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.2.2" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Nach" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Dd" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Dda" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Ecs" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Cheque" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Emandate" tableName="BMTBankDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="UpdateBranches" tableName="BMTBankDetail_Temp" defaultValue="0" />
+	</changeSet>
 
+	<changeSet id="ST#94.2.2" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_NACH DEFAULT 0 FOR NACH;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_DD DEFAULT 0 FOR DD;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_DDA DEFAULT 0 FOR DDA;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_ECS DEFAULT 0 FOR ECS;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_CHEQUE DEFAULT 0 FOR CHEQUE;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_EMANDATE DEFAULT 0 FOR EMANDATE;
+				ALTER TABLE BMTBankDetail_Temp ADD CONSTRAINT DF_BMTBANKDEATAIL_TEMP_UPDATEBRANCHES DEFAULT 0 FOR UPDATEBRANCHES;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#94.3.1" author="saikiran.n">
+		<addColumn tableName="BMTBankDetail">
+			<column name="Nach" type="boolean" />
+			<column name="Dd" type="boolean" />
+			<column name="Dda" type="boolean" />
+			<column name="Ecs" type="boolean" />
+			<column name="Cheque" type="boolean" />
+			<column name="Emandate" type="boolean" />
+			<column name="AllowedSources" type="varchar(50)" />
+			<column name="UpdateBranches" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#94.3.2" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Nach" tableName="BMTBankDetail" defaultValue="0" />
+		<addDefaultValue columnName="Dd" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="Dda" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="Ecs" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="Cheque" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="Emandate" tableName="BMTBankDetail" defaultValue="0"/>
+		<addDefaultValue columnName="UpdateBranches" tableName="BMTBankDetail" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#94.3.2" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_NACH DEFAULT 0 FOR NACH;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_DD DEFAULT 0 FOR DD;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_DDA DEFAULT 0 FOR DDA;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_ECS DEFAULT 0 FOR ECS;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_CHEQUE DEFAULT 0 FOR CHEQUE;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_EMANDATE DEFAULT 0 FOR EMANDATE;
+				ALTER TABLE BMTBankDetail ADD CONSTRAINT DF_BMTBANKDEATAIL_UPDATEBRANCHES DEFAULT 0 FOR UPDATEBRANCHES;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.1" author="saikiran.n">
+		<createView viewName="Bank_Instrument_mapping" replaceIfExists="true">
+			<![CDATA[
+				Select BankCode
+				, max(dd) dd
+				, max(dda) dda
+				, max(nach) nach
+				, max(ecs) ecs
+				, max(cheque) cheque
+				, max(emandate) emandate
+			from (
+				Select BankCode, dd, dda, nach, ecs, cheque, emandate From BankBranches Where (dd = 1 or dda = 1 or nach = 1 or ecs = 1 or cheque = 1 or emandate = 1)
+				Union 
+				Select BankCode, dd, dda, nach, ecs, cheque, emandate From BankBranches_Temp Where (dd = 1 or dda = 1 or nach = 1 or ecs = 1 or cheque = 1 or emandate = 1)
+			) T group by BankCode
+																																		   
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.2" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				Update BMTBankDetail Set DD = (Select bb.DD From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.DD = 1);
+				Update BMTBankDetail Set DDA = (Select bb.DDA From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.DDA = 1);
+				Update BMTBankDetail Set NACH = (Select bb.NACH From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.NACH = 1);
+				Update BMTBankDetail Set ECS = (Select bb.ECS From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.ECS = 1);
+				Update BMTBankDetail Set CHEQUE = (Select bb.CHEQUE From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.CHEQUE = 1);
+				Update BMTBankDetail Set EMANDATE = (Select bb.DD From Bank_Instrument_mapping bb Where BMTBankDetail.BankCode = bb.BankCode and bb.EMANDATE = 1);
+
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.3" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				Update BMTBankDetail_Temp Set DD = (Select bb.DD From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.DD = 1);
+				Update BMTBankDetail_Temp Set DDA = (Select bb.DDA From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.DDA = 1);
+				Update BMTBankDetail_Temp Set NACH = (Select bb.NACH From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.NACH = 1);
+				Update BMTBankDetail_Temp Set ECS = (Select bb.ECS From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.ECS = 1);
+				Update BMTBankDetail_Temp Set CHEQUE = (Select bb.CHEQUE From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.CHEQUE = 1);
+				Update BMTBankDetail_Temp Set EMANDATE = (Select bb.EMANDATE From Bank_Instrument_mapping bb Where BMTBankDetail_Temp.BankCode = bb.BankCode and bb.EMANDATE = 1);
+
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#94.4.4" author="saikiran.n">
+		<dropView viewName="Bank_Instrument_mapping"/>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.5" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE BMTBankDetail_Temp SET Nach = 0 where Nach is null;
+				UPDATE BMTBankDetail_Temp SET Dd = 0 where Dd is null;
+				UPDATE BMTBankDetail_Temp SET Dda = 0 where dda is null;
+				UPDATE BMTBankDetail_Temp SET Ecs = 0 where Ecs is null;
+				UPDATE BMTBankDetail_Temp SET Cheque = 0 where Cheque is null;
+				UPDATE BMTBankDetail_Temp SET Emandate = 0 where Emandate is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.4.6" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE BMTBankDetail SET Nach = 0 where Nach is null;
+				UPDATE BMTBankDetail SET Dd = 0 where Dd is null;
+				UPDATE BMTBankDetail SET Dda = 0 where Dda is null;
+				UPDATE BMTBankDetail SET Ecs = 0 where Ecs is null;
+				UPDATE BMTBankDetail SET Cheque = 0 where Cheque is null;
+				UPDATE BMTBankDetail SET Emandate = 0 where Emandate is null;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#94.5" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_ECS');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DDA');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DD');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_NACH');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Cheque');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Emandate');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_AllowedSources');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BankDetailDialog_btnMultiSource');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_UpdateBranches');
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_ECS';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DDA';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DD';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_NACH';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Cheque';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Emandate';
+				DELETE FROM SecRights where RightName='BankDetailDialog_AllowedSources';
+				DELETE FROM SecRights where RightName='button_BankDetailDialog_btnMultiSource';
+				DELETE FROM SecRights where RightName='BankDetailDialog_UpdateBranches';
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_ECS', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_DDA', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_DD', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_NACH', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_Cheque', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_Emandate', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_AllowedSources', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 2, 'button_BankDetailDialog_btnMultiSource', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'BankDetailDialog_UpdateBranches', 'BankDetailDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_ECS'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DDA'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_DD'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_NACH'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Cheque'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_Emandate'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_AllowedSources'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BankDetailDialog_btnMultiSource'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_UpdateBranches'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#94.6_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bmtbankdetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#94.6" author="saikiran.n">
+		<createView viewName="BMTBANKDETAIL_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT BankCode
+					, BankName
+					, BankShortCode
+					, AccnoLength
+					, AllowMultipleIfsc
+					, MinAccnoLength
+					, Nach
+					, Dda
+					, Dd
+					, Ecs
+					, Cheque
+					, Emandate
+					, AllowedSources
+					, UpdateBranches
+					, Active
+					, Version
+					, LastMntBy
+					, LastMntOn
+					, RecordStatus
+					, RoleCode
+					, NextRoleCode
+					, TaskId
+					, NextTaskId
+					, RecordType
+					, WorkFlowId
+				From BmtBankDetail
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#94.6_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'bmtbankdetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#94.6.1_pre" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bmtbankdetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#94.6.1" author="saikiran.n">
+		<createView viewName="BMTBANKDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT BankCode
+					, BankName
+					, BankShortCode
+					, AccnoLength
+					, AllowMultipleIfsc
+					, MinAccnoLength
+					, Nach
+					, Dda
+					, Dd
+					, Ecs
+					, Cheque
+					, Emandate
+					, AllowedSources
+					, UpdateBranches
+					, Active
+					, Version
+					, LastMntBy
+					, LastMntOn
+					, RecordStatus
+					, RoleCode
+					, NextRoleCode
+					, TaskId
+					, NextTaskId
+					, RecordType
+					, WorkFlowId
+				From BmtBankDetail_Temp
+				Union All 
+				SELECT BankCode
+					, BankName
+					, BankShortCode
+					, AccnoLength
+					, AllowMultipleIfsc
+					, MinAccnoLength
+					, Nach
+					, Dda
+					, Dd
+					, Ecs
+					, Cheque
+					, Emandate
+					, AllowedSources
+					, UpdateBranches
+					, Active
+					, Version
+					, LastMntBy
+					, LastMntOn
+					, RecordStatus
+					, RoleCode
+					, NextRoleCode
+					, TaskId
+					, NextTaskId
+					, RecordType
+					, WorkFlowId
+				From BmtBankDetail Where Not Exists (Select 1 From BmtBankDetail_Temp Where BankCode = BmtBankDetail.BankCode) 
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#94.6.1_post" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'bmtbankdetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

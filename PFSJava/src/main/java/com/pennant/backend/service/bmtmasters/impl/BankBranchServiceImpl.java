@@ -584,8 +584,8 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 				return false;
 			}
 			break;
-		case DDM:
-			if (!bankBranch.isDda()) {
+		case DD:
+			if (!bankBranch.isDd()) {
 				return false;
 			}
 			break;

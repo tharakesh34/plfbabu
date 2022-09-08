@@ -149,10 +149,7 @@
 									<label value="${c:l('label_MandateDialog_BankBranchID.value')}" />
 									<extendedcombobox id="bankBranchID" />
 									<label value="${c:l('label_MandateDialog_PartnerBank.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
 										<extendedcombobox id="partnerBank" />
-									</hbox>
 								</row>
 
 								<row>
@@ -181,6 +178,11 @@
 									</hbox>
 								</row>
 								<row>
+									<label value="${c:l('label_MandateDialog_AccType.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="accType" width="200px" />
+									</hbox>
 									<label value="${c:l('label_MandateDialog_AccNumber.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
@@ -188,22 +190,17 @@
 										<button id="btnFetchAccountDetails"
 											tooltiptext="${c:l('label_FetchAccountDetails.tooltiptext')}" image="/images/icons/more.png" />
 									</hbox>
+								</row>
+								<row>
 									<label value="${c:l('label_MandateDialog_AccHolderName.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<textbox id="accHolderName" maxlength="100" width="200px" />
 									</hbox>
-								</row>
-								<row>
 									<label value="${c:l('label_MandateDialog_JointAccHolderName.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="jointAccHolderName" maxlength="50" width="200px" />
-									</hbox>
-									<label value="${c:l('label_MandateDialog_AccType.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<combobox id="accType" width="200px" />
 									</hbox>
 								</row>
 								<row>

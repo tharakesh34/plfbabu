@@ -20,9 +20,13 @@ public enum InstrumentType {
 
 	MANUAL("MANUAL", "Manual Payment"),
 
-	DDM("DAS", "DAS"),
+	DD("DD", "DD"),
 
-	UDC("DAS", "DAS");
+	UDC("UDC", "UDC"),
+
+	CHEQUE("CHEQUE", "CHEQUE"),
+
+	DDA("DDA", "DDA");
 
 	private String code;
 	private String description;
@@ -49,7 +53,7 @@ public enum InstrumentType {
 	public static boolean isDD(String instrumentType) {
 		InstrumentType st = InstrumentType.valueOf(instrumentType);
 
-		return st == null ? false : st == InstrumentType.DDM;
+		return st == null ? false : st == InstrumentType.DD;
 	}
 
 	public static boolean isNACH(String instrumentType) {
