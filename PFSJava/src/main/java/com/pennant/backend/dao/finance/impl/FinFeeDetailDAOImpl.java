@@ -650,7 +650,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 	@Override
 	public boolean isFinTypeFeeExists(long feeTypeId, String finType, int moduleId, boolean originationFee) {
-		StringBuilder sql = new StringBuilder("Select FeeTypeId From (");
+		StringBuilder sql = new StringBuilder("Select count(FeeTypeId) From (");
 		sql.append(" Select FeeTypeId From FinTypeFees Where FeeTypeId  = ? and FinType = ?");
 		sql.append(" and ModuleId = ? and OriginationFee = ?");
 		sql.append(" Union all");

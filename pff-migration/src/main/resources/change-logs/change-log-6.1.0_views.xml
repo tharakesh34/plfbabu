@@ -10965,4 +10965,52 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#204813_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'feerefundfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#204813" author="Gopal.p">
+		<comment>TDS APPLICABLE ADDED</comment>
+		<createView viewName="FEEREFUNDFINANCEMAIN_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT Distinct FM.FINID,
+					FM.FINREFERENCE,
+  					FM.FINTYPE,
+  					FM.FINCCY,
+  					FM.FINBRANCH,
+  					FM.CLOSINGSTATUS,
+					FM.TDSAPPLICABLE
+  					FROM FINANCEMAIN FM
+  				INNER JOIN FINRECEIPTHEADER FR ON FR.REFERENCE = FM.FINREFERENCE AND FR.RECEIPTPURPOSE  = 'FeePayment'
+               		AND (SELECT SUM(FD.PaidAmount) from FINFEEDETAIL FD Where FD.FINREFERENCE = FM.FINREFERENCE) > 0
+  				WHERE FM.CLOSINGSTATUS  = 'C'
+				UNION ALL
+				SELECT Distinct FM.FINID,
+					FM.FINREFERENCE,
+  					FM.FINTYPE,
+  					FM.FINCCY,
+  					FM.FINBRANCH,
+  					FM.CLOSINGSTATUS,
+					FM.TDSAPPLICABLE
+  					FROM REJECTFINANCEMAIN FM
+  				INNER JOIN FINRECEIPTHEADER FR ON FM.FINREFERENCE = FR.REFERENCE AND FR.RECEIPTPURPOSE  = 'FeePayment'
+  				WHERE FR.RECEIPTMODESTATUS != 'C' AND NOT (EXISTS
+  					(SELECT 1 FROM FINANCEMAIN  WHERE FINANCEMAIN.FINREFERENCE = FM.FINREFERENCE
+  						AND FINANCEMAIN.CLOSINGSTATUS  = 'C'))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#204813_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'feerefundfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

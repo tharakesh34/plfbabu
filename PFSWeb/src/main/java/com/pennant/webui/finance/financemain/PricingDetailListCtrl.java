@@ -2031,12 +2031,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				roiBox.setId("ROI_" + topup_label);
 				roiBox.setMaxlength(18);
 				roiBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-				if (!newRecord) {
-					roiBox.setValue(
-							PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 2));
-				} else {
-					roiBox.setValue(BigDecimal.ZERO);
-				}
+				roiBox.setValue(PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 2));
 				roiBox.setDisabled(false);
 				roiBox.setReadonly(readOnly);
 				hbox.appendChild(roiBox);
