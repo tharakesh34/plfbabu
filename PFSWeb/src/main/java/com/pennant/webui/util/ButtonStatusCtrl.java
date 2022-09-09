@@ -126,7 +126,6 @@ public class ButtonStatusCtrl implements Serializable {
 			return;
 		}
 
-		// button.setSclass(Labels.getLabel("CSS_BUTTON_CLASS_NAME"));
 		button.setLabel(label);
 	}
 
@@ -216,11 +215,9 @@ public class ButtonStatusCtrl implements Serializable {
 			setVisible(ButtonEnum.New, false);
 
 			if (firstTaks) {
-				// setVisible(ButtonEnum.New, true);
 				setVisible(ButtonEnum.Delete, true);
 				setVisible(ButtonEnum.Save, true);
 			} else {
-				// setVisible(ButtonEnum.New, false);
 				setVisible(ButtonEnum.Delete, false);
 				setVisible(ButtonEnum.Save, true);
 			}
