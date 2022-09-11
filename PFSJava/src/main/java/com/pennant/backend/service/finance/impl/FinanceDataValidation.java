@@ -1848,20 +1848,14 @@ public class FinanceDataValidation {
 			}
 
 			if (fd.getChequeHeader() != null)
-				errorDetails = chequeHeaderService.chequeValidation(fd, PennantConstants.VLD_CRT_LOAN, "");
-			if (!errorDetails.isEmpty()) {
+				error = chequeHeaderService.chequeValidation(fd, PennantConstants.VLD_CRT_LOAN, "");
+			if (error != null) {
+				errorDetails.add(error);
 				schdData.setErrorDetails(errorDetails);
 				return schdData;
 			}
 
 			errorDetails = jointAccountDetailsValidation(fd);
-			if (!errorDetails.isEmpty()) {
-				schdData.setErrorDetails(errorDetails);
-				return schdData;
-			}
-
-			if (fd.getChequeHeader() != null)
-				errorDetails = chequeHeaderService.chequeValidation(fd, PennantConstants.VLD_CRT_LOAN, "");
 			if (!errorDetails.isEmpty()) {
 				schdData.setErrorDetails(errorDetails);
 				return schdData;

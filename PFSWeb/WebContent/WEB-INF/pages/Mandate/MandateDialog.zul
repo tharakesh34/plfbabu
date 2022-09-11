@@ -149,7 +149,7 @@
 									<label value="${c:l('label_MandateDialog_BankBranchID.value')}" />
 									<extendedcombobox id="bankBranchID" />
 									<label value="${c:l('label_MandateDialog_PartnerBank.value')}" />
-										<extendedcombobox id="partnerBank" />
+									<extendedcombobox id="partnerBank" />
 								</row>
 
 								<row>
@@ -207,58 +207,30 @@
 									<label value="${c:l('label_MandateDialog_PhoneCountryCode.value')}" />
 									<textbox id="phoneNumber" />
 								</row>
+								<row id="pennyDropRow">
+									<label value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
+									<textbox id="pennyDropResult" maxlength="50" width="200px" readonly="true" />
+									<label value="${c:l('label_MandateDialog_TransactionDetails.value')}" />
+									<textbox id="txnDetails" maxlength="50" width="200px" readonly="true" />
+								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_Active.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="active" checked="true" />
-									</hbox>
+									<checkbox id="active" checked="true" />
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_Status.value')}" />
 									<hbox>
-										<space spacing="2px" />
 										<combobox id="mandateStatus" readonly="true" disabled="true" />
-										<button id="btnReason" label="view"></button>
+										<button id="btnReason" label="view" />
 									</hbox>
 									<label value="${c:l('label_MandateStatusDialog_Reason.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="reason" maxlength="200" width="200px" multiline="true" rows="3" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_BarCodeNumber.value')}" />
-									<hbox>
-										<space spacing="2px" id="space_barCodeNumber" />
-										<uppercasebox id="barCodeNumber" width="200px" />
-									</hbox>
+									<textbox id="reason" maxlength="200" width="200px" multiline="true" rows="3" />
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_RegStatus.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<label id="regStatus" style="font-weight:bold;" />
-									</hbox>
-									<label value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="pennyDropResult" maxlength="50" width="200px" />
-									</hbox>
+									<label id="regStatus" style="font-weight:bold;" />
 								</row>
 								<row>
-									<label value="${c:l('label_MandateDialog_ApprovalID.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="approvalID" maxlength="50" width="200px" readonly="true" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_TransactionDetails.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="txnDetails" maxlength="50" width="200px" />
-									</hbox>
 									<label value="${c:l('label_MandateDialog_MandateDoc.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -270,10 +242,7 @@
 
 								<row>
 									<label value="${c:l('label_MandateDialog_Hold.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="hold" checked="false" />
-									</hbox>
+									<checkbox id="hold" checked="false" />
 
 									<label value="${c:l('label_MandateDialog_HoldReasons.value')}" />
 									<hbox>
@@ -281,7 +250,7 @@
 										<extendedcombobox id="holdReasons" width="200px" />
 									</hbox>
 								</row>
-								<row id="dasRow">
+								<row id="dasRow" visible="false">
 									<label value="${c:l('label_MandateDialog_EmployeeID.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -289,17 +258,11 @@
 									</hbox>
 
 									<label value="${c:l('label_MandateDialog_EmployerName.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="employerName" />
-									</hbox>
+									<textbox id="employerName" />
 								</row>
 								<row visible="false">
 									<label value="${c:l('label_MandateDialog_SecurityMandate.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="securityMandate" checked="false" />
-									</hbox>
+									<checkbox id="securityMandate" checked="false" />
 								</row>
 							</rows>
 						</grid>

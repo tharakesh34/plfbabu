@@ -8114,7 +8114,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						&& !this.userAction.getSelectedItem().getLabel().contains("Reject")
 						&& !this.userAction.getSelectedItem().getLabel().contains("Resubmit")
 						&& !this.userAction.getSelectedItem().getLabel().contains("Revert"))) {
-			chequeDetailDialogCtrl.doSave_PDC(afd, getFinanceMain().getFinReference());
+			chequeDetailDialogCtrl.doSavePDC(afd, getFinanceMain().getFinReference());
 		}
 
 		// Tax Detail

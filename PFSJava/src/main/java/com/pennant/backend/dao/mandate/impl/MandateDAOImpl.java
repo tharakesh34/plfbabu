@@ -787,8 +787,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 	@Override
 	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status) {
-
-		// finreference ='1500AGR0013594' and mandateid ='1151' and status ='B'
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, PresentmentId, Finreference, FinId,  SchDate, MandateId,");
 		sql.append(" ExcludeReason, BounceId, Status from presentmentdetails");
@@ -814,12 +812,12 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		return list.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId())).collect(Collectors.toList());
 	}
 
-	public List<FinanceMain> getLoansForMandate(long custId, String finRepayMethod) {
+	public List<FinanceMain> getLoans(long custId, String finRepayMethod) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID, FinReference, fm.FinRepayMethod FinRepayMethod");
+		sql.append(" FinID, FinReference, fm.FinType, fm.FinRepayMethod");
 		sql.append(" From FinanceMain fm");
-		sql.append("Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
-		sql.append("Where fm.FinIsActive = ? and fm.CustId = ? and fm.FinRepayMethod = ?");
+		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Where fm.FinIsActive = ? and fm.CustId = ? and fm.FinRepayMethod = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -828,6 +826,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinType(rs.getString("FinType"));
 			fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
 
 			return fm;

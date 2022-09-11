@@ -820,8 +820,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	@Override
-	public List<FinanceMain> getValidFinreferences(long custId, String finRepayMethod) {
-		return mandateDAO.getLoansForMandate(custId, finRepayMethod);
+	public List<FinanceMain> getLoans(long custId, String finRepayMethod) {
+		return mandateDAO.getLoans(custId, finRepayMethod);
 	}
 
 	/**

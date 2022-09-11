@@ -61,7 +61,6 @@ import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.PrimaryAccount;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -81,10 +80,10 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -129,15 +128,14 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		logger.info(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		ChequeHeader ch = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
-
-		long finID = ch.getFinID();
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (ch.isWorkflow()) {
@@ -154,14 +152,13 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			chequeHeaderDAO.update(ch, tableType);
 		}
 
-		// ChequeHeaderModule Details Processing
-		if (ch.getChequeDetailList() != null && !ch.getChequeDetailList().isEmpty()) {
+		if (CollectionUtils.isNotEmpty(ch.getChequeDetailList())) {
 			List<AuditDetail> details = ch.getAuditDetailMap().get("ChequeDetail");
 			details = processingChequeDetailList(details, tableType, ch.getHeaderID());
 			auditDetails.addAll(details);
 		}
-		String rcdMaintainSts = FinServiceEvent.CHEQUEDETAILS;
-		financeMainDAO.updateMaintainceStatus(finID, rcdMaintainSts);
+
+		financeMainDAO.updateMaintainceStatus(ch.getFinID(), FinServiceEvent.CHEQUEDETAILS);
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
@@ -179,7 +176,6 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		DocumentDetails dd = new DocumentDetails();
 		dd.setFinReference(ch.getFinReference());
-		// dd.setCustId(chequeHeader.getcustId());
 
 		for (ChequeDetail detail : cdList) {
 			if (!detail.isNewRecord()) {
@@ -761,773 +757,314 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		return cd;
 	}
 
-	// ChequeValidations
-	public List<ErrorDetail> chequeValidation(FinanceDetail fd, String methodName, String tableType) {
-		List<ErrorDetail> errorDetails = new ArrayList<>();
+	public ErrorDetail chequeValidation(FinanceDetail fd, String methodName, String tableType) {
 		ChequeHeader ch = fd.getChequeHeader();
-		List<Date> chequedate = new ArrayList<>();
 
-		String finReference = fd.getFinReference();
-		long finID = fd.getFinID();
-		ChequeHeader chequeHeaderDetails = chequeHeaderDAO.getChequeHeaderByRef(finID, tableType);
+		ErrorDetail error = validateCheques(ch);
 
-		if (!PennantConstants.VLD_CRT_LOAN.equalsIgnoreCase(methodName)) {
-			if (ch != null) {
-				if (finReference == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "FinReference";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				} else {
-					FinanceMain fm = financeMainDAO.getFinanceMainById(finID, tableType, false);
-					if (fm == null || !fm.isFinIsActive()) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "finReference";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90201", valueParm)));
-						return errorDetails;
-					} else {
-						fd.getFinScheduleData().setFinanceMain(fm);
-					}
-				}
-				if (PennantConstants.method_Update.equalsIgnoreCase(methodName)) {
-					if (chequeHeaderDetails == null) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "Header id ";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-						return errorDetails;
-					}
-					if (ch.getHeaderID() == 0) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "chequeHeader Id";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-						return errorDetails;
-					} else {
-						if (ch.getHeaderID() != chequeHeaderDetails.getHeaderID()) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "chequeHeader Id";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-							return errorDetails;
-						}
-					}
-					// validating the chequedetailsId in the request
-					for (ChequeDetail chquDetailsID : ch.getChequeDetailList()) {
-						if (chquDetailsID.getChequeDetailsID() == 0) {
-							String[] valueParm = new String[1];
-							valueParm[0] = " chequeDetails ID ";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-							return errorDetails;
-						}
-					}
-					// validating the chequeDetailsId
-					List<ChequeDetail> dbChqueDetailList = chequeDetailDAO
-							.getChequeDetailList(chequeHeaderDetails.getHeaderID(), tableType);
-					if (CollectionUtils.isNotEmpty(dbChqueDetailList)) {
-						List<Long> chequeDetailsId = new ArrayList<Long>();
-						for (ChequeDetail chequeDetail : dbChqueDetailList) {
-							chequeDetailsId.add(chequeDetail.getChequeDetailsID());
-						}
-						List<Long> chequeDtl = new ArrayList<Long>();
-						List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
-						for (ChequeDetail chequeDetail : chequeDetails) {
-							chequeDtl.add(chequeDetail.getChequeDetailsID());
-						}
-						for (ChequeDetail cheque : chequeDetails) {
-							if (!chequeDetailsId.contains(cheque.getChequeDetailsID())) {
-								String[] valueParm = new String[1];
-								valueParm[0] = " chequeDetails ";
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-								return errorDetails;
-							}
-						}
-						// validating the chequedetails deleteflag
-						int count = 0;
-						for (ChequeDetail cheque : ch.getChequeDetailList()) {
-							if (cheque.isDelete()) {
-								count++;
-							} else {
-								break;
-							}
-							if (count == ch.getChequeDetailList().size()) {
-								String[] valueParm = new String[2];
-								valueParm[0] = "All ChequeDetails Notbe Deleted";
-								valueParm[1] = "Greather than 0";
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30569", valueParm)));
-								return errorDetails;
-							}
-						}
-						// validating the cheque status
-						for (ChequeDetail chequeStatus : dbChqueDetailList) {
-							for (ChequeDetail cheque : ch.getChequeDetailList()) {
-								if (cheque.isDelete()) {
-									if (!StringUtils.equals(PennantConstants.CHEQUESTATUS_NEW,
-											chequeStatus.getChequeStatus())) {
-										String[] valueParm = new String[2];
-										valueParm[0] = "For " + chequeStatus.getChequeDetailsID();
-										valueParm[1] = chequeStatus.getChequeStatus() + "Status";
-										errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("49002", valueParm)));
-										return errorDetails;
-									}
-								}
-							}
-						}
-
-					}
-				}
-
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Cheque Header ";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
+		if (error != null) {
+			return error;
 		}
 
-		// duplicateValidation
-		List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
-		int count = chequeDetails.size();
-		if (ch.getNoOfCheques() == 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "NoOfCheques";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			return errorDetails;
-		} else {
-			if (count != ch.getNoOfCheques()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "ChequeDetails ";
-				valueParm[1] = " total no cheques";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30540", valueParm)));
-				return errorDetails;
-			}
-		}
-		if (!PennantConstants.method_Update.equalsIgnoreCase(methodName)) {
-			if (ch.getNoOfCheques() <= 2) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "NoOfCheques ";
-				valueParm[1] = "Three";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30569", valueParm)));
-				return errorDetails;
-			}
-		}
-		// bankBranchID validation
-		if (Long.valueOf(ch.getBankBranchID()) == 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "BankBranchID";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			return errorDetails;
-		} else {
-			BankBranch bankBranch = bankBranchDAO.getBankBranchById(ch.getBankBranchID(), "");
-			if (bankBranch.getBankBranchID() != ch.getBankBranchID()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "BankBranch";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-				return errorDetails;
-			}
-
-			if (StringUtils.isBlank(ch.getAccHolderName())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "AccHolderName";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
-			if (StringUtils.isBlank(ch.getAccountNo())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "AccountNo";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
-			if (ch.getAccountNo().length() > 15) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "AccountLength";
-				valueParm[1] = "or Equal to 15";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
-				return errorDetails;
-			}
-			if (ch.getChequeSerialNo() == 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "ChequeSerialNo";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			} else {
-				if (String.valueOf(ch.getChequeSerialNo()).length() > 6) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "ChequeSerialNo";
-					valueParm[1] = "or Equal to size Six";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
-					return errorDetails;
-				}
-			}
-		}
-		for (ChequeDetail chequeDetail : chequeDetails) {
-			// ChequeType
-
-			if (StringUtils.isBlank(chequeDetail.getChequeType())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "chequeType";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			} else {
-				List<ValueLabel> chequeTypeList = PennantStaticListUtil.getChequeTypes();
-				List<String> chequeType = new ArrayList<String>();
-				for (ValueLabel valueLabel : chequeTypeList) {
-					chequeType.add(valueLabel.getValue());
-				}
-				if (!(chequeType.contains(chequeDetail.getChequeType()))) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "chequeType";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-					return errorDetails;
-				}
-			}
-			// AccountType Validation
-			if (StringUtils.isBlank(chequeDetail.getAccountType())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "accountType";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			} else {
-				List<ValueLabel> accTypeList = PennantStaticListUtil.getChequeAccTypeList();
-				List<Object> accType = new ArrayList<Object>();
-				for (ValueLabel valueLabel : accTypeList) {
-					accType.add(valueLabel.getValue());
-				}
-				if (!(accType.contains(chequeDetail.getAccountType()))) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "accountType";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-					return errorDetails;
-				}
-			}
-			if (chequeDetail.getAmount() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Amount";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
-			if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeDetail.getChequeType())
-					&& chequeDetail.getChequeDate() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "chequeDate for pdc";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
-			if (StringUtils.equals(FinanceConstants.REPAYMTH_UDC, chequeDetail.getChequeType())
-					&& chequeDetail.getChequeDate() != null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "chequeDate For UDC";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0039", valueParm)));
-				return errorDetails;
-			}
-			if (chequeDetail.getAmount().toString().length() >= 18) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "chequeDate For UDC";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0039", valueParm)));
-				return errorDetails;
-			}
-			// duplicate date validations
-			if (chequeDetail.getChequeDate() != null) {
-				chequedate.add(chequeDetail.getChequeDate());
-				int compareDate = 0;
-				for (int i = 0; i < chequedate.size(); i++) {
-					Date d1 = chequedate.get(i);
-					for (int j = i; j < chequedate.size(); j++) {
-						Date d2 = chequedate.get(j);
-						if (d1.compareTo(d2) == 0) {
-							compareDate++;
-						}
-					}
-				}
-				if (compareDate > chequedate.size()) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Cheque Dates";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
-					return errorDetails;
-				}
-			}
+		if (!PennantConstants.method_Update.equalsIgnoreCase(methodName) && ch.getNoOfCheques() <= 2) {
+			return getError("30569", "NoOfCheques ", "Three");
 		}
 
-		return errorDetails;
+		error = validateBranchDetails(ch);
 
+		if (error != null) {
+			return error;
+		}
+
+		error = validateChequeSerialNo(ch);
+
+		if (error != null) {
+			return error;
+		}
+
+		return validateChequeDetails(ch.getChequeDetailList());
 	}
 
-	// ChequeValidations
-	public List<ErrorDetail> chequeValidationInMaintainence(FinanceDetail fd, String methodName, String tableType) {
-
-		List<ErrorDetail> errorDetails = new ArrayList<>();
+	public ErrorDetail chequeValidationInMaintainence(FinanceDetail fd, String methodName, String tableType) {
 		ChequeHeader ch = fd.getChequeHeader();
-		List<Date> Chequedate = new ArrayList<>();
-		FinanceMain financeMain = null;
 
-		long finID = fd.getFinID();
-		String finReference = fd.getFinReference();
+		ChequeHeader existingCH = chequeHeaderDAO.getChequeHeaderByRef(fd.getFinID(), tableType);
 
-		ChequeHeader dbChequeHeaderDetails = chequeHeaderDAO.getChequeHeaderByRef(finID, tableType);
-
-		if (!PennantConstants.VLD_CRT_LOAN.equalsIgnoreCase(methodName)) {
-			if (ch != null) {
-				if (finReference == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "FinReference";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				} else {
-					financeMain = financeMainDAO.getFinanceMainById(finID, tableType, false);
-					if (financeMain == null || !financeMain.isFinIsActive()) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "finReference";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90201", valueParm)));
-						return errorDetails;
-					} else {
-						fd.getFinScheduleData().setFinanceMain(financeMain);
-					}
-				}
-				if (PennantConstants.method_Update.equalsIgnoreCase(methodName)) {
-					if (dbChequeHeaderDetails == null) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "Header id ";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-						return errorDetails;
-					}
-					if (ch.getHeaderID() == 0) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "chequeHeader Id";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-						return errorDetails;
-					} else {
-						if (ch.getHeaderID() != dbChequeHeaderDetails.getHeaderID()) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "chequeHeader Id";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-							return errorDetails;
-						}
-					}
-					// validating the chequedetailsId in the request
-					for (ChequeDetail chquDetailsID : ch.getChequeDetailList()) {
-						if (chquDetailsID.getChequeDetailsID() == 0) {
-							String[] valueParm = new String[1];
-							valueParm[0] = " chequeDetails ID ";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-							return errorDetails;
-						}
-					}
-					// validating the chequeDetailsId
-					List<ChequeDetail> dbChqueDetailList = chequeDetailDAO
-							.getChequeDetailList(dbChequeHeaderDetails.getHeaderID(), tableType);
-					if (CollectionUtils.isNotEmpty(dbChqueDetailList)) {
-						List<Long> chequeDetailsId = new ArrayList<Long>();
-						for (ChequeDetail chequeDetail : dbChqueDetailList) {
-							chequeDetailsId.add(chequeDetail.getChequeDetailsID());
-						}
-						List<Long> chequeDtl = new ArrayList<Long>();
-						List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
-						for (ChequeDetail chequeDetail : chequeDetails) {
-							chequeDtl.add(chequeDetail.getChequeDetailsID());
-						}
-						for (ChequeDetail cheque : chequeDetails) {
-							if (!chequeDetailsId.contains(cheque.getChequeDetailsID())) {
-								String[] valueParm = new String[1];
-								valueParm[0] = " chequeDetails ";
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-								return errorDetails;
-							}
-						}
-						// validating the chequedetails deleteflag
-						int count = 0;
-						for (ChequeDetail cheque : ch.getChequeDetailList()) {
-							if (cheque.isDelete()) {
-								count++;
-							} else {
-								break;
-							}
-							if (count == ch.getChequeDetailList().size()) {
-								String[] valueParm = new String[2];
-								valueParm[0] = "All ChequeDetails Notbe Deleted";
-								valueParm[1] = "Greather than 0";
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30569", valueParm)));
-								return errorDetails;
-							}
-						}
-						// validating the cheque status
-						for (ChequeDetail chequeStatus : dbChqueDetailList) {
-							for (ChequeDetail cheque : ch.getChequeDetailList()) {
-								if (cheque.isDelete()) {
-									if (!StringUtils.equals(PennantConstants.CHEQUESTATUS_NEW,
-											chequeStatus.getChequeStatus())) {
-										String[] valueParm = new String[2];
-										valueParm[0] = "For " + chequeStatus.getChequeDetailsID();
-										valueParm[1] = chequeStatus.getChequeStatus() + "Status";
-										errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("49002", valueParm)));
-										return errorDetails;
-									}
-								}
-							}
-						}
-
-					}
-				}
-
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Cheque Header ";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
+		if (existingCH == null) {
+			return getError("RU0040", "Header id ");
 		}
 
-		// duplicateValidation
-		List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
-		int count = chequeDetails.size();
-		if (ch.getNoOfCheques() == 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "NoOfCheques";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			return errorDetails;
-		} else {
-			if (count != ch.getNoOfCheques()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "ChequeDetails ";
-				valueParm[1] = " total no cheques";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30540", valueParm)));
-				return errorDetails;
-			}
-		}
-		if (!PennantConstants.method_Update.equalsIgnoreCase(methodName)) {
-			if (ch.getNoOfCheques() <= 2) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "NoOfCheques ";
-				valueParm[1] = "Three";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30569", valueParm)));
-				return errorDetails;
-			}
-		}
-		// bankBranchID validation
-		if (Long.valueOf(ch.getBankBranchID()) == 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "BankBranchID";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			return errorDetails;
-		} else {
-			BankBranch bankBranch = bankBranchDAO.getBankBranchById(ch.getBankBranchID(), "");
-			if (bankBranch.getBankBranchID() != ch.getBankBranchID()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "BankBranch";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-				return errorDetails;
-			}
-
-			if (StringUtils.isBlank(ch.getAccHolderName())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "AccHolderName";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
-			if (StringUtils.isBlank(ch.getAccountNo())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "AccountNo";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
-			if (ch.getAccountNo().length() > 15) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "AccountLength";
-				valueParm[1] = "or Equal to 15";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
-				return errorDetails;
-			}
-		}
-		for (ChequeDetail chequeDetail : chequeDetails) {
-			// ChequeType
-
-			if (StringUtils.isBlank(chequeDetail.getChequeType())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "chequeType";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			} else {
-				List<ValueLabel> chequeTypeList = PennantStaticListUtil.getChequeTypes();
-				List<String> chequeType = new ArrayList<String>();
-				for (ValueLabel valueLabel : chequeTypeList) {
-					chequeType.add(valueLabel.getValue());
-				}
-				if (!(chequeType.contains(chequeDetail.getChequeType()))) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "chequeType";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-					return errorDetails;
-				}
-			}
-			// AccountType Validation
-			if (StringUtils.isBlank(chequeDetail.getAccountType())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "accountType";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			} else {
-				List<ValueLabel> accTypeList = PennantStaticListUtil.getChequeAccTypeList();
-				List<Object> accType = new ArrayList<Object>();
-				for (ValueLabel valueLabel : accTypeList) {
-					accType.add(valueLabel.getValue());
-				}
-				if (!(accType.contains(chequeDetail.getAccountType()))) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "accountType";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-					return errorDetails;
-				}
-			}
-			if (chequeDetail.getAmount() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Amount";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
-			if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeDetail.getChequeType())
-					&& chequeDetail.getChequeDate() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "chequeDate for pdc";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			}
-			if (StringUtils.equals(FinanceConstants.REPAYMTH_UDC, chequeDetail.getChequeType())
-					&& chequeDetail.getChequeDate() != null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "chequeDate For UDC";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0039", valueParm)));
-				return errorDetails;
-			}
-			if (chequeDetail.getAmount().toString().length() >= 18) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "chequeDate For UDC";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0039", valueParm)));
-				return errorDetails;
-			}
-			// duplicate date validations
-			if (chequeDetail.getChequeDate() != null) {
-				Chequedate.add(chequeDetail.getChequeDate());
-				int compareDate = 0;
-				for (int i = 0; i < Chequedate.size(); i++) {
-					Date d1 = Chequedate.get(i);
-					for (int j = i; j < Chequedate.size(); j++) {
-						Date d2 = Chequedate.get(j);
-						if (d1.compareTo(d2) == 0) {
-							compareDate++;
-						}
-					}
-				}
-				if (compareDate > Chequedate.size()) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Cheque Dates";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
-					return errorDetails;
-				}
-			}
+		if (ch.getHeaderID() == 0) {
+			return getError("90502", "chequeHeader Id");
 		}
 
-		return errorDetails;
+		ErrorDetail error = validateCheques(ch);
 
+		if (error != null) {
+			return error;
+		}
+
+		error = validateChequeHeaderDetails(ch, existingCH, tableType);
+
+		if (error != null) {
+			return error;
+		}
+
+		error = validateBranchDetails(ch);
+
+		if (error != null) {
+			return error;
+		}
+
+		return validateChequeDetails(ch.getChequeDetailList());
 	}
 
-	// ChequeValidations
-	public List<ErrorDetail> chequeValidationForUpdate(FinanceDetail fd, String methodName, String tableType) {
-
-		List<ErrorDetail> errorDetails = new ArrayList<>();
+	public ErrorDetail chequeValidationForUpdate(FinanceDetail fd, String methodName, String tableType) {
 		ChequeHeader ch = fd.getChequeHeader();
-		List<Date> Chequedate = new ArrayList<>();
 
-		long finID = fd.getFinID();
+		ChequeHeader existingCH = chequeHeaderDAO.getChequeHeaderByRef(fd.getFinID(), tableType);
 
-		if (ch != null) {
-			ChequeHeader dbChequeHeader = chequeHeaderDAO.getChequeHeaderByRef(finID, tableType);
-			if (dbChequeHeader == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Header id ";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-				return errorDetails;
+		if (existingCH == null) {
+			return getError("RU0040", "Header id ");
+		}
+
+		if (ch.getHeaderID() == 0) {
+			return getError("90502", "chequeHeader Id");
+		}
+
+		ErrorDetail error = validateCheques(ch);
+
+		if (error != null) {
+			return error;
+		}
+
+		// FIXME this should come from loan type
+		if (ch.getNoOfCheques() <= 2) {
+			return getError("30569", "NoOfCheques ", "Three");
+		}
+
+		error = validateBranchDetails(ch);
+
+		if (error != null) {
+			return error;
+		}
+
+		error = validateChequeSerialNo(ch);
+
+		if (error != null) {
+			return error;
+		}
+
+		ch.setNoOfCheques(ch.getNoOfCheques() + existingCH.getNoOfCheques());
+		ch.setTotalAmount(existingCH.getTotalAmount());
+
+		return validateChequeDetails(ch.getChequeDetailList());
+	}
+
+	private ErrorDetail validateCheques(ChequeHeader ch) {
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
+
+		if (ch.getNoOfCheques() == 0) {
+			return getError("90502", "NoOfCheques");
+		}
+
+		if (cheques.size() != ch.getNoOfCheques()) {
+			return getError("30540", "ChequeDetails ", " total no cheques");
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateChequeSerialNo(ChequeHeader ch) {
+		if (ch.getChequeSerialNo() == 0) {
+			return getError("90502", "ChequeSerialNo");
+		}
+
+		if (String.valueOf(ch.getChequeSerialNo()).length() > 6) {
+			return getError("30565", "ChequeSerialNo", "or Equal to size Six");
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateChequeHeaderDetails(ChequeHeader ch, ChequeHeader existingCH, String tableType) {
+		long headerID = existingCH.getHeaderID();
+
+		if (ch.getHeaderID() != headerID) {
+			return getError("RU0040", "chequeHeader Id");
+		}
+
+		for (ChequeDetail chquDetailsID : ch.getChequeDetailList()) {
+			if (chquDetailsID.getChequeDetailsID() == 0) {
+				return getError("90502", "chequeDetails ID");
 			}
-			ch.setVersion(dbChequeHeader.getVersion() + 1);
+		}
 
-			if (ch.getHeaderID() != dbChequeHeader.getHeaderID()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "chequeHeader Id";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-				return errorDetails;
+		List<ChequeDetail> existingCheques = chequeDetailDAO.getChequeDetailList(headerID, tableType);
+
+		List<Long> chequeDetailsId = new ArrayList<>();
+		existingCheques.forEach(cd -> chequeDetailsId.add(cd.getChequeDetailsID()));
+
+		List<Long> chequeDtl = new ArrayList<>();
+		List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
+
+		chequeDetails.forEach(cd -> chequeDtl.add(cd.getChequeDetailsID()));
+
+		for (ChequeDetail cheque : chequeDetails) {
+			if (!chequeDetailsId.contains(cheque.getChequeDetailsID())) {
+				return getError("RU0040", "chequeDetails");
 			}
+		}
 
-			// duplicateValidation
-			List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
-			int count = chequeDetails.size();
-			if (ch.getNoOfCheques() == 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "NoOfCheques";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			} else {
-				if (count != ch.getNoOfCheques()) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "ChequeDetails ";
-					valueParm[1] = " total no cheques";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30540", valueParm)));
-					return errorDetails;
-				}
-			}
+		ErrorDetail error = validateDeleteChequeCount(ch);
 
-			// FIX ME this should come from loan type
-			if (ch.getNoOfCheques() <= 2) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "NoOfCheques ";
-				valueParm[1] = "Three";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30569", valueParm)));
-				return errorDetails;
-			}
+		if (error != null) {
+			return error;
+		}
 
-			// bankBranchID validation
-			if (Long.valueOf(ch.getBankBranchID()) == 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "BankBranchID";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
-			} else {
-				BankBranch bankBranch = bankBranchDAO.getBankBranchById(ch.getBankBranchID(), "");
-
-				if (bankBranch == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "BankBranchID";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-					return errorDetails;
-				}
-
-				if (bankBranch.getBankBranchID() != ch.getBankBranchID()) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "BankBranch";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-					return errorDetails;
-				}
-
-				if (StringUtils.isBlank(ch.getAccHolderName())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "AccHolderName";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				}
-				if (StringUtils.isBlank(ch.getAccountNo())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "AccountNo";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				}
-				if (ch.getAccountNo().length() > 15) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "AccountLength";
-					valueParm[1] = "or Equal to 15";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
-					return errorDetails;
-				}
-				if (ch.getChequeSerialNo() == 0) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "ChequeSerialNo";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				} else {
-					if (String.valueOf(ch.getChequeSerialNo()).length() > 6) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "ChequeSerialNo";
-						valueParm[1] = "or Equal to size Six";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
-						return errorDetails;
-					}
-				}
-
-				ch.setNoOfCheques(ch.getNoOfCheques() + dbChequeHeader.getNoOfCheques());
-				ch.setTotalAmount(dbChequeHeader.getTotalAmount());
-			}
-			for (ChequeDetail chequeDetail : chequeDetails) {
-				// ChequeType
-
-				if (StringUtils.isBlank(chequeDetail.getChequeType())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "chequeType";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				} else {
-					List<ValueLabel> chequeTypeList = PennantStaticListUtil.getChequeTypes();
-					List<String> chequeType = new ArrayList<String>();
-					for (ValueLabel valueLabel : chequeTypeList) {
-						chequeType.add(valueLabel.getValue());
-					}
-					if (!(chequeType.contains(chequeDetail.getChequeType()))) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "chequeType";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-						return errorDetails;
-					}
-				}
-				// AccountType Validation
-				if (StringUtils.isBlank(chequeDetail.getAccountType())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "accountType";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				} else {
-					List<ValueLabel> accTypeList = PennantStaticListUtil.getChequeAccTypeList();
-					List<Object> accType = new ArrayList<Object>();
-					for (ValueLabel valueLabel : accTypeList) {
-						accType.add(valueLabel.getValue());
-					}
-					if (!(accType.contains(chequeDetail.getAccountType()))) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "accountType";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
-						return errorDetails;
-					}
-				}
-				if (chequeDetail.getAmount() == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Amount";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				}
-				if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeDetail.getChequeType())
-						&& chequeDetail.getChequeDate() == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "chequeDate for pdc";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				}
-				if (StringUtils.equals(FinanceConstants.REPAYMTH_UDC, chequeDetail.getChequeType())
-						&& chequeDetail.getChequeDate() != null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "chequeDate For UDC";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0039", valueParm)));
-					return errorDetails;
-				}
-				if (chequeDetail.getAmount().toString().length() >= 18) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "chequeDate For UDC";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0039", valueParm)));
-					return errorDetails;
-				}
-				// duplicate date validations
-				if (chequeDetail.getChequeDate() != null) {
-					Chequedate.add(chequeDetail.getChequeDate());
-					int compareDate = 0;
-					for (int i = 0; i < Chequedate.size(); i++) {
-						Date d1 = Chequedate.get(i);
-						for (int j = i; j < Chequedate.size(); j++) {
-							Date d2 = Chequedate.get(j);
-							if (d1.compareTo(d2) == 0) {
-								compareDate++;
-							}
-						}
-					}
-					if (compareDate > Chequedate.size()) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "Cheque Dates";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
-						return errorDetails;
-					}
+		for (ChequeDetail cd : existingCheques) {
+			for (ChequeDetail cheque : ch.getChequeDetailList()) {
+				if (cheque.isDelete() && !PennantConstants.CHEQUESTATUS_NEW.equals(cd.getChequeStatus())) {
+					return getError("49002", "For " + cd.getChequeDetailsID(), cd.getChequeStatus() + "Status");
 				}
 			}
 		}
-		return errorDetails;
+
+		return null;
+	}
+
+	private ErrorDetail validateDeleteChequeCount(ChequeHeader ch) {
+		int count = 0;
+		for (ChequeDetail cheque : ch.getChequeDetailList()) {
+			if (cheque.isDelete()) {
+				count++;
+			}
+		}
+
+		if (count == ch.getChequeDetailList().size()) {
+			return getError("30569", "All ChequeDetails Not be Deleted", "Greather than 0");
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateBranchDetails(ChequeHeader ch) {
+		if (Long.valueOf(ch.getBankBranchID()) == 0) {
+			return getError("90502", "BankBranchID");
+		}
+
+		BankBranch bankBranch = bankBranchDAO.getBankBranchById(ch.getBankBranchID(), "");
+
+		if (bankBranch == null) {
+			return getError("RU0040", "BankBranchID");
+		}
+
+		if (bankBranch.getBankBranchID() != ch.getBankBranchID()) {
+			return getError("RU0040", "BankBranch");
+		}
+
+		if (StringUtils.isBlank(ch.getAccHolderName())) {
+			return getError("90502", "AccHolderName");
+		}
+
+		if (StringUtils.isBlank(ch.getAccountNo())) {
+			return getError("90502", "AccountNo");
+		}
+
+		if (ch.getAccountNo().length() > 15) {
+			return getError("30565", "AccountLength", "or Equal to 15");
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateChequeDetails(List<ChequeDetail> cheques) {
+		for (ChequeDetail cheque : cheques) {
+			ErrorDetail error = validate(cheque);
+
+			if (error != null) {
+				return error;
+			}
+
+			error = validateChequeDate(cheque);
+
+			if (error != null) {
+				return error;
+			}
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validate(ChequeDetail cheque) {
+		if (StringUtils.isBlank(cheque.getChequeType())) {
+			return getError("90502", "chequeType");
+		}
+
+		List<String> chequeType = new ArrayList<>();
+		PennantStaticListUtil.getChequeTypes().forEach(c1 -> chequeType.add(c1.getValue()));
+
+		if (!(chequeType.contains(cheque.getChequeType()))) {
+			return getError("RU0040", "chequeType");
+		}
+
+		if (StringUtils.isBlank(cheque.getAccountType())) {
+			return getError("90502", "accountType");
+		}
+
+		List<String> accType = new ArrayList<>();
+		PennantStaticListUtil.getChequeAccTypeList().forEach(c1 -> accType.add(c1.getValue()));
+
+		if (!(accType.contains(cheque.getAccountType()))) {
+			return getError("RU0040", "accountType");
+		}
+
+		if (cheque.getAmount() == null) {
+			return getError("90502", "Amount");
+		}
+
+		// FIXME :: Error code is wrong
+		if (cheque.getAmount().toString().length() >= 18) {
+			return getError("RU0039", "chequeDate for UDC");
+		}
+
+		if (InstrumentType.isPDC(cheque.getChequeType()) && cheque.getChequeDate() == null) {
+			return getError("90502", "chequeDate for pdc");
+		}
+
+		if (InstrumentType.isUDC(cheque.getChequeType()) && cheque.getChequeDate() != null) {
+			return getError("RU0039", "chequeDate for UDC");
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateChequeDate(ChequeDetail cheque) {
+		List<Date> chequeDate = new ArrayList<>();
+
+		if (cheque.getChequeDate() != null) {
+			chequeDate.add(cheque.getChequeDate());
+			int compareDate = 0;
+			for (int i = 0; i < chequeDate.size(); i++) {
+				Date d1 = chequeDate.get(i);
+				for (int j = i; j < chequeDate.size(); j++) {
+					Date d2 = chequeDate.get(j);
+					if (d1.compareTo(d2) == 0) {
+						compareDate++;
+					}
+				}
+			}
+
+			if (compareDate > chequeDate.size()) {
+				return getError("90273", "Cheque Dates");
+			}
+		}
+
+		return null;
+	}
+
+	private ErrorDetail getError(String code, String... parm) {
+		return ErrorUtil.getErrorDetail(new ErrorDetail(code, parm));
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

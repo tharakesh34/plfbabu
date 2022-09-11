@@ -26,10 +26,8 @@
 package com.pennant.backend.model.mandate;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -40,7 +38,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -202,8 +199,6 @@ public class Mandate extends AbstractWorkflowEntity {
 	private boolean securityMandate;
 	private Long employeeID;
 	private String employerName;
-
-	private List<FinanceMain> validFinreferences = new ArrayList<FinanceMain>();
 
 	public Mandate() {
 		super();
@@ -1021,13 +1016,5 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setEmployerName(String employerName) {
 		this.employerName = employerName;
-	}
-
-	public List<FinanceMain> getValidFinreferences() {
-		return validFinreferences;
-	}
-
-	public void setValidFinreferences(List<FinanceMain> validFinreferences) {
-		this.validFinreferences = validFinreferences;
 	}
 }

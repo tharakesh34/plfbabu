@@ -91,6 +91,6 @@ public interface MandateDAO {
 
 	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status);
 
-	List<FinanceMain> getLoansForMandate(long custId, String finRepayMethod);
+	List<FinanceMain> getLoans(long custId, String finRepayMethod);
 
 }

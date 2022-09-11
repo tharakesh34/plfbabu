@@ -49,7 +49,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
-import com.pennant.backend.service.pdc.impl.ChequeHeaderServiceImpl;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -63,7 +62,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ChequeHeader</b>.<br>
  */
 public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> implements FinChequeHeaderService {
-	private static final Logger logger = LogManager.getLogger(ChequeHeaderServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinChequeHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;

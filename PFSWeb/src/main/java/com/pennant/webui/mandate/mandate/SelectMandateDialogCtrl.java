@@ -251,14 +251,20 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		try {
 			Map<String, Object> arg = getDefaultArguments();
 
-			List<FinanceMain> validFinreferences = mandateService.getValidFinreferences(this.mandate.getCustID(),
-					this.mandate.getMandateType());
-			this.mandate.setValidFinreferences(validFinreferences);
+			String mandateType = this.mandate.getMandateType();
+
+			List<FinanceMain> customerLoans = mandateService.getLoans(this.mandate.getCustID(), mandateType);
+
+			if (customerLoans.isEmpty()) {
+				MessageUtil.showError("There are no active loans for the selected Customer and Instrument Type.");
+				return;
+			}
+
 			arg.put("mandate", this.mandate);
 			arg.put("mandatedata", this);
 			arg.put("enqModule", enqiryModule);
 			arg.put("fromLoan", false);
-			arg.put("validReferences", this.mandate.getValidFinreferences());
+			arg.put("customerLoans", customerLoans);
 			arg.put("mandateListCtrl", this.mandateListCtrl);
 
 			if (MandateStatus.isAwaitingConf(mandate.getStatus())) {
@@ -402,6 +408,10 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
+	}
+
+	public void setMandateService(MandateService mandateService) {
+		this.mandateService = mandateService;
 	}
 
 }

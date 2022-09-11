@@ -88,5 +88,5 @@ public interface MandateService {
 
 	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status);
 
-	List<FinanceMain> getValidFinreferences(long custId, String finRepayMethod);
+	List<FinanceMain> getLoans(long custId, String finRepayMethod);
 }
