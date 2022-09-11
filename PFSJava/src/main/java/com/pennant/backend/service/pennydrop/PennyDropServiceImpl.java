@@ -14,22 +14,17 @@ public class PennyDropServiceImpl extends GenericService<BankAccountValidation> 
 
 	@Override
 	public void savePennyDropSts(BankAccountValidation pennyDropStatus) {
-		getPennyDropDAO().savePennyDropSts(pennyDropStatus);
-
+		pennyDropDAO.savePennyDropSts(pennyDropStatus);
 	}
 
 	@Override
 	public int getPennyDropCount(String accNumber, String ifsc) {
-		return getPennyDropDAO().getPennyDropCount(accNumber, ifsc);
+		return pennyDropDAO.getPennyDropCount(accNumber, ifsc);
 	}
 
 	@Override
 	public BankAccountValidation getPennyDropStatusDataByAcc(String accNumber, String ifsc) {
-		return getPennyDropDAO().getPennyDropStatusByAcc(accNumber, ifsc);
-	}
-
-	public PennyDropDAO getPennyDropDAO() {
-		return pennyDropDAO;
+		return pennyDropDAO.getPennyDropStatusByAcc(accNumber, ifsc);
 	}
 
 	public void setPennyDropDAO(PennyDropDAO pennyDropDAO) {

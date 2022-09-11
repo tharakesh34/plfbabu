@@ -3475,15 +3475,12 @@
 		scope="prototype">
 		<property name="mandateService" ref="mandateService" />
 	</bean>
-	<bean id="selectMandateDialogCtrl"
-		class="com.pennant.webui.mandate.mandate.SelectMandateDialogCtrl" parent="basisCtrl"
-		
-		scope="prototype" >
+	
+	<bean id="selectMandateDialogCtrl" class="com.pennant.webui.mandate.mandate.SelectMandateDialogCtrl" parent="basisCtrl" scope="prototype" >
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="customerService" ref="customerServiceTarget" />
 		<property name="mandateService" ref="mandateService" />
-		
-		</bean>
+	</bean>
 	
 	<bean id="mandateDialogCtrl" class="com.pennant.webui.mandate.mandate.MandateDialogCtrl" parent="basisCtrl"
 		scope="prototype">

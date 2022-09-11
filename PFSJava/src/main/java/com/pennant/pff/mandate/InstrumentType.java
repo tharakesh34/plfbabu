@@ -33,7 +33,7 @@ public enum InstrumentType {
 
 	private InstrumentType(String code, String description) {
 		this.code = code;
-		this.description = code;
+		this.description = description;
 	}
 
 	public String code() {
@@ -68,6 +68,12 @@ public enum InstrumentType {
 		return st == null ? false : st == InstrumentType.PDC;
 	}
 
+	public static boolean isUDC(String instrumentType) {
+		InstrumentType st = InstrumentType.valueOf(instrumentType);
+
+		return st == null ? false : st == InstrumentType.UDC;
+	}
+
 	public static boolean isEMandate(String instrumentType) {
 		InstrumentType st = InstrumentType.valueOf(instrumentType);
 
@@ -91,5 +97,4 @@ public enum InstrumentType {
 
 		return item != null && item != MANUAL;
 	}
-
 }

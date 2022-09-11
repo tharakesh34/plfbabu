@@ -404,4 +404,8 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.customerService = customerService;
 	}
 
+	public void setMandateService(MandateService mandateService) {
+		this.mandateService = mandateService;
+	}
+
 }

@@ -1,7 +1,5 @@
 package com.pennant.backend.service.pdc;
 
-import java.util.List;
-
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -24,9 +22,9 @@ public interface ChequeHeaderService {
 
 	FinanceDetail getFinanceDetailById(long finID);
 
-	List<ErrorDetail> chequeValidation(FinanceDetail fd, String methodName, String tableType);
+	ErrorDetail chequeValidation(FinanceDetail fd, String methodName, String tableType);
 
-	List<ErrorDetail> chequeValidationForUpdate(FinanceDetail fd, String methodUpdate, String tableType);
+	ErrorDetail chequeValidationForUpdate(FinanceDetail fd, String methodUpdate, String tableType);
 
-	List<ErrorDetail> chequeValidationInMaintainence(FinanceDetail fd, String methodUpdate, String tableType);
+	ErrorDetail chequeValidationInMaintainence(FinanceDetail fd, String methodUpdate, String tableType);
 }

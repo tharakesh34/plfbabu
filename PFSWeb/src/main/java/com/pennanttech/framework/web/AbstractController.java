@@ -620,6 +620,10 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		logger.trace(Literal.LEAVING);
 	}
 
+	protected void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
+		fillComboBox(combobox, value, list, "");
+	}
+
 	public void fillList(Combobox component, List<Property> properties, Object selectedKey) {
 		logger.trace(Literal.ENTERING);
 

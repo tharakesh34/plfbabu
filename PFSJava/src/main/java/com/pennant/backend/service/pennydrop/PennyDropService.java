@@ -9,5 +9,4 @@ public interface PennyDropService {
 	int getPennyDropCount(String accNumber, String ifsc);
 
 	BankAccountValidation getPennyDropStatusDataByAcc(String accNumber, String ifsc);
-
 }

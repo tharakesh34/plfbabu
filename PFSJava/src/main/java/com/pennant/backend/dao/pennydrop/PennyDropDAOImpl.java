@@ -3,9 +3,7 @@ package com.pennant.backend.dao.pennydrop;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -20,17 +18,22 @@ public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> impleme
 	}
 
 	@Override
-	public void savePennyDropSts(BankAccountValidation bankAccountValidations) {
-		logger.debug(Literal.ENTERING);
+	public void savePennyDropSts(BankAccountValidation bav) {
+		StringBuilder sql = new StringBuilder("Insert Into PENNY_DROP_STATUS");
+		sql.append(" (AcctNum, IFSC, InitiateType, Status, Reason)");
+		sql.append(" Values(?, ? , ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder(" Insert Into PENNY_DROP_STATUS");
-		insertSql.append(" (AcctNum, IFSC, InitiateType, Status, Reason)");
-		insertSql.append(" Values(:AcctNum, :iFSC , :initiateType, :Status, :Reason)");
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankAccountValidations);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug(Literal.LEAVING);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
+			ps.setString(index++, bav.getAcctNum());
+			ps.setString(index++, bav.getiFSC());
+			ps.setString(index++, bav.getInitiateType());
+			ps.setBoolean(index++, bav.isStatus());
+			ps.setString(index++, bav.getReason());
+		});
 	}
 
 	@Override
