@@ -42,6 +42,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -87,8 +88,7 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 		try {
 			relationshipOfficer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in RelationshipOfficers{} for the specified ROfficerCode >> {}", type,
-					id);
+			logger.warn(Message.NO_RECORD_FOUND);
 			relationshipOfficer = null;
 		}
 		logger.debug("Leaving");

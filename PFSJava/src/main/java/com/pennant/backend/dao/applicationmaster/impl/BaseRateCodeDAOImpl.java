@@ -40,6 +40,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -93,7 +94,7 @@ public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseR
 				return brc;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in RMTBaseRateCodes{} for the specified BRType >> {}", type, id);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		logger.debug(Literal.LEAVING);

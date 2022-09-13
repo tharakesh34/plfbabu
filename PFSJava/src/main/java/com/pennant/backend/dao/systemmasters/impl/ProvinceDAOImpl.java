@@ -79,9 +79,7 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cPCountry, cPProvince },
 					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Records are not found in RMTCountryVsProvince{} for the combination of CPCountry :{} and CPProvince : {}",
-					type, cPCountry, cPProvince);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

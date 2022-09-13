@@ -93,7 +93,7 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Limit group lines not availabe for the limit group code {}", id);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
 	}

@@ -3283,23 +3283,6 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
-	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
-		if (StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())) {
-			if (!bankBranch.isEcs()) {
-				isValidBranch = false;
-			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())) {
-			if (!bankBranch.isDda()) {
-				isValidBranch = false;
-			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())) {
-			if (!bankBranch.isNach()) {
-				isValidBranch = false;
-			}
-		}
-		return isValidBranch;
-	}
-
 	public List<ErrorDetail> disbursementValidation(FinanceDetail financeDetail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
@@ -4149,18 +4132,18 @@ public class FinanceDataValidation {
 
 		// validate min and max terms with loanType config.
 		if (numberOfTerms > 0) {
-		if (finMinTerm > 0 && finMaxTerm > 0) {
-			if (numberOfTerms < finMinTerm || numberOfTerms > finMaxTerm) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "Repay";
-				valueParm[1] = String.valueOf(finMinTerm);
-				valueParm[2] = String.valueOf(finMaxTerm);
+			if (finMinTerm > 0 && finMaxTerm > 0) {
+				if (numberOfTerms < finMinTerm || numberOfTerms > finMaxTerm) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Repay";
+					valueParm[1] = String.valueOf(finMinTerm);
+					valueParm[2] = String.valueOf(finMaxTerm);
 
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
 
-				return;
+					return;
+				}
 			}
-		}
 		}
 
 		if (subventionReq) {

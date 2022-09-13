@@ -500,9 +500,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), args, Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Reference Id is not found in verifications table for the specified referenceFor > {}, verificationType > {}, keyReference > {}, requestType > {}, verificationcategory > {}",
-					args);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

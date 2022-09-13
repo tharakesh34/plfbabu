@@ -60,6 +60,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwnersDAO {
 	private static Logger logger = LogManager.getLogger(TaskOwnersDAOImpl.class);
@@ -217,8 +218,7 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in Task_Owners table for the specified Reference >> {} and Role Code >> {}",
-					finReference, roleCode);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		logger.debug(Literal.LEAVING);

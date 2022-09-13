@@ -346,7 +346,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			// Fetching the collateral setup
 			CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupDetails(collateralRef, "_View");
 			if (collateralSetup == null) {
-				logger.info("Collateral setup not available for the collateral reference :" + collateralRef);
+				logger.info("Collateral setup not available for the collateral reference.");
 				return;
 			}
 

@@ -132,9 +132,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 				return ca;
 			}, id, addType);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Records are not found in CustomerAddresses{} for the specified CustID >> {} and CustAddrType >> {}",
-					type, id, addType);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

@@ -254,7 +254,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 				return crdts;
 			}, args);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info("Credit Review Configuration not avilable for the spcified Product >> {}", crd.getProduct());
+			logger.info(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

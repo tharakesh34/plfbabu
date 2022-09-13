@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>DedupParm model</b> class.<br>
@@ -81,9 +82,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 						return getTypeRowMapper(rs);
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"DedupParams not found in DedupParams{} for the specified QueryCode >> {} and QuerySubCode >> {} and QueryModule >> {}",
-					type, id, querySubCode, queryModule);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -314,8 +313,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		try {
 			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in CustomersDedup_View for the speficied Custid and Rule",
-					dedup.getCustId(), sqlQuery);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -339,8 +337,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		try {
 			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in FinanceDedup_View for the specified FinReference >> {} and Rule >> {}",
-					dedup.getFinReference(), sqlQuery);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
