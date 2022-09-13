@@ -312,7 +312,9 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			logger.info("Processing Payment Method upload>> {}:", finReference);
 
 			if ("F".equals(status)) {
+				if (changePayment.getFinID() != null) {
 				paymentMethodUploadDAO.updateChangePaymentDetails(changePayment);
+				}
 				updateLog(header.getDeStatus().getId(), changePayment.getFinReference(), "F",
 						changePayment.getUploadStatusRemarks());
 				fail++;

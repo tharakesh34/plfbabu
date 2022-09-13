@@ -248,7 +248,7 @@ public class PennantRegularExpressions {
 			put(REGEX_UPP_BOX_ALPHANUM, "[A-Za-z0-9]*");
 			put(REGEX_CUSTCIF, "[0-9]{5,7}");
 			put(REGEX_UPPBOX_ALPHA_CODE, "^[A-Za-z]+[A-Za-z\\_\\-]*");
-			put(REGEX_UPPBOX_ALPHANUM_UNDERSCORE, "^[A-Za-z]+[A-Za-z0-9\\_]*");
+			put(REGEX_UPPBOX_ALPHANUM_UNDERSCORE, "^[A-Za-z0-9]+[A-Za-z0-9\\_]*");
 			put(REGEX_ALPHANUM_FL23, "[Aa]{1}[Ee]{1}[a-zA-z0-9]{21}");
 			put(REGEX_ALPHANUM_UNDERSCORE_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9\\_\\s]*");
 			put(REGEX_NUMERIC_MAXLENGTH, "[0-9]{0,12}\\.[0-9]{0,9}");

@@ -13124,8 +13124,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			aFinanceMain.setFinReference(this.finReference.getValue());
-			aFinanceMain.setFinID(this.finId.getValue());
-			aFinanceSchData.setFinID(this.finId.getValue());
+			if (this.finId.getValue() > 0) {
+				aFinanceMain.setFinID(this.finId.getValue());
+				aFinanceSchData.setFinID(this.finId.getValue());
+			} else {
+				ReferenceGenerator.generateFinID(aFinanceMain);
+				aFinanceSchData.setFinID(aFinanceMain.getFinID());
+			}
 			aFinanceSchData.setFinReference(this.finReference.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);

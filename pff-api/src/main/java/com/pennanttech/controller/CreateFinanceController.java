@@ -282,7 +282,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 
 			fm.setFinReference(finReference);
-			schdData.setFinID(finID);
+			schdData.setFinID(fm.getFinID());
 			schdData.setFinReference(finReference);
 
 			if (fm.getUserDetails() == null) {

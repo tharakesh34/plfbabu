@@ -4148,6 +4148,7 @@ public class FinanceDataValidation {
 		}
 
 		// validate min and max terms with loanType config.
+		if (numberOfTerms > 0) {
 		if (finMinTerm > 0 && finMaxTerm > 0) {
 			if (numberOfTerms < finMinTerm || numberOfTerms > finMaxTerm) {
 				String[] valueParm = new String[3];
@@ -4159,6 +4160,7 @@ public class FinanceDataValidation {
 
 				return;
 			}
+		}
 		}
 
 		if (subventionReq) {
@@ -4755,7 +4757,7 @@ public class FinanceDataValidation {
 			return;
 		}
 
-		if (fm.getPlanEMIHMax() > (fm.getNumberOfTerms() - 1)) {
+		if (fm.getNumberOfTerms() > 0 && fm.getPlanEMIHMax() > (fm.getNumberOfTerms() - 1)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(fm.getNumberOfTerms() - 1);
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90240", valueParm)));
