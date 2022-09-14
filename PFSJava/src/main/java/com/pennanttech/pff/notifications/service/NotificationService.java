@@ -378,8 +378,6 @@ public class NotificationService extends GenericService<Notification> {
 					try {
 						parseMail(template, data);
 					} catch (Exception e) {
-						logger.error("Template {}", template);
-						logger.error("Data {}", data);
 						logger.error(Literal.EXCEPTION, e);
 						throw new AppException("999", ERROR_MESSAGE);
 					}
@@ -543,7 +541,6 @@ public class NotificationService extends GenericService<Notification> {
 				throw new AppException("Unable to read or process freemarker configuration or template", e);
 			} catch (TemplateException e) {
 				logger.error("Template {}", template);
-				logger.error("Data Map {}", model);
 				throw new AppException("Problem initializing freemarker or rendering template ", e);
 			}
 
@@ -643,8 +640,6 @@ public class NotificationService extends GenericService<Notification> {
 		try {
 			parseMail(template, data);
 		} catch (Exception e) {
-			logger.error("Template {}", template);
-			logger.error("Data {}", data);
 			logger.error(Literal.EXCEPTION, e);
 			throw new AppException("999", ERROR_MESSAGE);
 		}
