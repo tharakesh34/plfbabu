@@ -154,7 +154,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	protected Checkbox useExisting;
 	protected ExtendedCombobox mandateRef;
-	protected Textbox custID;
+	protected ExtendedCombobox custID;
 	protected Button btnSearchCustCIF;
 	private ExtendedCombobox entityCode;
 	protected ExtendedCombobox finReference;
@@ -421,6 +421,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
+
+		this.custID.setModuleName("Customer");
+		this.custID.setMandatoryStyle(true);
+		this.custID.setValueColumn("CustCIF");
+		this.custID.setDescColumn("CustShrtName");
+		this.custID.setDisplayStyle(2);
+		this.custID.setValidateColumns(new String[] { "CustCIF" });
 
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(130);
@@ -703,8 +710,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	public void fetchAccounts() {
+
+		Object obj = this.custID.getAttribute("custID");
+
+		if (obj == null) {
+			return;
+		}
+
 		Object dataObject = null;
-		long custID = this.mandate.getCustID();
+		long custID = Long.parseLong(this.custID.getAttribute("custID").toString());
 		Filter filter[] = new Filter[2];
 		filter[0] = new Filter("CustID", custID, Filter.OP_EQUAL);
 		filter[1] = new Filter("RepaymentFrom", "Y", Filter.OP_EQUAL);
@@ -1110,7 +1124,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.mandateType);
-		readOnlyComponent(true, this.custID);
+		// readOnlyComponent(true, this.custID);
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_MANDATE_ACCT_DET_READONLY)) {
 			readOnlyComponent(true, accNumber);
@@ -1291,7 +1305,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.mandateRef);
 		}
 
-		this.custID.setValue(aMandate.getCustCIF());
+		if (aMandate.getCustID() != Long.MIN_VALUE && aMandate.getCustID() != 0) {
+			this.custID.setAttribute("custID", aMandate.getCustID());
+			this.custID.setValue(aMandate.getCustCIF());
+			this.btnFetchAccountDetails.setDisabled(false);
+		}
 		this.btnFetchAccountDetails.setDisabled(false);
 
 		List<String> excludeList = new ArrayList<String>();
@@ -1501,6 +1519,20 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		aMandate.setUseExisting(this.useExisting.isChecked());
+
+		// Customer ID
+		try {
+			this.custID.getValidatedValue();
+			Object obj = this.custID.getAttribute("custID");
+			if (obj != null) {
+				if (!StringUtils.isEmpty(obj.toString())) {
+					aMandate.setCustID(Long.valueOf((obj.toString())));
+				}
+			}
+
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		try {
 			String ref = this.mandateRef.getValue();
@@ -1815,6 +1847,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	private void doSetValidation(boolean validate) {
 		logger.debug(Literal.ENTERING);
+
+		// Customer ID
+		if (!this.custID.isReadonly()) {
+			this.custID.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_CustID.value"), null, validate, true));
+		}
 
 		if (this.useExisting.isChecked()) {
 			this.mandateType.setConstraint(
@@ -2549,6 +2587,24 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		Executions.createComponents(pageName, null, map);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$custID(Event event) {
+		Object dataObject = custID.getObject();
+		if (dataObject instanceof String) {
+			this.custID.setValue(dataObject.toString());
+			this.btnFetchAccountDetails.setDisabled(false);
+		} else {
+			Customer details = (Customer) dataObject;
+			if (details != null) {
+				this.custID.setAttribute("custID", details.getCustID());
+				this.btnFetchAccountDetails.setDisabled(false);
+			} else {
+				this.accNumber.setValue("");
+				this.accHolderName.setValue("");
+				this.btnFetchAccountDetails.setDisabled(true);
+			}
+		}
 	}
 
 	public Mandate getMandate() {

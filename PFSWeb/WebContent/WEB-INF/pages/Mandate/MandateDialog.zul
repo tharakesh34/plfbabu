@@ -61,31 +61,49 @@
 									<extendedcombobox id="entityCode" readonly="true" />
 									<label value="${c:l('label_MandateDialog_CustID.value')}" />
 									<hbox>
-										<textbox id="custID" readonly="true" />
+										<extendedcombobox id="custID" readonly="true" />
 										<button id="btnSearchCustCIF" image="/images/icons/more.png" />
 									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_FinReference.value')}" />
 									<extendedcombobox id="finReference" />
-									<label value="${c:l('label_MandateDialog_UseExisting.value')}" />
-									<checkbox id="useExisting" disabled="true" />
-								</row>
 
+								</row>
 								<row>
-									<label value="${c:l('label_MandateDialog_MandateRef.value')}" />
+									<label value="${c:l('label_MandateDialog_UseExisting.value')}" />
 									<hbox>
-										<extendedcombobox id="mandateRef" />
-										<button id="btnPennyDropResult"
-											tooltiptext="${c:l('label_PennyDropResult.tooltiptext')}" label="${c:l('label_PennyDropResult')}"
-											sclass="z-toolbarbutton" />
-									</hbox>
-									<label value="${c:l('label_MandateDialog_MandateType.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<combobox id="mandateType" width="200px" readonly="true" />
+									<space spacing="2px" />
+									<checkbox id="useExisting" disabled="true" />
 									</hbox>
 								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_mandateDetails" sclass="gb-dialog">
+						<caption label="Mandate Details" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:10px;">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+							<row>
+								<label value="${c:l('label_MandateDialog_MandateRef.value')}" />
+								<hbox>
+									<extendedcombobox id="mandateRef" />
+									<button id="btnPennyDropResult"
+										tooltiptext="${c:l('label_PennyDropResult.tooltiptext')}" label="${c:l('label_PennyDropResult')}"
+										sclass="z-toolbarbutton" />
+								</hbox>
+								<label value="${c:l('label_MandateDialog_MandateType.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="mandateType" width="200px" readonly="true" />
+								</hbox>
+							</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_ExternalMandate.value') }" />
 									<checkbox id="externalMandate" checked="false" />
@@ -146,10 +164,47 @@
 									</hbox>
 								</row>
 								<row>
+									<label value="${c:l('label_MandateDialog_Hold.value')}" />
+									<checkbox id="hold" checked="false" />
+
+									<label value="${c:l('label_MandateDialog_HoldReasons.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<extendedcombobox id="holdReasons" width="200px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_RegStatus.value')}" />
+									<label id="regStatus" style="font-weight:bold;" />
+								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_MandateDoc.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="documentName" width="150px" maxlength="200" readonly="true" />
+										<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc"
+											hflex="1" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox id="gb_bankDetails" sclass="gb-dialog">
+						<caption label="Account Details" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:10px;">
+
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
 									<label value="${c:l('label_MandateDialog_BankBranchID.value')}" />
 									<extendedcombobox id="bankBranchID" />
-									<label value="${c:l('label_MandateDialog_PartnerBank.value')}" />
-									<extendedcombobox id="partnerBank" />
+
 								</row>
 
 								<row>
@@ -207,6 +262,23 @@
 									<label value="${c:l('label_MandateDialog_PhoneCountryCode.value')}" />
 									<textbox id="phoneNumber" />
 								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_otherDetails" sclass="gb-dialog">
+						<caption label="Other Details" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:10px;">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_MandateDialog_PartnerBank.value')}" />
+									<extendedcombobox id="partnerBank" />
+								</row>
 								<row id="pennyDropRow">
 									<label value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
 									<textbox id="pennyDropResult" maxlength="50" width="200px" readonly="true" />
@@ -225,30 +297,6 @@
 									</hbox>
 									<label value="${c:l('label_MandateStatusDialog_Reason.value')}" />
 									<textbox id="reason" maxlength="200" width="200px" multiline="true" rows="3" />
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_RegStatus.value')}" />
-									<label id="regStatus" style="font-weight:bold;" />
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_MandateDoc.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="documentName" width="150px" maxlength="200" readonly="true" />
-										<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc"
-											hflex="1" />
-									</hbox>
-								</row>
-
-								<row>
-									<label value="${c:l('label_MandateDialog_Hold.value')}" />
-									<checkbox id="hold" checked="false" />
-
-									<label value="${c:l('label_MandateDialog_HoldReasons.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<extendedcombobox id="holdReasons" width="200px" />
-									</hbox>
 								</row>
 								<row id="dasRow" visible="false">
 									<label value="${c:l('label_MandateDialog_EmployeeID.value')}" />
