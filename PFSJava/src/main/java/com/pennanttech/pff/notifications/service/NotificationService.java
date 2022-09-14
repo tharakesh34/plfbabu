@@ -90,6 +90,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
@@ -1269,7 +1270,7 @@ public class NotificationService extends GenericService<Notification> {
 			int templateId = (Integer) RuleExecutionUtil.executeRule(rule, fieldsAndValues, null,
 					RuleReturnType.INTEGER);
 			if (templateId == 0) {
-				logger.warn(String.format("Template not found for the notification rule %s", rule));
+				logger.warn(Message.NO_TEMPLATE_FOUND);
 				return null;
 			}
 
