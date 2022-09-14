@@ -52,6 +52,12 @@
 						</columns>
 						<rows>
 							<row visible="true">
+								<label value="${c:l('label_NormAccountMappingDialog_AccountType.value')}" />
+								<extendedcombobox id="accountType" />
+								<label value="${c:l('label_NormAccountMappingDialog_FinType.value')}" />
+								<extendedcombobox id="finType" />
+							</row>
+							<row visible="true">
 								<label id="label_NormAccountMappingDialog_Account" value="${c:l('label_NormAccountMappingDialog_Account.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
@@ -64,15 +70,34 @@
 								</hbox>
 							</row>
 							<row visible="true">
-								<label id="label_NormAccountMappingDialog_AccountType" value="${c:l('label_NormAccountMappingDialog_AccountType.value')}" />
-								<extendedcombobox id="accountType" />
-								<label id="label_NormAccountMappingDialog_ProfitCenter" value="${c:l('label_NormAccountMappingDialog_ProfitCenter.value')}" />
+								<label value="${c:l('label_NormAccountMappingDialog_CostCenter.value')}" />
+								<extendedcombobox id="costCenter" />
+								<label value="${c:l('label_NormAccountMappingDialog_ProfitCenter.value')}" />
 								<extendedcombobox id="profitCenter" />
 							</row>
 							<row visible="true">
-
-								<label id="label_NormAccountMappingDialog_CostCenter" value="${c:l('label_NormAccountMappingDialog_CostCenter.value')}" />
-								<extendedcombobox id="costCenter" />
+								<label value="${c:l('label_NormAccountMappingDialog_OpenedDate.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<datebox id="openedDate" width="120px" />
+								</hbox>
+								<label value="${c:l('label_NormAccountMappingDialog_ClosedDate.value')}"/>
+								<hbox>
+									<space id="spaceClosedDate" spacing="2px" />
+									<datebox id="closedDate" width="120px" />
+								</hbox>
+							</row>
+							<row>
+								<label value="${c:l('label_NormAccountMappingDialog_Status.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="status" readonly="true" width="120px" />
+								</hbox>
+								<label value="${c:l('label_NormAccountMappingDialog_AlwManualEntry.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="allowedManualEntry" readonly="true" width="120px" />
+								</hbox>
 							</row>
 						</rows>
 					</grid>

@@ -193,6 +193,13 @@
 									</hlayout>
 								</row>
 								<row id="row11">
+									<label value="${c:l('label_EmployerDetailDialog_DAS.value')}" />
+									<hlayout spacing="2px">
+										<space spacing="2px" />
+										<checkbox id="allowDas"/>
+									</hlayout>
+								</row>
+								<row id="row12">
 									<label id="label_EmployerDetailDialog_empIsActive" value="${c:l('label_EmployerDetailDialog_empIsActive.value')}" />
 									<hlayout id="hlayout_EmployerDetailDialog_empIsActive" spacing="2px">
 										<space id="space_EmployerDetailDialog_empIsActive" spacing="2px" />

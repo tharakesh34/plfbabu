@@ -27,7 +27,6 @@ package com.pennant.webui.systemmasters.employerdetail;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +49,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
@@ -158,8 +156,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	protected Space space_EmpPhone;
 
 	protected Textbox empPhone;
-	// protected Textbox phoneCountryCode;
-	// protected Textbox phoneAreaCode;
 
 	protected Label label_EmpFax;
 	protected Hlayout hlayout_EmpFax;
@@ -200,9 +196,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	protected Space space_ContactPersonNo;
 
 	protected Textbox contactPersonNo;
-	// protected Textbox cpPhoneCountryCode;
-	// protected Textbox cpPhoneAreaCode;
-
 	protected Label label_EmpAlocationType;
 	protected Hlayout hlayout_EmpAlocationType;
 	protected Space space_EmpAlocationType;
@@ -216,21 +209,17 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	protected Hlayout hlayout_empCategory;
 	protected Space space_EmpCategory;
 	protected Combobox empCategory;
-
 	protected Textbox bankRefNo;
-
-	private List<ValueLabel> alocationList = PennantStaticListUtil.getEmpAlocList();
+	protected Checkbox allowDas;
+	protected Checkbox empIsActive;
 
 	private boolean enqModule = false;
-	protected Checkbox empIsActive; // autoWired
-	// not auto wired vars
-	private EmployerDetail employerDetail; // overhanded per param
-	private transient EmployerDetailListCtrl employerDetailListCtrl; // overhanded per param
+	private String sEmpCountry;
+	private String sEmpProvince;
 
-	private transient String sEmpCountry;
-	private transient String sEmpProvince;
-	// ServiceDAOs / Domain Classes
+	private transient EmployerDetailListCtrl employerDetailListCtrl;
 	private transient EmployerDetailService employerDetailService;
+	private EmployerDetail employerDetail;
 
 	/**
 	 * default constructor.<br>
@@ -590,17 +579,14 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
-
 		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailDialog_btnSave"));
+			this.allowDas.setDisabled(isReadOnly("EmployerDetailDialog_AllowDas"));
 			this.empIsActive.setDisabled(isReadOnly("EmployerDetailDialog_empIsActive"));
 		}
-
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -700,6 +686,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			fillComboBox(this.empCategory, aEmployerDetail.getEmpCategory(), PennantStaticListUtil.getEmpCategoryList(),
 					"");
 		}
+
+		this.allowDas.setChecked(aEmployerDetail.isAllowDas());
 		this.empIsActive.setChecked(aEmployerDetail.isEmpIsActive());
 
 		if (aEmployerDetail.isNewRecord()) {
@@ -916,6 +904,12 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			} else {
 				aEmployerDetail.setEmpCategory(getComboboxValue(this.empCategory));
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aEmployerDetail.setAllowDas(this.allowDas.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1234,6 +1228,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empCategory.setValue("");
 		this.empAlocationType.setSelectedIndex(0);
 		this.empIsActive.setChecked(false);
+		this.allowDas.setChecked(false);
 		logger.debug("Leaving");
 	}
 

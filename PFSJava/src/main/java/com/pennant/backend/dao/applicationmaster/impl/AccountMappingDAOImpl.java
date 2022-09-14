@@ -24,6 +24,8 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,16 +33,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
@@ -58,32 +58,13 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 
 	@Override
 	public AccountMapping getAccountMapping(String account, String type) {
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append("select account, hostAccount, FinType, CostCenterID, ProfitCenterID, AccountType");
-		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Account = ?");
 
-		if (type.contains("View")) {
-			sql.append(", costCenterCode, costCenterDesc, profitCenterCode, profitCenterDesc");
-			sql.append(", accountTypeDesc, finTypeDesc");
-		}
-
-		sql.append(" From AccountMapping");
-		sql.append(type);
-		sql.append(" Where Account = :Account");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		AccountMapping accountMapping = new AccountMapping();
-		accountMapping.setAccount(account);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
-		RowMapper<AccountMapping> rowMapper = BeanPropertyRowMapper.newInstance(AccountMapping.class);
+		log(sql.toString());
 
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new AccountMappingRM(type), account);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -92,153 +73,236 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 
 	@Override
 	public List<AccountMapping> getAccountMappingFinType(String finType, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinType = ?");
 
-		logger.debug(Literal.ENTERING);
+		log(sql.toString());
 
-		AccountMapping accountMapping = new AccountMapping();
-		accountMapping.setFinType(finType);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select account, hostAccount, FinType, CostCenterID, ProfitCenterID, AccountType");
-		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-
-		if (type.contains("View")) {
-			sql.append(", costCenterCode, costCenterDesc, profitCenterCode, profitCenterDesc");
-			sql.append(", accountTypeDesc, finTypeDesc");
-		}
-
-		sql.append(" From AccountMapping");
-		sql.append(type);
-		sql.append(" Where FinType = :FinType");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountMapping);
-		RowMapper<AccountMapping> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountMapping.class);
-
-		logger.debug(Literal.LEAVING);
-
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finType), new AccountMappingRM(type));
 	}
 
 	@Override
-	public String save(AccountMapping accountMapping, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into AccountMapping");
+	public String save(AccountMapping ac, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert into AccountMapping");
 		sql.append(tableType.getSuffix());
-		sql.append(" (account, hostAccount, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinType, CostCenterID, ProfitCenterID, AccountType)");
-		sql.append(" values(");
-		sql.append(" :account, :hostAccount, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :FinType, :CostCenterID, :ProfitCenterID , :AccountType)");
+		sql.append(" (Account, HostAccount, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, FinType, CostCenterID, ProfitCenterID, AccountType");
+		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
+		log(sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, ac.getAccount());
+				ps.setString(index++, ac.getHostAccount());
+				ps.setLong(index++, ac.getVersion());
+				ps.setLong(index++, ac.getLastMntBy());
+				ps.setTimestamp(index++, ac.getLastMntOn());
+				ps.setString(index++, ac.getRecordStatus());
+				ps.setString(index++, ac.getRoleCode());
+				ps.setString(index++, ac.getNextRoleCode());
+				ps.setString(index++, ac.getTaskId());
+				ps.setString(index++, ac.getNextTaskId());
+				ps.setString(index++, ac.getRecordType());
+				ps.setLong(index++, ac.getWorkflowId());
+				ps.setString(index++, ac.getFinType());
+				ps.setLong(index++, ac.getCostCenterID());
+				ps.setLong(index++, ac.getProfitCenterID());
+				ps.setString(index++, ac.getAccountType());
+				ps.setDate(index++, JdbcUtil.getDate(ac.getOpenedDate()));
+				ps.setDate(index++, JdbcUtil.getDate(ac.getClosedDate()));
+				ps.setString(index++, ac.getStatus());
+				ps.setString(index++, ac.getAllowedManualEntry());
+				ps.setLong(index++, ac.getCreatedBy());
+				ps.setTimestamp(index++, ac.getCreatedOn());
+				ps.setObject(index++, ac.getApprovedBy());
+				ps.setTimestamp(index++, ac.getApprovedOn());
+
+			});
+
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(accountMapping.getAccount());
+		return String.valueOf(ac.getAccount());
 	}
 
 	@Override
-	public void update(AccountMapping accountMapping, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update AccountMapping");
+	public void update(AccountMapping ac, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update AccountMapping");
 		sql.append(tableType.getSuffix());
-		sql.append("  set hostAccount = :hostAccount, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, FinType = :FinType,");
-		sql.append(" CostCenterID = :CostCenterID, ProfitCenterID = :ProfitCenterID, AccountType = :AccountType");
-		sql.append(" where account = :account ");
+		sql.append(" Set HostAccount = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", FinType = ?, CostCenterID = ?, ProfitCenterID = ?, AccountType = ?");
+		sql.append(", OpenedDate = ?, ClosedDate = ?, Status = ?, AllowedManualEntry = ?");
+		sql.append(", CreatedBy = ?, CreatedOn = ?, ApprovedBy = ?, ApprovedOn = ?");
+		sql.append(" Where Account = ?");
+
 		if (tableType == TableType.MAIN_TAB) {
-			sql.append(" and Version = :Version - 1");
+			sql.append(" and Version = ?");
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		log(sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setString(index++, ac.getHostAccount());
+			ps.setTimestamp(index++, ac.getLastMntOn());
+			ps.setString(index++, ac.getRecordStatus());
+			ps.setString(index++, ac.getRoleCode());
+			ps.setString(index++, ac.getNextRoleCode());
+			ps.setString(index++, ac.getTaskId());
+			ps.setString(index++, ac.getNextTaskId());
+			ps.setString(index++, ac.getRecordType());
+			ps.setLong(index++, ac.getWorkflowId());
+			ps.setString(index++, ac.getFinType());
+			ps.setLong(index++, ac.getCostCenterID());
+			ps.setLong(index++, ac.getProfitCenterID());
+			ps.setString(index++, ac.getAccountType());
+			ps.setDate(index++, JdbcUtil.getDate(ac.getOpenedDate()));
+			ps.setDate(index++, JdbcUtil.getDate(ac.getClosedDate()));
+			ps.setString(index++, ac.getStatus());
+			ps.setString(index++, ac.getAllowedManualEntry());
+			ps.setLong(index++, ac.getCreatedBy());
+			ps.setTimestamp(index++, ac.getCreatedOn());
+			ps.setObject(index++, ac.getApprovedBy());
+			ps.setTimestamp(index++, ac.getApprovedOn());
+
+			ps.setString(index++, ac.getAccount());
+
+			if (tableType == TableType.MAIN_TAB) {
+				ps.setInt(index++, ac.getVersion() - 1);
+			}
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void delete(AccountMapping accountMapping, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from AccountMapping");
+	public void delete(AccountMapping ac, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete from AccountMapping");
 		sql.append(tableType.getSuffix());
-		sql.append(" where account = :account ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Where Account = ? ");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
-		int recordCount = 0;
+		log(sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, ac.getAccount());
+
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setTimestamp(index++, ac.getPrevMntOn());
+				} else {
+					ps.setInt(index++, ac.getVersion() - 1);
+				}
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void delete(String finType, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		AccountMapping accountMapping = new AccountMapping();
-		accountMapping.setFinType(finType);
-		StringBuilder sql = new StringBuilder("delete from AccountMapping");
+		StringBuilder sql = new StringBuilder("Delete from AccountMapping");
 		sql.append(tableType.getSuffix());
-		sql.append(" where FinType = :FinType ");
+		sql.append(" Where FinType = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
-		int recordCount = 0;
+		log(sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			if (jdbcOperations.update(sql.toString(), ps -> ps.setString(1, finType)) == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Account, HostAccount, FinType, CostCenterID, ProfitCenterID, AccountType");
+		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+
+		if (type.contains("View")) {
+			sql.append(", CostCenterCode, CostCenterDesc, ProfitCenterCode, ProfitCenterDesc");
+			sql.append(", AccountTypeDesc, FinTypeDesc");
+		}
+
+		sql.append(" From AccountMapping");
+		sql.append(type);
+
+		return sql;
+	}
+
+	private class AccountMappingRM implements RowMapper<AccountMapping> {
+		private String type;
+
+		public AccountMappingRM(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public AccountMapping mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+			AccountMapping ac = new AccountMapping();
+
+			ac.setAccount(rs.getString("Account"));
+			ac.setHostAccount(rs.getString("HostAccount"));
+			ac.setFinType(rs.getString("FinType"));
+			ac.setCostCenterID(rs.getLong("CostCenterID"));
+			ac.setProfitCenterID(rs.getLong("ProfitCenterID"));
+			ac.setAccountType(rs.getString("AccountType"));
+			ac.setOpenedDate(rs.getDate("OpenedDate"));
+			ac.setClosedDate(rs.getDate("ClosedDate"));
+			ac.setStatus(rs.getString("Status"));
+			ac.setAllowedManualEntry(rs.getString("AllowedManualEntry"));
+			ac.setVersion(rs.getInt("Version"));
+			ac.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ac.setLastMntBy(rs.getLong("LastMntBy"));
+			ac.setRecordStatus(rs.getString("RecordStatus"));
+			ac.setRoleCode(rs.getString("RoleCode"));
+			ac.setNextRoleCode(rs.getString("NextRoleCode"));
+			ac.setTaskId(rs.getString("TaskID"));
+			ac.setNextTaskId(rs.getString("NextTaskId"));
+			ac.setRecordType(rs.getString("RecordType"));
+			ac.setWorkflowId(rs.getLong("WorkFlowId"));
+			ac.setCreatedBy(rs.getLong("CreatedBy"));
+			ac.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			ac.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+			ac.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+
+			if (type.contains("View")) {
+				ac.setCostCenterCode(rs.getString("CostCenterCode"));
+				ac.setCostCenterDesc(rs.getString("CostCenterDesc"));
+				ac.setProfitCenterCode(rs.getString("ProfitCenterCode"));
+				ac.setProfitCenterDesc(rs.getString("ProfitCenterDesc"));
+				ac.setAccountTypeDesc(rs.getString("AccountTypeDesc"));
+				ac.setFinTypeDesc(rs.getString("FinTypeDesc"));
+			}
+
+			return ac;
+		}
+	}
+
+	private void log(String sql) {
+		logger.debug(Literal.SQL.concat(sql));
+	}
 }

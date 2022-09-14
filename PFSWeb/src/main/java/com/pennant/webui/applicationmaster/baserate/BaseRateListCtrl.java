@@ -74,17 +74,20 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> {
 	protected Textbox bRTypeDesc;
 	protected Datebox bREffDate;
 	protected Decimalbox bRRate;
+	protected Textbox approvedUser;
 
 	protected Listbox sortOperator_bRType;
 	protected Listbox sortOperator_bRTypeDesc;
 	protected Listbox sortOperator_bREffDate;
 	protected Listbox sortOperator_bRRate;
+	protected Listbox sortOperator_ApproverUser;
 
 	// List headers
 	protected Listheader listheader_BRType;
 	protected Listheader listheader_BRTypeDesc;
 	protected Listheader listheader_BREffDate;
 	protected Listheader listheader_BRRate;
+	protected Listheader listheader_ApproverName;
 
 	// checkRights
 	protected Button button_BaseRateList_NewBaseRate;
@@ -128,6 +131,8 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> {
 				Operators.DATE);
 		registerField("currency");
 		registerField("bRRate", listheader_BRRate, SortOrder.NONE, bRRate, sortOperator_bRRate, Operators.NUMERIC);
+		registerField("approvedUser", listheader_ApproverName, SortOrder.NONE, approvedUser, sortOperator_ApproverUser,
+				Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();

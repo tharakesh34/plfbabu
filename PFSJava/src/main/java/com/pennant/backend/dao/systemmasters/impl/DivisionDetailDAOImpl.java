@@ -260,4 +260,13 @@ public class DivisionDetailDAOImpl extends BasicDao<DivisionDetail> implements D
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isActiveDivision(String division) {
+		String sql = "Select coalesce(count(DivisionCode), 0) From SMTDivisionDetail Where DivisionCode = ? and Active = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, Integer.class, division, 1) > 0;
+	}
 }

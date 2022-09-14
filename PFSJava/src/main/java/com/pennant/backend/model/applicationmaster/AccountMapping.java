@@ -26,6 +26,7 @@ package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,6 +60,14 @@ public class AccountMapping extends AbstractWorkflowEntity {
 	private String accountType;
 	private String accountTypeDesc;
 	private String finTypeDesc;
+	private Date openedDate;
+	private Date closedDate;
+	private String status;
+	private String allowedManualEntry;
+	private long createdBy;
+	private Timestamp createdOn;
+	private Long approvedBy;
+	private Timestamp approvedOn;
 
 	private List<AccountMapping> accountMappingList = new ArrayList<AccountMapping>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -240,4 +249,69 @@ public class AccountMapping extends AbstractWorkflowEntity {
 	public void setTranType(String tranType) {
 		this.tranType = tranType;
 	}
+
+	public Date getOpenedDate() {
+		return openedDate;
+	}
+
+	public void setOpenedDate(Date openedDate) {
+		this.openedDate = openedDate;
+	}
+
+	public Date getClosedDate() {
+		return closedDate;
+	}
+
+	public void setClosedDate(Date closedDate) {
+		this.closedDate = closedDate;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getAllowedManualEntry() {
+		return allowedManualEntry;
+	}
+
+	public void setAllowedManualEntry(String allowedManualEntry) {
+		this.allowedManualEntry = allowedManualEntry;
+	}
+
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(Long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
+	}
+
 }

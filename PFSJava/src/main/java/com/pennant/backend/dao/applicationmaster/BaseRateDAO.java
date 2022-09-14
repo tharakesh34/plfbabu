@@ -38,22 +38,11 @@ public interface BaseRateDAO extends BasicCrudDao<BaseRate> {
 
 	BaseRate getBaseRateById(String bRType, String currency, Date bREffDate, String type);
 
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param bRType    bRType of the baseRate
-	 * @param bREffDate bREffDate of the baseRate
-	 * @param currency  currency of the baseRate
-	 * @param tableType The type of the table.
-	 * @return true if the record exists.
-	 */
 	boolean isDuplicateKey(String bRType, Date bREffDate, String currency, TableType tableType);
 
 	BaseRate getBaseRateByType(final String bRType, String currency, Date bREffDate);
 
 	boolean getBaseRateListById(String bRType, String currency, Date bREffDate, String type);
-
-	List<BaseRate> getBSRListByMdfDate(Date bREffDate, String type);
 
 	void deleteByEffDate(BaseRate baseRate, String type);
 

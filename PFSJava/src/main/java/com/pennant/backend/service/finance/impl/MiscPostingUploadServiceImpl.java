@@ -26,22 +26,21 @@ import com.pennant.backend.dao.finance.MiscPostingUploadDAO;
 import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
-import com.pennant.backend.model.applicationmaster.Branch;
-import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
-import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.MiscPostingUploadService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.accounting.HostAccountStatus;
+import com.pennant.pff.accounting.PostAgainst;
+import com.pennant.pff.accounting.TransactionType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
@@ -598,212 +597,41 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 
 	}
 
-	private void validateData(MiscPostingUpload miscPostingUpload) {
-		int errorCount = 0;
-		String reason = "";
-		Branch branch = new Branch();
-		FinanceMain finMain = new FinanceMain();
-		Customer customer = new Customer();
-		Entity entity = new Entity();
-		AccountMapping account = new AccountMapping();
+	private void validateData(MiscPostingUpload mpu) {
+		String reason = null;
+		String postAgainst = mpu.getPostAgainst();
 
-		// Value Date
-		if (miscPostingUpload.getValueDate() == null) {
-			errorCount++;
+		if (mpu.getValueDate() == null) {
 			reason = "Value Date is mandatory.";
 		}
 
-		if (errorCount == 0) {
-			if (StringUtils.isBlank(miscPostingUpload.getPostAgainst())) {
-				errorCount++;
-				reason = "Post Against is mandatory, it should not be empty.";
+		if (reason == null && StringUtils.isBlank(postAgainst)) {
+			reason = "Post Against is mandatory, it should not be empty.";
+		}
+
+		if (reason == null && !String.join("|", "L", "N", "C", "E").contains(postAgainst)) {
+			reason = " Post Against allowed values are L,N,C and E.";
+		}
+
+		if (reason == null) {
+			if ("N".equalsIgnoreCase(postAgainst)) {
+				reason = validateMPUForN(mpu);
+			} else if (PostAgainst.isLoan(postAgainst)) {
+				reason = validateMPUForLoan(mpu);
+			} else if (PostAgainst.isEntity(postAgainst)) {
+				reason = validateMPUForEntity(mpu);
 			} else {
-				if (String.join("|", "L", "N", "C", "E").contains(miscPostingUpload.getPostAgainst())) {
-					if (miscPostingUpload.getPostAgainst().equalsIgnoreCase("N")) {
-						if (StringUtils.isBlank(miscPostingUpload.getBranch())) {
-							errorCount++;
-							reason = " Branch is mandatory, it should not be empty.";
-						} else {
-							branch = branchDAO.getBranchById(miscPostingUpload.getBranch(), "");
-							if (branch != null && branch.isBranchIsActive()) {
-								miscPostingUpload.setBranch(branch.getBranchCode());
-							} else {
-								errorCount++;
-								reason = " Branch is invalid/Inactive.";
-							}
-						}
-
-						// Posting Division
-						if (errorCount == 0) {
-							if (StringUtils.isBlank(miscPostingUpload.getPostingDivision())) {
-								errorCount++;
-								reason = " Posting Division is mandatory, it should not be empty.";
-							} else {
-								DivisionDetail divisionDetails = getDivisionDetailDAO()
-										.getDivisionDetailById(miscPostingUpload.getPostingDivision(), "");
-								if (divisionDetails != null && divisionDetails.isActive()) {
-								} else {
-									errorCount++;
-									reason = " Posting Division is invalid/Inactive.";
-								}
-							}
-						}
-
-					} else if (miscPostingUpload.getPostAgainst().equalsIgnoreCase("L")) {
-						if (StringUtils.isBlank(miscPostingUpload.getReference())) {
-							errorCount++;
-							reason = " Loan Reference(Reference) is mandatory, it should not be empty.";
-						} else {
-							finMain = financeMainDAO.getFinanceMain(miscPostingUpload.getReference(),
-									TableType.MAIN_TAB);
-							if (finMain != null) {
-								miscPostingUpload.setBranch(finMain.getFinBranch());
-								miscPostingUpload.setPostingDivision(finMain.getLovDescFinDivision());
-
-								// value date validation
-
-								if (finMain.getFinStartDate().compareTo(miscPostingUpload.getValueDate()) > 0) {
-									errorCount++;
-									reason = " Value Date should greater than or equal to Loan StartDate";
-								}
-
-							} else {
-								errorCount++;
-								reason = " Loan Reference: " + miscPostingUpload.getReference()
-										+ " is not available in system.";
-								miscPostingUpload.setBranch(null);
-								miscPostingUpload.setPostingDivision(null);
-							}
-						}
-					} else if (miscPostingUpload.getPostAgainst().equalsIgnoreCase("E")) {
-
-						if (StringUtils.isBlank(miscPostingUpload.getReference())) {
-							errorCount++;
-							reason = "Entity(Reference) is mandatory, it should not be empty.";
-						} else {
-							entity = entityDAO.getEntity(miscPostingUpload.getReference(), "");
-							if (entity != null) {
-								// miscPostingUpload.setBranch(customer.getCustDftBranch());
-							} else {
-								errorCount++;
-								reason = " Entity(Reference): " + miscPostingUpload.getReference()
-										+ " is not available in the system.";
-								miscPostingUpload.setBranch(null);
-							}
-						}
-
-						// Posting Division
-						if (errorCount == 0) {
-							if (StringUtils.isBlank(miscPostingUpload.getPostingDivision())) {
-								errorCount++;
-								reason = " Posting Division is mandatory, it should not be empty.";
-								miscPostingUpload.setPostingDivision(null);
-							} else {
-								DivisionDetail divisionDetails = getDivisionDetailDAO()
-										.getDivisionDetailById(miscPostingUpload.getPostingDivision(), "");
-								if (divisionDetails != null && divisionDetails.isActive()) {
-								} else {
-									errorCount++;
-									reason = " Posting Division is invalid/Inactive.";
-								}
-							}
-
-							if (errorCount == 0) {
-								if (!StringUtils.isBlank(miscPostingUpload.getBranch())) {
-									branch = branchDAO.getBranchById(miscPostingUpload.getBranch(), "");
-									if (branch != null && branch.isBranchIsActive()) {
-										miscPostingUpload.setBranch(branch.getBranchCode());
-									} else {
-										errorCount++;
-										reason = " Branch is invalid/Inactive.";
-									}
-								}
-							}
-						}
-
-					} else {
-						if (StringUtils.isBlank(miscPostingUpload.getReference())) {
-							errorCount++;
-							reason = "Customer CIF(Reference) is mandatory, it should not be empty.";
-						} else {
-							customer = customerDAO.getCustomerByCIF(miscPostingUpload.getReference(), "");
-							if (customer != null) {
-								miscPostingUpload.setBranch(customer.getCustDftBranch());
-							} else {
-								errorCount++;
-								reason = " Customer CIF(Reference): " + miscPostingUpload.getReference()
-										+ " is not available in the system.";
-								miscPostingUpload.setBranch(null);
-							}
-						}
-
-						// Posting Division
-						if (StringUtils.isBlank(miscPostingUpload.getPostingDivision())) {
-							errorCount++;
-							reason = " Posting Division is mandatory, it should not be empty.";
-							miscPostingUpload.setPostingDivision(null);
-						} else {
-							DivisionDetail divisionDetails = getDivisionDetailDAO()
-									.getDivisionDetailById(miscPostingUpload.getPostingDivision(), "");
-							if (divisionDetails != null && divisionDetails.isActive()) {
-							} else {
-								errorCount++;
-								reason = " Posting Division is invalid/Inactive.";
-							}
-						}
-					}
-				} else {
-					errorCount++;
-					reason = " Post Against allowed values are L,N,C and E.";
-				}
+				reason = validatePMUForCustomer(mpu);
 			}
 		}
 
-		// Account
-		if (errorCount == 0) {
-			if (StringUtils.isBlank(miscPostingUpload.getAccount())) {
-				errorCount++;
-				reason = " Account is mandatory, it should not be empty.";
-			} else {
-				account = accountMappingDAO.getAccountMapping(miscPostingUpload.getAccount(), "");
-				if (account == null) {
-					errorCount++;
-					reason = " Account: " + miscPostingUpload.getAccount() + " is not available in system.";
-				}
-			}
+		if (reason == null) {
+			reason = validatePMUForAccount(mpu);
 		}
 
-		// Transaction Entry
-		if (errorCount == 0) {
-			if (StringUtils.isBlank(miscPostingUpload.getTxnEntry())) {
-				errorCount++;
-				reason = " Transacton Entry is mandatory, it should not be empty.";
-			} else {
-				if (miscPostingUpload.getTxnEntry().equals("D") || miscPostingUpload.getTxnEntry().equals("C")) {
-					miscPostingUpload.setTxnEntry(miscPostingUpload.getTxnEntry());
-				} else {
-					errorCount++;
-					reason = " Transacton Entry allowed values are 'D' or 'C'.";
-				}
-			}
-		}
-
-		// Payable Amount
-		if (errorCount == 0) {
-			if (BigDecimal.ZERO.compareTo(miscPostingUpload.getTxnAmount()) >= 0) {
-				errorCount++;
-				reason = " Transaction Amount should be greater than 0.";
-			} else {
-				miscPostingUpload.setTxnAmount(miscPostingUpload.getTxnAmount());
-			}
-		}
-
-		if (errorCount > 0) {
-			if (errorCount > 1) {
-				reason = reason + " Invalid record.";
-			}
-			miscPostingUpload.setUploadStatus("FAILED");
-			miscPostingUpload.setReason(reason);
+		if (reason != null) {
+			mpu.setUploadStatus("FAILED");
+			mpu.setReason(reason);
 		}
 	}
 
@@ -908,6 +736,141 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 		}
 		logger.debug("Leaving");
 		return auditDetails;
+	}
+
+	private String validateMPUForN(MiscPostingUpload mpu) {
+		if (StringUtils.isBlank(mpu.getBranch())) {
+			return " Branch is mandatory, it should not be empty.";
+		}
+
+		if (!branchDAO.isActiveBranch(mpu.getBranch())) {
+			return " Branch is invalid/Inactive.";
+		}
+
+		if (StringUtils.isBlank(mpu.getPostingDivision())) {
+			return " Posting Division is mandatory, it should not be empty.";
+		}
+
+		if (!divisionDetailDAO.isActiveDivision(mpu.getPostingDivision())) {
+			return " Posting Division is invalid/Inactive.";
+		}
+
+		return null;
+	}
+
+	private String validateMPUForLoan(MiscPostingUpload mpu) {
+		if (StringUtils.isBlank(mpu.getReference())) {
+			return " Loan Reference(Reference) is mandatory, it should not be empty.";
+		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMain(mpu.getReference(), TableType.MAIN_TAB);
+
+		if (fm == null) {
+			mpu.setBranch(null);
+			mpu.setPostingDivision(null);
+
+			return " Loan Reference: " + mpu.getReference() + " is not available in system.";
+		}
+
+		mpu.setBranch(fm.getFinBranch());
+		mpu.setPostingDivision(fm.getLovDescFinDivision());
+
+		if (fm.getFinStartDate().compareTo(mpu.getValueDate()) > 0) {
+			return " Value Date should greater than or equal to Loan StartDate";
+		}
+
+		return null;
+	}
+
+	private String validateMPUForEntity(MiscPostingUpload mpu) {
+		if (StringUtils.isBlank(mpu.getReference())) {
+			return "Entity(Reference) is mandatory, it should not be empty.";
+		}
+
+		if (entityDAO.getEntityCount(mpu.getReference()) <= 0) {
+			mpu.setBranch(null);
+			return " Entity(Reference): " + mpu.getReference() + " is not available in the system.";
+		}
+
+		if (StringUtils.isBlank(mpu.getPostingDivision())) {
+			mpu.setPostingDivision(null);
+			return " Posting Division is mandatory, it should not be empty.";
+		}
+
+		if (!divisionDetailDAO.isActiveDivision(mpu.getPostingDivision())) {
+			return " Posting Division is invalid/Inactive.";
+		}
+
+		if (!StringUtils.isBlank(mpu.getBranch())) {
+			if (!branchDAO.isActiveBranch(mpu.getBranch())) {
+				return " Branch is invalid/Inactive.";
+			}
+		}
+
+		return null;
+	}
+
+	private String validatePMUForCustomer(MiscPostingUpload mpu) {
+		if (StringUtils.isBlank(mpu.getReference())) {
+			return "Customer CIF(Reference) is mandatory, it should not be empty.";
+		}
+
+		String dftBranch = customerDAO.getCustDefaulBranchByCIF(mpu.getReference());
+
+		mpu.setBranch(dftBranch);
+		if (dftBranch == null) {
+			return " Customer CIF(Reference): " + mpu.getReference() + " is not available in the system.";
+		}
+
+		if (StringUtils.isBlank(mpu.getPostingDivision())) {
+			mpu.setPostingDivision(null);
+			return " Posting Division is mandatory, it should not be empty.";
+		}
+
+		if (!divisionDetailDAO.isActiveDivision(mpu.getPostingDivision())) {
+			return " Posting Division is invalid/Inactive.";
+		}
+
+		return null;
+	}
+
+	private String validatePMUForAccount(MiscPostingUpload mpu) {
+		if (StringUtils.isBlank(mpu.getAccount())) {
+			return " Account is mandatory, it should not be empty.";
+		}
+
+		AccountMapping am = accountMappingDAO.getAccountMapping(mpu.getAccount(), "");
+		if (am == null) {
+			return " Account: " + mpu.getAccount() + " is not available in system.";
+		}
+
+		if (HostAccountStatus.isClose(am.getStatus())) {
+			return "System cannot process for Account status is Closed";
+		}
+
+		if (TransactionType.isNone(am.getAllowedManualEntry())) {
+			return "System cannot process for Account Allowed Manual Entry is N";
+		}
+
+		if (StringUtils.isBlank(mpu.getTxnEntry())) {
+			return " Transacton Entry is mandatory, it should not be empty.";
+		}
+
+		if (!(TransactionType.isDebit(mpu.getTxnEntry()) || TransactionType.isCredit(mpu.getTxnEntry()))) {
+			return " Transacton Entry allowed values are 'D' or 'C'.";
+		}
+
+		if (!am.getAllowedManualEntry().equals(mpu.getTxnEntry())
+				&& !TransactionType.isBoth(am.getAllowedManualEntry())) {
+			return " Transcation Entry: " + mpu.getTxnEntry() + " " + "allowed values are : "
+					+ am.getAllowedManualEntry();
+		}
+
+		if (BigDecimal.ZERO.compareTo(mpu.getTxnAmount()) >= 0) {
+			return " Transaction Amount should be greater than 0.";
+		}
+
+		return null;
 	}
 
 	public JVPostingService getJVPostingService() {

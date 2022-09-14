@@ -149,7 +149,6 @@ public class AssetSubClassCodeDialogCtrl extends GFCBaseCtrl<AssetSubClassCode> 
 		this.classCode.setDescColumn("Description");
 		this.classCode.setValidateColumns(new String[] { "Code" });
 
-		this.code.setMaxlength(8);
 		this.description.setMaxlength(100);
 
 		setStatusDetails();

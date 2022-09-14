@@ -66,12 +66,12 @@ import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.systemmasters.EmployerDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.fusioncharts.ChartSetElement;
+import com.pennant.pff.accounting.PostAgainst;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -687,7 +687,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 			posting.setCurrency(fm.getFinCcy());
 		}
 		posting.setPostingDate(appDate);
-		posting.setPostAgainst(FinanceConstants.POSTING_AGAINST_LOAN);
+		posting.setPostAgainst(PostAgainst.LOAN.code());
 		posting.setBatchPurpose("");
 		posting.setBatchPostingStatus(fm.getFinPurpose());
 		posting.setReference(fm.getFinReference());

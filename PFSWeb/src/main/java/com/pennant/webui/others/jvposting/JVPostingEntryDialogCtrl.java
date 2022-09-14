@@ -71,6 +71,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.accounting.HostAccountStatus;
+import com.pennant.pff.accounting.TransactionType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -808,10 +810,30 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		this.account.setDescColumn("HostAccount");
 		this.account.setValidateColumns(new String[] { "Account" });
 
+		List<String> crEntries = new ArrayList<>();
+		crEntries.add(TransactionType.CREDIT.code());
+		crEntries.add(TransactionType.BOTH.code());
+
+		Filter[] accFilter = new Filter[2];
+		accFilter[0] = new Filter("allowedManualEntry", crEntries, Filter.OP_IN);
+		accFilter[1] = new Filter("status", HostAccountStatus.CLOSE.code(), Filter.OP_NOT_EQUAL);
+
+		this.account.setFilters(accFilter);
+
 		this.debitAccount.setModuleName("AccountMapping");
 		this.debitAccount.setValueColumn("Account");
 		this.debitAccount.setDescColumn("HostAccount");
 		this.debitAccount.setValidateColumns(new String[] { "Account" });
+
+		List<String> drEntries = new ArrayList<>();
+		drEntries.add(TransactionType.DEBIT.code());
+		drEntries.add(TransactionType.BOTH.code());
+
+		accFilter = new Filter[2];
+		accFilter[0] = new Filter("allowedManualEntry", drEntries, Filter.OP_IN);
+		accFilter[1] = new Filter("status", HostAccountStatus.CLOSE.code(), Filter.OP_NOT_EQUAL);
+
+		this.debitAccount.setFilters(accFilter);
 
 		this.txnCode.setMaxlength(3);
 		this.txnCode.setMandatoryStyle(true);

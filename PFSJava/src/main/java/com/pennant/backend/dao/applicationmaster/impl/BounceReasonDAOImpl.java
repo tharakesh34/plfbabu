@@ -24,17 +24,16 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import org.apache.commons.lang.StringUtils;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.model.applicationmaster.BounceReason;
@@ -59,32 +58,13 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 
 	@Override
 	public BounceReason getBounceReason(long bounceID, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where BounceID = ?");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" ruleID, returnCode, active, ");
-		if (type.contains("View")) {
-			sql.append(" ruleCode, ruleCodeDesc,");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From BounceReasons");
-		sql.append(type);
-		sql.append(" Where bounceID = :bounceID");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		BounceReason bounceReason = new BounceReason();
-		bounceReason.setBounceID(bounceID);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bounceReason);
-		RowMapper<BounceReason> rowMapper = BeanPropertyRowMapper.newInstance(BounceReason.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new BounceReasonRM(type), bounceID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -130,121 +110,134 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 	}
 
 	@Override
-	public String save(BounceReason bounceReason, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into BounceReasons");
+	public String save(BounceReason br, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert into BounceReasons");
 		sql.append(tableType.getSuffix());
-		sql.append("(bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" ruleID, returnCode, active, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(" :bounceID, :bounceCode, :reasonType, :category, :reason, :action, ");
-		sql.append(" :ruleID, :returnCode, :active, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" (BounceID, BounceCode, ReasonType, Category, Reason, Action");
+		sql.append(", RuleID, ReturnCode, Active, InstrumentType, HoldMarkBounceCount");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?)");
 
-		if (bounceReason.getBounceID() <= 0) {
-			bounceReason.setBounceID(getNextValue("SeqBounceReasons"));
+		if (br.getBounceID() <= 0) {
+			br.setBounceID(getNextValue("SeqBounceReasons"));
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bounceReason);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, br.getBounceID());
+				ps.setString(index++, br.getBounceCode());
+				ps.setInt(index++, br.getReasonType());
+				ps.setInt(index++, br.getCategory());
+				ps.setString(index++, br.getReason());
+				ps.setInt(index++, br.getAction());
+				ps.setLong(index++, br.getRuleID());
+				ps.setString(index++, br.getReturnCode());
+				ps.setBoolean(index++, br.isActive());
+				ps.setString(index++, br.getInstrumentType());
+				ps.setInt(index++, br.getHoldMarkBounceCount());
+				ps.setInt(index++, br.getVersion());
+				ps.setTimestamp(index++, br.getLastMntOn());
+				ps.setLong(index++, br.getLastMntBy());
+				ps.setString(index++, br.getRecordStatus());
+				ps.setString(index++, br.getRoleCode());
+				ps.setString(index++, br.getNextRoleCode());
+				ps.setString(index++, br.getTaskId());
+				ps.setString(index++, br.getNextTaskId());
+				ps.setString(index++, br.getRecordType());
+				ps.setLong(index++, br.getWorkflowId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(bounceReason.getBounceID());
+		return Long.toString(br.getBounceID());
 	}
 
 	@Override
-	public void update(BounceReason bounceReason, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update BounceReasons");
+	public void update(BounceReason br, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update BounceReasons");
 		sql.append(tableType.getSuffix());
-		sql.append("  set bounceCode = :bounceCode, reasonType = :reasonType, category = :category, ");
-		sql.append(" reason = :reason, action = :action, ruleID = :ruleID, ");
-		sql.append(" returnCode = :returnCode, active = :active, ");
-		sql.append(" Version = :Version , LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where bounceID = :bounceID ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Set BounceCode = ?, ReasonType = ?, Category = ?");
+		sql.append(", Reason = ?, Action = ?, RuleID = ?, ReturnCode = ?");
+		sql.append(", Active = ?, InstrumentType = ?, HoldMarkBounceCount = ?");
+		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
+		sql.append(" Where BounceID = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bounceReason);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
+			ps.setString(index++, br.getBounceCode());
+			ps.setInt(index++, br.getReasonType());
+			ps.setInt(index++, br.getCategory());
+			ps.setString(index++, br.getReason());
+			ps.setInt(index++, br.getAction());
+			ps.setLong(index++, br.getRuleID());
+			ps.setString(index++, br.getReturnCode());
+			ps.setBoolean(index++, br.isActive());
+			ps.setString(index++, br.getInstrumentType());
+			ps.setInt(index++, br.getHoldMarkBounceCount());
+			ps.setInt(index++, br.getVersion());
+			ps.setLong(index++, br.getLastMntBy());
+			ps.setTimestamp(index++, br.getLastMntOn());
+			ps.setString(index++, br.getRecordStatus());
+			ps.setString(index++, br.getRoleCode());
+			ps.setString(index++, br.getNextRoleCode());
+			ps.setString(index++, br.getTaskId());
+			ps.setString(index++, br.getNextTaskId());
+			ps.setString(index++, br.getRecordType());
+			ps.setLong(index++, br.getWorkflowId());
 
-		logger.debug(Literal.LEAVING);
+			ps.setLong(index++, br.getBounceID());
+
+			if (tableType == TableType.TEMP_TAB) {
+				ps.setTimestamp(index++, br.getPrevMntOn());
+			} else {
+				ps.setInt(index++, br.getVersion() - 1);
+			}
+		});
+
 	}
 
 	@Override
 	public void delete(BounceReason bounceReason, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from BounceReasons");
+		StringBuilder sql = new StringBuilder("Delete From BounceReasons");
 		sql.append(tableType.getSuffix());
-		sql.append(" where bounceID = :bounceID ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Where BounceID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bounceReason);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = this.jdbcOperations.update(sql.toString(),
+					ps -> ps.setLong(1, bounceReason.getBounceID()));
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public BounceReason getBounceReasonByReturnCode(String returnCode, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ReturnCode = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT bounceID, bounceCode, reasonType, category, reason, action, ");
-		sql.append(" ruleID, returnCode, active, ");
-		if (type.contains("View")) {
-			sql.append(" ruleCode, ruleCodeDesc,");
-		}
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
-		sql.append(" NextTaskId, RecordType, WorkflowId From BounceReasons");
-		sql.append(type);
-		sql.append(" Where ReturnCode = :ReturnCode");
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReturnCode", returnCode);
-
-		RowMapper<BounceReason> rowMapper = BeanPropertyRowMapper.newInstance(BounceReason.class);
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new BounceReasonRM(type), returnCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -252,21 +245,12 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 	}
 
 	@Override
-	public int getBounceReasonByRuleCode(long ruleId, String type) {
-		logger.debug("Entering");
-		BounceReason bounceReason = new BounceReason();
-		bounceReason.setRuleID(ruleId);
+	public int getBounceReasonByRuleCode(long ruleId) {
+		String sql = "Select Count(Code) From BounceReasons_View Where RuleID = ?";
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
-		selectSql.append(" From BounceReasons");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where RuleID =:RuleID");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bounceReason);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, ruleId);
 	}
 
 	@Override
@@ -320,6 +304,68 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
+		}
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BounceID, BounceCode, ReasonType, Category, Reason, Action");
+		sql.append(", RuleID, ReturnCode, Active, InstrumentType, HoldMarkBounceCount");
+
+		if (type.contains("View")) {
+			sql.append(", RuleCode, RuleCodeDesc");
+		}
+
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From BounceReasons");
+		sql.append(type);
+
+		return sql;
+	}
+
+	private class BounceReasonRM implements RowMapper<BounceReason> {
+
+		private String type;
+
+		public BounceReasonRM(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public BounceReason mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+			BounceReason br = new BounceReason();
+
+			br.setBounceID(rs.getLong("BounceID"));
+			br.setBounceCode(rs.getString("BounceCode"));
+			br.setReasonType(rs.getInt("ReasonType"));
+			br.setCategory(rs.getInt("Category"));
+			br.setReason(rs.getString("Reason"));
+			br.setAction(rs.getInt("Action"));
+			br.setRuleID(rs.getInt("RuleID"));
+			br.setReturnCode(rs.getString("ReturnCode"));
+			br.setActive(rs.getBoolean("Active"));
+			br.setInstrumentType(rs.getString("InstrumentType"));
+			br.setHoldMarkBounceCount(rs.getInt("HoldMarkBounceCount"));
+
+			if (type.contains("View")) {
+				br.setRuleCode(rs.getString("RuleCode"));
+				br.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
+			}
+
+			br.setVersion(rs.getInt("Version"));
+			br.setLastMntBy(rs.getLong("LastMntBy"));
+			br.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			br.setRecordStatus(rs.getString("RecordStatus"));
+			br.setRoleCode(rs.getString("RoleCode"));
+			br.setNextRoleCode(rs.getString("NextRoleCode"));
+			br.setTaskId(rs.getString("TaskId"));
+			br.setNextTaskId(rs.getString("NextTaskId"));
+			br.setRecordType(rs.getString("RecordType"));
+			br.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return br;
 		}
 	}
 }

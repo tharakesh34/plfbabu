@@ -57,4 +57,6 @@ public interface BranchDAO extends BasicCrudDao<Branch> {
 	boolean getUnionTerrotory(String cpProvince);
 
 	String getBranchDesc(String id, String type);
+
+	boolean isActiveBranch(String branch);
 }

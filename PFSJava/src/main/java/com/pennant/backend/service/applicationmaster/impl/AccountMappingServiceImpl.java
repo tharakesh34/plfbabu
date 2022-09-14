@@ -24,6 +24,7 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -48,6 +50,7 @@ import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -127,6 +130,8 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		}
 
 		if (accountMapping.isNewRecord()) {
+			accountMapping.setCreatedBy(accountMapping.getUserDetails().getUserId());
+			accountMapping.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 			accountMapping.setAccount(getAccountMappingDAO().save(accountMapping, tableType));
 			auditHeader.getAuditDetail().setModelData(accountMapping);
 			auditHeader.setAuditReference(accountMapping.getAccount());
@@ -334,6 +339,8 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 			if (accountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				accountMapping.setRecordType("");
+				accountMapping.setApprovedBy(accountMapping.getUserDetails().getUserId());
+				accountMapping.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 				getAccountMappingDAO().save(accountMapping, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;

@@ -59,6 +59,8 @@ public class BaseRateListModelItemRenderer implements ListitemRenderer<BaseRate>
 		lc = new Listcell(PennantApplicationUtil.formatRate(baseRate.getBRRate().doubleValue(), 9));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
+		lc = new Listcell(baseRate.getApprovedUser());
+		lc.setParent(item);
 		lc = new Listcell(baseRate.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(baseRate.getRecordType()));

@@ -437,4 +437,13 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isActiveBranch(String branch) {
+		String sql = "Select coalesce(count(BranchCode), 0) From RMTBranches Where BranchCode = ? and BranchIsActive = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, Integer.class, branch, 1) > 0;
+	}
 }

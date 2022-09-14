@@ -39,6 +39,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -83,14 +84,17 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	protected ExtendedCombobox ruleID;
 	protected Textbox returnCode;
 	protected Checkbox active;
-	private BounceReason bounceReason; // overhanded per param
+	protected Combobox instrumentType;
+	protected Intbox holdMarkBounceCount;
 
-	private transient BounceReasonListCtrl bounceReasonListCtrl; // overhanded per param
+	private transient BounceReasonListCtrl bounceReasonListCtrl;
 	private transient BounceReasonService bounceReasonService;
 
 	private List<Property> listReasonType = PennantStaticListUtil.getReasonType();
 	private List<Property> listCategory = PennantStaticListUtil.getCategoryType();
 	private List<ValueLabel> listAction = PennantStaticListUtil.getAction();
+	private final List<ValueLabel> instrumentTypeList = PennantStaticListUtil.getMandateTypeList();
+	private BounceReason bounceReason;
 
 	/**
 	 * default constructor.<br>
@@ -323,7 +327,10 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
+
 		this.recordStatus.setValue(aBounceReason.getRecordStatus());
+		fillComboBox(this.instrumentType, aBounceReason.getInstrumentType(), instrumentTypeList, "");
+		this.holdMarkBounceCount.setValue(aBounceReason.getHoldMarkBounceCount());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -337,15 +344,14 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 
 		doSetLOVValidation();
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> wve = new ArrayList<>();
 
-		// Bounce Code
 		try {
 			aBounceReason.setBounceCode(this.bounceCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Reason Type
+
 		try {
 			String strReasonType = null;
 			if (this.reasonType.getSelectedItem() != null) {
@@ -360,7 +366,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Category
+
 		try {
 			String strCategory = null;
 			if (this.category.getSelectedItem() != null) {
@@ -375,13 +381,13 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Reason
+
 		try {
 			aBounceReason.setReason(this.reason.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Action
+
 		try {
 			String strAction = null;
 			if (this.action.getSelectedItem() != null) {
@@ -396,7 +402,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Fee ID
+
 		try {
 			this.ruleID.getValidatedValue();
 			Rule rule = (Rule) this.ruleID.getObject();
@@ -406,16 +412,28 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Return Code
+
 		try {
 			String retCode = this.returnCode.getValue();
 			aBounceReason.setReturnCode(retCode);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Active
+
 		try {
 			aBounceReason.setActive(this.active.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aBounceReason.setInstrumentType(this.instrumentType.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aBounceReason.setHoldMarkBounceCount(this.holdMarkBounceCount.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -507,6 +525,11 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
+		if (!this.instrumentType.isReadonly()) {
+			this.instrumentType.setConstraint(new StaticListValidator(instrumentTypeList,
+					Labels.getLabel("label_BounceReasonDialog_InstrumentType.value")));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -523,6 +546,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		this.action.setConstraint("");
 		this.ruleID.setConstraint("");
 		this.returnCode.setConstraint("");
+		this.instrumentType.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -601,6 +625,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		readOnlyComponent(isReadOnly("BounceReasonDialog_Action"), this.action);
 		readOnlyComponent(isReadOnly("BounceReasonDialog_FeeID"), this.ruleID);
 		readOnlyComponent(isReadOnly("BounceReasonDialog_Active"), this.active);
+		readOnlyComponent(isReadOnly("BounceReasonDialog_InstrumentType"), this.instrumentType);
+		readOnlyComponent(isReadOnly("BounceReasonDialog_HoldMarkBounceCount"), this.holdMarkBounceCount);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -633,6 +659,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		readOnlyComponent(true, this.ruleID);
 		readOnlyComponent(true, this.returnCode);
 		readOnlyComponent(true, this.active);
+		readOnlyComponent(true, this.instrumentType);
+		readOnlyComponent(true, this.holdMarkBounceCount);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -660,6 +688,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		this.ruleID.setDescription("");
 		this.returnCode.setValue("");
 		this.active.setChecked(false);
+		this.instrumentType.setValue("");
+		this.holdMarkBounceCount.setValue(0);
 
 		logger.debug("Leaving");
 	}

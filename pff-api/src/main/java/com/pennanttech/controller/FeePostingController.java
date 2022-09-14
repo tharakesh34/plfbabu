@@ -43,6 +43,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.accounting.PostAgainst;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
@@ -408,7 +409,7 @@ public class FeePostingController extends ExtendedTestClass {
 		feePostings.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		feePostings.setSourceId(APIConstants.FINSOURCE_ID_API);
 
-		if (FinanceConstants.POSTING_AGAINST_LOAN.equals(feePostings.getPostAgainst())) {
+		if (PostAgainst.isLoan(feePostings.getPostAgainst())) {
 			feePostings.setPostingDivision(financeMainDAO.getLovDescFinDivisionByReference(feePostings.getReference()));
 		}
 	}

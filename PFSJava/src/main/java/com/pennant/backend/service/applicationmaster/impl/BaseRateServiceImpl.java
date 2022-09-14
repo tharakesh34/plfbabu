@@ -24,6 +24,7 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.impl.BaseRateDAOImpl;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -43,6 +45,7 @@ import com.pennant.backend.service.applicationmaster.BaseRateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -107,7 +110,9 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 		if (baseRate.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-
+		baseRate.setCreatedBy(baseRate.getUserDetails().getUserId());
+		baseRate.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+		
 		if (baseRate.isNewRecord()) {
 			getBaseRateDAO().save(baseRate, tableType);
 			auditHeader.getAuditDetail().setModelData(baseRate);
@@ -230,7 +235,10 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 			baseRate.setTaskId("");
 			baseRate.setNextTaskId("");
 			baseRate.setWorkflowId(0);
-
+			
+			baseRate.setApprovedBy(baseRate.getUserDetails().getUserId());
+			baseRate.setApprovedOn(new Timestamp(System.currentTimeMillis()));
+			
 			if (baseRate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				baseRate.setRecordType("");

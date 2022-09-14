@@ -203,4 +203,6 @@ public interface CustomerDAO {
 	List<FinanceEnquiry> getCustomerFinances(long custId, long finID, String segmentType);
 
 	boolean isPanFoundByCustIds(List<Long> coAppCustIds, String panNumber);
+
+	String getCustDefaulBranchByCIF(String custCIF);
 }

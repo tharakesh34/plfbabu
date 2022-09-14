@@ -68,6 +68,8 @@ public class BounceReason extends AbstractWorkflowEntity {
 	private BounceReason befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private String instrumentType;
+	private int holdMarkBounceCount;
 
 	public BounceReason() {
 		super();
@@ -79,7 +81,7 @@ public class BounceReason extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("ruleCode");
 		excludeFields.add("ruleCodeDesc");
 		excludeFields.add("categoryDesc");
@@ -246,6 +248,22 @@ public class BounceReason extends AbstractWorkflowEntity {
 
 	public void setLovdesccategory(String lovdesccategory) {
 		this.lovdesccategory = lovdesccategory;
+	}
+
+	public String getInstrumentType() {
+		return instrumentType;
+	}
+
+	public void setInstrumentType(String instrumentType) {
+		this.instrumentType = instrumentType;
+	}
+
+	public int getHoldMarkBounceCount() {
+		return holdMarkBounceCount;
+	}
+
+	public void setHoldMarkBounceCount(int holdMarkBounceCount) {
+		this.holdMarkBounceCount = holdMarkBounceCount;
 	}
 
 }

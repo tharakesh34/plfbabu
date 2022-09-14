@@ -84,13 +84,13 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.AssetConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.accounting.AccountingUtil;
+import com.pennant.pff.accounting.PostAgainst;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -427,25 +427,29 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			amountCodes = new AEAmountCodes();
 		}
 
-		// If Fees Created Against Finance Reference
-		if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LOAN, getFeePostings().getPostAgainst())) {
-			FinanceMain fm = getFinanceDetailService().getFinanceMain(getFeePostings().getReference(),
-					TableType.MAIN_TAB);
+		String feeReference = getFeePostings().getReference();
+		switch (PostAgainst.object(getFeePostings().getPostAgainst())) {
+		case LOAN:
+			FinanceMain fm = financeDetailService.getFinanceMain(feeReference, TableType.MAIN_TAB);
 			amountCodes.setFinType(fm.getFinType());
 			aeEvent.setBranch(fm.getFinBranch());
 			aeEvent.setCustID(fm.getCustID());
-		} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, getFeePostings().getPostAgainst())) {
-			Customer customer = getCustomerDetailsService().getCustomerByCIF(getFeePostings().getReference());
+			break;
+		case CUSTOMER:
+			Customer customer = customerDetailsService.getCustomerByCIF(feeReference);
 			aeEvent.setBranch(customer.getCustDftBranch());
 			aeEvent.setCustID(customer.getCustID());
-		} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL, getFeePostings().getPostAgainst())) {
-			CollateralSetup collateralSetup = getCollateralSetupService()
-					.getApprovedCollateralSetupById(getFeePostings().getReference());
+			break;
+		case COLLATERAL:
+			CollateralSetup collateralSetup = collateralSetupService.getApprovedCollateralSetupById(feeReference);
 			aeEvent.setCustID(collateralSetup.getDepositorId());
-		} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LIMIT, getFeePostings().getPostAgainst())) {
-			LimitHeader header = getLimitDetailService()
-					.getCustomerLimits(Long.valueOf(getFeePostings().getReference()));
+			break;
+		case LIMIT:
+			LimitHeader header = limitDetailService.getCustomerLimits(Long.valueOf(feeReference));
 			aeEvent.setCustID(header.getCustomerId());
+			break;
+		default:
+			break;
 		}
 
 		amountCodes.setPartnerBankAc(getFeePostings().getPartnerBankAc());
@@ -645,8 +649,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 */
 	public void doWriteBeanToComponents(FeePostings aFeePostings) {
 		logger.debug("Entering");
-		fillComboBox(this.postingAgainst, aFeePostings.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(),
-				"");
+		fillComboBox(this.postingAgainst, aFeePostings.getPostAgainst(), AccountingUtil.getpostingPurposeList(), "");
 		this.reference.setValue(aFeePostings.getReference());
 		this.feeTypeCode.setValue(
 				aFeePostings.isNewRecord() ? aFeePostings.getFeeTyeCode() : aFeePostings.getFeeTyeCode().trim());
@@ -964,8 +967,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			this.reference.setValue("", "");
 
 		} else {
-			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-					FinanceConstants.POSTING_AGAINST_LOAN)) {
+			if (PostAgainst.isLoan(this.postingAgainst.getSelectedItem().getValue().toString())) {
 				FinanceMain financeMain = (FinanceMain) this.reference.getObject();
 				this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
 				this.postingDivision.setValue(financeMain.getLovDescFinDivision());
@@ -999,16 +1001,16 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		if (StringUtils.equals(postValue, PennantConstants.List_Select)) {
 			addFilters("", "", "");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LOAN)) {
+		if (PostAgainst.isLoan(postValue)) {
 			addFilters("FinanceMain", "FinReference", "FinType");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_CUST)) {
+		if (PostAgainst.isCustomer(postValue)) {
 			addFilters("Customer", "CustCIF", "CustShrtName");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
+		if (PostAgainst.isCollateral(postValue)) {
 			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LIMIT)) {
+		if (PostAgainst.isLimit(postValue)) {
 			addFilters("LimitHeader", "HeaderId", "ResponsibleBranch");
 		}
 	}

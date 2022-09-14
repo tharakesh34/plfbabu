@@ -576,7 +576,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 	private void processExcelUploadDetails(UploadHeader uploadHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		List<MiscPostingUpload> miscPostingUploads = new ArrayList<MiscPostingUpload>();
+		List<MiscPostingUpload> miscPostingUploads = new ArrayList<>();
 		Sheet sheet = this.workbook.getSheetAt(0);
 		Iterator<Row> rows = sheet.iterator();
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());

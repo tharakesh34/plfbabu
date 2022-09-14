@@ -535,7 +535,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				}
 				break;
 			case RuleConstants.MODULE_BOUNCE:
-				count = bounceReasonDAO.getBounceReasonByRuleCode(ruleId, "_View");
+				count = bounceReasonDAO.getBounceReasonByRuleCode(ruleId);
 				break;
 			case RuleConstants.MODULE_LMTLINE:
 				count = limitGroupLinesDAO.getLimitLinesByRuleCode(ruleCode, "_View");

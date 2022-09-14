@@ -109,6 +109,8 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private Collection<SecurityRight> menuRights = new ArrayList<>();
 	private List<SecurityRole> roles = new ArrayList<>();
 	private boolean deleted;
+	private long createdBy;
+	private Timestamp createdOn;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -601,4 +603,21 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
+
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
 }

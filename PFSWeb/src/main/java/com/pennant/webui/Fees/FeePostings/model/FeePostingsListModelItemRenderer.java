@@ -39,6 +39,7 @@ import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.accounting.AccountingUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
@@ -58,7 +59,7 @@ public class FeePostingsListModelItemRenderer implements ListitemRenderer<FeePos
 		Listcell lc;
 		lc = new Listcell(PennantStaticListUtil
 				.getlabelDesc(StringUtils.equals(null, feePostings.getPostAgainst()) ? feePostings.getPostAgainst()
-						: feePostings.getPostAgainst().trim(), PennantStaticListUtil.getpostingPurposeList()));
+						: feePostings.getPostAgainst().trim(), AccountingUtil.getpostingPurposeList()));
 		lc.setParent(item);
 		lc = new Listcell(feePostings.getReference());
 		lc.setParent(item);

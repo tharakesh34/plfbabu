@@ -79,6 +79,7 @@ public class EmployerDetail extends AbstractWorkflowEntity {
 	private String bankRefNo;
 	@XmlElement
 	private String empCategory;
+	private boolean allowDas;
 	private boolean empIsActive;
 	private String lovValue;
 	private EmployerDetail befImage;
@@ -103,7 +104,7 @@ public class EmployerDetail extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("empIndustryName");
 		excludeFields.add("empCountryName");
 		excludeFields.add("empProvinceName");
@@ -115,10 +116,6 @@ public class EmployerDetail extends AbstractWorkflowEntity {
 		excludeFields.add("ruleResult");
 		return excludeFields;
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public long getId() {
 		return employerId;
@@ -374,6 +371,14 @@ public class EmployerDetail extends AbstractWorkflowEntity {
 
 	public void setEmpCategory(String empCategory) {
 		this.empCategory = empCategory;
+	}
+
+	public boolean isAllowDas() {
+		return allowDas;
+	}
+
+	public void setAllowDas(boolean allowDas) {
+		this.allowDas = allowDas;
 	}
 
 	public boolean isEmpIsActive() {

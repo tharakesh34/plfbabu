@@ -51,6 +51,11 @@ public class BaseRate extends AbstractWorkflowEntity {
 	private BaseRate befImage;
 	private LoggedInUser userDetails;
 	private boolean bRTypeIsActive;
+	private long createdBy;
+	private Timestamp createdOn;
+	private Long approvedBy;
+	private Timestamp approvedOn;
+	private String approvedUser;
 
 	public BaseRate() {
 		super();
@@ -69,6 +74,11 @@ public class BaseRate extends AbstractWorkflowEntity {
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setbRTypeIsActive(this.bRTypeIsActive);
+		entity.setCreatedBy(this.createdBy);
+		entity.setCreatedOn(this.createdOn);
+		entity.setApprovedBy(this.approvedBy);
+		entity.setApprovedOn(this.approvedOn);
+		entity.setApprovedUser(this.approvedUser);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -89,13 +99,10 @@ public class BaseRate extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("approvedUser");
 		return excludeFields;
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public String getId() {
 		return bRType;
@@ -196,4 +203,45 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(Long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
+	}
+
+	public String getApprovedUser() {
+		return approvedUser;
+	}
+
+	public void setApprovedUser(String approvedUser) {
+		this.approvedUser = approvedUser;
+	}
+
 }

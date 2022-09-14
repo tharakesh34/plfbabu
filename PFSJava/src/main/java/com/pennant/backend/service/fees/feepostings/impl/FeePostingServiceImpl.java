@@ -64,10 +64,10 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.accounting.PostAgainst;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -382,27 +382,26 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				}
 
 				// If Fee postings Created Against Finance Reference
-				if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LOAN, feePostings.getPostAgainst())) {
+				if (PostAgainst.isLoan(feePostings.getPostAgainst())) {
 					FinanceMain fm = financeMainDAO.getFinanceMain(feePostings.getReference(), TableType.MAIN_TAB);
 					amountCodes.setFinType(fm.getFinType());
 					amountCodes.setPartnerBankAc(getFeePostings().getPartnerBankAc());
 					aeEvent.setBranch(fm.getFinBranch());
 					aeEvent.setCustID(fm.getCustID());
 					aeEvent.setCcy(fm.getFinCcy());
-				} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, feePostings.getPostAgainst())) {
+				} else if (PostAgainst.isCustomer(feePostings.getPostAgainst())) {
 					Customer customer = customerDAO.getCustomerByCIF(feePostings.getReference(), "");
 					aeEvent.setBranch(customer.getCustDftBranch());
 					aeEvent.setCustID(customer.getCustID());
 					aeEvent.setCcy(customer.getCustBaseCcy());
-				} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL,
-						feePostings.getPostAgainst())) {
+				} else if (PostAgainst.isCollateral(feePostings.getPostAgainst())) {
 					CollateralSetup collateralSetup = collateralSetupDAO
 							.getCollateralSetupByRef(feePostings.getReference(), "");
 					Customer customer = customerDAO.getCustomerByID(collateralSetup.getDepositorId(), "");
 					aeEvent.setCustID(collateralSetup.getDepositorId());
 					aeEvent.setBranch(customer.getCustDftBranch());
 					aeEvent.setCcy(collateralSetup.getCollateralCcy());
-				} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LIMIT, feePostings.getPostAgainst())) {
+				} else if (PostAgainst.isLimit(feePostings.getPostAgainst())) {
 					LimitHeader header = limitHeaderDAO.getLimitHeaderById(Long.valueOf(feePostings.getReference()),
 							"_View");
 					aeEvent.setBranch(header.getCustDftBranch());
@@ -495,8 +494,8 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			}
 		}
 
-		switch (feePostings.getPostAgainst()) {
-		case FinanceConstants.POSTING_AGAINST_CUST:
+		switch (PostAgainst.valueOf(feePostings.getPostAgainst())) {
+		case CUSTOMER:
 			Customer customer = customerDAO.getCustomerByCIF(feePostings.getCif(), "");
 			if (customer != null) {
 				feePostings.setReference(feePostings.getCif());
@@ -519,7 +518,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				return auditDetail;
 			}
 			break;
-		case FinanceConstants.POSTING_AGAINST_LOAN:
+		case LOAN:
 			Long finID = financeMainDAO.getFinID(feePostings.getFinReference());
 
 			if (finID == null) {
@@ -545,7 +544,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				}
 			}
 			break;
-		case FinanceConstants.POSTING_AGAINST_LIMIT:
+		case LIMIT:
 			LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderById(feePostings.getLimitId(), "");
 			if (limitHeader != null) {
 				feePostings.setReference(String.valueOf(feePostings.getLimitId()));
@@ -567,7 +566,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				return auditDetail;
 			}
 			break;
-		case FinanceConstants.POSTING_AGAINST_COLLATERAL:
+		case COLLATERAL:
 			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(feePostings.getCollateralRef(),
 					"");
 			if (collateralSetup != null) {
@@ -659,7 +658,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				isMutiValues = true;
 				return isMutiValues;
 			} else {
-				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_CUST);
+				feePostings.setPostAgainst(PostAgainst.CUSTOMER.code());
 			}
 		}
 
@@ -670,7 +669,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				isMutiValues = true;
 				return isMutiValues;
 			} else {
-				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_LOAN);
+				feePostings.setPostAgainst(PostAgainst.LOAN.code());
 			}
 		}
 
@@ -681,7 +680,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				isMutiValues = true;
 				return isMutiValues;
 			} else {
-				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_COLLATERAL);
+				feePostings.setPostAgainst(PostAgainst.COLLATERAL.code());
 			}
 		}
 
@@ -692,7 +691,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				isMutiValues = true;
 				return isMutiValues;
 			} else {
-				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_LIMIT);
+				feePostings.setPostAgainst(PostAgainst.LIMIT.code());
 			}
 		}
 		return isMutiValues;

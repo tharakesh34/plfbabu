@@ -82,12 +82,12 @@ import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.service.expenses.LegalExpensesService;
 import com.pennant.backend.service.others.JVPostingService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.accounting.AccountingUtil;
+import com.pennant.pff.accounting.PostAgainst;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -909,15 +909,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.batchReference.setValue("");
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			getJVPosting().setPostingDate(SysParamUtil.getAppDate());
-			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getJVPurposeList(), "");
+			fillComboBox(this.postingAgainst, "", AccountingUtil.getJVPurposeList(), "");
 		} else {
 			this.batchReference.setValue(String.valueOf(aJVPosting.getBatchReference()));
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(aJVPosting.getBranch());
 			this.postingBranch.setDescription(aJVPosting.getBranchDesc());
 			this.postingBranch.setReadonly(true);
-			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), PennantStaticListUtil.getJVPurposeList(),
-					"");
+			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), AccountingUtil.getJVPurposeList(), "");
 		}
 
 		// Added to map with legal expenses
@@ -973,8 +972,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (StringUtils.isBlank(this.reference.getValue())) {
 			this.reference.setValue("", "");
 		} else {
-			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-					FinanceConstants.POSTING_AGAINST_LOAN)) {
+			String postAgaint = this.postingAgainst.getSelectedItem().getValue().toString();
+			if (PostAgainst.isLoan(postAgaint)) {
 				if (this.reference.getObject() != null) {
 					FinanceMain financeMain = (FinanceMain) this.reference.getObject();
 					this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
@@ -984,8 +983,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					this.postingBranch.setReadonly(true);
 				}
 			}
-			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-					FinanceConstants.POSTING_AGAINST_CUST)) {
+			if (PostAgainst.isCustomer(postAgaint)) {
 				Customer customer = (Customer) this.reference.getObject();
 				this.reference.setValue(customer.getCustCIF(), customer.getCustShrtName());
 				this.postingBranch.setValue(customer.getCustDftBranch());
@@ -1000,20 +998,22 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (!StringUtils.isEmpty(this.postingBranch.getValue())) {
 			this.postingBranch.setReadonly(true);
 		}
-		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue(), FinanceConstants.POSTING_AGAINST_LOAN)
-				&& this.postingBranch.getValue() != null) {
+
+		String postAgaint = this.postingAgainst.getSelectedItem().getValue().toString();
+
+		if (PostAgainst.isLoan(postAgaint) && this.postingBranch.getValue() != null) {
 			Filter[] reference = new Filter[1];
 			reference[0] = Filter.in("finbranch", this.postingBranch.getValue());
 			this.reference.setFilters(reference);
 		}
-		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue(), FinanceConstants.POSTING_AGAINST_CUST)
-				&& this.postingBranch.getValue() != null) {
+
+		if (PostAgainst.isCustomer(postAgaint) && this.postingBranch.getValue() != null) {
 			Filter[] reference = new Filter[1];
 			reference[0] = Filter.in("custdftbranch", this.postingBranch.getValue());
 			this.reference.setFilters(reference);
 		}
-		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue(), FinanceConstants.POSTING_AGAINST_LIMIT)
-				&& this.postingBranch.getValue() != null) {
+
+		if (PostAgainst.isLimit(postAgaint) && this.postingBranch.getValue() != null) {
 			Filter[] reference = new Filter[1];
 			reference[0] = Filter.in("ResponsibleBranch", this.postingBranch.getValue());
 			this.reference.setFilters(reference);
@@ -1872,19 +1872,24 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (StringUtils.equals(postValue, PennantConstants.List_Select)) {
 			addFilters("", "", "");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LOAN)) {
+
+		if (PostAgainst.isLoan(postValue)) {
 			addFilters("FinanceMain", "FinReference", "FinType");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_CUST)) {
+
+		if (PostAgainst.isCustomer(postValue)) {
 			addFilters("Customer", "CustCIF", "CustShrtName");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
+
+		if (PostAgainst.isCollateral(postValue)) {
 			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LIMIT)) {
+
+		if (PostAgainst.isLimit(postValue)) {
 			addFilters("LimitHeader", "HeaderId", "ResponsibleBranch");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_ENTITY)) {
+
+		if (PostAgainst.isEntity(postValue)) {
 			addFilters("Entity", "EntityCode", "EntityDesc");
 			this.postingBranch.setMandatoryStyle(false);
 		}

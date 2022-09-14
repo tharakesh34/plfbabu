@@ -3423,32 +3423,6 @@ public class PennantStaticListUtil {
 		return roundingTargetList;
 	}
 
-	public static List<ValueLabel> getJVPurposeList() {
-		if (jvPostingPurposeList == null) {
-			jvPostingPurposeList = new ArrayList<ValueLabel>(1);
-			jvPostingPurposeList
-					.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_LOAN, Labels.getLabel("label_Finance")));
-		}
-		return jvPostingPurposeList;
-	}
-
-	public static List<ValueLabel> getpostingPurposeList() {
-		if (postingPurposeList == null) {
-			postingPurposeList = new ArrayList<ValueLabel>(4);
-			postingPurposeList
-					.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_LOAN, Labels.getLabel("label_Finance")));
-			postingPurposeList
-					.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_CUST, Labels.getLabel("label_Customer")));
-			postingPurposeList.add(
-					new ValueLabel(FinanceConstants.POSTING_AGAINST_COLLATERAL, Labels.getLabel("label_Collateral")));
-			postingPurposeList
-					.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_LIMIT, Labels.getLabel("label_Limit")));
-			postingPurposeList
-					.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_ENTITY, Labels.getLabel("label_Entity")));
-		}
-		return postingPurposeList;
-	}
-
 	public static List<ValueLabel> getAuthnticationTypes() {
 
 		if (authTypes == null) {

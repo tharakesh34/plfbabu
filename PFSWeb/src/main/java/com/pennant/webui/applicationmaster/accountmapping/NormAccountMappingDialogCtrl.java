@@ -11,10 +11,14 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.CostCenter;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
@@ -24,11 +28,17 @@ import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.accounting.AccountingUtil;
+import com.pennant.pff.accounting.HostAccountStatus;
+import com.pennant.pff.accounting.TransactionType;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -42,6 +52,12 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	protected ExtendedCombobox accountType;
 	protected ExtendedCombobox profitCenter;
 	protected ExtendedCombobox costCenter;
+	protected ExtendedCombobox finType;
+	protected Datebox openedDate;
+	protected Datebox closedDate;
+	protected Combobox status;
+	protected Combobox allowedManualEntry;
+	protected Space spaceClosedDate;
 
 	private AccountMapping accountMapping;
 	private transient AccountMappingListCtrl accountMappingListCtrl;
@@ -109,7 +125,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	}
 
 	/**
-	 * Set the properties of the fields, like maxLength.<br>
+	 * AccountMappingDialog_ClosedDate Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
@@ -140,6 +156,17 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("controlac", 0, Filter.OP_EQUAL);
 		this.accountType.setFilters(filters);
+
+		this.finType.setModuleName("FinanceType");
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setDisplayStyle(2);
+		this.finType.setValidateColumns(new String[] { "FinType" });
+		this.finType.setMandatoryStyle(true);
+
+		this.openedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.closedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
 		setStatusDetails();
 
 		logger.debug("Leaving");
@@ -235,35 +262,67 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param accountMapping
+	 * @param am
 	 * 
 	 */
-	public void doWriteBeanToComponents(AccountMapping accountMapping) {
-		logger.debug("Entering");
+	public void doWriteBeanToComponents(AccountMapping am) {
+		logger.debug(Literal.ENTERING);
 
-		this.account.setValue(accountMapping.getAccount());
-		this.hostAccount.setValue(accountMapping.getHostAccount());
+		this.account.setValue(am.getAccount());
+		this.hostAccount.setValue(am.getHostAccount());
 
-		if (String.valueOf(accountMapping.getProfitCenterID()) != null) {
-			this.profitCenter.setObject(new ProfitCenter(accountMapping.getProfitCenterID()));
-			this.profitCenter.setValue(accountMapping.getProfitCenterCode(), accountMapping.getProfitCenterDesc());
+		if (String.valueOf(am.getProfitCenterID()) != null) {
+			this.profitCenter.setObject(new ProfitCenter(am.getProfitCenterID()));
+			this.profitCenter.setValue(am.getProfitCenterCode(), am.getProfitCenterDesc());
 		}
 
-		if (String.valueOf(accountMapping.getCostCenterID()) != null) {
-			this.costCenter.setObject(new CostCenter(accountMapping.getCostCenterID()));
-			this.costCenter.setValue(accountMapping.getCostCenterCode(), accountMapping.getCostCenterDesc());
+		if (String.valueOf(am.getCostCenterID()) != null) {
+			this.costCenter.setObject(new CostCenter(am.getCostCenterID()));
+			this.costCenter.setValue(am.getCostCenterCode(), am.getCostCenterDesc());
 		}
-		this.accountType.setValue(accountMapping.getAccountType());
 
-		if (accountMapping.isNewRecord()) {
+		this.accountType.setValue(am.getAccountType());
+
+		if (am.isNewRecord()) {
 			this.accountType.setDescription("");
 		} else {
-			this.accountType.setDescription(accountMapping.getAccountTypeDesc());
+			this.accountType.setDescription(am.getAccountTypeDesc());
 		}
 
-		this.recordStatus.setValue(accountMapping.getRecordStatus());
+		this.finType.setValue(am.getFinType());
 
-		logger.debug("Leaving");
+		if (am.isNewRecord()) {
+			this.finType.setDescription("");
+		} else {
+			this.finType.setDescription(am.getFinTypeDesc());
+		}
+
+		if (am.getOpenedDate() == null) {
+			this.openedDate.setValue(SysParamUtil.getAppDate());
+		} else {
+			this.openedDate.setValue(am.getOpenedDate());
+		}
+
+		if (HostAccountStatus.isClose(am.getStatus())) {
+			this.spaceClosedDate.setSclass(PennantConstants.mandateSclass);
+			this.closedDate.setValue(am.getClosedDate());
+		}
+
+		if (StringUtils.isEmpty(am.getAllowedManualEntry())) {
+			fillComboBox(this.allowedManualEntry, TransactionType.BOTH.code(), AccountingUtil.getManualEntries(), "");
+		} else {
+			fillComboBox(this.allowedManualEntry, am.getAllowedManualEntry(), AccountingUtil.getManualEntries(), "");
+		}
+
+		if (StringUtils.isEmpty(am.getStatus())) {
+			fillComboBox(this.status, HostAccountStatus.OPEN.code(), AccountingUtil.getGLAccountStatus(), "");
+		} else {
+			fillComboBox(this.status, am.getStatus(), AccountingUtil.getGLAccountStatus(), "");
+		}
+
+		this.recordStatus.setValue(am.getRecordStatus());
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -315,6 +374,18 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			accountMapping.setFinType(this.finType.getValue());
+			accountMapping.setFinTypeDesc(this.finType.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		accountMapping.setOpenedDate(this.openedDate.getValue());
+		accountMapping.setClosedDate(this.closedDate.getValue());
+		accountMapping.setAllowedManualEntry(this.allowedManualEntry.getSelectedItem().getValue());
+		accountMapping.setStatus(this.status.getSelectedItem().getValue());
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -403,6 +474,21 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					Labels.getLabel("label_NormAccountMappingDialog_AccountType.value"), null, true));
 		}
 
+		if (!this.finType.isReadonly()) {
+			this.finType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_NormAccountMappingDialog_FinType.value"), null, true));
+		}
+
+		if (!this.allowedManualEntry.isDisabled()) {
+			this.allowedManualEntry.setConstraint(new StaticListValidator(AccountingUtil.getManualEntries(),
+					Labels.getLabel("label_NormAccountMappingDialog_AlwManualEntry.value")));
+		}
+
+		if (!this.openedDate.isDisabled()) {
+			this.openedDate.setConstraint(new PTDateValidator(Labels.getLabel("DATE_NO_FUTURE"), true, null,
+					SysParamUtil.getAppDate(), true));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -418,6 +504,11 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.profitCenter.setConstraint("");
 		this.costCenter.setConstraint("");
 		this.accountType.setConstraint("");
+		this.finType.setConstraint("");
+		this.openedDate.setConstraint("");
+		this.closedDate.setConstraint("");
+		this.allowedManualEntry.setConstraint("");
+		this.status.setConstraint("");
 
 		logger.debug("Leaving");
 	}
@@ -446,6 +537,11 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.accountType.setErrorMessage("");
 		this.profitCenter.setErrorMessage("");
 		this.costCenter.setErrorMessage("");
+		this.finType.setErrorMessage("");
+		this.openedDate.setErrorMessage("");
+		this.closedDate.setErrorMessage("");
+		this.allowedManualEntry.setErrorMessage("");
+		this.status.setErrorMessage("");
 
 		logger.debug("Leaving");
 	}
@@ -485,6 +581,11 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.profitCenter.setReadonly(isReadOnly("AccountMappingDialog_ProfitCenter"));
 		this.costCenter.setReadonly(isReadOnly("AccountMappingDialog_CostCenter"));
 		this.accountType.setReadonly(isReadOnly("AccountMappingDialog_AccountType"));
+		this.finType.setReadonly(isReadOnly("AccountMappingDialog_FinType"));
+		this.openedDate.setReadonly(isReadOnly("AccountMappingDialog_OpenedDate"));
+		this.closedDate.setReadonly(isReadOnly("AccountMappingDialog_ClosedDate"));
+		this.allowedManualEntry.setReadonly(isReadOnly("AccountMappingDialog_AllowedManualEntry"));
+		this.status.setReadonly(isReadOnly("AccountMappingDialog_Status"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -513,6 +614,11 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.profitCenter.setReadonly(true);
 		this.costCenter.setReadonly(true);
 		this.accountType.setReadonly(true);
+		this.finType.setReadonly(true);
+		this.openedDate.setReadonly(true);
+		this.closedDate.setReadonly(true);
+		this.allowedManualEntry.setReadonly(true);
+		this.status.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -539,6 +645,11 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.profitCenter.setValue("");
 		this.costCenter.setValue("");
 		this.accountType.setValue("");
+		this.finType.setValue("");
+		this.openedDate.setValue(null);
+		this.closedDate.setValue(null);
+		this.allowedManualEntry.setValue("");
+		this.status.setValue("");
 
 		logger.debug("Leaving");
 	}
@@ -761,6 +872,19 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		setOverideMap(aAuditHeader.getOverideMap());
 		logger.debug("Leaving");
 		return processCompleted;
+	}
+
+	public void onSelect$status(Event event) {
+		String status = (String) this.status.getSelectedItem().getValue();
+
+		if (HostAccountStatus.isClose(status)) {
+			this.spaceClosedDate.setSclass(PennantConstants.mandateSclass);
+			this.closedDate.setDisabled(true);
+			this.closedDate.setValue(SysParamUtil.getAppDate());
+		} else {
+			this.spaceClosedDate.setSclass("");
+			this.closedDate.setDisabled(false);
+		}
 	}
 
 	/**

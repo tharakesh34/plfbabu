@@ -24,8 +24,6 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,8 +34,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -74,29 +70,54 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	 */
 	@Override
 	public BaseRate getBaseRateById(final String bRType, String currency, Date bREffDate, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BRType, Currency, BREffDate, BRRate, DelExistingRates, BRTypeIsActive");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, LastMdfDate");
 
-		BaseRate baseRate = new BaseRate();
-		baseRate.setBRType(bRType);
-		baseRate.setCurrency(currency);
-		baseRate.setBREffDate(bREffDate);
-
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT BRType, Currency, BREffDate, BRRate, DelExistingRates, BRTypeIsActive,");
 		if (type.contains("View")) {
-			selectSql.append(" LovDescBRTypeName, ");
+			sql.append(", LovDescBRTypeName");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,");
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,LastMdfDate ");
-		selectSql.append(" FROM RMTBaseRates");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BRType =:BRType and BREffDate=:BREffDate and Currency=:Currency");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
-		RowMapper<BaseRate> typeRowMapper = BeanPropertyRowMapper.newInstance(BaseRate.class);
+		sql.append(" From RMTBaseRates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BRType = ? and BREffDate = ? and Currency = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BaseRate br = new BaseRate();
+
+				br.setBRType(rs.getString("BRType"));
+				br.setCurrency(rs.getString("Currency"));
+				br.setBREffDate(JdbcUtil.getDate(rs.getDate("BREffDate")));
+				br.setBRRate(rs.getBigDecimal("BRRate"));
+				br.setDelExistingRates(rs.getBoolean("DelExistingRates"));
+				br.setbRTypeIsActive(rs.getBoolean("BRTypeIsActive"));
+				br.setCreatedBy(rs.getLong("CreatedBy"));
+				br.setCreatedOn(rs.getTimestamp("CreatedOn"));
+				br.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+				br.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+				br.setVersion(rs.getInt("Version"));
+				br.setLastMntBy(rs.getLong("LastMntBy"));
+				br.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				br.setRecordStatus(rs.getString("RecordStatus"));
+				br.setRoleCode(rs.getString("RoleCode"));
+				br.setNextRoleCode(rs.getString("NextRoleCode"));
+				br.setTaskId(rs.getString("TaskId"));
+				br.setNextTaskId(rs.getString("NextTaskId"));
+				br.setRecordType(rs.getString("RecordType"));
+				br.setWorkflowId(rs.getLong("WorkflowId"));
+				br.setLastMdfDate(JdbcUtil.getDate(rs.getDate("LastMdfDate")));
+
+				if (type.contains("View")) {
+					br.setLovDescBRTypeName(rs.getString("LovDescBRTypeName"));
+				}
+
+				return br;
+			}, bRType, bREffDate, currency);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -142,88 +163,131 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	}
 
 	@Override
-	public String save(BaseRate baseRate, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into RMTBaseRates");
+	public String save(BaseRate br, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert into RMTBaseRates");
 		sql.append(tableType.getSuffix());
 		sql.append(" (BRType, Currency, BREffDate, BRRate, DelExistingRates, BRTypeIsActive,");
+		sql.append(" CreatedBy, CreatedOn, ApprovedBy, ApprovedOn,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		sql.append(" NextTaskId, RecordType, WorkflowId, LastMdfDate )");
-		sql.append(" Values(:BRType, :Currency, :BREffDate, :BRRate, :DelExistingRates, :BRTypeIsActive,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :LastMdfDate)");
+		sql.append(" NextTaskId, RecordType, WorkflowId, LastMdfDate)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRate);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, br.getBRType());
+				ps.setString(index++, br.getCurrency());
+				ps.setDate(index++, JdbcUtil.getDate(br.getBREffDate()));
+				ps.setBigDecimal(index++, br.getBRRate());
+				ps.setBoolean(index++, br.isDelExistingRates());
+				ps.setBoolean(index++, br.isbRTypeIsActive());
+				ps.setLong(index++, br.getCreatedBy());
+				ps.setTimestamp(index++, br.getCreatedOn());
+				ps.setObject(index++, br.getApprovedBy());
+				ps.setTimestamp(index++, br.getApprovedOn());
+				ps.setInt(index++, br.getVersion());
+				ps.setLong(index++, br.getLastMntBy());
+				ps.setTimestamp(index++, br.getLastMntOn());
+				ps.setString(index++, br.getRecordStatus());
+				ps.setString(index++, br.getRoleCode());
+				ps.setString(index++, br.getNextRoleCode());
+				ps.setString(index++, br.getTaskId());
+				ps.setString(index++, br.getNextTaskId());
+				ps.setString(index++, br.getRecordType());
+				ps.setLong(index++, br.getWorkflowId());
+				ps.setDate(index++, JdbcUtil.getDate(br.getLastMdfDate()));
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return baseRate.getId();
+		return br.getId();
 	}
 
 	@Override
-	public void update(BaseRate baseRate, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("update RMTBaseRates");
+	public void update(BaseRate br, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update RMTBaseRates");
 		sql.append(tableType.getSuffix());
-		sql.append(" set BRRate = :BRRate,  DelExistingRates = :DelExistingRates, BRTypeIsActive = :BRTypeIsActive,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, LastMdfDate=:LastMdfDate ");
-		sql.append(" where BRType =:BRType AND BREffDate = :BREffDate AND Currency = :Currency");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Set BRRate = ?, DelExistingRates = ?, BRTypeIsActive = ?, CreatedBy = ?");
+		sql.append(", CreatedOn = ? ApprovedBy = ?, ApprovedOn = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", RecordStatus= ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?, LastMdfDate = ?");
+		sql.append(" Where BRType = ? and BREffDate = ? and Currency = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRate);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Check for the concurrency failure.
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setBigDecimal(index++, br.getBRRate());
+			ps.setBoolean(index++, br.isDelExistingRates());
+			ps.setBoolean(index++, br.isbRTypeIsActive());
+			ps.setObject(index++, br.getApprovedBy());
+			ps.setTimestamp(index++, br.getApprovedOn());
+			ps.setLong(index++, br.getCreatedBy());
+			ps.setTimestamp(index++, br.getCreatedOn());
+			ps.setInt(index++, br.getVersion());
+			ps.setLong(index++, br.getLastMntBy());
+			ps.setTimestamp(index++, br.getLastMntOn());
+			ps.setString(index++, br.getRecordStatus());
+			ps.setString(index++, br.getRoleCode());
+			ps.setString(index++, br.getNextRoleCode());
+			ps.setString(index++, br.getTaskId());
+			ps.setString(index++, br.getNextTaskId());
+			ps.setString(index++, br.getRecordType());
+			ps.setLong(index++, br.getWorkflowId());
+			ps.setDate(index++, JdbcUtil.getDate(br.getLastMdfDate()));
+
+			ps.setString(index++, br.getBRType());
+			ps.setDate(index++, JdbcUtil.getDate(br.getBREffDate()));
+			ps.setString(index++, br.getCurrency());
+
+			if (tableType == TableType.TEMP_TAB) {
+				ps.setTimestamp(index++, br.getPrevMntOn());
+			} else {
+				ps.setInt(index++, br.getVersion() - 1);
+			}
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void delete(BaseRate baseRate, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" delete from RMTBaseRates");
+	public void delete(BaseRate br, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete from RMTBaseRates");
 		sql.append(tableType.getSuffix());
-		sql.append(" where BRType =:BRType and BREffDate = :BREffDate and Currency = :Currency");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Where BRType = ? and BREffDate = ? and Currency = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(baseRate);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, br.getBRType());
+				ps.setDate(index++, JdbcUtil.getDate(br.getBREffDate()));
+				ps.setString(index++, br.getCurrency());
+
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setTimestamp(index++, br.getPrevMntOn());
+				} else {
+					ps.setInt(index++, br.getVersion() - 1);
+				}
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -305,8 +369,6 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	 */
 	@Override
 	public BaseRate getBaseRateByDate(String bRType, String currency, Date bREffDate) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BRType, BREffDate, BRRate");
 		sql.append(" from RMTBaseRates");
@@ -314,22 +376,18 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 		sql.append(" and BREffDate = (Select max(BREffDate) from rmtbaserates");
 		sql.append(" Where brtype = ? and Currency = ? and breffdate <= ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { bRType, currency, bRType, currency, bREffDate }, new RowMapper<BaseRate>() {
-						@Override
-						public BaseRate mapRow(ResultSet rs, int rowNum) throws SQLException {
-							BaseRate br = new BaseRate();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BaseRate br = new BaseRate();
 
-							br.setBRType(rs.getString("BRType"));
-							br.setBREffDate(rs.getTimestamp("BREffDate"));
-							br.setBRRate(rs.getBigDecimal("BRRate"));
+				br.setBRType(rs.getString("BRType"));
+				br.setBREffDate(rs.getTimestamp("BREffDate"));
+				br.setBRRate(rs.getBigDecimal("BRRate"));
 
-							return br;
-						}
-					});
+				return br;
+			}, bRType, currency, bRType, currency, bREffDate);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -340,25 +398,19 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	 * To get base rate value using base rate code and effective date is less than passed date
 	 */
 	public BaseRate getBaseRateByType(final String bRType, String currency, Date bREffDate) {
-		logger.debug(Literal.ENTERING);
-		BaseRate baseRate = null;
-
 		List<BaseRate> baseRates = getBaseRateListByType(bRType, currency, bREffDate, "");
 
 		if (baseRates.size() > 0) {
-			baseRate = baseRates.get(0);
+			return baseRates.get(0);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return baseRate;
+		return null;
 	}
 
 	/**
 	 * To get base rate value using base rate code and effective date is less than passed date
 	 */
 	public boolean getBaseRateListById(String bRType, String currency, Date bREffDate, String type) {
-		logger.debug(Literal.ENTERING);
-
 		List<BaseRate> baseRateList = getBaseRateListByType(bRType, currency, bREffDate, type);
 
 		if (baseRateList.size() > 0) {
@@ -368,33 +420,11 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 			}
 		}
 
-		logger.debug(Literal.LEAVING);
-
 		if (baseRateList.size() > 0) {
 			return false;
 		}
+
 		return true;
-	}
-
-	@Override
-	public List<BaseRate> getBSRListByMdfDate(Date effDate, String type) {
-		logger.debug("Entering");
-
-		BaseRate baseRate = new BaseRate();
-		StringBuilder selectSql = new StringBuilder("SELECT BRType,Currency,BREffDate,BRRate,LastMdfDate ");
-		selectSql.append(" FROM RMTBaseRates");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where LastMdfDate='");
-		selectSql.append(effDate);
-		selectSql.append('\'');
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
-		RowMapper<BaseRate> typeRowMapper = BeanPropertyRowMapper.newInstance(BaseRate.class);
-
-		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		logger.debug("Leaving");
-		return baseRates;
 	}
 
 	/**

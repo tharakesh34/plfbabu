@@ -2874,4 +2874,17 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 	}
 
+	@Override
+	public String getCustDefaulBranchByCIF(String custCIF) {
+		String sql = "Select CustDftBranch  from Customers  Where CustCIF = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return jdbcOperations.queryForObject(sql, String.class, custCIF);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

@@ -31,16 +31,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.systemmasters.EmployerDetailDAO;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -68,29 +64,74 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	 */
 	@Override
 	public EmployerDetail getEmployerDetailById(final long id, String type) {
-		logger.debug("Entering");
-		EmployerDetail employerDetail = new EmployerDetail();
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr");
+		sql.append(", EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2");
+		sql.append(", EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId");
+		sql.append(", EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType, BankRefNo");
+		sql.append(", AllowDas, EmpIsActive, EmpCategory");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
-		employerDetail.setId(id);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType,BankRefNo,EmpIsActive");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(", EmpCategory ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",lovDescIndustryDesc,lovDescCountryDesc,lovDescProvinceName,lovDescCityName");
+			sql.append(", LovDescIndustryDesc, LovDescCountryDesc, LovDescProvinceName, LovDescCityName");
 		}
-		selectSql.append(" From EmployerDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where EmployerId =:EmployerId");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
-		RowMapper<EmployerDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(EmployerDetail.class);
+		sql.append(" From EmployerDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where EmployerId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				EmployerDetail ed = new EmployerDetail();
+
+				ed.setEmployerId(rs.getLong("EmployerId"));
+				ed.setEmpIndustry(rs.getString("EmpIndustry"));
+				ed.setEmpName(rs.getString("EmpName"));
+				ed.setEstablishDate(rs.getDate("EstablishDate"));
+				ed.setEmpAddrHNbr(rs.getString("EmpAddrHNbr"));
+				ed.setEmpFlatNbr(rs.getString("EmpFlatNbr"));
+				ed.setEmpAddrStreet(rs.getString("EmpAddrStreet"));
+				ed.setEmpAddrLine1(rs.getString("EmpAddrLine1"));
+				ed.setEmpAddrLine2(rs.getString("EmpAddrLine2"));
+				ed.setEmpPOBox(rs.getString("EmpPOBox"));
+				ed.setEmpCountry(rs.getString("EmpCountry"));
+				ed.setEmpProvince(rs.getString("EmpProvince"));
+				ed.setEmpCity(rs.getString("EmpCity"));
+				ed.setEmpPhone(rs.getString("EmpPhone"));
+				ed.setEmpFax(rs.getString("EmpFax"));
+				ed.setEmpTelexNo(rs.getString("EmpTelexNo"));
+				ed.setEmpEmailId(rs.getString("EmpEmailId"));
+				ed.setEmpWebSite(rs.getString("EmpWebSite"));
+				ed.setContactPersonName(rs.getString("ContactPersonName"));
+				ed.setContactPersonNo(rs.getString("ContactPersonNo"));
+				ed.setEmpAlocationType(rs.getString("EmpAlocationType"));
+				ed.setBankRefNo(rs.getString("BankRefNo"));
+				ed.setAllowDas(rs.getBoolean("AllowDas"));
+				ed.setEmpIsActive(rs.getBoolean("EmpIsActive"));
+				ed.setEmpCategory(rs.getString("EmpCategory"));
+				ed.setVersion(rs.getInt("Version"));
+				ed.setLastMntBy(rs.getLong("LastMntBy"));
+				ed.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ed.setRecordStatus(rs.getString("RecordStatus"));
+				ed.setRoleCode(rs.getString("RoleCode"));
+				ed.setNextRoleCode(rs.getString("NextRoleCode"));
+				ed.setTaskId(rs.getString("TaskId"));
+				ed.setNextTaskId(rs.getString("NextTaskId"));
+				ed.setRecordType(rs.getString("RecordType"));
+				ed.setWorkflowId(rs.getLong("WorkflowId"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					ed.setLovDescIndustryDesc(rs.getString("LovDescIndustryDesc"));
+					ed.setLovDescCountryDesc(rs.getString("LovDescCountryDesc"));
+					ed.setLovDescProvinceName(rs.getString("LovDescProvinceName"));
+					ed.setLovDescCityName(rs.getString("LovDescCityName"));
+				}
+
+				return ed;
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -108,29 +149,20 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	 * 
 	 */
 	@Override
-	public void delete(EmployerDetail employerDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
+	public void delete(EmployerDetail ed, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From EmployerDetail");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
+		sql.append(" Where EmployerId = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From EmployerDetail");
-		deleteSql.append(tableType.getSuffix());
-		deleteSql.append(" Where EmployerId =:EmployerId");
-		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-		logger.trace(Literal.SQL + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			if (this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, ed.getEmployerId())) == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -147,36 +179,70 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	 */
 
 	@Override
-	public String save(EmployerDetail employerDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		if (employerDetail.getId() == Long.MIN_VALUE) {
-			employerDetail.setId(getNextValue("SeqEmployerDetail"));
-			logger.debug("get NextValue:" + employerDetail.getId());
+	public String save(EmployerDetail ed, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert Into EmployerDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" (EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet");
+		sql.append(", EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax");
+		sql.append(", EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType");
+		sql.append(", BankRefNo, AllowDas, EmpIsActive, EmpCategory");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(")");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		if (ed.getId() == Long.MIN_VALUE) {
+			ed.setId(getNextValue("SeqEmployerDetail"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into EmployerDetail");
-		insertSql.append(tableType.getSuffix());
-		insertSql.append(
-				" (EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType,BankRefNo,EmpIsActive");
-		insertSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		insertSql.append(",EmpCategory)");
-		insertSql.append(
-				" Values(:EmployerId, :EmpIndustry, :EmpName, :EstablishDate, :EmpAddrHNbr, :EmpFlatNbr, :EmpAddrStreet, :EmpAddrLine1, :EmpAddrLine2, :EmpPOBox, :EmpCountry, :EmpProvince, :EmpCity, :EmpPhone, :EmpFax, :EmpTelexNo, :EmpEmailId, :EmpWebSite, :ContactPersonName, :ContactPersonNo, :EmpAlocationType, :BankRefNo, :EmpIsActive");
-		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
-		insertSql.append(",:EmpCategory)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + insertSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
 		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, ed.getEmployerId());
+				ps.setString(index++, ed.getEmpIndustry());
+				ps.setString(index++, ed.getEmpName());
+				ps.setDate(index++, JdbcUtil.getDate(ed.getEstablishDate()));
+				ps.setString(index++, ed.getEmpAddrHNbr());
+				ps.setString(index++, ed.getEmpFlatNbr());
+				ps.setString(index++, ed.getEmpAddrStreet());
+				ps.setString(index++, ed.getEmpAddrLine1());
+				ps.setString(index++, ed.getEmpAddrLine2());
+				ps.setString(index++, ed.getEmpPOBox());
+				ps.setString(index++, ed.getEmpCountry());
+				ps.setString(index++, ed.getEmpProvince());
+				ps.setString(index++, ed.getEmpCity());
+				ps.setString(index++, ed.getEmpPhone());
+				ps.setString(index++, ed.getEmpFax());
+				ps.setString(index++, ed.getEmpTelexNo());
+				ps.setString(index++, ed.getEmpEmailId());
+				ps.setString(index++, ed.getEmpWebSite());
+				ps.setString(index++, ed.getContactPersonName());
+				ps.setString(index++, ed.getContactPersonNo());
+				ps.setString(index++, ed.getEmpAlocationType());
+				ps.setString(index++, ed.getBankRefNo());
+				ps.setObject(index++, ed.isAllowDas());
+				ps.setBoolean(index++, ed.isEmpIsActive());
+				ps.setString(index++, ed.getEmpCategory());
+				ps.setInt(index++, ed.getVersion());
+				ps.setLong(index++, ed.getLastMntBy());
+				ps.setTimestamp(index++, ed.getLastMntOn());
+				ps.setString(index++, ed.getRecordStatus());
+				ps.setString(index++, ed.getRoleCode());
+				ps.setString(index++, ed.getNextRoleCode());
+				ps.setString(index++, ed.getTaskId());
+				ps.setString(index++, ed.getNextTaskId());
+				ps.setString(index++, ed.getRecordType());
+				ps.setLong(index++, ed.getWorkflowId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(employerDetail.getId());
+
+		return Long.toString(ed.getEmployerId());
 	}
 
 	/**
@@ -190,29 +256,64 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	 * 
 	 */
 	@Override
-	public void update(EmployerDetail employerDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder("Update EmployerDetail");
-		updateSql.append(tableType.getSuffix());
-		updateSql.append(
-				" Set EmpIndustry = :EmpIndustry, EmpName = :EmpName, EstablishDate = :EstablishDate, EmpAddrHNbr = :EmpAddrHNbr, EmpFlatNbr = :EmpFlatNbr, EmpAddrStreet = :EmpAddrStreet, EmpAddrLine1 = :EmpAddrLine1, EmpAddrLine2 = :EmpAddrLine2, EmpPOBox = :EmpPOBox, EmpCountry = :EmpCountry, EmpProvince = :EmpProvince, EmpCity = :EmpCity, EmpPhone = :EmpPhone, EmpFax = :EmpFax, EmpTelexNo = :EmpTelexNo, EmpEmailId = :EmpEmailId, EmpWebSite = :EmpWebSite, ContactPersonName = :ContactPersonName, ContactPersonNo = :ContactPersonNo, EmpAlocationType = :EmpAlocationType, BankRefNo = :BankRefNo, EmpIsActive = :EmpIsActive");
-		updateSql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(", EmpCategory = :EmpCategory");
-		updateSql.append(" Where EmployerId =:EmployerId");
-		// updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
+	public void update(EmployerDetail ed, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update EmployerDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" Set EmpIndustry = ?, EmpName = ?, EstablishDate = ?, EmpAddrHNbr = ?");
+		sql.append(", EmpFlatNbr = ?, EmpAddrStreet = ?, EmpAddrLine1 = ?, EmpAddrLine2 = ?");
+		sql.append(", EmpFax = ?, EmpTelexNo = ?, EmpEmailId = ?, EmpWebSite = ?, ContactPersonName = ?");
+		sql.append(", ContactPersonNo = ?, EmpAlocationType = ?, BankRefNo = ?, AllowDAS = ?, EmpIsActive = ?");
+		sql.append(", EmpCategory = ?, EmpPOBox = ?, EmpCountry = ?, EmpProvince = ?, EmpCity = ?, EmpPhone = ?");
+		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where EmployerId = ?");
 
-		logger.trace(Literal.SQL + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		// Check for the concurrency failure.
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, ed.getEmpIndustry());
+			ps.setString(index++, ed.getEmpName());
+			ps.setDate(index++, JdbcUtil.getDate(ed.getEstablishDate()));
+			ps.setString(index++, ed.getEmpAddrHNbr());
+			ps.setString(index++, ed.getEmpFlatNbr());
+			ps.setString(index++, ed.getEmpAddrStreet());
+			ps.setString(index++, ed.getEmpAddrLine1());
+			ps.setString(index++, ed.getEmpAddrLine2());
+			ps.setString(index++, ed.getEmpFax());
+			ps.setString(index++, ed.getEmpTelexNo());
+			ps.setString(index++, ed.getEmpEmailId());
+			ps.setString(index++, ed.getEmpWebSite());
+			ps.setString(index++, ed.getContactPersonName());
+			ps.setString(index++, ed.getContactPersonNo());
+			ps.setString(index++, ed.getEmpAlocationType());
+			ps.setString(index++, ed.getBankRefNo());
+			ps.setBoolean(index++, ed.isAllowDas());
+			ps.setBoolean(index++, ed.isEmpIsActive());
+			ps.setString(index++, ed.getEmpCategory());
+			ps.setString(index++, ed.getEmpPOBox());
+			ps.setString(index++, ed.getEmpCountry());
+			ps.setString(index++, ed.getEmpProvince());
+			ps.setString(index++, ed.getEmpCity());
+			ps.setString(index++, ed.getEmpPhone());
+			ps.setInt(index++, ed.getVersion());
+			ps.setLong(index++, ed.getLastMntBy());
+			ps.setTimestamp(index++, ed.getLastMntOn());
+			ps.setString(index++, ed.getRecordStatus());
+			ps.setString(index++, ed.getRoleCode());
+			ps.setString(index++, ed.getNextRoleCode());
+			ps.setString(index++, ed.getTaskId());
+			ps.setString(index++, ed.getNextTaskId());
+			ps.setString(index++, ed.getRecordType());
+			ps.setLong(index++, ed.getWorkflowId());
+
+			ps.setLong(index++, ed.getEmployerId());
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -223,29 +324,28 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 
 	@Override
 	public boolean isNonTargetEmployee(String name, String category, String type) {
+		String sql;
+		String whereClause = "EmployerId = ? and And EmpCategory != ?";
 
-		logger.debug(Literal.ENTERING);
-		boolean exists = false;
+		Object obj = new Object[] { name, category };
 
-		// Prepare the parameter source.
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("EmployerId", Integer.parseInt(name));
-		paramSource.addValue("EmpCategory", category);
+		switch (type.toLowerCase()) {
+		case "":
+			sql = QueryUtil.getCountQuery("EmployerDetail", whereClause);
+			break;
+		case "_temp":
+			sql = QueryUtil.getCountQuery("EmployerDetail", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "EmployerDetail_Temp", "EmployerDetail" }, whereClause);
+			obj = new Object[] { name, category, name, category };
 
-		// Check whether the document id exists for another customer.
-		String sql = QueryUtil.getCountQuery(new String[] { "EmployerDetail" },
-				"EmployerId =:EmployerId and EmpCategory =:EmpCategory");
-
-		logger.trace(Literal.SQL + sql);
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		if (count > 0) {
-			exists = true;
+			break;
 		}
 
-		logger.debug(Literal.LEAVING);
-		return exists;
+		logger.debug(Literal.SQL + sql);
 
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
 }

@@ -45,7 +45,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.accounting.AccountingUtil;
 import com.pennant.webui.Fees.FeePostings.model.FeePostingsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.PTListReportUtils;
@@ -135,7 +135,7 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 
 		registerField("PostingAmount", listheader_PostingAmount);
 		registerField("PostDate", listheader_PostDate);
-		fillComboBox(this.postAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
+		fillComboBox(this.postAgainst, "", AccountingUtil.getpostingPurposeList(), "");
 		// Render the page and display the data.
 		doRenderPage();
 
