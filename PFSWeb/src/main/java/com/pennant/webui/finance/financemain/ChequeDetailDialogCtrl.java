@@ -2361,7 +2361,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		Combobox combobox = (Combobox) listcell.getFirstChild();
 
 		String combovalue = combobox.getSelectedItem().getLabel();
-		if (PennantConstants.List_Select.equals(combovalue)) {
+		if (Labels.getLabel(COMBO_SELECT).equals(combovalue)) {
 			return null;
 		}
 

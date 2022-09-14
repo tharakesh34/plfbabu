@@ -1716,6 +1716,11 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (InstrumentType.isPDC(fm.getFinRepayMethod()) || finType.isChequeCaptureReq()) {
 			doSetDefaultChequeHeader(fd, moveLoanStage);
 		}
+
+		if (fd.getChequeHeader() != null) {
+			prepareCheques(fd, userDetails, stp, moveLoanStage);
+		}
+
 		doProcessOCRDetails(fd, userDetails);
 
 		// Covenants
@@ -4415,6 +4420,62 @@ public class CreateFinanceController extends SummaryDetailService {
 		auditHeader.setAuditSessionID(userDetails.getSessionId());
 		auditHeader.setUsrLanguage(userDetails.getLanguage());
 		return auditHeader;
+	}
+
+	private void prepareCheques(FinanceDetail fd, LoggedInUser loggedInUser, boolean stp, boolean moveLoanStage) {
+		ChequeHeader ch = fd.getChequeHeader();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		ch.setTotalAmount(BigDecimal.ZERO);
+		ch.setFinID(fm.getFinID());
+		ch.setFinReference(fm.getFinReference());
+		ch.setActive(true);
+		ch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ch.setLastMntBy(loggedInUser.getUserId());
+		ch.setRecordStatus(moveLoanStage ? fm.getRecordStatus() : getRecordStatus(fm.isQuickDisb(), stp));
+		ch.setVersion(1);
+		ch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		ch.setTaskId(fm.getTaskId());
+		ch.setNextTaskId(fm.getNextTaskId());
+		ch.setRoleCode(fm.getRoleCode());
+		ch.setNextRoleCode(fm.getNextRoleCode());
+		ch.setWorkflowId(fm.getWorkflowId());
+		ch.setNewRecord(true);
+
+		BigDecimal totalChequeAmount = BigDecimal.ZERO;
+		int chequeSerialNum = ch.getChequeSerialNo();
+
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
+
+		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+
+		for (ChequeDetail cheque : cheques) {
+			cheque.setChequeSerialNo(chequeSerialNum++);
+			cheque.setBankBranchID(ch.getBankBranchID());
+			cheque.setAccHolderName(ch.getAccHolderName());
+			cheque.setAccountNo(ch.getAccountNo());
+			cheque.setStatus(PennantConstants.CHEQUESTATUS_NEW);
+			cheque.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
+			cheque.setChequeCcy(ccy);
+			cheque.setActive(true);
+			cheque.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			cheque.setLastMntBy(loggedInUser.getUserId());
+			cheque.setRecordStatus(moveLoanStage ? fm.getRecordStatus() : getRecordStatus(fm.isQuickDisb(), stp));
+			cheque.setVersion(2);
+			cheque.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			cheque.setTaskId(fm.getTaskId());
+			cheque.setNextTaskId(fm.getNextTaskId());
+			cheque.setRoleCode(fm.getRoleCode());
+			cheque.setNextRoleCode(fm.getNextRoleCode());
+			cheque.setWorkflowId(fm.getWorkflowId());
+			cheque.setNewRecord(true);
+
+			totalChequeAmount = totalChequeAmount.add(cheque.getAmount());
+		}
+
+		ch.setTotalAmount(totalChequeAmount);
 	}
 
 	protected String getTaskAssignmentMethod(String taskId) {
