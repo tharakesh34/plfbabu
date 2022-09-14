@@ -8950,4 +8950,7 @@ public class FinanceDataValidation {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
 
+	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
+		this.chequeHeaderService = chequeHeaderService;
+	}
 }

@@ -713,7 +713,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
 
 		fillBankBranch(ch, chequeDetails);
-		doFillChequeDetails(chequeDetails);
+		doFillChequeDetails(sortedChequeDetails(chequeDetails));
 
 		financeSchedules = getFinanceSchedules();
 		if (CollectionUtils.isNotEmpty(schdData.getFinanceScheduleDetails())) {
@@ -768,6 +768,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 
 		ch.setActive(true);
+
+		ch.setChequeDetailList(chequeDetailList);
 
 		if (isGenarate) {
 			wve.addAll(componentValues());
@@ -1128,7 +1130,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 				Combobox combobox = getCombobox(String.valueOf(cd.geteMIRefNo()));
 
-				if (PennantConstants.List_Select.equals(combobox.getSelectedItem().getValue())) {
+				if (PennantConstants.List_Select.equals(combobox.getSelectedItem().getLabel())) {
 					MessageUtil.showMessage("Cheques are generated up to till maturity.");
 					break;
 				}
@@ -1148,6 +1150,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			this.deleteCheques.setVisible(totalCheques > 0);
 			this.totNoOfCheques.setValue(totalCheques);
 			chequeDetailList.addAll(cheques);
+
+			cheques = cheques.stream()
+					.sorted((cd1, cd2) -> Integer.compare(cd1.getChequeSerialNo(), cd2.getChequeSerialNo()))
+					.collect(Collectors.toList());
 			doFillChequeDetails(cheques);
 		} else {
 			if (parenttab != null) {
@@ -1282,8 +1288,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		List<Listitem> listitems = listBoxChequeDetail.getItems();
 
-		details = sortedChequeDetails(details);
-
 		int index = listitems.size() + 1;
 
 		for (ChequeDetail cd : details) {
@@ -1293,7 +1297,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			listitem.setId(String.valueOf(index++));
 			listitem.setAttribute("data", cd);
 
-			appendSelectBox(listitem, isReadOnly);
+			appendSelectBox(listitem, isReadOnly, cd);
 
 			appendChequeType(listitem, cd);
 
@@ -1578,6 +1582,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<ChequeDetail> cheques = new ArrayList<>();
 
 		boolean deletedCheques = false;
+		int count = 0;
 		for (Listitem listItem : listBoxChequeDetail.getItems()) {
 			Checkbox checkbox = (Checkbox) listItem.getFirstChild().getFirstChild();
 
@@ -1593,7 +1598,15 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 
 			deletedCheques = true;
+			count++;
+
+			if (checkbox.isChecked() && PennantConstants.CHEQUESTATUS_CANCELLED.equals(cheque.getChequeStatus())) {
+				cheques.add(cheque);
+				continue;
+			}
+
 			cheque.setChequeStatus(PennantConstants.CHEQUESTATUS_CANCELLED);
+
 			setWorkflowDetailsOnDelete(cheque);
 
 			String rcdType = cheque.getRecordType();
@@ -1608,12 +1621,17 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			return;
 		}
 
-		this.deleteCheques.setDisabled(listBoxChequeDetail.getItems().size() == cheques.size());
+		this.deleteCheques.setDisabled(listBoxChequeDetail.getItems().size() == count);
 
 		listBoxChequeDetail.getItems().clear();
 		this.totAmount.setValue(BigDecimal.ZERO);
 
 		setChequeDetailList(cheques);
+
+		cheques = cheques.stream()
+				.sorted((cd1, cd2) -> Integer.compare(cd1.getChequeSerialNo(), cd2.getChequeSerialNo()))
+				.collect(Collectors.toList());
+
 		doFillChequeDetails(cheques);
 	}
 
@@ -1632,7 +1650,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	private Date getSchdDate(Listitem listitem) {
 		Combobox combobox = (Combobox) listitem.getChildren().get(Field.DUE_DATE.index()).getFirstChild();
-		return DateUtil.parseShortDate(combobox.getValue());
+		return DateUtil.parseShortDate(combobox.getSelectedItem().getLabel());
 	}
 
 	private void setWorkflowDetailsOnDelete(ChequeDetail cd) {
@@ -1702,7 +1720,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					&& (schedule.getInstNumber() != 0 || FinanceConstants.FLAG_BPI.equals(schedule.getBpiOrHoliday()))
 					&& BigDecimal.ZERO.equals(schedule.getPartialPaidAmt())) {
 				comboitem = new Comboitem();
-				comboitem.setValue(schedule.getSchDate());
+				comboitem.setValue(schedule.getInstNumber());
 				comboitem.setLabel(DateUtil.formatToShortDate(schedule.getSchDate()));
 				comboitem.setAttribute("SchdDate", schedule.getSchDate());
 				combobox.appendChild(comboitem);
@@ -1979,7 +1997,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 				String emiCBValue = getComboboxValue(combobox);
 				if (!"0".equals(emiCBValue) && !PennantConstants.List_Select.equals(emiCBValue)) {
-					Date emiDate = (Date) getCombobox(emiCBValue).getSelectedItem().getValue();
+					Date emiDate = DateUtil.parseShortDate(getCombobox(emiCBValue).getSelectedItem().getLabel());
 
 					wve.addAll(validateSchedules(listcell, combobox, emiDate));
 				}
@@ -2200,8 +2218,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 	}
 
-	private void appendSelectBox(Listitem listitem, boolean isReadOnly) {
+	private void appendSelectBox(Listitem listitem, boolean isReadOnly, ChequeDetail cd) {
 		Checkbox checkBox = new Checkbox();
+		checkBox.setChecked(PennantConstants.CHEQUESTATUS_CANCELLED.equals(cd.getChequeStatus()));
 		checkBox.setDisabled(!isDeleteVisible() || isReadOnly);
 		checkBox.addForward(Events.ON_CLICK, this.window, "onClickCheckBox");
 
@@ -2341,7 +2360,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		Combobox combobox = (Combobox) listcell.getFirstChild();
 
-		String combovalue = combobox.getValue();
+		String combovalue = combobox.getSelectedItem().getLabel();
 		if (PennantConstants.List_Select.equals(combovalue)) {
 			return null;
 		}
@@ -2508,7 +2527,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			Listcell listcell = list.get(Field.DUE_DATE.index());
 			Combobox combobox = (Combobox) listcell.getFirstChild();
 
-			Date chqDate = DateUtil.parseShortDate(combobox.getValue());
+			Date chqDate = DateUtil.parseShortDate(combobox.getSelectedItem().getLabel());
 			if (chequeDate.compareTo(chqDate) == 0) {
 				return true;
 			}

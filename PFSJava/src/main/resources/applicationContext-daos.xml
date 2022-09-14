@@ -3550,6 +3550,7 @@
 		<property name="covenantTypeDAO" ref="covenantTypeDAO" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="chequeHeaderService" ref="chequeHeaderService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->

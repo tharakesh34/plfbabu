@@ -154,7 +154,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 				ps.setString(index++, cheque.getDocumentName());
 				ps.setObject(index++, cheque.getDocumentRef());
 				ps.setString(index++, cheque.getChequeType());
-				ps.setString(index++, PennantConstants.CHEQUESTATUS_NEW);
+				ps.setString(index++, cheque.getChequeStatus());
 				ps.setString(index++, cheque.getAccountType());
 				ps.setString(index++, cheque.getAccHolderName());
 				ps.setInt(index++, cheque.getInstNo());
@@ -206,7 +206,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			ps.setString(index++, cheque.getDocumentName());
 			ps.setObject(index++, cheque.getDocumentRef());
 			ps.setString(index++, cheque.getChequeType());
-			ps.setString(index++, PennantConstants.CHEQUESTATUS_NEW);
+			ps.setString(index++, cheque.getChequeStatus());
 			ps.setString(index++, cheque.getAccountType());
 			ps.setString(index++, cheque.getAccHolderName());
 			ps.setInt(index++, cheque.getInstNo());
