@@ -184,6 +184,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Textbox phoneNumber;
 
 	protected Checkbox defaultMandate;
+
+	protected Row mandateStatusRow;
 	protected Combobox mandateStatus;
 	protected Button btnReason;
 	protected Space space_Reason;
@@ -196,6 +198,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Checkbox swapMandate;
 	private Datebox swapEffectiveDate;
 
+	protected Row holdRow;
 	private Checkbox hold;
 	private ExtendedCombobox holdReasons;
 
@@ -380,8 +383,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (arguments.containsKey("mandateListCtrl")) {
 			setMandateListCtrl((MandateListCtrl) arguments.get("mandateListCtrl"));
 		}
-
-		this.useExisting.setDisabled(!fromLoan);
 
 		if (fromLoan) {
 			onCreateFromLoanOrgination();
@@ -880,10 +881,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		doEditFieldByInstrument(instrumentType);
 	}
 
-	private boolean isApproved() {
-		return StringUtils.isEmpty(this.mandate.getRecordType()) && !this.mandate.isNewRecord();
-	}
-
 	private void doEditFieldByInstrument(InstrumentType instrumentType) {
 		if (instrumentType == InstrumentType.SI || instrumentType == InstrumentType.DAS) {
 			doSetReadOnly();
@@ -906,7 +903,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (instrumentType == InstrumentType.SI) {
 			pennyDropRow.setVisible(false);
 
-			readOnlyComponent(false, this.finReference);
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
 			readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
 		}
@@ -916,17 +912,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		case DD:
 		case NACH:
 		case EMANDATE:
-			readOnlyComponent(false, this.finReference);
 			this.bankBranchID.setFilters(new Filter[] { new Filter(instrumentType.name(), 1, Filter.OP_EQUAL) });
 			break;
 		default:
 			break;
-		}
-
-		if (isApproved()) {
-			readOnlyComponent(true, this.finReference);
-		} else {
-			readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.finReference);
 		}
 	}
 
@@ -1001,13 +990,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		String status = StringUtils.trimToEmpty(aMandate.getStatus());
 
 		if (status.equals("") || status.equals(PennantConstants.List_Select)) {
-			this.mandateStatus.setVisible(false);
-			this.btnReason.setVisible(false);
-			this.reason.setVisible(false);
+			mandateStatusRow.setVisible(false);
 		} else {
-			this.mandateStatus.setVisible(true);
-			this.btnReason.setVisible(true);
-			this.reason.setVisible(true);
+			mandateStatusRow.setVisible(true);
 		}
 
 		if (MandateStatus.isRejected(status)) {
@@ -1019,11 +1004,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.mandateStatus);
 			readOnlyComponent(true, reason);
 
+			mandateStatusRow.setVisible(true);
 			this.reason.setValue("");
-			// this.mandateStatus.setVisible(false);
-			this.btnReason.setVisible(false);
-
-			this.reason.setVisible(false);
 		}
 
 		if (MandateStatus.isApproved(status) || MandateStatus.isHold(status) || MandateStatus.isRelease(status)) {
@@ -1050,11 +1032,18 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.hold);
 			readOnlyComponent(true, this.holdReasons);
 			readOnlyComponent(true, this.partnerBank);
+			readOnlyComponent(true, this.externalMandate);
 		}
 
-		if (MandateStatus.isApproved(status) || MandateStatus.isRelease(status)) {
-			readOnlyComponent(false, this.hold);
-			readOnlyComponent(false, this.holdReasons);
+		if (MandateStatus.isApproved(status) || MandateStatus.isRelease(status) || MandateStatus.isHold(status)
+				|| enqiryModule) {
+			holdRow.setVisible(true);
+
+			readOnlyComponent(isReadOnly("MandateDialog_Hold"), this.hold);
+
+			if (this.hold.isChecked()) {
+				readOnlyComponent(isReadOnly("MandateDialog_HoldReasons"), this.holdReasons);
+			}
 		}
 
 	}
@@ -1104,11 +1093,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				&& StringUtils.isNotEmpty(getMandate().getRecordStatus())) {
 			readOnlyComponent(true, this.mandateType);
 		}
-
-		if (this.hold.isChecked()) {
-			this.holdReasons.setReadonly(false);
-		}
-
 	}
 
 	private void doEdit() {
@@ -1122,9 +1106,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.custID.setReadonly(true);
 		}
 
-		readOnlyComponent(true, this.finReference);
+		if (!fromLoan) {
+			this.useExisting.setVisible(false);
+		}
+
+		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())) {
+			readOnlyComponent(true, this.finReference);
+		}
+
 		readOnlyComponent(true, this.mandateType);
-		// readOnlyComponent(true, this.custID);
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_MANDATE_ACCT_DET_READONLY)) {
 			readOnlyComponent(true, accNumber);
@@ -1160,6 +1150,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_SecurityMandate"), this.securityMandate);
 		readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
 		readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
+		readOnlyComponent(isReadOnly("button_MandateDialog_btnPennyDropResult"), this.btnPennyDropResult);
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
@@ -1169,6 +1160,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), this.eMandateSource);
 		readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.eMandateReferenceNo);
+
+		if (bankAccountValidationService != null && !enqiryModule) {
+			btnPennyDropResult.setVisible(true);
+		} else {
+			btnPennyDropResult.setVisible(false);
+		}
 
 		if (this.finReference.getValue() == null) {
 			readOnlyComponent(true, partnerBank);
@@ -1228,7 +1225,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.btnPennyDropResult);
 		readOnlyComponent(true, this.custID);
 		readOnlyComponent(true, this.entityCode);
-		readOnlyComponent(true, this.finReference);
+		// readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.mandateType);
 		readOnlyComponent(true, this.bankBranchID);
 		readOnlyComponent(true, this.eMandateSource);
@@ -1365,8 +1362,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.hold.setChecked(false);
 		} else {
 			this.inputDate.setValue(aMandate.getInputDate());
-			if (maintain) {
-				this.hold.setChecked(aMandate.isHold());
+			this.hold.setChecked(aMandate.isHold());
+			if (aMandate.getHoldReasons() != null) {
 				this.holdReasons.setValue(String.valueOf(aMandate.getHoldReasons()));
 			}
 
@@ -2534,17 +2531,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	public void onCheck$hold(Event event) {
-		logger.debug(Literal.ENTERING);
 		if (this.hold.isChecked()) {
-			this.holdReasons.setValue(this.holdReasons.getValue());
 			this.holdReasons.setReadonly(false);
-			this.holdReasons.setMandatoryStyle(true);
 		} else {
-			this.holdReasons.setReadonly(true);
 			this.holdReasons.setValue("");
-			this.holdReasons.setMandatoryStyle(false);
+			this.holdReasons.setReadonly(true);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	public void doSetCustomerFilters() {

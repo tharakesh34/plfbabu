@@ -70,6 +70,24 @@
 									<extendedcombobox id="finReference" />
 
 								</row>
+<<<<<<< HEAD
+								<row>
+									<label value="${c:l('label_MandateDialog_UseExisting.value')}" />
+									<checkbox id="useExisting" disabled="true" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_mandateDetails" sclass="gb-dialog">
+						<caption label="Mandate Details" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:10px;">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
 								<row>
 									<label value="${c:l('label_MandateDialog_UseExisting.value')}" />
 									<hbox>
@@ -112,10 +130,7 @@
 								</row>
 								<row id="emandateRow" visible="false">
 									<label value="${c:l('label_MandateDialog_E-Mandate_Source.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<extendedcombobox id="eMandateSource" width="200px" />
-									</hbox>
+									<extendedcombobox id="eMandateSource" width="200px" />
 									<label value="${c:l('label_MandateDialog_E-Mandate_Reference_No.value')}" />
 									<hbox>
 										<space sclass="mandatory" spacing="2px" />
@@ -154,15 +169,44 @@
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_MaxLimit.value')}" />
-									<hbox>
-										<currencyBox id="maxLimit" />
-									</hbox>
+									<currencyBox id="maxLimit" />
 									<label value="${c:l('label_MandateDialog_AmtInWords.value')}" />
+									<label id="amountInWords" style="font-weight:bold;" />
+								</row>
+								<row id="holdRow" visible="false">
+									<label value="${c:l('label_MandateDialog_Hold.value')}" />
+									<checkbox id="hold" checked="false" />
+									<label value="${c:l('label_MandateDialog_HoldReasons.value')}" />
+									<extendedcombobox id="holdReasons" width="200px" />
+								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_RegStatus.value')}" />
+									<label id="regStatus" style="font-weight:bold;" />
+								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_MandateDoc.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<label id="amountInWords" style="font-weight:bold;" />
+										<textbox id="documentName" width="150px" maxlength="200" readonly="true" />
+										<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc"
+											hflex="1" />
 									</hbox>
 								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox id="gb_bankDetails" sclass="gb-dialog">
+						<caption label="Account Details" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:10px;">
+
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
 								<row>
 									<label value="${c:l('label_MandateDialog_Hold.value')}" />
 									<checkbox id="hold" checked="false" />
@@ -209,28 +253,18 @@
 
 								<row>
 									<label value="${c:l('label_MandateDialog_Bank.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="bank" maxlength="50" width="200px" readonly="true" />
-									</hbox>
+									<textbox id="bank" maxlength="50" width="200px" readonly="true" />
 									<label value="${c:l('label_MandateDialog_city.value')}" />
 									<hbox>
-										<space spacing="2px" />
 										<textbox id="city" maxlength="50" width="200px" readonly="true" />
 										<label id="cityName" />
 									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_Micr.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="micr" maxlength="50" width="200px" readonly="true" />
-									</hbox>
+									<textbox id="micr" maxlength="50" width="200px" readonly="true" />
 									<label value="${c:l('label_MandateDialog_Ifsc.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="ifsc" maxlength="50" width="200px" readonly="true" />
-									</hbox>
+									<textbox id="ifsc" maxlength="50" width="200px" readonly="true" />
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_AccType.value')}" />
@@ -253,10 +287,7 @@
 										<textbox id="accHolderName" maxlength="100" width="200px" />
 									</hbox>
 									<label value="${c:l('label_MandateDialog_JointAccHolderName.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="jointAccHolderName" maxlength="50" width="200px" />
-									</hbox>
+									<textbox id="jointAccHolderName" maxlength="50" width="200px" />
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_PhoneCountryCode.value')}" />
@@ -289,7 +320,7 @@
 									<label value="${c:l('label_MandateDialog_Active.value')}" />
 									<checkbox id="active" checked="true" />
 								</row>
-								<row>
+								<row id="mandateStatusRow">
 									<label value="${c:l('label_MandateDialog_Status.value')}" />
 									<hbox>
 										<combobox id="mandateStatus" readonly="true" disabled="true" />
@@ -300,11 +331,7 @@
 								</row>
 								<row id="dasRow" visible="false">
 									<label value="${c:l('label_MandateDialog_EmployeeID.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<extendedcombobox id="employeeID" width="200px" />
-									</hbox>
-
+									<extendedcombobox id="employeeID" width="200px" />
 									<label value="${c:l('label_MandateDialog_EmployerName.value')}" />
 									<textbox id="employerName" />
 								</row>
