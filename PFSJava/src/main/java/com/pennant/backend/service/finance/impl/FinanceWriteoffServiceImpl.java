@@ -724,11 +724,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			}
 
 			doSave_PftDetails(pftDetail, isNew);
-
-			// Account Details Update
-			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				accountProcessUtil.procAccountUpdate(accountingSetEntries);
-			}
 		}
 
 		logger.debug(Literal.LEAVING);

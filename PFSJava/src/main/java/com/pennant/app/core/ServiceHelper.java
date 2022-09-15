@@ -49,7 +49,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -120,7 +119,6 @@ abstract public class ServiceHelper {
 	// accounting
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private PostingsDAO postingsDAO;
-	private AccountProcessUtil accountProcessUtil;
 	protected PostingsPreparationUtil postingsPreparationUtil;
 	// over due
 	protected FinODDetailsDAO finODDetailsDAO;
@@ -333,10 +331,6 @@ abstract public class ServiceHelper {
 
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
 		this.presentmentDetailDAO = presentmentDetailDAO;
-	}
-
-	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
-		this.accountProcessUtil = accountProcessUtil;
 	}
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {

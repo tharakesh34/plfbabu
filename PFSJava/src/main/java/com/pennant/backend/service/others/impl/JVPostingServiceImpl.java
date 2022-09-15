@@ -42,7 +42,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -93,7 +92,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private LegalExpensesDAO legalExpensesDAO;
 	private PostingsDAO postingsDAO;
-	private AccountProcessUtil accountProcessUtil;
 	private FinanceMainService financeMainService;
 	private CurrencyService currencyService;
 	private TransactionCodeService transactionCodeService;
@@ -261,8 +259,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				}
 
 				List<ReturnDataSet> list = postingsPreparationUtil.processEntryList(dbList, jVPosting);
-
-				accountProcessUtil.procAccountUpdate(list);
 
 				if (list != null && list.size() > 0) {
 					ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
@@ -911,7 +907,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		try {
 			List<ReturnDataSet> list = postingsPreparationUtil.processEntryList(dbList, jVPosting);
-			accountProcessUtil.procAccountUpdate(list);
 
 			if (CollectionUtils.isNotEmpty(list)) {
 				List<ErrorDetail> errorDetails = new ArrayList<>();
@@ -1221,11 +1216,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	@Autowired
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
-	}
-
-	@Autowired
-	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
-		this.accountProcessUtil = accountProcessUtil;
 	}
 
 	@Autowired

@@ -72,7 +72,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 	private AccountEngineExecution engineExecution;
 	private PostingsDAO postingsDAO;
-	private AccountProcessUtil accountProcessUtil;
 	private CommitmentDAO commitmentDAO;
 	private CommitmentMovementDAO commitmentMovementDAO;
 	private DivisionDetailDAO divisionDetailDAO;
@@ -145,7 +144,6 @@ public class PostingsPreparationUtil implements Serializable {
 		// FIXME: PV: Prepare Return Data Set
 
 		postingsDAO.saveBatch(returnDatasetList);
-		accountProcessUtil.procAccountUpdate(returnDatasetList);
 
 		return aeEvent;
 	}
@@ -282,7 +280,6 @@ public class PostingsPreparationUtil implements Serializable {
 		if (!list.isEmpty()) {
 			if (aeEvent.isPostingSucess()) {
 				postingsDAO.saveBatch(list);
-				// getAccountProcessUtil().updateAccountInfo(list);
 			}
 		}
 
@@ -554,8 +551,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 		postingsDAO.saveBatch(returnDataSets);
 
-		accountProcessUtil.procAccountUpdate(returnDataSets);
-
 		logger.debug(Literal.LEAVING);
 		return returnDataSets;
 	}
@@ -576,8 +571,6 @@ public class PostingsPreparationUtil implements Serializable {
 		postingsDAO.updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
 
 		postingsDAO.saveBatch(returnDataSets);
-
-		accountProcessUtil.procAccountUpdate(returnDataSets);
 
 		logger.debug(Literal.LEAVING);
 		return returnDataSets;
@@ -612,8 +605,6 @@ public class PostingsPreparationUtil implements Serializable {
 		postingsDAO.updateStatusByPostRef(postRef, AccountConstants.POSTINGS_REVERSE);
 
 		postingsDAO.saveBatch(returnDataSets);
-
-		accountProcessUtil.procAccountUpdate(returnDataSets);
 
 		logger.debug(Literal.LEAVING);
 		return returnDataSets;
@@ -720,8 +711,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 		postingsDAO.saveBatch(returnDataSets);
 
-		accountProcessUtil.procAccountUpdate(returnDataSets);
-
 		logger.debug(Literal.LEAVING);
 		return returnDataSets;
 	}
@@ -736,10 +725,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
-	}
-
-	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
-		this.accountProcessUtil = accountProcessUtil;
 	}
 
 	public void setCommitmentDAO(CommitmentDAO commitmentDAO) {

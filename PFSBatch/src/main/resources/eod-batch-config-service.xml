@@ -30,7 +30,6 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
