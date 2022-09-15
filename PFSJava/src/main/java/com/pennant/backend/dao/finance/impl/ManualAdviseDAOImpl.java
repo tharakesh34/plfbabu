@@ -1157,7 +1157,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" From ManualAdviseMovements");
 		sql.append(" Where ReceiptID in (");
 		sql.append(commaJoin(receiptList));
-		sql.append(")");
+		sql.append(") Group by AdviseID");
 
 		logger.debug(Literal.SQL + sql.toString());
 

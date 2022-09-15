@@ -84,7 +84,6 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("DISBURSEMENT_AUTO_DOWNLOAD", false);
 
 		// Temporary Enabled, need to disable once the testing is done
-		customConstants.put("MANDATE_ALLOW_CO_APP", true);
 		customConstants.put("DISBURSEMENT_ALLOW_CO_APP", true);
 		customConstants.put("CHEQUE_ALLOW_CO_APP", true);
 		customConstants.put("CUST_ADDR_AUTO_FILL", true);
