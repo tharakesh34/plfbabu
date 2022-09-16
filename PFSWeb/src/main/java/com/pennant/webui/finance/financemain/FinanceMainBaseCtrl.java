@@ -3071,6 +3071,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			final Map<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_MANDATE));
 			map.put("fromLoan", true);
+			map.put("MandateType", this.finRepayMethod.getValue());
 			Executions.createComponents("/WEB-INF/pages/Mandate/MandateDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_MANDATE), map);
 		}

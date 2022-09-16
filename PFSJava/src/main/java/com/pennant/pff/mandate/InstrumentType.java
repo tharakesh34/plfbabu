@@ -1,5 +1,8 @@
 package com.pennant.pff.mandate;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum InstrumentType {
 
 	NACH("NACH", "National Automated Clearing House"),
@@ -45,56 +48,54 @@ public enum InstrumentType {
 	}
 
 	public static boolean isECS(String instrumentType) {
-		InstrumentType st = InstrumentType.valueOf(instrumentType);
-
-		return st == null ? false : st == InstrumentType.ECS;
+		return isEqual(ECS, object(instrumentType));
 	}
 
 	public static boolean isDD(String instrumentType) {
-		InstrumentType st = InstrumentType.valueOf(instrumentType);
-
-		return st == null ? false : st == InstrumentType.DD;
+		return isEqual(DD, object(instrumentType));
 	}
 
 	public static boolean isNACH(String instrumentType) {
-		InstrumentType st = InstrumentType.valueOf(instrumentType);
-
-		return st == null ? false : st == InstrumentType.NACH;
+		return isEqual(NACH, object(instrumentType));
 	}
 
 	public static boolean isPDC(String instrumentType) {
-		InstrumentType st = InstrumentType.valueOf(instrumentType);
-
-		return st == null ? false : st == InstrumentType.PDC;
+		return isEqual(PDC, object(instrumentType));
 	}
 
 	public static boolean isUDC(String instrumentType) {
-		InstrumentType st = InstrumentType.valueOf(instrumentType);
-
-		return st == null ? false : st == InstrumentType.UDC;
+		return isEqual(UDC, object(instrumentType));
 	}
 
 	public static boolean isEMandate(String instrumentType) {
-		InstrumentType st = InstrumentType.valueOf(instrumentType);
-
-		return st == null ? false : st == InstrumentType.EMANDATE;
+		return isEqual(EMANDATE, object(instrumentType));
 	}
 
 	public static boolean isDAS(String instrumentType) {
-		InstrumentType st = InstrumentType.valueOf(instrumentType);
-
-		return st == null ? false : st == InstrumentType.DAS;
+		return isEqual(DAS, object(instrumentType));
 	}
 
 	public static boolean isSI(String instrumentType) {
-		InstrumentType st = InstrumentType.valueOf(instrumentType);
-
-		return st == null ? false : st == InstrumentType.SI;
+		return isEqual(SI, object(instrumentType));
 	}
 
 	public static boolean isValid(String instrumentType) {
-		InstrumentType item = InstrumentType.valueOf(instrumentType);
+		return isEqual(MANUAL, object(instrumentType));
+	}
 
-		return item != null && item != MANUAL;
+	private static boolean isEqual(InstrumentType instrumentType, InstrumentType type) {
+		return type == null ? false : type == instrumentType;
+	}
+
+	public static InstrumentType object(String instrumentType) {
+		List<InstrumentType> list = Arrays.asList(InstrumentType.values());
+
+		for (InstrumentType it : list) {
+			if (it.code().equals(instrumentType)) {
+				return it;
+			}
+		}
+
+		return null;
 	}
 }

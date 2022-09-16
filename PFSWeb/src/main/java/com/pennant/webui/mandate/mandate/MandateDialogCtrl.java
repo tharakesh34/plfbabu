@@ -63,10 +63,13 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -91,6 +94,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
@@ -118,6 +122,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
+import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
@@ -150,8 +155,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private static final Logger logger = LogManager.getLogger(MandateDialogCtrl.class);
 
 	protected Window window_MandateDialog;
-	protected Groupbox gb_basicDetails;
-
+	private Tabpanel tabPanel_dialogWindow;
+	protected Groupbox basicDetailsGroupbox;
+	protected Label labelUseExisting;
 	protected Checkbox useExisting;
 	protected ExtendedCombobox mandateRef;
 	protected ExtendedCombobox custID;
@@ -159,12 +165,35 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private ExtendedCombobox entityCode;
 	protected ExtendedCombobox finReference;
 	protected Combobox mandateType;
-	protected ExtendedCombobox bankBranchID;
 
+	protected Groupbox mandateDetailsGroupbox;
+	protected Checkbox externalMandate;
+	protected Textbox umrNumber;
 	protected Row emandateRow;
 	protected Textbox eMandateReferenceNo;
 	protected ExtendedCombobox eMandateSource;
+	private Checkbox securityMandate;
+	protected Checkbox openMandate;
+	protected Checkbox defaultMandate;
+	protected Checkbox swapMandate;
+	private Datebox swapEffectiveDate;
+	protected Datebox startDate;
+	protected Datebox expiryDate;
+	protected CurrencyBox maxLimit;
+	protected FrequencyBox periodicity;
+	protected Row holdRow;
+	private Checkbox hold;
+	private ExtendedCombobox holdReasons;
+	protected Label regStatus;
+	protected Row mandateStatusRow;
+	protected Combobox mandateStatus;
+	protected Button btnReason;
+	protected Row reasonRow;
+	protected Textbox reason;
+	protected Textbox documentName;
 
+	protected Groupbox accDetailsGroupbox;
+	protected ExtendedCombobox bankBranchID;
 	protected Textbox bank;
 	protected Textbox city;
 	protected Label cityName;
@@ -175,37 +204,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Textbox accHolderName;
 	protected Textbox jointAccHolderName;
 	protected Combobox accType;
-	protected CurrencyBox maxLimit;
 	protected Label amountInWords;
-	protected Datebox startDate;
-	protected Checkbox openMandate;
-	protected Datebox expiryDate;
-	protected FrequencyBox periodicity;
 	protected Textbox phoneNumber;
 
-	protected Checkbox defaultMandate;
-
-	protected Row mandateStatusRow;
-	protected Combobox mandateStatus;
-	protected Button btnReason;
-	protected Space space_Reason;
-	protected Textbox reason;
-
-	protected Checkbox externalMandate;
-	protected Textbox umrNumber;
-	private Checkbox securityMandate;
-
-	protected Checkbox swapMandate;
-	private Datebox swapEffectiveDate;
-
-	protected Row holdRow;
-	private Checkbox hold;
-	private ExtendedCombobox holdReasons;
-
+	protected Groupbox dasGroupbox;
 	protected Row dasRow;
 	private ExtendedCombobox employeeID;
 	private Textbox employerName;
 
+	protected Groupbox otherDetailsGroupbox;
 	protected Datebox inputDate;
 	protected ExtendedCombobox partnerBank;
 	protected Checkbox active;
@@ -217,16 +224,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Textbox txnDetails;
 
 	protected Button btnUploadDoc;
-	protected Textbox documentName;
 	protected Groupbox mandateDocGroupBox;
 	protected Iframe mandatedoc;
 	private byte[] imagebyte;
-	protected Label regStatus;
 	protected Button btnHelp;
 	protected Button btnProcess;
 	protected Button btnView;
 	protected North north_mandate;
 	protected Groupbox finBasicdetails;
+	protected Groupbox listBoxFinancesGroupbox;
 
 	private transient final String btnCtroller_ClassPrefix = "button_MandateDialog_";
 	private boolean notes_Entered = false;
@@ -252,18 +258,22 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private transient PennyDropDAO pennyDropDAO;
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private transient BankAccountValidation bankAccountValidations;
+	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 
-	private boolean flag = false;
+	// private boolean flag = false;
 	private boolean enqModule = false;
 	private boolean fromLoan = false;
 	private boolean registration = false;
 	private boolean maintain = false;
+	private boolean fromLoanEnquiry = false;
+	private boolean disbEnquiry = false;
 	private int ccyFormatter = 0;
 	protected int maxAccNoLength;
 	protected int minAccNoLength;
 
 	private final List<ValueLabel> mandateTypeList = MandateUtil.getInstrumentTypes();
 	private final List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
+	protected Listbox listBoxMandateFinExposure;
 
 	/**
 	 * default constructor.<br>
@@ -356,6 +366,19 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (arguments.containsKey("enqModule")) {
 			enqModule = (Boolean) arguments.get("enqModule");
+		}
+
+		if (arguments.containsKey("fromLoanEnquiry")) {
+			fromLoanEnquiry = (Boolean) arguments.get("fromLoanEnquiry");
+		}
+
+		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
+			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
+					.get("financeEnquiryHeaderDialogCtrl");
+		}
+
+		if (arguments.containsKey("tabPaneldialogWindow")) {
+			tabPanel_dialogWindow = (Tabpanel) arguments.get("tabPaneldialogWindow");
 		}
 
 		if (arguments.containsKey("fromLoan")) {
@@ -893,15 +916,17 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (instrumentType == InstrumentType.DAS) {
-			pennyDropRow.setVisible(false);
 
+			this.dasGroupbox.setVisible(true);
 			this.dasRow.setVisible(true);
+
 			readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
 			readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
 		}
 
 		if (instrumentType == InstrumentType.SI) {
-			pennyDropRow.setVisible(false);
+
+			this.accDetailsGroupbox.setVisible(true);
 
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
 			readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
@@ -912,6 +937,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		case DD:
 		case NACH:
 		case EMANDATE:
+			this.mandateDetailsGroupbox.setVisible(true);
+			this.accDetailsGroupbox.setVisible(true);
+			this.otherDetailsGroupbox.setVisible(true);
+
 			this.bankBranchID.setFilters(new Filter[] { new Filter(instrumentType.name(), 1, Filter.OP_EQUAL) });
 			break;
 		default:
@@ -974,6 +1003,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					checkTabDisplay(aMandate.getMandateType(), false);
 				}
 
+			} else if (fromLoanEnquiry) {
+				if (tabPanel_dialogWindow != null) {
+					int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()
+							* 20;
+					this.window_MandateDialog.setHeight(this.borderLayoutHeight - rowsHeight - 30 + "px");
+					tabPanel_dialogWindow.appendChild(this.window_MandateDialog);
+				}
+			} else if (disbEnquiry) {
+				setDialog(DialogType.MODAL);
 			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
@@ -991,8 +1029,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (status.equals("") || status.equals(PennantConstants.List_Select)) {
 			mandateStatusRow.setVisible(false);
+			reasonRow.setVisible(false);
 		} else {
 			mandateStatusRow.setVisible(true);
+			reasonRow.setVisible(true);
 		}
 
 		if (MandateStatus.isRejected(status)) {
@@ -1005,6 +1045,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, reason);
 
 			mandateStatusRow.setVisible(true);
+			reasonRow.setVisible(true);
 			this.reason.setValue("");
 		}
 
@@ -1049,11 +1090,17 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void doDesignByMode() {
+
+		if (fromLoanEnquiry) {
+			this.north_mandate.setVisible(false);
+		}
+
 		if (enqModule) {
 			this.btnCancel.setVisible(false);
 			this.btnSave.setVisible(false);
 			this.btnDelete.setVisible(false);
 			this.btnNotes.setVisible(false);
+			this.listBoxFinancesGroupbox.setVisible(true);
 			return;
 		}
 
@@ -1095,6 +1142,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 	}
 
+	private void doDesignbyInstrumenttype() {
+
+		this.dasGroupbox.setVisible(InstrumentType.isDAS(this.mandateType.getValue()));
+	}
+
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
@@ -1108,6 +1160,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (!fromLoan) {
 			this.useExisting.setVisible(false);
+			this.labelUseExisting.setVisible(false);
 		}
 
 		if (StringUtils.isNotEmpty(this.mandate.getOrgReference())) {
@@ -1290,6 +1343,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	public void doWriteBeanToComponents(Mandate aMandate) {
 		logger.debug(Literal.ENTERING);
+
+		if (!fromLoanEnquiry) {
+			doFillManFinanceExposureDetails(getMandateService().getMandateFinanceDetailById(aMandate.getMandateID()));
+		}
 
 		fillComboBox(this.mandateType, aMandate.getMandateType(), mandateTypeList, "");
 
@@ -1842,14 +1899,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		throw new WrongValuesException(wvea);
 	}
 
-	private void doSetValidation(boolean validate) {
-		logger.debug(Literal.ENTERING);
-
-		// Customer ID
-		if (!this.custID.isReadonly()) {
-			this.custID.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_MandateDialog_CustID.value"), null, validate, true));
-		}
+	private void doSetBasicDetailValidation(boolean validate) {
 
 		if (this.useExisting.isChecked()) {
 			this.mandateType.setConstraint(
@@ -1861,32 +1911,32 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 		}
 
-		if (!this.bankBranchID.isReadonly()) {
-			this.bankBranchID.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_MandateDialog_BankBranchID.value"), null, validate));
+		// Customer ID
+		if (!this.custID.isReadonly()) {
+			this.custID.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_CustID.value"), null, validate, true));
 		}
 
-		if (!this.accNumber.isReadonly()) {
-			this.accNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_AccNumber.value"),
-					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, validate, minAccNoLength, maxAccNoLength));
+		if (!this.finReference.isReadonly()) {
+			this.finReference
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_FinReference.value"),
+							null, ImplementationConstants.CLIENT_NFL ? false : validate));
 		}
 
-		if (!this.accHolderName.isReadonly()) {
-			this.accHolderName
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_AccHolderName.value"),
-							PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, validate));
+		if (!this.eMandateSource.isReadonly()) {
+			this.eMandateSource.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_MandateDialog_E-Mandate_Source.value"), null, validate));
 		}
 
-		if (!this.jointAccHolderName.isReadonly()) {
-			this.jointAccHolderName.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_MandateDialog_JointAccHolderName.value"),
-							PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, false));
+		if (!this.eMandateReferenceNo.isReadonly()) {
+			this.eMandateReferenceNo.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_MandateDialog_E-Mandate_Reference_No.value"), null, validate));
+
 		}
 
-		if (!this.accType.isDisabled() && validate) {
-			this.accType.setConstraint(
-					new StaticListValidator(accTypeList, Labels.getLabel("label_MandateDialog_AccType.value")));
-		}
+	}
+
+	private void doSetMandateDetValidation(boolean validate) {
 
 		Date mandbackDate = DateUtil.addDays(SysParamUtil.getAppDate(),
 				-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
@@ -1913,42 +1963,89 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					ccyFormatter, validate, false));
 		}
 
+		if (!this.reason.isReadonly() && (PennantConstants.List_Select.equals(this.mandateStatus.getValue()))) {
+
+			if (this.mandateStatus.getValue().equals(this.mandate.getStatus())) {
+				this.reason
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateStatusDialog_Reason.value"),
+								PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			}
+		}
+
+	}
+
+	private void doSetAccountDetValidation(boolean validate) {
+
+		if (!this.bankBranchID.isReadonly()) {
+			this.bankBranchID.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_BankBranchID.value"), null, validate));
+		}
+
 		if (!this.phoneNumber.isReadonly()) {
 			this.phoneNumber.setConstraint(
 					new PTMobileNumberValidator(Labels.getLabel("label_MandateDialog_PhoneNumber.value"), false));
 		}
 
-		if (!this.reason.isReadonly()) {
-			this.reason.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateStatusDialog_Reason.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, flag));
+		if (!this.accNumber.isReadonly()) {
+			this.accNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_AccNumber.value"),
+					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, validate, minAccNoLength, maxAccNoLength));
 		}
 
-		if (!this.finReference.isReadonly()) {
-			this.finReference
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_FinReference.value"),
-							null, ImplementationConstants.CLIENT_NFL ? false : validate));
+		if (!this.accHolderName.isReadonly()) {
+			this.accHolderName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_AccHolderName.value"),
+							PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, validate));
 		}
 
+		if (!this.jointAccHolderName.isReadonly()) {
+			this.jointAccHolderName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_JointAccHolderName.value"),
+							PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, false));
+		}
+
+		if (!this.accType.isDisabled() && validate) {
+			this.accType.setConstraint(
+					new StaticListValidator(accTypeList, Labels.getLabel("label_MandateDialog_AccType.value")));
+		}
+
+	}
+
+	private void dosetOtherDetValidaion(boolean validate) {
 		if (!this.partnerBank.isReadonly()) {
 			this.partnerBank.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MandateDialog_PartnerBank.value"), null, true, false));
 		}
+	}
 
-		if (!this.eMandateSource.isReadonly()) {
-			this.eMandateSource.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MandateDialog_E-Mandate_Source.value"), null, validate));
-		}
-
-		if (!this.eMandateReferenceNo.isReadonly()) {
-			this.eMandateReferenceNo.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MandateDialog_E-Mandate_Reference_No.value"), null, validate));
-
-		}
-
+	private void doSetDasValidation(boolean validate) {
 		if (this.dasRow.isVisible() && !this.employeeID.isReadonly()) {
 			this.employeeID.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MandateDialog_EmployeeID.value"), null, true, false));
 
+		}
+	}
+
+	private void doSetValidation(boolean validate) {
+		logger.debug(Literal.ENTERING);
+
+		if (this.basicDetailsGroupbox.isVisible()) {
+			doSetBasicDetailValidation(validate);
+		}
+
+		if (this.mandateDetailsGroupbox.isVisible()) {
+			doSetMandateDetValidation(validate);
+		}
+
+		if (this.accDetailsGroupbox.isVisible()) {
+			doSetAccountDetValidation(validate);
+		}
+
+		if (this.otherDetailsGroupbox.isVisible()) {
+			dosetOtherDetValidaion(validate);
+		}
+
+		if (this.dasGroupbox.isVisible()) {
+			doSetDasValidation(validate);
 		}
 
 	}
@@ -2010,11 +2107,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} else {
 			getMandateListCtrl().search();
 		}
-	}
-
-	public void onSelect$status(Event event) {
-		this.space_Reason.setSclass("mandatory");
-		flag = true;
 	}
 
 	public void onFulfill$bankBranchID(Event event) {
@@ -2396,6 +2488,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.parenttab.setVisible(false);
 		String val = StringUtils.trimToEmpty(mandateType);
 
+		InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
+		doEditFieldByInstrument(instrumentType);
+
 		if (!InstrumentType.isPDC(val)) {
 			for (ValueLabel valueLabel : mandateTypeList) {
 				if (val.equals(valueLabel.getValue())) {
@@ -2595,6 +2690,38 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.accNumber.setValue("");
 				this.accHolderName.setValue("");
 				this.btnFetchAccountDetails.setDisabled(true);
+			}
+		}
+	}
+
+	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {
+		this.listBoxMandateFinExposure.getItems().clear();
+		if (manFinanceExposureDetails != null) {
+			for (FinanceEnquiry finEnquiry : manFinanceExposureDetails) {
+				Listitem item = new Listitem();
+				Listcell lc = new Listcell(DateUtility.formatToLongDate(finEnquiry.getFinStartDate()));
+				lc.setParent(item);
+				lc = new Listcell(finEnquiry.getLovDescFinTypeName());
+				lc.setParent(item);
+				lc = new Listcell(finEnquiry.getFinReference());
+				lc.setParent(item);
+
+				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue().add(finEnquiry.getFeeChargeAmt());
+				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(),
+						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
+						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(finEnquiry.getFinStatus());
+				lc.setParent(item);
+				this.listBoxMandateFinExposure.appendChild(item);
+
 			}
 		}
 	}

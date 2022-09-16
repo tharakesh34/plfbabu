@@ -595,7 +595,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("mandate", list.get(0));
 				map.put("fromLoanEnquiry", true);
 				map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
-				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul";
+				path = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 			}
 		} else if ("ODENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OverdueEnquiry"));

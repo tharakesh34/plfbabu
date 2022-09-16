@@ -294,7 +294,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 			String page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 			if (enqiryModule) {
-				page = "/WEB-INF/pages/Enquiry/FinanceInquiry/MandateEnquiryDialog.zul";
+				page = "/WEB-INF/pages/Mandate/MandateDialog.zul";
 			}
 
 			Executions.createComponents(page, null, arg);
