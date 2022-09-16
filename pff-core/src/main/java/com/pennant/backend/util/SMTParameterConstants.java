@@ -184,6 +184,28 @@ public class SMTParameterConstants {
 	public static final String USR_ACCT_LOCK_DAYS = "USR_ACCT_LOCK_DAYS";
 
 	/**
+	 * Parameter code to specify the number of days to disable the user account, when the new user is not logging into
+	 * the application.
+	 */
+	public static final String USR_DISABLE_DAYS_NEW = "USR_DISABLE_DAYS_NEW";
+
+	/**
+	 * Parameter code to specify the number of days to disable the user account, when the existing user is not logging
+	 * into the application.
+	 */
+	public static final String USR_DISABLE_DAYS_EXISTING = "USR_DISABLE_DAYS_EXISTING";
+
+	/**
+	 * Parameter code to allow the job to run for locking the user
+	 */
+	public static final String ALLOW_USR_LOCKING_JOB = "ALLOW_USR_LOCKING_JOB";
+
+	/**
+	 * Parameter code to allow the job to run for disabling the user
+	 */
+	public static final String ALLOW_USR_DISABLE_JOB = "ALLOW_USR_DISABLE_JOB";
+
+	/**
 	 * Parameter code to specify the cron expression for Security user account locking job.
 	 */
 	public static final String USR_ACCT_LOCK_CRON_EXPRESSION = "USR_ACCT_LOCK_CRON_EXPRESSION";
@@ -402,4 +424,9 @@ public class SMTParameterConstants {
 	public static final String LOAN_START_DATE_FUTURE_DAYS = "LOAN_START_DATE_FUTURE_DAYS";
 	public static final String FEE_POSTING_DATE_BACK_DAYS = "FEE_POSTING_DATE_BACK_DAYS";
 	public static final String RATE_CHANGE_FROM_DATE_BACK_DAYS = "RATE_CHANGE_FROM_DATE_BACK_DAYS";
+	public static final String USR_PWD_MAX_LEN = "USR_PWD_MAX_LEN";
+	public static final String USR_PWD_MIN_LEN = "USR_PWD_MIN_LEN";
+	public static final String USR_PWD_SPECIAL_CHAR_COUNT = "USR_PWD_SPECIAL_CHAR_COUNT";
+	public static final String USR_EXPIRY_DAYS = "USR_EXPIRY_DAYS";
+	public static final String OTP_SENDTO_MAIL = "OTP_SENDTO_MAIL";
 }

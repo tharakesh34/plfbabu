@@ -1,7 +1,7 @@
 package com.pennapps.security.core.otp;
 
 public enum OTPModule {
-	LOGIN(1, "Login");
+	LOGIN(1, "Login"), RE(2, "RESETPASSWORD");
 
 	private final Integer key;
 	private final String value;

@@ -1208,7 +1208,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
 								NotificationConstants.MAIL_MODULE_CREDIT)
 						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
-								NotificationConstants.MAIL_MODULE_PROVIDER))) {
+								NotificationConstants.MAIL_MODULE_PROVIDER)
+						|| NotificationConstants.TEMPLATE_FOR_OTP.equals(this.templateModule.getSelectedItem().getValue().toString()))) {
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData,
 					this.templateEvent.getSelectedItem().getValue());
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1,

@@ -43,37 +43,69 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.security.UserType;
 
+@XmlType(propOrder = { "usrID", "usrLogin" })
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement(name = "securityUser")
+
 public class SecurityUser extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -8443234918260997954L;
 
+	@XmlElement
 	private long usrID = Long.MIN_VALUE;
+	@XmlElement
 	private String usrLogin;
+	@XmlElement
 	private String usrPwd;
+	@XmlElement
 	private String usrLName;
+	@XmlElement
 	private String usrMName;
+	@XmlElement
 	private String usrFName;
+	@XmlElement
 	private String usrMobile;
+	@XmlElement
 	private String usrEmail;
+	@XmlElement
 	private boolean usrEnabled = true;
+	@XmlElement
 	private Date usrCanSignonFrom;
+	@XmlElement
 	private Date usrCanSignonTo;
+	@XmlElement
 	private boolean usrCanOverrideLimits;
+	@XmlElement
 	private boolean usrAcExp;
+	@XmlElement
 	private boolean usrAcLocked;
+	@XmlElement
 	private String usrLanguage;
+	@XmlElement
 	private long usrDftAppId;
+	@XmlElement
 	private String usrBranchCode;
+	@XmlElement
 	private String usrDeptCode;
+	@XmlElement
 	private String usrToken;
+	@XmlElement
 	private boolean usrIsMultiBranch;
 	private int usrInvldLoginTries;
 	private LoggedInUser userDetails;
+	@XmlElement
 	private String userStaffID;
 	private String lovDescUsrDftAppCodeName;
 	private String lovDescUsrBranchCodeName;
@@ -81,6 +113,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private String lovDescUsrLanguage;
 	private String lovValue;
 	private SecurityUser befImage;
+	@XmlElement
 	private Date usrAcExpDt;
 	private Date pwdExpDt;
 	private String usrDftAppCode;
@@ -88,15 +121,20 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private long loginAppId = App.ID;
 	private Timestamp lastLoginOn;
 	private Timestamp lastFailLoginOn;
+	@XmlElement
 	private String usrDesg;
 	private String lovDescUsrDesg;
+	@XmlElement(name = "userType")
 	private String authType;
+	@XmlElement
 	private Long businessVertical;
 	private String businessVerticalCode;
 	private String businessVerticalDesc;
 	private String ldapDomainName;
 	private String userType = UserType.USER.name();
+	@XmlElement
 	private List<SecurityUserDivBranch> securityUserDivBranchList = new ArrayList<>();
+	@XmlElement
 	private List<SecurityUserOperations> securityUserOperationsList;
 	private List<ReportingManager> reportingManagersList;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
@@ -109,8 +147,20 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private Collection<SecurityRight> menuRights = new ArrayList<>();
 	private List<SecurityRole> roles = new ArrayList<>();
 	private boolean deleted;
-	private long createdBy;
+	@XmlElement
+	private String disableReason;
+	@XmlElement
+	private String employeeType;
 	private Timestamp createdOn;
+	private Long createdBy;
+	private Timestamp approvedOn;
+	private Long approvedBy;
+	@XmlElement
+	private WSReturnStatus returnStatus;
+	private String sourceId;
+	private String status;
+	@XmlElement
+	private String reason;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -124,6 +174,10 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		excludeFields.add("lovDescFirstName");
 		excludeFields.add("menuRights");
 		excludeFields.add("roles");
+		excludeFields.add("returnStatus");
+		excludeFields.add("sourceId");
+		excludeFields.add("status");
+		excludeFields.add("reason");
 		return excludeFields;
 	}
 
@@ -604,12 +658,20 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		this.deleted = deleted;
 	}
 
-	public long getCreatedBy() {
-		return createdBy;
+	public String getDisableReason() {
+		return disableReason;
 	}
 
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
+	public void setDisableReason(String disableReason) {
+		this.disableReason = disableReason;
+	}
+
+	public String getEmployeeType() {
+		return employeeType;
+	}
+
+	public void setEmployeeType(String employeeType) {
+		this.employeeType = employeeType;
 	}
 
 	public Timestamp getCreatedOn() {
@@ -620,4 +682,59 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		this.createdOn = createdOn;
 	}
 
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
+	}
+
+	public Long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(Long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
 }

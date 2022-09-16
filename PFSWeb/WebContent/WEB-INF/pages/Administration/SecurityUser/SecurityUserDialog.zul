@@ -190,6 +190,13 @@
 														<space spacing="2px" />
 														<checkbox id="usrEnabled" checked="true" />
 													</hbox>
+													<label id="label_SecurityUserDialog_DisableReason" value="${c:l('label_SecurityUserDialog_DisableReason.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="disableReason" width="140px" />
+													</hbox>
+												</row>												
+												<row visible="true">
 													<label id="label_SecurityUserDialog_UsrCanOverrideLimits" value="${c:l('label_SecurityUserDialog_UsrCanOverrideLimits.value')}" />
 													<hbox>
 														<space spacing="2px" />
@@ -268,8 +275,10 @@
 													<hbox>
 														<extendedcombobox id="businessvertical" />
 													</hbox>
-
-
+													<label id="label_SecurityUserDialog_EmployeeType" value="${c:l('label_SecurityUserDialog_EmployeeType.value')}" />
+													<hbox>
+														<combobox id="employeeType" width="140px" />
+													</hbox>
 												</row>
 											</rows>
 										</grid>

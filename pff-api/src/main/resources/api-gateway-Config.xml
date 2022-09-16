@@ -905,5 +905,32 @@
 	<!-- SOAP Container -->
 	<jaxws:endpoint id="finCovenantSoapService" implementor="#wsFinCovenantService"
 		address="/finCovenantSoap" publish="false" />
+	
+   <!-- Security User API gateway -->
+	<bean id="wsSecurityUserServices" class="com.pennant.api.user.service.impl.SecurityUserWebServiceImpl" />
 
+	<!-- rest container -->
+	<jaxrs:server id="securityUserRestService" address="/securityUserRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsSecurityUserServices" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<ref bean="exceptionMapper" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="securityUserSoapService" implementor="#securityUserService" address="/securityUserSoap"
+		publish="false" />
 </beans>

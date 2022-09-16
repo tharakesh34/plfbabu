@@ -346,4 +346,777 @@
 		</sql>
 	</changeSet>
 
-</databaseChangeLog>	
+	<changeSet id="ST#84.1" author="saikrishna.b">
+		<addColumn tableName="SecUsers">
+			<column name="DisableReason" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#84.2" author="saikrishna.b">
+		<addColumn tableName="SecUsers">
+			<column name="EmployeeType" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#84.3" author="saikrishna.b">
+		<addColumn tableName="SecUsers_temp">
+			<column name="DisableReason" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#84.4" author="saikrishna.b">
+		<addColumn tableName="SecUsers_temp">
+			<column name="EmployeeType" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#84.5" author="saikrishna.b">
+		<addColumn tableName="SecUsers_rtemp">
+			<column name="DisableReason" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#84.6" author="saikrishna.b">
+		<addColumn tableName="SecUsers_rtemp">
+			<column name="EmployeeType" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.1" author="saikrishna.b">
+		<addColumn tableName="SecUsers">
+			<column name="CreatedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.2" author="saikrishna.b">
+		<addColumn tableName="SecUsers">
+			<column name="CreatedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.3" author="saikrishna.b">
+		<addColumn tableName="SecUsers">
+			<column name="ApprovedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.4" author="saikrishna.b">
+		<addColumn tableName="SecUsers">
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.5" author="saikrishna.b">
+		<addColumn tableName="SecUsers_temp">
+			<column name="CreatedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.6" author="saikrishna.b">
+		<addColumn tableName="SecUsers_temp">
+			<column name="CreatedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#85.7" author="saikrishna.b">
+		<addColumn tableName="SecUsers_temp">
+			<column name="ApprovedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.8" author="saikrishna.b">
+		<addColumn tableName="SecUsers_temp">
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.9" author="saikrishna.b">
+		<addColumn tableName="SecUsers_rtemp">
+			<column name="CreatedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.10" author="saikrishna.b">
+		<addColumn tableName="SecUsers_rtemp">
+			<column name="CreatedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.11" author="saikrishna.b">
+		<addColumn tableName="SecUsers_rtemp">
+			<column name="ApprovedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.12" author="saikrishna.b">
+		<addColumn tableName="SecUsers_rtemp">
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#85.13" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS SET CREATEDBY = LASTMNTBY WHERE CREATEDBY IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.14" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS SET CREATEDON = LASTMNTON WHERE CREATEDON IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.15" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS SET APPROVEDBY = LASTMNTBY WHERE APPROVEDBY IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.16" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS SET APPROVEDON = LASTMNTON WHERE APPROVEDON IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.17" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS_TEMP SET CREATEDBY = LASTMNTBY WHERE CREATEDBY IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.18" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS_TEMP SET CREATEDON = LASTMNTON WHERE CREATEDON IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.19" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS_TEMP SET APPROVEDBY = LASTMNTBY WHERE APPROVEDBY IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.20" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS_TEMP SET APPROVEDON = LASTMNTON WHERE APPROVEDON IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.21" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS_RTEMP SET CREATEDBY = LASTMNTBY WHERE CREATEDBY IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.22" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS_RTEMP SET CREATEDON = LASTMNTON WHERE CREATEDON IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.23" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS_RTEMP SET APPROVEDBY = LASTMNTBY WHERE APPROVEDBY IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.24" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				UPDATE SECUSERS_RTEMP SET APPROVEDON = LASTMNTON WHERE APPROVEDON IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.25" author="saikrishna.b">
+		<addNotNullConstraint tableName="SecUsers" columnName="CreatedBy"
+			columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="ST#85.26" author="saikrishna.b">
+		<addNotNullConstraint tableName="SecUsers" columnName="CreatedOn"
+			columnDataType="datetime" />
+	</changeSet>
+	
+	<changeSet id="ST#85.27" author="saikrishna.b">
+		<addNotNullConstraint tableName="SecUsers_temp" columnName="CreatedBy"
+			columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="ST#85.28" author="saikrishna.b">
+		<addNotNullConstraint tableName="SecUsers_temp" columnName="CreatedOn"
+			columnDataType="datetime" />
+	</changeSet>
+	
+	<changeSet id="ST#85.29" author="saikrishna.b">
+		<addNotNullConstraint tableName="SecUsers_rtemp" columnName="CreatedBy"
+			columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="ST#85.30" author="saikrishna.b">
+		<addNotNullConstraint tableName="SecUsers_rtemp" columnName="CreatedOn"
+			columnDataType="datetime" />
+	</changeSet>
+	
+	<changeSet id="ST#84.10_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'secusers_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#84.10" author="saikrishna.b">
+		<createView viewName="SECUSERS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.USRID
+					, T1.USRLOGIN
+					, T1.USRPWD
+					, T1.USERSTAFFID
+					, T1.USRFNAME
+					, T1.USRMNAME
+					, T1.USRLNAME
+					, T1.USRMOBILE
+					, T1.USREMAIL
+					, T1.USRENABLED
+					, T1.USRCANSIGNONFROM
+					, T1.USRCANSIGNONTO
+					, T1.USRCANOVERRIDELIMITS
+					, T1.USRACEXP
+					, T1.USRACEXPDT
+					, T1.PWDEXPDT
+					, T1.USRACLOCKED
+					, T1.USRLANGUAGE
+					, T5.LNGDESC LOVDESCUSRLANGUAGE
+					, T1.USRDFTAPPID
+					, T2.APPCODE LOVDESCUSRDFTAPPCODE
+					, T2.APPDESCRIPTION LOVDESCUSRDFTAPPCODENAME
+					, T1.USRBRANCHCODE
+					, T4.BRANCHDESC LOVDESCUSRBRANCHCODENAME
+					, T1.USRDEPTCODE
+					, T3.DEPTDESC LOVDESCUSRDEPTCODENAME
+					, T1.USRTOKEN
+					, T1.USRISMULTIBRANCH
+					, T1.USRINVLDLOGINTRIES
+					, T1.USRDESG
+					, T6.DESGDESC LOVDESCUSRDESG
+					, T1.BUSINESSVERTICAL
+				    , T7.CODE BUSINESSVERTICALCODE
+				    , T7.DESCRIPTION BUSINESSVERTICALDESC
+					, T1.VERSION
+					, T1.LASTMNTBY
+					, T1.LASTMNTON
+					, T1.RECORDSTATUS
+					, T1.ROLECODE
+					, T1.NEXTROLECODE
+					, T1.TASKID
+					, T1.NEXTTASKID
+					, T1.RECORDTYPE
+					, T1.WORKFLOWID
+					, T1.USRDFTAPPCODE
+					, T1.AUTHTYPE
+					, T1.USERTYPE
+					, T1.ACCESSTOALLBRANCHES
+					, T1.LDAPDOMAINNAME
+					, T1.DELETED
+					, T1.DISABLEREASON
+					, T1.EMPLOYEETYPE
+					, T1.CREATEDBY
+					, T1.CREATEDON
+					, T1.APPROVEDBY
+					, T1.APPROVEDON
+			    FROM SECUSERS_TEMP T1
+			    LEFT JOIN PTAPPLICATIONDETAILS T2 ON T1.USRDFTAPPID = T2.APPID
+			    LEFT JOIN BMTDEPARTMENTS T3 ON T1.USRDEPTCODE = T3.DEPTCODE
+			    LEFT JOIN RMTBRANCHES T4 ON T1.USRBRANCHCODE = T4.BRANCHCODE
+			    LEFT JOIN BMTLANGUAGE T5 ON T1.USRLANGUAGE = T5.LNGCODE
+			    LEFT JOIN BMTDESIGNATIONS T6 ON T1.USRDESG = T6.DESGCODE
+			    LEFT JOIN BUSINESS_VERTICAL T7 ON T7.ID = T1.BUSINESSVERTICAL
+			 	UNION ALL
+			 	SELECT T1.USRID
+					, T1.USRLOGIN
+					, T1.USRPWD
+					, T1.USERSTAFFID
+					, T1.USRFNAME
+					, T1.USRMNAME
+					, T1.USRLNAME
+					, T1.USRMOBILE
+					, T1.USREMAIL
+					, T1.USRENABLED
+					, T1.USRCANSIGNONFROM
+					, T1.USRCANSIGNONTO
+					, T1.USRCANOVERRIDELIMITS
+					, T1.USRACEXP
+					, T1.USRACEXPDT
+					, T1.PWDEXPDT
+					, T1.USRACLOCKED
+					, T1.USRLANGUAGE
+					, T5.LNGDESC LOVDESCUSRLANGUAGE
+					, T1.USRDFTAPPID
+					, T2.APPCODE LOVDESCUSRDFTAPPCODE
+					, T2.APPDESCRIPTION LOVDESCUSRDFTAPPCODENAME
+					, T1.USRBRANCHCODE
+					, T4.BRANCHDESC LOVDESCUSRBRANCHCODENAME
+					, T1.USRDEPTCODE
+					, T3.DEPTDESC LOVDESCUSRDEPTCODENAME
+					, T1.USRTOKEN
+					, T1.USRISMULTIBRANCH
+					, T1.USRINVLDLOGINTRIES
+					, T1.USRDESG
+					, T6.DESGDESC LOVDESCUSRDESG
+					, T1.BUSINESSVERTICAL
+					, T7.CODE BUSINESSVERTICALCODE
+					, T7.DESCRIPTION BUSINESSVERTICALDESC
+					, T1.VERSION
+					, T1.LASTMNTBY
+					, T1.LASTMNTON
+					, T1.RECORDSTATUS
+					, T1.ROLECODE
+					, T1.NEXTROLECODE
+					, T1.TASKID
+					, T1.NEXTTASKID
+					, T1.RECORDTYPE
+					, T1.WORKFLOWID
+					, T1.USRDFTAPPCODE
+					, T1.AUTHTYPE
+					, T1.USERTYPE
+					, T1.ACCESSTOALLBRANCHES
+					, T1.LDAPDOMAINNAME
+					, T1.DELETED
+					, T1.DISABLEREASON
+					, T1.EMPLOYEETYPE
+					, T1.CREATEDBY
+					, T1.CREATEDON
+					, T1.APPROVEDBY
+					, T1.APPROVEDON
+			    FROM SECUSERS T1
+			    LEFT JOIN PTAPPLICATIONDETAILS T2 ON T1.USRDFTAPPID = T2.APPID
+			    LEFT JOIN BMTDEPARTMENTS T3 ON T1.USRDEPTCODE = T3.DEPTCODE
+			    LEFT JOIN RMTBRANCHES T4 ON T1.USRBRANCHCODE = T4.BRANCHCODE
+			    LEFT JOIN BMTLANGUAGE T5 ON T1.USRLANGUAGE = T5.LNGCODE
+			    LEFT JOIN BMTDESIGNATIONS T6 ON T1.USRDESG = T6.DESGCODE
+			    LEFT JOIN BUSINESS_VERTICAL T7 ON T7.ID = T1.BUSINESSVERTICAL
+			    WHERE NOT EXISTS (SELECT 1  FROM SECUSERS_TEMP WHERE SECUSERS_TEMP.USRID = T1.USRID)
+			]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#84.10_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'secusers_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="ST#84.11_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'secusers_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#84.11" author="saikrishna.b">
+		<createView viewName="SECUSERS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.USRID
+					, T1.USRLOGIN
+					, T1.USRPWD
+					, T1.USERSTAFFID
+					, T1.USRFNAME
+					, T1.USRMNAME
+					, T1.USRLNAME
+					, T1.USRMOBILE
+					, T1.USREMAIL
+					, T1.USRENABLED
+					, T1.USRCANSIGNONFROM
+					, T1.USRCANSIGNONTO
+					, T1.USRCANOVERRIDELIMITS
+					, T1.USRACEXP
+					, T1.USRACEXPDT
+					, T1.PWDEXPDT
+					, T1.USRACLOCKED
+					, T1.USRLANGUAGE
+					, T5.LNGDESC LOVDESCUSRLANGUAGE
+					, T1.USRDFTAPPID
+					, T2.APPCODE LOVDESCUSRDFTAPPCODE
+					, T2.APPDESCRIPTION LOVDESCUSRDFTAPPCODENAME
+					, T1.USRBRANCHCODE
+					, T4.BRANCHDESC LOVDESCUSRBRANCHCODENAME
+					, T1.USRDEPTCODE
+					, T3.DEPTDESC LOVDESCUSRDEPTCODENAME
+					, T1.USRTOKEN
+					, T1.USRISMULTIBRANCH
+					, T1.USRINVLDLOGINTRIES
+					, T1.USRDESG
+					, T6.DESGDESC LOVDESCUSRDESG
+					, T1.BUSINESSVERTICAL
+					, T7.CODE BUSINESSVERTICALCODE
+					, T7.DESCRIPTION BUSINESSVERTICALDESC
+					, T1.VERSION
+					, T1.LASTMNTBY
+					, T1.LASTMNTON
+					, T1.RECORDSTATUS
+					, T1.ROLECODE
+					, T1.NEXTROLECODE
+					, T1.TASKID
+					, T1.NEXTTASKID
+					, T1.RECORDTYPE
+					, T1.WORKFLOWID
+					, T1.USRDFTAPPCODE
+					, T1.AUTHTYPE
+					, T1.USERTYPE
+					, T1.ACCESSTOALLBRANCHES
+					, T1.LDAPDOMAINNAME
+					, T1.DELETED
+					, T1.DISABLEREASON
+					, T1.EMPLOYEETYPE
+					, T1.CREATEDBY
+					, T1.CREATEDON
+					, T1.APPROVEDBY
+					, T1.APPROVEDON
+			    FROM SECUSERS T1
+			    LEFT JOIN PTAPPLICATIONDETAILS T2 ON T1.USRDFTAPPID = T2.APPID
+			    LEFT JOIN BMTDEPARTMENTS T3 ON T1.USRDEPTCODE = T3.DEPTCODE
+			    LEFT JOIN RMTBRANCHES T4 ON T1.USRBRANCHCODE = T4.BRANCHCODE
+			    LEFT JOIN BMTLANGUAGE T5 ON T1.USRLANGUAGE = T5.LNGCODE
+			    LEFT JOIN BMTDESIGNATIONS T6 ON T1.USRDESG = T6.DESGCODE
+			    LEFT JOIN BUSINESS_VERTICAL T7 ON T7.ID = T1.BUSINESSVERTICAL
+			]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#84.11_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'secusers_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#84.12_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'secusers_rview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#84.12" author="saikrishna.b">
+		<createView viewName="SECUSERS_RVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.USRID
+				    , T1.USRLOGIN
+				    , T1.USRPWD
+				    , T1.USERSTAFFID
+				    , T1.USRFNAME
+				    , T1.USRMNAME
+				    , T1.USRLNAME
+				    , T1.USRMOBILE
+				    , T1.USREMAIL
+				    , T1.USRENABLED
+				    , T1.USRCANSIGNONFROM
+				    , T1.USRCANSIGNONTO
+				    , T1.USRCANOVERRIDELIMITS
+				    , T1.USRACEXP
+				    , T1.USRACEXPDT
+				    , T1.PWDEXPDT
+				    , T1.USRACLOCKED
+				    , T1.USRLANGUAGE
+				    , T5.LNGDESC LOVDESCUSRLANGUAGE
+				    , T1.USRDFTAPPID
+				    , T2.APPCODE LOVDESCUSRDFTAPPCODE
+				    , T2.APPDESCRIPTION LOVDESCUSRDFTAPPCODENAME
+				    , T1.USRBRANCHCODE
+				    , T4.BRANCHDESC LOVDESCUSRBRANCHCODENAME
+				    , T1.USRDEPTCODE
+				    , T3.DEPTDESC LOVDESCUSRDEPTCODENAME
+				    , T1.USRTOKEN
+				    , T1.USRISMULTIBRANCH
+				    , T1.USRINVLDLOGINTRIES
+				    , T1.USRDESG
+				    , T6.DESGDESC LOVDESCUSRDESG
+				    , T1.BUSINESSVERTICAL
+				    , T7.CODE BUSINESSVERTICALCODE
+				    , T7.DESCRIPTION BUSINESSVERTICALDESC
+				    , T1.VERSION
+				    , T1.LASTMNTBY
+				    , T1.LASTMNTON
+				    , T1.RECORDSTATUS
+				    , T1.ROLECODE
+				    , T1.NEXTROLECODE
+				    , T1.TASKID
+				    , T1.NEXTTASKID
+				    , T1.RECORDTYPE
+				    , T1.WORKFLOWID
+				    , T1.USRDFTAPPCODE
+				    , T1.AUTHTYPE
+				    , T1.USERTYPE
+				    , T1.LDAPDOMAINNAME
+				    , T1.DELETED
+				    , T1.DISABLEREASON
+					, T1.EMPLOYEETYPE
+					, T1.CREATEDBY
+					, T1.CREATEDON
+					, T1.APPROVEDBY
+					, T1.APPROVEDON
+		        FROM SECUSERS_RTEMP T1
+		        JOIN PTAPPLICATIONDETAILS T2 ON T1.USRDFTAPPID = T2.APPID
+		        JOIN BMTDEPARTMENTS T3 ON T1.USRDEPTCODE = T3.DEPTCODE
+		        JOIN RMTBRANCHES T4 ON T1.USRBRANCHCODE = T4.BRANCHCODE
+		        JOIN BMTLANGUAGE T5 ON T1.USRLANGUAGE = T5.LNGCODE
+		        JOIN BMTDESIGNATIONS T6 ON T1.USRDESG = T6.DESGCODE
+		        LEFT JOIN BUSINESS_VERTICAL T7 ON T7.ID = T1.BUSINESSVERTICAL
+				UNION ALL
+				SELECT T1.USRID
+				    , T1.USRLOGIN
+				    , T1.USRPWD
+				    , T1.USERSTAFFID
+				    , T1.USRFNAME
+				    , T1.USRMNAME
+				    , T1.USRLNAME
+				    , T1.USRMOBILE
+				    , T1.USREMAIL
+				    , T1.USRENABLED
+				    , T1.USRCANSIGNONFROM
+				    , T1.USRCANSIGNONTO
+				    , T1.USRCANOVERRIDELIMITS
+				    , T1.USRACEXP
+				    , T1.USRACEXPDT
+				    , T1.PWDEXPDT
+				    , T1.USRACLOCKED
+				    , T1.USRLANGUAGE
+				    , T5.LNGDESC LOVDESCUSRLANGUAGE
+				    , T1.USRDFTAPPID
+				    , T2.APPCODE LOVDESCUSRDFTAPPCODE
+				    , T2.APPDESCRIPTION LOVDESCUSRDFTAPPCODENAME
+				    , T1.USRBRANCHCODE
+				    , T4.BRANCHDESC LOVDESCUSRBRANCHCODENAME
+				    , T1.USRDEPTCODE
+				    , T3.DEPTDESC LOVDESCUSRDEPTCODENAME
+				    , T1.USRTOKEN
+				    , T1.USRISMULTIBRANCH
+				    , T1.USRINVLDLOGINTRIES
+				    , T1.USRDESG
+				    , T6.DESGDESC LOVDESCUSRDESG
+				    , T1.BUSINESSVERTICAL
+				    , T7.CODE BUSINESSVERTICALCODE
+				    , T7.DESCRIPTION BUSINESSVERTICALDESC
+				    , T1.VERSION
+				    , T1.LASTMNTBY
+				    , T1.LASTMNTON
+				    , T1.RECORDSTATUS
+				    , T1.ROLECODE
+				    , T1.NEXTROLECODE
+				    , T1.TASKID
+				    , T1.NEXTTASKID
+				    , T1.RECORDTYPE
+				    , T1.WORKFLOWID
+				    , T1.USRDFTAPPCODE
+				    , T1.AUTHTYPE
+				    , T1.USERTYPE
+				    , T1.LDAPDOMAINNAME
+				    , T1.DELETED
+				    , T1.DISABLEREASON
+					, T1.EMPLOYEETYPE
+					, T1.CREATEDBY
+					, T1.CREATEDON
+					, T1.APPROVEDBY
+					, T1.APPROVEDON
+			   	FROM SECUSERS T1
+			    JOIN PTAPPLICATIONDETAILS T2 ON T1.USRDFTAPPID = T2.APPID
+			    JOIN BMTDEPARTMENTS T3 ON T1.USRDEPTCODE = T3.DEPTCODE
+			    JOIN RMTBRANCHES T4 ON T1.USRBRANCHCODE = T4.BRANCHCODE
+			    JOIN BMTLANGUAGE T5 ON T1.USRLANGUAGE = T5.LNGCODE
+		        JOIN BMTDESIGNATIONS T6 ON T1.USRDESG = T6.DESGCODE
+		        LEFT JOIN BUSINESS_VERTICAL T7 ON T7.ID = T1.BUSINESSVERTICAL
+			    WHERE NOT EXISTS (SELECT 1 FROM SECUSERS_RTEMP  WHERE SECUSERS_RTEMP.USRID = T1.USRID)
+			 ]]>	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#84.12_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'secusers_rview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#84.13" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'SecurityUserDialog_usrDisableReason');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'SecurityUserDialog_usrEmployeeType');
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'SecurityUserDialog_usrDisableReason';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'SecurityUserDialog_usrEmployeeType';
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'SecurityUserDialog_usrDisableReason', 'SecurityUserDialog', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'SecurityUserDialog_usrEmployeeType', 'SecurityUserDialog', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SECURITYUSER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'SecurityUserDialog_usrDisableReason'), 1, 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SECURITYUSER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'SecurityUserDialog_usrEmployeeType'), 1, 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#84.14" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('SU_DISABLE_REASON', 'Reason for disabling Security User', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#84.15" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('SU_EMP_TYPE', 'List of employee Types in security user', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.31" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+		    	DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'USR_DISABLE_DAYS_NEW';
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'USR_DISABLE_DAYS_EXISTING';
+
+            	INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC,SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('USR_DISABLE_DAYS_NEW', 'Number of days to disable the user account when the new user is created N number of days ago.', 'String', '1', '30', 3, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC,SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('USR_DISABLE_DAYS_EXISTING', 'Numbre of days to disable the user account when the user is not login from the N number of days.', 'String', '1', '90', 3, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#85.32" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'ALLOW_USR_LOCKING_JOB';
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'ALLOW_USR_DISABLE_JOB';
+
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) VALUES ('ALLOW_USR_LOCKING_JOB','Allowing user locking job ','String',1,'N',3,0,null,null,'Allowing user locking job',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+ 
+ 				INSERT INTO SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) VALUES ('ALLOW_USR_DISABLE_JOB','Allowing user disabling job ','String',1,'N',3,0,null,null,'Allowing user disabling job',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#87.1" author="saikrishna.b">
+		<sql>
+		<![CDATA[
+			DELETE FROM ERRORDETAILS WHERE CODE = '93303';
+			INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('93303', 'EN', 'E', 'No records found with User ID {0}', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#87.2" author="saikrishna.b">
+		<sql>
+		<![CDATA[
+			DELETE FROM ERRORDETAILS WHERE CODE = '93304';
+			INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('93304', 'EN', 'E', 'Invalid {0}', NULL, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#87.3" author="saikrishna.b">
+		<sql>
+		<![CDATA[
+			DELETE FROM ERRORDETAILS WHERE CODE = '93305';
+			INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('93305', 'EN', 'E', 'Operation with Code {0} is not assigned for User with User Login {1}', NULL, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#87.4" author="saikrishna.b">
+		<sql>
+		<![CDATA[
+			DELETE FROM ERRORDETAILS WHERE CODE = '93306';
+			INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('93306','EN','E','Operation with Code {0} is already assigned for User with User Login {1}', NULL, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#87.5" author="saikrishna.b">
+		<sql>
+		<![CDATA[
+			DELETE FROM ERRORDETAILS WHERE CODE = '93307';
+			INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('93307','EN','E','User ID {0} is not matched for the User Login {1}', NULL, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#87.6" author="saikrishna.b">
+		<sql>
+			<![CDATA[ 
+				DELETE FROM ERRORDETAILS WHERE CODE = '90007';
+				DELETE FROM ERRORDETAILS WHERE CODE = '90008';
+				DELETE FROM ERRORDETAILS WHERE CODE = '90009';
+			
+				INSERT INTO ErrorDetails(CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID,NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION)VALUES(90007, 'EN', 'W', 'No records found with User Login {0}.', 'Cannot proceed further', 'Approved', null, null, null, null, null, 0, CURRENT_TIMESTAMP, 1000, 0);
+				INSERT INTO ErrorDetails(CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID,NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION)VALUES(90008, 'EN', 'W', 'You are not authorized to change the data, Once it is expired.', 'Cannot proceed further', 'Approved', null, null, null, null, null, 0, CURRENT_TIMESTAMP, 1000, 0);
+				INSERT INTO ErrorDetails(CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID,NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION)VALUES(90009, 'EN', 'W', 'It is under Maintainance: {0}. You are not allowed to maintain this record.', 'Cannot proceed further', 'Approved', null, null, null, null, null, 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#87.7" author="saikrishna.b">
+		<sql>
+		<![CDATA[
+			DELETE FROM ERRORDETAILS WHERE CODE = '90010';
+			INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('90010','EN','E','{0} is not configured', NULL, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#88.1" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				DELETE FROM TEMPLATEFIELDS WHERE MODULE = 'OTP' AND FIELD = 'otp';
+				INSERT INTO TEMPLATEFIELDS(MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('OTP', 'otp', 'OTP', 'A', 'OTP');
+
+				DELETE FROM TEMPLATEFIELDS WHERE MODULE = 'OTP' AND FIELD = 'user_name';
+				INSERT INTO TEMPLATEFIELDS(MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('OTP', 'user_name', 'User Name', 'A', 'OTP');
+
+                DELETE FROM TEMPLATEFIELDS WHERE MODULE = 'OTP' AND FIELD = 'otp_validity';
+                INSERT INTO TEMPLATEFIELDS(MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('OTP', 'otp_validity', 'OTP Validity', 'A', 'OTP');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#88.2" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select MAX(Seqno)+1 from SeqMailTemplate), 'SU', 'OTP', 'RESPWD_OTP', 'Reset Password', 1, 'Dear User Your One Time Password(OTP)  to log in to Your System.', 1, 'Dear User Your OTP is.', 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP')
+				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select MAX(Seqno)+1 from SeqMailTemplate), 'SU', 'OTP', 'TWO_FACTOR_OTP', 'Two Factor Authentication', 1, 'Dear User Your One Time Password(OTP)  to log in to Your System.', 1, 'Dear User Your OTP is.', 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP')
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>

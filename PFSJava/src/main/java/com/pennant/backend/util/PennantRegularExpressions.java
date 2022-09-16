@@ -48,6 +48,7 @@ public class PennantRegularExpressions {
 	// -------------------------------------------------//
 
 	public static final String USER_LOGIN_REGIX = "[a-zA-Z0-9]{5,}";
+	public static final String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=[^\\s]+$)(?=.*[!@#$%^&*_-])";
 
 	// -------------------------------------------------//
 	// ********** Modules -- Mandatory Fields **********//

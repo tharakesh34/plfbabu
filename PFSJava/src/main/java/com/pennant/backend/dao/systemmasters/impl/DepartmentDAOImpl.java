@@ -246,4 +246,14 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+
+	@Override
+	public boolean isDeptValid(String deptCode) {
+		String sql = "Select coalesce(count(DeptCode), 0) From BMTDepartments Where DeptCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, deptCode) > 0;
+	}
+
 }

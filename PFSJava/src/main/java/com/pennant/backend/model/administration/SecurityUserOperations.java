@@ -24,19 +24,34 @@
  */
 package com.pennant.backend.model.administration;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement(name = "securityUserOperations")
 
 public class SecurityUserOperations extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 3894711431224067299L;
 	private long usrOprID = Long.MIN_VALUE;
+	@XmlElement
 	private long usrID;
 	private String lovDescFirstName;
 	private String lovDescMiddleName;
 	private String lovDescLastName;
 
+	@XmlElement
 	private long oprID;
+	@XmlElement
 	private String lovDescOprCd;// operation code
+	@XmlElement
 	private String lovDescOprDesc;
 
 	private LoggedInUser userDetails;
@@ -45,6 +60,15 @@ public class SecurityUserOperations extends AbstractWorkflowEntity {
 	private String lovDescUsrFName;
 	private String lovDescUsrMName;
 	private String lovDescUsrLName;
+
+	@XmlElement
+	private String sourceId;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("sourceId");
+		return excludeFields;
+	}
 
 	public SecurityUserOperations() {
 		super();
@@ -167,6 +191,14 @@ public class SecurityUserOperations extends AbstractWorkflowEntity {
 
 	public void setLovDescOprDesc(String lovDescOprDesc) {
 		this.lovDescOprDesc = lovDescOprDesc;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
 	}
 
 }

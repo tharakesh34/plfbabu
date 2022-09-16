@@ -2,6 +2,7 @@ package com.pennapps.security.core.otp;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,14 +10,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import com.pennant.backend.dao.mail.MailTemplateDAO;
+import com.pennant.backend.model.mail.MailTemplate;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.notification.Notification;
 
 import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -30,26 +34,20 @@ public class OTPAuthentication {
 
 	private OTPService otpService;
 	private OTPDataAccess otpDataAccess;
+	private MailTemplateDAO mailTemplateDAO;
+	private Configuration freemarkerMailConfiguration;
 
 	private static Template smsTemplate;
 	private static Template emailTemplate;
 
 	public String generateOTP() {
 		StringBuilder builder = new StringBuilder();
-		String otp = null;
-		int count = length;
-		try {
-			while (count-- != 0) {
-				int character = (int) (Math.random() * fromat.length());
-				builder.append(fromat.charAt(character));
-			}
-			otp = builder.toString();
 
-		} finally {
-			builder = null;
+		while (length-- != 0) {
+			builder.append(fromat.charAt((int) (Math.random() * fromat.length())));
 		}
 
-		return otp;
+		return builder.toString();
 	}
 
 	public void saveOTP(OTPMessage message) {
@@ -67,31 +65,21 @@ public class OTPAuthentication {
 	public void sendOTP(OTPMessage message) {
 		String mobileNo = message.getMobileNo();
 		String emailID = message.getEmailID();
-		String smsMessage = null;
-		String emailMessage = null;
 
-		if ("Y".equalsIgnoreCase(App.getProperty("two.factor.authentication.sms")) && mobileNo != null) {
-			smsMessage = getSMSMessage(message.getOtp(), "SMS");
+		prepareOTPMessage(message);
+
+		String smsMessage = message.getSmsMessage();
+		String emailMessage = message.getEmailMessage();
+
+		if (message.isSendSMS() && mobileNo != null && smsMessage != null) {
+			Thread smsThread = new Thread(new SMSThread(mobileNo, smsMessage));
+			smsThread.start();
 		}
 
-		if ("Y".equalsIgnoreCase(App.getProperty("two.factor.authentication.email")) && emailID != null) {
-			emailMessage = getSMSMessage(message.getOtp(), "EMAIL");
+		if (message.isSendEmail() && emailID != null && emailMessage != null) {
+			Thread emailThread = new Thread(new EmailThread(emailID, emailMessage));
+			emailThread.start();
 		}
-
-		message.setSmsMessage(smsMessage);
-		message.setEmailMessage(emailMessage);
-
-		Notification notification = new Notification();
-		notification.setMobileNumber(mobileNo);
-		notification.setMessage(smsMessage);
-
-		Thread smsThread = new Thread(new SMSThread(mobileNo, smsMessage));
-		Thread emailThread = new Thread(new EmailThread(emailID, smsMessage));
-
-		smsThread.start();
-
-		emailThread.start();
-
 	}
 
 	public OTPStatus verifyOTP(OTPModule module, String otp, Date receivedOn, String sessionID) {
@@ -113,6 +101,23 @@ public class OTPAuthentication {
 		}
 
 		return verifyOTP(receivedOn, message);
+	}
+
+	public String getSMSMessage(String otp, String otpType) {
+		Map<String, String> dataMap = new HashMap<>();
+
+		dataMap.put("OTP", otp);
+		dataMap.put("OTP_VALIDITY", String.valueOf(validity));
+
+		Template template = getTemplate(otpType);
+
+		try {
+			return FreeMarkerTemplateUtils.processTemplateIntoString(template, dataMap);
+		} catch (IOException | TemplateException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return null;
 	}
 
 	private OTPStatus verifyOTP(Date receivedOn, OTPMessage message) {
@@ -141,24 +146,6 @@ public class OTPAuthentication {
 		} else {
 			return OTPStatus.INVALID;
 		}
-	}
-
-	public String getSMSMessage(String otp, String otpType) {
-		Map<String, String> dataMap = new HashMap<>();
-
-		dataMap.put("OTP", otp);
-		dataMap.put("OTP_VALIDITY", String.valueOf(validity));
-
-		Template template = getTemplate(otpType);
-
-		try {
-			String otpMessage = FreeMarkerTemplateUtils.processTemplateIntoString(template, dataMap);
-			return otpMessage;
-		} catch (IOException | TemplateException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		return null;
 	}
 
 	private Template getTemplate(String otpType) {
@@ -202,6 +189,51 @@ public class OTPAuthentication {
 		}
 
 		return template;
+	}
+
+	private void prepareOTPMessage(OTPMessage otpMessage) {
+		MailTemplate template = mailTemplateDAO.getTemplateByCode(otpMessage.getTemplateCode());
+
+		if (template == null || !template.isActive()) {
+			return;
+		}
+
+		Map<String, Object> dataMap = new HashMap<>();
+		dataMap.put("otp", otpMessage.getOtp());
+		dataMap.put("user_name", otpMessage.getUserName());
+		dataMap.put("otp_validity", String.valueOf(validity));
+		dataMap.put("vo", dataMap);
+
+		try {
+			if (template.isEmailTemplate()) {
+				String content = new String(template.getEmailContent(), StandardCharsets.UTF_16);
+				otpMessage.setEmailMessage(parseMessage(content, dataMap));
+			}
+
+			if (template.isSmsTemplate()) {
+				otpMessage.setSmsMessage(parseMessage(template.getSmsContent(), dataMap));
+			}
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+	}
+
+	private String parseMessage(String content, Map<String, Object> dataMap) {
+		try {
+			StringTemplateLoader loader = new StringTemplateLoader();
+
+			loader.putTemplate("OTPTemplate", content);
+
+			freemarkerMailConfiguration.setTemplateLoader(loader);
+
+			Template otpTemplate = freemarkerMailConfiguration.getTemplate("OTPTemplate");
+
+			return FreeMarkerTemplateUtils.processTemplateIntoString(otpTemplate, dataMap);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return null;
 	}
 
 	public void setFromat(String fromat) {
@@ -268,4 +300,13 @@ public class OTPAuthentication {
 		}
 	}
 
+	@Autowired
+	public void setMailTemplateDAO(MailTemplateDAO mailTemplateDAO) {
+		this.mailTemplateDAO = mailTemplateDAO;
+	}
+
+	@Autowired
+	public void setFreemarkerMailConfiguration(Configuration freemarkerMailConfiguration) {
+		this.freemarkerMailConfiguration = freemarkerMailConfiguration;
+	}
 }

@@ -2018,7 +2018,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("LovFieldCode",
 				new ModuleMapping("LovFieldCode", LovFieldCode.class,
 						new String[] { "BMTLovFieldCode", "BMTLovFieldCode_AView" }, masterWF,
-						new String[] { "FieldCode", "FieldCodeDesc" }, null, 300));
+						new String[] { "FieldCode", "FieldCodeDesc" }, null, 600));
 
 		ModuleUtil.register("RepaymentMethod",
 				new ModuleMapping("RepaymentMethod", RepaymentMethod.class,

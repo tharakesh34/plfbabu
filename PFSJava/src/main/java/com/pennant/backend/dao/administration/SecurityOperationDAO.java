@@ -29,8 +29,6 @@ import java.util.List;
 import com.pennant.backend.model.administration.SecurityOperation;
 
 public interface SecurityOperationDAO {
-	SecurityOperation getSecurityOperation();
-
 	SecurityOperation getSecurityOperationById(long id, String type);
 
 	void update(SecurityOperation securityOperation, String type);
@@ -42,4 +40,8 @@ public interface SecurityOperationDAO {
 	SecurityOperation getSecurityOperationByCode(final String oprCode, String type);
 
 	List<SecurityOperation> getApprovedSecurityOperation();
+
+	boolean isOperationExistByOprCode(String lovDescOprCd);
+
+	long getSecurityOperationByCode(String lovDescOprCd);
 }

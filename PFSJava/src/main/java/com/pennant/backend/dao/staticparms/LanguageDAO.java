@@ -40,4 +40,6 @@ public interface LanguageDAO {
 	void delete(Language language, String type);
 
 	String save(Language language, String type);
+
+	boolean isLanguageValid(String languageCode);
 }

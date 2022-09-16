@@ -25,23 +25,17 @@
  */
 package com.pennant.backend.dao.administration.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.administration.SecurityOperationDAO;
-import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityOperation;
-import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -53,206 +47,136 @@ import com.pennanttech.pennapps.core.resource.Message;
  * 
  */
 public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> implements SecurityOperationDAO {
-	private static Logger logger = LogManager.getLogger(SecurityOperationDAOImpl.class);
 
 	public SecurityOperationDAOImpl() {
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new SecurityOperation
-	 * 
-	 * @return SecurityOperation
-	 */
-	@Override
-	public SecurityOperation getSecurityOperation() {
-		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("SecurityOperation");
-		SecurityOperation securityOperation = new SecurityOperation();
-		if (workFlowDetails != null) {
-			securityOperation.setWorkflowId(workFlowDetails.getWorkFlowId());
-		}
-		return securityOperation;
-	}
-
-	/**
-	 * Fetch the Record SecurityOperation details by key field
-	 * 
-	 * @param id   (int)
-	 * @param type (String) ""/_Temp/_View
-	 * @return SecurityOperation
-	 */
 	@Override
 	public SecurityOperation getSecurityOperationById(final long id, String type) {
-		logger.debug("Entering");
-		SecurityOperation securityOperation = getSecurityOperation();
-		securityOperation.setId(id);
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where OprId = ?");
 
-		StringBuilder selectSql = new StringBuilder("Select OprID, OprCode, OprDesc");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From SecOperations");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where OprID =:OprID");
-		logger.debug("selectSql: " + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperation);
-		RowMapper<SecurityOperation> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityOperation.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new SecurityOperationsRM(), id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
-	/**
-	 * Fetch the Record SecurityOperation details by key field
-	 * 
-	 * @param String(grpCode),
-	 * @param type             (String) ""/_Temp/_View
-	 * @return SecurityOperation
-	 */
 	@Override
 	public SecurityOperation getSecurityOperationByCode(String oprCode, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where OprCode = ?");
 
-		logger.debug("Entering ");
-
-		StringBuilder selectSql = new StringBuilder("Select OprID, OprCode, OprDesc");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From SecOperations");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where OprCode =:OprCode");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("OprCode", oprCode);
-
-		RowMapper<SecurityOperation> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityOperation.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new SecurityOperationsRM(), oprCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
-		} finally {
-			logger.debug("Leaving ");
 		}
 	}
 
-	/**
-	 * This method Deletes the Record from the SecOperations or SecOperations_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete SecurityOperation by key GrpID
-	 * 
-	 * @param SecurityOperation (securityOperation)
-	 * @param type              (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	public void delete(SecurityOperation securityOperation, String type) {
+	@Override
+	public void delete(SecurityOperation so, String type) {
+		StringBuilder sql = new StringBuilder("Delete From SecOperations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where OprID = ?");
 
-		logger.debug("Entering ");
-		int recordCount = 0;
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		StringBuilder deleteSql = new StringBuilder("Delete From SecOperations");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where OprID =:OprID");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperation);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-			if (recordCount <= 0) {
+			if (this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, so.getOprID())) <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		logger.debug("Leaving ");
-
 	}
 
-	/**
-	 * This method insert new Records into SecOperations or SecOperations_Temp. it fetches the available Sequence form
-	 * SeqSecoperations by using getNextidviewDAO().getNextId() method.
-	 *
-	 * save SecurityOperation
-	 * 
-	 * @param SecurityOperation (securityOperation)
-	 * @param type              (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public long save(SecurityOperation securityOperation, String type) {
-		logger.debug("Entering ");
-		if (securityOperation.getId() == Long.MIN_VALUE) {
-			securityOperation.setId(getNextValue("SeqSecOperations"));
-			logger.debug("get NextValue:" + securityOperation.getId());
+	public long save(SecurityOperation so, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into SecOperations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (OprID, OprCode, OprDesc");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		if (so.getId() == Long.MIN_VALUE) {
+			so.setId(getNextValue("SeqSecOperations"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into SecOperations");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (OprID, OprCode, OprDesc");
-		insertSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:OprID, :OprCode, :OprDesc");
-		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperation);
+			ps.setLong(index++, so.getOprID());
+			ps.setString(index++, so.getOprCode());
+			ps.setString(index++, so.getOprDesc());
+			ps.setInt(index++, so.getVersion());
+			ps.setLong(index++, so.getLastMntBy());
+			ps.setTimestamp(index++, so.getLastMntOn());
+			ps.setString(index++, so.getRecordStatus());
+			ps.setString(index++, so.getRoleCode());
+			ps.setString(index++, so.getNextRoleCode());
+			ps.setString(index++, so.getTaskId());
+			ps.setString(index++, so.getNextTaskId());
+			ps.setString(index++, so.getRecordType());
+			ps.setLong(index++, so.getWorkflowId());
+		});
 
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving ");
-		return securityOperation.getId();
+		return so.getId();
 	}
 
-	/**
-	 * This method updates the Record SecOperations or SecOperations_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update SecurityOperation by key GrpID and Version
-	 * 
-	 * @param SecurityOperation (securityOperation)
-	 * @param type              (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(SecurityOperation securityOperation, String type) {
-		int recordCount = 0;
-		logger.debug("Entering ");
-		StringBuilder updateSql = new StringBuilder("Update SecOperations");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set OprCode = :OprCode, OprDesc = :OprDesc");
-		updateSql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(
-				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
-		updateSql.append("RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where OprID =:OprID");
+	public void update(SecurityOperation so, String type) {
+		StringBuilder sql = new StringBuilder("Update SecOperations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set OprCode = ?, OprDesc = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus= ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
+		sql.append(" Where OprID = ?");
 
 		if (StringUtils.isBlank(type)) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append(" and Version = ?");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperation);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, so.getOprCode());
+			ps.setString(index++, so.getOprDesc());
+			ps.setInt(index++, so.getVersion());
+			ps.setLong(index++, so.getLastMntBy());
+			ps.setTimestamp(index++, so.getLastMntOn());
+			ps.setString(index++, so.getRecordStatus());
+			ps.setString(index++, so.getRoleCode());
+			ps.setString(index++, so.getNextRoleCode());
+			ps.setString(index++, so.getTaskId());
+			ps.setString(index++, so.getNextTaskId());
+			ps.setString(index++, so.getRecordType());
+			ps.setLong(index++, so.getWorkflowId());
+
+			ps.setLong(index++, so.getOprID());
+
+			if (StringUtils.isBlank(type)) {
+				ps.setInt(index++, so.getVersion() - 1);
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving ");
 	}
 
 	@Override
@@ -262,7 +186,7 @@ public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> imp
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From SecOperations_AView");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 
@@ -286,4 +210,64 @@ public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> imp
 		});
 	}
 
+	@Override
+	public boolean isOperationExistByOprCode(String lovDescOprCd) {
+		String sql = "Select count(OprCode) from SecOperations Where OprCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, lovDescOprCd) > 0;
+	}
+
+	@Override
+	public long getSecurityOperationByCode(String oprCode) {
+		String sql = "Select OprID From SecOperations Where OprCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, oprCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" OprID, OprCode, OprDesc");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From SecOperations");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private class SecurityOperationsRM implements RowMapper<SecurityOperation> {
+
+		private SecurityOperationsRM() {
+			super();
+		}
+
+		@Override
+		public SecurityOperation mapRow(ResultSet rs, int rowNum) throws SQLException {
+			SecurityOperation so = new SecurityOperation();
+
+			so.setOprID(rs.getLong("OprID"));
+			so.setOprCode(rs.getString("OprCode"));
+			so.setOprDesc(rs.getString("OprDesc"));
+			so.setVersion(rs.getInt("Version"));
+			so.setLastMntBy(rs.getLong("LastMntBy"));
+			so.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			so.setRecordStatus(rs.getString("RecordStatus"));
+			so.setRoleCode(rs.getString("RoleCode"));
+			so.setNextRoleCode(rs.getString("NextRoleCode"));
+			so.setTaskId(rs.getString("TaskId"));
+			so.setNextTaskId(rs.getString("NextTaskId"));
+			so.setRecordType(rs.getString("RecordType"));
+			so.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return so;
+		}
+	}
 }

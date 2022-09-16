@@ -302,4 +302,22 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
+	@Override
+	public MailTemplate getTemplateByCode(String templateCode) {
+		String sql = "Select EmailTemplate, SmsTemplate, SmsContent, EmailContent, Active From Templates where TemplateCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, (rs, roNum) -> {
+			MailTemplate mt = new MailTemplate();
+
+			mt.setEmailTemplate(rs.getBoolean("EmailTemplate"));
+			mt.setSmsTemplate(rs.getBoolean("SmsTemplate"));
+			mt.setSmsContent(rs.getString("SmsContent"));
+			mt.setEmailContent(rs.getBytes("EmailContent"));
+			mt.setActive(rs.getBoolean("Active"));
+
+			return mt;
+		}, templateCode);
+	}
 }

@@ -33,6 +33,7 @@ import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.lic.exception.LicenseException;
 
 public interface SecurityUserService {
@@ -72,4 +73,14 @@ public interface SecurityUserService {
 
 	long getSecuredUserDetails(String username);
 
+	void disableUserAccount();
+
+	AuditDetail doUserValidation(AuditHeader auditHeader, boolean isAllowCluster, boolean isUpdate,
+			LoggedInUser logUsrDtls);
+
+	AuditDetail doValidation(AuditHeader auditHeader, LoggedInUser logUserDtls, boolean isFromUserExpire);
+
+	AuditHeader updateUserStatus(AuditHeader auditHeader);
+
+	SecurityUser getSecurityUserByLoginId(String userLogin);
 }

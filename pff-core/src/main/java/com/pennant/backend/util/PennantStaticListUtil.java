@@ -1701,34 +1701,14 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_MailTemplateDialog_CustomerNotification")));
 			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_AE,
 					Labels.getLabel("label_MailTemplateDialog_AlertNotification")));
-			// templateForList.add(new
-			// ValueLabel(NotificationConstants.TEMPLATE_FOR_DN,
-			// Labels.getLabel("label_MailTemplateDialog_DealerNotification")));
-			// templateForList.add(new
-			// ValueLabel(NotificationConstants.TEMPLATE_FOR_TP,
-			// Labels.getLabel("label_MailTemplateDialog_ProviderNotification")));
-			// templateForList.add(new
-			// ValueLabel(NotificationConstants.TEMPLATE_FOR_QP,
-			// Labels.getLabel("label_MailTemplateDialog_QueuePriority")));
-			// templateForList.add(new
-			// ValueLabel(NotificationConstants.TEMPLATE_FOR_GE,
-			// Labels.getLabel("label_MailTemplateDialog_GraceEndDate")));
-			// templateForList.add(new
-			// ValueLabel(NotificationConstants.TEMPLATE_FOR_PO,
-			// Labels.getLabel("label_MailTemplateDialog_POAuthNotification")));
-			// templateForList.add(new
-			// ValueLabel(NotificationConstants.TEMPLATE_FOR_TAT,
-			// Labels.getLabel("label_MailTemplateDialog_TATTemplate")));
-			// templateForList.add(new
-			// ValueLabel(NotificationConstants.TEMPLATE_FOR_LIMIT,
-			// Labels.getLabel("label_MailTemplateDialog_LimitNotification")));
 			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_SP,
 					Labels.getLabel("label_MailTemplateDialog_SourcingPartnerNotification")));
 			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_DSAN,
 					Labels.getLabel("label_MailTemplateDialog_DSANotification")));
 			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_PVRN,
 					Labels.getLabel("label_MailTemplateDialog_PNNotification")));
-
+			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_SU,
+					Labels.getLabel("label_MailTemplateDialog_SecurityUser")));
 		}
 		return templateForList;
 	}
@@ -1741,6 +1721,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_MailTemplateDialog_Finance")));
 			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.MAIL_MODULE_PROVIDER,
 					Labels.getLabel("label_MailTemplateDialog_Provider")));
+			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_OTP,
+					Labels.getLabel("label_MailTemplateDialog_OTP")));
 
 		}
 		return mailTeplateModulesList;
@@ -2361,7 +2343,7 @@ public class PennantStaticListUtil {
 			templateEvents
 					.add(new ValueLabel(FinServiceEvent.CANCELFIN, Labels.getLabel("label_VasEvent_Cancellation")));
 			templateEvents.add(new ValueLabel(FinServiceEvent.DUEALERTS, Labels.getLabel("label_VasEvent_DueAlerts")));
-
+			templateEvents.add(new ValueLabel("SecurityUser", Labels.getLabel("label_OTP_SecurityUser")));
 		}
 		return templateEvents;
 	}

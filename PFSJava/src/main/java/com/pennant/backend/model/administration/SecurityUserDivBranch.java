@@ -29,6 +29,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -36,11 +41,16 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>SecurityUserDivBranch table</b>.<br>
  *
  */
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement(name = "securityUserDivBranch")
 public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -306657295035931426L;
 
+	@XmlElement
 	private long usrID = Long.MIN_VALUE;
+	@XmlElement
 	private String userDivision;
+	@XmlElement
 	private String userBranch;
 	private String userBranchDesc;
 	private String lovValue;
@@ -51,14 +61,19 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 
 	// for SecurityUserAccess Table
+	@XmlElement
 	private String entity;
 	private String entityDesc;
+	@XmlElement
 	private String accessType;
 	private Long clusterId;
+	@XmlElement
 	private String clusterCode;
 	private String clusterName;
+	@XmlElement
 	private String clusterType;
 	private Long parentCluster;
+	@XmlElement
 	private String parentClusterCode;
 	private String parentClusterName;
 	private String parentClusterType;
@@ -68,6 +83,13 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private transient Map<String, Object> entities = new HashMap<>();
 	private transient Map<String, Object> clusters = new HashMap<>();
 	private transient Map<String, Object> branches = new HashMap<>();
+
+	@XmlElement(name = "entities")
+	private String entitiesValues;
+	@XmlElement(name = "clusters")
+	private String clusterValues;
+	@XmlElement(name = "branches")
+	private String branchValues;
 
 	public SecurityUserDivBranch() {
 		super();
@@ -101,6 +123,9 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		excludeFields.add("clusters");
 		excludeFields.add("branches");
 		excludeFields.add("clusterId");
+		excludeFields.add("entitiesValues");
+		excludeFields.add("clusterValues");
+		excludeFields.add("branchValues");
 		return excludeFields;
 	}
 
@@ -318,6 +343,30 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 
 	public void setBranches(Map<String, Object> branches) {
 		this.branches = branches;
+	}
+
+	public String getEntitiesValues() {
+		return entitiesValues;
+	}
+
+	public void setEntitiesValues(String entitiesValues) {
+		this.entitiesValues = entitiesValues;
+	}
+
+	public String getClusterValues() {
+		return clusterValues;
+	}
+
+	public void setClusterValues(String clusterValues) {
+		this.clusterValues = clusterValues;
+	}
+
+	public String getBranchValues() {
+		return branchValues;
+	}
+
+	public void setBranchValues(String branchValues) {
+		this.branchValues = branchValues;
 	}
 
 }

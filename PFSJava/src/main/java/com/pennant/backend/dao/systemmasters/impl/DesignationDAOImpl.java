@@ -208,4 +208,13 @@ public class DesignationDAOImpl extends BasicDao<Designation> implements Designa
 
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public boolean isDesignationValid(String desgCode) {
+		String sql = "Select coalesce(count(DesgCode), 0) From BMTDesignations Where DesgCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, desgCode) > 0;
+	}
 }

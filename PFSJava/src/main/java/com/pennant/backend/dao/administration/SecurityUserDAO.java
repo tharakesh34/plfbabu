@@ -72,5 +72,15 @@ public interface SecurityUserDAO {
 
 	void lockUserAccounts();
 
-	void markAsDelete(SecurityUser securityUser, String Type);
+	void markAsDelete(SecurityUser securityUser, String type);
+
+	List<SecurityUser> getDisableUserAccounts();
+
+	void updateDisableUser(List<SecurityUser> userAccounts);
+
+	boolean isUserExist(String usrLogin);
+
+	void updateUserStatus(SecurityUser user);
+
+	List<String> getLovFieldCodeValues(String lovFieldCode);
 }

@@ -39,6 +39,7 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
@@ -51,8 +52,11 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.security.user.AuthenticationError;
 import com.pennanttech.pennapps.lic.License;
@@ -85,6 +89,9 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 
 	protected Div loginError;
 	protected Label loginErrorMsg;
+	protected A forgetLink;
+
+	private SecurityUserDAO securityUserDAO;
 
 	/**
 	 * Default constructor.
@@ -110,6 +117,8 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 			recaptcha.setClientAttribute("data-sitekey", GoogleCaptcha.getSiteKey());
 			recaptcha.setClientAttribute("data-callback", "onSuccess");
 		}
+
+		forgetLink.setVisible(App.getBooleanProperty("authentication.login.password.reset"));
 
 		try {
 			SessionUserDetails.getLogiedInUser();
@@ -204,6 +213,61 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 		}
 	}
 
+	private String validateUser(String userName) {
+		if (StringUtils.isBlank(userName)) {
+			return AuthenticationError.USER_NAME_NOT_BLANK.message();
+		}
+
+		SecurityUser secUser = securityUserDAO.getSecurityUserByLogin(userName, "");
+
+		if (secUser == null) {
+			return AuthenticationError.USER_NOT_FOUND.message();
+		}
+
+		if (StringUtils.isEmpty(secUser.getUsrEmail()) || StringUtils.isEmpty(secUser.getUsrMobile())) {
+			return "E-Mail or Mobile Number is madatory. Please contact system administartor.";
+		}
+
+		if (secUser.isDeleted()) {
+			return "User account is deleted. Please contact system administartor.";
+		}
+
+		if (!secUser.isUsrEnabled()) {
+			return "User account is disabled. Please contact system administartor.";
+		}
+
+		if (secUser.isUsrAcLocked()) {
+			return "User account is locked. Please contact system adminstrator.";
+		}
+
+		if (!AuthenticationType.DAO.name().equals(secUser.getAuthType())) {
+			return "Password reset not allowed for internal user.";
+		}
+
+		return null;
+	}
+
+	public void onClick$forgetLink(Event event) {
+		logger.info(Literal.ENTERING);
+
+		this.txtbox_Username.clearErrorMessage();
+		loginError.setVisible(false);
+
+		String userName = this.txtbox_Username.getValue();
+
+		String errorMsg = validateUser(userName);
+
+		if (errorMsg != null) {
+			loginError.setVisible(true);
+			Executions.sendRedirect("./loginDialog.zul?login_error=" + errorMsg);
+		} else {
+			loginError.setVisible(false);
+			Executions.sendRedirect("/ForgotPasswordDialog.zul?userName=" + userName);
+		}
+
+		logger.info(Literal.LEAVING);
+	}
+
 	@Override
 	public int hashCode() {
 		return super.hashCode();
@@ -212,5 +276,10 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	@Override
 	public boolean equals(Object obj) {
 		return this == obj;
+	}
+
+	@Autowired
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
 	}
 }

@@ -143,6 +143,12 @@ public class APIServices {
 		services.add("getCustomerDetails");
 		services.add("getWorkFlowDetails");
 		services.add("getProcessView");
+		services.add("createSecurityUser");
+		services.add("updateSecurityUser");
+		services.add("addOperation");
+		services.add("deleteOperation");
+		services.add("enableUser");
+		services.add("expireUser");
 
 		return services;
 	}

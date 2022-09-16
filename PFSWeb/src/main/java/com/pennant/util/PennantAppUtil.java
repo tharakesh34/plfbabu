@@ -114,6 +114,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.pff.constant.LookUpCode;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.pennapps.core.App;
@@ -2505,4 +2506,43 @@ public class PennantAppUtil {
 		return labelList;
 	}
 
+	public static List<ValueLabel> getDisableReason() {
+		JdbcSearchObject<LovFieldDetail> object = new JdbcSearchObject<>(LovFieldDetail.class);
+		object.addTabelName("RMTLovFieldDetail");
+		object.addFilterEqual("fieldCode", LookUpCode.SU_DISABLE_REASON);
+		object.addField("fieldCodevalue");
+		object.addField("valuedesc");
+
+		PagedListService service = (PagedListService) SpringUtil.getBean("pagedListService");
+		List<LovFieldDetail> appList = service.getBySearchObject(object);
+
+		if (CollectionUtils.isEmpty(appList)) {
+			return new ArrayList<>();
+		}
+
+		List<ValueLabel> disableReason = new ArrayList<>();
+		appList.stream().forEach(lfd -> disableReason.add(new ValueLabel(lfd.getFieldCodeValue(), lfd.getValueDesc())));
+
+		return disableReason;
+	}
+
+	public static List<ValueLabel> getEmployeeTypes() {
+		JdbcSearchObject<LovFieldDetail> object = new JdbcSearchObject<>(LovFieldDetail.class);
+		object.addTabelName("RMTLovFieldDetail");
+		object.addFilterEqual("fieldCode", LookUpCode.SU_EMP_TYPE);
+		object.addField("fieldCodevalue");
+		object.addField("valuedesc");
+
+		PagedListService service = (PagedListService) SpringUtil.getBean("pagedListService");
+		List<LovFieldDetail> appList = service.getBySearchObject(object);
+
+		if (CollectionUtils.isEmpty(appList)) {
+			return new ArrayList<>();
+		}
+
+		List<ValueLabel> employeeType = new ArrayList<>();
+		appList.stream().forEach(lfd -> employeeType.add(new ValueLabel(lfd.getFieldCodeValue(), lfd.getValueDesc())));
+
+		return employeeType;
+	}
 }

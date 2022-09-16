@@ -44,4 +44,6 @@ public interface DesignationDAO extends BasicCrudDao<Designation> {
 	 * @return
 	 */
 	boolean isDuplicateKey(String designationCode, TableType tableType);
+
+	boolean isDesignationValid(String desgCode);
 }

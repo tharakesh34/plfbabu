@@ -17,6 +17,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -87,6 +88,9 @@ public class OtpCtrl extends GenericForwardComposer<Component> {
 		message.setMobileNo(user.getMobileNo());
 		message.setEmailID(user.getEmailId());
 		message.setSessionID(user.getSessionId());
+		message.setSendEmail("Y".equalsIgnoreCase(App.getProperty("two.factor.authentication.sms")));
+		message.setSendSMS("Y".equalsIgnoreCase(App.getProperty("two.factor.authentication.email")));
+		message.setTemplateCode("TWO_FACTOR_OTP");
 
 		saveOTP(message);
 

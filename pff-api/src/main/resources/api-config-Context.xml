@@ -228,4 +228,12 @@
 	</bean>
 
 	<bean name="foreClosureServiceTarget" class="com.pennanttech.pff.foreclosure.service.impl.ForeClosureServiceImpl" />
+	
+	<bean id="securityUserController" class="com.pennant.api.user.controller.SecurityUserController" autowire="byName"
+		scope="prototype" parent="absractController">
+	</bean>
+	
+	<bean id ="absractController" class="com.pennant.pff.api.controller.AbstractController" abstract="true"/>
+	
+	<bean id ="absractService" class="com.pennant.pff.api.service.AbstractService" abstract="true"/>
 </beans>

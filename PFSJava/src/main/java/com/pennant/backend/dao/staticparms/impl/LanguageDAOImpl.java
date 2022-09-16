@@ -40,6 +40,7 @@ import com.pennant.backend.model.staticparms.Language;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 
 /**
@@ -196,4 +197,12 @@ public class LanguageDAOImpl extends BasicDao<Language> implements LanguageDAO {
 		logger.debug("Leaving");
 	}
 
+	@Override
+	public boolean isLanguageValid(String languageCode) {
+		String sql = "Select coalesce(count(LngCode), 0) From BMTLanguage Where LngCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, languageCode) > 0;
+	}
 }

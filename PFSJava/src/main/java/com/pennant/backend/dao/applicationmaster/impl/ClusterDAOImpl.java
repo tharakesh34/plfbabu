@@ -26,6 +26,7 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -272,5 +273,31 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 		RowMapper<ClusterHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		return jdbcTemplate.query(sql.toString(), source, rowMapper);
+	}
+
+	@Override
+	public long getClusterByCode(String code, String clusterType, String entity, String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Id From Clusters");
+		sql.append(type);
+		sql.append(" Where Code = ? and entity = ?");
+
+		if (!StringUtils.isEmpty(clusterType)) {
+			sql.append(" and clusterType = ?");
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			if (!StringUtils.isEmpty(clusterType)) {
+				return this.jdbcOperations.queryForObject(sql.toString(), long.class, code, entity, clusterType);
+			} else {
+				return this.jdbcOperations.queryForObject(sql.toString(), long.class, code, entity);
+			}
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
 	}
 }

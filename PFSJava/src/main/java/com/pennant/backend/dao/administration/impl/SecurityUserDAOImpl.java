@@ -24,28 +24,27 @@
  */
 package com.pennant.backend.dao.administration.impl;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
@@ -61,6 +60,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -70,7 +70,8 @@ import com.pennanttech.pennapps.core.util.DateUtil;
  * 
  */
 public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements SecurityUserDAO {
-	private static Logger logger = LogManager.getLogger(SecurityUserDAOImpl.class);
+
+	private static final String ERR_41004 = "41004";
 
 	public SecurityUserDAOImpl() {
 		super();
@@ -79,224 +80,248 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	@Override
 	public SecurityUser getSecurityUserById(final long usrid, String type) {
 		StringBuilder sql = getSecurityUserQuery(type);
-		sql.append(" where usrid = ?");
+		sql.append(" Where usrid = ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				return getTypeRowMapper(rs, type);
-			}, usrid);
+			return this.jdbcOperations.queryForObject(sql.toString(), new SecurityUserRM(type), usrid);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-	}
-
-	// DE#374 :User Creation : After approving the user, work-flow before and after image values not coming properly in
-	// audit table.
-	private StringBuilder getSecurityUserQuery(String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile");
-		sql.append(", UsrEmail, UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits");
-		sql.append(", UsrAcExp, UsrAcExpDt, UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode");
-		sql.append(", UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, UsrDftAppCode");
-		sql.append(", PwdExpDt, UserType, BusinessVertical, LdapDomainName, Deleted");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", LovDescUsrDftAppCode, LovDescUsrDftAppCodeName, LovDescUsrDeptCodeName");
-			sql.append(", LovDescUsrBranchCodeName, LovDescUsrLanguage, LovDescUsrDesg");
-			sql.append(", BusinessVerticalCode, BusinessVerticalDesc");
-		}
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" from secusers");
-		sql.append(StringUtils.trimToEmpty(type));
-
-		return sql;
 	}
 
 	@Override
 	public SecurityUser getSecurityUserByLogin(final String usrLogin, String type) {
 		StringBuilder sql = getSecurityUserQuery(type);
-		sql.append(" where usrlogin = ?");
+		sql.append(" Where UsrLogin = ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				return getTypeRowMapper(rs, type);
-			}, usrLogin);
+			return this.jdbcOperations.queryForObject(sql.toString(), new SecurityUserRM(type), usrLogin);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
-	/**
-	 * This method Deletes the Record from the SecUsers or SecUsers_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Security Users by key UsrID
-	 * 
-	 * @param Security Users (securityUsers)
-	 * @param type     (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public void delete(SecurityUser securityUser, String type) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
-
+	@Override
+	public void delete(SecurityUser su, String type) {
 		StringBuilder sql = new StringBuilder("Delete From SecUsers");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where usrid =:usrID");
+		sql.append(" Where UsrId = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(su);
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		LoggedInUser ud = su.getUserDetails();
 
 		try {
-			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				ErrorDetail errorDetails = getError("41003", securityUser.getUsrLogin(),
-						securityUser.getUserDetails().getLanguage());
-				throw new AppException(errorDetails.getError()) {
-				};
+			if (this.jdbcOperations.update(sql.toString(), beanParameters) > 0) {
+				return;
 			}
+
+			ErrorDetail error = getError("41003", su.getUsrLogin(), ud.getLanguage());
+			throw new AppException(error.getError());
 		} catch (DataAccessException e) {
-			ErrorDetail errorDetails = getError("41006", securityUser.getUsrLogin(),
-					securityUser.getUserDetails().getLanguage());
-			throw new DependencyFoundException(errorDetails.getError());
+			ErrorDetail error = getError("41006", su.getUsrLogin(), ud.getLanguage());
+			throw new DependencyFoundException(error.getError());
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method insert new Records into SecUsers or SecUsers_Temp. it fetches the available Sequence form SeqSecUsers
-	 * by using getNextidviewDAO().getNextId() method.
-	 *
-	 * save Security Users
-	 * 
-	 * @param Security Users (securityUsers)
-	 * @param type     (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public long save(SecurityUser securityUser, String type) {
-		logger.debug(Literal.ENTERING);
-		if (securityUser.getId() == Long.MIN_VALUE) {
-			securityUser.setId(getNextValue("SeqSecUsers"));
-			logger.debug("get NextValue:" + securityUser.getId());
-		}
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Insert Into SecUsers");
+	public long save(SecurityUser su, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into SecUsers");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail");
 		sql.append(", UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrAcLocked");
 		sql.append(", UsrLanguage, UsrDftAppId, UsrDftAppCode, UsrBranchCode, UsrDeptCode, UsrToken");
 		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrAcExpDt, UsrDesg, AuthType");
 		sql.append(", PwdExpDt, AccountUnLockedOn");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId, businessvertical, LDAPDomainName, Deleted)");
-		sql.append(" Values(:UsrID, :UsrLogin, :UsrPwd, :UserStaffID, :UsrFName, :UsrMName, :UsrLName, :UsrMobile");
-		sql.append(", :UsrEmail, :UsrEnabled, :UsrCanSignonFrom, :UsrCanSignonTo, :UsrCanOverrideLimits, :UsrAcExp");
-		sql.append(", :UsrAcLocked, :UsrLanguage, :UsrDftAppId, :UsrDftAppCode, :UsrBranchCode, :UsrDeptCode");
-		sql.append(", :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries, :UsrAcExpDt, :UsrDesg, :AuthType");
-		sql.append(", :PwdExpDt, :AccountUnLockedOn");
-		sql.append(", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId, :businessVertical, :ldapDomainName, :Deleted)");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId, businessvertical, LDAPDomainName, Deleted");
+		sql.append(", DisableReason, EmployeeType");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append(") Values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug(Literal.LEAVING);
-		return securityUser.getId();
+			if (su.getId() == Long.MIN_VALUE) {
+				su.setId(getNextValue("SeqSecUsers"));
+			}
+
+			ps.setLong(index++, su.getUsrID());
+			ps.setString(index++, su.getUsrLogin());
+			ps.setString(index++, su.getUsrPwd());
+			ps.setString(index++, su.getUserStaffID());
+			ps.setString(index++, su.getUsrFName());
+			ps.setString(index++, su.getUsrMName());
+			ps.setString(index++, su.getUsrLName());
+			ps.setString(index++, su.getUsrMobile());
+			ps.setString(index++, su.getUsrEmail());
+			ps.setBoolean(index++, su.isUsrEnabled());
+			ps.setDate(index++, JdbcUtil.getDate(su.getUsrCanSignonFrom()));
+			ps.setDate(index++, JdbcUtil.getDate(su.getUsrCanSignonTo()));
+			ps.setBoolean(index++, su.isUsrCanOverrideLimits());
+			ps.setBoolean(index++, su.isUsrAcExp());
+			ps.setBoolean(index++, su.isUsrAcLocked());
+			ps.setString(index++, su.getUsrLanguage());
+			ps.setObject(index++, su.getUsrDftAppId());
+			ps.setString(index++, su.getUsrDftAppCode());
+			ps.setString(index++, su.getUsrBranchCode());
+			ps.setString(index++, su.getUsrDeptCode());
+			ps.setString(index++, su.getUsrToken());
+			ps.setBoolean(index++, su.isUsrIsMultiBranch());
+			ps.setInt(index++, su.getUsrInvldLoginTries());
+			ps.setDate(index++, JdbcUtil.getDate(su.getUsrAcExpDt()));
+			ps.setString(index++, su.getUsrDesg());
+			ps.setString(index++, su.getAuthType());
+			ps.setDate(index++, JdbcUtil.getDate(su.getPwdExpDt()));
+			ps.setDate(index++, JdbcUtil.getDate(su.getAccountUnLockedOn()));
+			ps.setInt(index++, su.getVersion());
+			ps.setLong(index++, su.getLastMntBy());
+			ps.setTimestamp(index++, su.getLastMntOn());
+			ps.setString(index++, su.getRecordStatus());
+			ps.setString(index++, su.getRoleCode());
+			ps.setString(index++, su.getNextRoleCode());
+			ps.setString(index++, su.getTaskId());
+			ps.setString(index++, su.getNextTaskId());
+			ps.setString(index++, su.getRecordType());
+			ps.setLong(index++, su.getWorkflowId());
+			ps.setObject(index++, su.getBusinessVertical());
+			ps.setString(index++, su.getldapDomainName());
+			ps.setBoolean(index++, su.isDeleted());
+			ps.setString(index++, su.getDisableReason());
+			ps.setString(index++, su.getEmployeeType());
+			ps.setObject(index++, su.getCreatedBy());
+			ps.setTimestamp(index++, su.getCreatedOn());
+			ps.setObject(index++, su.getApprovedBy());
+			ps.setTimestamp(index++, su.getApprovedOn());
+		});
+
+		return su.getId();
 	}
 
-	/**
-	 * This method updates the Record SecUsers or SecUsers_Temp. if Record not updated then throws DataAccessException
-	 * with error 41004. update Security Users by key UsrID and Version
-	 * 
-	 * @param SecurityUsers (securityUser)
-	 * @param type          (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@SuppressWarnings("serial")
 	@Override
-	public void update(SecurityUser securityUser, String type) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
-
+	public void update(SecurityUser su, String type) {
 		StringBuilder sql = new StringBuilder("Update SecUsers");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" set UsrLogin = :UsrLogin, UsrPwd = :UsrPwd, UserStaffID = :UserStaffID");
-		sql.append(", UsrFName = :UsrFName, UsrMName = :UsrMName, UsrLName = :UsrLName, UsrMobile = :UsrMobile");
-		sql.append(", UsrEmail = :UsrEmail, UsrEnabled = :UsrEnabled, UsrCanSignonFrom = :UsrCanSignonFrom");
-		sql.append(", UsrCanSignonTo = :UsrCanSignonTo, UsrCanOverrideLimits = :UsrCanOverrideLimits");
-		sql.append(", UsrAcExp = :UsrAcExp, UsrAcLocked = :UsrAcLocked, UsrLanguage = :UsrLanguage");
-		sql.append(", UsrDftAppId = :UsrDftAppId, UsrAcExpDt = :UsrAcExpDt, UsrDftAppCode = :UsrDftAppCode");
-		sql.append(", UsrBranchCode = :UsrBranchCode, UsrDeptCode = :UsrDeptCode");
-		sql.append(", UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries");
-		sql.append(", UsrDesg = :UsrDesg, AuthType = :AuthType, PwdExpDt = :PwdExpDt");
-		sql.append(", BusinessVertical= :BusinessVertical");
-		sql.append(", AccountLockedOn =:AccountLockedOn, AccountUnLockedOn =:AccountUnLockedOn");
-		sql.append(", Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		sql.append(", RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
-		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType");
-		sql.append(", WorkflowId = :WorkflowId, LDAPDomainName = :ldapDomainName");
-
-		sql.append(" Where UsrID =:UsrID");
+		sql.append(" Set UsrLogin = ?, UsrPwd = ?, UserStaffID = ?");
+		sql.append(", UsrFName = ?, UsrMName = ?, UsrLName = ?, UsrMobile = ?");
+		sql.append(", UsrEmail = ?, UsrEnabled = ?, UsrCanSignonFrom = ?");
+		sql.append(", UsrCanSignonTo = ?, UsrCanOverrideLimits = ?, UsrAcExp = ?");
+		sql.append(", UsrAcLocked = ?, UsrLanguage = ?, UsrDftAppId = ?, UsrAcExpDt = ?, UsrDftAppCode = ?");
+		sql.append(", UsrBranchCode = ?, UsrDeptCode = ?, UsrIsMultiBranch = ?, UsrInvldLoginTries = ?");
+		sql.append(", UsrDesg = ?, AuthType = ?, PwdExpDt = ?, BusinessVertical = ?");
+		sql.append(", AccountLockedOn = ?, AccountUnLockedOn = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", LDAPDomainName = ?, DisableReason = ?, EmployeeType = ?");
+		sql.append(", ApprovedBy = ?, ApprovedOn = ?");
+		sql.append("  Where UsrId = ?");
 
 		if (StringUtils.isBlank(type)) {
-			sql.append(" AND Version= :Version-1");
+			sql.append(" and Version = ?");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, su.getUsrLogin());
+			ps.setString(index++, su.getUsrPwd());
+			ps.setString(index++, su.getUserStaffID());
+			ps.setString(index++, su.getUsrFName());
+			ps.setString(index++, su.getUsrMName());
+			ps.setString(index++, su.getUsrLName());
+			ps.setString(index++, su.getUsrMobile());
+			ps.setString(index++, su.getUsrEmail());
+			ps.setBoolean(index++, su.isUsrEnabled());
+			ps.setDate(index++, JdbcUtil.getDate(su.getUsrCanSignonFrom()));
+			ps.setDate(index++, JdbcUtil.getDate(su.getUsrCanSignonTo()));
+			ps.setBoolean(index++, su.isUsrCanOverrideLimits());
+			ps.setBoolean(index++, su.isUsrAcExp());
+			ps.setBoolean(index++, su.isUsrAcLocked());
+			ps.setString(index++, su.getUsrLanguage());
+			ps.setObject(index++, su.getUsrDftAppId());
+			ps.setDate(index++, JdbcUtil.getDate(su.getUsrAcExpDt()));
+			ps.setString(index++, su.getUsrDftAppCode());
+			ps.setString(index++, su.getUsrBranchCode());
+			ps.setString(index++, su.getUsrDeptCode());
+			ps.setBoolean(index++, su.isUsrIsMultiBranch());
+			ps.setInt(index++, su.getUsrInvldLoginTries());
+			ps.setString(index++, su.getUsrDesg());
+			ps.setString(index++, su.getAuthType());
+			ps.setDate(index++, JdbcUtil.getDate(su.getPwdExpDt()));
+			ps.setObject(index++, su.getBusinessVertical());
+			ps.setDate(index++, JdbcUtil.getDate(su.getAccountLockedOn()));
+			ps.setDate(index++, JdbcUtil.getDate(su.getAccountUnLockedOn()));
+			ps.setInt(index++, su.getVersion());
+			ps.setLong(index++, su.getLastMntBy());
+			ps.setTimestamp(index++, su.getLastMntOn());
+			ps.setString(index++, su.getRecordStatus());
+			ps.setString(index++, su.getRoleCode());
+			ps.setString(index++, su.getNextRoleCode());
+			ps.setString(index++, su.getTaskId());
+			ps.setString(index++, su.getNextTaskId());
+			ps.setString(index++, su.getRecordType());
+			ps.setLong(index++, su.getWorkflowId());
+			ps.setString(index++, su.getldapDomainName());
+			ps.setString(index++, su.getDisableReason());
+			ps.setString(index++, su.getEmployeeType());
+			ps.setObject(index++, su.getApprovedBy());
+			ps.setTimestamp(index++, su.getApprovedOn());
+
+			ps.setLong(index++, su.getUsrID());
+
+			if (StringUtils.isBlank(type)) {
+				ps.setInt(index++, su.getVersion() - 1);
+			}
+		});
 
 		if (recordCount <= 0) {
-			ErrorDetail errorDetails = getError("41004", securityUser.getUsrLogin(),
-					securityUser.getUserDetails().getLanguage());
-			throw new AppException(errorDetails.getError()) {
-			};
+			ErrorDetail error = getError(ERR_41004, su.getUsrLogin(), su.getUserDetails().getLanguage());
+			throw new AppException(error.getError());
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method updates the UsrPwd,UsrToken,UsrAcExpDt fields of securityUser record if Record not updated then
-	 * throws DataAccessException
-	 * 
-	 * @param securityUser (SecurityUsers)
-	 */
-	public void changePassword(SecurityUser securityUser) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
+	public void changePassword(SecurityUser su) {
+		StringBuilder sql = new StringBuilder("Update SecUsers Set");
+		sql.append(" UsrPwd = ?, UsrToken = ?, UsrAcExpDt = ?, PwdExpDt = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", RecordStatus = ?");
+		sql.append(" where UsrId = ?");
 
-		StringBuilder sql = new StringBuilder("Update SecUsers");
-		sql.append(" set UsrPwd = :UsrPwd, UsrToken = :UsrToken, UsrAcExpDt = :UsrAcExpDt, PwdExpDt = :PwdExpDt");
-		sql.append(", Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		sql.append(", RecordStatus = :RecordStatus");
-		sql.append(" Where UsrID =:UsrID");
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		logger.trace(Literal.SQL + sql.toString());
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+			ps.setString(index++, su.getUsrPwd());
+			ps.setString(index++, su.getUsrToken());
+			ps.setDate(index++, JdbcUtil.getDate(su.getUsrAcExpDt()));
+			ps.setDate(index++, JdbcUtil.getDate(su.getPwdExpDt()));
+			ps.setInt(index++, su.getVersion());
+			ps.setLong(index++, su.getLastMntBy());
+			ps.setTimestamp(index++, su.getLastMntOn());
+			ps.setString(index++, su.getRecordStatus());
+
+			ps.setLong(index++, su.getUsrID());
+		});
 
 		if (recordCount <= 0) {
-			ErrorDetail errorDetails = getError("41004", securityUser.getUsrLogin(),
-					securityUser.getUserDetails().getLanguage());
-			throw new AppException(errorDetails.getError());
+			ErrorDetail error = getError(ERR_41004, su.getUsrLogin(), su.getUserDetails().getLanguage());
+			throw new AppException(error.getError());
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -309,349 +334,433 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 				userLanguage);
 	}
 
-	/**
-	 * Fetch the Record Security User Division Branch Details by key fields
-	 * 
-	 */
 	@Override
-	public SecurityUserDivBranch getSecUserDivBrDetailsById(SecurityUserDivBranch securityUserDivBranch, String type) {
-		StringBuilder sql = new StringBuilder(" Select UsrID, UserDivision, UserBranch");
+	public SecurityUserDivBranch getSecUserDivBrDetailsById(SecurityUserDivBranch divBranch, String type) {
+		StringBuilder sql = new StringBuilder("Select UsrID, UserDivision, UserBranch");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", UserBranchDesc ");
+			sql.append(", UserBranchDesc");
 		}
+
 		sql.append(" From SecurityUserDivBranch");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where UsrID = :UsrID And UserDivision = :UserDivision And UserBranch =:UserBranch");
+		sql.append(" Where UsrID = ? and UserDivision = ? and UserBranch = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
-		RowMapper<SecurityUserDivBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				SecurityUserDivBranch div = new SecurityUserDivBranch();
+
+				div.setUsrID(rs.getLong("UsrID"));
+				div.setUserDivision(rs.getString("UserDivision"));
+				div.setUserBranch(rs.getString("UserBranch"));
+				div.setVersion(rs.getInt("Version"));
+				div.setLastMntBy(rs.getLong("LastMntBy"));
+				div.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				div.setRecordStatus(rs.getString("RecordStatus"));
+				div.setRoleCode(rs.getString("RoleCode"));
+				div.setNextRoleCode(rs.getString("NextRoleCode"));
+				div.setTaskId(rs.getString("TaskId"));
+				div.setNextTaskId(rs.getString("NextTaskId"));
+				div.setRecordType(rs.getString("RecordType"));
+				div.setWorkflowId(rs.getLong("WorkflowId"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					div.setUserBranchDesc(rs.getString("UserBranchDesc"));
+				}
+
+				return div;
+			}, divBranch.getUsrID(), divBranch.getUserDivision(), divBranch.getUserBranch());
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}
 
-	/**
-	 * This method is to Save SecurityUser Division Branch Details
-	 */
-	public long saveDivBranchDetails(SecurityUserDivBranch securityUserDivBranch, String type) {
-		logger.debug(Literal.ENTERING);
+	@Override
+	public long saveDivBranchDetails(SecurityUserDivBranch divBranch, String type) {
+		List<SecurityUserDivBranch> list = new ArrayList<>();
+		list.add(divBranch);
 
-		StringBuilder sql = new StringBuilder();
+		saveDivBranchDetails(list, type);
 
-		sql.append("insert into SecurityUserDivBranch");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(UsrID, UserDivision, UserBranch");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId)");
-		sql.append(" values(:UsrID, :UserDivision, :UserBranch");
-		sql.append(", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-
-		logger.debug(Literal.LEAVING);
-		return securityUserDivBranch.getId();
+		return divBranch.getId();
 	}
 
-	/**
-	 * This method is to Save SecurityUser Division Branch Details
-	 */
+	@Override
 	public void saveDivBranchDetails(List<SecurityUserDivBranch> list, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
-		sql.append("insert into SecurityUserDivBranch");
+		sql.append("Insert into SecurityUserDivBranch");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(UsrID, UserDivision, UserBranch");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId)");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		sql.append("values(:UsrID, :UserDivision, :UserBranch");
-		sql.append(", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(list.toArray()));
+			this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					int index = 1;
+
+					SecurityUserDivBranch divBranch = list.get(i);
+
+					ps.setLong(index++, divBranch.getUsrID());
+					ps.setString(index++, divBranch.getUserDivision());
+					ps.setString(index++, divBranch.getUserBranch());
+					ps.setInt(index++, divBranch.getVersion());
+					ps.setLong(index++, divBranch.getLastMntBy());
+					ps.setTimestamp(index++, divBranch.getLastMntOn());
+					ps.setString(index++, divBranch.getRecordStatus());
+					ps.setString(index++, divBranch.getRoleCode());
+					ps.setString(index++, divBranch.getNextRoleCode());
+					ps.setString(index++, divBranch.getTaskId());
+					ps.setString(index++, divBranch.getNextTaskId());
+					ps.setString(index++, divBranch.getRecordType());
+					ps.setLong(index, divBranch.getWorkflowId());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return list.size();
+				}
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method is to Update SecurityUser Division Branch Details
-	 */
-	@SuppressWarnings("serial")
 	@Override
-	public void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch, String type) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
-
+	public void updateDivBranchDetails(SecurityUserDivBranch divBranch, String type) {
 		StringBuilder sql = new StringBuilder("Update SecurityUserDivBranch");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		sql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
-		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where UsrID = :UsrID and UserDivision = :UserDivision");
-		sql.append(" and UserBranch =:UserBranch");
+		sql.append(" Set Version = ? , LastMntBy = ?, LastMntOn = ?");
+		sql.append(", RecordStatus= ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" where UsrID = ? and UserDivision = ? and UserBranch = ?");
+		sql.append("");
 
-		logger.debug("updateSql:" + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setInt(index++, divBranch.getVersion());
+			ps.setLong(index++, divBranch.getLastMntBy());
+			ps.setTimestamp(index++, divBranch.getLastMntOn());
+			ps.setString(index++, divBranch.getRecordStatus());
+			ps.setString(index++, divBranch.getRoleCode());
+			ps.setString(index++, divBranch.getNextRoleCode());
+			ps.setString(index++, divBranch.getTaskId());
+			ps.setString(index++, divBranch.getNextTaskId());
+			ps.setString(index++, divBranch.getRecordType());
+			ps.setLong(index, divBranch.getWorkflowId());
+
+			ps.setLong(index++, divBranch.getUsrID());
+			ps.setString(index++, divBranch.getUserDivision());
+			ps.setString(index++, divBranch.getUserBranch());
+
+		});
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetail errorDetails = getError("41004", String.valueOf(securityUserDivBranch.getUsrID()),
-					securityUserDivBranch.getUserDetails().getLanguage());
-			throw new AppException(errorDetails.getError()) {
-			};
+			LoggedInUser details = divBranch.getUserDetails();
+			String usrID = String.valueOf(divBranch.getUsrID());
+			ErrorDetail error = getError(ERR_41004, usrID, details.getLanguage());
+			throw new AppException(error.getError());
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method is to Delete Each Branch Under Division
-	 */
-	@SuppressWarnings("serial")
 	@Override
-	public void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch, String type) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
-
+	public void deleteDivBranchDetails(SecurityUserDivBranch divBranch, String type) {
 		StringBuilder sql = new StringBuilder("Delete From SecurityUserDivBranch");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where UsrID = :UsrID And UserDivision = :UserDivision And UserBranch =:UserBranch");
+		sql.append(" Where UsrID = ? and UserDivision = ? and UserBranch = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
-		logger.debug("deleteSql:" + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		LoggedInUser details = divBranch.getUserDetails();
+
+		String usrID = String.valueOf(divBranch.getUsrID());
 
 		try {
-			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, divBranch.getUsrID());
+				ps.setString(index++, divBranch.getUserDivision());
+				ps.setString(index++, divBranch.getUserBranch());
+			});
+
 			if (recordCount <= 0) {
-				ErrorDetail errorDetails = getError("41003", String.valueOf(securityUserDivBranch.getUsrID()),
-						securityUserDivBranch.getUserDetails().getLanguage());
-				throw new AppException(errorDetails.getError()) {
-				};
+				ErrorDetail error = getError("41003", usrID, details.getLanguage());
+				throw new AppException(error.getError());
 			}
 		} catch (DataAccessException e) {
-			ErrorDetail errorDetails = getError("41006", String.valueOf(securityUserDivBranch.getUsrID()),
-					securityUserDivBranch.getUserDetails().getLanguage());
-			throw new DependencyFoundException(errorDetails.getError());
+			ErrorDetail error = getError("41006", usrID, details.getLanguage());
+			throw new DependencyFoundException(error.getError());
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method is to Fetch SecurityUser Division Branch Details
-	 */
+	private List<SecurityUserDivBranch> getDivisionBasedNonCluster(long usrID, String type) {
+		StringBuilder sql = new StringBuilder("Select UsrID, UserDivision, UserBranch");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From SecurityUserDivBranch");
+		sql.append(type);
+		sql.append(" Where  UsrID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			SecurityUserDivBranch sudb = new SecurityUserDivBranch();
+
+			sudb.setUsrID(rs.getLong("UsrID"));
+			sudb.setUserDivision(rs.getString("UserDivision"));
+			sudb.setUserBranch(rs.getString("UserBranch"));
+			sudb.setVersion(rs.getInt("Version"));
+			sudb.setLastMntBy(rs.getLong("LastMntBy"));
+			sudb.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			sudb.setRecordStatus(rs.getString("RecordStatus"));
+			sudb.setRoleCode(rs.getString("RoleCode"));
+			sudb.setNextRoleCode(rs.getString("NextRoleCode"));
+			sudb.setTaskId(rs.getString("TaskId"));
+			sudb.setNextTaskId(rs.getString("NextTaskId"));
+			sudb.setRecordType(rs.getString("RecordType"));
+			sudb.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return sudb;
+		}, usrID);
+	}
+
+	private List<SecurityUserDivBranch> getDivisionBasedCluster(long usrID) {
+		StringBuilder sql = new StringBuilder("Select ua.UsrID, ua.Division, dd.DivisionCodeDesc");
+		sql.append(", ua.Branch, b.BranchDesc, ua.AccessType, ua.ClusterId, ua.ClusterType");
+		sql.append(", cl.Code, cl.Name, ua.Entity, e.EntityDesc, ua.ParentCluster");
+		sql.append(", ua.ParentClusterType, clp.Code ParentClusterCode, clp.Name ParentClusterName");
+		sql.append(" From SecUserAccess ua");
+		sql.append(" Inner Join SMTDivisionDetail dd ON dd.DivisionCode = ua.Division");
+		sql.append(" Left Join RMTBranches b ON b.BranchCode = ua.Branch");
+		sql.append(" Left Join Entity e ON e.EntityCode = ua.Entity");
+		sql.append(" Left Join Clusters cl ON cl.Id = ua.ClusterID");
+		sql.append(" Left Join Clusters clp ON clp.Id = ua.ParentCluster");
+		sql.append(" Left Join Cluster_Hierarchy ch ON ch.Entity = ua.Entity and ch.ClusterType = ua.ClusterType");
+		sql.append(" Where UsrID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			SecurityUserDivBranch sudb = new SecurityUserDivBranch();
+
+			sudb.setUsrID(rs.getLong("UsrID"));
+			sudb.setUserDivision(rs.getString("Division"));
+			sudb.setDivisionDesc(rs.getString("DivisionCodeDesc"));
+			sudb.setUserBranch(rs.getString("Branch"));
+			sudb.setBranchDesc(rs.getString("BranchDesc"));
+			sudb.setAccessType(rs.getString("AccessType"));
+			sudb.setClusterId(JdbcUtil.getLong(rs.getObject("ClusterId")));
+			sudb.setClusterType(rs.getString("ClusterType"));
+			sudb.setClusterCode(rs.getString("Code"));
+			sudb.setClusterName(rs.getString("Name"));
+			sudb.setEntity(rs.getString("Entity"));
+			sudb.setEntityDesc(rs.getString("EntityDesc"));
+			sudb.setParentCluster(JdbcUtil.getLong(rs.getObject("ParentCluster")));
+			sudb.setParentClusterType(rs.getString("ParentClusterType"));
+			sudb.setParentClusterCode(rs.getString("ParentClusterCode"));
+			sudb.setParentClusterName(rs.getString("ParentClusterName"));
+
+			return sudb;
+		}, usrID);
+	}
+
 	@Override
 	public List<SecurityUserDivBranch> getSecUserDivBrList(long usrID, String type) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
-			sql.append("select t1.usrid, t1.division UserDivision, dd.divisionCodeDesc divisionDesc");
-			sql.append(", t1.branch UserBranch, t2.branchdesc, t1.accessType, t1.ClusterId, t1.ClusterType");
-			sql.append(", t4.code ClusterCode, t4.Name ClusterNmae, t1.Entity, t3.EntityDesc");
-			sql.append(
-					", t1.ParentCluster, t1.ParentClusterType, t5.code ParentClusterCode, t5.Name ParentClusterName");
-			sql.append(" FROM SecUserAccess t1");
-			sql.append(" inner join SMTDivisionDetail dd ON dd.DivisionCode = t1.division");
-			sql.append(" left join rmtbranches t2 ON t1.branch = t2.branchcode");
-			sql.append(" left join entity t3 ON t3.entitycode = t1.entity");
-			sql.append(" left join clusters t4 ON t4.Id = t1.clusterId");
-			sql.append(" left join clusters t5 ON t5.Id = t1.parentCluster");
-			sql.append(" left join cluster_Hierarchy t6 ON t6.entity = t1.entity and t6.clusterType = t1.clusterType");
+			return getDivisionBasedCluster(usrID);
 		} else {
-			sql.append("select usrId, userDivision, UserBranch");
-			sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
-			sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-			sql.append(" FROM  SecurityUserDivBranch");
-			sql.append(type);
+			return getDivisionBasedNonCluster(usrID, type);
 		}
-		sql.append(" Where UsrID = :UsrID");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-
-		parameterSource.addValue("UsrID", usrID);
-
-		RowMapper<SecurityUserDivBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
-
-		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
-	/**
-	 * This method is to Delete SecurityUser Division Branch Details Under User
-	 */
 	@Override
 	public void deleteBranchs(SecurityUser securityUser, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Delete From SecurityUserDivBranch");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where UsrID = :UsrID");
+		sql.append(" Where UsrID = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, securityUser.getUsrID()));
 	}
 
 	@Override
 	public int getActiveUsersCount(long userId) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		String sql = "select count(usrId) from secusers where usrId <> :usrId and usrenabled = :usrenabled";
+		String sql = "Select count(UsrId) From Secusers Where UsrID <> ? and UsrEnabled = ?";
 
-		paramMap.addValue("usrId", userId);
-		paramMap.addValue("usrenabled", 1);
+		logger.debug(Literal.SQL.concat(sql));
 
-		return jdbcTemplate.queryForObject(sql, paramMap, Integer.class);
+		return jdbcOperations.queryForObject(sql, Integer.class, userId, 1);
 	}
 
 	@Override
 	public int getActiveUsersCount() {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		String sql = "select count(usrenabled) from secusers where usrenabled = :usrenabled";
+		String sql = "Select count(UsrEnabled) From Secusers Where UsrEnabled = ?";
 
-		paramMap.addValue("usrenabled", 1);
+		logger.debug(Literal.SQL.concat(sql));
 
-		return jdbcTemplate.queryForObject(sql, paramMap, Integer.class);
+		return jdbcOperations.queryForObject(sql, Integer.class, 1);
 	}
 
 	@Override
 	public List<Entity> getEntityList(String entity) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
-		sql.append("select distinct e.EntityCode, e.EntityDesc");
-		sql.append(" from Entity e");
-		sql.append(" inner join smtdivisiondetail d on d.entitycode = e.entitycode");
-		sql.append(" where e.EntityCode = :entitycode");
+		sql.append("Select distinct e.EntityCode, e.EntityDesc");
+		sql.append(" From Entity e");
+		sql.append(" Inner Join smtdivisiondetail d on d.EntityCode = e.EntityCode");
+		sql.append(" where e.EntityCode = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("entitycode", entity);
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			Entity e = new Entity();
 
-		RowMapper<Entity> rowMapper = BeanPropertyRowMapper.newInstance(Entity.class);
+			e.setEntityCode(rs.getString("EntityCode"));
+			e.setEntityDesc(rs.getString("EntityDesc"));
 
-		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			return e;
+		}, entity);
 	}
 
 	@Override
 	public long getUserByName(String userName) {
-		logger.debug("Entering ");
-		SecurityUser securityUser = new SecurityUser();
-		securityUser.setUsrLogin(StringUtils.upperCase(userName));
+		String sql = "Select UsrID From SecUsers Where UsrLogin = ?";
 
-		StringBuilder selectSql = new StringBuilder("Select UsrID ");
-
-		selectSql.append("  From SecUsers");
-		selectSql.append(" Where UsrLogin =:UsrLogin");
-
-		logger.debug("selectSql:" + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		RowMapper<SecurityUser> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUser.class);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql, Long.class, userName);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			securityUser.setUsrID(0);
+			return 0;
 		}
-		logger.debug("Leaving ");
-		return securityUser.getUsrID();
 	}
 
 	@Override
 	public List<SecurityUser> getSecUsersByRoles(String[] roles) {
-		logger.debug(Literal.ENTERING);
-
 		if (roles == null || roles.length == 0) {
 			return new ArrayList<>();
 		}
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select u.UsrID, u.UsrLogin, u.UsrFName, u.UsrMName, u.UsrLName, u.UsrMobile, u.UsrEmail");
-		sql.append(", u.UsrBranchCode, b.BranchDesc LovDescUsrBranchCodeName, u.LDAPDomainName");
-		sql.append(" from SecUsers u");
-		sql.append(" left join rmtbranches b on b.branchcode = u.UsrBranchCode");
-		sql.append(" inner join SecuserOPerations uop on uop.usrId = u.usrId");
-		sql.append(" inner join secOPerationRoles opr on opr.oprid = uop.oprid");
-		sql.append(" where opr.roleId in (select roleId from secRoles where rolecd in (:Rolecd))");
+		List<String> asList = Arrays.asList(roles);
 
-		logger.trace(Literal.SQL + sql.toString());
+		StringBuilder sql = new StringBuilder("Select u.UsrID, u.UsrLogin, u.UsrFName");
+		sql.append(", u.UsrMName, u.UsrLName, u.UsrMobile, u.UsrEmail");
+		sql.append(", u.UsrBranchCode, b.BranchDesc, u.LDAPDomainName");
+		sql.append(" From SecUsers u");
+		sql.append(" Left Join RMTBranches b on b.BranchCode = u.UsrBranchCode");
+		sql.append(" Inner Join SecuserOPerations uop on uop.UsrID = u.UsrID");
+		sql.append(" Inner Join secOPerationRoles opr on opr.OprID = uop.OprID");
+		sql.append(" Where opr.RoleID in (Select RoleId from SecRoles Where RoleCD in (");
+		sql.append(commaJoin(asList));
+		sql.append("))");
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("Rolecd", Arrays.asList(roles));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		RowMapper<SecurityUser> rowMapper = BeanPropertyRowMapper.newInstance(SecurityUser.class);
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			for (String role : asList) {
+				ps.setString(index++, role);
+			}
+		}, (rs, rowNum) -> {
+			SecurityUser su = new SecurityUser();
+
+			su.setUsrID(rs.getLong("UsrID"));
+			su.setUsrLogin(rs.getString("UsrLogin"));
+			su.setUsrFName(rs.getString("UsrFName"));
+			su.setUsrMName(rs.getString("UsrMName"));
+			su.setUsrLName(rs.getString("UsrLName"));
+			su.setUsrMobile(rs.getString("UsrMobile"));
+			su.setUsrEmail(rs.getString("UsrEmail"));
+			su.setUsrBranchCode(rs.getString("UsrBranchCode"));
+			su.setLovDescUsrBranchCodeName(rs.getString("BranchDesc"));
+			su.setldapDomainName(rs.getString("LDAPDomainName"));
+
+			return su;
+		});
+	}
+
+	private String commaJoin(List<String> list) {
+		return list.stream().map(e -> "?").collect(Collectors.joining(","));
 	}
 
 	@Override
 	public SecurityUser getSecurityUserAccessToAllBranches(long id) {
-		logger.debug("Entering ");
-		SecurityUser securityUser = new SecurityUser();
-		securityUser.setId(id);
+		SecurityUser su = new SecurityUser();
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select AccessToAllBranches, LovDescUsrBranchCodeName From SecUsers_AVIEW ");
-		selectSql.append(" Where UsrID = :UsrID");
+		String sql = "Select AccessToAllBranches, LovDescUsrBranchCodeName From SecUsers_AVIEW  Where UsrID = ?";
 
-		logger.debug("selectSql:" + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		RowMapper<SecurityUser> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUser.class);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				su.setAccessToAllBranches(rs.getBoolean("AccessToAllBranches"));
+				su.setLovDescUsrBranchCodeName(rs.getString("LovDescUsrBranchCodeName"));
+
+				return su;
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			securityUser.setUsrID(0);
+			su.setUsrID(0);
 		}
-		logger.debug("Leaving ");
-		return securityUser;
+
+		return su;
 	}
 
 	private void updateLockUser(List<? extends SecurityUser> userAccounts) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("update SecUsers");
-		sql.append(" set UsrAcLocked = 1, AccountLockedOn = :AccountLockedOn");
-		sql.append(", AccountUnLockedOn = null where UsrID = :UsrID");
+		String sql = "Update SecUsers set UsrAcLocked = ?, AccountLockedOn = ?, AccountUnLockedOn = ? where UsrID = ?";
 
-		jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(userAccounts.toArray()));
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				int index = 1;
+
+				SecurityUser su = userAccounts.get(i);
+
+				ps.setInt(index++, 1);
+				ps.setDate(index++, JdbcUtil.getDate(su.getAccountLockedOn()));
+				ps.setDate(index, null);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return userAccounts.size();
+			}
+		});
 	}
 
 	@Override
 	public void lockUserAccounts() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select UsrID, LastLoginOn, AccountUnLockedOn from SecUsers");
+		sql.append("Select UsrID, LastLoginOn, AccountUnLockedOn From SecUsers");
 		sql.append(" where UsrAcLocked = 0 and UserType = :UserType");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("UserType", "USER");
 
 		int days = SysParamUtil.getValueAsInt(SMTParameterConstants.USR_ACCT_LOCK_DAYS);
 
-		Date sysDate = DateUtility.getSysDate();
+		Date sysDate = DateUtil.getSysDate();
 		List<SecurityUser> userAccounts = new ArrayList<>();
 		this.jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
 
@@ -685,83 +794,219 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			}
 		});
 
-		if (userAccounts.size() > 0) {
+		if (CollectionUtils.isNotEmpty(userAccounts)) {
 			// call batch update method
 			updateLockUser(userAccounts);
 			userAccounts.clear();
 		}
 	}
 
-	private SecurityUser getTypeRowMapper(ResultSet rs, String type) throws SQLException {
-		SecurityUser su = new SecurityUser();
+	@Override
+	public void updateDisableUser(List<SecurityUser> userAccounts) {
+		String sql = "Update SecUsers Set UsrEnabled = ?, DisableReason = ? Where UsrID = ?";
 
-		su.setUsrID(rs.getLong("UsrID"));
-		su.setUsrLogin(rs.getString("UsrLogin"));
-		su.setUsrPwd(rs.getString("UsrPwd"));
-		su.setUserStaffID(rs.getString("UserStaffID"));
-		su.setUsrFName(rs.getString("UsrFName"));
-		su.setUsrMName(rs.getString("UsrMName"));
-		su.setUsrLName(rs.getString("UsrLName"));
-		su.setUsrMobile(rs.getString("UsrMobile"));
-		su.setUsrEmail(rs.getString("UsrEmail"));
-		su.setUsrEnabled(rs.getBoolean("UsrEnabled"));
-		su.setUsrCanSignonFrom(rs.getTimestamp("UsrCanSignonFrom"));
-		su.setUsrCanSignonTo(rs.getTimestamp("UsrCanSignonTo"));
-		su.setUsrCanOverrideLimits(rs.getBoolean("UsrCanOverrideLimits"));
-		su.setUsrAcExp(rs.getBoolean("UsrAcExp"));
-		su.setUsrAcExpDt(rs.getTimestamp("UsrAcExpDt"));
-		su.setUsrAcLocked(rs.getBoolean("UsrAcLocked"));
-		su.setUsrLanguage(rs.getString("UsrLanguage"));
-		su.setUsrDftAppId(rs.getLong("UsrDftAppId"));
-		su.setUsrBranchCode(rs.getString("UsrBranchCode"));
-		su.setUsrDeptCode(rs.getString("UsrDeptCode"));
-		su.setUsrToken(rs.getString("UsrToken"));
-		su.setUsrIsMultiBranch(rs.getBoolean("UsrIsMultiBranch"));
-		su.setUsrInvldLoginTries(rs.getInt("UsrInvldLoginTries"));
-		su.setUsrDesg(rs.getString("UsrDesg"));
-		su.setAuthType(rs.getString("AuthType"));
-		su.setUsrDftAppCode(rs.getString("UsrDftAppCode"));
-		su.setPwdExpDt(rs.getTimestamp("PwdExpDt"));
-		su.setUserType(rs.getString("UserType"));
-		su.setBusinessVertical(JdbcUtil.getLong(rs.getObject("BusinessVertical")));
-		su.setldapDomainName(rs.getString("LdapDomainName"));
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			su.setLovDescUsrDftAppCodeName(rs.getString("LovDescUsrDftAppCodeName"));
-			su.setLovDescUsrDeptCodeName(rs.getString("LovDescUsrDeptCodeName"));
-			su.setLovDescUsrBranchCodeName(rs.getString("LovDescUsrBranchCodeName"));
-			su.setLovDescUsrLanguage(rs.getString("LovDescUsrLanguage"));
-			su.setLovDescUsrDesg(rs.getString("LovDescUsrDesg"));
-			su.setBusinessVerticalCode(rs.getString("BusinessVerticalCode"));
-			su.setBusinessVerticalDesc(rs.getString("BusinessVerticalDesc"));
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				SecurityUser su = userAccounts.get(i);
+
+				int index = 1;
+
+				ps.setBoolean(index++, su.isUsrEnabled());
+				ps.setString(index++, su.getDisableReason());
+
+				ps.setLong(index, su.getUsrID());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return userAccounts.size();
+			}
+		});
+	}
+
+	@Override
+	public List<SecurityUser> getDisableUserAccounts() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" UsrID, LastLoginOn, CreatedOn, UsrEnabled");
+		sql.append(" From SecUsers");
+		sql.append(" Where UsrEnabled = ? and UserType = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setBoolean(1, true);
+			ps.setString(2, "USER");
+		}, (rs, num) -> {
+			SecurityUser su = new SecurityUser();
+
+			su.setUsrID(rs.getLong("UsrID"));
+			su.setLastLoginOn(rs.getTimestamp("LastLoginOn"));
+			su.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			su.setUsrEnabled(rs.getBoolean("UsrEnabled"));
+
+			return su;
+		});
+	}
+
+	private class SecurityUserRM implements RowMapper<SecurityUser> {
+		private String type;
+
+		private SecurityUserRM(String type) {
+			this.type = type;
 		}
-		su.setVersion(rs.getInt("Version"));
-		su.setLastMntBy(rs.getLong("LastMntBy"));
-		su.setLastMntOn(rs.getTimestamp("LastMntOn"));
-		su.setRecordStatus(rs.getString("RecordStatus"));
-		su.setRoleCode(rs.getString("RoleCode"));
-		su.setNextRoleCode(rs.getString("NextRoleCode"));
-		su.setTaskId(rs.getString("TaskId"));
-		su.setNextTaskId(rs.getString("NextTaskId"));
-		su.setRecordType(rs.getString("RecordType"));
-		su.setWorkflowId(rs.getLong("WorkflowId"));
 
-		return su;
+		@Override
+		public SecurityUser mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+			SecurityUser su = new SecurityUser();
+
+			su.setUsrID(rs.getLong("UsrID"));
+			su.setUsrLogin(rs.getString("UsrLogin"));
+			su.setUsrPwd(rs.getString("UsrPwd"));
+			su.setUserStaffID(rs.getString("UserStaffID"));
+			su.setUsrFName(rs.getString("UsrFName"));
+			su.setUsrMName(rs.getString("UsrMName"));
+			su.setUsrLName(rs.getString("UsrLName"));
+			su.setUsrMobile(rs.getString("UsrMobile"));
+			su.setUsrEmail(rs.getString("UsrEmail"));
+			su.setUsrEnabled(rs.getBoolean("UsrEnabled"));
+			su.setUsrCanSignonFrom(rs.getTimestamp("UsrCanSignonFrom"));
+			su.setUsrCanSignonTo(rs.getTimestamp("UsrCanSignonTo"));
+			su.setUsrCanOverrideLimits(rs.getBoolean("UsrCanOverrideLimits"));
+			su.setUsrAcExp(rs.getBoolean("UsrAcExp"));
+			su.setUsrAcExpDt(rs.getTimestamp("UsrAcExpDt"));
+			su.setUsrAcLocked(rs.getBoolean("UsrAcLocked"));
+			su.setUsrLanguage(rs.getString("UsrLanguage"));
+			su.setUsrDftAppId(rs.getLong("UsrDftAppId"));
+			su.setUsrBranchCode(rs.getString("UsrBranchCode"));
+			su.setUsrDeptCode(rs.getString("UsrDeptCode"));
+			su.setUsrToken(rs.getString("UsrToken"));
+			su.setUsrIsMultiBranch(rs.getBoolean("UsrIsMultiBranch"));
+			su.setUsrInvldLoginTries(rs.getInt("UsrInvldLoginTries"));
+			su.setUsrDesg(rs.getString("UsrDesg"));
+			su.setAuthType(rs.getString("AuthType"));
+			su.setUsrDftAppCode(rs.getString("UsrDftAppCode"));
+			su.setPwdExpDt(rs.getTimestamp("PwdExpDt"));
+			su.setUserType(rs.getString("UserType"));
+			su.setBusinessVertical(JdbcUtil.getLong(rs.getObject("BusinessVertical")));
+			su.setldapDomainName(rs.getString("LdapDomainName"));
+			su.setDeleted(rs.getBoolean("Deleted"));
+			su.setDisableReason(rs.getString("DisableReason"));
+			su.setEmployeeType(rs.getString("EmployeeType"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				su.setLovDescUsrDftAppCodeName(rs.getString("LovDescUsrDftAppCodeName"));
+				su.setLovDescUsrDeptCodeName(rs.getString("LovDescUsrDeptCodeName"));
+				su.setLovDescUsrBranchCodeName(rs.getString("LovDescUsrBranchCodeName"));
+				su.setLovDescUsrLanguage(rs.getString("LovDescUsrLanguage"));
+				su.setLovDescUsrDesg(rs.getString("LovDescUsrDesg"));
+				su.setBusinessVerticalCode(rs.getString("BusinessVerticalCode"));
+				su.setBusinessVerticalDesc(rs.getString("BusinessVerticalDesc"));
+			}
+
+			su.setVersion(rs.getInt("Version"));
+			su.setLastMntBy(rs.getLong("LastMntBy"));
+			su.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			su.setRecordStatus(rs.getString("RecordStatus"));
+			su.setRoleCode(rs.getString("RoleCode"));
+			su.setNextRoleCode(rs.getString("NextRoleCode"));
+			su.setTaskId(rs.getString("TaskId"));
+			su.setNextTaskId(rs.getString("NextTaskId"));
+			su.setRecordType(rs.getString("RecordType"));
+			su.setWorkflowId(rs.getLong("WorkflowId"));
+			su.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedBy")));
+			su.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			su.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+			su.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+
+			return su;
+		}
 	}
 
 	@Override
 	public void markAsDelete(SecurityUser seu, String type) {
-		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" SecUsers");
-		sql.append(" Set UsrEnabled = ?, Deleted = ?");
-		sql.append(" Where Usrid = ?");
+		String sql = "Update SecUsers Set UsrEnabled = ?, Deleted = ? Where Usrid = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql));
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 			ps.setBoolean(index++, seu.isUsrEnabled());
 			ps.setBoolean(index++, seu.isDeleted());
 			ps.setLong(index++, seu.getUsrID());
 		});
+	}
+
+	@Override
+	public boolean isUserExist(String usrLogin) {
+		String sql = "Select count(UsrLogin) from SecUsers Where UsrLogin = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, Integer.class, usrLogin) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
+	}
+
+	@Override
+	public void updateUserStatus(SecurityUser user) {
+		StringBuilder sql = new StringBuilder("Update SecUsers");
+		sql.append(" Set UsrEnabled = ?, UsrAcExp = ?, DisableReason = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(" Where UsrID = ? and Version = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setBoolean(index++, user.isUsrEnabled());
+			ps.setBoolean(index++, user.isUsrAcExp());
+			ps.setString(index++, user.getDisableReason());
+			ps.setInt(index++, user.getVersion());
+			ps.setLong(index++, user.getLastMntBy());
+			ps.setTimestamp(index++, user.getLastMntOn());
+
+			ps.setLong(index++, user.getUsrID());
+			ps.setInt(index++, user.getVersion() - 1);
+		});
+	}
+
+	@Override
+	public List<String> getLovFieldCodeValues(String lovFieldCode) {
+		String sql = "Select FieldCodeValue FROM RMTLovFieldDetail Where FieldCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForList(sql, String.class, lovFieldCode);
+	}
+
+	private StringBuilder getSecurityUserQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile");
+		sql.append(", UsrEmail, UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits");
+		sql.append(", UsrAcExp, UsrAcExpDt, UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode");
+		sql.append(", UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, UsrDftAppCode");
+		sql.append(", PwdExpDt, UserType, BusinessVertical, LdapDomainName, Deleted, DisableReason, EmployeeType");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescUsrDftAppCode, LovDescUsrDftAppCodeName, LovDescUsrDeptCodeName");
+			sql.append(", LovDescUsrBranchCodeName, LovDescUsrLanguage, LovDescUsrDesg");
+			sql.append(", BusinessVerticalCode, BusinessVerticalDesc");
+		}
+
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append(" From SecUsers");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
 	}
 }

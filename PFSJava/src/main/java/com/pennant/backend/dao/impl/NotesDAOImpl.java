@@ -53,6 +53,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 	private static Logger logger = LogManager.getLogger(NotesDAOImpl.class);
@@ -226,17 +227,34 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 
 	@Override
 	public void save(Notes notes) {
-		logger.debug("Entering");
-		notes.setId(getNextValue("SeqNotes"));
+		StringBuilder sql = new StringBuilder("Insert Into Notes");
+		sql.append("(NoteId, ModuleName, Reference, RemarkType, AlignType");
+		sql.append(", RoleCode, Version, Remarks, InputBy, InputDate");
+		sql.append(") Values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder(" INSERT INTO Notes (NoteId, ModuleName, Reference , ");
-		insertSql.append(" RemarkType, AlignType, RoleCode, Version, Remarks, InputBy, InputDate )");
-		insertSql.append(" Values( :NoteId, :ModuleName, :Reference, :RemarkType, :AlignType, :RoleCode, ");
-		insertSql.append(" :Version, :Remarks, :InputBy, :InputDate)");
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
-		logger.debug("Leaving");
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				notes.setId(getNextValue("SeqNotes"));
+
+				ps.setLong(index++, notes.getNoteId());
+				ps.setString(index++, notes.getModuleName());
+				ps.setString(index++, notes.getReference());
+				ps.setString(index++, notes.getRemarkType());
+				ps.setString(index++, notes.getAlignType());
+				ps.setString(index++, notes.getRoleCode());
+				ps.setInt(index++, notes.getVersion());
+				ps.setString(index++, notes.getRemarks());
+				ps.setLong(index++, notes.getInputBy());
+				ps.setTimestamp(index++, notes.getInputDate());
+			});
+		} catch (Exception e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
 	}
 
 	public void delete(Notes notes) {

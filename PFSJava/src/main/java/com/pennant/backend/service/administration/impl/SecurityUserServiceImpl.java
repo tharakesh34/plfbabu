@@ -24,24 +24,37 @@
  */
 package com.pennant.backend.service.administration.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.QueueAssignmentDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.dao.administration.SecurityUserPasswordsDAO;
+import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.applicationmaster.ClusterDAO;
+import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.applicationmaster.ReportingManagerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.staticparms.LanguageDAO;
+import com.pennant.backend.dao.systemmasters.DepartmentDAO;
+import com.pennant.backend.dao.systemmasters.DesignationDAO;
+import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
+import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.administration.ReportingManager;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
@@ -54,9 +67,12 @@ import com.pennant.backend.service.administration.SecurityUserHierarchyService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.constant.LookUpCode;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.lic.License;
@@ -68,6 +84,11 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class SecurityUserServiceImpl extends GenericService<SecurityUser> implements SecurityUserService {
+	private static final String ERR_90502 = "90502";
+	private static final String ERR_90300 = "90300";
+	private static final String ERR_93304 = "93304";
+	private static final String ERR_RU0040 = "RU0040";
+	private static final String ERR_90010 = "90010";
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private SecurityUserDAO securityUsersDAO;
@@ -77,6 +98,14 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	private QueueAssignmentDAO queueAssignmentDAO;
 	private SecurityUserOperationsDAO securityUserOperationsDAO;
 	private ReportingManagerDAO reportingManagerDAO;
+	private ClusterDAO clusterDAO;
+	private DivisionDetailDAO divisionDetailDAO;
+	private EntityDAO entityDAO;
+	private LanguageDAO languageDAO;
+	private DesignationDAO designationDAO;
+	private DepartmentDAO departmentDAO;
+	private BranchDAO branchDAO;
+	private NotesDAO notesDAO;
 
 	private static Logger logger = LogManager.getLogger(SecurityUserServiceImpl.class);
 
@@ -145,11 +174,11 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 			saveUserDivisions(securityUser, tableType.getSuffix(), null);
-		}
-
-		List<AuditDetail> auditDtls = auditHeader.getAuditDetails();
-		if (CollectionUtils.isNotEmpty(auditDtls)) {
-			auditDetails.addAll(processingDetailList(auditDtls, tableType.getSuffix(), securityUser));
+		} else {
+			List<AuditDetail> userDivBranchs = securityUser.getAuditDetailMap().get("UserDivBranchs");
+			if (CollectionUtils.isNotEmpty(userDivBranchs)) {
+				auditDetails.addAll(processingDetailList(userDivBranchs, tableType.getSuffix(), securityUser));
+			}
 		}
 
 		List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
@@ -406,10 +435,14 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 				securityUsersDAO.update(securityUser, "");
 			}
 
-			List<AuditDetail> userDivBranchs = securityUser.getAuditDetailMap().get("UserDivBranchs");
-			if (CollectionUtils.isNotEmpty(userDivBranchs)) {
-				securityUsersDAO.deleteBranchs(securityUser, "_temp");
-				auditDetails.addAll(processingDetailList(userDivBranchs, "", securityUser));
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
+				saveUserDivisions(securityUser, "", "doApprove");
+			} else {
+				List<AuditDetail> userDivBranchs = securityUser.getAuditDetailMap().get("UserDivBranchs");
+				if (CollectionUtils.isNotEmpty(userDivBranchs)) {
+					securityUsersDAO.deleteBranchs(securityUser, "_temp");
+					auditDetails.addAll(processingDetailList(userDivBranchs, "", securityUser));
+				}
 			}
 
 			List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
@@ -418,10 +451,14 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 			}
 
-			refreshUserHierarchy(securityUser);
+			if (CollectionUtils.isNotEmpty(securityUser.getReportingManagersList())) {
+				refreshUserHierarchy(securityUser);
+			}
 		}
 
-		securityUsersDAO.delete(securityUser, "_Temp");
+		if (!PennantConstants.FINSOURCE_ID_API.equals(securityUser.getSourceId())) {
+			securityUsersDAO.delete(securityUser, "_Temp");
+		}
 
 		List<ReportingManager> reportingManagers = securityUser.getReportingManagersList();
 		if (CollectionUtils.isNotEmpty(reportingManagers)) {
@@ -982,6 +1019,11 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		return securityUsersDAO.getSecurityUserByLogin(userLogin, "");
 	}
 
+	@Override
+	public SecurityUser getSecurityUserByLoginId(String userLogin) {
+		return securityUsersDAO.getSecurityUserByLogin(userLogin, "_Temp");
+	}
+
 	/**
 	 * Method For Preparing List of AuditDetails for securityUser
 	 * 
@@ -1284,6 +1326,49 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		return auditDetails;
 	}
 
+	public void disableUserAccount() {
+		logger.debug(Literal.ENTERING);
+
+		List<SecurityUser> users = securityUsersDAO.getDisableUserAccounts();
+
+		int newUsrDays = SysParamUtil.getValueAsInt(SMTParameterConstants.USR_DISABLE_DAYS_NEW);
+		int existingUsrDays = SysParamUtil.getValueAsInt(SMTParameterConstants.USR_DISABLE_DAYS_EXISTING);
+		Date sysDate = DateUtil.getSysDate();
+
+		List<SecurityUser> updateList = new ArrayList<>();
+
+		for (SecurityUser user : users) {
+			Date lastLoginOn = user.getLastLoginOn();
+			Date createdOn = user.getCreatedOn();
+
+			if (lastLoginOn == null && DateUtil.getDaysBetween(createdOn, sysDate) > newUsrDays) {
+				setDisableUser(user);
+				updateList.add(user);
+			}
+
+			if (lastLoginOn != null && DateUtil.getDaysBetween(lastLoginOn, sysDate) > existingUsrDays) {
+				setDisableUser(user);
+				updateList.add(user);
+			}
+
+			if (updateList.size() > 1000) {
+				securityUsersDAO.updateDisableUser(updateList);
+				updateList.clear();
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(updateList)) {
+			securityUsersDAO.updateDisableUser(updateList);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setDisableUser(SecurityUser user) {
+		user.setUsrEnabled(false);
+		user.setDisableReason(LookUpCode.SU_DR_DORMANT);
+	}
+
 	@Override
 	public void validateLicensedUsers() throws LicenseException {
 		License.validateLicensedUsers(securityUsersDAO.getActiveUsersCount());
@@ -1296,6 +1381,654 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		return securityUsersDAO.getUserByName(username);
 	}
 
+	private void setError(AuditDetail ad, String code, String... parms) {
+		ErrorDetail error = ErrorUtil.getError(code, parms);
+
+		StringBuilder logMsg = new StringBuilder();
+		logMsg.append("\n");
+		logMsg.append("=======================================================\n");
+		logMsg.append("Error-Code: ").append(error.getCode()).append("\n");
+		logMsg.append("Error-Message: ").append(error.getMessage()).append("\n");
+		logMsg.append("=======================================================");
+		logMsg.append("\n");
+
+		logger.error(Literal.EXCEPTION, logMsg);
+
+		ad.setErrorDetail(error);
+	}
+
+	public AuditDetail doUserValidation(AuditHeader ah, boolean isAllowCluster, boolean isUpdate,
+			LoggedInUser logUsrDtls) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail ad = ah.getAuditDetail();
+		SecurityUser user = (SecurityUser) ad.getModelData();
+
+		if (StringUtils.isBlank(user.getUsrLogin())) {
+			setError(ad, ERR_90502, "usrLogin");
+			return ad;
+		}
+
+		if (StringUtils.isBlank(user.getUserType())) {
+			setError(ad, ERR_90502, "userType");
+			return ad;
+		}
+
+		userNameValidations(ad, user);
+
+		if (CollectionUtils.isNotEmpty(ad.getErrorDetails())) {
+			return ad;
+		}
+
+		userStaffIDValidation(ad, user);
+
+		if (CollectionUtils.isNotEmpty(ad.getErrorDetails())) {
+			return ad;
+		}
+
+		languageValidations(ad, user);
+
+		if (CollectionUtils.isNotEmpty(ad.getErrorDetails())) {
+			return ad;
+		}
+
+		userDeptValidations(ad, user);
+
+		if (CollectionUtils.isNotEmpty(ad.getErrorDetails())) {
+			return ad;
+		}
+
+		userDesignationValidation(ad, user);
+
+		if (CollectionUtils.isNotEmpty(ad.getErrorDetails())) {
+			return ad;
+		}
+
+		userBranchValidation(ad, user);
+
+		if (CollectionUtils.isNotEmpty(ad.getErrorDetails())) {
+			return ad;
+		}
+
+		if (user.getUsrMobile() != null && user.getUsrMobile().length() > 13) {
+			setError(ad, ERR_90300, "UsrMobile", "13");
+			return ad;
+		}
+
+		if (user.getUsrEmail() != null && user.getUsrEmail().length() > 50) {
+			setError(ad, ERR_90300, "UsrMobile", "50");
+			return ad;
+		}
+
+		if (!user.isUsrEnabled()) {
+			userDisableValidation(ad, user);
+		} else if (user.getDisableReason() != null) {
+			setError(ad, ERR_RU0040, "disableReason");
+			return ad;
+		}
+
+		userEmployeeTypeValidation(ad, user);
+
+		if (CollectionUtils.isNotEmpty(ad.getErrorDetails())) {
+			return ad;
+		}
+
+		AuditDetail returnStatus = validateDivisions(ad, user, isAllowCluster, logUsrDtls);
+
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	public AuditDetail doValidation(AuditHeader ah, LoggedInUser logUsrDtls, boolean isFromUserExpire) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail auditDetail = ah.getAuditDetail();
+		SecurityUser user = (SecurityUser) auditDetail.getModelData();
+
+		if (StringUtils.isBlank(user.getUsrLogin()) || StringUtils.equals(null, user.getUsrLogin())) {
+			setError(auditDetail, "90502", "usrLogin");
+			return auditDetail;
+		}
+
+		if ((!user.isUsrEnabled() || user.isUsrAcExp()) && StringUtils.isBlank(user.getReason())) {
+			setError(auditDetail, "90502", "reason");
+			return auditDetail;
+		}
+
+		if (!isFromUserExpire) {
+
+			if (!user.isUsrEnabled()) {
+				userDisableValidation(auditDetail, user);
+			} else if (user.getDisableReason() != null) {
+				setError(auditDetail, "RU0040", "disableReason");
+				return auditDetail;
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
+			return auditDetail;
+		}
+
+		if (isFromUserExpire && !user.isUsrAcExp()) {
+			setError(auditDetail, "90008", "usrAcExp");
+			return auditDetail;
+		}
+
+		SecurityUser UserDetailTemp = getSecurityUserByLoginId(user.getUsrLogin());
+		if (UserDetailTemp != null) {
+			setError(auditDetail, "90009", "usrLogin");
+			return auditDetail;
+		}
+
+		return validateDivisions(auditDetail, user, false, logUsrDtls);
+	}
+
+	private AuditDetail validateDivisions(AuditDetail auditDetail, SecurityUser user, boolean isAllowCluster,
+			LoggedInUser logUsrDtls) {
+		logger.debug(Literal.ENTERING);
+
+		List<SecurityUserDivBranch> newdivList = new ArrayList<>();
+		AuditDetail ad = new AuditDetail();
+		Timestamp lastMntOn = new Timestamp(System.currentTimeMillis());
+
+		for (SecurityUserDivBranch divBranch : user.getSecurityUserDivBranchList()) {
+			if (!isAllowCluster) {
+				return validateDivisionBased(auditDetail, newdivList, logUsrDtls, divBranch, lastMntOn);
+			} else {
+				ad = validateClusterbased(auditDetail, newdivList, logUsrDtls, divBranch, lastMntOn);
+				if (CollectionUtils.isNotEmpty(ad.getErrorDetails())) {
+					break;
+				}
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(newdivList)) {
+			user.setSecurityUserDivBranchList(newdivList);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return ad;
+	}
+
+	private AuditDetail validateClusterbased(AuditDetail ad, List<SecurityUserDivBranch> divList,
+			LoggedInUser userDetails, SecurityUserDivBranch divBranch, Timestamp lastMntOn) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail returnStatus = new AuditDetail();
+
+		boolean entities = false;
+		boolean clusters = false;
+		boolean branches = false;
+
+		if (StringUtils.isEmpty(divBranch.getAccessType())) {
+			setError(ad, ERR_90502, "Access Type");
+			return ad;
+		}
+
+		if (!divisionDetailDAO.isActiveDivision(divBranch.getUserDivision())) {
+			setError(ad, ERR_93304, "Division");
+			return ad;
+		}
+
+		if (entityDAO.getEntityCount(divBranch.getEntitiesValues()) == 0) {
+			setError(ad, ERR_93304, "Entities");
+			return ad;
+		}
+
+		switch (divBranch.getAccessType()) {
+		case PennantConstants.ACCESSTYPE_ENTITY:
+			entities = true;
+			if (StringUtils.isEmpty(divBranch.getEntitiesValues())) {
+				setError(ad, ERR_90502, "Entities");
+				return ad;
+			}
+
+			break;
+		case PennantConstants.ACCESSTYPE_CLUSTER:
+			accessTypeClusterTypeValidation(ad, divBranch);
+			clusters = true;
+			break;
+		case PennantConstants.ACCESSTYPE_BRANCH:
+			accessTypeBranchValidation(ad, divBranch);
+			branches = true;
+			break;
+		default:
+			break;
+		}
+
+		long lastUsr = userDetails.getUserId();
+		long currUsr = divBranch.getUsrID();
+		String accessType = divBranch.getAccessType();
+		String userBranch = divBranch.getUserDivision();
+
+		if (entities) {
+			String[] enties = divBranch.getEntitiesValues().split(",");
+			for (String value : enties) {
+				SecurityUserDivBranch division = new SecurityUserDivBranch();
+				division.setAccessType(accessType);
+				division.setUsrID(currUsr);
+				division.setUserDivision(userBranch);
+				division.setEntity(value);
+				division.setRecordStatus("");
+				division.setLastMntBy(lastUsr);
+				division.setLastMntOn(lastMntOn);
+				division.setUserDetails(userDetails);
+
+				divList.add(division);
+			}
+
+		}
+		if (clusters) {
+			String[] clusts = divBranch.getClusterValues().split(",");
+
+			for (String value : clusts) {
+				SecurityUserDivBranch division = new SecurityUserDivBranch();
+				division.setAccessType(accessType);
+				division.setUsrID(currUsr);
+				division.setUserDivision(userBranch);
+
+				division.setEntity(divBranch.getEntity());
+				division.setClusterType(divBranch.getClusterType());
+				division.setClusterId(
+						clusterDAO.getClusterByCode(value, divBranch.getClusterType(), divBranch.getEntity(), ""));
+				division.setRecordStatus("");
+				division.setLastMntBy(lastUsr);
+				division.setLastMntOn(lastMntOn);
+				division.setUserDetails(userDetails);
+				divList.add(division);
+			}
+		}
+
+		if (branches) {
+			String[] branchs = divBranch.getBranchValues().split(",");
+
+			for (String value : branchs) {
+				SecurityUserDivBranch division = new SecurityUserDivBranch();
+				division.setAccessType(accessType);
+				division.setUsrID(currUsr);
+				division.setUserDivision(userBranch);
+				division.setUserBranch(value);
+				division.setEntity(divBranch.getEntity());
+				division.setParentCluster(
+						clusterDAO.getClusterByCode(divBranch.getParentClusterCode(), "", divBranch.getEntity(), ""));
+				division.setRecordStatus("");
+				division.setLastMntBy(lastUsr);
+				division.setLastMntOn(lastMntOn);
+				division.setUserDetails(userDetails);
+
+				divList.add(division);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	private void accessTypeBranchValidation(AuditDetail ad, SecurityUserDivBranch divBranch) {
+		if (StringUtils.isEmpty(divBranch.getEntity())) {
+			setError(ad, ERR_90502, "entity");
+		}
+
+		if (StringUtils.isEmpty(divBranch.getParentClusterCode())) {
+			setError(ad, ERR_90502, "ParentClusterCode");
+		}
+
+		if (StringUtils.isEmpty(divBranch.getBranchValues())) {
+			setError(ad, ERR_90502, "branches");
+		}
+	}
+
+	private void accessTypeClusterTypeValidation(AuditDetail ad, SecurityUserDivBranch divBranch) {
+		if (StringUtils.isEmpty(divBranch.getEntity())) {
+			setError(ad, ERR_90502, "Entitiy");
+		}
+		if (StringUtils.isEmpty(divBranch.getClusterType())) {
+			setError(ad, ERR_90502, "Cluster Type");
+		}
+		if (StringUtils.isEmpty(divBranch.getClusterValues())) {
+			setError(ad, ERR_90502, "Cluster Values");
+		}
+	}
+
+	private AuditDetail validateDivisionBased(AuditDetail ad, List<SecurityUserDivBranch> list, LoggedInUser details,
+			SecurityUserDivBranch branch, Timestamp lastMntOn) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail returnStatus = new AuditDetail();
+
+		String userBranch = branch.getUserBranch();
+
+		if (StringUtils.isEmpty(userBranch)) {
+			setError(ad, ERR_90502, "User Branch");
+			return ad;
+		}
+
+		String[] branches = userBranch.split(",");
+		for (String divBranch : branches) {
+			SecurityUserDivBranch division = new SecurityUserDivBranch();
+			division.setUsrID(branch.getUsrID());
+			division.setUserDivision(branch.getUserDivision());
+			division.setUserBranch(divBranch);
+			division.setRecordStatus("");
+			division.setLastMntBy(details.getUserId());
+			division.setLastMntOn(lastMntOn);
+			division.setUserDetails(details);
+			division.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			division.setNewRecord(true);
+
+			list.add(division);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	private AuditDetail validateAuthTypeandPassword(AuditDetail auditDetail, SecurityUser user, boolean isUpdate) {
+		logger.debug(Literal.ENTERING);
+
+		String authType = user.getAuthType();
+		String inType = Labels.getLabel("label_Auth_Type_Internal");
+		boolean isPwd = false;
+
+		if (isUpdate && StringUtils.equals(authType, inType)) {
+			user.setAuthType(AuthenticationType.DAO.name());
+			return null;
+		}
+
+		if (StringUtils.equals(authType, inType)) {
+			user.setAuthType(AuthenticationType.DAO.name());
+			if (StringUtils.isBlank(user.getUsrPwd())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Password";
+				ErrorDetail errorDetail = new ErrorDetail();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			isPwd = checkPasswordCriteria(user.getUsrLogin(), user.getUsrPwd());
+
+			if (isPwd) {
+				String[] valueParm = new String[4];
+				valueParm[0] = "Password";
+				valueParm[1] = "Not Matched with";
+				valueParm[2] = "Criteria";
+				valueParm[3] = "";
+				ErrorDetail errorDetail = new ErrorDetail();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	public boolean checkPasswordCriteria(String username, String password) {
+		logger.debug(Literal.ENTERING);
+		boolean inValid = false;
+		String pattern = "";
+		int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
+		int pwdMaxLenght = SysParamUtil.getValueAsInt("USR_PWD_MAX_LEN");
+		pattern = PennantRegularExpressions.PASSWORD_PATTERN + ".{" + String.valueOf(pwdMinLenght) + ","
+				+ String.valueOf(pwdMaxLenght) + "})";
+		Pattern p = Pattern.compile(pattern);
+		Matcher matcher = p.matcher(password);
+		if (!matcher.matches()) {
+			return true;
+		}
+		if (matcher.matches()) {
+			for (String part : getSubstrings(username, 3)) {
+				if (StringUtils.containsIgnoreCase(password, part)) {
+					return true;
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return inValid;
+	}
+
+	private List<String> getSubstrings(String string, int partitionSize) {
+		logger.debug(Literal.ENTERING);
+		List<String> partsList = new ArrayList<String>();
+		int len = string.length();
+		for (int i = 0; i < len; i += 1) {
+			String part = string.substring(i, Math.min(len, i + partitionSize));
+			if (part.length() == 3) {
+				partsList.add(part);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return partsList;
+	}
+
+	@Override
+	public AuditHeader updateUserStatus(AuditHeader ah) {
+		logger.debug(Literal.ENTERING);
+
+		SecurityUser user = new SecurityUser();
+		BeanUtils.copyProperties((SecurityUser) ah.getAuditDetail().getModelData(), user);
+
+		SecurityUser befUser = securityUsersDAO.getSecurityUserByLogin(user.getUsrLogin(), "");
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(user.getRecordType())) {
+			ah.getAuditDetail().setBefImage(befUser);
+		}
+
+		user.setRoleCode("");
+		user.setNextRoleCode("");
+		user.setTaskId("");
+		user.setNextTaskId("");
+		user.setWorkflowId(0);
+
+		if (user.isUsrEnabled()) {
+			user.setDisableReason(null);
+		}
+
+		securityUsersDAO.updateUserStatus(user);
+
+		doSaveNotes(user);
+
+		ah.setAuditTranType(PennantConstants.TRAN_WF);
+		auditHeaderDAO.addAudit(ah);
+
+		ah.setAuditTranType("");
+		ah.getAuditDetail().setAuditTranType("");
+		ah.getAuditDetail().setModelData(user);
+		auditHeaderDAO.addAudit(ah);
+
+		/*
+		 * if (!user.isUsrEnabled()) { queueAssignmentDAO.executeStoredProcedure(user.getUsrID()); }
+		 */
+
+		logger.debug(Literal.LEAVING);
+		return ah;
+	}
+
+	private void userNameValidations(AuditDetail ad, SecurityUser user) {
+		String usrFName = user.getUsrFName();
+		if (StringUtils.isBlank(usrFName)) {
+			setError(ad, ERR_90502, "usrFName");
+			return;
+		} else if (usrFName.length() > 50) {
+			setError(ad, ERR_90300, "usrFName", "50");
+			return;
+		}
+
+		String usrLName = user.getUsrLName();
+		if (StringUtils.isBlank(usrLName)) {
+			setError(ad, ERR_90502, "usrLName");
+		} else if (usrLName.length() > 50) {
+			setError(ad, ERR_90300, "usrLName", "50");
+		}
+	}
+
+	private void userStaffIDValidation(AuditDetail ad, SecurityUser user) {
+		if (StringUtils.isBlank(user.getUserStaffID())) {
+			setError(ad, ERR_90502, "userStaffID");
+			return;
+		}
+
+		if (user.getUsrLanguage().length() > 10) {
+			setError(ad, ERR_90300, "userStaffID", "10");
+		}
+	}
+
+	private void languageValidations(AuditDetail ad, SecurityUser user) {
+		String usrLanguage = user.getUsrLanguage();
+		String column = "usrLanguage";
+
+		if (!languageDAO.isLanguageValid(usrLanguage)) {
+			setError(ad, ERR_93304, column);
+		} else if (StringUtils.isBlank(usrLanguage)) {
+			setError(ad, ERR_90502, column);
+		} else if (usrLanguage.length() > 4) {
+			setError(ad, ERR_90300, column, "4");
+		}
+	}
+
+	private void userDeptValidations(AuditDetail ad, SecurityUser user) {
+		String usrDeptCode = user.getUsrDeptCode();
+		String column = "UsrDeptCode";
+		if (!departmentDAO.isDeptValid(usrDeptCode)) {
+			setError(ad, ERR_93304, column);
+		} else if (StringUtils.isBlank(usrDeptCode)) {
+			setError(ad, ERR_90502, column);
+		} else if (usrDeptCode.length() > 8) {
+			setError(ad, ERR_90300, column, "8");
+		}
+	}
+
+	private void userDesignationValidation(AuditDetail ad, SecurityUser user) {
+		String usrDesg = user.getUsrDesg();
+
+		if (!designationDAO.isDesignationValid(usrDesg)) {
+			setError(ad, ERR_93304, "Designation");
+		} else if (StringUtils.isBlank(usrDesg)) {
+			setError(ad, ERR_90502, "UsrDesg");
+		} else if (usrDesg.length() > 50) {
+			setError(ad, ERR_90300, "UsrDesg", "50");
+		}
+	}
+
+	private void userBranchValidation(AuditDetail ad, SecurityUser user) {
+		String branchCode = user.getUsrBranchCode();
+		if (!branchDAO.isActiveBranch(branchCode)) {
+			setError(ad, ERR_93304, "Branch");
+		} else if (StringUtils.isBlank(branchCode)) {
+			setError(ad, ERR_90502, "UsrBranchCode");
+		}
+	}
+
+	private void userDisableValidation(AuditDetail ad, SecurityUser user) {
+		List<String> reasons = securityUsersDAO.getLovFieldCodeValues(LookUpCode.SU_DISABLE_REASON);
+		String disableReason = user.getDisableReason();
+		boolean anyMatch = false;
+
+		if (CollectionUtils.isNotEmpty(reasons)) {
+			if (disableReason != null) {
+				anyMatch = reasons.stream().anyMatch(reason -> reason.contentEquals(disableReason));
+			}
+
+			if (StringUtils.isBlank(disableReason)) {
+				setError(ad, ERR_90502, "disable reason");
+			} else if (!anyMatch) {
+				setError(ad, ERR_93304, "disable reason");
+			}
+		} else if (user.getDisableReason() == null) {
+			user.setDisableReason(PennantConstants.List_Select);
+		} else if (user.getDisableReason() != null) {
+			setError(ad, ERR_90010, "disable reason");
+		}
+	}
+
+	private void userEmployeeTypeValidation(AuditDetail ad, SecurityUser user) {
+		List<String> employees = securityUsersDAO.getLovFieldCodeValues(LookUpCode.SU_EMP_TYPE);
+		String employeeType = user.getEmployeeType();
+		boolean anyMatch = false;
+
+		if (CollectionUtils.isNotEmpty(employees)) {
+			if (employeeType != null) {
+				anyMatch = employees.stream().anyMatch(employee -> employee.contentEquals(employeeType));
+			}
+
+			if (StringUtils.isBlank(employeeType)) {
+				setError(ad, ERR_90502, "Employee Type");
+				return;
+			} else if (!anyMatch) {
+				setError(ad, ERR_93304, "Employee Type");
+				return;
+			}
+		} else if (user.getEmployeeType() == null) {
+			user.setEmployeeType(PennantConstants.List_Select);
+		} else if (user.getEmployeeType() != null) {
+			setError(ad, ERR_90010, "Employee Type");
+		}
+	}
+
+	private void doSaveNotes(SecurityUser user) {
+		Notes notes = new Notes();
+
+		notes.setModuleName("SecurityUsers");
+		notes.setReference(String.valueOf(user.getUsrID()));
+		notes.setVersion(user.getVersion());
+		notes.setRemarks(user.getReason());
+		notes.setInputBy(user.getLastMntBy());
+		notes.setInputDate(user.getLastMntOn());
+		notes.setRemarkType("N");
+		notes.setAlignType("R");
+		notes.setRoleCode(user.getRoleCode());
+
+		notesDAO.save(notes);
+	}
+
+	public DivisionDetailDAO getDivisionDetailDAO() {
+		return divisionDetailDAO;
+	}
+
+	public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
+		this.divisionDetailDAO = divisionDetailDAO;
+	}
+
+	public EntityDAO getEntityDAO() {
+		return entityDAO;
+	}
+
+	public void setEntityDAO(EntityDAO entityDAO) {
+		this.entityDAO = entityDAO;
+	}
+
+	public LanguageDAO getLanguageDAO() {
+		return languageDAO;
+	}
+
+	public void setLanguageDAO(LanguageDAO languageDAO) {
+		this.languageDAO = languageDAO;
+	}
+
+	public DesignationDAO getDesignationDAO() {
+		return designationDAO;
+	}
+
+	public void setDesignationDAO(DesignationDAO designationDAO) {
+		this.designationDAO = designationDAO;
+	}
+
+	public DepartmentDAO getDepartmentDAO() {
+		return departmentDAO;
+	}
+
+	public void setDepartmentDAO(DepartmentDAO departmentDAO) {
+		this.departmentDAO = departmentDAO;
+	}
+
+	public BranchDAO getBranchDAO() {
+		return branchDAO;
+	}
+
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
+	}
+
 	public void setReportingManagerDAO(ReportingManagerDAO reportingManagerDAO) {
 		this.reportingManagerDAO = reportingManagerDAO;
 	}
@@ -1306,6 +2039,22 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 	public void setSecurityUsersDAO(SecurityUserDAO securityUsersDAO) {
 		this.securityUsersDAO = securityUsersDAO;
+	}
+
+	public ClusterDAO getClusterDAO() {
+		return clusterDAO;
+	}
+
+	public void setClusterDAO(ClusterDAO clusterDAO) {
+		this.clusterDAO = clusterDAO;
+	}
+
+	public NotesDAO getNotesDAO() {
+		return notesDAO;
+	}
+
+	public void setNotesDAO(NotesDAO notesDAO) {
+		this.notesDAO = notesDAO;
 	}
 
 }

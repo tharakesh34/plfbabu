@@ -17,6 +17,10 @@ public class OTPMessage implements Serializable {
 	private String smsMessage;
 	private String emailMessage;
 	private long validity;
+	private String userName;
+	private String templateCode;
+	private boolean sendSMS;
+	private boolean sendEmail;
 
 	public OTPMessage() {
 		super();
@@ -116,6 +120,38 @@ public class OTPMessage implements Serializable {
 
 	public void setValidity(long validity) {
 		this.validity = validity;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getTemplateCode() {
+		return templateCode;
+	}
+
+	public void setTemplateCode(String templateCode) {
+		this.templateCode = templateCode;
+	}
+
+	public boolean isSendSMS() {
+		return sendSMS;
+	}
+
+	public void setSendSMS(boolean sendSMS) {
+		this.sendSMS = sendSMS;
+	}
+
+	public boolean isSendEmail() {
+		return sendEmail;
+	}
+
+	public void setSendEmail(boolean sendEmail) {
+		this.sendEmail = sendEmail;
 	}
 
 }

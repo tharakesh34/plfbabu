@@ -507,8 +507,11 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 			auditDetails = processingAuditDetailList(auditHeader.getAuditDetails(), "", securityUser);
 		}
 
-		securityUserOperationsDAO.deleteById(securityUser.getUsrID(), "_Temp");
-		securityUserDAO.delete(securityUser, "_RTEMP");
+		if (!PennantConstants.FINSOURCE_ID_API.equals(securityUser.getSourceId())) {
+			securityUserOperationsDAO.deleteById(securityUser.getUsrID(), "_Temp");
+			securityUserDAO.delete(securityUser, "_RTEMP");
+		}
+
 		auditHeader.setAuditDetail(null);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(auditDetails);
@@ -523,34 +526,19 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		return auditHeader;
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for authorizationDetail
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param channelId
-	 * @return
-	 */
-
 	private List<AuditDetail> processingAuditDetailList(List<AuditDetail> auditDetails, String type,
 			SecurityUser secUser) {
 		logger.debug("Entering ");
 
-		List<AuditDetail> userOperationsAuditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> details = new ArrayList<>();
 
-		for (AuditDetail auditDetail : auditDetails) {
-			Object object = auditDetail.getModelData();
-
-			if (object.getClass().isInstance(new SecurityUserOperations())) {
-				userOperationsAuditDetails.add(auditDetail);
+		for (AuditDetail ad : auditDetails) {
+			if (ad.getModelData().getClass().isInstance(new SecurityUserOperations())) {
+				details.add(ad);
 			}
 		}
 
-		if (!userOperationsAuditDetails.isEmpty()) {
-			userOperationsAuditDetails = processingDetailList(userOperationsAuditDetails, type, secUser);
-		}
-
-		return userOperationsAuditDetails;
+		return processingDetailList(details, type, secUser);
 	}
 
 	private AuditHeader resetAuditDetails(AuditHeader auditHeader, SecurityUser securityUser, String tranType) {
@@ -558,18 +546,18 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		auditHeader.setAuditTranType(tranType);
 
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
-			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+			List<AuditDetail> auditDetails = new ArrayList<>();
 
 			for (AuditDetail detail : auditHeader.getAuditDetails()) {
-				SecurityUserOperations userOperations = (SecurityUserOperations) detail.getModelData();
+				SecurityUserOperations user = (SecurityUserOperations) detail.getModelData();
 				detail.setAuditTranType(tranType);
-				userOperations.setRecordType("");
-				userOperations.setRoleCode("");
-				userOperations.setNextRoleCode("");
-				userOperations.setTaskId("");
-				userOperations.setNextTaskId("");
-				userOperations.setWorkflowId(0);
-				detail.setModelData(userOperations);
+				user.setRecordType("");
+				user.setRoleCode("");
+				user.setNextRoleCode("");
+				user.setTaskId("");
+				user.setNextTaskId("");
+				user.setWorkflowId(0);
+				detail.setModelData(user);
 				auditDetails.add(detail);
 			}
 			auditHeader.setAuditDetails(auditDetails);
@@ -578,15 +566,6 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using securityUserDAO.delete with parameters securityUser,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtChannelDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");

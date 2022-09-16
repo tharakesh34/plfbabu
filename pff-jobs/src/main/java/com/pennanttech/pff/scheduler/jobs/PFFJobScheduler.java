@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
+import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.service.finance.covenant.impl.CovenantAlerts;
@@ -67,6 +68,7 @@ public class PFFJobScheduler extends JobScheduler {
 	private DisbursementResponse disbursementResponse;
 	private MandateProcesses mandateProcesses;
 	private PmayProcess pmayProcess;
+	private SecurityUserService securityUserService;
 
 	@Override
 	protected List<JobData> loadJobs() {
@@ -185,6 +187,7 @@ public class PFFJobScheduler extends JobScheduler {
 		 */
 		args = new JobDataMap();
 		args.put("securityUserDAO", securityUserDAO);
+		args.put("securityUserService", securityUserService);
 		jobData = new JobData("USER_AUTO_LOCKING_JOB", SecurityUserAccountLockJob.class, args);
 		jobDataList.add(jobData);
 
@@ -487,4 +490,7 @@ public class PFFJobScheduler extends JobScheduler {
 		this.pmayProcess = pmayProcess;
 	}
 
+	public void setSecurityUserService(SecurityUserService securityUserService) {
+		this.securityUserService = securityUserService;
+	}
 }

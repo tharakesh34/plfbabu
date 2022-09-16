@@ -5941,5 +5941,7 @@
 		class="com.pennant.webui.finance.enquiry.TdsCertificateEnquiryDialogCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="tanAssignmentService" ref="tanAssignmentService" />
 	</bean>
+	
+	<bean id="forgotpwdDialogCtrl" class="com.pennant.webui.login.ForgotPasswordDialogCtrl" scope="prototype"/>
 
 </beans>

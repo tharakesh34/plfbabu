@@ -76,4 +76,6 @@ public interface SecurityUserOperationsDAO {
 	List<String> getUsrMailsByRoleIds(String roleCode);
 
 	long getNextValue();
+
+	List<Long> getSecUserOperationIdsByUsrID(long usrID, String type);
 }

@@ -44,4 +44,6 @@ public interface DepartmentDAO extends BasicCrudDao<Department> {
 	 * @return
 	 */
 	boolean isDuplicateKey(String departmentCode, TableType tableType);
+
+	boolean isDeptValid(String deptCode);
 }

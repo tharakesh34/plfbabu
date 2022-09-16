@@ -190,6 +190,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	/* not auto wired variables */
 	private SecurityUser securityUser;
 	private transient SecurityUserListCtrl securityUserListCtrl;
+	protected Combobox disableReason;
+	protected Label label_SecurityUserDialog_DisableReason;
+	protected Combobox employeeType;
 
 	private transient boolean validationOn;
 
@@ -211,6 +214,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected boolean newRecord = false;
 	private boolean findUser = false;
 	private List<ValueLabel> ldapDomainList = PennantStaticListUtil.getLDAPDomains();
+	private List<ValueLabel> disableReasonList = PennantAppUtil.getDisableReason();
+	private List<ValueLabel> employeeTypeList = PennantAppUtil.getEmployeeTypes();
 
 	@Autowired
 	private transient UserSearch ldapUserSearch;
@@ -581,6 +586,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrMobile.setValue(aSecurityUser.getUsrMobile());
 		this.usrEmail.setValue(aSecurityUser.getUsrEmail());
 		this.usrEnabled.setChecked(aSecurityUser.isUsrEnabled());
+		fillComboBox(this.disableReason, aSecurityUser.getDisableReason(), disableReasonList, "");
 		this.usrCanSignonFrom.setValue(aSecurityUser.getUsrCanSignonFrom());
 		this.usrCanSignonTo.setValue(aSecurityUser.getUsrCanSignonTo());
 		this.usrCanOverrideLimits.setChecked(aSecurityUser.isUsrCanOverrideLimits());
@@ -624,10 +630,41 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.businessvertical.setObject(businessVertical);
 		}
 
+		fillComboBox(this.employeeType, aSecurityUser.getEmployeeType(), employeeTypeList, "");
+		setDisableReasonVisibility(aSecurityUser.isUsrEnabled(), aSecurityUser);
+
 		doFillReportingManagerDetails(aSecurityUser.getReportingManagersList());
 
 		this.recordStatus.setValue(aSecurityUser.getRecordStatus());
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * To make the Disable reason visible based on user enable unchecked
+	 * 
+	 * @param event
+	 */
+	public void onCheck$usrEnabled(Event event) {
+		setDisableReasonVisibility(this.usrEnabled.isChecked(), getSecurityUser());
+	}
+
+	/**
+	 * To make the Disable reason visible based on user enable unchecked
+	 * 
+	 * @param usrEnabled    - Validate if the user is enabled or not
+	 * @param aSecurityUser - Bean value
+	 */
+	private void setDisableReasonVisibility(boolean usrEnabled, SecurityUser aSecurityUser) {
+		if (!usrEnabled) {
+			this.label_SecurityUserDialog_DisableReason.setVisible(true);
+			this.disableReason.setVisible(true);
+			fillComboBox(this.disableReason, aSecurityUser.getDisableReason(), this.disableReasonList, "");
+		} else {
+			aSecurityUser.setDisableReason(null);
+			fillComboBox(this.disableReason, "", this.disableReasonList, "");
+			this.label_SecurityUserDialog_DisableReason.setVisible(false);
+			this.disableReason.setVisible(false);
+		}
 	}
 
 	/**
@@ -818,6 +855,29 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		try {
+			if (!this.usrEnabled.isChecked() && !disableReasonList.isEmpty()) {
+				if (this.disableReason.getSelectedItem() != null
+						&& !StringUtils.trimToEmpty(this.disableReason.getSelectedItem().getValue().toString())
+								.equals(PennantConstants.List_Select)) {
+					aSecurityUser.setDisableReason(this.disableReason.getSelectedItem().getValue().toString());
+				} else {
+					aSecurityUser.setDisableReason(PennantConstants.List_Select);
+				}
+
+				if ("#".equals(getComboboxValue(this.disableReason))) {
+					throw new WrongValueException(this.disableReason, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_SecurityUserDialog_DisableReason.value") }));
+				} else {
+					aSecurityUser.setDisableReason(this.disableReason.getSelectedItem().getValue().toString());
+				}
+			} else {
+				aSecurityUser.setDisableReason(PennantConstants.List_Select);
+			}
+		} catch (WrongValueException we) {
+			tab1.add(we);
+		}
+
+		try {
 			if (this.usrCanSignonFrom != null) {
 				aSecurityUser.setUsrCanSignonFrom(PennantAppUtil.getTime(this.usrCanSignonFrom.getValue()));
 			}
@@ -949,6 +1009,28 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			tab1.add(we);
 		}
 
+		try {
+			if (!employeeTypeList.isEmpty()) {
+				Comboitem empType = this.employeeType.getSelectedItem();
+				if (empType != null && !PennantConstants.List_Select.equals(empType.getValue().toString())) {
+					aSecurityUser.setEmployeeType(empType.getValue().toString());
+				} else {
+					aSecurityUser.setEmployeeType(PennantConstants.List_Select);
+				}
+
+				if ("#".equals(getComboboxValue(this.employeeType))) {
+					throw new WrongValueException(this.employeeType, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_SecurityUserDialog_EmployeeType.value") }));
+				} else {
+					aSecurityUser.setEmployeeType(empType.getValue().toString());
+				}
+			} else {
+				aSecurityUser.setEmployeeType(PennantConstants.List_Select);
+			}
+		} catch (WrongValueException we) {
+			tab1.add(we);
+		}
+
 		if (!findUser && getSecurityUser().isNewRecord() && aSecurityUser.getUsrLogin() != null) {
 			tab1.add(new WrongValueException(this.usrLogin, "User not found"));
 		} else {
@@ -1000,6 +1082,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		aSecurityUser.setRecordStatus(this.recordStatus.getValue());
+
+		if (securityUser.isNewRecord()) {
+			aSecurityUser.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+			aSecurityUser.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1166,6 +1254,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrCanSignonTo.setConstraint("");
 		this.usrLanguage.setConstraint("");
 		this.usrDftAppId.setConstraint("");
+		this.disableReason.setConstraint("");
+		this.employeeType.setConstraint("");
 
 		doRemoveClusterValidation();
 		logger.debug(Literal.LEAVING);
@@ -1222,6 +1312,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrLanguage.setErrorMessage("");
 		this.usrDftAppId.setErrorMessage("");
 		this.usrDesg.setErrorMessage("");
+		this.disableReason.setErrorMessage("");
+		this.employeeType.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -1303,6 +1395,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrAcExp.setDisabled(isReadOnly("SecurityUserDialog_usrAcExp"));
 		this.usrAcLocked.setDisabled(isReadOnly("SecurityUserDialog_usrAcLocked"));
 		this.usrEnabled.setDisabled(isReadOnly("SecurityUserDialog_usrEnabled"));
+		this.disableReason.setDisabled(isReadOnly("SecurityUserDialog_usrDisableReason"));
 		this.usrCanSignonFrom.setDisabled(isReadOnly("SecurityUserDialog_usrCanSignonFrom"));
 		this.usrCanSignonTo.setDisabled(isReadOnly("SecurityUserDialog_usrCanSignonTo"));
 		this.usrCanOverrideLimits.setDisabled(isReadOnly("SecurityUserDialog_usrCanOverrideLimits"));
@@ -1316,6 +1409,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrAcExpDt.setDisabled(isReadOnly("SecurityUserDialog_UsrAcExpDt"));
 		this.btnNewReportingManagerList.setDisabled(isReadOnly("button_SecurityUserDialog_RM_btnNew"));
 		this.businessvertical.setReadonly(isReadOnly("SecurityUserDialog_RM_Businessvertical"));
+		this.employeeType.setDisabled(isReadOnly("SecurityUserDialog_usrEmployeeType"));
 
 		readOnlyComponent(isReadOnly("button_SecurityUserDialog_RM_btnNew"), this.btnNewReportingManagerList);
 		readOnlyComponent(isReadOnly("button_SecurityUserDialog_RM_btnNew"), this.btnNewReportingManagerList);
@@ -1363,6 +1457,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrMobile.setReadonly(true);
 		this.usrEmail.setReadonly(true);
 		this.usrEnabled.setDisabled(true);
+		this.disableReason.setReadonly(true);
 		this.usrCanSignonFrom.setDisabled(true);
 		this.usrCanSignonTo.setDisabled(true);
 		this.usrCanOverrideLimits.setDisabled(true);
@@ -1375,6 +1470,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrIsMultiBranch.setDisabled(true);
 		this.usrDesg.setReadonly(true);
 		this.usrAcExpDt.setDisabled(true);
+		this.employeeType.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1406,6 +1502,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrMobile.setValue("");
 		this.usrEmail.setValue("");
 		this.usrEnabled.setChecked(false);
+		this.disableReason.setValue("");
 		this.usrCanSignonFrom.setText("");
 		this.usrCanSignonTo.setText("");
 		this.usrCanOverrideLimits.setChecked(false);
@@ -1420,6 +1517,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrIsMultiBranch.setChecked(false);
 		this.usrDesg.setValue("");
 		this.usrDesg.setDescription("");
+		this.employeeType.setValue("");
 
 		doClearClusters();
 		logger.debug(Literal.LEAVING);
@@ -1634,6 +1732,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 			} else {
 				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					aSecurityUser.setApprovedOn(new Timestamp(System.currentTimeMillis()));
+					aSecurityUser.setApprovedBy(getUserWorkspace().getLoggedInUser().getUserId());
 					auditHeader = securityUserService.doApprove(auditHeader);
 
 					if (aSecurityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {

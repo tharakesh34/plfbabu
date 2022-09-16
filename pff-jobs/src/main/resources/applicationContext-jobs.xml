@@ -26,6 +26,7 @@
 		<property name="putCallAlerts" ref="putCallAlerts" />
 		<property name="lmsServiceLogAlerts" ref="lmsServiceLogAlerts" />
 		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="securityUserService" ref="securityUserService" />
 		<property name="cashBackDBDProcess" ref="cashBackDBDProcess" />
 		<property name="dMSService" ref="dMSService" />
 		<property name="externalInterfaceService" ref="externalInterfaceService" />

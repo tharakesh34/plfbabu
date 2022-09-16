@@ -44,4 +44,6 @@ public interface MailTemplateDAO {
 	int getMailTemplateByCode(String templateCode, long id, String type);
 
 	MailTemplate getMailTemplateByCode(String tempCode, String string);
+
+	MailTemplate getTemplateByCode(String tempCode);
 }

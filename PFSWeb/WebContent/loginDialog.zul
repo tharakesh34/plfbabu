@@ -4,38 +4,48 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <?script type="text/javascript" src="/macros/pennantzk.js.dsp?v=${desktop.webApp.build}"?>
 <?script type="text/javascript" src="/macros/pennantInit.js.dsp?v=${desktop.webApp.build}"?>
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ca="client/attribute"
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ca="client/attribute"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd"
 	xmlns:w="http://www.zkoss.org/2005/zk/client">
-	<window id="loginwin" border="none" width="100%" height="100%" use="com.pennant.webui.login.LoginDialogCtrl">
-		<script type="text/javascript" src="https://www.google.com/recaptcha/api.js" defer="true" />
+	<window id="loginwin" border="none" width="100%" height="100%"
+		use="com.pennant.webui.login.LoginDialogCtrl">
+		<script type="text/javascript"
+			src="https://www.google.com/recaptcha/api.js" defer="true" />
 
 		<borderlayout>
 			<west size="60%" border="none">
-				<image src="/images/PennAppsLoginpage.png" height="100%" width="100%" />
+				<image src="/images/PennAppsLoginpage.png" height="100%"
+					width="100%" />
 			</west>
 			<east size="40%">
 				<borderlayout>
 					<north border="0">
 						<vlayout>
-							<image src="/images/plf_client_logo.png" align="left"
-								style="margin-right:6px; margin-top:4px" />
-							<image src="/images/plf_product_logo.png" align="right"
-								style="margin-right:6px; margin-top:4px" />
+							<image src="/images/plf_client_logo.png"
+								align="left" style="margin-right:6px; margin-top:4px" />
+							<image src="/images/plf_product_logo.png"
+								align="right" style="margin-right:6px; margin-top:4px" />
 						</vlayout>
 					</north>
 					<center border="none">
 						<div>
-							<div style="margin-top:70px;margin-right:25px;margin-left:25px;" height="60px">
-								<div id="licenceMessageRow" visible="false"
+							<div
+								style="margin-top:70px;margin-right:25px;margin-left:25px;"
+								height="60px">
+								<div id="licenceMessageRow"
+									visible="false"
 									style=" border:2px solid #FF6666; background: #FFD3D3; color: #000;;font-size:20px;">
 									<tablelayout columns="3">
-										<tablechildren style="vertical-align:middle">
-											<a id="licenceMessageIcon" iconSclass="z-icon-info-circle"
+										<tablechildren
+											style="vertical-align:middle">
+											<a id="licenceMessageIcon"
+												iconSclass="z-icon-info-circle"
 												style="text-decoration:none;color:#FF6666;font-size: 24px;" />
 										</tablechildren>
-										<tablechildren style="vertical-align:middle">
+										<tablechildren
+											style="vertical-align:middle">
 											<label value="" />
 										</tablechildren>
 										<tablechildren>
@@ -47,25 +57,37 @@
 							</div>
 
 
-							<div style="margin-top:40px;margin-left:70px;">
-								<h:form action="login?${_csrf.parameterName}=${_csrf.token}" method="post">
-									<grid style="border:none;background:white;">
+							<div
+								style="margin-top:40px;margin-left:70px;">
+								<h:form
+									action="login?${_csrf.parameterName}=${_csrf.token}"
+									method="post">
+									<grid
+										style="border:none;background:white;">
 										<columns>
 											<column width="200px" />
-											<column width="200px" align="right" />
+											<column width="200px"
+												align="right" />
 										</columns>
 										<rows>
 											<row>
 												<cell colspan="2"></cell>
 											</row>
+											<row>
+												<cell colspan="2"></cell>
+											</row>
 
-											<row height="80px" width="320px">
+											<row height="80px"
+												width="320px">
 												<cell colspan="2">
-													<div id="loginError" visible="false"
+													<div id="loginError"
+														visible="false"
 														style="margin-left:60px;margin-right:14px; border:2px solid #FF6666; background: #FFD3D3; color: #000;font-size:1px;"
 														height="">
-														<div style="margin-top:2px;margin-left:5px">
-															<label id="loginErrorMsg" />
+														<div
+															style="margin-top:2px;margin-left:5px">
+															<label
+																id="loginErrorMsg" />
 														</div>
 													</div>
 												</cell>
@@ -76,47 +98,71 @@
 											</row>
 
 											<row align="left">
-												<label value="${c:l('label_LoginDialog_user.value')}"
+												<label
+													value="${c:l('label_LoginDialog_user.value')}"
 													style="margin-left:65px;font-weight:bold;" />
-												<textbox id="txtbox_Username" sclass="z-textbox-loginUser" width="180px"
-													height="24px" style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();"
-													w:onChange="encryptEventValue(event);" />
+												<textbox
+													id="txtbox_Username" sclass="z-textbox-loginUser"
+													width="180px" height="24px" style="margin-right:60px"
+													ca:autocomplete="off" w:onOK="onSubmitOK();" />
 											</row>
 											<row>
-												<textbox id="txtbox_Username1" name="username" width="150px"
-													height="22px" style="margin-right:60px" visible="false" ca:autocomplete="off"
+												<textbox
+													id="txtbox_Username1" name="username" width="150px"
+													height="22px" style="margin-right:60px" visible="false"
+													ca:autocomplete="off"
 													w:onChange="encryptEventValue(event);" />
 											</row>
 
 											<row align="left">
-												<label id="label_LoginDialog_pwd"
-													value=" ${c:l('label_LoginDialog_pwd.value')}" style="margin-left:65px;font-weight:bold;" />
-												<textbox type="password" sclass="z-textbox-loginPassword"
-													id="txtbox_Password" width="180px" height="24px" style="margin-right:60px" ca:autocomplete="off"
-													w:onOK="onSubmitOK();" w:onChange="encryptEventValue(event);" />
+												<label
+													id="label_LoginDialog_pwd"
+													value=" ${c:l('label_LoginDialog_pwd.value')}"
+													style="margin-left:65px;font-weight:bold;" />
+												<textbox type="password"
+													sclass="z-textbox-loginPassword" id="txtbox_Password"
+													width="180px" height="24px" style="margin-right:60px"
+													ca:autocomplete="off" w:onOK="onSubmitOK();"
+													w:onChange="encryptEventValue(event);" />
 											</row>
-											<row spans="2" height="12px">
-												<textbox type="password" name="password" id="txtbox_Password1"
-													visible="false" ca:autocomplete="off" w:onChange="encryptEventValue(event);" />
+											<row spans="2"
+												height="12px">
+												<textbox type="password"
+													name="password" id="txtbox_Password1" visible="false"
+													ca:autocomplete="off"
+													w:onChange="encryptEventValue(event);" />
 											</row>
 											<row align="left">
 												<cell />
 												<cell>
 													<div>
 														<hbox>
-															<button type="submit" id="btnLogin" label="Login"
-																width="88px" sclass="z-toolbarbutton" w:onClick="encryptPassword()" />
-															<button type="reset" id="btnReset" label="Reset"
-																width="88px" sclass="z-toolbarbutton" />
+															<button
+																type="submit" id="btnLogin" label="Login" width="88px"
+																sclass="z-toolbarbutton" w:onClick="encryptPassword()" />
+															<button
+																type="reset" id="btnReset" label="Reset" width="88px"
+																sclass="z-toolbarbutton" />
 														</hbox>
 													</div>
 												</cell>
 											</row>
 											<row>
+												<div
+													style="position:absolute;top:220px;left:230px;">
+													<a id="forgetLink"
+														label="Forgot Password?" width="136px" height="25px"
+														w:onClick="encryptPassword()" />
+												</div>
+											</row>
+
+											<row>
 												<cell colspan="2"></cell>
 											</row>
-											<row align="center" spans="2">
-												<div id="recaptcha" class="g-recaptcha"
+											<row align="center"
+												spans="2">
+												<div id="recaptcha"
+													class="g-recaptcha"
 													style="margin-left:67px;-webkit-transform: scale(1.04);-webkit-transform-origin: 0 0;height:100px;"
 													visible="false" tabindex="2" height="100%">
 												</div>
@@ -129,18 +175,23 @@
 					</center>
 					<south border="none">
 						<div>
-							<div id="unauthorizedMessageRow" align="center" visible="false"
+							<div id="unauthorizedMessageRow"
+								align="center" visible="false"
 								style="margin-right:22px;margin-left:25px; color: #000;;font-size:20px;">
 								<tablelayout columns="3">
-									<tablechildren style="vertical-align:middle">
-										<a iconSclass="z-icon-exclamation-triangle"
+									<tablechildren
+										style="vertical-align:middle">
+										<a
+											iconSclass="z-icon-exclamation-triangle"
 											style="text-decoration:none;color:#FF6666;font-size:14px;" />
 									</tablechildren>
-									<tablechildren style="vertical-align:middle">
+									<tablechildren
+										style="vertical-align:middle">
 										<label value="" />
 									</tablechildren>
 									<tablechildren>
-										<label id="unauthorizedMessage" style="text-align:center;margin-top:5px;" />
+										<label id="unauthorizedMessage"
+											style="text-align:center;margin-top:5px;" />
 									</tablechildren>
 								</tablelayout>
 							</div>
@@ -151,11 +202,14 @@
 			<center />
 			<south height="5%" border="normal"
 				style="background-color:#FCFCFC; border-top-color:#ff6600;border-top-width:2px; padding-top:2px;">
-				<vbox align="center" height="100%" width="100%" pack="center">
+				<vbox align="center" height="100%" width="100%"
+					pack="center">
 					<div align="center">
 						<hbox>
-							<label id="copyRight" style="color:black;font-size:12px;" />
-							<a id="copyRightInfo" iconSclass="z-icon-info-circle"
+							<label id="copyRight"
+								style="color:black;font-size:12px;" />
+							<a id="copyRightInfo"
+								iconSclass="z-icon-info-circle"
 								style="text-decoration:none;color:#385D8A;font-size: 15px;" />
 						</hbox>
 					</div>

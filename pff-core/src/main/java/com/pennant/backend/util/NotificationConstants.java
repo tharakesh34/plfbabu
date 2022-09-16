@@ -6,10 +6,10 @@ public class NotificationConstants {
 		super();
 	}
 
-	// Mail Template Configuration Type Codes
+	public static final String DEFAULT_CHARSET = "UTF-16";
+	
 	public static final String TEMPLATE_FORMAT_PLAIN = "P";
 	public static final String TEMPLATE_FORMAT_HTML = "H";
-	public static final String DEFAULT_CHARSET = "UTF-16";
 	public static final String TEMPLATE_FOR_CN = "CN";
 	public static final String TEMPLATE_FOR_AE = "AE";
 	public static final String TEMPLATE_FOR_DN = "DN";
@@ -21,7 +21,9 @@ public class NotificationConstants {
 	public static final String TEMPLATE_FOR_LIMIT = "LT";
 	public static final String TEMPLATE_FOR_SP = "SP";
 	public static final String TEMPLATE_FOR_DSAN = "DN";
-	public static final String TEMPLATE_FOR_PVRN = "PN";// Vehicle Dealer/Provider Approval Notification
+	public static final String TEMPLATE_FOR_PVRN = "PN";
+	public static final String TEMPLATE_FOR_OTP = "OTP";
+	public static final String TEMPLATE_FOR_SU = "SU";
 
 	// Module Code for Notification to maintain parameters
 	public static final String MAIL_MODULE_FIN = "FIN";
