@@ -84,6 +84,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1002,7 +1003,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		List<String> chequeType = new ArrayList<>();
-		PennantStaticListUtil.getChequeTypes().forEach(c1 -> chequeType.add(c1.getValue()));
+		MandateUtil.getChequeTypes().forEach(c1 -> chequeType.add(c1.getValue()));
 
 		if (!(chequeType.contains(cheque.getChequeType()))) {
 			return getError("RU0040", "chequeType");

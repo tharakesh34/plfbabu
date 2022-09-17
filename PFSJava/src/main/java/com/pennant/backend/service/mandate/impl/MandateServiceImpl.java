@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,8 +41,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.MandateCheckDigitDAO;
@@ -53,11 +56,15 @@ import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.mandate.MandateStatusUpdateDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
@@ -65,18 +72,23 @@ import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.external.MandateProcesses;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
@@ -95,6 +107,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
+	private BankBranchService bankBranchService;
+	private BankDetailService bankDetailService;
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -869,6 +883,334 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return mandateDAO.getMandateByMandateRef(mandateRef);
 	}
 
+	@Override
+	public ErrorDetail validate(FinanceDetail fd, String vldGroup) {
+		Mandate mandate = fd.getMandate();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String repaymentMethod = fm.getFinRepayMethod();
+
+		if (mandate == null || (!(InstrumentType.isManual(repaymentMethod) || InstrumentType.isPDC(repaymentMethod))
+				&& fd.isStp())) {
+			return ErrorUtil.getError("90502", "Mandate");
+		}
+
+		if (InstrumentType.isManual(repaymentMethod)) {
+			return ErrorUtil.getError("90329", "Mandate", "finRepayMethod is " + repaymentMethod);
+		}
+
+		ErrorDetail error = null;
+		if (mandate.isUseExisting()) {
+			error = validateExisting(fd, vldGroup);
+		} else {
+			error = validateNew(fd);
+		}
+
+		if (error != null) {
+			return error;
+		}
+
+		if (!InstrumentType.isEMandate(mandate.getMandateType())) {
+			return null;
+		}
+
+		if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
+			return ErrorUtil.getError("90502", "eMandateReferenceNo");
+		}
+
+		if (StringUtils.isBlank(mandate.geteMandateSource())) {
+			return ErrorUtil.getError("90502", "eMandateSource");
+		}
+
+		if (mandateDAO.validateEmandateSource(mandate.geteMandateSource()) == 0) {
+			return ErrorUtil.getError("90501", "eMandateSource" + mandate.geteMandateSource());
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateNew(FinanceDetail fd) {
+		Mandate mandate = fd.getMandate();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		String repaymentMethod = fm.getFinRepayMethod();
+
+		mandate.setMandateID(Long.MIN_VALUE);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+			if (mandate.getPartnerBankId() <= 0) {
+				return ErrorUtil.getError("90502", "partnerBankId");
+			}
+
+			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
+			if (partnerBank == null) {
+				return ErrorUtil.getError("90263", "");
+			}
+		}
+
+		if (StringUtils.isBlank(mandate.getMandateType())) {
+			return ErrorUtil.getError("90502", "mandateType");
+		}
+
+		String ifsc = mandate.getIFSC();
+		String micr = mandate.getMICR();
+		if (StringUtils.isBlank(ifsc)
+				&& (StringUtils.isBlank(mandate.getBankCode()) || StringUtils.isBlank(mandate.getBranchCode()))) {
+			return ErrorUtil.getError("90313", "");
+		}
+
+		if (StringUtils.isBlank(mandate.getAccType())) {
+			return ErrorUtil.getError("90502", "accType");
+		}
+
+		if (StringUtils.isBlank(mandate.getAccNumber())) {
+			return ErrorUtil.getError("90502", "accNumber");
+		}
+
+		if (ImplementationConstants.ALLOW_BARCODE && StringUtils.isBlank(mandate.getBarCodeNumber())) {
+			return ErrorUtil.getError("90502", "BarCodeNumber");
+		}
+
+		if (mandate.getAccNumber().length() > 50) {
+			return ErrorUtil.getError("30568", "accNumber length", "50");
+		}
+
+		if (StringUtils.isBlank(mandate.getAccHolderName())) {
+			return ErrorUtil.getError("90502", "accHolderName");
+		}
+
+		if (mandate.getStartDate() == null) {
+			return ErrorUtil.getError("90502", "startDate");
+		}
+
+		if (!mandate.isOpenMandate()) {
+			if (mandate.getExpiryDate() == null) {
+				return ErrorUtil.getError("90502", "expiryDate");
+			}
+		} else {
+			if (mandate.getExpiryDate() != null) {
+				return ErrorUtil.getError("90329", "expiryDate", "open mandate");
+			}
+		}
+
+		if (StringUtils.isNotBlank(mandate.getBarCodeNumber())) {
+			Pattern pattern = Pattern
+					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_BARCODE_NUMBER));
+			Matcher matcher = pattern.matcher(mandate.getBarCodeNumber());
+
+			if (matcher.matches() == false) {
+				return ErrorUtil.getError("90404", "barCodeNumber", mandate.getBarCodeNumber());
+			}
+		}
+
+		if (mandate.getMaxLimit() == null) {
+			return ErrorUtil.getError("90242", "maxLimit");
+		}
+
+		if (mandate.getMaxLimit().compareTo(BigDecimal.ZERO) <= 0) {
+			return ErrorUtil.getError("91121", "maxLimit", "0");
+		}
+
+		Date dftAppEndDate = SysParamUtil.getValueAsDate(SMTParameterConstants.APP_DFT_END_DATE);
+		String strEndDate = DateUtil.formatToLongDate(dftAppEndDate);
+		if (mandate.getExpiryDate() != null) {
+			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
+					|| mandate.getExpiryDate().after(dftAppEndDate)) {
+				String strStartDate = DateUtil.formatToLongDate(DateUtil.addDays(mandate.getStartDate(), 1));
+
+				return ErrorUtil.getError("90318", "Mandate ExpiryDate", strStartDate, strEndDate);
+			}
+		}
+
+		if (mandate.getStartDate() != null) {
+			Date mandbackDate = DateUtil.addDays(SysParamUtil.getAppDate(),
+					-SysParamUtil.getValueAsInt(SMTParameterConstants.MANDATE_STARTDATE));
+			if (mandate.getStartDate().before(mandbackDate) || mandate.getStartDate().after(dftAppEndDate)) {
+				String strStartDate = DateUtil.formatToLongDate(mandbackDate);
+				return ErrorUtil.getError("90318", "mandate start date", strStartDate, strEndDate);
+			}
+		}
+
+		String bankCode = mandate.getBankCode();
+		String branchCode = mandate.getBranchCode();
+
+		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+		if (bankBranch.getError() != null) {
+			return bankBranch.getError();
+		}
+
+		mandate.setBankCode(bankBranch.getBankCode());
+		mandate.setMICR(bankBranch.getMICR());
+
+		if (!bankBranchService.validateBranchCode(bankBranch, mandate.getMandateType())) {
+			return ErrorUtil.getError("90333", mandate.getMandateType());
+		}
+
+		if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
+			BankDetail bankDetail = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+			if (bankDetail != null) {
+				int maxAccNoLength = bankDetail.getAccNoLength();
+				int minAccNoLength = bankDetail.getMinAccNoLength();
+				if (mandate.getAccNumber().length() < minAccNoLength
+						|| mandate.getAccNumber().length() > maxAccNoLength) {
+					String minChar = String.valueOf(minAccNoLength) + " characters";
+					String maxChar = String.valueOf(maxAccNoLength) + " characters";
+					return ErrorUtil.getError("BNK001", "AccountNumber(Mandate)", minChar, maxChar);
+				}
+			}
+		}
+
+		String mobileNumber = mandate.getPhoneNumber();
+		if (StringUtils.isNotBlank(mobileNumber) && !(mobileNumber.matches("\\d{10}"))) {
+			return ErrorUtil.getError("90278", "");
+		}
+
+		String accHolderRegix = "^$|^[A-Za-z]+[A-Za-z.\\s]*";
+
+		String accHolderName = mandate.getAccHolderName();
+		if (StringUtils.isNotBlank(accHolderName) && !(accHolderName.matches(accHolderRegix))) {
+			return ErrorUtil.getError("90237", "AccHolderName");
+		}
+
+		String jointAccHolderName = mandate.getJointAccHolderName();
+		if (StringUtils.isNotBlank(jointAccHolderName) && !(jointAccHolderName.matches(accHolderRegix))) {
+			return ErrorUtil.getError("90237", "JointAccHolderName");
+		}
+
+		if (StringUtils.isNotBlank(mandate.getMandateType())) {
+			List<ValueLabel> mandateType = MandateUtil.getInstrumentTypes();
+			boolean mandateTypeSts = false;
+			for (ValueLabel value : mandateType) {
+				if (StringUtils.equals(value.getValue(), mandate.getMandateType())) {
+					mandateTypeSts = true;
+					break;
+				}
+			}
+			if (!mandateTypeSts) {
+				return ErrorUtil.getError("90307", mandate.getMandateType());
+			}
+		}
+
+		if (StringUtils.isNotBlank(mandate.getAccType())) {
+			List<ValueLabel> accType = PennantStaticListUtil.getAccTypeList();
+			boolean accTypeSts = false;
+			for (ValueLabel value : accType) {
+				if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
+					accTypeSts = true;
+					break;
+				}
+			}
+			if (!accTypeSts) {
+				return ErrorUtil.getError("90308", mandate.getAccType());
+			}
+		}
+
+		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
+			ErrorDetail error = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
+			if (error != null && StringUtils.isNotBlank(error.getCode())) {
+				return ErrorUtil.getError("90207", mandate.getPeriodicity());
+			}
+		} else {
+			mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
+		}
+
+		if (StringUtils.isNotBlank(mandate.getStatus())) {
+			List<ValueLabel> status = MandateUtil.getMandateStatus();
+			boolean sts = false;
+			for (ValueLabel value : status) {
+				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
+					sts = true;
+					break;
+				}
+			}
+			if (!sts) {
+				return ErrorUtil.getError("90309", mandate.getStatus());
+			}
+		}
+
+		if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), repaymentMethod)) {
+			return ErrorUtil.getError("90311", repaymentMethod, mandate.getMandateType());
+		}
+
+		if (mandate.getDocImage() == null && StringUtils.isBlank(mandate.getExternalRef())) {
+			return ErrorUtil.getError("90123", "docContent", "docRefId");
+		} else if (StringUtils.isBlank(mandate.getDocumentName())) {
+			return ErrorUtil.getError("90502", "Document Name");
+		}
+
+		if (StringUtils.isNotBlank(mandate.getDocumentName())) {
+			String docName = mandate.getDocumentName().toLowerCase();
+			if (!docName.contains(".")) {
+				return ErrorUtil.getError("90291", mandate.getDocumentName());
+			}
+
+			if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
+				return ErrorUtil.getError("90502", "Document Name");
+			}
+
+			if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")
+					&& !docName.endsWith(".pdf")) {
+				return ErrorUtil.getError("90122", "Document Extension available ext are:JPG,JPEG,PNG,PDF ");
+			}
+		}
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+			if (mandate.getPartnerBankId() <= 0) {
+				return ErrorUtil.getError("90502", "partnerBankId");
+			} else {
+				PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
+				if (partnerBank == null) {
+					return ErrorUtil.getError("90263", "");
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private ErrorDetail validateExisting(FinanceDetail fd, String vldGroup) {
+		Mandate mandate = fd.getMandate();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String repaymentMethod = fm.getFinRepayMethod();
+
+		if (mandate.getMandateID() == Long.MIN_VALUE) {
+			return ErrorUtil.getError("90502", "MandateID");
+		}
+
+		Mandate curMandate = mandateDAO.getMandateById(mandate.getMandateID(), "_AView");
+		if (curMandate == null) {
+			return ErrorUtil.getError("90303", String.valueOf(mandate.getMandateID()));
+		}
+
+		String fmCustCIF = fm.getLovDescCustCIF();
+		if (!PennantConstants.VLD_UPD_LOAN.equals(vldGroup) && !curMandate.getCustCIF().equals(fmCustCIF)) {
+			return ErrorUtil.getError("90310", fmCustCIF, curMandate.getCustCIF());
+		}
+
+		if (curMandate.getCustID() != fm.getCustID()) {
+			return ErrorUtil.getError("90310", fmCustCIF, curMandate.getCustCIF());
+		}
+
+		if (!repaymentMethod.equalsIgnoreCase(curMandate.getMandateType())) {
+			return ErrorUtil.getError("90311", repaymentMethod, curMandate.getMandateType());
+		}
+
+		if (!(curMandate.isOpenMandate() || (curMandate.getOrgReference() == null))) {
+			return ErrorUtil.getError("90312", String.valueOf(mandate.getMandateID()));
+		}
+
+		if (!curMandate.isActive()) {
+			return ErrorUtil.getError("81004", "mandate:", String.valueOf(mandate.getMandateID()));
+		}
+
+		fd.setMandate(curMandate);
+		return null;
+	}
+
 	@Autowired(required = false)
 	@Qualifier(value = "mandateProcesses")
 	public void setMandateProces(MandateProcesses mandateProcesses) {
@@ -937,6 +1279,14 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	private MandateProcesses getMandateProcess() {
 		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
+	}
+
+	public void setBankBranchService(BankBranchService bankBranchService) {
+		this.bankBranchService = bankBranchService;
+	}
+
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
 	}
 
 }

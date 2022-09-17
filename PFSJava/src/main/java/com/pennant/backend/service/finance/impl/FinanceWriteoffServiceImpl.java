@@ -667,7 +667,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		auditHeader.getAuditDetail().setModelData(header);
 
-		saveFinSalPayment(schdData, orgNextSchd, true);
 		finStageAccountingLogDAO.update(finID, fd.getModuleDefiner(), false);
 
 		logger.debug(Literal.LEAVING);

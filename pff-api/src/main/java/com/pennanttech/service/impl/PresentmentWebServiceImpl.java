@@ -164,7 +164,7 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 	}
 
 	private boolean isValidPaymentMode(String mandateType) {
-		return InstrumentType.isValid(mandateType);
+		return InstrumentType.isManual(mandateType);
 	}
 
 	@Override

@@ -645,7 +645,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		boolean date = true;
 
 		for (ChequeDetail cd : cdList) {
-			if (!FinanceConstants.REPAYMTH_PDC.equals(cd.getChequeType())) {
+			if (!InstrumentType.isPDC(cd.getChequeType())) {
 				continue;
 			}
 

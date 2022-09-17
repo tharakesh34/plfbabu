@@ -2116,58 +2116,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 
 	/**
-	 * Method for Saving Next payment details For Salaried Account
-	 * 
-	 * @param schdData
-	 * @param oldSchd
-	 */
-	protected void saveFinSalPayment(FinScheduleData schdData, FinanceScheduleDetail oldSchd, boolean dftZeoPay) {
-		logger.debug("Entering");
-
-		if (oldSchd == null
-				|| !StringUtils.equals(schdData.getFinanceMain().getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTO)) {
-			logger.debug("Leaving");
-			return;
-		}
-
-		boolean saveFinSalPay = false;
-		Date curBDay = SysParamUtil.getAppDate();
-
-		// Finding ut Next payment Schedule Date
-		FinanceScheduleDetail newSchd = null;
-		if (!dftZeoPay) {
-			for (FinanceScheduleDetail schd : schdData.getFinanceScheduleDetails()) {
-				if (schd.getSchDate().compareTo(curBDay) >= 0 && schd.isRepayOnSchDate()) {
-					newSchd = schd;
-					break;
-				}
-			}
-
-			// Failed to Fetch Next Installment Date or No data exists after Next Business Date.
-			if (newSchd == null) {
-				logger.debug("Leaving");
-				return;
-			}
-
-			if (oldSchd.getSchDate().compareTo(newSchd.getSchDate()) == 0) {
-				if (oldSchd.getProfitSchd().compareTo(newSchd.getProfitSchd()) != 0
-						|| oldSchd.getPrincipalSchd().compareTo(newSchd.getPrincipalSchd()) != 0) {
-					saveFinSalPay = true;
-				}
-			} else {
-				saveFinSalPay = true;
-			}
-
-			if (!saveFinSalPay) {
-				logger.debug("Leaving");
-				return;
-			}
-		}
-
-		logger.debug("Leaving");
-	}
-
-	/**
 	 * Method for Add a Movement Entry for Commitment Disbursement Event
 	 * 
 	 * @param commitment

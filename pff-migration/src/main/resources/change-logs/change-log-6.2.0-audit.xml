@@ -130,30 +130,4 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#72" author="Alekhya.T">
-		<addColumn tableName="AdtChequeDetail">
-			<column name="InstNo" type="bigint" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="ST#72.1" author="Alekhya.T">
-		<sql>
-			<![CDATA[	
-				UPDATE ADTCHEQUEDETAIL SET INSTNO = 0 WHERE INSTNO IS NULL;
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="ST#72.2" author="Alekhya.T" dbms="postgresql, oracle">
-		<addDefaultValue columnName="InstNo" tableName="AdtChequeDetail" defaultValue="0" />
-	</changeSet>
-	
-	<changeSet id="ST#72.2" author="Alekhya.T" dbms="mssql">
-		<sql>
-			<![CDATA[	
-				ALTER TABLE ADTCHEQUEDETAIL ADD CONSTRAINT DF_ACD_INSTNO DEFAULT 0 FOR INSTNO;
-			]]>
-		</sql>
-	</changeSet>
-	
 </databaseChangeLog>

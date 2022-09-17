@@ -12,16 +12,21 @@ import com.pennanttech.extension.FeatureExtension;
 
 public class MandateUtil {
 
+	private MandateUtil() {
+		super();
+	}
+
 	private static List<ValueLabel> instrumentTypes;
 	private static List<ValueLabel> repaymentMethods;
 	private static List<ValueLabel> mandateStatus;
+	private static List<ValueLabel> chequeTypesList;
 
 	public static List<ValueLabel> getInstrumentTypes() {
 		if (instrumentTypes != null) {
 			return instrumentTypes;
 		}
 
-		instrumentTypes = new ArrayList<ValueLabel>(4);
+		instrumentTypes = new ArrayList<>(4);
 
 		for (InstrumentType item : InstrumentType.values()) {
 			switch (item) {
@@ -48,7 +53,7 @@ public class MandateUtil {
 			return repaymentMethods;
 		}
 
-		repaymentMethods = new ArrayList<ValueLabel>(4);
+		repaymentMethods = new ArrayList<>(4);
 
 		for (InstrumentType item : InstrumentType.values()) {
 			switch (item) {
@@ -79,7 +84,7 @@ public class MandateUtil {
 			return mandateStatus;
 		}
 
-		mandateStatus = new ArrayList<ValueLabel>(7);
+		mandateStatus = new ArrayList<>(7);
 
 		String customStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
 
@@ -98,6 +103,19 @@ public class MandateUtil {
 		mandateStatus.add(new ValueLabel(MandateStatus.INPROCESS, Labels.getLabel("label_Mandate_INPROCESS")));
 
 		return mandateStatus;
+	}
+
+	public static List<ValueLabel> getChequeTypes() {
+		if (chequeTypesList != null) {
+			return chequeTypesList;
+		}
+
+		chequeTypesList = new ArrayList<>(3);
+		chequeTypesList.add(new ValueLabel(InstrumentType.PDC.name(), InstrumentType.PDC.code()));
+		chequeTypesList.add(new ValueLabel(InstrumentType.SPDC.name(), InstrumentType.SPDC.code()));
+		chequeTypesList.add(new ValueLabel(InstrumentType.UDC.name(), InstrumentType.UDC.code()));
+
+		return chequeTypesList;
 	}
 
 	private static boolean isEanbled(InstrumentType mandateType) {

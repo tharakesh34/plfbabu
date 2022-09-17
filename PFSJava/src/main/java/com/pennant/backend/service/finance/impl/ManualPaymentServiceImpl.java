@@ -758,8 +758,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		} else {
 			limitCheckDetails.doProcessLimits(fm, FinanceConstants.AMENDEMENT);
 		}
-		// Save Salaried Posting Details
-		saveFinSalPayment(schdData, orgNextSchd, false);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;

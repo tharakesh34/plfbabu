@@ -116,6 +116,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainSelectItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -1157,7 +1158,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinServiceEvent.HOLDEMI)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 			whereClause.append("AND FinReference NOT IN (select  FinReference from FinanceMain where finrepaymethod="
-					+ "'" + FinanceConstants.REPAYMTH_MANUAL + "')");
+					+ "'" + InstrumentType.MANUAL.name() + "')");
 		} else if (moduleDefiner.equals(FinServiceEvent.CHGSCHDMETHOD)) {
 			whereClause
 					.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D + "' AND StepFinance = 0 ");

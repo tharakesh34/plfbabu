@@ -3692,17 +3692,6 @@ public class PennantStaticListUtil {
 		return gstMapping;
 	}
 
-	public static List<ValueLabel> getChequeTypes() {
-		if (chequeTypesList == null) {
-			chequeTypesList = new ArrayList<ValueLabel>(3);
-			chequeTypesList.add(new ValueLabel(FinanceConstants.REPAYMTH_PDC,
-					Labels.getLabel("label_Finance_Cheque_RepayMethod_PDC")));
-			chequeTypesList.add(new ValueLabel(FinanceConstants.REPAYMTH_UDC,
-					Labels.getLabel("label_Finance_Cheque_RepayMethod_UDC")));
-		}
-		return chequeTypesList;
-	}
-
 	// GST Fee Tax Types
 	public static List<ValueLabel> getFeeTaxTypes() {
 		if (feeTaxTypes == null) {

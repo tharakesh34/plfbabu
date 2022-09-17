@@ -547,7 +547,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	private void doCheckMandate(String finRepayMethod, long CustID, boolean onChange) {
-		if (InstrumentType.isValid(finRepayMethod)) {
+		if (InstrumentType.isManual(finRepayMethod)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_mandateId"), this.mandateRef);
 			if (onChange) {
 				this.row_Escrow.setVisible(false);
@@ -558,8 +558,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.mandateRef.setValue("");
 			}
 
-		} else if (FinanceConstants.REPAYMTH_MANUAL.equals(finRepayMethod)
-				&& ImplementationConstants.ALLOW_ESCROW_MODE) {
+		} else if (InstrumentType.isManual(finRepayMethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
 			readOnlyComponent(true, this.mandateRef);
 			this.mandateRef.setValue("");
 			this.mandateRef.setAttribute("mandateID", new Long(0));

@@ -402,4 +402,6 @@ public class SMTParameterConstants {
 	public static final String LOAN_START_DATE_FUTURE_DAYS = "LOAN_START_DATE_FUTURE_DAYS";
 	public static final String FEE_POSTING_DATE_BACK_DAYS = "FEE_POSTING_DATE_BACK_DAYS";
 	public static final String RATE_CHANGE_FROM_DATE_BACK_DAYS = "RATE_CHANGE_FROM_DATE_BACK_DAYS";
+	public static final String APP_DFT_END_DATE = "APP_DFT_END_DATE";
+	public static final String MANDATE_STARTDATE = "MANDATE_STARTDATE";
 }

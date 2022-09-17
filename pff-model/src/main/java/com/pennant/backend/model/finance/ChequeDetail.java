@@ -96,8 +96,6 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	private String chequeBounceReason;
 	private String sourceId;
 	@XmlElement
-	private int instNo;
-	@XmlElement
 	private boolean isDelete = false;
 	private boolean oldCheque;
 
@@ -416,14 +414,6 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		this.isDelete = isDelete;
 	}
 
-	public int getInstNo() {
-		return instNo;
-	}
-
-	public void setInstNo(int instNo) {
-		this.instNo = instNo;
-	}
-	
 	public boolean isOldCheque() {
 		return oldCheque;
 	}

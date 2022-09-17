@@ -15,19 +15,21 @@ public enum InstrumentType {
 
 	PDC("PDC", "Post Dated Cheque"),
 
-	SI("SI", "SI"),
+	SPDC("SPDC", "Security Post Dated Cheque"),
 
-	SII("SII", "SI-Internal"),
+	SI("SI", "Standing Instruction"),
 
-	DAS("DAS", "DAS"),
+	SII("SII", "Standing Instruction Internal"),
+
+	DAS("DAS", "Deduct Against Salary"),
 
 	MANUAL("MANUAL", "Manual Payment"),
 
-	DD("DD", "DD"),
+	DD("DD", "Direct Debit"),
 
-	UDC("UDC", "UDC"),
+	UDC("UDC", "Undated Cheque"),
 
-	CHEQUE("CHEQUE", "CHEQUE"),
+	CHEQUE("CHEQUE", "Cheque"),
 
 	DDA("DDA", "DDA");
 
@@ -47,51 +49,71 @@ public enum InstrumentType {
 		return description;
 	}
 
-	public static boolean isECS(String instrumentType) {
-		return isEqual(ECS, object(instrumentType));
-	}
-
-	public static boolean isDD(String instrumentType) {
-		return isEqual(DD, object(instrumentType));
-	}
-
 	public static boolean isNACH(String instrumentType) {
-		return isEqual(NACH, object(instrumentType));
+		return isEqual(NACH, getType(instrumentType));
 	}
 
-	public static boolean isPDC(String instrumentType) {
-		return isEqual(PDC, object(instrumentType));
+	public static boolean isECS(String instrumentType) {
+		return isEqual(ECS, getType(instrumentType));
 	}
 
-	public static boolean isUDC(String instrumentType) {
-		return isEqual(UDC, object(instrumentType));
+	public static boolean isENACH(String instrumentType) {
+		return isEqual(ENACH, getType(instrumentType));
 	}
 
 	public static boolean isEMandate(String instrumentType) {
-		return isEqual(EMANDATE, object(instrumentType));
+		return isEqual(EMANDATE, getType(instrumentType));
 	}
 
-	public static boolean isDAS(String instrumentType) {
-		return isEqual(DAS, object(instrumentType));
+	public static boolean isPDC(String instrumentType) {
+		return isEqual(PDC, getType(instrumentType));
+	}
+
+	public static boolean isSPDC(String instrumentType) {
+		return isEqual(SPDC, getType(instrumentType));
 	}
 
 	public static boolean isSI(String instrumentType) {
-		return isEqual(SI, object(instrumentType));
+		return isEqual(SI, getType(instrumentType));
 	}
 
-	public static boolean isValid(String instrumentType) {
-		return isEqual(MANUAL, object(instrumentType));
+	public static boolean isSII(String instrumentType) {
+		return isEqual(SII, getType(instrumentType));
+	}
+
+	public static boolean isDAS(String instrumentType) {
+		return isEqual(DAS, getType(instrumentType));
+	}
+
+	public static boolean isManual(String instrumentType) {
+		return isEqual(MANUAL, getType(instrumentType));
+	}
+
+	public static boolean isDD(String instrumentType) {
+		return isEqual(DD, getType(instrumentType));
+	}
+
+	public static boolean isUDC(String instrumentType) {
+		return isEqual(UDC, getType(instrumentType));
+	}
+
+	public static boolean isCheque(String instrumentType) {
+		return isEqual(CHEQUE, getType(instrumentType));
+	}
+
+	public static boolean isDda(String instrumentType) {
+		return isEqual(DDA, getType(instrumentType));
 	}
 
 	private static boolean isEqual(InstrumentType instrumentType, InstrumentType type) {
 		return type == null ? false : type == instrumentType;
 	}
 
-	public static InstrumentType object(String instrumentType) {
+	public static InstrumentType getType(String instrumentType) {
 		List<InstrumentType> list = Arrays.asList(InstrumentType.values());
 
 		for (InstrumentType it : list) {
-			if (it.code().equals(instrumentType)) {
+			if (it.name().equals(instrumentType)) {
 				return it;
 			}
 		}

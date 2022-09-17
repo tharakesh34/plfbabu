@@ -1193,10 +1193,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		fillList(this.grcAdvType, AdvanceType.getGrcList(), aFinanceMain.getGrcAdvType());
 		this.grcAdvTerms.setValue(aFinanceMain.getGrcAdvTerms());
 
-		String repayMethod = aFinanceMain.getFinRepayMethod();
-		if (StringUtils.isEmpty(repayMethod)) {
-			repayMethod = FinanceConstants.REPAYMTH_AUTO;
-		}
+		String repayMethod = StringUtils.trimToEmpty(aFinanceMain.getFinRepayMethod());
+
 		fillComboBox(this.finRepayMethod, repayMethod, MandateUtil.getRepayMethods(), "");
 
 		this.commitmentRef.setValue(aFinanceMain.getFinCommitmentRef(),

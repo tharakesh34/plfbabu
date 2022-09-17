@@ -338,7 +338,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 	private boolean checkRepayMethod(FinanceMain finmain) {
 		String rpymentod = StringUtils.trimToEmpty(finmain.getFinRepayMethod());
-		return InstrumentType.isValid(rpymentod);
+		return InstrumentType.isManual(rpymentod);
 	}
 
 	private Mandate checkExistingMandate(long mandateID) {

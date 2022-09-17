@@ -2344,8 +2344,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return getError(error.getCode(), error.getParameters());
 		}
 
-		setInstallmentNumber(fd);
-
 		return finServiceInstController.processChequeDetail(fd, "");
 	}
 
@@ -2364,8 +2362,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		if (error != null) {
 			return getError(error.getCode(), error.getParameters());
 		}
-
-		setInstallmentNumber(fd);
 
 		return finServiceInstController.processChequeDetail(fd, type);
 	}
@@ -2386,8 +2382,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return getError(error.getCode(), error.getParameters());
 		}
 
-		setInstallmentNumber(fd);
-
 		return finServiceInstController.updateCheque(fd, type);
 	}
 
@@ -2404,8 +2398,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		if (error != null) {
 			return getError(error.getCode(), error.getParameters());
 		}
-
-		setInstallmentNumber(fd);
 
 		return finServiceInstController.updateChequeDetailsinMaintainence(fd, "");
 	}
@@ -2505,21 +2497,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		if (validReq && chequeDetailDAO.isChequeExists(headerID, schDate)) {
 			setError(schdData, "41018", "Cheque ", "Cheque Date : " + schDate);
-		}
-	}
-
-	private void setInstallmentNumber(FinanceDetail fd) {
-		ChequeHeader chequeHeader = fd.getChequeHeader();
-		List<ChequeDetail> cheques = chequeHeader.getChequeDetailList();
-
-		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
-
-		for (ChequeDetail cheque : cheques) {
-			for (FinanceScheduleDetail schedule : schedules) {
-				if (schedule.getSchDate().compareTo(cheque.getChequeDate()) == 0) {
-					cheque.setInstNo(schedule.getInstNumber());
-				}
-			}
 		}
 	}
 

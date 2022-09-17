@@ -49,7 +49,6 @@ public class ImplementationConstants {
 		ALLOW_DEVIATIONS = getValueAsBoolean("ALLOW_DEVIATIONS", true);
 		LATEPAY_PROFIT_CAL_ON_DAYZERO = getValueAsBoolean("LATEPAY_PROFIT_CAL_ON_DAYZERO", true);
 		ADD_FEEINFTV_ONCALC = getValueAsBoolean("ADD_FEEINFTV_ONCALC", true);
-		ALLOW_FIN_SALARY_PAYMENT = getValueAsBoolean("ALLOW_FIN_SALARY_PAYMENT", true);
 		ALLOW_SPECIALRATE = getValueAsBoolean("ALLOW_SPECIALRATE", false);
 		ALLOW_MANUAL_SCHEDULE = getValueAsBoolean("ALLOW_MANUAL_SCHEDULE", false);
 		CAPTURE_APPLICATION_NUMBER = getValueAsBoolean("CAPTURE_APPLICATION_NUMBER", true);
@@ -337,7 +336,6 @@ public class ImplementationConstants {
 	public static boolean ALLOW_DEVIATIONS;
 	public static boolean LATEPAY_PROFIT_CAL_ON_DAYZERO;
 	public static boolean ADD_FEEINFTV_ONCALC;
-	public static boolean ALLOW_FIN_SALARY_PAYMENT;
 	public static boolean ALLOW_SPECIALRATE;
 	public static boolean ALLOW_MANUAL_SCHEDULE;
 	public static boolean CAPTURE_APPLICATION_NUMBER;

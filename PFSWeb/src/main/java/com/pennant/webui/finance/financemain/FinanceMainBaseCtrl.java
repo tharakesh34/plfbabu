@@ -303,6 +303,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
@@ -4685,7 +4686,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		/* Escrow Mode */
 		if (ImplementationConstants.ALLOW_ESCROW_MODE && conventional) {
-			if (FinanceConstants.REPAYMTH_MANUAL.equals(aFinanceMain.getFinRepayMethod())) {
+			if (InstrumentType.isManual(aFinanceMain.getFinRepayMethod())) {
 				this.row_Escrow.setVisible(true);
 			}
 
@@ -18135,7 +18136,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			repymethod = this.finRepayMethod.getSelectedItem().getValue().toString();
 		}
 
-		if (FinanceConstants.REPAYMTH_MANUAL.equals(repymethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
+		if (InstrumentType.isManual(repymethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
 			this.row_Escrow.setVisible(true);
 			if (!this.escrow.isChecked()) {
 				this.customerBankAcct.setReadonly(true);

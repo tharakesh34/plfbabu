@@ -124,11 +124,11 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		sql.append(type.getSuffix());
 		sql.append("(ChequeDetailsID, HeaderID, BankBranchID, AccountNo, ChequeSerialNo, ChequeDate");
 		sql.append(", EMIRefNo, Amount, ChequeCcy, Status, Active, DocumentName, DocumentRef, ChequeType");
-		sql.append(", ChequeStatus, AccountType, AccHolderName, InstNo, Version, LastMntBy, LastMntOn");
+		sql.append(", ChequeStatus, AccountType, AccHolderName, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		if (cheque.getId() == Long.MIN_VALUE || cheque.getId() == 0) {
 			cheque.setId(getNextValue("SeqChequeDetail"));
@@ -157,7 +157,6 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 				ps.setString(index++, cheque.getChequeStatus());
 				ps.setString(index++, cheque.getAccountType());
 				ps.setString(index++, cheque.getAccHolderName());
-				ps.setInt(index++, cheque.getInstNo());
 				ps.setInt(index++, cheque.getVersion());
 				ps.setLong(index++, cheque.getLastMntBy());
 				ps.setTimestamp(index++, cheque.getLastMntOn());
@@ -183,7 +182,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		sql.append(" Set HeaderID = ?, BankBranchID = ?, AccountNo = ?, ChequeSerialNo = ?");
 		sql.append(", ChequeDate = ?, EMIRefNo = ?, Amount = ?, ChequeCcy = ?, Status = ?");
 		sql.append(", Active = ?, DocumentName = ?, DocumentRef = ?, ChequeType = ?");
-		sql.append(", ChequeStatus = ?, AccountType = ?, AccHolderName = ?, InstNo = ?");
+		sql.append(", ChequeStatus = ?, AccountType = ?, AccHolderName = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where chequeDetailsID = ?");
@@ -209,7 +208,6 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			ps.setString(index++, cheque.getChequeStatus());
 			ps.setString(index++, cheque.getAccountType());
 			ps.setString(index++, cheque.getAccHolderName());
-			ps.setInt(index++, cheque.getInstNo());
 			ps.setInt(index++, cheque.getVersion());
 			ps.setLong(index++, cheque.getLastMntBy());
 			ps.setTimestamp(index++, cheque.getLastMntOn());
@@ -300,7 +298,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ChequeDetailsID, HeaderID, BankBranchID, AccountNo, ChequeSerialNo, ChequeDate");
 		sql.append(", EMIRefNo, Amount, ChequeCcy, Status, Active, DocumentName, DocumentRef, ChequeType");
-		sql.append(", ChequeStatus, AccountType, AccHolderName, InstNo, Version, LastMntOn, LastMntBy");
+		sql.append(", ChequeStatus, AccountType, AccHolderName, Version, LastMntOn, LastMntBy");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (type.equals("_View")) {
@@ -341,7 +339,6 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			cheque.setChequeStatus(rs.getString("ChequeStatus"));
 			cheque.setAccountType(rs.getString("AccountType"));
 			cheque.setAccHolderName(rs.getString("AccHolderName"));
-			cheque.setInstNo(rs.getInt("InstNo"));
 			cheque.setVersion(rs.getInt("Version"));
 			cheque.setLastMntBy(rs.getLong("LastMntBy"));
 			cheque.setLastMntOn(rs.getTimestamp("LastMntOn"));

@@ -119,6 +119,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.PTCKeditor;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1441,7 +1442,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDftTerms.setValue(finDftTerms);
 		if (aFinanceType.isNewRecord() && !isCopyProcess) {
 			// Select manual repay by default.
-			fillComboBox(this.cbfinRepayMethod, FinanceConstants.REPAYMTH_MANUAL, MandateUtil.getRepayMethods(), "");
+			fillComboBox(this.cbfinRepayMethod, InstrumentType.MANUAL.name(), MandateUtil.getRepayMethods(), "");
 		} else {
 			fillComboBox(this.cbfinRepayMethod, aFinanceType.getFinRepayMethod(), MandateUtil.getRepayMethods(), "");
 		}

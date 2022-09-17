@@ -29,6 +29,7 @@ import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
@@ -89,4 +90,6 @@ public interface MandateService {
 	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status);
 
 	List<FinanceMain> getLoans(long custId, String finRepayMethod);
+
+	ErrorDetail validate(FinanceDetail fd, String vldGroup);
 }

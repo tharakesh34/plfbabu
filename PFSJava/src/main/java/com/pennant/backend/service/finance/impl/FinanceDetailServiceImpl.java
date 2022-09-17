@@ -3899,12 +3899,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetails.addAll(linkedFinancesService.doApproveLinkedFinanceList(fd));
 		}
 
-		// Fetch Next Payment Details from Finance for Salaried Postings
-		// Verification
-		FinanceScheduleDetail orgNextSchd = null;
-		if (ImplementationConstants.ALLOW_FIN_SALARY_PAYMENT && StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
-			orgNextSchd = financeScheduleDetailDAO.getNextSchPayment(finID, curBDay);
-		}
 		String recordType = fm.getRecordType();
 
 		if (!isWIF) {
@@ -4613,11 +4607,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// =======================================
 		fm.setRoleCode(roleCode);
 		updateTaskLog(fm, false);
-
-		// Save Salaried Posting Details
-		if (ImplementationConstants.ALLOW_FIN_SALARY_PAYMENT && StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
-			saveFinSalPayment(schdData, orgNextSchd, false);
-		}
 
 		// Receipt creation through Restructure Process
 		if (restructReceiptReq) {
