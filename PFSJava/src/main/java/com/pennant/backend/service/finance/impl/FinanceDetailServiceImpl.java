@@ -1822,7 +1822,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 				break;
 			case FinanceConstants.PROCEDT_FINANCETABS:
-				showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getFinRefId()), 3, "0"),
+				showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getTabCode()), 3, "0"),
 						mandInputInStage);
 				break;
 			default:
@@ -2699,15 +2699,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// FinancialSummary Sanction Condition Details
 		// =======================================
 		if (fd.getSanctionDetailsList() != null && sanctionConditionsService != null) {
-			for (SanctionConditions sanctionConditions : fd.getSanctionDetailsList()) {
-				sanctionConditions.setFinReference(finReference);
-				sanctionConditions.setTaskId(fm.getTaskId());
-				sanctionConditions.setNextTaskId(fm.getNextTaskId());
-				sanctionConditions.setRoleCode(fm.getRoleCode());
-				sanctionConditions.setNextRoleCode(fm.getNextRoleCode());
-				sanctionConditions.setRecordStatus(fm.getRecordStatus());
-				sanctionConditions.setWorkflowId(fm.getWorkflowId());
-				sanctionConditions.setLastMntOn(fm.getLastMntOn());
+			for (SanctionConditions sc : fd.getSanctionDetailsList()) {
+				sc.setFinID(fm.getFinID());
+				sc.setFinReference(finReference);
+				sc.setTaskId(fm.getTaskId());
+				sc.setNextTaskId(fm.getNextTaskId());
+				sc.setRoleCode(fm.getRoleCode());
+				sc.setNextRoleCode(fm.getNextRoleCode());
+				sc.setRecordStatus(fm.getRecordStatus());
+				sc.setWorkflowId(fm.getWorkflowId());
+				sc.setLastMntOn(fm.getLastMntOn());
 			}
 			auditDetails.addAll(
 					sanctionConditionsService.doProcess(fd.getSanctionDetailsList(), tableType, auditTranType, false));

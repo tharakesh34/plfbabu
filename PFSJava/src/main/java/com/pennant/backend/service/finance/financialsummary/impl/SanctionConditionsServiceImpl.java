@@ -107,27 +107,28 @@ public class SanctionConditionsServiceImpl extends GenericService<SanctionCondit
 	@Override
 	public void saveOrUpdate(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType) {
 		logger.debug(Literal.ENTERING);
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		List<SanctionConditions> sanctionConditionsList = financeDetail.getSanctionDetailsList();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		for (SanctionConditions sanctionConditions : sanctionConditionsList) {
-			sanctionConditions.setTaskId(financeMain.getTaskId());
-			sanctionConditions.setNextTaskId(financeMain.getNextTaskId());
-			sanctionConditions.setRoleCode(financeMain.getRoleCode());
-			sanctionConditions.setNextRoleCode(financeMain.getNextRoleCode());
-			sanctionConditions.setRecordStatus(financeMain.getRecordStatus());
-			sanctionConditions.setWorkflowId(financeMain.getWorkflowId());
-			sanctionConditions.setFinReference(financeMain.getFinReference());
-			if (sanctionConditions.isNewRecord()) {
-				getSanctionConditionsDAO().save(sanctionConditions, tableType);
-				auditDetails.add(getAuditDetails(sanctionConditions, 1, PennantConstants.TRAN_ADD));
-			} else if (StringUtils.trimToEmpty(sanctionConditions.getRecordType())
+		for (SanctionConditions sc : sanctionConditionsList) {
+			sc.setTaskId(financeMain.getTaskId());
+			sc.setNextTaskId(financeMain.getNextTaskId());
+			sc.setRoleCode(financeMain.getRoleCode());
+			sc.setNextRoleCode(financeMain.getNextRoleCode());
+			sc.setRecordStatus(financeMain.getRecordStatus());
+			sc.setWorkflowId(financeMain.getWorkflowId());
+			sc.setFinID(financeMain.getFinID());
+			sc.setFinReference(financeMain.getFinReference());
+			if (sc.isNewRecord()) {
+				getSanctionConditionsDAO().save(sc, tableType);
+				auditDetails.add(getAuditDetails(sc, 1, PennantConstants.TRAN_ADD));
+			} else if (StringUtils.trimToEmpty(sc.getRecordType())
 					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				getSanctionConditionsDAO().update(sanctionConditions, tableType);
-				auditDetails.add(getAuditDetails(sanctionConditions, 1, PennantConstants.TRAN_DEL));
+				getSanctionConditionsDAO().update(sc, tableType);
+				auditDetails.add(getAuditDetails(sc, 1, PennantConstants.TRAN_DEL));
 			} else {
-				getSanctionConditionsDAO().update(sanctionConditions, tableType);
-				auditDetails.add(getAuditDetails(sanctionConditions, 1, PennantConstants.TRAN_UPD));
+				getSanctionConditionsDAO().update(sc, tableType);
+				auditDetails.add(getAuditDetails(sc, 1, PennantConstants.TRAN_UPD));
 			}
 		}
 		addAudit(auditHeader, auditDetails);

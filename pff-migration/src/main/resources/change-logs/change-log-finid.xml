@@ -2000,7 +2000,11 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
-
+	
+	<changeSet id="60.5" author="murthy.y">
+		<dropForeignKeyConstraint baseTableName="creditreviewdata" constraintName="fk_creditreviewdata_finid"/>
+	</changeSet>
+	
 	<changeSet id="61" author="murthy.y">
 		<addColumn tableName="customerdedupdetail">
 			<column name="FinID" type="bigint" />

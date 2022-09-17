@@ -82,7 +82,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CreditReviewData crd = new CreditReviewData();
 
-				crd.setFinID(rs.getString("FinID"));
+				crd.setFinID(rs.getLong("FinID"));
 				crd.setFinReference(rs.getString("FinReference"));
 				crd.setTemplateData(rs.getString("TemplateData"));
 				crd.setTemplateName(rs.getString("TemplateName"));
@@ -121,7 +121,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setString(index++, crd.getFinID());
+				ps.setLong(index++, crd.getFinID());
 				ps.setString(index++, crd.getFinReference());
 				ps.setString(index++, crd.getTemplateData());
 				ps.setString(index++, crd.getTemplateName());
@@ -168,7 +168,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 			ps.setString(index++, crd.getRecordType());
 			ps.setLong(index++, crd.getWorkflowId());
 
-			ps.setString(index++, crd.getFinID());
+			ps.setLong(index++, crd.getFinID());
 			ps.setInt(index++, crd.getTemplateVersion());
 			ps.setString(index++, crd.getTemplateName());
 		});

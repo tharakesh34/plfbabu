@@ -26246,4 +26246,12 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="Eligbilit_1" author="murthy.y" >
+		<sql>
+			<![CDATA[
+				DELETE from SECRIGHTS where RIGHTNAME in('FinanceMainDialog_Eligibility_Sal');	
+				INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceMainDialog_Eligibility_Sal', 'FinanceMainDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

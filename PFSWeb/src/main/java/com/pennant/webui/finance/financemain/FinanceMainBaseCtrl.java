@@ -1942,7 +1942,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 
 		FinanceType financeType = aFinanceDetail.getFinScheduleData().getFinanceType();
-
 		// Customer Details
 		if (onLoad || StringUtils.isEmpty(moduleDefiner)) {
 			appendCustomerDetailTab(onLoad);
@@ -2203,7 +2202,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Linking/DeLinking Loans
-		if (StringUtils.isEmpty(moduleDefiner)) {
+		if (isTabVisible(StageTabConstants.Linked) && StringUtils.isEmpty(moduleDefiner)) {
 			appendLinkedFinancesTab();
 		}
 
@@ -2255,15 +2254,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param tabID
 	 * @return
 	 */
-	private boolean isTabVisible(long tabID) {
-		String strTabId = StringUtils.leftPad(String.valueOf(tabID), 3, "0");
-		boolean showTab = true;
+	private boolean isTabVisible(String tabCode) {
+		String strTabCode = StringUtils.leftPad(tabCode, 3, "0");
+		boolean showTab = false;
 		String roles = "";
 
-		if (getFinanceDetail().getShowTabDetailMap().containsKey(strTabId)) {
-			roles = getFinanceDetail().getShowTabDetailMap().get(strTabId);
-			if (!StringUtils.contains(roles, getRole() + ",")) {
-				showTab = false;
+		if (getFinanceDetail().getShowTabDetailMap().containsKey(strTabCode)) {
+			roles = getFinanceDetail().getShowTabDetailMap().get(strTabCode);
+			if (StringUtils.contains(roles, getRole() + ",")) {
+				showTab = true;
 			}
 		}
 		return showTab;
@@ -4843,7 +4842,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (customerDialogCtrl != null) {
 					map.put("incomeDetailsList", getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList());
 				}
-				map.put("isEditable", isReadOnly("FinanceMainDialog_EligibilitySal"));
+
+				map.put("isEditable", isReadOnly("FinanceMainDialog_Eligibility"));
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Spreadsheet.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW), map);
 			} else {
@@ -5073,7 +5073,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Credit Review Details Data in finance
 	 */
 	private void appendCreditReviewDetailSummaryTab(boolean onLoadProcess) {
-		Map<String, Object> map = new HashMap<>();
 		boolean createTab = false;
 
 		if (getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY) == null) {
@@ -5088,23 +5087,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		final Map<String, Object> screenData = new HashMap<>();
 
+		String eligibility = this.eligibilityMethod.getValue();
+
 		screenData.put("FinReference", this.finReference.getValue());
 		screenData.put("FinType", this.finType.getValue());
-		screenData.put("EligibilityMethod", this.eligibilityMethod.getValue());
+		screenData.put("EligibilityMethod", eligibility);
 
 		if (customerDialogCtrl != null) {
 			screenData.put("EmpType", customerDialogCtrl.getEmpType());
 			screenData.put("IncomeDetails", getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList());
 		}
+
 		if (jointAccountDetailDialogCtrl != null) {
 			screenData.put("JointAccountDetails", jointAccountDetailDialogCtrl.getJointAccountDetailList());
 		}
+
+		Map<String, Object> map = new HashMap<>();
 		screenData.put("UserRole", getRole());
-		screenData.put("Right_EligibilitySal", isReadOnly("FinanceMainDialog_EligibilitySal"));
+		screenData.put("Right_Eligibility", isReadOnly("FinanceMainDialog_Eligibility"));
 
 		if (spreadSheetService != null) {
 			map = spreadSheetService.setSpreadSheetData(screenData, financeDetail);
 		}
+
 		@SuppressWarnings("unchecked")
 		Map<String, Object> dataMap = (Map<String, Object>) map.getOrDefault("dataMap", new HashMap<>());
 
@@ -5112,6 +5117,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			SpreadSheet spreadSheet = (SpreadSheet) dataMap.get("spreadsheet");
 			Sessions.getCurrent().setAttribute("ss", spreadSheet);
 		}
+
+		map.put("financeMainDialogCtrl", this);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul",
@@ -5176,7 +5183,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			objectList.add(aFinanceDetail);
 
 			extendedFieldCtrl.render(objectList);
-			setEligibilityMethod(aFinanceMain.getLovEligibilityMethod());
 		} catch (Exception e) {
 			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
 			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
@@ -7465,18 +7471,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return;
 			}
 			CreditReviewData creditReviewData = spreadSheetCtrl.getCreditReviewData();
+			creditReviewData.setFinID(aFm.getFinID());
 			creditReviewData.setFinReference(this.finReference.getValue());
 			afd.setCreditReviewData(spreadSheetCtrl.getCreditReviewData());
 		}
 
-		if (financeSpreadSheetCtrl != null && !isReadOnly("FinanceMainDialog_EligibilitySal")) {
+		if (financeSpreadSheetCtrl != null && !isReadOnly("FinanceMainDialog_Eligibility")) {
 			if (financeSpreadSheetCtrl.doSave(userAction, true)) {
 				return;
 			}
 			CreditReviewData creditReviewData = financeSpreadSheetCtrl.getCreditReviewData();
+			creditReviewData.setFinID(aFm.getFinID());
 			creditReviewData.setFinReference(this.finReference.getValue());
 			afd.setCreditReviewData(creditReviewData);
-			financeSpreadSheetCtrl.doSave_ScoreDetail(afd);
+			financeSpreadSheetCtrl.doSaveScoreDetail(afd);
 		}
 
 		if (financeExtCreditReviewSpreadSheetCtrl != null) {
@@ -7485,6 +7493,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			CreditReviewData creditReviewData = financeExtCreditReviewSpreadSheetCtrl.getCreditReviewData();
 			if (creditReviewData != null) {
+				creditReviewData.setFinID(aFm.getFinID());
 				creditReviewData.setFinReference(this.finReference.getValue());
 				afd.setCreditReviewData(creditReviewData);
 			}
@@ -19371,17 +19380,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Finance Stage Accounting Posting Details
 		appendStageAccountingDetailsTab(false);
 
-		// Credit Review Details
-		if (PennantConstants.OLD_CREDITREVIEWTAB
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
-				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
-			appendCreditReviewDetailTab(false);
-		} else if (PennantConstants.NEW_CREDITREVIEWTAB
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
-				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
-			appendCreditReviewDetailSummaryTab(false);
-		}
-
 		// Query Management Tab
 		if (isTabVisible(StageTabConstants.QueryMangement)) {
 			appendQueryMangementTab(false);
@@ -22821,254 +22819,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	}
 
-	public boolean isCreditReviewDataChanged(CreditReviewDetails creditReviewDetails, boolean isFromLoan) {
-		logger.debug(Literal.ENTERING);
-
-		boolean isModified = false;
-		boolean isLiabilitiesChanged = false;
-		BigDecimal roi = BigDecimal.ZERO;
-		int tenor = 0;
-		CreditReviewDetails crRevDetails = new CreditReviewDetails();
-		StringBuilder fields = new StringBuilder();
-		Map<String, Object> dataMap = new HashMap<>();
-
-		String rateBasis = getComboboxValue(this.repayRateBasis);
-		if (CalculationConstants.RATE_BASIS_R.equals(rateBasis)
-				|| CalculationConstants.RATE_BASIS_C.equals(rateBasis)) {
-			if (StringUtils.isNotEmpty(this.repayRate.getBaseValue())) {
-				roi = this.repayRate.getEffRateValue();
-			} else {
-				roi = this.repayProfitRate.getValue();
-			}
-		} else {
-			roi = this.repayProfitRate.getValue();
-		}
-		tenor = this.numberOfTerms_two.intValue();
-
-		if (roi.compareTo(creditReviewDetails.getRoi()) != 0) {
-			fields.append("ROI,");
-			// dataMap.put("ROI", roi.divide(new BigDecimal(100), 9,
-			// RoundingMode.HALF_DOWN));
-			dataMap.put("ROI", roi);
-		}
-		if (tenor != creditReviewDetails.getTenor()) {
-			fields.append("TENOR,");
-			dataMap.put("TENOR", tenor);
-		}
-		BigDecimal repayAmountValue = getFinanceDetail().getFinScheduleData().getFinanceMain().getFirstRepay();
-		BigDecimal compreValue = BigDecimal.ZERO;
-		BigDecimal totalAbb = BigDecimal.ZERO;
-		if (repayAmountValue.compareTo(compreValue) != 0) {
-			totalAbb = creditReviewDetails.getAvgBankBal()
-					.divide(PennantApplicationUtil.formateAmount(repayAmountValue, 2), RoundingMode.HALF_DOWN);
-			creditReviewDetails.setTotalAbb(totalAbb);
-		}
-
-		if (totalAbb.compareTo(creditReviewDetails.getTotalAbb()) != 0) {
-			fields.append("ABB_EMI,");
-			dataMap.put("ABB_EMI", totalAbb);
-		}
-
-		if (!isFromLoan) {
-			creditReviewDetails.setRoi(roi);
-			creditReviewDetails.setTenor(tenor);
-			creditReviewDetails.setTotalAbb(totalAbb);
-		}
-		setExtendedFieldsForCreditReview(fields, dataMap, creditReviewDetails, isFromLoan);
-		BigDecimal accBal = BigDecimal.ZERO;
-		BigDecimal bounceIn = BigDecimal.ZERO;
-		int debitNo = 0;
-		int noOfMonths = 0;
-
-		List<CustomerBankInfo> bankInfo = new ArrayList<>();
-		if (customerDialogCtrl != null) {
-			bankInfo = customerDialogCtrl.getCustomerBankInfoDetailList();
-		}
-
-		String recordType = null;
-		for (CustomerBankInfo customerBankInfo : bankInfo) {
-			recordType = customerBankInfo.getRecordType();
-			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
-					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-				continue;
-			}
-
-			List<BankInfoDetail> bankAccDetails = customerBankInfo.getBankInfoDetails();
-			// noOfMonths = noOfMonths +
-			// bankAccDetails.size();
-			for (BankInfoDetail bankInfoDetail : bankAccDetails) {
-				recordType = bankInfoDetail.getRecordType();
-				if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
-						|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-					continue;
-				}
-
-				accBal = accBal.add(bankInfoDetail.getoDCCLimit());
-				bounceIn = bounceIn.add(bankInfoDetail.getBounceIn());
-				debitNo = debitNo + bankInfoDetail.getDebitNo();
-				noOfMonths = noOfMonths + 1;
-			}
-
-			if (noOfMonths > 0) {
-				accBal = accBal.divide(new BigDecimal(noOfMonths), RoundingMode.HALF_DOWN);
-				// accBal = accBal.divide(new BigDecimal(bankInfo.size()),
-				// RoundingMode.HALF_DOWN);
-
-				bounceIn = bounceIn.divide(new BigDecimal(noOfMonths), RoundingMode.HALF_DOWN);
-				debitNo = debitNo / noOfMonths;
-			}
-		}
-
-		creditReviewDetails
-				.setAvgBankBal(PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
-		if (debitNo != 0) {
-			BigDecimal debitNoValue = bounceIn.divide(new BigDecimal(debitNo), RoundingMode.HALF_DOWN);
-			creditReviewDetails.setChequeBncOthEmi(
-					PennantApplicationUtil.formateAmount(debitNoValue, PennantConstants.defaultCCYDecPos));
-		}
-
-		if ((creditReviewDetails.getAvgBankBal()
-				.compareTo(PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos)) != 0)) {
-			fields.append("ABB,");
-			dataMap.put("ABB", PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
-			if (!isFromLoan) {
-				creditReviewDetails
-						.setAvgBankBal(PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
-			}
-		}
-		crRevDetails.setFields(fields.toString());
-		if (isLiabilitiesChanged) {
-			if (!isFromLoan) {
-				// spreadSheetCtrl.doFillExternalLiabilities(extLiabilities,
-				// dataMap);
-				spreadSheetCtrl.setDataToCells(crRevDetails, dataMap);
-			}
-			isModified = true;
-		} else if (StringUtils.isNotBlank(fields.toString())) {
-			if (!isFromLoan) {
-				spreadSheetCtrl.setDataToCells(crRevDetails, dataMap);
-			}
-			isModified = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return isModified;
-	}
-
-	public void setExtendedFieldsForCreditReview(StringBuilder fields, Map<String, Object> dataMap,
-			CreditReviewDetails creditReviewDetails, boolean isFromLoan) {
-		logger.debug(Literal.ENTERING);
-
-		if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
-			return;
-		} else {
-			Window window = extendedFieldCtrl.getWindow();
-			String elgMethodValue = "";
-			try {
-				if (window.getFellowIfAny("ad_ELGMETHOD") instanceof Textbox) {
-					elgMethodValue = ((Textbox) window.getFellowIfAny("ad_ELGMETHOD")).getValue();
-				}
-
-				// If Eligibility Method is ET(Express Top-Up)
-				if ("ET".equals(elgMethodValue)) {
-
-					BigDecimal sanctionedAmt = BigDecimal.ZERO;
-					if (window.getFellowIfAny("ad_ET_LN_SNCAMT") instanceof CurrencyBox) {
-						sanctionedAmt = ((CurrencyBox) window.getFellowIfAny("ad_ET_LN_SNCAMT")).getActualValue();
-						if (sanctionedAmt == null) {
-							sanctionedAmt = BigDecimal.ZERO;
-						}
-					}
-
-					BigDecimal outSatandingAmt = BigDecimal.ZERO;
-					if (window.getFellowIfAny("ad_ET_OT_LNAMNT") instanceof CurrencyBox) {
-						outSatandingAmt = ((CurrencyBox) window.getFellowIfAny("ad_ET_OT_LNAMNT")).getActualValue();
-						if (outSatandingAmt == null) {
-							outSatandingAmt = BigDecimal.ZERO;
-						}
-					}
-
-					if (!(creditReviewDetails.getSanctionedAmt().compareTo(sanctionedAmt) == 0)) {
-						fields.append("SNCTNAMNT,");
-						dataMap.put("SNCTNAMNT", String.valueOf(sanctionedAmt));
-						if (!isFromLoan) {
-							creditReviewDetails.setSanctionedAmt(sanctionedAmt);
-						}
-					}
-
-					if (!(creditReviewDetails.getOutStandingLoanAmt().compareTo(outSatandingAmt) == 0)) {
-						fields.append("OTSTNDNGAMNT,");
-						dataMap.put("OTSTNDNGAMNT", String.valueOf(outSatandingAmt));
-						if (!isFromLoan) {
-							creditReviewDetails.setOutStandingLoanAmt(outSatandingAmt);
-						}
-					}
-				} else if ("WC".equals(elgMethodValue)) { // If Eligibility
-															// Method is
-															// WC(Working
-															// capital)
-					BigDecimal accountLimit = BigDecimal.ZERO;
-
-					if (window.getFellowIfAny("ad_WC_CC_ACNT_LIMIT") instanceof CurrencyBox) {
-						accountLimit = ((CurrencyBox) window.getFellowIfAny("ad_WC_CC_ACNT_LIMIT")).getActualValue();
-						if (accountLimit == null) {
-							accountLimit = BigDecimal.ZERO;
-						}
-					}
-					if (!(creditReviewDetails.getAccountLimit().compareTo(accountLimit) == 0)) {
-						fields.append("CC_ACNTKIMIT,");
-						dataMap.put("CC_ACNTKIMIT", String.valueOf(accountLimit));
-						if (!isFromLoan) {
-							creditReviewDetails.setAccountLimit(accountLimit);
-						}
-					}
-				} else if ("BT".equals(elgMethodValue)) { // If Eligibility
-															// Method is
-															// BT(Balance
-															// Transfer)
-					BigDecimal btLoanAmtTrack = BigDecimal.ZERO;
-
-					if (window.getFellowIfAny("ad_BT_LN_AMT_BT") instanceof CurrencyBox) {
-						btLoanAmtTrack = ((CurrencyBox) window.getFellowIfAny("ad_BT_LN_AMT_BT")).getActualValue();
-						if (btLoanAmtTrack == null) {
-							btLoanAmtTrack = BigDecimal.ZERO;
-						}
-					}
-
-					if (!(creditReviewDetails.getLoanAmount().compareTo(btLoanAmtTrack) == 0)) {
-						fields.append("LNAMNT_BT,");
-						dataMap.put("LNAMNT_BT", String.valueOf(btLoanAmtTrack));
-						if (!isFromLoan) {
-							creditReviewDetails.setLoanAmout(btLoanAmtTrack);
-						}
-					}
-				} else if ("CACS".contentEquals(elgMethodValue)) {
-					BigDecimal grossReceiptAmt = BigDecimal.ZERO;
-
-					if (window.getFellowIfAny("ad_CAS_GROSSRECEIPT") instanceof CurrencyBox) {
-						grossReceiptAmt = ((CurrencyBox) window.getFellowIfAny("ad_CAS_GROSSRECEIPT")).getActualValue();
-						if (grossReceiptAmt == null) {
-							grossReceiptAmt = BigDecimal.ZERO;
-						}
-						if (!(creditReviewDetails.getGrossRecipt().compareTo(grossReceiptAmt) == 0)) {
-							fields.append("GrossRecipt,");
-							dataMap.put("GrossRecipt", String.valueOf(grossReceiptAmt));
-							if (!isFromLoan) {
-								creditReviewDetails.setGrossRecipt(grossReceiptAmt);
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
 	public void appendFinancialSummary(boolean onLoad) {
-
 		logger.debug(Literal.ENTERING);
 
 		try {
