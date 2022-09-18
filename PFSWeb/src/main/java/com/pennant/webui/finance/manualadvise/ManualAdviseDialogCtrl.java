@@ -109,7 +109,6 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -630,6 +629,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 
 		FinanceDetail fd = financeDetailService.getFinSchdDetailById(financeMain.getFinID(), "", false);
+
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		tdsApplicable = TDSCalculator.isTDSApplicable(fm);
 		this.gb_TDSDetails.setVisible(true);
@@ -849,13 +849,20 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 
-				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getWaivedAmount(),
-						PennantConstants.defaultCCYDecPos));
-				lc.setStyle("text-align:right;");
-				item.appendChild(lc);
-
 				BigDecimal totalWaivedGST = movement.getWaivedCGST().add(movement.getWaivedUGST())
 						.add(movement.getWaivedSGST()).add(movement.getWaivedIGST()).add(movement.getWaivedCESS());
+
+				BigDecimal waivedamount;
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
+					waivedamount = movement.getWaivedAmount().subtract(totalWaivedGST);
+				} else {
+					waivedamount = movement.getWaivedAmount();
+				}
+
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(waivedamount, PennantConstants.defaultCCYDecPos));
+				lc.setStyle("text-align:right;");
+				item.appendChild(lc);
 
 				lc = new Listcell(
 						PennantApplicationUtil.amountFormate(totalWaivedGST, PennantConstants.defaultCCYDecPos));
@@ -932,12 +939,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			if (this.adviseAmount.getActualValue() != null) {
 				aManualAdvise.setAdviseAmount(PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(),
 						PennantConstants.defaultCCYDecPos));
-
-				if (StringUtils.equals(this.adviseType.getSelectedItem().getValue().toString(),
-						String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))) {
-					aManualAdvise.setBalanceAmt(PennantApplicationUtil
-							.unFormateAmount(this.adviseAmount.getActualValue(), PennantConstants.defaultCCYDecPos));
-				}
+				aManualAdvise.setBalanceAmt(PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(),
+						PennantConstants.defaultCCYDecPos));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1408,16 +1411,19 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	}
 
 	private boolean validateValueDate() {
-		if (PennantConstants.RCD_STATUS_RESUBMITTED.equals(this.userAction.getSelectedItem().getValue())
-				|| PennantConstants.RCD_STATUS_REJECTED.equals(this.userAction.getSelectedItem().getValue())
-				|| PennantConstants.RCD_STATUS_CANCELLED.equals(this.userAction.getSelectedItem().getValue())) {
+		String usrAction = this.userAction.getSelectedItem().getValue();
+
+		if (PennantConstants.RCD_STATUS_RESUBMITTED.equals(usrAction)
+				|| PennantConstants.RCD_STATUS_REJECTED.equals(usrAction)
+				|| PennantConstants.RCD_STATUS_CANCELLED.equals(usrAction)) {
 			return false;
 		}
 
 		Date valueDate = this.valueDate.getValue();
+		Date maturityDate = financeMain.getMaturityDate();
+		boolean finIsActive = financeMain.isFinIsActive();
 
-		if (DateUtil.compare(this.valueDate.getValue(), financeMain.getMaturityDate()) >= 0
-				&& financeMain.isFinIsActive()) {
+		if (valueDate.compareTo(maturityDate) > 0 && finIsActive) {
 			if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)) {
 				MessageUtil.showError(
 						Labels.getLabel("label_ManualAdviseDialog_Cancel_DueDateCrossedMaturityInMtn.ErrMsg"));
@@ -1429,13 +1435,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 
 		Date appDate = SysParamUtil.getAppDate();
-		if (DateUtil.compare(valueDate, appDate) != 0 && !financeMain.isFinIsActive()) {
+		if (valueDate.compareTo(appDate) != 0 && !finIsActive) {
 			MessageUtil.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_LoanClosed.ErrMsg"));
 			return true;
 		}
 
-		if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)
-				&& DateUtil.compare(valueDate, appDate) <= 0) {
+		if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module) && valueDate.compareTo(appDate) <= 0) {
 			MessageUtil.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_BackDate.ErrMsg"));
 			return true;
 		}

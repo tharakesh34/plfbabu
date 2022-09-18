@@ -32,6 +32,11 @@
 			<name>Central Repository</name>
 			<url>http://nexus-pennant-services/nexus/content/groups/public/</url>
 		</repository>
+		<repository>
+			<id>Shibboleth</id>
+			<name>Shibboleth</name>
+			<url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -735,6 +740,18 @@
 			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- SAML2 Dependencies -->
+		<dependency>
+			<groupId>org.springframework.security.extensions</groupId>
+			<artifactId>spring-security-saml2-core</artifactId>
+			<version>1.0.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security.extensions</groupId>
+			<artifactId>spring-security-saml-dsl-core</artifactId>
+			<version>1.0.5.RELEASE</version>
+		</dependency>
+		<!-- SAML2 Dependencies -->
 
 	</dependencies>
 

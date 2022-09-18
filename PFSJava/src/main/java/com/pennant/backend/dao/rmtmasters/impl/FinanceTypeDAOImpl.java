@@ -111,7 +111,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MaxAutoIncrAllowed, AlwLoanSplit, SplitLoanType, TdsType, CalcOfSteps, StepsAppliedFor");
 		sql.append(", IntProvRule, RegProvRule, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType, OverDraftExtGraceDays");
 		sql.append(", OverDraftColChrgFeeType, OverDraftColAmt");
-		
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc ");
 			sql.append(", LovDescFinDivisionName");
@@ -1365,5 +1365,29 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public List<String> getFinanceTypeList() {
+		logger.debug(Literal.ENTERING);
+		List<String> ft = null;
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinType");
+		sql.append(" From RmtFinancetypes");
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			ft = this.jdbcOperations.query(sql.toString(), new RowMapper<String>() {
+				@Override
+				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+					return rs.getString("FinType");
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return ft;
+
 	}
 }

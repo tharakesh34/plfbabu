@@ -495,7 +495,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finReference) > 0 ? true : false;
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finReference) > 0;
 		} catch (EmptyResultDataAccessException e) {
 			return false;
 		}
@@ -693,4 +693,55 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		return map;
 	}
+
+	@Override
+	public CollateralAssignment getCollateralDetails(String collateralRef) {
+		logger.debug("Entering");
+
+		StringBuilder sql = new StringBuilder("select Distinct SiId, AssetId From COLLATERALASSIGNMENT");
+		sql.append(" Where collateralref = ? and SiId is not null and assetId is not null");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { collateralRef }, (rs, rowNum) -> {
+				CollateralAssignment ca = new CollateralAssignment();
+
+				ca.setSiid(rs.getLong("SiId"));
+				ca.setAssetid(rs.getLong("ASSETID"));
+
+				return ca;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug("Leaving");
+		return null;
+
+	}
+
+	@Override
+	public void updateCersaiDetails(String ref, Long siId, Long assetId) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" Update COLLATERALASSIGNMENT ");
+		sql.append(" Set SiId = :SiId ");
+		sql.append(", AssetId = :AssetId");
+		sql.append(" Where CollateralRef=:CollateralRef ");
+
+		paramMap.addValue("SiId", siId);
+		paramMap.addValue("AssetId", assetId);
+		paramMap.addValue("CollateralRef", ref);
+		try {
+
+			this.jdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 }

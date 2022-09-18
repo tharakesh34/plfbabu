@@ -40,7 +40,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -1276,5 +1278,30 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
+	}
+
+	@Override
+	public List<FinanceScheduleDetail> getFinSchdDetailsBtwDates(String finReference, Date fromdate, Date toDate) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("FromDate", fromdate);
+		source.addValue("ToDate", toDate);
+
+		StringBuilder sql = new StringBuilder(" Select FinReference, SchDate, BalanceForPftCal,");
+		sql.append(" PftDaysBasis, CalculatedRate, ProfitCalc");
+		sql.append(" From FinScheduleDetails Where");
+		sql.append(" FinReference = :FinReference and schdate between");
+		sql.append(" (select max(schdate) from finscheduledetails where schdate < :FromDate and ");
+		sql.append(" FinReference = :FinReference) and (select min(schdate) from finscheduledetails");
+		sql.append(" where schdate > :ToDate and finreference = :FinReference)");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 }

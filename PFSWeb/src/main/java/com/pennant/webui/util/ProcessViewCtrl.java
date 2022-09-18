@@ -86,9 +86,9 @@ public class ProcessViewCtrl extends GFCBaseCtrl<WorkFlowDetails> implements Ser
 			if (fromAuditId != 0L && toAuditId != 0L) {
 				loadWorkflow(workFlowId, moduleCode, keyValue, fromAuditId, toAuditId);
 			}
-			doSetFieldProperties();
 		}
 
+		doSetFieldProperties();
 		logger.debug(Literal.LEAVING);
 	}
 

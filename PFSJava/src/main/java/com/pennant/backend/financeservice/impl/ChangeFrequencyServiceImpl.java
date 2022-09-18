@@ -113,6 +113,12 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				continue;
 			}
 
+			// if there is any part payment done after selected event from date
+			if (!curSchd.isFrqDate() && curSchd.getPrincipalSchd().compareTo(curSchd.getRepayAmount()) == 0
+					&& curSchd.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) {
+				continue;
+			}
+
 			Calendar newDate = Calendar.getInstance();
 			newDate.setTime(curSchd.getSchDate());
 			Date oldDate = curSchd.getSchDate();

@@ -51,6 +51,7 @@ import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -97,9 +98,18 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		}
 
 		if (fmi.isNewRecord()) {
-			fmi.setFinMaintainId(Long.parseLong(finMaintainInstructionDAO.save(fmi, tableType)));
-			auditHeader.getAuditDetail().setModelData(fmi);
-			auditHeader.setAuditReference(String.valueOf(fmi.getFinMaintainId()));
+			FinMaintainInstruction finInst = null;
+			if (tableType.getSuffix().equals("_Temp")) {
+				finInst = finMaintainInstructionDAO.getFinMaintainInstructionByFinRef(fmi.getFinID(), fmi.getEvent(),
+						tableType.getSuffix());
+			}
+			if (finInst == null) {
+				fmi.setFinMaintainId(Long.parseLong(finMaintainInstructionDAO.save(fmi, tableType)));
+				auditHeader.getAuditDetail().setModelData(fmi);
+				auditHeader.setAuditReference(String.valueOf(fmi.getFinMaintainId()));
+			} else {
+				throw new ConcurrencyException();
+			}
 		} else {
 			finMaintainInstructionDAO.update(fmi, tableType);
 		}

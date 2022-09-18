@@ -463,7 +463,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		if (financeDetail.isNewRecord() || StringUtils.isEmpty(financeMain.getRecordType())) {
 
-			if (CollectionUtils.isNotEmpty(finFeeDetailActualList)) {
+			if (CollectionUtils.isNotEmpty(finFeeDetailActualList)
+					&& !FinServiceEvent.RESTRUCTURE.equals(financeDetail.getModuleDefiner())) {
 
 				List<FinFeeDetail> originationFeeList = new ArrayList<>();
 				originationFeeList.addAll(finFeeDetailActualList);
@@ -472,7 +473,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if ((StringUtils.isNotBlank(financeDetail.getModuleDefiner())
 						&& !FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner()))
 						|| StringUtils.isBlank(wifReference)) {
-					finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
+					String branchCode = getUserWorkspace().getLoggedInUser().getBranchCode();
+					finFeeDetailList = finFeeDetailService.convertToFinanceFees(financeDetail, branchCode);
 				} else {
 					// for WIF loans in loan origination
 					for (FinFeeDetail finFeeDetail : finFeeDetailActualList) {
@@ -498,7 +500,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
 			} else {
-				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
+				String branchCode = getUserWorkspace().getLoggedInUser().getBranchCode();
+				finFeeDetailList = finFeeDetailService.convertToFinanceFees(financeDetail, branchCode);
 				calculateFees(finFeeDetailList, financeDetail.getFinScheduleData(), financeDetail.getValueDate());
 				doFillFinFeeDetailList(finFeeDetailList);
 			}
@@ -717,95 +720,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		this.listBoxFinFeeReceipts.appendChild(item);
 
 		logger.debug("Leaving ");
-	}
-
-	private List<FinFeeDetail> convertToFinanceFees(List<FinTypeFees> finTypeFeesList) {
-		logger.debug("Entering");
-
-		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
-
-		if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
-			FinFeeDetail finFeeDetail = null;
-			String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
-			String finBranch = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
-			String finCCY = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy();
-
-			long custId = 0;
-			if (financeDetail.getCustomerDetails() != null) {
-				custId = financeDetail.getCustomerDetails().getCustomer().getCustID();
-			}
-
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch,
-					finBranch, financeDetail.getFinanceTaxDetail());
-
-			String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
-
-			for (FinTypeFees finTypeFee : finTypeFeesList) {
-				finFeeDetail = new FinFeeDetail();
-				finFeeDetail.setNewRecord(true);
-				finFeeDetail.setOriginationFee(finTypeFee.isOriginationFee());
-				finFeeDetail.setFinEvent(finTypeFee.getFinEvent());
-				finFeeDetail.setFinEventDesc(finTypeFee.getFinEventDesc());
-				finFeeDetail.setFeeTypeID(finTypeFee.getFeeTypeID());
-				finFeeDetail.setFeeOrder(finTypeFee.getFeeOrder());
-				finFeeDetail.setFeeTypeCode(finTypeFee.getFeeTypeCode());
-				finFeeDetail.setFeeTypeDesc(finTypeFee.getFeeTypeDesc());
-				finFeeDetail.setFeeScheduleMethod(finTypeFee.getFeeScheduleMethod());
-				finFeeDetail.setCalculationType(finTypeFee.getCalculationType());
-				finFeeDetail.setRuleCode(finTypeFee.getRuleCode());
-
-				BigDecimal finAmount = CalculationUtil.roundAmount(finTypeFee.getAmount(),
-						financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
-				finTypeFee.setAmount(finAmount);
-
-				finFeeDetail.setFixedAmount(finTypeFee.getAmount());
-				finFeeDetail.setPercentage(finTypeFee.getPercentage());
-				finFeeDetail.setCalculateOn(finTypeFee.getCalculateOn());
-				finFeeDetail.setAlwDeviation(finTypeFee.isAlwDeviation());
-				finFeeDetail.setMaxWaiverPerc(finTypeFee.getMaxWaiverPerc());
-				finFeeDetail.setAlwModifyFee(finTypeFee.isAlwModifyFee());
-				finFeeDetail.setAlwModifyFeeSchdMthd(finTypeFee.isAlwModifyFeeSchdMthd());
-				finFeeDetail.setCalculatedAmount(finTypeFee.getAmount());
-				finFeeDetail.setTaxComponent(finTypeFee.getTaxComponent());
-				finFeeDetail.setTaxApplicable(finTypeFee.isTaxApplicable());
-
-				if (finTypeFee.isTaxApplicable()) {
-					if (subventionFeeCode.equals(finTypeFee.getFeeTypeCode())) {
-						taxPercentages = getDealerTaxPercentages();
-					}
-					this.finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, getFinanceDetail(),
-							taxPercentages);
-				} else {
-					finFeeDetail.setActualAmountOriginal(finTypeFee.getAmount());
-					finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
-					finFeeDetail.setActualAmount(finTypeFee.getAmount());
-
-					BigDecimal netAmountOriginal = finFeeDetail.getActualAmountOriginal()
-							.subtract(finFeeDetail.getWaivedAmount());
-
-					finFeeDetail.setNetAmountOriginal(netAmountOriginal);
-					finFeeDetail.setNetAmountGST(BigDecimal.ZERO);
-					finFeeDetail.setNetAmount(netAmountOriginal);
-
-					if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(),
-							CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
-						finFeeDetail.setWaivedAmount(finTypeFee.getAmount());
-					}
-
-					finFeeDetail.setRemainingFeeOriginal(finFeeDetail.getActualAmount()
-							.subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmountOriginal()));
-					finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
-					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount())
-							.subtract(finFeeDetail.getPaidAmount()));
-				}
-
-				finFeeDetails.add(finFeeDetail);
-			}
-		}
-
-		logger.debug("Leaving ");
-
-		return finFeeDetails;
 	}
 
 	private void doCheckEnquiry() {
@@ -2725,7 +2639,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 
-			List<FinFeeDetail> finFeeDetailListNew = convertToFinanceFees(finTypeFeesList);
+			String branchCode = getUserWorkspace().getLoggedInUser().getBranchCode();
+			List<FinFeeDetail> finFeeDetailListNew = finFeeDetailService.convertToFinanceFees(financeDetail,
+					branchCode);
 			for (FinFeeDetail finFeeDetail : finFeeDetailListNew) {
 				if (!feeDetailMap.containsKey(getUniqueID(finFeeDetail))) {
 					feeDetailMap.put(getUniqueID(finFeeDetail), finFeeDetail);
@@ -3166,10 +3082,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				RoundingMode.HALF_DOWN);
 		tdsNetFee = CalculationUtil.roundAmount(tdsNetFee, tdsRoundMode, tdsRoundingTarget);
 
-		tdsPaidFee = (feeDetails.getPaidAmountOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
+		tdsPaidFee = (feeDetails.getPaidAmount().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
 				RoundingMode.HALF_DOWN);
 		tdsPaidFee = CalculationUtil.roundAmount(tdsPaidFee, tdsRoundMode, tdsRoundingTarget);
-
+		if (feeDetails.getPaidAmount().compareTo(feeDetails.getNetAmount()) == 0) {
+			BigDecimal diffTDS = tdsNetFee.subtract(tdsPaidFee);
+			tdsPaidFee = tdsPaidFee.add(diffTDS);
+		}
 		feeDetails.setPaidAmountOriginal(
 				feeDetails.getPaidAmount().subtract(feeDetails.getPaidAmountGST()).add(tdsPaidFee));
 

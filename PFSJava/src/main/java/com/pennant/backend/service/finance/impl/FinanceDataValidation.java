@@ -2222,7 +2222,7 @@ public class FinanceDataValidation {
 
 							if (isNotValidCif) {
 								String[] valueParm = new String[2];
-								valueParm[0] = collateralSetup.getDepositorCif();
+								valueParm[0] = collateralSetup.getCollateralRef();
 								valueParm[1] = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90249", valueParm)));
 								return errorDetails;
@@ -6104,7 +6104,7 @@ public class FinanceDataValidation {
 
 						// validate paid by Customer method
 						if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finTypeSchdMtd)) {
-							if (paidAmount.compareTo(finTypeFee.getAmount()) != 0) {
+							if (paidAmount.compareTo(finTypeFee.getAmount()) != 0 && !isAPICall) {
 								String[] valueParm = new String[1];
 								valueParm[0] = feeTypeCode;
 								errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90254", valueParm)));

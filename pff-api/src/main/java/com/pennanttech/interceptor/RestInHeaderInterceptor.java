@@ -14,7 +14,6 @@ import java.util.StringTokenizer;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -186,12 +185,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			if (StringUtils.isBlank(apiLogDetail.getAuthKey())) {
 				apiLogDetail.setAuthKey(header.getSecurityInfo());
 			}
-			// if given messageId is notBlank then check the messageId is
-			// already processed or not.
-			if (StringUtils.isNotBlank(apiLogDetail.getMessageId())) {
-				checkDuplicate(message, header, apiLogDetail);
-			}
-
 			logger.debug(Literal.ENTERING);
 
 		} catch (UnsupportedEncodingException e1) { // Invalid request URL
@@ -243,6 +236,10 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 
 			} else if (APIHeader.API_MESSAGEID.equalsIgnoreCase(key)) {
 				isHeaderContainMsgId = true;
+				String messageID = headerMap.get(key).toString().replace("[", "").replace("]", "");
+				if (messageID.length() > 200) {
+					getErrorDetails("92010", new String[] { APIHeader.API_MESSAGEID });
+				}
 			} else if (APIHeader.API_ENTITYID.equalsIgnoreCase(key)) {
 				isHeaderContainEntityId = true;
 			} else if (APIHeader.API_SERVICEVERSION.equalsIgnoreCase(key)) {
@@ -390,39 +387,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			getErrorDetails("92001", null);
 		}
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void checkDuplicate(Message message, APIHeader header, APILogDetail apiLogDetail) {
-		logger.info(Literal.ENTERING);
-
-		String messageId = header.getMessageId();
-		String entityId = header.getEntityId();
-
-		logger.info("Checking for duplicate meaasge with MessageId: {} and EntityId: {}", messageId, entityId);
-		APILogDetail apiLog = apiLogDetailDAO.getAPILog(messageId, entityId);
-
-		if (apiLog == null) {
-			apiLogDetail.setProcessed(true);
-			logger.debug(Literal.LEAVING);
-			return;
-		}
-
-		logger.info("Message already processed with ID:{}", apiLog.getSeqId());
-
-		Response response = Response.status(Response.Status.CONFLICT).entity(apiLog.getResponse()).build();
-
-		message.getExchange().put(Response.class, response);
-		header.setReturnCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
-		header.setReturnDesc(APIConstants.RES_DUPLICATE_MSDID);
-
-		apiLogDetail.setReference(apiLog.getReference());
-		apiLogDetail.setKeyFields(apiLog.getKeyFields());
-		apiLogDetail.setStatusCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
-		apiLogDetail.setError(apiLog.getError());
-		apiLogDetail.setKeyFields(apiLog.getKeyFields());
-		apiLogDetail.setProcessed(false);
-
-		logger.info(Literal.LEAVING);
 	}
 
 	/*

@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -843,6 +844,30 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public void cancelManualAdvises(FinanceMain fm) {
+		List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(fm.getFinReference(), "");
+
+		List<ManualAdvise> updateList = new ArrayList<>();
+
+		if (CollectionUtils.isNotEmpty(manualAdvise)
+				&& PennantConstants.RCD_STATUS_APPROVED.equals(fm.getRecordStatus())) {
+			for (ManualAdvise md : manualAdvise) {
+				Date valueDate = md.getValueDate();
+
+				if (!PennantConstants.MANUALADVISE_CANCEL.equals(md.getStatus())
+						&& DateUtility.compare(valueDate, fm.getMaturityDate()) > 0) {
+					md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
+					md.setAdviseID(md.getAdviseID());
+
+					updateList.add(md);
+				}
+			}
+
+			manualAdviseDAO.updateStatus(updateList, "");
+		}
+	}
+
 	private void postManualAdvise(FinEODEvent fodEvent, CustEODEvent codEvent, ManualAdvise ma) {
 		logger.debug(Literal.ENTERING);
 
@@ -906,7 +931,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			return;
 		}
 
-		if (detail.getTotalGST().compareTo(BigDecimal.ZERO) <= 0) {
+		if (advise.isTaxApplicable() && detail.getTotalGST().compareTo(BigDecimal.ZERO) <= 0) {
 			saveDueTaxDetail(advise, detail, null);
 			manualAdviseDAO.updateLinkedTranId(advise);
 
@@ -928,16 +953,18 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		List<ManualAdviseMovements> advMovements = new ArrayList<>();
 		advMovements.add(advMovement);
 
-		InvoiceDetail id = new InvoiceDetail();
-		id.setLinkedTranId(linkedTranId);
-		id.setFinanceDetail(fd);
-		id.setWaiver(false);
-		id.setMovements(advMovements);
-		id.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+		if (advise.isTaxApplicable()) {
+			InvoiceDetail id = new InvoiceDetail();
+			id.setLinkedTranId(linkedTranId);
+			id.setFinanceDetail(fd);
+			id.setWaiver(false);
+			id.setMovements(advMovements);
+			id.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
 
-		Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(id);
+			Long invoiceID = this.gstInvoiceTxnService.advTaxInvoicePreparation(id);
 
-		saveDueTaxDetail(advise, detail, invoiceID);
+			saveDueTaxDetail(advise, detail, invoiceID);
+		}
 
 		manualAdviseDAO.updateLinkedTranId(advise);
 

@@ -420,7 +420,15 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 		if (cronToDate != null) {
 			String[] remFrq = DateUtility.timeBetween(eodStartTime, cronToDate).split(":");
-			fillComboBox(this.reminderFrequencyHour, remFrq[0], hourList, "");
+			int remFrqhr = Integer.parseInt(remFrq[0]);
+			String remhr = "";
+			remFrqhr = (remFrqhr > 12 ? remFrqhr - 12 : remFrqhr);
+			if (remFrqhr < 10) {
+				remhr = "0" + (String.valueOf(remFrqhr));
+			} else {
+				remhr = String.valueOf(remFrqhr);
+			}
+			fillComboBox(this.reminderFrequencyHour, remhr, hourList, "");
 			fillComboBox(this.reminderFrequencyMin, remFrq[1], minList, "");
 		} else {
 			fillComboBox(this.reminderFrequencyHour, "", hourList, "");
@@ -433,7 +441,15 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 		if (cronToDate != null) {
 			String[] delayFrq = DateUtility.timeBetween(cronToDate, eodStartTime).split(":");
-			fillComboBox(this.delayFrequencyHour, delayFrq[0], hourList, "");
+			int delayfrqhr = Integer.parseInt(delayFrq[0]);
+			String delayhr = "";
+			delayfrqhr = (delayfrqhr > 12 ? delayfrqhr - 12 : delayfrqhr);
+			if (delayfrqhr < 10) {
+				delayhr = "0" + (String.valueOf(delayfrqhr));
+			} else {
+				delayhr = String.valueOf(delayfrqhr);
+			}
+			fillComboBox(this.delayFrequencyHour, delayhr, hourList, "");
 			fillComboBox(this.delayFrequencyMin, delayFrq[1], minList, "");
 		} else {
 			fillComboBox(this.delayFrequencyHour, "", hourList, "");
@@ -468,6 +484,11 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.enableAutoEOD.setDisabled(true);
 			this.eodAutoDisable.setChecked(false);
 			this.eodAutoDisable.setDisabled(true);
+			this.eodStartJobFrequency.setValue(cronToDate(null));
+			this.eodStartJobFrequency.setDisabled(true);
+			this.enableAutoEOD.setChecked(false);
+			this.enableAutoEOD.setDisabled(true);
+			this.eodAutoDisable.setChecked(false);
 			checkGbNotifVisibility();
 		}
 
@@ -586,7 +607,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				wve.add(we);
 			}
 			try {
-				aEODConfig.setEnableAutoEod(this.enableAutoEOD.isChecked());
+				aEODConfig.setEODAutoDisable(this.eodAutoDisable.isChecked());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}

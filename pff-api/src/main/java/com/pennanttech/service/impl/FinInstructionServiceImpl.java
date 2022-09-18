@@ -1412,8 +1412,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		fsi.setNewReceipt(true);
 
 		String paymentMode = fsi.getPaymentMode();
-		if (FinServiceEvent.SCHDRPY.equals(fsi.getModuleDefiner()) && fsi.getRealizationDate() == null
-				&& ReceiptMode.CHEQUE.equals(paymentMode) || ReceiptMode.DD.equals(paymentMode)) {
+		if (fsi.getRealizationDate() == null && ReceiptMode.CHEQUE.equals(paymentMode)
+				|| ReceiptMode.DD.equals(paymentMode)) {
 			fsi.setRealizationDate(SysParamUtil.getAppDate());
 		} else {
 			fsi.setRealizationDate(fsi.getRealizationDate());

@@ -4446,11 +4446,28 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(finOptionService.doApprove(finOptions, TableType.MAIN_TAB, tranType));
 				}
 
+				boolean isRegCol = false;
+
 				// Collateral Assignments Details
 				// =======================================
 				if (fd.getCollateralAssignmentList() != null && !fd.getCollateralAssignmentList().isEmpty()) {
 					List<AuditDetail> details = fd.getAuditDetailMap().get("CollateralAssignments");
 					details = processingCollateralAssignmentList(details, "", fm);
+					for (CollateralAssignment ca : fd.getCollateralAssignmentList()) {
+						int count = collateralAssignmentDAO.getAssignedCollateralCount(ca.getCollateralRef(), "_AView");
+						Date regDate = collateralSetupService.getRegistrationDate(ca.getCollateralRef());
+						if (PennantConstants.RECORD_TYPE_NEW.equals(ca.getRecordType())) {
+							if (count > 1 && regDate != null) {
+								isRegCol = true;
+							}
+						}
+
+						if (isRegCol) {
+							CollateralAssignment collass = collateralSetupService.getCollDetails(ca.getCollateralRef());
+							collateralSetupService.updateCersaiDetails(ca.getCollateralRef(), collass.getSiid(),
+									collass.getAssetid());
+						}
+					}
 					auditDetails.addAll(details);
 				}
 

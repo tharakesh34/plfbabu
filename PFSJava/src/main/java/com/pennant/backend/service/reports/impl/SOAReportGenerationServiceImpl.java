@@ -97,10 +97,12 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.RestructureCharge;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.systemmasters.ApplicantDetail;
 import com.pennant.backend.model.systemmasters.InterestRateDetail;
 import com.pennant.backend.model.systemmasters.OtherFinanceDetail;
+import com.pennant.backend.model.systemmasters.SOAFeeDetails;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
@@ -556,67 +558,93 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setRepayFrq(FrequencyUtil.getRepayFrequencyLabel(statementOfAccount.getRepayFrq()));
 			}
 
-			// Including advance and moratorium EMI terms
-			int tenure = statementOfAccount.getTenure();
-			statementOfAccount.setTenure(tenure);
-			if (sOAExtensionService != null) {
-				tenure = tenure + sOAExtensionService.getMortoriumTerms(finReference);
-				tenure = tenure + finMain.getAdvTerms();
-				sOAExtensionService.setRequiredFields(statementOfAccount);
-			}
-
 			// Based on Repay Frequency codes it will set
 			String frequency = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
 			statementOfAccount.setTenureLabel(FrequencyUtil.getRepayFrequencyLabel(frequency));
 
 			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-				statementOfAccount.setTenure(tenure + finMain.getGraceTerms());
+				statementOfAccount.setTenure(finMain.getAdvTerms() + finMain.getGraceTerms());
 			} else {
 				if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
 					statementOfAccount.setDownPayment(new BigDecimal(statementOfAccount.getAdvInstAmt()));
 				}
 			}
 
-			// FinExcess Amount
-			statementOfAccount.setAdvInstAmt("0.00 / 0");
-			statementOfAccount.setAdvEMIAmt("0.00 / 0.00");
-			statementOfAccount.setAdvIntAmt("0.00 / 0.00");
-			statementOfAccount.setCashCollAmt("0.00 / 0.00");
-			statementOfAccount.setDsraAmt("0.00 / 0.00");
+			if (sOAExtensionService == null) {
+				// FinExcess Amount
+				statementOfAccount.setAdvInstAmt("0.00 / 0");
+				statementOfAccount.setAdvEMIAmt("0.00 / 0.00");
+				statementOfAccount.setAdvIntAmt("0.00 / 0.00");
+				statementOfAccount.setCashCollAmt("0.00 / 0.00");
+				statementOfAccount.setDsraAmt("0.00 / 0.00");
 
-			// Advance EMI Installments
-			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
-					+ " / " + finMain.getAdvTerms());
+				// Advance EMI Installments
+				statementOfAccount
+						.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
+								+ " / " + finMain.getAdvTerms());
 
-			if (CollectionUtils.isNotEmpty(finExcessAmountsList)) {
-				for (FinExcessAmount finExcessAmount : finExcessAmountsList) {
-					String balanceAmt = PennantApplicationUtil.amountFormate(finExcessAmount.getBalanceAmt(),
-							ccyEditField);
-					String actualAmt = PennantApplicationUtil.amountFormate(finExcessAmount.getAmount(), ccyEditField);
-					if (AdvanceRuleCode.ADVEMI.name().equals(finExcessAmount.getAmountType())) {
-						statementOfAccount.setAdvEMIAmt(actualAmt + " / " + balanceAmt);
-						int advEMITerms = finMain.getAdvTerms();
-						statementOfAccount.setAdvInstAmt(actualAmt + " / " + advEMITerms);
-					} else if (AdvanceRuleCode.ADVINT.name().equals(finExcessAmount.getAmountType())) {
-						int grcAdvTerms = finMain.getGrcAdvTerms();
-						int advTerms = 0;
-						if (AdvanceType.UT.name().equals(finMain.getAdvType())) {
-							advTerms = finMain.getAdvTerms();
+				if (CollectionUtils.isNotEmpty(finExcessAmountsList)) {
+					for (FinExcessAmount finExcessAmount : finExcessAmountsList) {
+						String balanceAmt = PennantApplicationUtil.amountFormate(finExcessAmount.getBalanceAmt(),
+								ccyEditField);
+						String actualAmt = PennantApplicationUtil.amountFormate(finExcessAmount.getAmount(),
+								ccyEditField);
+						if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(finExcessAmount.getAmountType())) {
+							statementOfAccount.setAdvEMIAmt(actualAmt + " / " + balanceAmt);
+							int advEMITerms = finMain.getAdvTerms();
+							statementOfAccount.setAdvInstAmt(actualAmt + " / " + advEMITerms);
+						} else if (AdvanceRuleCode.ADVINT.name().equals(finExcessAmount.getAmountType())) {
+							int grcAdvTerms = finMain.getGrcAdvTerms();
+							int advTerms = 0;
+							if (AdvanceType.UT.name().equals(finMain.getAdvType())) {
+								advTerms = finMain.getAdvTerms();
+							}
+							if (AdvanceType.UF.name().equals(finMain.getGrcAdvType())) {
+								grcAdvTerms = finMain.getGraceTerms();
+							}
+							if (AdvanceType.UF.name().equals(finMain.getAdvType())) {
+								advTerms = finMain.getNumberOfTerms();
+							}
+							int advIntTerms = grcAdvTerms + advTerms;
+							statementOfAccount.setAdvIntAmt(actualAmt + " / " + advIntTerms);
+						} else if (AdvanceRuleCode.CASHCLT.name().equals(finExcessAmount.getAmountType())) {
+							statementOfAccount.setCashCollAmt(actualAmt + " / " + balanceAmt);
+						} else if (AdvanceRuleCode.DSF.name().equals(finExcessAmount.getAmountType())) {
+							statementOfAccount.setDsraAmt(actualAmt + " / " + balanceAmt);
 						}
-						if (AdvanceType.UF.name().equals(finMain.getGrcAdvType())) {
-							grcAdvTerms = finMain.getGraceTerms();
-						}
-						if (AdvanceType.UF.name().equals(finMain.getAdvType())) {
-							advTerms = finMain.getNumberOfTerms();
-						}
-						int advIntTerms = grcAdvTerms + advTerms;
-						statementOfAccount.setAdvIntAmt(actualAmt + " / " + advIntTerms);
-					} else if (AdvanceRuleCode.CASHCLT.name().equals(finExcessAmount.getAmountType())) {
-						statementOfAccount.setCashCollAmt(actualAmt + " / " + balanceAmt);
-					} else if (AdvanceRuleCode.DSF.name().equals(finExcessAmount.getAmountType())) {
-						statementOfAccount.setDsraAmt(actualAmt + " / " + balanceAmt);
 					}
 				}
+			} else {
+
+				// FinExcess Amount
+				statementOfAccount.setAdvInstAmt("0.00 / 0");
+				statementOfAccount.setAdvEMIAmt("0.00");
+				statementOfAccount.setAdvIntAmt("0.00");
+				statementOfAccount.setCashCollAmt("0.00");
+				statementOfAccount.setDsraAmt("0.00");
+
+				// Advance EMI Installments
+				statementOfAccount
+						.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
+								+ " / " + finMain.getAdvTerms());
+
+				if (CollectionUtils.isNotEmpty(finExcessAmountsList)) {
+					for (FinExcessAmount finExcessAmount : finExcessAmountsList) {
+						String balanceAmt = PennantApplicationUtil.amountFormate(finExcessAmount.getBalanceAmt(),
+								ccyEditField);
+						if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(finExcessAmount.getAmountType())) {
+							statementOfAccount.setAdvEMIAmt(balanceAmt);
+						} else if (AdvanceRuleCode.CASHCLT.name().equals(finExcessAmount.getAmountType())) {
+							statementOfAccount.setCashCollAmt(balanceAmt);
+						} else if (AdvanceRuleCode.DSF.name().equals(finExcessAmount.getAmountType())) {
+							statementOfAccount.setDsraAmt(balanceAmt);
+						} else if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(finExcessAmount.getAmountType())) {
+							statementOfAccount.setBalanceAmt(PennantApplicationUtil
+									.formateAmount(finExcessAmount.getBalanceAmt(), ccyEditField));
+						}
+					}
+				}
+
 			}
 
 			if (soaReportService != null) {
@@ -670,6 +698,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount
 						.setCustSalutation(StringUtils.trimToEmpty(statementOfAccountCustDetails.getCustSalutation()));
 				statementOfAccount.setCustCIF(statementOfAccountCustDetails.getCustCIF());
+				statementOfAccount.setCustCtgCode(statementOfAccountCustDetails.getCustCtgCode());
 				statementOfAccount.setCustAddrHNbr(statementOfAccountCustDetails.getCustAddrHNbr());
 				statementOfAccount.setCustFlatNbr(statementOfAccountCustDetails.getCustFlatNbr());
 				statementOfAccount.setCustAddrStreet(statementOfAccountCustDetails.getCustAddrStreet());
@@ -741,6 +770,31 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 		statementOfAccount.setStartDate(startDate);
 		statementOfAccount.setEndDate(endDate);
+
+		// Including advance and moratorium EMI terms
+		int tenure = statementOfAccount.getTenure();
+		statementOfAccount.setTenure(tenure);
+		if (sOAExtensionService != null) {
+			tenure = tenure + sOAExtensionService.getMortoriumTerms(finReference);
+			tenure = tenure + finMain.getAdvTerms();
+			sOAExtensionService.setRequiredFields(statementOfAccount, startDate, endDate);
+
+			for (Map<String, Object> extMap : statementOfAccount.getCustomerDetails()) {
+				if (extMap.containsKey("UCIC") && extMap.get("UCIC") != null) {
+					statementOfAccount.setUcic(String.valueOf(extMap.get("UCIC")));
+				}
+			}
+
+			statementOfAccount.setOdPrincipal(
+					PennantApplicationUtil.formateAmount(statementOfAccount.getOdPrincipal(), ccyEditField));
+			statementOfAccount
+					.setOdProfit(PennantApplicationUtil.formateAmount(statementOfAccount.getOdProfit(), ccyEditField));
+			statementOfAccount.setTotalPriBal(
+					PennantApplicationUtil.formateAmount(statementOfAccount.getTotalPriBal(), ccyEditField));
+
+			statementOfAccount.setSOAFeeDetails(getSOAFeeDetails(statementOfAccount));
+
+		}
 
 		// Formatting the amounts
 		// Formatting the amounts
@@ -857,6 +911,21 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			summary.setCcyEditField(ccyEditField);
 			summary.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			summary.setAppDate(SysParamUtil.getAppDate());
+			String component = summary.getComponent();
+			// Loan Receivables and Loan Summary
+			if (component.equals("Bounce Charges")) {
+				statementOfAccount
+						.setBounceDue(PennantApplicationUtil.formateAmount(summary.getOverDue(), ccyEditField));
+			} else if (component.equals("Other Payables")) {
+				statementOfAccount.setOtherPayableDue(PennantApplicationUtil
+						.formateAmount(summary.getDue().subtract(summary.getReceipt()), ccyEditField));
+			} else if (component.equals("Other Receivables")) {
+				statementOfAccount.setOtherReceivableDue(PennantApplicationUtil
+						.formateAmount(summary.getDue().subtract(summary.getReceipt()), ccyEditField));
+			} else if (component.equals("Late Payment Penalty")) {
+				statementOfAccount.setTotPenaltyAmt(PennantApplicationUtil
+						.formateAmount(summary.getDue().subtract(summary.getReceipt()), ccyEditField));
+			}
 			summary.setDue(PennantApplicationUtil.formateAmount(summary.getDue(), ccyEditField));
 			summary.setReceipt(PennantApplicationUtil.formateAmount(summary.getReceipt(), ccyEditField));
 			summary.setWaiver(PennantApplicationUtil.formateAmount(summary.getWaiver(), ccyEditField));
@@ -1211,7 +1280,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						}
 						/* GST Calculation only for Exclusive case */
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-							rcvWaived = rcvWaived.add(ma.getWaivedAmount()).add(currWaiverGst);
+							rcvWaived = rcvWaived.add(ma.getWaivedAmount()).add(CalculationUtil.getTotalWaivedGST(ma));
 						} else {
 							rcvWaived = rcvWaived.add(ma.getWaivedAmount());
 						}
@@ -1681,6 +1750,53 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	}
 
 	/**
+	 * to get the Report Fee Details
+	 * 
+	 * @param event An event sent to the event handler of the component.
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
+	private List<SOAFeeDetails> getSOAFeeDetails(StatementOfAccount soa) {
+
+		SOAFeeDetails soaFeeDetails = new SOAFeeDetails();
+		List<ManualAdvise> manualAdviseList = getManualAdvise(soa.getFinReference(), soa.getEndDate());
+		List<SOAFeeDetails> soaFeeDetailsList = new ArrayList<>();
+		// Charges Receivable
+		for (ManualAdvise advise : manualAdviseList) {
+			if (FinanceConstants.MANUAL_ADVISE_RECEIVABLE == advise.getAdviseType()) {
+				BigDecimal advAmount = advise.getAdviseAmount();
+				BigDecimal bal = BigDecimal.ZERO;
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advise.getTaxComponent())) {
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(soa.getFinID());
+					TaxAmountSplit taxAmountSplit = null;
+					taxAmountSplit = GSTCalculator.getExclusiveGST(advAmount, taxPercentages);
+
+					BigDecimal paidGst = advise.getPaidCGST().add(advise.getPaidSGST()).add(advise.getPaidIGST())
+							.add(advise.getPaidUGST()).add(advise.getPaidIGST()).add(advise.getPaidCESS());
+					BigDecimal waivedGst = advise.getWaivedCGST().add(advise.getWaivedSGST())
+							.add(advise.getWaivedIGST()).add(advise.getWaivedUGST()).add(advise.getWaivedIGST())
+							.add(advise.getWaivedCESS());
+
+					BigDecimal balGst = taxAmountSplit.gettGST().subtract(paidGst).subtract(waivedGst);
+
+					bal = advAmount.subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount()).add(balGst);
+				} else {
+					bal = advAmount.subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
+				}
+				soaFeeDetails = new SOAFeeDetails();
+				if (!(bal.compareTo(BigDecimal.ZERO) == 0)) {
+					soaFeeDetails.setFeeType(advise.getFeeTypeDesc());
+					soaFeeDetails.setAmount(PennantApplicationUtil.formateAmount(bal, soa.getCcyEditField()));
+					soaFeeDetails.setBookingDate(advise.getPostDate());
+					soaFeeDetails.setCcyEditField(soa.getCcyEditField());
+					soaFeeDetailsList.add(soaFeeDetails);
+				}
+			}
+		}
+		return soaFeeDetailsList;
+	}
+
+	/**
 	 * to get the Report Transaction Details
 	 * 
 	 * @param event An event sent to the event handler of the component.
@@ -1797,6 +1913,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 				String bpiOrHoliday = finSchdDetail.getBpiOrHoliday();
 				BigDecimal repayAmount = finSchdDetail.getRepayAmount();
+				BigDecimal principal = finSchdDetail.getPrincipalSchd();
+				BigDecimal interest = finSchdDetail.getProfitSchd();
 
 				if (StringUtils.isBlank(closingStatus) || !StringUtils.equalsIgnoreCase(closingStatus, "C")) {
 
@@ -1876,14 +1994,30 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 						BigDecimal transactionAmt = BigDecimal.ZERO;
 
-						if (repayAmount != null) {
-							transactionAmt = repayAmount;
+						if (principal != null) {
+							transactionAmt = principal;
 						}
 
 						if (partialPaidAmt != null) {
 							transactionAmt = transactionAmt.subtract(partialPaidAmt);
 						}
 
+						soaTranReport = new SOATransactionReport();
+						soaTranReport
+								.setEvent(dueForInstallment + finSchdDetail.getInstNumber() + finRef + " Principal :");
+						soaTranReport.setTransactionDate(finSchdDetail.getSchDate());
+						soaTranReport.setValueDate(finSchdDetail.getSchDate());
+						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						soaTranReport.setDebitAmount(transactionAmt);
+						soaTranReport.setPriority(3);
+						if (soaTranReport.getDebitAmount().compareTo(BigDecimal.ZERO) > 0) {
+							soaTransactionReports.add(soaTranReport);
+						}
+						transactionAmt = BigDecimal.ZERO;
+
+						if (interest != null) {
+							transactionAmt = interest;
+						}
 						soaTranReport = new SOATransactionReport();
 						soaTranReport.setEvent(dueForInstallment + finSchdDetail.getInstNumber() + finRef);
 						soaTranReport.setTransactionDate(finSchdDetail.getSchDate());

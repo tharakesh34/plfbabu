@@ -1,5 +1,6 @@
 package com.pennant.backend.service.finance.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -447,7 +448,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		schdData.setLowerTaxDeductionDetails(lowerTaxDeductionDAO.getLowerTaxDeductionDetails(finID, ""));
 
-		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
+		List<LowerTaxDeduction> ltdList = new ArrayList<>();
 
 		LowerTaxDeduction ltd = new LowerTaxDeduction();
 		ltd.setFinID(fm.getFinID());
@@ -461,12 +462,35 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		schdData.getLowerTaxDeductionDetails().addAll(ltdList);
 
-		for (FinanceScheduleDetail schedule : schdData.getFinanceScheduleDetails()) {
-			if (schedule.getSchDate().compareTo(appDate) >= 0 && schedule.getPresentmentId() == 0) {
-				schedule.setTDSApplicable(fmi.istDSApplicable());
+		// PSD - 199558
+		Date eventFromDate = null;
+		for (FinanceScheduleDetail curSchd : schdData.getFinanceScheduleDetails()) {
+
+			// Back Dated Schedules
+			if (curSchd.getSchDate().compareTo(appDate) <= 0) {
+				continue;
 			}
+
+			// Presented Schedules, Freezing Period
+			if (curSchd.getPresentmentId() > 0) {
+				continue;
+			}
+
+			// Future Paid Schedules
+			if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+
+				continue;
+			}
+
+			if (eventFromDate == null) {
+				eventFromDate = curSchd.getSchDate();
+			}
+
+			curSchd.setTDSApplicable(fmi.istDSApplicable());
 		}
 
+		fm.setEventFromDate(eventFromDate);
 		schdData = ScheduleCalculator.procReCalTDSAmount(schdData);
 
 		logger.debug(Literal.LEAVING);

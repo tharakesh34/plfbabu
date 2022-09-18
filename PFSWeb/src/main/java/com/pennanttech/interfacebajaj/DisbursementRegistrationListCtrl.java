@@ -83,10 +83,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
@@ -129,8 +127,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected ExtendedCombobox partnerBank;
 	protected Datebox fromDate;
 	protected Datebox toDate;
-	protected Uppercasebox finType;
-	protected Space space_finType;
+	protected ExtendedCombobox finType;
 	protected ExtendedCombobox branch;
 	protected Checkbox qdp;
 	protected Combobox channelTypes;
@@ -162,7 +159,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	protected Button button_Search;
 	protected Button btnDownload;
-	protected Button btnFinType;
 	protected int oldVar_sortOperator_finType;
 
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
@@ -275,66 +271,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 	}
 
-	public void onSelect$sortOperator_FinType(Event event) {
-		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_FinType, oldVar_sortOperator_finType,
-				this.finType);
-	}
-
-	/**
-	 * On Change Search Operators resetting Data entered by User
-	 * 
-	 * @param listbox
-	 * @param oldOperator
-	 * @param textbox
-	 * @return
-	 */
-	private int doChangeStringOperator(Listbox listbox, int oldOperator, Textbox textbox) {
-
-		final Listitem item = listbox.getSelectedItem();
-		final int searchOpId = Integer.parseInt(((ValueLabel) item.getAttribute("data")).getValue());
-
-		if (oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN) {
-			if (!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)) {
-				textbox.setValue("");
-			}
-		} else {
-			if (searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN) {
-				textbox.setValue("");
-			}
-		}
-		return searchOpId;
-
-	}
-
-	public void onClick$btnFinType(Event event) {
-		logger.debug(Literal.ENTERING);
-
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_DisbursementRegistrationList, "FinanceType",
-				this.finType.getValue(), null);
-		if (dataObject instanceof String) {
-			this.finType.setValue(dataObject.toString());
-		} else {
-
-			Map<String, Object> details = (Map<String, Object>) dataObject;
-			if (details != null) {
-				String tempflagcode = "";
-				List<String> flagKeys = new ArrayList<>(details.keySet());
-				for (int i = 0; i < flagKeys.size(); i++) {
-					if (StringUtils.isEmpty(flagKeys.get(i))) {
-						continue;
-					}
-					if (i == 0) {
-						tempflagcode = flagKeys.get(i);
-					} else {
-						tempflagcode = tempflagcode + "," + flagKeys.get(i);
-					}
-				}
-				this.finType.setValue(tempflagcode);
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
 	private void doSetFieldProperties() {
 		listItem_Checkbox = new Listitem();
 		listCell_Checkbox = new Listcell();
@@ -348,7 +284,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
 
-		this.space_finType.setSclass(PennantConstants.mandateSclass);
+		this.finType.setSclass(PennantConstants.mandateSclass);
 
 		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getDisbRegistrationTypes(), "");
 		if (ImplementationConstants.DISB_REQ_RES_FILE_GEN_MODE) {
@@ -369,6 +305,14 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.branch.setValueColumn("BranchCode");
 		this.branch.setDescColumn("BranchDesc");
 		this.branch.setValidateColumns(new String[] { "BranchCode" });
+
+		this.finType.setModuleName("FinanceType");
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setValidateColumns(new String[] { "FinType" });
+		this.finType.setMultySelection(true);
+		this.finType.setInputAllowed(false);
+		this.finType.setWidth("150px");
 
 		this.entity.setModuleName("Entity");
 		this.entity.setMandatoryStyle(true);
@@ -851,8 +795,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			if (details != null) {
 				this.partnerBank.setButtonDisabled(false);
 				this.partnerBank.setMandatoryStyle(true);
-				Filter[] filters = new Filter[1];
+				Filter[] filters = new Filter[2];
 				filters[0] = new Filter("Entity", details.getEntityCode(), Filter.OP_EQUAL);
+				filters[1] = new Filter("alwDisb", 1, Filter.OP_EQUAL);
 				this.partnerBank.setFilters(filters);
 			} else {
 				this.partnerBank.setValue("");

@@ -1499,6 +1499,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						custBankInfo.getBefImage(), custBankInfo));
 			}
 		}
+
+		if (CollectionUtils.isNotEmpty(customerDetails.getGstDetailsList())) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerGstDetails");
+			details = processingCustomerGSTDetailList(details, tableType, customerDetails.getCustID());
+			auditDetails.addAll(details);
+		}
+
 		if (customerDetails.getCustomerGstList() != null) {
 			for (CustomerGST customerGST : customerDetails.getCustomerGstList()) {
 				if (StringUtils.isBlank(customerGST.getRecordType())) {

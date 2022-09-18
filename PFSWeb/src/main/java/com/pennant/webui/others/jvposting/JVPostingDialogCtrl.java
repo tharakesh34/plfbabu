@@ -967,14 +967,15 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	}
 
 	public void onFulfill$reference(Event event) {
-
 		logger.debug("Entering");
 
-		if (StringUtils.isBlank(this.reference.getValue())) {
+		String postAgainst = this.postingAgainst.getSelectedItem().getValue().toString();
+
+		if (StringUtils.isBlank(this.reference.getValue()) || PennantConstants.List_Select.equals(postAgainst)) {
 			this.reference.setValue("", "");
 		} else {
-			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-					FinanceConstants.POSTING_AGAINST_LOAN)) {
+			switch (postAgainst) {
+			case FinanceConstants.POSTING_AGAINST_LOAN:
 				if (this.reference.getObject() != null) {
 					FinanceMain financeMain = (FinanceMain) this.reference.getObject();
 					this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
@@ -983,13 +984,15 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					this.postingBranch.setValue(financeMain.getFinBranch());
 					this.postingBranch.setReadonly(true);
 				}
-			}
-			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-					FinanceConstants.POSTING_AGAINST_CUST)) {
+				break;
+			case FinanceConstants.POSTING_AGAINST_CUST:
 				Customer customer = (Customer) this.reference.getObject();
 				this.reference.setValue(customer.getCustCIF(), customer.getCustShrtName());
 				this.postingBranch.setValue(customer.getCustDftBranch());
 				this.postingBranch.setReadonly(true);
+				break;
+			default:
+				break;
 			}
 		}
 		logger.debug("Leaving");
@@ -1870,7 +1873,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.postingBranch.setMandatoryStyle(true);
 
 		if (StringUtils.equals(postValue, PennantConstants.List_Select)) {
-			addFilters("", "", "");
+			// addFilters("", "", "");
 		}
 		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LOAN)) {
 			addFilters("FinanceMain", "FinReference", "FinType");

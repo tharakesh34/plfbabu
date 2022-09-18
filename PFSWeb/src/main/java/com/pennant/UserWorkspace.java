@@ -47,7 +47,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Window;
 
@@ -122,7 +121,6 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 		} catch (LicenseException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		Executions.sendRedirect("/csrfLogout.zul");
 	}
 
 	/**

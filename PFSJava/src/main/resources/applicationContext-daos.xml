@@ -2114,6 +2114,7 @@
 		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 		<property name="gstDetailDAO" ref="gstDetailDAO" />
 		<property name="vehicleDealerDAO" ref="vehicleDealerDAO" />
+		<property name="genderDAO" ref="genderDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -2783,6 +2784,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="getCustomerDedup">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -4815,6 +4817,7 @@
 		<property name="covenantsService" ref="covenantsService" />
 		<property name="covenantsDAO" ref="covenantsDAO" />
 		<property name="israDetailService" ref="israDetailService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<!-- Stage Accounting -->
@@ -7232,6 +7235,7 @@
 		<property name="overdraftLoanDAO" ref="overdraftLoanDAO" />
 		<property name="overdrafLoanService" ref="overdrafLoanService" />
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
+		<property name="overdraftScheduleDetailDAO" ref="overdraftScheduleDetailDAO"/>
 	</bean>
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
@@ -7469,6 +7473,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="cancel*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -10838,6 +10843,7 @@
 				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doProcess*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
 				<prop key="getReferenceSequence">PROPAGATION_REQUIRED</prop>
 				<prop key="getMiscPostingBranchSeq">PROPAGATION_REQUIRED</prop>
@@ -12763,5 +12769,233 @@
 
 	<bean name="customerDataService" class="com.pennant.backend.service.customermasters.impl.CustomerDataService" />
 	
+	<!--  Average Yield Report -->
+	<bean id="averageYieldReportService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="averageYieldReportServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="averageYieldReportServiceTarget" class="com.pennant.backend.service.reports.impl.AverageYieldReportServiceImpl">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+	</bean>
+	
+	<bean name="cersaiDownloadProcess" class="com.pennanttech.pff.cersai.CERSAIDownloadProcess">
+		<property name="cersaiService" ref="cersaiService" />
+	</bean>
+	
+	<bean id="cersaiService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="cersaiServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="cersaiServiceTarget" class="com.pennant.backend.service.cersai.impl.CERSAIServiceImpl">
+		<property name="cersaiDao" ref="cersaiDao" />
+	</bean>
+	
+	<bean id="cersaiDao" class="com.pennant.backend.dao.cersai.impl.CERSAIDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- AssetCategory -->
+	<bean id="assetCategoryDAO" class="com.pennant.backend.dao.cersai.impl.AssetCategoryDAOImpl" parent="basicDao"/>
+	<bean id="assetCategoryService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="assetCategoryServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="assetCategoryServiceTarget" class="com.pennant.backend.service.cersai.impl.AssetCategoryServiceImpl">
+       <property name="assetCategoryDAO" ref="assetCategoryDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
+   
+   	<!-- SecurityInterestType -->
+	<bean id="securityInterestTypeDAO" class="com.pennant.backend.dao.cersai.impl.SecurityInterestTypeDAOImpl" parent="basicDao"/>
+	<bean id="securityInterestTypeService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="securityInterestTypeServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="securityInterestTypeServiceTarget" class="com.pennant.backend.service.cersai.impl.SecurityInterestTypeServiceImpl">
+       <property name="securityInterestTypeDAO" ref="securityInterestTypeDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
+		<!-- AssetSubType -->
+	<bean id="assetSubTypeDAO" class="com.pennant.backend.dao.cersai.impl.AssetSubTypeDAOImpl" parent="basicDao"/>
+	<bean id="assetSubTypeService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="assetSubTypeServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="assetSubTypeServiceTarget" class="com.pennant.backend.service.cersai.impl.AssetSubTypeServiceImpl">
+       <property name="assetSubTypeDAO" ref="assetSubTypeDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+	
+	
+	<!-- AssetType -->
+	<bean id="assetTypDAO" class="com.pennant.backend.dao.cersai.impl.AssetTypeDAOImpl" parent="basicDao"/>
+	
+	<bean id="assetTypService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="assetTypServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="assetTypServiceTarget" class="com.pennant.backend.service.cersai.impl.AssetTypeServiceImpl">
+       <property name="assetTypDAO" ref="assetTypDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+	
+	<!-- AreaUnit -->
+	<bean id="areaUnitDAO" class="com.pennant.backend.dao.cersai.impl.AreaUnitDAOImpl" parent="basicDao"/>
+	
+	<bean id="areaUnitService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="areaUnitServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="areaUnitServiceTarget" class="com.pennant.backend.service.cersai.impl.AreaUnitServiceImpl">
+       <property name="areaUnitDAO" ref="areaUnitDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+	
+	<!-- CityMapping -->
+	<bean id="cityMappingDAO" class="com.pennant.backend.dao.cersai.impl.CityMappingDAOImpl" parent="basicDao"/>
+	<bean id="cityMappingService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="cityMappingServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="cityMappingServiceTarget" class="com.pennant.backend.service.cersai.impl.CityMappingServiceImpl">
+       <property name="cityMappingDAO" ref="cityMappingDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+	
+	
+	
+		<!-- DistrictMapping -->
+	<bean id="districtMappingDAO" class="com.pennant.backend.dao.cersai.impl.DistrictMappingDAOImpl" parent="basicDao"/>
+	<bean id="districtMappingService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="districtMappingServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="districtMappingServiceTarget" class="com.pennant.backend.service.cersai.impl.DistrictMappingServiceImpl">
+       <property name="districtMappingDAO" ref="districtMappingDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+	
+		<!-- ProvinceMapping -->
+	<bean id="provinceMappingDAO" class="com.pennant.backend.dao.cersai.impl.ProvinceMappingDAOImpl" parent="basicDao"/>
+	<bean id="provinceMappingService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="transactionManager" /></property>
+	   <property name="target"><ref bean="provinceMappingServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="provinceMappingServiceTarget" class="com.pennant.backend.service.cersai.impl.ProvinceMappingServiceImpl">
+       <property name="provinceMappingDAO" ref="provinceMappingDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 
 </beans>

@@ -544,12 +544,20 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		this.btnChangeReceipt.setDisabled(false);
 		this.btnPrint.setVisible(false);
 		this.effectiveScheduleTab.setVisible(false);
+
+		FinanceMain financeMain = financeMainService.getFinanceMainByRef(this.finReference.getValue(), false);
+		Date maturityDate = financeMain.getMaturityDate();
+		if (this.receiptDate.getValue().compareTo(maturityDate) > 0) {
+			MessageUtil.showError("Receipt Date is not allowed more than Maturity Date");
+			this.receiptDate.setValue(SysParamUtil.getAppDate());
+			return;
+		}
+
 		int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
 		this.interestTillDate.setValue(DateUtility.addDays(this.receiptDate.getValue(), defaultClearingDays));
 
 		receiptData.setValueDate(this.receiptDate.getValue());
 		receiptData.getReceiptHeader().setReceiptDate(this.receiptDate.getValue());
-		FinanceMain financeMain = financeMainService.getFinanceMainByRef(this.finReference.getValue(), false);
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
 
 		if (ReceiptMode.CHEQUE.equals(this.receiptMode.getSelectedItem().getValue())

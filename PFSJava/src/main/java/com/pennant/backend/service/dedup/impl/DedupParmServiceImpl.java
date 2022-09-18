@@ -44,6 +44,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
@@ -72,6 +73,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
 import com.pennanttech.pennapps.core.App;
@@ -81,6 +83,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.CustomerDedupService;
+import com.pennanttech.pff.external.ExternalCustDedupSerivce;
 
 /**
  * Service implementation for methods that depends on <b>DedupParm</b>.<br>
@@ -99,6 +102,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 	@Autowired(required = false)
 	private CustomerDedupService customerDedupService;
+	private ExternalCustDedupSerivce externalCustDedupSerivce;
 
 	public DedupParmServiceImpl() {
 		super();
@@ -346,24 +350,45 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		// To Check duplicate customer in core banking
 		customerDedupList.addAll(customerInterfaceService.fetchCustomerDedupDetails(cd));
 
-		// TO Check duplicate customer in Local database
-		for (DedupParm dedupParm : dedupParmList) {
-			String sqlQuery = dedupParm.getSQLQuery();
-			List<CustomerDedup> list = customerDedupDAO.fetchCustomerDedupDetails(cd, sqlQuery);
+		boolean alwExtCustDedup = SysParamUtil.isAllowed(SMTParameterConstants.EXTERNAL_CUSTOMER_DEDUP);
 
-			String queryCode = dedupParm.getQueryCode();
-			String finReference = cd.getFinReference();
+		if (alwExtCustDedup) {
+			if (externalCustDedupSerivce != null) {
+				customerDedupList = externalCustDedupSerivce.getExternarCustomerDedupDetails(cd);
+			}
+		} else {
+			// TO Check duplicate customer in Local database
+			for (DedupParm dedupParm : dedupParmList) {
+				List<CustomerDedup> list = customerDedupDAO.fetchCustomerDedupDetails(cd, dedupParm.getSQLQuery());
 
-			for (CustomerDedup custDedup : list) {
-				custDedup.setDedupRule(queryCode);
-				custDedup.setFinReference(finReference);
-				custDedup.setQueryField(getQueryFields(sqlQuery, fieldNames));
-				custDedup.setModule(FinanceConstants.DEDUP_FINANCE);
-				customerDedupList.add(custDedup);
+				for (int i = 0; i < list.size(); i++) {
+					CustomerDedup custDedup = list.get(i);
+					custDedup.setDedupRule(dedupParm.getQueryCode());
+					custDedup.setFinReference(cd.getFinReference());
+					custDedup.setQueryField(getQueryFields(dedupParm.getSQLQuery(), fieldNames));
+					custDedup.setModule(FinanceConstants.DEDUP_FINANCE);
+					customerDedupList.add(custDedup);
+				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
 		return customerDedupList;
+	}
+
+	@Override
+	public CustomerDedup processNewUCIC(CustomerDedup custDedup, String ucicType) {
+		CustomerDedup customerDedup = new CustomerDedup();
+		if (externalCustDedupSerivce != null) {
+			customerDedup = externalCustDedupSerivce.generateNewUCIC(custDedup, ucicType);
+		}
+		return customerDedup;
+	}
+
+	@Override
+	public List<CustomerDedup> processRetrigger(CustomerDedup custDedup, String ucicType) {
+		List<CustomerDedup> dedupList = new ArrayList<CustomerDedup>();
+		dedupList = externalCustDedupSerivce.reTrigger(custDedup);
+		return dedupList;
 	}
 
 	@Override
@@ -1289,5 +1314,10 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	@Override
 	public StringBuilder getSelectQuery(CustomerDedup dedup, boolean blackList) {
 		return customerDedupDAO.getSelectQuery(dedup, blackList);
+	}
+
+	@Autowired(required = false)
+	public void setExternalCustDedupSerivce(ExternalCustDedupSerivce externalCustDedupSerivce) {
+		this.externalCustDedupSerivce = externalCustDedupSerivce;
 	}
 }

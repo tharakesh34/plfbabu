@@ -172,7 +172,7 @@ public class AccountingConfigCache {
 		List<TransactionEntry> transactionEntries;
 		try {
 			transactionEntries = transactionEntryCache.get(accountSetid);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.warn("Unable to load data from Transaction Entry cache: ", e);
 			transactionEntries = transactionEntryDAO.getListTranEntryForBatch(accountSetid, "");
 		}

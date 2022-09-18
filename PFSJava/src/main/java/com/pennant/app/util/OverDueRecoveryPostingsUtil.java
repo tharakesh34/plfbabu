@@ -405,14 +405,16 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			FinanceDetail financeDetail = new FinanceDetail();
 			financeDetail.getFinScheduleData().setFinanceMain(fm);
 
-			InvoiceDetail invoiceDetail = new InvoiceDetail();
-			invoiceDetail.setLinkedTranId(aeEvent.getLinkedTranId());
-			invoiceDetail.setFinanceDetail(financeDetail);
-			invoiceDetail.setMovements(advMovements);
-			invoiceDetail.setWaiver(false);
-			invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
+			if (!aeEvent.isSimulateAccounting()) {
+				InvoiceDetail invoiceDetail = new InvoiceDetail();
+				invoiceDetail.setLinkedTranId(aeEvent.getLinkedTranId());
+				invoiceDetail.setFinanceDetail(financeDetail);
+				invoiceDetail.setMovements(advMovements);
+				invoiceDetail.setWaiver(false);
+				invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);
 
-			this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+				this.gstInvoiceTxnService.advTaxInvoicePreparation(invoiceDetail);
+			}
 
 			// Saving Tax Income Details
 			FinTaxIncomeDetail taxIncome = new FinTaxIncomeDetail();

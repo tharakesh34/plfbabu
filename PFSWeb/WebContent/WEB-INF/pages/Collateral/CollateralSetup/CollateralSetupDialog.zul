@@ -220,6 +220,41 @@
 														<textbox id="remarks" maxlength="1000" multiline="true" rows="2" width="950px" />
 													</hbox>
 												</row>
+												<row>
+													<label value="${c:l('label_CollateralSetupDialog_assetId.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="assetId" width="180px" readonly="true" />
+													</hbox>
+													<label value="${c:l('label_CollateralSetupDialog_SiId.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="siId" width="180px" readonly="true" />
+													</hbox>
+												</row>
+												<row>
+													<label value="${c:l('label_CollateralSetupDialog_CersaiRegDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="cersaiRegDate" disabled="true" />
+													</hbox>
+													<label value="${c:l('label_CollateralSetupDialog_CersaiModificationDate.value')}" />
+													<hbox>
+													<datebox id="cersaiModificationDate" disabled="true" />
+													</hbox>
+												</row>
+												<row>
+													<label value="${c:l('label_CollateralSetupDialog_regStatus.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="regStatus" width="140px" disabled="true" />
+													</hbox>
+													<label value="${c:l('label_CollateralSetupDialog_cersaiSatisfactionDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="cersaiSatisfactionDate" disabled="true" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

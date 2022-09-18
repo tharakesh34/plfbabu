@@ -4439,6 +4439,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			// ### 19-06-2018 - End
 
+			boolean alwExtCustDedup = SysParamUtil.isAllowed(SMTParameterConstants.EXTERNAL_CUSTOMER_DEDUP);
+
 			// Check for service tasks. If one exists perform the task(s)
 			String finishedTasks = "";
 			String serviceTasks = getServiceTasks(taskId, aCustomer, finishedTasks);
@@ -4447,17 +4449,23 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				String method = serviceTasks.split(";")[0];
 				if ("doDdeDedup".equals(method) || "doVerifierDedup".equals(method)
 						|| "doApproverDedup".equals(method)) {
-					CustomerDetails tCustomerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
-					String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-					tCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), tCustomerDetails,
-							this.window_CustomerDialog, curLoginUser, "");
-					if (tCustomerDetails.getCustomer().isDedupFound()
-							&& !tCustomerDetails.getCustomer().isSkipDedup()) {
-						processCompleted = false;
-					} else {
-						processCompleted = true;
+					if ((alwExtCustDedup
+							&& (PennantConstants.RCD_STATUS_SUBMITTED.equals(aCustomer.getRecordStatus())
+									&& PennantConstants.RECORD_TYPE_NEW.equals(aCustomer.getRecordType()))
+							&& StringUtils.trimToNull(aCustomer.getCustCoreBank()) == null) || !alwExtCustDedup) {
+						CustomerDetails tCustomerDetails = (CustomerDetails) auditHeader.getAuditDetail()
+								.getModelData();
+						String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
+						tCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), tCustomerDetails,
+								this.window_CustomerDialog, curLoginUser, "");
+						if (tCustomerDetails.getCustomer().isDedupFound()
+								&& !tCustomerDetails.getCustomer().isSkipDedup()) {
+							processCompleted = false;
+						} else {
+							processCompleted = true;
+						}
+						auditHeader.getAuditDetail().setModelData(tCustomerDetails);
 					}
-					auditHeader.getAuditDetail().setModelData(tCustomerDetails);
 				} else {
 					CustomerDetails tCustomerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 					tCustomerDetails.setCustomer(aCustomer);

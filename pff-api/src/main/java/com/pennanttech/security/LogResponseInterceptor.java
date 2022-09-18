@@ -178,6 +178,8 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 				if (StringUtils.isBlank(apiLogDetail.getStatusCode())) {
 					apiLogDetail.setStatusCode(returnCode);
 				}
+				String messageId = apiLogDetail.getMessageId();
+				apiLogDetail.setMessageId(messageId);
 				// save API logging details
 				apiLogDetailDAO.updateLogDetails(apiLogDetail);
 			}

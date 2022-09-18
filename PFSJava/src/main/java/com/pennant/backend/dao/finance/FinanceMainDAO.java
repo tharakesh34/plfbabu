@@ -404,4 +404,6 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getForFinanceExposer(long custId);
 
 	int getBucketByFinStatus(long finID);
+
+	List<FinanceMain> getFinanceMainActiveList(Date fromDate, Date toDate, String finType);
 }

@@ -135,16 +135,16 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		String whereClause = "";
 		if (!enqiryModule) {
 			this.searchObject.addFilter(new Filter("BounceID", 0, Filter.OP_EQUAL));
+			whereClause = "(Status is NULL) OR (Status in ('" + PennantConstants.MANUALADVISE_MAINTAIN + "'))";
+
 			if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)) {
-				whereClause = "(Status is NULL) OR (RecordStatus not in ('" + PennantConstants.RCD_STATUS_APPROVED
+				whereClause = whereClause + " OR (RecordStatus not in ('" + PennantConstants.RCD_STATUS_APPROVED
 						+ "'))";
 
 				this.searchObject.addWhereClause(whereClause);
 				this.searchObject.addFilter(new Filter("ValueDate", SysParamUtil.getAppDate(), Filter.OP_GREATER_THAN));
 			}
 			if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)) {
-				whereClause = "(Status is NULL) OR (Status in ('" + PennantConstants.MANUALADVISE_MAINTAIN + "'))";
-
 				this.searchObject.addWhereClause(whereClause);
 				this.searchObject.addFilter(new Filter("ValueDate", SysParamUtil.getAppDate(), Filter.OP_GREATER_THAN));
 			}

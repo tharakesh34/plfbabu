@@ -44,6 +44,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.saml.SAMLCredential;
+import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
 
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -56,13 +59,18 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * It's been configured in the spring security xml contextfile.<br>
  * 
  */
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService, SAMLUserDetailsService {
 	private static final Logger logger = LogManager.getLogger(UserDetailsServiceImpl.class);
 
 	private UserService userService;
 
 	public UserDetailsServiceImpl() {
 		super();
+	}
+
+	@Override
+	public Object loadUserBySAML(SAMLCredential credential) throws UsernameNotFoundException {
+		return loadUserByUsername(credential.getNameID().getValue());
 	}
 
 	@Override

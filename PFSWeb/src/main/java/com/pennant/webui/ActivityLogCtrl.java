@@ -336,11 +336,15 @@ public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator
 
 			item = new Listitem();
 
-			WorkflowEngine we = new WorkflowEngine(workFlow.getWorkFlowXml());
+			String taskName = "";
+			if (workFlow != null) {
+				WorkflowEngine we = new WorkflowEngine(workFlow.getWorkFlowXml());
+				taskName = we.getUserTask(activity.getTaskId()).getName();
+			}
 			if (activity.getTaskId() == null) {
 				cell = new Listcell("");
 			} else {
-				cell = new Listcell((we.getUserTask(activity.getTaskId()).getName()));
+				cell = new Listcell((taskName));
 			}
 			cell.setParent(item);
 

@@ -1,6 +1,5 @@
 package com.pennant.pff.eod.cache;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +19,7 @@ public class BounceConfigCache {
 		BounceReason bounceReason = null;
 		try {
 			bounceReason = bounceCache.get(bounceCode);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.warn("Unable to load data from Bounce cache: ", e);
 			bounceReason = getBounceReason(bounceCode);
 		}

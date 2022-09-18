@@ -3,17 +3,16 @@ package com.pennanttech.pff.eod;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeBodyPart;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.zkoss.zul.Timer;
@@ -35,6 +34,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.lic.License;
+import com.pennanttech.pennapps.notification.email.OutGoingMailServer;
+import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
+import com.pennanttech.pennapps.notification.email.configuration.OutgoingMailProperties;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.batch.backend.service.BatchProcessStatusService;
 import com.pennanttech.pff.batch.model.BatchProcessStatus;
@@ -282,29 +284,24 @@ public class EODServiceImpl implements EODService {
 	private void sendEmail(EODConfig eodConfig, String subject) {
 		logger.debug(Literal.ENTERING);
 
-		JavaMailSenderImpl mailSender = generateMailSender(eodConfig);
+		OutGoingMailServer instance = getOutGoingMailServer(eodConfig);
+
+		MimeBodyPart body = new MimeBodyPart();
 
 		String[] ccMailAddress = eodConfig.getCCEmailAddress().split(",");
 		String[] toMailAddress = eodConfig.getToEmailAddress().split(",");
 
 		try {
-			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-			helper.setFrom(eodConfig.getFromEmailAddress());
-			helper.setSentDate(DateUtil.getSysDate());
-			helper.setTo(toMailAddress);
-			helper.setCc(ccMailAddress);
-			helper.setSubject(subject);
-
 			EODNotificationStatus eod = setEODStatus(subject, eodConfig);
 			Configuration config = setConfiguration();
 
 			String result = FreeMarkerTemplateUtils.processTemplateIntoString(config.getTemplate("eod_alert.html"),
 					eod);
 
-			helper.setText("", result);
-			mailSender.send(message);
+			body.setText(result, StandardCharsets.UTF_8.name(), EmailBodyType.HTML.getValue());
+
+			instance.setSender(eodConfig.getFromEmailAddress(), eodConfig.getFromName());
+			instance.send(toMailAddress, ccMailAddress, subject, body, null);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
@@ -312,21 +309,24 @@ public class EODServiceImpl implements EODService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private JavaMailSenderImpl generateMailSender(EODConfig eodConfig) {
-		logger.debug(Literal.ENTERING);
-
-		JavaMailSenderImpl eodMailNotification = new JavaMailSenderImpl();
-		eodMailNotification.setHost(eodConfig.getSMTPHost());
-		eodMailNotification.setPort(Integer.valueOf(eodConfig.getSMTPPort()));
-		eodMailNotification.setUsername(eodConfig.getSMTPUserName());
+	private OutGoingMailServer getOutGoingMailServer(EODConfig eodConfig) {
+		OutgoingMailProperties properties = new OutgoingMailProperties();
+		properties.setUser(eodConfig.getSMTPUserName());
 
 		if (eodConfig.isSMTPAutenticationRequired()) {
 			String password = EncryptionUtil.decrypt("ENC(" + eodConfig.getSMTPPwd() + ")");
-			eodMailNotification.setPassword(password);
+			properties.setPassword(password);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return eodMailNotification;
+		properties.setHost(eodConfig.getSMTPHost());
+		properties.setPort(eodConfig.getSMTPPort());
+		properties.setEncryptionType(eodConfig.getEncryptionType());
+		properties.setFrom(eodConfig.getFromEmailAddress());
+		properties.setPersonal(eodConfig.getFromName());
+		properties.setReturnMail(eodConfig.getFromEmailAddress());
+		properties.setAuth(eodConfig.isSMTPAutenticationRequired());
+
+		return OutGoingMailServer.getInstance(properties);
 	}
 
 	private Date cronToDate(String cronExp) {

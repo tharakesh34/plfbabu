@@ -1,0 +1,39 @@
+<?page title="PLF - Logged out"?>
+<?link rel="shortcut icon" type="image/x-icon" href="/Favicon.png" cacheable="false" language="xul/html" zscriptLanguage="Java"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+	<window border="3d">
+		<style>body { padding: 0 0; background-color: #EBEBEB; /* 0 padding on top and bottom and 0 padding on right and left
+			*/ }
+		</style>
+
+		<div align="center">
+			<panel>
+				<panelchildren style="background-color: #EBEBEB;">
+
+					<vbox>
+						<separator />
+						<separator />
+						<separator />
+						<separator />
+
+						<label value="Logged out successfully" />
+
+						<separator />
+						<separator />
+
+						<div align="center">
+							<a href="/">
+								Sign in again
+							</a>
+						</div>
+					</vbox>
+				</panelchildren>
+			</panel>
+		</div>
+
+	</window>
+</zk>

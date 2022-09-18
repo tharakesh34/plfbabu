@@ -6437,4 +6437,36 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return 0;
 		}
 	}
+
+	public List<FinanceMain> getFinanceMainActiveList(Date fromDate, Date toDate, String finType) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinanceMain> finMains;
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference,CalRoundingMode,RoundingTarget,FinCcy,FinType,cs.CustShrtName lovDescCustShrtName");
+		sql.append(" From FinanceMain fm");
+		sql.append(" inner join customers cs on cs.custid = fm.custid");
+		sql.append(
+				" where FinisActive =:FinisActive and FinStartDate <=:FinStartDate  and MaturityDate >= :MaturityDate");
+		if (finType != null) {
+			sql.append(" and finType =:finType ");
+		}
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinisActive", true);
+		source.addValue("FinStartDate", fromDate);
+		source.addValue("MaturityDate", toDate);
+		if (finType != null) {
+			source.addValue("finType", finType);
+		}
+		try {
+			RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
+			finMains = jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+			return new ArrayList<>();
+		}
+		logger.debug(Literal.LEAVING);
+		return finMains;
+	}
 }

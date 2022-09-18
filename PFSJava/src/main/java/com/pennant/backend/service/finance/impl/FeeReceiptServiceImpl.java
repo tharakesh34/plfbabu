@@ -1554,6 +1554,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			// PSD #157162 IMD API issue> system is deducting waiver amount from remaining fee amount and not allowing
 			// to make the payment of complete remaining amount
 			BigDecimal amount = fee.getRemainingFee().add(fee.getWaivedAmount());
+			BigDecimal diffTDS = BigDecimal.ZERO;
+			BigDecimal tdsPaid = BigDecimal.ZERO;
 
 			if (upFinFeeDetail.getPaidAmount() == null) {
 				upFinFeeDetail.setPaidAmount(BigDecimal.ZERO);
@@ -1561,19 +1563,28 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			if (upFinFeeDetail.getPaidAmount().compareTo(amount) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = feeCode;
-				valueParm[1] = PennantApplicationUtil.amountFormate(amount, 0);
+				valueParm[1] = PennantApplicationUtil.amountFormate(amount, 2);
 				return ErrorUtil.getErrorDetail(new ErrorDetail("IMD003", valueParm));
 			}
+
 			BigDecimal allocatedAmt = upFinFeeDetail.getPaidAmount();
 			totalFeePaid = totalFeePaid.add(allocatedAmt);
 			FinFeeReceipt feeReceipt = fee.getFinFeeReceipts().get(0);
-			feeReceipt.setPaidAmount(allocatedAmt);
+
+			BigDecimal remTDS = fee.getNetTDS();
 
 			if (fee.isTdsReq() && fee.getRemTDS().compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal tdsPaid = (fee.getRemTDS().multiply(allocatedAmt)).divide(amount, 2, RoundingMode.HALF_DOWN);
+				tdsPaid = (remTDS.multiply(allocatedAmt)).divide(fee.getNetAmountOriginal(), 2, RoundingMode.HALF_DOWN);
 				tdsPaid = CalculationUtil.roundAmount(tdsPaid, tdsRoundMode, tdsRoundingTarget);
-				feeReceipt.setPaidTds(tdsPaid);
 			}
+
+			if (allocatedAmt.compareTo(fee.getRemainingFee()) == 0) {
+				diffTDS = fee.getRemTDS().subtract(tdsPaid);
+			}
+
+			tdsPaid = tdsPaid.add(diffTDS);
+			feeReceipt.setPaidAmount(allocatedAmt);
+			feeReceipt.setPaidTds(tdsPaid);
 		}
 
 		if (BigDecimal.ZERO.compareTo(totalFeePaid) == 0) {

@@ -38,8 +38,10 @@ import java.net.URISyntaxException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
@@ -84,7 +86,11 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	protected Window outerIndexWindow;
 	protected Menuitem menuitem_logout;
 	protected Menuitem menuitem_changePasssword;
+	protected Menuitem menuitem_global_logout;
 	LoggedInUser user = null;
+
+	@Value("${authentication.sso:false}")
+	private boolean sso;
 
 	/**
 	 * Default constructor.
@@ -136,6 +142,13 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 			break;
 		}
 
+		if (sso) {
+			menuitem_global_logout.setVisible(true);
+			menuitem_changePasssword.setVisible(false);
+		} else {
+			menuitem_global_logout.setVisible(false);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -169,7 +182,30 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	 * @throws IOException
 	 */
 	public void onClick$menuitem_logout(Event event) throws IOException {
-		getUserWorkspace().doLogout(); // logout.
+		getUserWorkspace().doLogout();
+
+		if (sso) {
+			Executions.sendRedirect("/saml/logout?local=true");
+		} else {
+			Executions.sendRedirect("/csrfLogout.zul");
+		}
+
+	}
+
+	/**
+	 * When the 'Logout' button is clicked.<br>
+	 * 
+	 * @throws IOException
+	 */
+	public void onClick$menuitem_global_logout(Event event) throws IOException {
+		getUserWorkspace().doLogout();
+
+		if (sso) {
+			Executions.sendRedirect("/saml/logout");
+		} else {
+			Executions.sendRedirect("/csrfLogout.zul");
+		}
+
 	}
 
 	public void onClick$menuitem_changePasssword() throws URISyntaxException {

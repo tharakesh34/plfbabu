@@ -1424,8 +1424,22 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.overDueInstlementPft.setValue(PennantAppUtil.amountFormate(
 					finSummary.getOverDueInstlementPft().add(financeSummary.getFinODTotPenaltyBal()),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-			this.finProfitrate.setValue(PennantApplicationUtil
-					.formatRate(finSummary.getFinRate() != null ? finSummary.getFinRate().doubleValue() : 0, 2));
+			Date appDate = SysParamUtil.getAppDate();
+
+			List<FinanceScheduleDetail> fsds = finScheduleData.getFinanceScheduleDetails();
+
+			String pftRate = PennantApplicationUtil.formatRate(finSummary.getFinRate().doubleValue(), 2);
+
+			for (FinanceScheduleDetail fsd : fsds) {
+				Date schdate = fsd.getSchDate();
+
+				if (schdate.compareTo(appDate) >= 0 && fsd.getInstNumber() > 0) {
+					pftRate = PennantApplicationUtil.formatRate(fsd.getActRate().doubleValue(), 2);
+					break;
+				}
+			}
+
+			this.finProfitrate.setValue(pftRate);
 			this.paidInstlments.setValue(String.valueOf(finSummary.getPaidInstlments()));
 			this.paidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid().add(waivedAmt),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));

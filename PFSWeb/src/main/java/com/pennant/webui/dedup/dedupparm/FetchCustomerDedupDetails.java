@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.customermasters.Customer;
@@ -27,8 +28,10 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FetchCustomerDedupDetails {
 
@@ -36,6 +39,8 @@ public class FetchCustomerDedupDetails {
 
 	private static String CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custFName,custLName,custCRCPR,custEMail,mobileNumber,aadharNumber,"
 			+ "custNationality,dedupRule,override";
+
+	private static final String CUSTOMERDEDUP_LABELS2 = "custCIF,custShrtName,custDOB,custCRCPR,aadharNumber,custEMail,mobileNumber,custCoreBank";
 
 	private static DedupParmService dedupParmService;
 	private static CustomerDedupDAO customerDedupDAO;
@@ -49,6 +54,8 @@ public class FetchCustomerDedupDetails {
 	public static CustomerDetails getCustomerDedup(String userRole, CustomerDetails customerDetails,
 			Window parentWindow, String curLoginUser, String finType) throws InterfaceException {
 		List<CustomerDedup> customerDedupList = null;
+
+		boolean alwExtCustDedup = SysParamUtil.isAllowed(SMTParameterConstants.EXTERNAL_CUSTOMER_DEDUP);
 
 		if (customerDetails != null && customerDetails.getCustomer() != null) {
 
@@ -65,23 +72,58 @@ public class FetchCustomerDedupDetails {
 					CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,custEMail,mobileNumber,aadharNumber,"
 							+ "custNationality,dedupRule,override";
 				}
-				Object dataObject = ShowCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS,
-						customerDedup, curLoginUser);
 
-				if (dataObject != null) {
-					ShowCustomerDedupListBox details = (ShowCustomerDedupListBox) dataObject;
+				customer.setDedupFound(true);
+				Object dataObject = null;
 
-					logger.debug("The User Action is " + details.getUserAction());
-					int userAction = details.getUserAction();
+				if (alwExtCustDedup) {
+					dataObject = ShowExtCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS2,
+							customerDedup, curLoginUser, getDedupParmService());
 
-					customerDedupList = (List<CustomerDedup>) details.getObject();
+					if (dataObject != null) {
+						ShowExtCustomerDedupListBox details = (ShowExtCustomerDedupListBox) dataObject;
 
-					if (userAction == 1) {
-						customerDetails.setCustomerDedupList(customerDedupList);
-						customer.setSkipDedup(true);
-					} else if (userAction == 0) {
-						customer.setSkipDedup(false);
+						System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
+						logger.debug("The User Action is " + details.getUserAction());
+						int userAction = details.getUserAction();
+
+						customerDedupList = (List<CustomerDedup>) details.getObject();
+
+						if (userAction == 1) {
+							customerDetails.setCustomerDedupList(customerDedupList);
+							CustomerDedup dedup = customerDedupList.get(0);
+							if (dedup != null && PennantConstants.UCIC_NEW.equals(dedup.getUcicType())) {
+								MessageUtil.showInfo("label_External_Dedup_UCIC_Msg", dedup.getCustCoreBank(),
+										customer.getCustShrtName());
+							}
+							customer.setCustCoreBank(dedup.getCustCoreBank());
+							customer.setSkipDedup(true);
+						} else if (userAction == 0) {
+							customer.setSkipDedup(false);
+						}
 					}
+
+				} else {
+					dataObject = ShowCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS,
+							customerDedup, curLoginUser);
+
+					if (dataObject != null) {
+						ShowCustomerDedupListBox details = (ShowCustomerDedupListBox) dataObject;
+
+						System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
+						logger.debug("The User Action is " + details.getUserAction());
+						int userAction = details.getUserAction();
+
+						customerDedupList = (List<CustomerDedup>) details.getObject();
+
+						if (userAction == 1) {
+							customerDetails.setCustomerDedupList(customerDedupList);
+							customer.setSkipDedup(true);
+						} else if (userAction == 0) {
+							customer.setSkipDedup(false);
+						}
+					}
+
 				}
 
 			} else {
@@ -117,6 +159,8 @@ public class FetchCustomerDedupDetails {
 
 		List<DedupParm> finDedupParmList = new ArrayList<>();
 
+		boolean alwExtCustDedup = SysParamUtil.isAllowed(SMTParameterConstants.EXTERNAL_CUSTOMER_DEDUP);
+
 		String custCIF = customerDedup.getCustCIF();
 		if (StringUtils.isNotEmpty(finType) && CollectionUtils.isNotEmpty(queryCodeList)
 				&& CollectionUtils.isNotEmpty(list)) {
@@ -129,16 +173,21 @@ public class FetchCustomerDedupDetails {
 				custDedupList.forEach(l1 -> l1.setOverridenby(l1.getOverrideUser()));
 				overridedCustDedupList.addAll(custDedupList);
 
-				for (DedupParm parm : list) {
-					if (StringUtils.equals(parm.getQueryCode(), queryCode.getLovDescNamelov())) {
-						finDedupParmList.add(parm);
+				if (!alwExtCustDedup) {
+					for (DedupParm parm : list) {
+						if (StringUtils.equals(parm.getQueryCode(), queryCode.getLovDescNamelov())) {
+							finDedupParmList.add(parm);
+						}
 					}
-				}
+					// to get the de dup details based on the de dup parameters i.e query's list from both application
+					// and core
+					// banking
+				} else {
+					customerDedupList.addAll(getDedupParmService().getCustomerDedup(customerDedup, list));
 
+				}
 			}
-			// to get the de dup details based on the de dup parameters i.e query's list from both application and core
-			// banking
-			customerDedupList.addAll(dedupParmService.getCustomerDedup(customerDedup, finDedupParmList));
+
 		} else {
 			if (CollectionUtils.isNotEmpty(list)) {
 				for (DedupParm dedupParm : list) {
@@ -208,6 +257,8 @@ public class FetchCustomerDedupDetails {
 			return customerDetails;
 		}
 
+		boolean alwExtCustDedup = SysParamUtil.isAllowed(SMTParameterConstants.EXTERNAL_CUSTOMER_DEDUP);
+
 		CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
 		Customer customer = customerDetails.getCustomer();
 
@@ -221,8 +272,14 @@ public class FetchCustomerDedupDetails {
 
 		customer.setDedupFound(true);
 		customerDedup.setFinType(finType);
-		Object dataObject = ShowCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS,
-				customerDedup, curLoginUser);
+		Object dataObject = null;
+		if (alwExtCustDedup) {
+			dataObject = ShowExtCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS2,
+					customerDedup, curLoginUser, getDedupParmService());
+		} else {
+			dataObject = ShowCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS, customerDedup,
+					curLoginUser);
+		}
 
 		if (dataObject == null) {
 			return customerDetails;
@@ -313,16 +370,27 @@ public class FetchCustomerDedupDetails {
 		String mobileNumber = "";
 		String emailid = "";
 		String aadharId = "";
+		String passPortNo = "";
 		String voterId = "";
 		String drivingLicenseNo = "";
 		String aadhar = masterDefDAO.getMasterCode("DOC_TYPE", "AADHAAR");
 		String passPort = masterDefDAO.getMasterCode("DOC_TYPE", "PASSPORT");
 		String panNumber = masterDefDAO.getMasterCode("DOC_TYPE", "PAN");
+		StringBuilder custAddress = new StringBuilder("");
+
+		String phoneType = "";
+		String emailType = "";
+		String city = "";
+		String state = "";
+		String country = "";
+		String pincode = "";
+		String addressType = "";
+		String drivingLicence = masterDefDAO.getMasterCode("DOC_TYPE", "DRIVING_LICENCE");
+		String drivingLicenceNo = "";
 
 		String voterIdCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, PennantConstants.VOTER_ID);
 		String drivingLicenseCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE,
 				PennantConstants.DRIVING_LICENCE);
-		StringBuilder custAddress = new StringBuilder("");
 
 		Customer customer = customerDetails.getCustomer();
 		if (customerDetails.getCustomerPhoneNumList() != null) {
@@ -330,6 +398,7 @@ public class FetchCustomerDedupDetails {
 				if (String.valueOf(custPhone.getPhoneTypePriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
 							custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+					phoneType = custPhone.getPhoneTypeCode();
 					break;
 				}
 			}
@@ -355,7 +424,7 @@ public class FetchCustomerDedupDetails {
 		if (customerDetails.getCustomerDocumentsList() != null) {
 			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
 				if (document.getCustDocCategory().equals(passPort)) {
-					passPort = document.getCustDocTitle();
+					passPortNo = document.getCustDocTitle();
 					break;
 				}
 			}
@@ -406,6 +475,49 @@ public class FetchCustomerDedupDetails {
 			}
 		}
 
+		boolean alwExtCustDedup = SysParamUtil.isAllowed(SMTParameterConstants.EXTERNAL_CUSTOMER_DEDUP);
+		// Address
+		if (customerDetails.getAddressList() != null) {
+			for (CustomerAddres address : customerDetails.getAddressList()) {
+				if (String.valueOf(address.getCustAddrPriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+					custAddress.append(
+							StringUtils.isNotBlank(address.getCustAddrLine3()) ? address.getCustAddrLine3().concat(", ")
+									: "");
+					custAddress.append(
+							StringUtils.isNotBlank(address.getCustAddrHNbr()) ? address.getCustAddrHNbr().concat(", ")
+									: "");
+					custAddress.append(
+							StringUtils.isNotBlank(address.getCustFlatNbr()) ? address.getCustFlatNbr().concat(", ")
+									: "");
+					custAddress.append(StringUtils.isNotBlank(address.getCustAddrStreet())
+							? address.getCustAddrStreet().concat(", ")
+							: "");
+					custAddress.append(
+							StringUtils.isNotBlank(address.getCustAddrLine1()) ? address.getCustAddrLine1().concat(", ")
+									: "");
+
+					if (!alwExtCustDedup) {
+						custAddress.append(StringUtils.isNotBlank(address.getCustAddrLine2())
+								? address.getCustAddrLine2().concat(", ")
+								: "");
+						custAddress.append(address.getCustAddrCity()).append(", ");
+						custAddress.append(address.getCustAddrProvince()).append(", ");
+						custAddress.append(address.getCustAddrZIP()).append(", ");
+						custAddress.append(address.getCustAddrCountry());
+					} else {
+						custAddress.append(
+								StringUtils.isNotBlank(address.getCustAddrLine2()) ? address.getCustAddrLine2() : "");
+					}
+					city = address.getCustAddrCity();
+					state = address.getCustAddrProvince();
+					country = address.getCustAddrCountry();
+					pincode = address.getCustAddrZIP();
+					addressType = address.getCustAddrType();
+					break;
+				}
+			}
+		}
+
 		CustomerDedup customerDedup = new CustomerDedup();
 		customerDedup.setFinReference(customer.getCustCIF());
 		customerDedup.setCustId(customer.getCustID());
@@ -422,7 +534,7 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setCustSector(customer.getCustSector());
 		customerDedup.setCustSubSector(customer.getCustSubSector());
 		customerDedup.setCustNationality(customer.getCustNationality());
-		customerDedup.setCustPassportNo(passPort);
+		customerDedup.setCustPassportNo(passPortNo);
 		customerDedup.setCustTradeLicenceNum(customer.getCustTradeLicenceNum());
 		customerDedup.setCustVisaNum(customer.getCustVisaNum());
 		customerDedup.setMobileNumber(mobileNumber);
@@ -432,6 +544,21 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setVoterID(voterId);
 		customerDedup.setDrivingLicenceNo(drivingLicenseNo);
 		customerDedup.setAddress(custAddress.toString());
+		customerDedup.setAddress(custAddress.toString());
+		if (alwExtCustDedup) {
+			customerDedup.setGender(customer.getCustGenderCode());
+		} else {
+			customerDedup.setGender(customer.getLovDescCustGenderCodeName());
+		}
+		customerDedup.setCity(city);
+		customerDedup.setState(state);
+		customerDedup.setCountry(country);
+		customerDedup.setPincode(pincode);
+		customerDedup.setPhoneType(phoneType);
+		customerDedup.setEmailType(emailType);
+		customerDedup.setLikeCustMName(customer.getCustMName());
+		customerDedup.setAddressType(addressType);
+		customerDedup.setDrivingLicenceNo(drivingLicenceNo);
 
 		if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
 			Map<String, Object> mapValues = customerDetails.getExtendedFieldRender().getMapValues();

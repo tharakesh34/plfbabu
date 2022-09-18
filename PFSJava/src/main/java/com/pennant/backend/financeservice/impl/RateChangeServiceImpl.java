@@ -142,7 +142,10 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 			return auditDetail;
 		}
 
-		Date appDate = SysParamUtil.getAppDate();
+		Date sysDate = SysParamUtil.getAppDate();
+		Date appDate = DateUtility.addDays(sysDate,
+				-SysParamUtil.getValueAsInt(SMTParameterConstants.RATE_CHANGE_FROM_DATE_BACK_DAYS));
+
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", isWIF);
 
 		if (StringUtils.equals(UploadConstants.RATE_CHANGE_UPLOAD, fsi.getReqFrom())) {

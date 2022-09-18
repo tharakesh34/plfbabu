@@ -724,7 +724,7 @@ public class GSTDetailDialogCtrl extends GFCBaseCtrl<GSTDetail> {
 		}
 
 		if (StringUtils.isNotBlank(gstStateCode)
-				&& !StringUtils.equalsIgnoreCase(province.getCPProvince(), taxNumber.substring(0, 2))) { // if GST State
+				&& !StringUtils.equalsIgnoreCase(gstStateCode, taxNumber.substring(0, 2))) { // if GST State
 			auditHeader.setErrorDetails(
 					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65023", null, null)));
 			return auditHeader;

@@ -90,6 +90,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.customermasters.impl.CustomerDataService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
@@ -132,6 +133,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private VehicleDealerService vehicleDealerService;
 	private ISRADetailService israDetailService;
 	private CustomerDataService customerDataService;
+	private CollateralSetupService collateralSetupService;
 
 	public FinanceMaintenanceServiceImpl() {
 		super();
@@ -425,12 +427,27 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					.addAll(israDetailService.saveOrUpdate(fd, tableType.getSuffix(), auditHeader.getAuditTranType()));
 		}
 
+		boolean isRegCol = false;
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 			// set Finance Collateral Details Audit
 			// =======================================
 			if (fd.getCollateralAssignmentList() != null && !fd.getCollateralAssignmentList().isEmpty()) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("CollateralAssignments");
 				details = processingCollateralAssignmentList(details, tableType.getSuffix(), fm);
+				for (CollateralAssignment ca : fd.getCollateralAssignmentList()) {
+					int count = collateralAssignmentDAO.getAssignedCollateralCount(ca.getCollateralRef(), "_AView");
+					Date regDate = collateralSetupService.getRegistrationDate(ca.getCollateralRef());
+					if (PennantConstants.RECORD_TYPE_NEW.equals(ca.getRecordType())) {
+						if (count > 1 && regDate != null) {
+							isRegCol = true;
+						}
+					}
+					if (isRegCol) {
+						CollateralAssignment collass = collateralSetupService.getCollDetails(ca.getCollateralRef());
+						collateralSetupService.updateCersaiDetails(ca.getCollateralRef(), collass.getSiid(),
+								collass.getAssetid());
+					}
+				}
 				auditDetails.addAll(details);
 			}
 		} else {
@@ -2072,4 +2089,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		this.customerDataService = customerDataService;
 	}
 
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
+	}
 }

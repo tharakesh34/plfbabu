@@ -270,6 +270,7 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.PricingDetailService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
@@ -973,6 +974,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private BaseRateService baseRateService;
 	private CollateralSetupFetchingService collateralSetupFetchingService;
 	private PartnerBankService partnerBankService;
+	private ManualAdviseService manualAdviseService;
 
 	protected Commitment commitment;
 	protected Tab listWindowTab;
@@ -3606,7 +3608,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		getSourChannelCategory();
 
 		// Start Finance MainDetails Tab ---> 1. Sourcing Details
-
+		// sanctionDate
+		this.sanctionedDate.setValue(aFinanceMain.getSanctionedDate());
 		// Finance MainDetails Tab ---> 1. Basic Details
 
 		this.finType.setValue(aFinanceMain.getFinType());
@@ -7289,6 +7292,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFm.getProductCategory())) {
 			isOverdraft = true;
 		}
+
+		manualAdviseService.cancelManualAdvises(aFm);
+
 		if (this.userAction.getSelectedItem() != null) {
 			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 					|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -13301,13 +13307,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				throw new WrongValueException(this.subVentionFrom, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_FinanceMainDialog_SubventionFrom.value") }));
 			}
-			aFinanceMain.setSubVentionFrom(getComboboxValue(this.subVentionFrom));
+			if (financeType.isSubventionReq()) {
+				aFinanceMain.setSubVentionFrom(getComboboxValue(this.subVentionFrom));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if (!this.subVentionFrom.isDisabled()
+			if (financeType.isSubventionReq() && !this.subVentionFrom.isDisabled()
 					&& !getComboboxValue(this.subVentionFrom).equals(PennantConstants.List_Select)) {
 				this.manufacturerDealer.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_FinanceMainDialog_ManufacturerDealer.value"), null, true));
@@ -13391,7 +13399,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
 
-		if (this.row_ManualSchedule.isVisible() && !this.manualSchdType.isDisabled()) {
+		if (this.row_ManualSchedule.isVisible() && this.row_ManualSchedule.isVisible()
+				&& !this.manualSchdType.isDisabled()) {
 			try {
 				if (getComboboxValue(this.manualSchdType).equals(PennantConstants.List_Select)) {
 					throw new WrongValueException(this.manualSchdType, Labels.getLabel("STATIC_INVALID",
@@ -23951,4 +23960,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.overdraftLimitDAO = overdraftLimitDAO;
 	}
 
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
 }

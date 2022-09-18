@@ -27,12 +27,14 @@ package com.pennant.backend.dao.collateral.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -63,10 +65,11 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(", MaxCollateralValue, SpecialLTV, CollateralLoc, Valuator, ExpiryDate, ReviewFrequency");
 		sql.append(", NextReviewDate, MultiLoanAssignment, Status, ThirdPartyAssignment, Remarks");
 		sql.append(", CollateralValue, BankLTV, BankValuation, Version , LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn)");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn");
+		sql.append(", RegStatus, Modified, RegistrationDate, ModificationDate, SatisfactionDate)");
 		sql.append(" Values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
+		sql.append(", ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -104,6 +107,12 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			ps.setLong(index++, cs.getWorkflowId());
 			ps.setLong(index++, cs.getCreatedBy());
 			ps.setTimestamp(index++, cs.getCreatedOn());
+			ps.setString(index++, cs.getRegStatus());
+			ps.setBoolean(index++, cs.isModified());
+			ps.setDate(index++, JdbcUtil.getDate(cs.getRegistrationDate()));
+			ps.setDate(index++, JdbcUtil.getDate(cs.getModificationDate()));
+			ps.setDate(index++, JdbcUtil.getDate(cs.getSatisfactionDate()));
+
 		});
 
 		return cs.getId();
@@ -360,9 +369,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(", MultiLoanAssignment, ThirdPartyAssignment, Remarks, CollateralValue, BankLTV");
 		sql.append(", BankValuation, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn");
-
+		sql.append(", RegStatus, registrationDate, modificationDate, satisfactionDate");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
-			sql.append(", CollateralType, DepositorCif, DepositorName, CollateralTypeName");
+			sql.append(", CollateralType, DepositorCif, DepositorName, CollateralTypeName, AssetId, SiId");
 		}
 
 		sql.append(" From CollateralSetup");
@@ -411,6 +420,10 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			cs.setWorkflowId(rs.getLong("WorkflowId"));
 			cs.setCreatedBy(rs.getLong("CreatedBy"));
 			cs.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			cs.setRegStatus(rs.getString("RegStatus"));
+			cs.setRegistrationDate(JdbcUtil.getDate(rs.getDate("registrationDate")));
+			cs.setModificationDate(JdbcUtil.getDate(rs.getDate("modificationDate")));
+			cs.setSatisfactionDate(JdbcUtil.getDate(rs.getDate("satisfactionDate")));
 
 			if (StringUtils.containsIgnoreCase(type, "View")) {
 				cs.setCollateralType(rs.getString("CollateralType"));
@@ -488,5 +501,95 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 			return cs;
 		}
+	}
+
+	@Override
+	public void updateSetupDetail(String collateralref, boolean modified) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" Update CollateralSetup ");
+		sql.append(" Set Modified = :Modified");
+		sql.append(" Where CollateralRef=:CollateralRef ");
+
+		paramMap.addValue("Modified", modified);
+		paramMap.addValue("CollateralRef", collateralref);
+		try {
+
+			this.jdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public Date getRegistrationDate(String collateralRef) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select REGISTRATIONDATE From CollateralSetup ");
+		sql.append(" Where CollateralRef= ? ");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, collateralRef);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public Date getExtendedFieldMap(String reference, String tableName, int seqNo) {
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("select REVSECRTCRTNDATE from ");
+		sql.append(tableName);
+		sql.append(" where reference = :reference and seqno = :seqNo");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("reference", reference);
+		source.addValue("seqNo", seqNo);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
+		} catch (Exception e) {
+			logger.warn("Records not found in {} for the reference : {}", tableName, reference);
+		}
+
+		return null;
+	}
+
+	@Override
+	public void saveCollateralRevisedDate(String collateralRef, Date revDate) {
+		logger.debug("Entering");
+
+		StringBuilder sql = new StringBuilder("Insert Into CollateralRevisedHistory");
+		sql.append(" (CollateralRef, RevisedDate )");
+		sql.append(" Values(?, ?) ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, collateralRef);
+				ps.setDate(index++, JdbcUtil.getDate(revDate));
+
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug("Leaving");
+
 	}
 }

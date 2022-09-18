@@ -41,6 +41,7 @@
 		<property name="overdraftLoanDAO" ref="overdraftLoanDAO" />
 		<property name="overdrafLoanService" ref="overdrafLoanService" />
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
+		<property name="overdraftScheduleDetailDAO" ref="overdraftScheduleDetailDAO"/>
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />

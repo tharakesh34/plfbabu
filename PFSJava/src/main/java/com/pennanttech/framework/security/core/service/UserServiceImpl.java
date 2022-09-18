@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 		} else if (user.isUsrAcLocked()) {
 			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED);
 		} else if (user.isDeleted()) {
-			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED);
+			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED); // FIXME
 		}
 
 		Date date = DateUtil.getSysDate();

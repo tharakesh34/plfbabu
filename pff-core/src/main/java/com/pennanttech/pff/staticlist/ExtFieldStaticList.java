@@ -83,6 +83,7 @@ public final class ExtFieldStaticList {
 		list.add("NationalityCode");
 		list.add("OtherBankFinanceType");
 		list.add("PhoneType");
+		list.add("PoliceCaseDetail");
 		list.add("Product");
 		list.add("Profession");
 		list.add("PromotionCode");
@@ -118,14 +119,16 @@ public final class ExtFieldStaticList {
 		list.add("ExtendedSecurityUser");
 		list.add("RestrictedProfile");
 		list.add("CautiousProfile");
-		list.add("VehicleDealer");
-		list.add("TechnicalAgency");
-		list.add("TechnicalAgency");
-		list.add("ProjectUnits");
-		list.add("ProjectTowers");
-		list.add("ProjectFloors");
-		list.add("UnitNumber");
-		list.add("DSA");
+		list.add("AssetCategory");
+		list.add("SecurityInterestType");
+		list.add("AssetSubType");
+		list.add("AssetTyp");
+		list.add("AreaUnit");
+		list.add("District");
+		list.add("CityMapping");
+		list.add("ProvinceMapping");
+		list.add("DistrictMapping");
+
 		return list;
 	}
 

@@ -114,6 +114,7 @@ import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
+import com.pennant.backend.util.CersaiConstants;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -123,6 +124,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
@@ -542,6 +544,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (collateralSetup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				collateralSetup.setRecordType("");
+				collateralSetup.setRegStatus(CersaiConstants.CERSAI_NEW);
 				collateralSetupDAO.save(collateralSetup, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -586,6 +589,25 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				auditDetails.addAll(details);
 			}
 
+			for (ExtendedFieldRender extRender : collateralSetup.getExtendedFieldRenderList()) {
+				String tableName = "";
+				String collateralType = collateralSetup.getCollateralType();
+				if (collateralType != null) {
+					tableName = getTableName(CollateralConstants.MODULE_NAME, collateralType);
+				}
+
+				String collateralRef = collateralSetup.getCollateralRef();
+				Date revDate = collateralSetupDAO.getExtendedFieldMap(collateralRef, tableName, extRender.getSeqNo());
+
+				Map<String, Object> extMap = extRender.getMapValues();
+				Date curDate = (Date) extMap.get("REVSECRTCRTNDATE");
+				if (curDate != null && DateUtil.compare(curDate, revDate) != 0) {
+					boolean modified = true;
+					collateralSetupDAO.saveCollateralRevisedDate(collateralRef, curDate);
+					collateralSetupDAO.updateSetupDetail(collateralRef, modified);
+				}
+			}
+
 			// Collateral Extended field Details
 			if (collateralSetup.getExtendedFieldRenderList() != null
 					&& !collateralSetup.getExtendedFieldRenderList().isEmpty()) {
@@ -621,6 +643,15 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
+	}
+
+	private String getTableName(String module, String subModuleName) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(module);
+		sb.append("_");
+		sb.append(subModuleName);
+		sb.append("_ED");
+		return sb.toString();
 	}
 
 	/**
@@ -3474,6 +3505,21 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	@Autowired
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+
+	@Override
+	public CollateralAssignment getCollDetails(String collateralRef) {
+		return collateralAssignmentDAO.getCollateralDetails(collateralRef);
+	}
+
+	@Override
+	public void updateCersaiDetails(String ref, Long siId, Long assetId) {
+		collateralAssignmentDAO.updateCersaiDetails(ref, siId, assetId);
+	}
+
+	@Override
+	public Date getRegistrationDate(String collateralRef) {
+		return collateralSetupDAO.getRegistrationDate(collateralRef);
 	}
 
 	@Autowired

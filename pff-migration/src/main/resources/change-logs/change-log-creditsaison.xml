@@ -1557,4 +1557,29 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#203654.1" author="Gopal" dbms="postgresql">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval BIGINT;
+			begin
+			SELECT COALESCE(MAX(T.FEETYPEID),0)+1 INTO V_MAXVAL FROM
+			(SELECT FEETYPEID FROM FEETYPES UNION ALL SELECT FEETYPEID FROM FEETYPES_TEMP) T;
+			EXECUTE 'alter sequence SEQFEETYPES
+			restart start with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#203653 " author="Alekhya.t">
+		<sql>
+		<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'INSTRUMENT_TYPE_PARTNER_BANK' WHERE SYSPARMCODE ='PRESENTMENT_EXTRACTION_TYPE';
+			]]>
+			</sql>
+	</changeSet>
+	
 </databaseChangeLog>

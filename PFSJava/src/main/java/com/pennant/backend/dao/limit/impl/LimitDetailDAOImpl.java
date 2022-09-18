@@ -198,12 +198,13 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append(" LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving, LimitSanctioned");
-		sql.append(", ReservedLimit, UtilisedLimit, LimitCheck, LimitChkMethod, Version, CreatedBy, CreatedOn");
+		sql.append(", ReservedLimit, UtilisedLimit, NonRvlUtilised, LimitCheck");
+		sql.append(", LimitChkMethod, Version, CreatedBy, CreatedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, bankingArrangement, limitCondition, externalRef, externalRef1");
 		sql.append(", tenor, osPriBal");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -222,6 +223,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 				ps.setBigDecimal(index++, ld.getLimitSanctioned());
 				ps.setBigDecimal(index++, ld.getReservedLimit());
 				ps.setBigDecimal(index++, ld.getUtilisedLimit());
+				ps.setBigDecimal(index++, ld.getNonRvlUtilised());
 				ps.setBoolean(index++, ld.isLimitCheck());
 				ps.setString(index++, ld.getLimitChkMethod());
 				ps.setInt(index++, ld.getVersion());
@@ -321,7 +323,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		StringBuilder sql = new StringBuilder("Update LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set ReservedLimit = ?, UtilisedLimit = ?");
-		sql.append(", NonRvlUtilised = ?");
+		sql.append(", NonRvlUtilised = ?, OsPriBal = ?");
 		sql.append(" Where DetailId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -332,6 +334,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 			ps.setBigDecimal(index++, limitDetail.getReservedLimit());
 			ps.setBigDecimal(index++, limitDetail.getUtilisedLimit());
 			ps.setBigDecimal(index++, limitDetail.getNonRvlUtilised());
+			ps.setBigDecimal(index++, limitDetail.getOsPriBal());
 			ps.setLong(index++, limitDetail.getDetailId());
 		});
 	}
@@ -401,10 +404,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select DetailId, LimitHeaderId, LimitLine, GroupCode, LimitStructureDetailsID, LimitChkMethod");
-		sql.append(", ExpiryDate, LimitSanctioned,  ReservedLimit, UtilisedLimit");
+		sql.append(", ExpiryDate, LimitSanctioned,  ReservedLimit, UtilisedLimit, NonRvlUtilised, OsPriBal");
 		sql.append(", LimitCheck, Revolving, Currency, ValidateMaturityDate");
 		sql.append(", lv.Version, lv.CreatedBy, lv.CreatedOn, lv.LastMntBy, lv.LastMntOn, lv.RecordStatus");
-		sql.append(", lv.RoleCode, lv.NextRoleCode, lv.TaskId, lv.NextTaskId, lv.RecordType, lv.WorkflowId");
+		sql.append(", lv.RoleCode, lv.NextRoleCode, lv.TaskId");
+		sql.append(", lv.NextTaskId, lv.RecordType, lv.WorkflowId, lv.OsPriBal");
 		sql.append(" From LimitLines_View lv");
 		sql.append(" Inner Join LimitHeader lh on lh.HeaderId = lv.LimitHeaderId");
 		sql.append(" Where (LimitLine=:LimitLine OR GroupCode in (:GroupCodes))");
@@ -616,12 +620,12 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append(" LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving, LimitSanctioned");
-		sql.append(", ReservedLimit, UtilisedLimit, LimitCheck, LimitChkMethod, Version, CreatedBy, CreatedOn");
-		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId, bankingArrangement, limitCondition, externalRef, externalRef1");
-		sql.append(", tenor, osPriBal");
+		sql.append(", ReservedLimit, UtilisedLimit, NonRvlUtilised, LimitCheck, LimitChkMethod, Version");
+		sql.append(", CreatedBy, CreatedOn, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, bankingArrangement, limitCondition");
+		sql.append(", externalRef, externalRef1, tenor, osPriBal");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
@@ -640,6 +644,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 				ps.setBigDecimal(index++, ld.getLimitSanctioned());
 				ps.setBigDecimal(index++, ld.getReservedLimit());
 				ps.setBigDecimal(index++, ld.getUtilisedLimit());
+				ps.setBigDecimal(index++, ld.getNonRvlUtilised());
 				ps.setBoolean(index++, ld.isLimitCheck());
 				ps.setString(index++, ld.getLimitChkMethod());
 				ps.setInt(index++, ld.getVersion());

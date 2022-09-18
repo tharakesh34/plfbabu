@@ -16,6 +16,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.cersai.Cersai;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennanttech.dataengine.DataEngineImport;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.AbstractInterface;
@@ -193,5 +194,11 @@ public class AbstractCersaiProcess extends AbstractInterface implements CersaiPr
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void processResponseFile(long userId, File file, Media media, DataEngineStatus ds) throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 }

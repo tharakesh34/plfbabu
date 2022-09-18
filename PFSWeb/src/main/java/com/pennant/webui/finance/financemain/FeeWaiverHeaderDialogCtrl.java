@@ -1439,6 +1439,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 					break;
 				} else {
 					detail.setCurrWaiverAmount(amount);
+					detail.setWaivedAmount(amount);
 					// Preparing GST
 					prepareGST(detail, amount);
 					detail.setBalanceAmount(detail.getReceivableAmount().subtract(detail.getCurrWaiverAmount()));

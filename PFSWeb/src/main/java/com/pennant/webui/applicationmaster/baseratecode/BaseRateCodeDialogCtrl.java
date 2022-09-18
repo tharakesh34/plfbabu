@@ -197,7 +197,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BaseRateCodeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BaseRateCodeDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BaseRateCodeDialog_btnDelete"));
+		this.btnDelete.setVisible(false); // base rate code should not be deleted.
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_BaseRateCodeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");

@@ -360,6 +360,10 @@ public class TanDetailListCtrl extends GFCBaseCtrl<TanAssignment> {
 					Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_TanDetail.title") })));
 			return false;
 		} else {
+			if (CollectionUtils.isEmpty(tanAssiginmentList)) {
+				tanAssiginmentList = new ArrayList<>();
+			}
+
 			tanAssiginmentList.clear();
 			for (Listitem listitem : listBoxTanDetail.getItems()) {
 				TanAssignment aTanAssignment = (TanAssignment) listitem.getAttribute("data");

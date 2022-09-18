@@ -34,6 +34,7 @@ public class OtherFinanceDetail {
 	private String finType;
 	private String applicantType;
 	private String custCIF;
+	private String product;
 
 	public OtherFinanceDetail() {
 		super();
@@ -71,4 +72,11 @@ public class OtherFinanceDetail {
 		this.custCIF = custCIF;
 	}
 
+	public String getProduct() {
+		return product;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
+	}
 }

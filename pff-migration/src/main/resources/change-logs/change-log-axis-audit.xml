@@ -63,6 +63,13 @@
 	<changeSet id="DE#30.1" author="saisandeep.b">
 		<dropNotNullConstraint tableName="AdtBUILDERGROUP" columnName="SEGMENTATION" columnDataType="varchar(50)" />
     </changeSet>
+    
+    <changeSet id="DE#70" author="saisandeep.b">
+		<modifyDataType tableName="AdtFinStepPolicyDetail" columnName="AuditDate" newDataType="datetime" />
+		<modifyDataType tableName="AdtFinStepPolicyDetail" columnName="StepStart" newDataType="datetime" />
+		<modifyDataType tableName="AdtFinStepPolicyDetail" columnName="StepEnd" newDataType="datetime" />
+		<modifyDataType tableName="AdtFinStepPolicyDetail" columnName="LastmntOn" newDataType="datetime" />
+	</changeSet>
 	
 	<changeSet id="DE#71.1" author="saisandeep.b">
 		<sql>

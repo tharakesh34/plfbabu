@@ -23,6 +23,8 @@ public class FileDownlaod {
 	private Date startDate;
 	private Date endDate;
 	private String segmentType;
+	private String reportFormat;
+	private String customerCategory;
 
 	public String getName() {
 		return name;
@@ -174,6 +176,22 @@ public class FileDownlaod {
 
 	public void setSegmentType(String segmentType) {
 		this.segmentType = segmentType;
+	}
+
+	public String getCustomerCategory() {
+		return customerCategory;
+	}
+
+	public void setCustomerCategory(String customerCategory) {
+		this.customerCategory = customerCategory;
+	}
+
+	public String getReportFormat() {
+		return reportFormat;
+	}
+
+	public void setReportFormat(String reportFormat) {
+		this.reportFormat = reportFormat;
 	}
 
 }

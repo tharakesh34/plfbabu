@@ -323,6 +323,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 			if (liabilityRequest.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
+				liabilityRequest.setNocDate(SysParamUtil.getAppDate());
 				liabilityRequest.setRecordType("");
 				liabilityRequestDAO.save(liabilityRequest, "");
 			} else {

@@ -245,8 +245,8 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 
 		// FIXME MURTHY
 		/*
-		 * if (ImplementationConstants.AUTO_EOD_REQUIRED) { DefaultJobSchedular defaultJobSchedular =
-		 * (DefaultJobSchedular) SpringBeanUtil .getBean("defaultJobSchedular"); try { if
+		 * if (ImplementationConstants.AUTO_EOD_REQUIRED && eODConfig.isAutoEodRequired()) { DefaultJobSchedular
+		 * defaultJobSchedular = (DefaultJobSchedular) SpringBeanUtil .getBean("defaultJobSchedular"); try { if
 		 * (eODConfig.isAutoEodRequired()) { defaultJobSchedular.reScheduleJob(AutoEODJob.JOB_KEY,
 		 * eODConfig.getEODStartJobFrequency()); } if (eODConfig.isEmailNotifReqrd()) {
 		 * defaultJobSchedular.reScheduleJob(EODReminderJob.JOB_KEY, eODConfig.getReminderFrequency()); } if

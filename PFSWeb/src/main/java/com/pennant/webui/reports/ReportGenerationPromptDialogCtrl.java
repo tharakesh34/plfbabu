@@ -1280,7 +1280,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									&& ((Datebox) toDateBox).getValue().before(((Datebox) fromDateBox).getValue())) {
 								throw new WrongValueException(fromDateBox,
 										Labels.getLabel("label_Error_FromDateMustBfrTo.vlaue"));
-							} else if (StringUtils.equals("menu_Item_TDSRegister_Report", reportMenuCode)) {// FIXME
+							} else if (StringUtils.equals("menu_Item_GLcodewise_Report", reportMenuCode)) {// FIXME
 								int diffDays = 31;
 								if (DateUtility.getDaysBetween(((Datebox) fromDateBox).getValue(),
 										((Datebox) toDateBox).getValue()) > diffDays && filedId.equals("11")) {
@@ -1806,13 +1806,42 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			argsMap.put("whereCondition2", whereCond1);
 		}
 
+		Date befDate = null;
+		Date aftDate = null;
+
+		if (!(StringUtils.equals(reportMenuCode, "menu_Item_FeeReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_LoanDisbursementBasicListing")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_LoanClosureReport"))) {
+			befDate = DateUtility.addDays(DateUtility.getDBDate(fromDate), -1);
+			aftDate = DateUtility.addDays(DateUtility.getDBDate(toDate), 1);
+		}
+
 		if (fromDate != null) {
-			argsMap.put("fromDate", "'" + DateUtility.getDBDate(fromDate).toString() + "'");
-			fromDate = "'" + DateUtility.getDBDate(fromDate).toString() + "'";
+			if (StringUtils.equals(reportMenuCode, "menu_Item_FeeReport")
+					|| StringUtils.equals(reportMenuCode, "menu_Item_LoanDisbursementBasicListing")
+					|| StringUtils.equals(reportMenuCode, "menu_Item_LoanClosureReport")) {
+				argsMap.put("DateOne", fromDate.toString());
+			} else {
+				argsMap.put("fromDate", "'" + DateUtility.getDBDate(fromDate).toString() + "'");
+			}
+		}
+
+		if (fromDate != null && befDate != null) {
+			argsMap.put("befDate", "'" + befDate.toString() + "'");
 		}
 
 		if (toDate != null) {
-			argsMap.put("toDate", "'" + DateUtility.getDBDate(toDate).toString() + "'");
+			if (StringUtils.equals(reportMenuCode, "menu_Item_FeeReport")
+					|| StringUtils.equals(reportMenuCode, "menu_Item_LoanDisbursementBasicListing")
+					|| StringUtils.equals(reportMenuCode, "menu_Item_LoanClosureReport")) {
+				argsMap.put("DateTwo", toDate.toString());
+			} else {
+				argsMap.put("toDate", "'" + DateUtility.getDBDate(toDate).toString() + "'");
+			}
+		}
+
+		if (toDate != null && aftDate != null) {
+			argsMap.put("aftDate", "'" + aftDate.toString() + "'");
 		}
 
 		if (!reportConfiguration.isPromptRequired()) {
@@ -2590,6 +2619,76 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null, null);
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_StatutoryAudit_Principal")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_Future_CashFlowReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_PartywiseInterestDetails_GSTreport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_StatAuditInterest_Accrual")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_StatutoryAudit_Interest")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_InterestRateModification")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_CorporateStatAuditReport")) {
+
+			String fromDate = null;
+			String toDate = null;
+
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			fromDate = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+			if (!StringUtils.equals(reportMenuCode, "menu_Item_Future_CashFlowReport")) {
+				toDate = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+			}
+			doShowReport("", null, fromDate, toDate, null);
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_StatutoryAudit_Principal")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_Future_CashFlowReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_PartywiseInterestDetails_GSTreport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_StatAuditInterest_Accrual")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_StatutoryAudit_Interest")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_InterestRateModification")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_CorporateStatAuditReport")) {
+			String fromDate = null;
+			String toDate = null;
+
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			fromDate = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+			if (!StringUtils.equals(reportMenuCode, "menu_Item_Future_CashFlowReport")) {
+				toDate = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+			}
+			doShowReport("", null, fromDate, toDate, null);
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_LoanDetailLMSReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_OverdueAgeingReport")) {
+			String toDate = null;
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			toDate = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+			doShowReport("", null, null, toDate, null);
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_LoanDetailsMISReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_CME_ExposureReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_Revised_LimitReport")) {
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+			String toDate = "";
+			if (StringUtils.equals(reportMenuCode, "menu_Item_Revised_LimitReport")) {
+				for (ReportSearchTemplate filter : filters) {
+					if (filter.getFieldID() == 2) {
+						toDate = ((ReportSearchTemplate) filter).getFieldValue();
+					}
+				}
+			} else {
+				toDate = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+			}
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
+					toDate, null);
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_DailyBalanceReport")) {
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+			String fromDate = "";
+			String toDate = "";
+			fromDate = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+			toDate = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
+					fromDate, toDate, null);
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_WriteoffReport")) {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			if ("where".equals(whereCondition.toString().trim())) {
@@ -2619,6 +2718,31 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
 					fromDate, null, null);
+		} else if ("menu_Item_FeeReport".equals(reportMenuCode)
+				|| "menu_Item_LoanClosureReport".equals(reportMenuCode)) {
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			String[] dateslist = ((ReportSearchTemplate) filters.get(0)).getFieldValue().split("&");
+			String fromDate = dateslist[0];
+			String toDate = dateslist[1];
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
+					fromDate, toDate, null);
+		} else if ("menu_Item_LoanDisbursementBasicListing".equals(reportMenuCode)) {
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			String fromDate = "";
+			String toDate = "";
+			for (ReportSearchTemplate filter : filters) {
+				if (filter.getFieldID() == 4) {
+					String[] dateslist = ((ReportSearchTemplate) filter).getFieldValue().split("&");
+					fromDate = dateslist[0];
+					toDate = dateslist[1];
+				}
+			}
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
+					fromDate, toDate, null);
 		} else {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,

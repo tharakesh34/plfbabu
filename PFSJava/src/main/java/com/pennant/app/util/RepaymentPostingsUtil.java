@@ -757,6 +757,7 @@ public class RepaymentPostingsUtil {
 
 				// Previous Month Amortization reset to Total Profit to avoid posting on closing Month End
 				pftDetail.setPrvMthAmz(pftDetail.getTotalPftSchd());
+				pftDetail.setAmzTillLBD(pftDetail.getTotalPftSchd());
 			}
 		} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
 			fm.setFinIsActive(false);

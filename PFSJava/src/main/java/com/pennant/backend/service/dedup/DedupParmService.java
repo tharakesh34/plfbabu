@@ -87,4 +87,8 @@ public interface DedupParmService {
 			String role);
 
 	StringBuilder getSelectQuery(CustomerDedup dedup, boolean blackList);
+
+	CustomerDedup processNewUCIC(CustomerDedup custDedup, String ucicType);
+
+	List<CustomerDedup> processRetrigger(CustomerDedup custDedup, String ucicType);
 }

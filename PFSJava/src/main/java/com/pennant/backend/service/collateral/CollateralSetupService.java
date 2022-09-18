@@ -26,6 +26,7 @@
 package com.pennant.backend.service.collateral;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
@@ -86,4 +87,10 @@ public interface CollateralSetupService {
 	List<CollateralSetup> getCollateralByCustId(long custID, String type);
 
 	List<CollateralSetup> getCollateralSetupByCustomer(long custID, String finType);
+
+	CollateralAssignment getCollDetails(String collateralRef);
+
+	void updateCersaiDetails(String collateralRef, Long assetid, Long siid);
+
+	Date getRegistrationDate(String collateralRef);
 }

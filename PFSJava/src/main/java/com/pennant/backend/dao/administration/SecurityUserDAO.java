@@ -72,5 +72,5 @@ public interface SecurityUserDAO {
 
 	void lockUserAccounts();
 
-	void markAsDelete(SecurityUser securityUser, String Type);
+	void markAsDelete(SecurityUser securityUser, String type);
 }

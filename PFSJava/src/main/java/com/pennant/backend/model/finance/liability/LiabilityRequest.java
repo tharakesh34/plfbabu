@@ -63,6 +63,7 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 	private String finCcy;
 	private String custCIF;
 	private BigDecimal finAmount = BigDecimal.ZERO;
+	private Date nocDate;
 
 	public LiabilityRequest() {
 		super();
@@ -85,6 +86,7 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 		excludeFields.add("custCIF");
 		excludeFields.add("finAmount");
 		excludeFields.add("financeDetail");
+		excludeFields.add("nocDate");
 
 		return excludeFields;
 	}
@@ -253,4 +255,11 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 		this.insClaimReason = insClaimReason;
 	}
 
+	public Date getNocDate() {
+		return nocDate;
+	}
+
+	public void setNocDate(Date nocDate) {
+		this.nocDate = nocDate;
+	}
 }

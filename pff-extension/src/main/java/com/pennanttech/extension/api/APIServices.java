@@ -143,6 +143,7 @@ public class APIServices {
 		services.add("getCustomerDetails");
 		services.add("getWorkFlowDetails");
 		services.add("getProcessView");
+		services.add("earlySettlement");
 
 		return services;
 	}

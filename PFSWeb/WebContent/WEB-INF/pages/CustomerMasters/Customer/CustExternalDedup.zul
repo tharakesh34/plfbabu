@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_custExternalDedupDialog" border="normal" apply="${custExternalDedupCtrl}" width="70%"
+		height="70%" sizable="false">
+
+		<borderlayout id="borderlayoutGender">
+			<north>
+				<div sclass="z-toolbar" style="padding:0px">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						
+						<toolbar align="start" sclass="toolbar-start"/>
+						
+						<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_CustDedupDialog.title')}" sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none"  autoscroll="true">
+				<groupbox id="gb_customerDetails" mold="3d">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+						<columns>
+							<column width="150px" />
+							<column />
+							<column width="150px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_CustomerID"
+									value="${c:l('label_custExternalDedupDialog_CustomerID.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="customerID" width="120px" readonly="true"/>
+								</hbox>
+								<label id="label_custExternalDedupDialog_UID"
+									value="${c:l('label_custExternalDedupDialog_UID.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="uID" width="120px" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_Name"
+									value="${c:l('label_custExternalDedupDialog_Name.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="name" width="120px" readonly="true" />
+								</hbox>
+								<label id="label_custExternalDedupDialog_DrivingLicense"
+									value="${c:l('label_custExternalDedupDialog_DrivingLicense.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="drivingLicense" width="120px" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_MotherName"
+									value="${c:l('label_custExternalDedupDialog_MotherName.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="motherName" width="120px" readonly="true" />
+								</hbox>
+								<label id="label_custExternalDedupDialog_GSTIN"
+									value="${c:l('label_custExternalDedupDialog_GSTIN.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="gSTIN" width="120px" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_FatherName"
+									value="${c:l('label_custExternalDedupDialog_FatherName.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="fatherName" width="120px" readonly = "true"/>
+								</hbox>
+								<label id="label_custExternalDedupDialog_RegistrationORCINNo"
+									value="${c:l('label_custExternalDedupDialog_RegistrationORCINNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="registrationORCINNo" width="120px" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_SpouseName"
+									value="${c:l('label_custExternalDedupDialog_SpouseName.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="spouseName" width="120px" readonly="true" />
+								</hbox>
+								<label id="label_custExternalDedupDialog_TANNo"
+									value="${c:l('label_custExternalDedupDialog_TANNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="tANNo" width="120px" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_EmployerName"
+									value="${c:l('label_custExternalDedupDialog_EmployerName.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="employerName" width="120px" readonly="true" />
+								</hbox>
+								<label id="label_custExternalDedupDialog_NRegaCard"
+									value="${c:l('label_custExternalDedupDialog_NRegaCard.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="nRegaCard" width="120px" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_Gender"
+									value="${c:l('label_custExternalDedupDialog_Gender.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="gender" width="120px" readonly="true" />
+								</hbox>
+								<label id="label_custExternalDedupDialog_BankAccountNo"
+									value="${c:l('label_custExternalDedupDialog_BankAccountNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="bankAccountNo" width="120px" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_Dob"
+									value="${c:l('label_custExternalDedupDialog_Dob.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<datebox id="dob" width="120px" readonly="true" />
+								</hbox>
+								<label id="label_custExternalDedupDialog_IFSCCode"
+									value="${c:l('label_custExternalDedupDialog_IFSCCode.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="iFSCCode" width="120px" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_PanNo"
+									value="${c:l('label_custExternalDedupDialog_PanNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="panNo" width="120px" readonly="true" />
+								</hbox>
+								<label id="label_custExternalDedupDialog_UCIC"
+									value="${c:l('label_custExternalDedupDialog_UCIC.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="uCIC" width="120px" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_VoterID"
+									value="${c:l('label_custExternalDedupDialog_VoterID.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="voterID" width="120px" readonly="true" />
+								</hbox>
+								<label id="label_custExternalDedupDialog_CSSCORE"
+									value="${c:l('label_custExternalDedupDialog_CSSCORE.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="cSSCORE" readonly="true" />
+								</hbox>
+							</row>
+
+							<row visible="true">
+								<label id="label_custExternalDedupDialog_PassportNo"
+									value="${c:l('label_custExternalDedupDialog_PassportNo.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="passportNo" width="120px" readonly="true" />
+								</hbox>
+								<label id="label_custExternalDedupDialog_Rank"
+									value="${c:l('label_custExternalDedupDialog_Rank.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="rank"  width="120px" readonly="true" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

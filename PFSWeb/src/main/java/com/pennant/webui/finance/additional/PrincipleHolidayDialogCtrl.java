@@ -244,7 +244,8 @@ public class PrincipleHolidayDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				if (FinanceConstants.FLAG_RESTRUCTURE_PRIH.equals(curSchd.getBpiOrHoliday())) {
+				if (FinanceConstants.FLAG_RESTRUCTURE_PRIH.equals(curSchd.getBpiOrHoliday())
+						|| FinanceConstants.FLAG_HOLIDAY.equals(curSchd.getBpiOrHoliday())) {
 					continue;
 				}
 

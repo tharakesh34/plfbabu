@@ -1888,7 +1888,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			frequencyDate = DateUtil.addMonths(frequencyDate, 12);
 		} else if ("O".equals(strFrequencyType)) {
 			if (covenantTypeObject != null && !covenantTypeObject.isAlertsRequired()) {
-				frequencyDate = null;
+				// frequencyDate = null;
 				disablePDD();
 				disablePDDDetailsGroup();
 			}
@@ -1901,10 +1901,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		}
 
 		if (frequencyDate != null) {
-			if ("O".equals(strFrequencyType) && this.alertsRequired.isChecked()) {
-				this.covenantNextFrequencyDate.setValue(this.receivableDate.getValue());
+			if ("O".equals(strFrequencyType)) {
+				this.covenantNextFrequencyDate.setValue(null);
+				this.covenantNextFrequencyDate.setDisabled(true);
 			} else {
 				this.covenantNextFrequencyDate.setValue(frequencyDate);
+				this.covenantNextFrequencyDate.setDisabled(false);
 			}
 
 			Date covenantNextFrequencyDate = this.covenantNextFrequencyDate.getValue();
@@ -1916,6 +1918,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 			if (covenantNextFrequencyDate != null) {
 				this.covenantGraceDueDate.setValue(DateUtil.addDays(covenantNextFrequencyDate, covenantGraceDays));
+			} else {
+				this.covenantGraceDueDate.setValue(null);
+				this.covenantGraceDueDate.setDisabled(true);
 			}
 
 		} else {
@@ -2267,7 +2272,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.notifyTo.setButtonDisabled(true);
 		this.covenantNextFrequencyDate.setText(null);
 		this.covenantGraceDueDate.setText(null);
-		this.alertsRequired.setDisabled(true);
+		this.covenantNextFrequencyDate.setDisabled(true);
+		this.covenantGraceDays.setReadonly(true);
+		// this.alertsRequired.setDisabled(true);
 		this.alertsRequired.setChecked(false);
 		onCheckAlertsRequired();
 	}
