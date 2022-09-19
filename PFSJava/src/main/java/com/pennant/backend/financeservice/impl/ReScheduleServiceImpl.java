@@ -1,6 +1,7 @@
 package com.pennant.backend.financeservice.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
@@ -31,6 +33,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
@@ -38,6 +41,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction> implements ReScheduleService {
@@ -107,14 +111,25 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		BigDecimal schPriDue = BigDecimal.ZERO;
 		BigDecimal schPftDue = BigDecimal.ZERO;
 		BigDecimal unModifiedPft = BigDecimal.ZERO;
+		// Set Original end balance of Event From Date schedule
+		BigDecimal orgEndBalOnFromDate = BigDecimal.ZERO;
+
 		Date rateAppliedFromDate = null;
 		for (int i = 0; i < scheduleList.size(); i++) {
 			if (scheduleList.get(i).getSchDate().compareTo(fromDate) <= 0) {
 				rateAppliedFromDate = scheduleList.get(i).getSchDate();
 				mapList.put(scheduleList.get(i).getSchDate(), scheduleList.get(i));
 				unModifiedPft = unModifiedPft.add(scheduleList.get(i).getProfitSchd());
+				if (scheduleList.get(i).getSchDate().compareTo(fromDate) == 0) {
+					orgEndBalOnFromDate = scheduleList.get(i).getOrgEndBal();
+				}
 			} else {
-
+				// if there is any part payment done after selected event from date
+				if (!scheduleList.get(i).isFrqDate()
+						&& scheduleList.get(i).getPrincipalSchd().compareTo(scheduleList.get(i).getRepayAmount()) == 0
+						&& scheduleList.get(i).getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) {
+					mapList.put(scheduleList.get(i).getSchDate(), scheduleList.get(i));
+				}
 				schPftDue = schPftDue.add(scheduleList.get(i).getProfitSchd());
 				schPriDue = schPriDue.add(scheduleList.get(i).getPrincipalSchd());
 			}
@@ -510,6 +525,130 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			financeMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		} else {
 			financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+			if (financeMain.isStepFinance() && (StringUtils.equals(financeMain.getScheduleMethod(),
+					CalculationConstants.SCHMTHD_PRI)
+					|| StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))) {
+
+				// financeMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+				financeMain.setProcMethod(FinServiceEvent.RESCHD);
+
+				for (FinanceScheduleDetail finSch : scheduleData.getFinanceScheduleDetails()) {
+					if (finSch.getSchDate().compareTo(financeMain.getEventFromDate()) > 0) {
+						if (!finSch.isRepayOnSchDate()) {
+							continue;
+						}
+						financeMain.setRecalFromDate(finSch.getSchDate());
+						break;
+					}
+				}
+				financeMain.setResetOrgBal(false);
+
+				int idxStart = 0;
+				int riStart = 0;
+				int riEnd = 0;
+				boolean grcEnd = false;
+
+				List<FinanceStepPolicyDetail> spdList = scheduleData.getStepPolicyDetails();
+				scheduleList = scheduleData.getFinanceScheduleDetails();
+				boolean lastStep = false;
+
+				for (int i = 0; i < spdList.size(); i++) {
+
+					FinanceStepPolicyDetail spd = spdList.get(i);
+					if (grcEnd && PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
+						continue;
+					}
+
+					riStart = idxStart;
+					if (riEnd == 0) {
+						riEnd = riStart + spd.getInstallments();
+					} else {
+						riEnd = riStart + spd.getInstallments() - 1;
+					}
+
+					BigDecimal steppedEMI = BigDecimal.ZERO;
+					if (i == spdList.size() - 1) {
+						lastStep = true;
+
+						steppedEMI = orgEndBalOnFromDate.divide(new BigDecimal(spd.getInstallments()), 9,
+								RoundingMode.HALF_DOWN);
+						steppedEMI = steppedEMI.setScale(0, RoundingMode.HALF_DOWN);
+						steppedEMI = CalculationUtil.roundAmount(steppedEMI, financeMain.getCalRoundingMode(),
+								financeMain.getRoundingTarget());
+
+					}
+
+					int instCount = 0;
+					for (int iFsd = idxStart; iFsd < scheduleList.size(); iFsd++) {
+						FinanceScheduleDetail fsd = scheduleList.get(iFsd);
+
+						// Part payment installment is also considering for installment count so added isFrqDate
+						// condition.
+						String specifier = fsd.getSpecifier();
+						if (fsd.isRepayOnSchDate() && fsd.isFrqDate()
+								&& !(StringUtils.equals(fsd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI))) {
+							instCount = instCount + 1;
+
+							if (lastStep) {
+								fsd.setOrgPri(steppedEMI);
+							} else {
+								fsd.setOrgPri(spd.getSteppedEMI());
+							}
+
+						} else if (iFsd != 0 && PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())
+								&& !(FinanceConstants.FLAG_BPI.equals(fsd.getBpiOrHoliday()))
+								&& (CalculationConstants.SCH_SPECIFIER_GRACE.equals(specifier)
+										|| CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier))
+								&& fsd.isFrqDate()) {
+							instCount = instCount + 1;
+
+							if (lastStep) {
+								fsd.setOrgPri(steppedEMI);
+							} else {
+								fsd.setOrgPri(spd.getSteppedEMI());
+							}
+						}
+
+						// Set Original End Balance
+						fsd.setOrgEndBal(orgEndBalOnFromDate.subtract(fsd.getOrgPri()));
+						orgEndBalOnFromDate = orgEndBalOnFromDate.subtract(fsd.getOrgPri());
+
+						if (spd.getInstallments() == instCount) {
+							if (CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
+									&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)) {
+								grcEnd = true;
+							}
+							idxStart = iFsd + 1;
+
+							for (int j = idxStart; j < scheduleList.size(); j++) {
+
+								FinanceScheduleDetail sd = scheduleList.get(j);
+
+								if (sd.isRepayOnSchDate() && sd.isFrqDate() && !sd.isDisbOnSchDate()
+										&& !(StringUtils.equals(sd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI))) {
+									break;
+								} else if (iFsd != 0
+										&& PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())
+										&& !(FinanceConstants.FLAG_BPI.equals(sd.getBpiOrHoliday()))
+										&& (CalculationConstants.SCH_SPECIFIER_GRACE.equals(sd.getSpecifier())
+												|| CalculationConstants.SCH_SPECIFIER_GRACE_END
+														.equals(sd.getSpecifier()))
+										&& !sd.isDisbOnSchDate() && sd.isFrqDate()) {
+
+									break;
+								}
+
+								// Set Original End Balance
+								sd.setOrgEndBal(orgEndBalOnFromDate);
+
+								idxStart++;
+							}
+
+							break;
+						}
+					}
+				}
+			}
 		}
 		financeMain.setPftIntact(finServiceInstruction.isPftIntact());
 

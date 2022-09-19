@@ -21,7 +21,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -334,7 +334,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		if (this.dateOfInc.isVisible() && !this.dateOfInc.isDisabled()) {
 			this.dateOfInc
 					.setConstraint(new PTDateValidator(Labels.getLabel("label_OrganizationDialog_DateOfInc.value"),
-							true, null, DateUtil.getDatePart(DateUtility.getAppDate()), true));
+							true, null, DateUtil.getDatePart(SysParamUtil.getAppDate()), true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -406,7 +406,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		}
 
 		try {
-			org.setCreatedOn(DateUtility.getAppDate());
+			org.setCreatedOn(SysParamUtil.getAppDate());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -477,7 +477,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					if (!suntechFlag && StringUtils.containsIgnoreCase(interfaceServiceLog.getStatus(), "FAILED")) {
 						try {
 							bussinessDate = getBussinessDate();
-							Date appDate = DateUtility.addDays(DateUtility.getAppDate(), -1);
+							Date appDate = DateUtility.addDays(SysParamUtil.getAppDate(), -1);
 							if (StringUtils.equalsIgnoreCase(bussinessDate, interfaceServiceLog.getInterface_Info())) {
 								reProcess.setDisabled(false);
 							} else if (DateUtility.compare(appDate, interfaceServiceLog.getEodDate()) == 0) {

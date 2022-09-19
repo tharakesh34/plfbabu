@@ -373,7 +373,7 @@
 	<changeSet id="DE#3831.7" author="praveena.v">
 		<sql>
 			<![CDATA[
-				update reportfilterfields set FIELDDBNAME=''P.fintype' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 5;
+				update reportfilterfields set FIELDDBNAME='P.fintype' where reportid in (select reportid from reportconfiguration  where menuitemcode='menu_Item_LoanwiseVoucherDetail') AND FIELDID = 5;
 			]]>
 		</sql>
 	</changeSet>

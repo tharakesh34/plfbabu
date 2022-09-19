@@ -12,4 +12,5 @@ public interface CersaiProcess {
 
 	public void processResponseFile(long userId, File file, Media media) throws Exception;
 
+	void processResponseFile(long userId, File file, Media media, DataEngineStatus ds) throws Exception;
 }

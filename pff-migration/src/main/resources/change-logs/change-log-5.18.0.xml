@@ -372,7 +372,7 @@
 			<column name="FINREFERENCE" type="varchar(20)" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="63" author="Sravani.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -380,7 +380,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="63" author="Sravani.M" dbms="orcle">
 		<sql>
 			<![CDATA[
@@ -1931,8 +1931,8 @@
 	<!-- change logs for ISRA Details Start -->
 
 	<changeSet id="ST#92.0" author="saisandeep.b">
-		<createSequence sequenceName="SEQISRADETAILS" maxValue="999999999999999999" minValue="1" incrementBy="1"
-			startValue="1" />
+		<createSequence sequenceName="SEQISRADETAILS" maxValue="999999999999999999" minValue="1"
+			incrementBy="1" startValue="1" />
 	</changeSet>
 
 	<changeSet id="ST#362.2" author="NaveenKumar.A" dbms="mssql">
@@ -2223,8 +2223,8 @@
 	</changeSet>
 
 	<changeSet id="ST#92.14" author="saisandeep.b">
-		<createSequence sequenceName="SEQISRALIQUIDDETAILS" maxValue="999999999999999999" minValue="1" incrementBy="1"
-			startValue="1" />
+		<createSequence sequenceName="SEQISRALIQUIDDETAILS" maxValue="999999999999999999" minValue="1"
+			incrementBy="1" startValue="1" />
 	</changeSet>
 
 	<changeSet id="ST#92.15" author="saisandeep.b">
@@ -2471,15 +2471,15 @@
 			<column name="ISRA" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="ST#92.26_pre" author="saisandeep.b" >
+
+	<changeSet id="ST#92.26_pre" author="saisandeep.b">
 		<sql>
 			<![CDATA[	
 				UPDATE FINANCEMAIN SET ISRA = 0 WHERE ISRA IS NULL;
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#92.26.1" author="saisandeep.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ISRA" tableName="Financemain" defaultValue="0" />
 	</changeSet>
@@ -2497,8 +2497,8 @@
 			<column name="ISRA" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="ST#92.27_pre" author="saisandeep.b" >
+
+	<changeSet id="ST#92.27_pre" author="saisandeep.b">
 		<sql>
 			<![CDATA[	
 				UPDATE FINANCEMAIN_TEMP SET ISRA = 0 WHERE ISRA IS NULL;
@@ -2523,8 +2523,8 @@
 			<column name="ISRA" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="ST#92.28_pre" author="saisandeep.b" >
+
+	<changeSet id="ST#92.28_pre" author="saisandeep.b">
 		<sql>
 			<![CDATA[	
 				UPDATE REJECTFINANCEMAIN SET ISRA = 0 WHERE ISRA IS NULL;
@@ -2549,8 +2549,8 @@
 			<column name="ISRA" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="ST#92.29_pre" author="saisandeep.b" >
+
+	<changeSet id="ST#92.29_pre" author="saisandeep.b">
 		<sql>
 			<![CDATA[	
 				UPDATE WIFFINANCEMAIN SET ISRA = 0 WHERE ISRA IS NULL;
@@ -2575,8 +2575,8 @@
 			<column name="ISRA" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="ST#92.30_pre" author="saisandeep.b" >
+
+	<changeSet id="ST#92.30_pre" author="saisandeep.b">
 		<sql>
 			<![CDATA[	
 				UPDATE WIFFINANCEMAIN_TEMP SET ISRA = 0 WHERE ISRA IS NULL;
@@ -3925,7 +3925,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#3220.3.8" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -3943,7 +3943,7 @@
 		<addDefaultValue columnName="LppReq" tableName="PRESENTMENTHEADER" defaultValue="0" />
 		<addDefaultValue columnName="BounceReq" tableName="PRESENTMENTHEADER" defaultValue="0" />
 	</changeSet>
-	
+
 
 	<!-- Columns added in Presentment Header changes ended -->
 
@@ -4200,7 +4200,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#3220.6.12" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -4236,7 +4236,7 @@
 			<column name="TotPenaltyBal" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#3220.6.16" author="Gopal.p" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -4244,7 +4244,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#3220.6.16" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4260,7 +4260,7 @@
 			<column name="LPIBal" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#3220.6.17" author="Gopal.p" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -4268,7 +4268,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#3220.6.17" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5346,7 +5346,7 @@
 			<column name="FinReference" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#3220.29.5" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5354,7 +5354,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#3220.29.5" author="Gopal.p" dbms="orcle">
 		<sql>
 			<![CDATA[
@@ -5581,7 +5581,7 @@
 			<column name="LinkedTranId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#189782" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -5693,13 +5693,13 @@
 
 	<changeSet id="ST#11.3_1" author="kavya.n">
 		<createTable tableName="Cust_Docs">
-			<column name ="ID" type="bigInt" autoIncrement="true"/>
+			<column name="ID" type="bigInt" autoIncrement="true" />
 			<column name="CustID" type="bigInt" />
 			<column name="CustDocCategory" type="varchar(50)" />
 			<column name="seq" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.4_1" author="kavya.n">
 		<sql>
 			<![CDATA[
@@ -5708,8 +5708,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="ST#11.5_1" author="kavya.n" dbms="postgresql">
+
+	<changeSet id="ST#11.5_1" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					Update  CustomerDocuments cd set id = seq from (
@@ -5723,7 +5723,7 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="ST#11.5_1" author="kavya.n" dbms="mssql">
+	<changeSet id="ST#11.5_1" author="kavya.n" dbms="mssql">
 		<sql>
 			<![CDATA[
                       UPDATE CustomerDocuments
@@ -5789,7 +5789,7 @@
 			<column name="CustDocCategory" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.7" author="kavya.n" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -5797,14 +5797,14 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.7" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				CREATE INDEX IX_CustDocs_CustID_DocCat ON CustomerDocuments(CustID,lower(CustDocCategory));
 			]]>
 		</sql>
-	</changeSet>	
+	</changeSet>
 
 	<changeSet id="ST#11.8" author="kavya.n" dbms="mssql">
 		<createIndex tableName="CustomerDocuments_Temp" indexName="IX_CustDocs_CustID_DocCat_T" unique="true">
@@ -5812,7 +5812,7 @@
 			<column name="CustDocCategory" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.8" author="kavya.n" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -5820,7 +5820,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.8" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5828,30 +5828,31 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.9" author="kavya.n">
-		<addNotNullConstraint tableName="CustomerDocuments" columnName="ID" columnDataType="BigInt"/>
+		<addNotNullConstraint tableName="CustomerDocuments" columnName="ID" columnDataType="BigInt" />
 	</changeSet>
-	
+
 	<changeSet id="ST#11.9.1" author="kavya.n">
-		<addNotNullConstraint tableName="CustomerDocuments_Temp" columnName="ID" columnDataType="BigInt"/>
+		<addNotNullConstraint tableName="CustomerDocuments_Temp" columnName="ID" columnDataType="BigInt" />
 	</changeSet>
 
 	<changeSet id="ST#11.10.1" author="kavya.n">
 		<dropPrimaryKey constraintName="PK_CustomerDocuments" tableName="CustomerDocuments" />
 	</changeSet>
-	
+
 	<changeSet id="ST#11.10.2" author="kavya.n">
 		<dropPrimaryKey constraintName="PK_CustomerDocuments_Temp" tableName="CustomerDocuments_Temp" />
 	</changeSet>
-	 
+
 	<changeSet id="ST#11.11.1" author="kavya.n">
 		<addPrimaryKey tableName="CustomerDocuments" columnNames="Id" constraintName="PK_CustomerDocuments" />
 	</changeSet>
 
 	<changeSet id="ST#11.12.1" author="kavya.n">
-		<addPrimaryKey tableName="CustomerDocuments_Temp" columnNames="Id" constraintName="PK_CustomerDocuments_Temp" />
-	</changeSet> 
+		<addPrimaryKey tableName="CustomerDocuments_Temp" columnNames="Id"
+			constraintName="PK_CustomerDocuments_Temp" />
+	</changeSet>
 
 	<changeSet id="ST#11.18" author="kavya.n">
 		<createSequence sequenceName="SeqDocument_Status" startValue="1" maxValue="999999999999999999"
@@ -5913,7 +5914,8 @@
 	</changeSet>
 
 	<changeSet id="ST#11.18.4" author="kavya.n">
-		<addPrimaryKey tableName="Document_Status_Temp" columnNames="Id" constraintName="PK_Document_Status_Temp" />
+		<addPrimaryKey tableName="Document_Status_Temp" columnNames="Id"
+			constraintName="PK_Document_Status_Temp" />
 	</changeSet>
 
 	<changeSet id="ST#11.18.5" author="kavya.n" dbms='mssql'>
@@ -5921,7 +5923,7 @@
 			<column name="FinReference" type="varchar(20)" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.18.5" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5929,7 +5931,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.18.5" author="kavya.n" dbms="orcle">
 		<sql>
 			<![CDATA[
@@ -5943,7 +5945,7 @@
 			<column name="FinReference" type="varchar(20)" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.18.6" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5951,7 +5953,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.18.6" author="kavya.n" dbms="orcle">
 		<sql>
 			<![CDATA[
@@ -5979,7 +5981,7 @@
 			<column name="Status" type="char(1)" />
 			<column name="Remarks" type="varchar(2000)" />
 			<column name="Covenants" type="varchar(200)" />
-			<column name="Processed" type="int"/>
+			<column name="Processed" type="int" />
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -6011,7 +6013,7 @@
 			<column name="Status" type="char(1)" />
 			<column name="Remarks" type="varchar(2000)" />
 			<column name="Covenants" type="varchar(200)" />
-			<column name="Processed" type="int"/>
+			<column name="Processed" type="int" />
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -6030,11 +6032,13 @@
 	</changeSet>
 
 	<changeSet id="ST#11.19.3" author="kavya.n">
-		<addPrimaryKey tableName="Document_Status_Details" columnNames="Id" constraintName="PK_Document_Status_Dtls" />
+		<addPrimaryKey tableName="Document_Status_Details" columnNames="Id"
+			constraintName="PK_Document_Status_Dtls" />
 	</changeSet>
 
 	<changeSet id="ST#11.19.4" author="kavya.n">
-		<addPrimaryKey tableName="Document_Status_Details_Temp" columnNames="Id" constraintName="PK_Document_Status_Dtls_Temp" />
+		<addPrimaryKey tableName="Document_Status_Details_Temp" columnNames="Id"
+			constraintName="PK_Document_Status_Dtls_Temp" />
 	</changeSet>
 
 	<changeSet id="ST#11.19.5" author="kavya.n">
@@ -6110,25 +6114,26 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.23" author="kavya.n">
-		<dropTable tableName="Cust_Docs"/>
+		<dropTable tableName="Cust_Docs" />
 	</changeSet>
-	
-	<changeSet id="ST#11.17_1_post1" author="Murthy.y"  >
+
+	<changeSet id="ST#11.17_1_post1" author="Murthy.y">
 		<preConditions onFail="MARK_RAN">
-			<tableExists  tableName="SEQDOCUMENTDETAILS"/>
+			<tableExists tableName="SEQDOCUMENTDETAILS" />
 		</preConditions>
-		<dropTable tableName="SEQDOCUMENTDETAILS"/>
+		<dropTable tableName="SEQDOCUMENTDETAILS" />
 	</changeSet>
-	
-	<changeSet  id="ST#11.17_1_post2" author="Murthy.y">
+
+	<changeSet id="ST#11.17_1_post2" author="Murthy.y">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<sequenceExists sequenceName="SEQDOCUMENTDETAILS" />
 			</not>
 		</preConditions>
-		<createSequence sequenceName="SEQDOCUMENTDETAILS" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+		<createSequence sequenceName="SEQDOCUMENTDETAILS" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" />
 	</changeSet>
 
 	<changeSet id="ST#11.17_1" author="Murthy.y" dbms="oracle">
@@ -6195,7 +6200,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.18" author="murthy.y">
 		<sql>
 		    <![CDATA[
@@ -6236,7 +6241,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.34" author="kavya.n">
 		<sql>
      		<![CDATA[
@@ -6246,7 +6251,7 @@
          	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.35_pre" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6254,7 +6259,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.35" author="kavya.n">
 		<createView viewName="DOCUMENTSTATUSCOVENANTS_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -6281,7 +6286,7 @@
 	       ]]>	
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.35_post" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6289,7 +6294,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#58" author="gopalaswamy.m">
 		<sql>
 			<![CDATA[	
@@ -6299,30 +6304,30 @@
 		</sql>
 	</changeSet>
 
-	 <!-- Bulk Fee Waiver Upload functionality related scripts Start--> 
+	<!-- Bulk Fee Waiver Upload functionality related scripts Start -->
 
-	<changeSet id="ST#474.1" author="savitri.n" >
+	<changeSet id="ST#474.1" author="savitri.n">
 		<createSequence sequenceName="SeqFeeWaiverUploadHeader" startValue="1" maxValue="999999999999999999"
 			incrementBy="1" />
 	</changeSet>
-	     	
+
 	<changeSet id="ST#474.2" author="savitri.n">
 		<createTable tableName="FeeWaiverUploadHeader">
 			<column name="UploadId" type="bigint">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
-			<column name="filelocation" type="varchar(250)"/>
+			<column name="filelocation" type="varchar(250)" />
 			<column name="filename" type="varchar(250)">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="transactiondate" type="datetime">
-				<constraints nullable="false"/>
-			</column>		
+				<constraints nullable="false" />
+			</column>
 			<column name="totalrecords" type="decimal(10,0)" />
 			<column name="successcount" type="decimal(10,0)" />
 			<column name="failedcount" type="decimal(10,0)" />
 			<column name="module" type="varchar(100)">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="filedownload" type="smallint" />
 			<column name="approveddate" type="datetime" />
@@ -6339,16 +6344,17 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkFlowId" type="bigint" />
 		</createTable>
-	</changeSet>   	
-	
+	</changeSet>
+
 	<changeSet id="ST#474.2_1" author="savitri.n">
 		<addPrimaryKey tableName="FeeWaiverUploadHeader" columnNames="UploadId" />
 	</changeSet>
-		
+
 	<changeSet id="ST#474.2_2" author="savitri.n">
-		<addUniqueConstraint tableName="FeeWaiverUploadHeader" columnNames="FileName" constraintName="UK_FWUH_FNAME" />
+		<addUniqueConstraint tableName="FeeWaiverUploadHeader" columnNames="FileName"
+			constraintName="UK_FWUH_FNAME" />
 	</changeSet>
-	
+
 	<changeSet id="ST#474.2_3" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="MakerId" tableName="FeeWaiverUploadHeader" defaultValue="0" />
 		<addDefaultValue columnName="ApproverId" tableName="FeeWaiverUploadHeader" defaultValue="0" />
@@ -6362,24 +6368,24 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#474.3" author="savitri.n">
 		<createTable tableName="FeeWaiverUploadHeader_Temp">
 			<column name="UploadId" type="bigint">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
-			<column name="filelocation" type="varchar(250)"/>
+			<column name="filelocation" type="varchar(250)" />
 			<column name="filename" type="varchar(250)">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="transactiondate" type="datetime">
-				<constraints nullable="false"/>
-			</column>		
+				<constraints nullable="false" />
+			</column>
 			<column name="totalrecords" type="decimal(10,0)" />
 			<column name="successcount" type="decimal(10,0)" />
 			<column name="failedcount" type="decimal(10,0)" />
 			<column name="module" type="varchar(100)">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="filedownload" type="smallint" />
 			<column name="approveddate" type="datetime" />
@@ -6401,11 +6407,12 @@
 	<changeSet id="ST#474.3_1" author="savitri.n">
 		<addPrimaryKey tableName="FeeWaiverUploadHeader_Temp" columnNames="UploadId" />
 	</changeSet>
-		
+
 	<changeSet id="ST#474.3_2" author="savitri.n">
-		<addUniqueConstraint tableName="FeeWaiverUploadHeader_Temp" columnNames="FileName" constraintName="UK_FWUH_FNAME_T" />
+		<addUniqueConstraint tableName="FeeWaiverUploadHeader_Temp" columnNames="FileName"
+			constraintName="UK_FWUH_FNAME_T" />
 	</changeSet>
-	
+
 	<changeSet id="ST#474.3_3" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="MakerId" tableName="FeeWaiverUploadHeader_Temp" defaultValue="0" />
 		<addDefaultValue columnName="ApproverId" tableName="FeeWaiverUploadHeader_Temp" defaultValue="0" />
@@ -6423,14 +6430,14 @@
 	<changeSet id="ST#474.4" author="savitri.n">
 		<createTable tableName="FeeWaiverUploads">
 			<column name="WaiverId" type="bigint">
-				<constraints nullable="false"/>
-			</column>		
-			<column name="UploadId" type="bigint">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
-			<column name="FinReference" type="varchar(20)"/>
-			<column name="FeeTypeCode" type="char(8)"/>
-			<column name="ValueDate" type="datetime" />		
+			<column name="UploadId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)" />
+			<column name="FeeTypeCode" type="char(8)" />
+			<column name="ValueDate" type="datetime" />
 			<column name="WaivedAmount" type="decimal(18,0)" />
 			<column name="Remarks" type="varchar(100)" />
 			<column name="Status" type="char(1)" />
@@ -6448,11 +6455,11 @@
 			<column name="WorkFlowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#474.4_1" author="savitri.n">
 		<addPrimaryKey tableName="FeeWaiverUploads" columnNames="WaiverId" />
-	</changeSet>	
-		
+	</changeSet>
+
 	<changeSet id="ST#474.4_2" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="WaivedAmount" tableName="FeeWaiverUploads" defaultValue="0" />
 	</changeSet>
@@ -6463,19 +6470,19 @@
 				ALTER TABLE FEEWAIVERUPLOADS ADD CONSTRAINT DF_FWU_WAIVEDAMOUNT DEFAULT 0 FOR WAIVEDAMOUNT;
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="ST#474.5" author="savitri.n">
 		<createTable tableName="FeeWaiverUploads_Temp">
 			<column name="WaiverId" type="bigint">
-				<constraints nullable="false"/>
-			</column>		
-			<column name="UploadId" type="bigint">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
-			<column name="FinReference" type="varchar(20)"/>
-			<column name="FeeTypeCode" type="char(8)"/>
-			<column name="ValueDate" type="datetime" />	
+			<column name="UploadId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)" />
+			<column name="FeeTypeCode" type="char(8)" />
+			<column name="ValueDate" type="datetime" />
 			<column name="WaivedAmount" type="decimal(18,0)" />
 			<column name="Remarks" type="varchar(100)" />
 			<column name="Status" type="char(1)" />
@@ -6493,11 +6500,11 @@
 			<column name="WorkFlowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#474.5_1" author="savitri.n">
 		<addPrimaryKey tableName="FeeWaiverUploads_Temp" columnNames="WaiverId" />
-	</changeSet>	
-		
+	</changeSet>
+
 	<changeSet id="ST#474.5_2" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="WaivedAmount" tableName="FeeWaiverUploads_Temp" defaultValue="0" />
 	</changeSet>
@@ -6509,7 +6516,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#474.13" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -6535,10 +6542,10 @@
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FEEWAIVER_UPLOAD_MAKER'), 	(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_WaiverUploadDialog_btnSave'),  1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
-	</changeSet>  
-	
-	<!-- Bulk Fee Waiver Upload functionality related scripts End--> 
-	
+	</changeSet>
+
+	<!-- Bulk Fee Waiver Upload functionality related scripts End -->
+
 	<changeSet id="ST#473.3" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -6547,7 +6554,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ID#1" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[	
@@ -6571,7 +6578,7 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#4" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[	
@@ -6579,7 +6586,7 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#5" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[	
@@ -6587,7 +6594,7 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#6" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[
@@ -6595,7 +6602,7 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#7" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[
@@ -6603,15 +6610,15 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#8" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[
 				create index ix_cibcuextrc_segmt_ty on cibil_customer_extract(lower(segment_type));
 			]]>
-	</sql>
+		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#9" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[
@@ -6619,7 +6626,7 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#10" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[
@@ -6627,7 +6634,7 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#11" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[
@@ -6635,7 +6642,7 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#12" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[
@@ -6643,7 +6650,7 @@
 			]]>
 		</sql>
 	</changeSet>
-			
+
 	<changeSet id="ID#13" author="savitri.n" dbms="postgresql">
 		<sql> 
 			<![CDATA[
@@ -6660,10 +6667,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#700" author="savitri.n">
 		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="EligibilityMethods"
-		newDataType="varchar(500)" />
+			newDataType="varchar(500)" />
 	</changeSet>
 
 	<changeSet id="ST#700.1" author="savitri.n">
@@ -6677,7 +6684,7 @@
 	<changeSet id="ST#697.1" author="Manoj.P">
 		<modifyDataType tableName="RMTFINANCETYPES" columnName="RPYHIERARCHY" newDataType="VARCHAR(20)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#700_post" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6686,25 +6693,26 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#688" author="savitri.n">
 		<createTable tableName="SOA_FeeType_Mapping">
 			<column name="FeeTypeId" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="FeeCode" type="char(8)">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="ReceivableComponent" type="char(8)">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 		</createTable>
-	</changeSet> 
-	
-	<changeSet id="ST#688.1" author="savitri.n">
-		<addPrimaryKey tableName="SOA_FeeType_Mapping" columnNames="FeeTypeId" constraintName="pk_SOA_FeeType_Mapping"/>
 	</changeSet>
-	
+
+	<changeSet id="ST#688.1" author="savitri.n">
+		<addPrimaryKey tableName="SOA_FeeType_Mapping" columnNames="FeeTypeId"
+			constraintName="pk_SOA_FeeType_Mapping" />
+	</changeSet>
+
 	<changeSet id="ST#701.1" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -6712,14 +6720,14 @@
                 INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, RECORDSTATUS, WORKFLOWID, LASTMNTBY, VERSION) VALUES ('930501', 'EN', 'E', 'GST Details are Mandatory', 'Approved', 0, 1000, 1);			
             ]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="ST#701.2" author="savitri.n">
 		<addColumn tableName="Fintaxdetail">
-			<column name="AvailCustTaxNum" type="boolean"/>
+			<column name="AvailCustTaxNum" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.3" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -6727,9 +6735,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.4" author="savitri.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AvailCustTaxNum" tableName="Fintaxdetail" defaultValue="0"/>
+		<addDefaultValue columnName="AvailCustTaxNum" tableName="Fintaxdetail" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="ST#701.4" author="savitri.n" dbms="mssql">
@@ -6739,13 +6747,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.5" author="savitri.n">
 		<addColumn tableName="Fintaxdetail_Temp">
 			<column name="availCustTaxNum" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.6" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -6753,9 +6761,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.7" author="savitri.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AvailCustTaxNum" tableName="Fintaxdetail_Temp" defaultValue="0"/>
+		<addDefaultValue columnName="AvailCustTaxNum" tableName="Fintaxdetail_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="ST#701.7" author="savitri.n" dbms="mssql">
@@ -6765,7 +6773,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.11" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -6774,9 +6782,9 @@
             ]]>
 		</sql>
 	</changeSet>
-	
+
 	<!-- Customer GST Details capturing -->
-	
+
 	<changeSet id="ST#701.12" author="savitri.n">
 		<createTable tableName="GST_Details">
 			<column name="Id" type="bigint">
@@ -6788,25 +6796,25 @@
 			<column name="gstNumber" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Address" type="varchar(50)" >
+			<column name="Address" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="AddressLine1" type="varchar(50)" >
+			<column name="AddressLine1" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="AddressLine2" type="varchar(50)" />	
-			<column name="AddressLine3" type="varchar(50)" />	
+			<column name="AddressLine2" type="varchar(50)" />
+			<column name="AddressLine3" type="varchar(50)" />
 			<column name="AddressLine4" type="varchar(50)" />
-			<column name="CountryCode" type="char(2)" >
+			<column name="CountryCode" type="char(2)">
 				<constraints nullable="false" />
 			</column>
-			<column name="StateCode" type="varchar(8)" >
+			<column name="StateCode" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
 			<column name="CityCode" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Pincode" type="varchar(10)" >
+			<column name="Pincode" type="varchar(10)">
 				<constraints nullable="false" />
 			</column>
 			<column name="PincodeId" type="bigint" />
@@ -6830,11 +6838,11 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.13" author="savitri.n">
-		<addPrimaryKey tableName="GST_Details" columnNames="Id" constraintName="pk_GST_Details"/>
+		<addPrimaryKey tableName="GST_Details" columnNames="Id" constraintName="pk_GST_Details" />
 	</changeSet>
-	
+
 	<changeSet id="ST#701.14" author="savitri.n">
 		<createTable tableName="GST_Details_Temp">
 			<column name="Id" type="bigint">
@@ -6846,25 +6854,25 @@
 			<column name="gstNumber" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Address" type="varchar(50)" >
+			<column name="Address" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="AddressLine1" type="varchar(50)" >
+			<column name="AddressLine1" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="AddressLine2" type="varchar(50)" />	
-			<column name="AddressLine3" type="varchar(50)" />	
+			<column name="AddressLine2" type="varchar(50)" />
+			<column name="AddressLine3" type="varchar(50)" />
 			<column name="AddressLine4" type="varchar(50)" />
-			<column name="CountryCode" type="char(2)" >
+			<column name="CountryCode" type="char(2)">
 				<constraints nullable="false" />
 			</column>
-			<column name="StateCode" type="varchar(8)" >
+			<column name="StateCode" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
 			<column name="CityCode" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Pincode" type="varchar(10)" >
+			<column name="Pincode" type="varchar(10)">
 				<constraints nullable="false" />
 			</column>
 			<column name="PincodeId" type="bigint" />
@@ -6888,21 +6896,21 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.15" author="savitri.n">
-		<addPrimaryKey tableName="GST_Details_Temp" columnNames="Id" constraintName="pk_GST_Details_Temp"/>
+		<addPrimaryKey tableName="GST_Details_Temp" columnNames="Id" constraintName="pk_GST_Details_Temp" />
 	</changeSet>
-	
+
 	<changeSet id="ST#701.16" author="savitri.n">
-		<addForeignKeyConstraint constraintName="fk_Gst_Details_custId" referencedTableName="Customers"
-			referencedColumnNames="CustId" baseTableName="GST_Details" baseColumnNames="CustId" />
+		<addForeignKeyConstraint constraintName="fk_Gst_Details_custId"
+			referencedTableName="Customers" referencedColumnNames="CustId" baseTableName="GST_Details" baseColumnNames="CustId" />
 	</changeSet>
-	
+
 	<changeSet id="ST#701.17" author="savitri.n">
 		<createSequence sequenceName="SeqGST_Details" startValue="1" maxValue="999999999999999999"
 			incrementBy="1" minValue="1" />
 	</changeSet>
-	
+
 	<changeSet id="ST#701.18_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6910,7 +6918,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.18" author="savitri.n">
 		<createView viewName="GST_DETAILS_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -6955,7 +6963,7 @@
      		]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.18_post" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6971,7 +6979,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.19.1" author="savitri.n">
 		<createView viewName="GST_DETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -7064,7 +7072,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.20" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -7100,7 +7108,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.21" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -7109,7 +7117,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.22" author="savitri.n" dbms="oracle">
 		<sql splitStatements="false">
 		<![CDATA[
@@ -7169,16 +7177,16 @@
 			SP_EXECUTESQL @SQLCmd;
 			]]>
 		</sql>
-	</changeSet> 
-		
+	</changeSet>
+
 	<changeSet id="ST#701.23" author="ADARSH">
-    	<dropView viewName="GSTDETAILS_VIEW"/>
+		<dropView viewName="GSTDETAILS_VIEW" />
 	</changeSet>
-	
+
 	<changeSet id="ST#701.23.1" author="ADARSH">
-    	<dropView viewName="GSTDETAILS_AVIEW"/>
+		<dropView viewName="GSTDETAILS_AVIEW" />
 	</changeSet>
-	
+
 	<changeSet id="ST#701.23.2" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -7186,11 +7194,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#701.23.3" author="ADARSH">
 		<dropTable tableName="GSTDETAILS_TEMP" />
 	</changeSet>
-	
+
 	<changeSet id="ST#701.23.4" author="ADARSH">
 		<dropTable tableName="GSTDETAILS" />
 	</changeSet>
@@ -7200,7 +7208,7 @@
 			<column name="CESS" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="DE#275.2" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7208,7 +7216,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#277.1" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7241,7 +7249,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#314" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7250,7 +7258,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#369.1_pre" author="saisandeep.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7258,7 +7266,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#369.1" author="saisandeep.b">
 		<createView replaceIfExists="true" viewName="FINOPTIONREPORT_VIEW">
 			<![CDATA[
@@ -7266,7 +7274,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="DE#369.1_post" author="saisandeep.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7274,7 +7282,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.1" author="saisandeep.b">
 		<sql>
 			<![CDATA[	 
@@ -7296,13 +7304,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.2" author="saisandeep.b">
 		<addColumn tableName="WIFFinancemain_temp">
 			<column name="planemihalwingrace" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.3" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7310,7 +7318,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.4" author="saisandeep.b" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -7322,18 +7330,18 @@
 	<changeSet id="ST#232.4" author="saisandeep.b" dbms="postgresql,oracle">
 		<addDefaultValue columnName="planemihalwingrace" tableName="WIFFinancemain_temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#232.5" author="saisandeep.b">
 		<addNotNullConstraint tableName="WIFFinancemain_temp" columnName="planemihalwingrace"
 			columnDataType="boolean" />
 	</changeSet>
-	
+
 	<changeSet id="ST#232.6" author="saisandeep.b">
 		<addColumn tableName="WIFFinancemain">
 			<column name="planemihalwingrace" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.7" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7341,7 +7349,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.8" author="saisandeep.b" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -7353,68 +7361,68 @@
 	<changeSet id="ST#232.8" author="saisandeep.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="planemihalwingrace" tableName="WIFFinancemain" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#232.9" author="saisandeep.b">
 		<addNotNullConstraint tableName="WIFFinancemain" columnName="planemihalwingrace"
 			columnDataType="boolean" />
 	</changeSet>
-	
+
 	<changeSet id="ST#232.13" author="saisandeep.b">
-	<comment>Rescheduling changes</comment>
+		<comment>Rescheduling changes</comment>
 		<addColumn tableName="FinServiceInstruction">
 			<column name="GraceBaseRate" type="char(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.13.1" author="saisandeep.b">
-	<comment>Rescheduling changes</comment>
+		<comment>Rescheduling changes</comment>
 		<addColumn tableName="FinServiceInstruction">
 			<column name="GraceSpecialRate" type="char(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.13.2" author="saisandeep.b">
-	<comment>Rescheduling changes</comment>
+		<comment>Rescheduling changes</comment>
 		<addColumn tableName="FinServiceInstruction">
-			<column name="GrcMargin" type="decimal(13,9)" />			
+			<column name="GrcMargin" type="decimal(13,9)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.13.3" author="saisandeep.b">
-	<comment>Rescheduling changes</comment>
+		<comment>Rescheduling changes</comment>
 		<addColumn tableName="FinServiceInstruction">
 			<column name="GrcPftRate" type="decimal(13,9)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.14" author="saisandeep.b">
-	<comment>Rescheduling changes</comment>
+		<comment>Rescheduling changes</comment>
 		<addColumn tableName="FinServiceInstruction_Temp">
 			<column name="GraceBaseRate" type="char(8)" />
-			</addColumn>
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.14.1" author="saisandeep.b">
-	<comment>Rescheduling changes</comment>
-		<addColumn tableName="FinServiceInstruction_Temp">			
+		<comment>Rescheduling changes</comment>
+		<addColumn tableName="FinServiceInstruction_Temp">
 			<column name="GraceSpecialRate" type="char(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.14.2" author="saisandeep.b">
-  <comment>Rescheduling changes</comment>
+		<comment>Rescheduling changes</comment>
 		<addColumn tableName="FinServiceInstruction_Temp">
 			<column name="GrcMargin" type="decimal(13,9)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.14.3" author="saisandeep.b">
-	<comment>Rescheduling changes</comment>
+		<comment>Rescheduling changes</comment>
 		<addColumn tableName="FinServiceInstruction_Temp">
 			<column name="GrcPftRate" type="decimal(13,9)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.15" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7423,7 +7431,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.16" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7432,7 +7440,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.17" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7441,7 +7449,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#232.18" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7450,7 +7458,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#316" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7458,7 +7466,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#379.1" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7468,7 +7476,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#390.1" author="saisandeep.b">
 		<sql>
 			<![CDATA[
@@ -7478,7 +7486,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#432_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7486,27 +7494,29 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#432.0_pre" author="vijaya.a" dbms='mssql'>
-    	<dropPrimaryKey constraintName="partnerbankmodes_pkey" tableName="PartnerBankModes"/>
+		<dropPrimaryKey constraintName="partnerbankmodes_pkey" tableName="PartnerBankModes" />
 	</changeSet>
-	
+
 	<changeSet id="ST#432.0" author="vijaya.a">
 		<modifyDataType tableName="PartnerBankModes" columnName="paymentmode" newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#432.0.1" author="vijaya.a">
-		<addNotNullConstraint tableName="PartnerBankModes" columnName="PaymentMode" columnDataType="varchar(50)" />
+		<addNotNullConstraint tableName="PartnerBankModes" columnName="PaymentMode"
+			columnDataType="varchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#432.0.2" author="vijaya.a">
 		<addNotNullConstraint tableName="PartnerBankModes" columnName="Purpose" columnDataType="char(1)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#432.0_post" author="vijaya.a" dbms='mssql'>
-    	<addPrimaryKey columnNames="PartnerBankId, Purpose, PaymentMode" constraintName="partnerbankmodes_pkey" tableName="PartnerBankModes"/>
+		<addPrimaryKey columnNames="PartnerBankId, Purpose, PaymentMode" constraintName="partnerbankmodes_pkey"
+			tableName="PartnerBankModes" />
 	</changeSet>
-	
+
 	<changeSet id="ST#432_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7514,7 +7524,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#432.1_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7523,7 +7533,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#432.0_pre" author="vijaya.a" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -7531,15 +7541,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#432.1" author="vijaya.a">
 		<modifyDataType tableName="FinTypePartnerBanks_temp" columnName="PaymentMode" newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#432.1.1" author="vijaya.a">
 		<modifyDataType tableName="FinTypePartnerBanks" columnName="PaymentMode" newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#432.0_post" author="vijaya.a" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -7547,7 +7557,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#432.1_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7556,7 +7566,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#432.2_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7565,15 +7575,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#432.2" author="vijaya.a">
 		<modifyDataType tableName="FinReceiptDetail_Temp" columnName="PaymentType" newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#432.2.1" author="vijaya.a">
 		<modifyDataType tableName="FinReceiptDetail" columnName="PaymentType" newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#432.2_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7582,7 +7592,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#326_pre" author="gopalaSwamy.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7592,7 +7602,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="DE#326" author="gopalaSwamy.m" >
+	<changeSet id="DE#326" author="gopalaSwamy.m">
 		<modifyDataType tableName="COVENANT_DOCUMENTS_TEMP" columnName="covenanttype" newDataType="VARCHAR(50)" />
 		<modifyDataType tableName="COVENANT_DOCUMENTS" columnName="covenanttype" newDataType="VARCHAR(50)" />
 	</changeSet>
@@ -7605,19 +7615,19 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#337.1" author="gopalaswamy.m">
 		<addColumn tableName="PRESENTMENT_REQ_DETAILS">
 			<column name="HEADERID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	 <changeSet id="DE#337.2" author="gopalaswamy.m">
+
+	<changeSet id="DE#337.2" author="gopalaswamy.m">
 		<addColumn tableName="PRESENTMENT_REQ_DETAILS_TEMP">
 			<column name="HEADERID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#436" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -7626,7 +7636,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="DE#373" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -7635,7 +7645,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#390" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -7644,7 +7654,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#425" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -7653,7 +7663,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#404" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -7667,7 +7677,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1_1" author="Ramya.v">
 		<sql>
 			<![CDATA[
@@ -7676,7 +7686,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#354.16_pre" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7686,7 +7696,7 @@
 	</changeSet>
 
 	<changeSet id="ST#354.16" author="kavya.n">
-	  <createView viewName="FileBatchStatus_AView" replaceIfExists="true">
+		<createView viewName="FileBatchStatus_AView" replaceIfExists="true">
 		<![CDATA[
 			SELECT ID,
 			  BATCH_NAME FILENAME
@@ -7694,15 +7704,15 @@
 		]]>
       </createView>
 	</changeSet>
-	
-	 <changeSet id="ST#354.16_post" author="kavya.n" dbms="postgresql">
+
+	<changeSet id="ST#354.16_post" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'filebatchstatus_aview');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#195993" author="nagavamsi.p">
 		<sql>
         	<![CDATA[
@@ -7714,7 +7724,7 @@
             ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#196105" author="saratkumar.p">
 		<sql>
 			<![CDATA[
@@ -7722,7 +7732,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#189787" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -7744,7 +7754,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#189787.1" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -7754,7 +7764,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#195913" author="Gopal.p" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -7777,7 +7787,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#195913" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7787,7 +7797,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#195913.1" author="Gopal.p" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -7810,7 +7820,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#195913.1" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7820,8 +7830,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="PSD#195913.2" author="Gopal.p" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -7844,7 +7854,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#195913.2" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7854,7 +7864,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#195913.3" author="Gopal.p" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -7877,7 +7887,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#195913.3" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7887,7 +7897,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#190312" author="Gopal.p">
 		<sql> 
 			<![CDATA[ 
@@ -7896,7 +7906,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#196104.1" author="Alekhya.T">
 		<sql> 
 			<![CDATA[ 
@@ -7906,7 +7916,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#196102" author="Alekhya.T">
 		<sql>
 			<![CDATA[
@@ -7916,7 +7926,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#196102.1" author="Alekhya.T">
 		<sql>
 			<![CDATA[
@@ -7926,7 +7936,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#196452" author="Alekhya.T">
 		<sql>
 			<![CDATA[ 
@@ -7937,7 +7947,7 @@
   			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#196563" author="Alekhya.T">
 		<sql>
 			<![CDATA[ 
@@ -7946,7 +7956,7 @@
   			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#198121" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -7954,7 +7964,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#198128" author="Saikiran.n">
 		<sql>
 			<![CDATA[ 
@@ -7962,15 +7972,15 @@
   			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="PSD#198142.1" author="Gopal.p" >
+
+	<changeSet id="PSD#198142.1" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				UPDATE REPORTLIST SET FIELDTYPE = 'String,String,String,String,boolean', FIELDVALUES = 'bounceCode,lovdescreasontype,lovdesccategory,returnCode,active' WHERE CODE = 'BounceReason';
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet author="Alekhya.T" id="PSD#199106">
 		<sql>
 			<![CDATA[ 
@@ -7994,7 +8004,7 @@
 		   ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#197117" author="Alekhya.T">
 		<sql>
 			<![CDATA[
@@ -8004,7 +8014,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#197117.1.1_pre" author="Alekhya.T" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8012,7 +8022,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#197117.1.1" author="Alekhya.T">
 		<createView viewName="FILEBATCHSTATUS_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -8022,7 +8032,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="PSD#197117.1.1_post" author="Alekhya.T" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8030,15 +8040,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#199263" author="Alekhya.T">
 		<sql>
 			<![CDATA[
 				UPDATE DEDUPFIELDS SET FIELDNAME = 'Ucic' WHERE FIELDNAME = 'UCIC';
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="1_1" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -8055,8 +8065,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="PSD#200208" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[
@@ -8074,7 +8084,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="UPFEE_001" author="Gopal.p">
 		<sql>
 			<![CDATA[ 
@@ -8083,7 +8093,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200208.1" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[
@@ -8092,7 +8102,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200650" author="Saikiran.n">
 		<sql>
 			<![CDATA[
@@ -8143,7 +8153,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#201401_pre" author="Alekhya.T" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8152,15 +8162,17 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#201401" author="Alekhya.T">
-		<modifyDataType tableName="ASSET_CLASS_SETUP_HEADER" columnName="repayhierarchy" newDataType="varchar(20)"/>
+		<modifyDataType tableName="ASSET_CLASS_SETUP_HEADER" columnName="repayhierarchy"
+			newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#201401.1" author="Alekhya.T">
-		<modifyDataType tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnName="repayhierarchy" newDataType="varchar(20)"/>
+		<modifyDataType tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnName="repayhierarchy"
+			newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="PSD#201401_post" author="Alekhya.T" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8169,7 +8181,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#201401.2" author="Alekhya.T">
 		<sql>
 			<![CDATA[	
@@ -8180,27 +8192,27 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
-	
+
+
+
 	<changeSet id="PSD#200634.1" author="Saikiran.n">
 		<addColumn tableName="Secusers_temp">
 			<column name="Deleted" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.2" author="Saikiran.n">
 		<addColumn tableName="Secusers">
 			<column name="Deleted" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.3" author="Saikiran.n">
 		<addColumn tableName="Secusers_rtemp">
 			<column name="Deleted" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.4" author="Saikiran.n">
 		<sql>
 			<![CDATA[
@@ -8210,12 +8222,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.5" author="Saikiran.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="Deleted" tableName="Secusers" defaultValue="0" />
 		<addDefaultValue columnName="Deleted" tableName="Secusers_Temp" defaultValue="0" />
 		<addDefaultValue columnName="Deleted" tableName="Secusers_rtemp" defaultValue="0" />
-		
+
 	</changeSet>
 
 	<changeSet id="PSD#200634.5" author="Saikiran.n" dbms="mssql">
@@ -8228,7 +8240,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.6_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8367,7 +8379,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.7_pre" author="Saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8504,7 +8516,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.8_pre" author="Saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8584,5 +8596,179 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="203005" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				UPDATE BOUNCEREASONS SET LASTMNTBY = 1000 WHERE LASTMNTBY IS NULL;
+				UPDATE BOUNCEREASONS SET WORKFLOWID = 0 WHERE WORKFLOWID IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#202681" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE RBFIELDDETAILS SET MODULECODE = 'RuleAssetClassCode' WHERE RBEVENT = 'PROVSN' AND MODULECODE = 'AssetClassCode';
+				UPDATE RBFIELDDETAILS SET MODULECODE = 'RuleSubClassCode' WHERE RBEVENT = 'PROVSN' AND MODULECODE = 'AssetSubClassCode';
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="PSD#204155.0" author="venkatesh.ch">
+		<sql>
+			<![CDATA[
+				Delete from ErrorDetails Where Code = '92010';
+				INSERT INTO ErrorDetails (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('92010','EN','E','{0} in header should be less than or equal to 200 characters.','NULL','Approved','NULL','NULL','NULL','NULL','NULL',0,CURRENT_TIMESTAMP,1000,0);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#204155.1_pre" author="venkatesh.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'plfapilogdetails');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#204155.1.1_pre" author="venkatesh.ch" dbms="oracle">
+		<dropIndex indexName="IX_PAPI_PRC_MSID" tableName="plfapilogdetails" />
+	</changeSet>
+
+	<changeSet id="PSD#204155.1" author="venkatesh.ch">
+		<modifyDataType tableName="plfapilogdetails" columnName="messageid" newDataType="varchar(200)" />
+	</changeSet>
+
+	<changeSet id="PSD#204155.1.1_post" author="venkatesh.ch" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_PAPI_PRC_MSID ON PLFAPILOGDETAILS (PROCESSED, NLSSORT(ENTITYID,'nls_sort=''BINARY_CI'''), NLSSORT(MESSAGEID,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#204155.1_post" author="venkatesh.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'plfapilogdetails');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#204104.1" author="Sandeep Kumar.M">
+		<sql>
+			<![CDATA[	
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_BaseRateCodeDialog_btnDelete');
+	  
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_BaseRateCodeDialog_btnDelete';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#197897_pre" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'limitlines_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#197897" author="gopal.p">
+		<createView viewName="LIMITLINES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T.DETAILID, 
+					T.LIMITHEADERID, 
+					T1.RULECODE,
+					T1.RULEVALUE,
+					T1.CUSTOMERID,
+					T1.CUSTOMERGROUP,
+					T.LIMITLINE,
+					R.SQLRULE,
+					R.RULECODEDESC LIMITLINEDESC,
+					T.GROUPCODE, 
+					T.LIMITSTRUCTUREDETAILSID,
+					T.LIMITCHKMETHOD, 
+					T.EXPIRYDATE, 
+					T.LIMITSANCTIONED,  
+					T.RESERVEDLIMIT, 
+					T.UTILISEDLIMIT,
+					T.LIMITCHECK,
+					COALESCE(T.REVOLVING,0) REVOLVING,
+					T1.LIMITCCY CURRENCY,
+					T.VERSION,
+					T.CREATEDBY,
+					T.CREATEDON,
+					T.LASTMNTBY, 
+					T.LASTMNTON, 
+					T.RECORDSTATUS, 
+					T.ROLECODE, 
+					T.NEXTROLECODE, 
+					T.TASKID, 
+					T.NEXTTASKID, 
+					T.RECORDTYPE, 
+					T.WORKFLOWID, 
+					T.NONRVLUTILISED, 
+					T.OSPRIBAL
+				FROM LIMITDETAILS_AVIEW T 
+				INNER JOIN LIMITHEADER T1 ON T1.HEADERID = T.LIMITHEADERID
+				LEFT OUTER JOIN RULES R ON T.LIMITLINE = R.RULECODE AND RULEMODULE = 'LMTLINE'
+				WHERE T1.ACTIVE = 1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#197897_post" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'limitlines_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#197897.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				UPDATE LIMITDETAILS SET NONRVLUTILISED = 0 WHERE NONRVLUTILISED IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#197897.2" author="nagavamsi.p" dbms="postgresql,oracle">
+		<addDefaultValue columnName="NONRVLUTILISED" tableName="LIMITDETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="PSD#197897.2" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LIMITDETAILS ADD CONSTRAINT DF_LIMITDET_NONRVLUTILISED DEFAULT 0 FOR NONRVLUTILISED;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#197897.3" author="nagavamsi.p" dbms="postgresql,oracle">
+		<addDefaultValue columnName="NONRVLUTILISED" tableName="LIMITDETAILS_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="PSD#197897.3" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LIMITDETAILS_TEMP ADD CONSTRAINT DF_LIMITDET_T_NONRVLUTILISED DEFAULT 0 FOR NONRVLUTILISED;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#301.1" author="saisandeep.b">
+		<addColumn tableName="FinLiabilityReq">
+			<column name="NOCDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#301.2" author="saisandeep.b">
+		<addColumn tableName="FinLiabilityReq_Temp">
+			<column name="NOCDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

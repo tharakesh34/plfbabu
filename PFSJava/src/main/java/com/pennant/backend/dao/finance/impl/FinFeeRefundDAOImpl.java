@@ -40,6 +40,7 @@ import com.pennant.backend.model.finance.FinFeeRefundHeader;
 import com.pennant.backend.model.finance.PrvsFinFeeRefund;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -79,7 +80,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 				int index = 1;
 
 				ps.setLong(index++, frh.getHeaderId());
-				ps.setLong(index++, frh.getFinID());
+				ps.setObject(index++, frh.getFinID());
 				ps.setString(index++, frh.getFinReference());
 				ps.setLong(index++, frh.getLinkedTranId());
 				ps.setInt(index++, frh.getVersion());
@@ -115,7 +116,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, frh.getFinID());
+			ps.setObject(index++, frh.getFinID());
 			ps.setString(index++, frh.getFinReference());
 			ps.setLong(index++, frh.getLinkedTranId());
 			ps.setInt(index++, frh.getVersion());
@@ -191,7 +192,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 				FinFeeRefundHeader frh = new FinFeeRefundHeader();
 
 				frh.setHeaderId(rs.getLong("HeaderId"));
-				frh.setFinID(rs.getLong("FinID"));
+				frh.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
 				frh.setFinReference(rs.getString("FinReference"));
 				frh.setLinkedTranId(rs.getLong("LinkedTranId"));
 				frh.setVersion(rs.getInt("Version"));

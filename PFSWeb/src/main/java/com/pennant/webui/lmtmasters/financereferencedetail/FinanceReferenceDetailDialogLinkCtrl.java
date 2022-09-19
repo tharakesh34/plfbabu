@@ -63,7 +63,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.StageTabDetail;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.CheckList;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.TATNotificationCode;
@@ -82,7 +81,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -1079,17 +1077,6 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
-	}
-
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_FinanceReferenceDetailDialogLink, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
 	}
 
 	public void onClick$btnNotes(Event event) {

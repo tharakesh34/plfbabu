@@ -769,7 +769,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			} else {
 				this.mandateRef.setAttribute("mandateID", Long.MIN_VALUE);
 				this.periodicity.setValue(MandateConstants.MANDATE_DEFAULT_FRQ);
-				this.startDate.setValue(DateUtility.getAppDate());
+				this.startDate.setValue(SysParamUtil.getAppDate());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1474,7 +1474,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				aMandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
 			}
 			if (aMandate.getStartDate() == null) {
-				aMandate.setStartDate(DateUtility.getAppDate());
+				aMandate.setStartDate(SysParamUtil.getAppDate());
 			}
 		}
 
@@ -1979,7 +1979,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					new StaticListValidator(accTypeList, Labels.getLabel("label_MandateDialog_AccType.value")));
 		}
 		// Start Date
-		Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),
+		Date mandbackDate = DateUtility.addDays(SysParamUtil.getAppDate(),
 				-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 		Date appExpiryDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 

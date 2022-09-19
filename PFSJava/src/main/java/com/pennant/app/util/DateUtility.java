@@ -61,41 +61,6 @@ public final class DateUtility extends DateUtil {
 	private static final Logger logger = LogManager.getLogger(DateUtility.class);
 
 	/**
-	 * Returns a {@link java.util.Date} object that represents the application date.
-	 * 
-	 * @return A {@link java.util.Date} that represents the application date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
-	 */
-	public static java.util.Date getAppDate() {
-		return SysParamUtil.getAppDate();
-	}
-
-	/**
-	 * Returns the string representation with the specified date format pattern of the application date.
-	 * 
-	 * @param dateFormat The format describing the date and time pattern.
-	 * @return The formatted date string of the application date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
-	 */
-	public static String getAppDate(DateFormat dateFormat) {
-		return SysParamUtil.getAppDate(dateFormat);
-	}
-
-	/**
-	 * Returns the string representation with the specified date format pattern of the application date.
-	 * 
-	 * @param dateFormat The format describing the date and time pattern.
-	 * @return The formatted date string of the application date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
-	 */
-	public static String getAppDate(String dateFormat) {
-		return SysParamUtil.getAppDate(dateFormat);
-	}
-
-	/**
 	 * Returns a {@link java.util.Date} object that represents the value date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the value date.
@@ -116,42 +81,6 @@ public final class DateUtility extends DateUtil {
 	 */
 	public static String getAppValueDate(DateFormat dateFormat) {
 		return format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), dateFormat);
-	}
-
-	/**
-	 * Returns a {@link java.util.Date} object that represents the Next business date.
-	 * 
-	 * @return A {@link java.util.Date} that represents the Next business date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getNextBusinessdate} instead.
-	 */
-	public static java.util.Date getNextBusinessdate() {
-		return SysParamUtil.getNextBusinessdate();
-	}
-
-	/**
-	 * Returns a {@link java.util.Date} object that represents the Next business date.
-	 * 
-	 * @return A {@link java.util.Date} that represents the Next business date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getLastBusinessdate} instead.
-	 */
-	public static java.util.Date getLastBusinessdate() {
-		return SysParamUtil.getLastBusinessdate();
-	}
-
-	/**
-	 * Returns the string representation with the specified pattern of the value date.
-	 * 
-	 * @param pattern The pattern describing the date and time format.
-	 * @return The formatted date string of the value date.
-	 * 
-	 * @return A {@link java.util.Date} that represents the Next business date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getValueDate} instead.
-	 */
-	public static String getValueDate(String pattern) {
-		return SysParamUtil.getValueDate(pattern);
 	}
 
 	/**

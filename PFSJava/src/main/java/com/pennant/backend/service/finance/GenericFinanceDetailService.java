@@ -64,7 +64,6 @@ import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
@@ -257,7 +256,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected ExtTablesDAO extTablesDAO;
 	protected AccountEngineExecution engineExecution;
 	protected CustomerDAO customerDAO;
-	protected AccountProcessUtil accountProcessUtil;
 	protected PostingsPreparationUtil postingsPreparationUtil;
 	protected FinStatusDetailDAO finStatusDetailDAO;
 	protected SuspensePostingUtil suspensePostingUtil;
@@ -2933,10 +2931,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
-	}
-
-	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
-		this.accountProcessUtil = accountProcessUtil;
 	}
 
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {

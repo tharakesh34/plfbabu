@@ -114,17 +114,11 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Encode the password and sets usrToken by calling 2) Do the
-	 * Business validation by using businessValidation(auditHeader) method if there is any error or warning message then
-	 * return the auditHeader. 3) Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * SecUsers/SecUsers_Temp by using SecurityUsersDAO's save method b) Update the Record in the table. based on the
-	 * module workFlow Configuration. by using SecurityUsersDAO's update method 4) Audit the record in to AuditHeader
-	 * and AdtSecUsers by using auditHeaderDAO.addAudit(auditHeader)
+	 * Saves or updates the record.
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
-
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -703,19 +697,10 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	}
 
 	/**
-	 * changePassword method do the following <br>
-	 * 1.Takes input SecurityUser Object ,sets the userAcExpDt with the condition whether user himself changing password
-	 * or admin resetting the password <br>
-	 * 2.Update the Password by calling SecurityUsersDAO's changePassword(SecurityUser) method<br>
-	 * <br>
-	 * 3.Save the usrId,password,token,lastMntBy in "SecUserPasswords" table by calling SecurityUsersDAO's
-	 * saveRecentPassword() <br>
-	 * 4.If records are more than USR_MAX_PWD_BACKUP for single user delete the oldest record by calling
-	 * SecurityUsersDAO' deleteOldestPassword
+	 * Updates the record.
 	 * 
 	 * @param auditHeader (AuditHeader)
 	 * @return auditHeaders (AuditHeader)
-	 *
 	 */
 	public AuditHeader changePassword(AuditHeader auditHeader) {
 		logger.trace(Literal.ENTERING);
@@ -729,11 +714,11 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		}
 
 		if (securityUser.getLastMntBy() == securityUser.getUsrID()) {
-			// Change Password: Save the password to maintain history.
+			// Save to the log for maintaining the history.
 			getSecurityUserPasswordsDAO().save(securityUser);
 		} else {
-			// Reset Password: Set the password expire date, so that system will prompt the user to change his
-			// password on his next login.
+			// As the administrator changes, set expire date so that system will force the user to change on his/her
+			// next login.
 			securityUser.setPwdExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
 		}
 

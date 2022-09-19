@@ -119,12 +119,9 @@
 	<!-- Postings Preparation Util -->
 	<bean name="postingsPreparationUtil" class="com.pennant.app.util.PostingsPreparationUtil">
 		<property name="engineExecution" ref="engineExecution" />
-		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
 
 	<bean id="commitmentDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentDAOImpl" parent="basicDao" />
@@ -152,13 +149,6 @@
 		parent="basicDao" />
 
 	<bean id="accountTypeDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountTypeDAOImpl" parent="basicDao" />
-
-	<!-- Account process Util -->
-	<bean name="accountProcessUtil" class="com.pennant.app.util.AccountProcessUtil">
-		<property name="accountsDAO" ref="accountsDAO" />
-		<property name="accountTypeDAO" ref="accountTypeDAO" />
-		<property name="accountsHistoryDAO" ref="accountsHistoryDAO" />
-	</bean>
 
 	<!-- Transaction Entry -->
 	<bean id="transactionEntryDAO" class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl"

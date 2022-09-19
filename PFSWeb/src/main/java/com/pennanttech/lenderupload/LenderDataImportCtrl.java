@@ -65,9 +65,9 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.amazonaws.util.CollectionUtils;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
@@ -581,7 +581,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 		uploadHeader.setFileName(fileName);
 		uploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		uploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		uploadHeader.setTransactionDate(DateUtility.getAppDate());
+		uploadHeader.setTransactionDate(SysParamUtil.getAppDate());
 		uploadHeader.setModule("LenderDataUpload");
 		uploadHeader.setVersion(1);
 		logger.debug(Literal.LEAVING);

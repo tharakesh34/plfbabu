@@ -621,7 +621,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, CustId, FinID, FinReference, BankId, DocName, DocType");
-		sql.append(", FromDate, ToDate, PasswordProtected, DocRefId, DocUri"); // Password
+		sql.append(", FromDate, ToDate, PasswordProtected, DocRefId, DocUri");
 		sql.append(" From ExternalDocuments");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where BankId = ?");
@@ -643,7 +643,6 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ed.setFromDate(rs.getTimestamp("FromDate"));
 			ed.setToDate(rs.getTimestamp("ToDate"));
 			ed.setPasswordProtected(rs.getString("PasswordProtected"));
-			// ed.setPassword(rs.getString("Password"));
 			ed.setDocRefId(rs.getLong("DocRefId"));
 			ed.setDocUri(rs.getString("DocUri"));
 

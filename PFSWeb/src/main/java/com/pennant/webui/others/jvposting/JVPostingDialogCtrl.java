@@ -966,24 +966,22 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	}
 
 	public void onFulfill$reference(Event event) {
-
 		logger.debug("Entering");
 
-		if (StringUtils.isBlank(this.reference.getValue())) {
+		String postAgainst = this.postingAgainst.getSelectedItem().getValue().toString();
+
+		if (StringUtils.isBlank(this.reference.getValue()) || PennantConstants.List_Select.equals(postAgainst)) {
 			this.reference.setValue("", "");
 		} else {
-			String postAgaint = this.postingAgainst.getSelectedItem().getValue().toString();
-			if (PostAgainst.isLoan(postAgaint)) {
-				if (this.reference.getObject() != null) {
-					FinanceMain financeMain = (FinanceMain) this.reference.getObject();
-					this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
-					this.postingDivision.setValue(financeMain.getLovDescFinDivision());
-					this.postingDivision.setReadonly(true);
-					this.postingBranch.setValue(financeMain.getFinBranch());
-					this.postingBranch.setReadonly(true);
-				}
+			if (PostAgainst.isLoan(postAgainst) && this.reference.getObject() != null) {
+				FinanceMain financeMain = (FinanceMain) this.reference.getObject();
+				this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
+				this.postingDivision.setValue(financeMain.getLovDescFinDivision());
+				this.postingDivision.setReadonly(true);
+				this.postingBranch.setValue(financeMain.getFinBranch());
+				this.postingBranch.setReadonly(true);
 			}
-			if (PostAgainst.isCustomer(postAgaint)) {
+			if (PostAgainst.isCustomer(postAgainst)) {
 				Customer customer = (Customer) this.reference.getObject();
 				this.reference.setValue(customer.getCustCIF(), customer.getCustShrtName());
 				this.postingBranch.setValue(customer.getCustDftBranch());
@@ -1870,7 +1868,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.postingBranch.setMandatoryStyle(true);
 
 		if (StringUtils.equals(postValue, PennantConstants.List_Select)) {
-			addFilters("", "", "");
+			// addFilters("", "", "");
 		}
 
 		if (PostAgainst.isLoan(postValue)) {

@@ -921,6 +921,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 			detail.setDPDdays(dpdDays.intValue());
 			detail.setNPARepayApprtnmnt(getComboboxValue(npaPymntApprtn));
 			detail.setActive(activeBox.isChecked());
+			detail.setRuleId(Long.valueOf(rulebox.getSelectedItem().getValue()));
 
 			provisionDetailsList.add(detail);
 
@@ -986,9 +987,6 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 				throw new WrongValueException(rulebox, Labels.getLabel("CHECK_NO_EMPTY",
 						new String[] { Labels.getLabel("label_SelectNPAProvisionHeaderDialog_NPAType.value") }));
 			}
-
-			detail.setRuleId(Long.valueOf(rulebox.getSelectedItem().getValue()));
-
 		}
 		logger.debug(Literal.LEAVING);
 

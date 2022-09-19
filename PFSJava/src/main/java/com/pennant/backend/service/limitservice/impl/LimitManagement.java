@@ -642,6 +642,7 @@ public class LimitManagement {
 
 					/* Reverse the utilization in case of loan reject */
 					details.setReservedLimit(details.getReservedLimit().subtract(blockAmount));
+					details.setOsPriBal(details.getOsPriBal().subtract(limitAmount));
 					limitDetailDAO.updateReserveUtilise(details, "");
 				}
 			}
@@ -670,6 +671,7 @@ public class LimitManagement {
 					details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
 				}
 
+				details.setOsPriBal(details.getOsPriBal().subtract(limitAmount));
 				limitDetailDAO.updateReserveUtilise(details, "");
 			}
 			break;
@@ -769,6 +771,7 @@ public class LimitManagement {
 					details.setNonRvlUtilised(details.getNonRvlUtilised().subtract(limitAmount));
 				}
 
+				details.setOsPriBal(details.getOsPriBal().subtract(limitAmount));
 				limitDetailDAO.updateReserveUtilise(details, "");
 			}
 			break;
@@ -817,6 +820,7 @@ public class LimitManagement {
 					details.setNonRvlUtilised(details.getNonRvlUtilised().add(limitAmount));
 				}
 
+				details.setOsPriBal(details.getOsPriBal().subtract(limitAmount));
 				limitDetailDAO.updateReserveUtilise(details, "");
 			}
 
@@ -893,6 +897,7 @@ public class LimitManagement {
 					details.setNonRvlUtilised(details.getNonRvlUtilised().subtract(limitAmount));
 				}
 
+				details.setOsPriBal(details.getOsPriBal().subtract(limitAmount));
 				limitDetailDAO.updateReserveUtilise(details, "");
 			}
 

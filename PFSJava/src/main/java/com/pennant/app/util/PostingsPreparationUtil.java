@@ -54,8 +54,6 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
-import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.commitment.Commitment;
@@ -74,12 +72,8 @@ public class PostingsPreparationUtil implements Serializable {
 
 	private AccountEngineExecution engineExecution;
 	private PostingsDAO postingsDAO;
-	private AccountProcessUtil accountProcessUtil;
 	private CommitmentDAO commitmentDAO;
 	private CommitmentMovementDAO commitmentMovementDAO;
-	// private FinanceCancellationProcess financeCancellationProcess;
-	private FinanceTypeDAO financeTypeDAO;
-	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private DivisionDetailDAO divisionDetailDAO;
 
 	public PostingsPreparationUtil() {
@@ -141,7 +135,7 @@ public class PostingsPreparationUtil implements Serializable {
 	// ****************** Process Methods *******************//
 	// ******************************************************//
 
-	public AEEvent processPostingDetails(AEEvent aeEvent) throws AccountNotFoundException, InterfaceException {
+	public AEEvent processPostingDetails(AEEvent aeEvent) throws InterfaceException {
 		// Preparation for Commitment Postings
 		long linkedTranId = postingsDAO.getLinkedTransId();
 		aeEvent.setLinkedTranId(linkedTranId);
@@ -150,7 +144,6 @@ public class PostingsPreparationUtil implements Serializable {
 		// FIXME: PV: Prepare Return Data Set
 
 		postingsDAO.saveBatch(returnDatasetList);
-		accountProcessUtil.procAccountUpdate(returnDatasetList);
 
 		return aeEvent;
 	}
@@ -287,7 +280,6 @@ public class PostingsPreparationUtil implements Serializable {
 		if (!list.isEmpty()) {
 			if (aeEvent.isPostingSucess()) {
 				postingsDAO.saveBatch(list);
-				// getAccountProcessUtil().updateAccountInfo(list);
 			}
 		}
 
@@ -559,8 +551,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 		postingsDAO.saveBatch(returnDataSets);
 
-		accountProcessUtil.procAccountUpdate(returnDataSets);
-
 		logger.debug(Literal.LEAVING);
 		return returnDataSets;
 	}
@@ -581,8 +571,6 @@ public class PostingsPreparationUtil implements Serializable {
 		postingsDAO.updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
 
 		postingsDAO.saveBatch(returnDataSets);
-
-		accountProcessUtil.procAccountUpdate(returnDataSets);
 
 		logger.debug(Literal.LEAVING);
 		return returnDataSets;
@@ -617,8 +605,6 @@ public class PostingsPreparationUtil implements Serializable {
 		postingsDAO.updateStatusByPostRef(postRef, AccountConstants.POSTINGS_REVERSE);
 
 		postingsDAO.saveBatch(returnDataSets);
-
-		accountProcessUtil.procAccountUpdate(returnDataSets);
 
 		logger.debug(Literal.LEAVING);
 		return returnDataSets;
@@ -725,8 +711,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 		postingsDAO.saveBatch(returnDataSets);
 
-		accountProcessUtil.procAccountUpdate(returnDataSets);
-
 		logger.debug(Literal.LEAVING);
 		return returnDataSets;
 	}
@@ -743,10 +727,6 @@ public class PostingsPreparationUtil implements Serializable {
 		this.postingsDAO = postingsDAO;
 	}
 
-	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
-		this.accountProcessUtil = accountProcessUtil;
-	}
-
 	public void setCommitmentDAO(CommitmentDAO commitmentDAO) {
 		this.commitmentDAO = commitmentDAO;
 	}
@@ -755,16 +735,7 @@ public class PostingsPreparationUtil implements Serializable {
 		this.commitmentMovementDAO = commitmentMovementDAO;
 	}
 
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
-		this.finTypeAccountingDAO = finTypeAccountingDAO;
-	}
-
 	public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
 		this.divisionDetailDAO = divisionDetailDAO;
 	}
-
 }

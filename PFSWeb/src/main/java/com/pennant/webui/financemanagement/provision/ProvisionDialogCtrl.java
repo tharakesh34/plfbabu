@@ -582,7 +582,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			wve.add(we);
 		}
 		try {
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			aProvision.setProvisionDate(appDate);
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -683,11 +683,9 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	// CRUD operations
 
 	/**
-	 * Deletes a Provision object from database.<br>
-	 * 
-	 * @throws InterruptedException
+	 * Deletes a Provision object from database.
 	 */
-	private void doDelete() throws InterruptedException {
+	private void doDelete() {
 		//
 	}
 
@@ -1214,7 +1212,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		getProvision().setCustID(fm.getCustID());
 		getProvision().setCustCIF(fm.getLovDescCustCIF());
 		getProvision().setCustShrtName(fm.getLovDescCustShrtName());
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		getProvision().setDueFromDate(appDate);
 		getProvision().setFinCcy(fm.getFinCcy());
 
@@ -1453,17 +1451,6 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aProvision.getBefImage(), aProvision);
 		return new AuditHeader(aProvision.getFinReference(), null, null, null, auditDetail, aProvision.getUserDetails(),
 				getOverideMap());
-	}
-
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_ProvisionDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
 	}
 
 	public void onClick$btnNotes(Event event) {

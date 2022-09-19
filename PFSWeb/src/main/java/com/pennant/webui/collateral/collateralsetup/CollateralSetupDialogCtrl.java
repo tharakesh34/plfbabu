@@ -52,6 +52,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
@@ -188,6 +189,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	protected Groupbox gb_ThirdPartyAssignDetails;
 	protected Button btnFlagDetails;
 	protected Uppercasebox flagDetails;
+	protected Datebox cersaiRegDate;
+	protected Datebox cersaiModificationDate;
+	protected Datebox cersaiSatisfactionDate;
+	protected Combobox regStatus;
+	protected Textbox assetId;
+	protected Textbox siId;
 
 	protected Label label_DepositorCif;
 	protected Label label_CollateralRef;
@@ -696,6 +703,13 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.nextReviewDate.setValue(aCollateralSetup.getNextReviewDate());
 		this.multiLoanAssignment.setChecked(aCollateralSetup.isMultiLoanAssignment());
 		this.remarks.setValue(aCollateralSetup.getRemarks());
+		this.cersaiRegDate.setValue(aCollateralSetup.getRegistrationDate());
+		this.cersaiModificationDate.setValue(aCollateralSetup.getModificationDate());
+		this.cersaiSatisfactionDate.setValue(aCollateralSetup.getSatisfactionDate());
+		this.regStatus.setValue(aCollateralSetup.getRegStatus());
+		this.assetId
+				.setValue(String.valueOf(aCollateralSetup.getAssetId() == null ? "" : aCollateralSetup.getAssetId()));
+		this.siId.setValue(String.valueOf(aCollateralSetup.getSiId() == null ? "" : aCollateralSetup.getSiId()));
 		this.thirdPartyAssignment.setChecked(aCollateralSetup.isThirdPartyAssignment());
 
 		if (aCollateralSetup.isNewRecord()) {

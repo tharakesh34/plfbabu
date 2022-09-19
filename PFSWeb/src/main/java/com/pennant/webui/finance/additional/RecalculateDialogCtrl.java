@@ -275,7 +275,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						PennantStaticListUtil.getSchCalCodes(), excldValues);
 
 				if (aFinSchData.getFinanceMain().getEventFromDate() == null) {
-					aFinSchData.getFinanceMain().setEventFromDate(DateUtility.getAppDate());
+					aFinSchData.getFinanceMain().setEventFromDate(SysParamUtil.getAppDate());
 				}
 			} else {
 
@@ -529,8 +529,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				return;
 			}
 			// Validate the no of installment should match with upload repayment schedule.
-			if (StringUtils.equals(moduleDefiner, FinServiceEvent.RECALCULATE)
-					&& noOfInstall != details.size()) {
+			if (StringUtils.equals(moduleDefiner, FinServiceEvent.RECALCULATE) && noOfInstall != details.size()) {
 				MessageUtil.showError(Labels.getLabel("NOOFINSTL_ROWS"));
 				Tab tab = getTab(AssetConstants.UNIQUE_ID_MANUALSCHEDULE);
 				if (tab != null) {

@@ -68,7 +68,6 @@
 		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />

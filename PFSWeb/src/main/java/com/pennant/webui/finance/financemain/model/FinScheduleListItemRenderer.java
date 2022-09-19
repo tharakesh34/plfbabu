@@ -193,7 +193,6 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 		FinanceMain aFinanceMain = getFinScheduleData().getFinanceMain();
 		FinanceType financeType = getFinScheduleData().getFinanceType();
-		String product = financeType.getFinCategory();
 
 		// Schedule Fee Details existis or not Checking
 		List<FeeRule> feeRuleList = getFinScheduleData().getFeeRules();
@@ -855,7 +854,18 @@ public class FinScheduleListItemRenderer implements Serializable {
 				if (getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate()) != 0) {
 					String colorClass = "";
 
-					String label = Labels.getLabel("label_listcell_repay.label");
+					String label = "";
+					if (DateUtil.compare(aFinanceMain.getMaturityDate(), getFinanceScheduleDetail().getSchDate()) == 0
+							&& FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(aFinanceMain.getClosingStatus())) {
+						label = Labels.getLabel("label_listcell_EarlySettlement.label");
+
+					} else if (!getFinanceScheduleDetail().isFrqDate() && getFinanceScheduleDetail().getRepayAmount()
+							.compareTo(getFinanceScheduleDetail().getPartialPaidAmt()) == 0) {
+						label = Labels.getLabel("label_listcell_PartialPayment.label");
+					} else {
+						label = Labels.getLabel("label_listcell_repay.label");
+					}
+
 					if (getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getGrcPeriodEndDate()) < 0
 							&& (StringUtils.equals(aFinanceMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_NOPAY)
 									|| StringUtils.equals(aFinanceMain.getGrcSchdMthd(),
@@ -1823,7 +1833,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				Checkbox planEMIHDate = new Checkbox();
 
 				if (StringUtils.equals(getModuleDefiner(), FinServiceEvent.PLANNEDEMI)
-						&& DateUtility.compare(data.getSchDate(), DateUtility.getAppDate()) <= 0) {
+						&& DateUtility.compare(data.getSchDate(), SysParamUtil.getAppDate()) <= 0) {
 					planEMIHDate.setDisabled(true);
 				} else {
 					planEMIHDate.setDisabled(isEMIHEditable);
@@ -2454,12 +2464,25 @@ public class FinScheduleListItemRenderer implements Serializable {
 				}
 			}
 
+			boolean ppEntryAdded = false;
 			if (curSchd.isRepayOnSchDate()
 					|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 
 				if (curSchd.getSchDate().compareTo(aFinanceMain.getFinStartDate()) != 0) {
 
-					String label = Labels.getLabel("label_listcell_repay.label");
+					String label = "";
+					if (DateUtil.compare(aFinanceMain.getMaturityDate(), curSchd.getSchDate()) == 0
+							&& FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(aFinanceMain.getClosingStatus())) {
+						label = Labels.getLabel("label_listcell_EarlySettlement.label");
+
+					} else if (!curSchd.isFrqDate()
+							&& curSchd.getRepayAmount().compareTo(curSchd.getPartialPaidAmt()) == 0) {
+						label = Labels.getLabel("label_listcell_PartialPayment.label");
+						ppEntryAdded = true;
+					} else {
+						label = Labels.getLabel("label_listcell_repay.label");
+					}
+
 					if (curSchd.getSchDate().compareTo(aFinanceMain.getGrcPeriodEndDate()) < 0
 							&& (StringUtils.equals(aFinanceMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_NOPAY)
 									|| StringUtils.equals(aFinanceMain.getGrcSchdMthd(),

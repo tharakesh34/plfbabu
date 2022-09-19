@@ -14,5 +14,9 @@
 
 	<!-- ZestPartCancellation service -->
 	<bean id="partCancellationSchd" class="com.pennanttech.pff.external.service.ZestPartCancellationSchd" />
-
+	
+	<bean id="spreadSheetService" class="com.pennanttech.pff.extension.spreadsheet.SpreadSheetServiceImpl" />
+	
+	<bean id="spreadSheetDataAccess" class="com.pennanttech.pff.extension.spreadsheet.SpreadSheetDataAccess" parent="basicDao"/>
+	
 </beans>

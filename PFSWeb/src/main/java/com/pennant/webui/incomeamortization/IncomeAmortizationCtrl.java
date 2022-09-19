@@ -363,7 +363,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
 
-		Date amzMonth = DateUtility.getMonthStart(DateUtility.getAppDate());
+		Date amzMonth = DateUtility.getMonthStart(SysParamUtil.getAppDate());
 		amzMonth = DateUtility.addDays(amzMonth, -1);
 
 		monthEndList.add(new ValueLabel(DateUtility.format(amzMonth, PennantConstants.DBDateFormat),

@@ -397,28 +397,17 @@ public class InstallmentDueService extends ServiceHelper {
 			if (post) {
 				aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
-				boolean alwPostingRev = false;
-				if (eventProperties.isParameterLoaded()) {
-					alwPostingRev = eventProperties.isAccrualReversalReq();
-				} else {
-					alwPostingRev = SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ);
-				}
-
-				if (alwPostingRev) {
-					pfd.setAmzTillLBD(pfd.getAmzTillLBD().add(amountCodes.getInstpft()));
-				}
-
 				long linkedTranId = aeEvent.getLinkedTranId();
 				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && linkedTranId > 0) {
 					createInovice(fd, curSchd, linkedTranId);
 				}
-				pfd.setAmzTillLBD(pfd.getAmzTillLBD().add(totPft));
 			} else {
 				engineExecution.getAccEngineExecResults(aeEvent);
 				datasets.addAll(aeEvent.getReturnDataSet());
 			}
-
 		}
+
+		pfd.setAmzTillLBD(pfd.getAmzTillLBD().add(totPft));
 		logger.debug(Literal.LEAVING);
 		return datasets;
 	}

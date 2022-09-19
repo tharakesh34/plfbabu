@@ -92,6 +92,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity {
 	private boolean allowMultiple;
 	private String moduleType;
 	private boolean resendReq;
+	private String tabCode;
 
 	public FinanceReferenceDetail() {
 		super();
@@ -154,6 +155,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity {
 		entity.setAllowMultiple(this.allowMultiple);
 		entity.setModuleType(this.moduleType);
 		entity.setResendReq(this.resendReq);
+		entity.setTabCode(this.tabCode);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -169,11 +171,12 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("aggType");
 		excludeFields.add("allowMultiple");
 		excludeFields.add("moduleType");
 		excludeFields.add("resendReq");
+		excludeFields.add("tabCode");
 		return excludeFields;
 	}
 
@@ -561,4 +564,11 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity {
 		this.resendReq = resendReq;
 	}
 
+	public String getTabCode() {
+		return tabCode;
+	}
+
+	public void setTabCode(String tabCode) {
+		this.tabCode = tabCode;
+	}
 }

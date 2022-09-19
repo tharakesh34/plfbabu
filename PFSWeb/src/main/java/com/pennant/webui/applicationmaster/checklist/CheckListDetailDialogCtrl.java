@@ -827,22 +827,6 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	}
 
 	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_CheckListDetailDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-	}
-
-	/**
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)

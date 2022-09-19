@@ -6,15 +6,18 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -38,6 +41,8 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -45,6 +50,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -64,6 +70,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -92,6 +99,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	private FinanceCancellationService financeCancellationService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	private ManualAdviseDAO manualAdviseDAO;
 
 	protected Listbox listBoxCancelFinancePosting;
 
@@ -1148,6 +1156,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 
+		Date appDate = SysParamUtil.getAppDate();
+
 		while (retValue == PennantConstants.porcessOVERIDE) {
 
 			if (StringUtils.isBlank(method)) {
@@ -1155,6 +1165,34 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 			} else {
 				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					String finreference = afinanceMain.getFinReference();
+					String errormsg = "";
+
+					List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(finreference, "");
+
+					List<ManualAdvise> updateList = new ArrayList<>();
+
+					if (CollectionUtils.isNotEmpty(manualAdvise)) {
+						for (ManualAdvise md : manualAdvise) {
+							Date valueDate = md.getValueDate();
+
+							if (DateUtil.compare(valueDate, appDate) > 0) {
+								md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
+								md.setAdviseID(md.getAdviseID());
+								updateList.add(md);
+							}
+						}
+
+						if (CollectionUtils.isNotEmpty(updateList)) {
+							errormsg = "Manual Advise will be cancelled along with loan, Do you want to proceed yes or No";
+							if (MessageUtil.confirm(errormsg) == MessageUtil.YES) {
+								manualAdviseDAO.updateStatus(updateList, "");
+							} else {
+								return false;
+							}
+						}
+					}
+
 					auditHeader = getFinanceCancellationService().doApprove(auditHeader, true);
 
 					if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -1577,4 +1615,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
 }

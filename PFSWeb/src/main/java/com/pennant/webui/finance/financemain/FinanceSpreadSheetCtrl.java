@@ -1,28 +1,19 @@
 package com.pennant.webui.finance.financemain;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.json.JSONObject;
-import org.zkoss.json.parser.JSONParser;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.api.Importer;
@@ -30,46 +21,35 @@ import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.CellData;
+import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.EditableCellStyle;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.AuxAction;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Div;
-import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.PathUtil;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerAddres;
-import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
-import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
-import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
-import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.rmtmasters.ScoringMetrics;
-import com.pennant.backend.model.rmtmasters.ScoringSlab;
-import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.model.spreadsheet.CustomerSalaried;
-import com.pennant.backend.service.finance.ScoringDetailService;
-import com.pennant.backend.service.rulefactory.RuleService;
-import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.spreadsheet.SheetCopier;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RuleReturnType;
+import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
@@ -79,27 +59,15 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	protected Window window_SpreadSheetDialog;
 	protected Button button_FetchData;
 	protected Spreadsheet spreadSheet = null;
-	protected Div spreadSheetDiv;
 
-	// protected Listbox listBoxCustomerExternalLiability;
+	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
+	private boolean isReadOnly;
+
 	private CreditReviewDetails creditReviewDetails = null;
 	private CreditReviewData creditReviewData = null;
-	private List<CustomerIncome> customerIncomeList = new ArrayList<CustomerIncome>();
 
-	private Object financeMainDialogCtrl = null;
-	private boolean isEditable;
-	private Map<String, Object> dataMap = new HashMap<>();
-	List<CustomerExtLiability> appExtLiabilities = new ArrayList<>();
-	private boolean isReadOnly;
-	private FinanceDetail financeDetail = null;
-	private BigDecimal totalExposure = BigDecimal.ZERO;
-	StringBuilder fields = new StringBuilder();
-	private RuleService ruleService;
-	private ScoringDetailService finScoringDetailService;
+	private FinanceDetail fd;
 
-	/**
-	 * default constructor.<br>
-	 */
 	public FinanceSpreadSheetCtrl() {
 		super();
 	}
@@ -109,21 +77,12 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		super.pageRightName = "FinanceMainDialog";
 	}
 
-	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected Rule object in a Map.
-	 * 
-	 * @param event
-	 */
-	@SuppressWarnings("unchecked")
 	public void onCreate$window_SpreadSheetDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
-		// Set the page level components.
 		setPageComponents(window_SpreadSheetDialog);
 
 		try {
-			// READ OVERHANDED parameters !
 			if (arguments.containsKey("creditReviewDetails")) {
 				this.creditReviewDetails = (CreditReviewDetails) arguments.get("creditReviewDetails");
 			}
@@ -133,23 +92,15 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				this.financeMainDialogCtrl = arguments.get("financeMainDialogCtrl");
+				this.financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
 			}
 
 			if (arguments.containsKey("financeDetail")) {
-				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+				this.fd = (FinanceDetail) arguments.get("financeDetail");
 			}
 
-			if (arguments.containsKey("isEditable")) {
-				isEditable = (boolean) arguments.get("isEditable");
-			}
-
-			if (arguments.containsKey("dataMap")) {
-				dataMap = (Map<String, Object>) arguments.get("dataMap");
-			}
-
-			if (arguments.containsKey("externalLiabilities")) {
-				appExtLiabilities = (List<CustomerExtLiability>) arguments.get("externalLiabilities");
+			if (arguments.containsKey("Right_Eligibility")) {
+				isReadOnly = (boolean) arguments.get("Right_Eligibility");
 			}
 
 			if (arguments.containsKey("enqiryModule")) {
@@ -160,18 +111,8 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				doShowDialog();
 			}
 
-			// Set Spread Sheet Dialog Controller instance in base Controller
-			if (getFinanceMainDialogCtrl() != null) {
-				try {
-					Class[] paramType = { this.getClass() };
-					Object[] stringParameter = { this };
-					if (financeMainDialogCtrl.getClass().getMethod("setFinanceSpreadSheetCtrl", paramType) != null) {
-						financeMainDialogCtrl.getClass().getMethod("setFinanceSpreadSheetCtrl", paramType)
-								.invoke(financeMainDialogCtrl, stringParameter);
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
+			if (financeMainDialogCtrl != null) {
+				financeMainDialogCtrl.setFinanceSpreadSheetCtrl(this);
 			}
 
 		} catch (Exception e) {
@@ -187,31 +128,109 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		return new File(reportSrc);
 	}
 
+	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap) {
+		String employmentType = (String) dataMap.get("CUST_EMPLOYMENT_TYPE");
+
+		return getSheet(sheetNamePrefix, book, dataMap, employmentType);
+	}
+
+	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap, String eligibilityMethod) {
+		String custCIF = (String) dataMap.get("CIF");
+
+		String sheetName = sheetNamePrefix.concat("_").concat(eligibilityMethod);
+		Sheet sourceSheet = book.getSheet(sheetName);
+
+		if (sourceSheet == null) {
+			throw new AppException(sheetName + " Sheet not found.");
+		}
+
+		sheetName = sheetName.concat("_").concat(custCIF);
+
+		return SheetCopier.clone(sheetName, sourceSheet);
+	}
+
 	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
 		try {
-			// access components after calling super.doAfterCompose()
-			Importer importer = Importers.getImporter();
 
-			Book book = importer.imports(getFile(this.creditReviewDetails.getTemplateName()),
-					this.creditReviewDetails.getTemplateName());
+			String templateName = this.creditReviewDetails.getTemplateName();
+			String eligibilityMethod = this.creditReviewDetails.getEligibilityMethod();
 
-			// hidden the top row and column left
-			spreadSheet.setHiderowhead(true);
-			spreadSheet.setHidecolumnhead(true);
-			spreadSheet.setBook(book);
-			spreadSheet.setShowSheetbar(true);
-			spreadSheet.enableBindingAnnotation();
-			spreadSheet.disableUserAction(AuxAction.ADD_SHEET, true);
-			spreadSheet.setPreloadRowSize(100);
-			if (!enqiryModule) {
-				doWriteBeanToComponents(creditReviewDetails, creditReviewData);
-			} else if (enqiryModule) {
-				renderCellsData(creditReviewDetails, creditReviewData);
+			// Loading Template
+			Book book = null;
+			if (spreadSheet.getBook() == null) {
+				Importer importer = Importers.getImporter();
+				book = importer.imports(getFile(templateName), templateName);
+
+				spreadSheet.disableUserAction(AuxAction.ADD_SHEET, true);
+				spreadSheet.disableUserAction(AuxAction.RENAME_SHEET, true);
+				spreadSheet.disableUserAction(AuxAction.HIDE_SHEET, true);
+				spreadSheet.disableUserAction(AuxAction.MOVE_SHEET_LEFT, true);
+				spreadSheet.disableUserAction(AuxAction.MOVE_SHEET_RIGHT, true);
+				spreadSheet.disableUserAction(AuxAction.DELETE, true);
+				spreadSheet.disableUserAction(AuxAction.UNHIDE_SHEET, true);
+				spreadSheet.disableUserAction(AuxAction.PROTECT_SHEET, true);
+				spreadSheet.disableUserAction(AuxAction.COPY, true);
+
+				spreadSheet.setHiderowhead(true);
+
+				spreadSheet.setHidecolumnhead(true);
+				spreadSheet.setShowSheetbar(true);
+				spreadSheet.enableBindingAnnotation();
+
+				spreadSheet.setMaxVisibleColumns(100);
+				spreadSheet.setMaxVisibleRows(130);
+				spreadSheet.setPreloadRowSize(100);
+
+				spreadSheet.setBook(book);
+			} else {
+				book = spreadSheet.getBook();
 			}
+
+			// Getting applicant data from screen.
+			Map<String, Object> applicantDataMap = getApplicantData();
+
+			/* Getting co-applicant data from screen. */
+			Map<String, Map<String, Object>> coApplicantData = getCoApplicantData();
+
+			if (applicantDataMap.isEmpty()) {
+				return;
+			}
+
+			/*
+			 * Setting applicant data to corresponding cell based on the configuration, either from Fields or FieldKeys
+			 */
+			try {
+				Sheet sheet = getSheet("APP", book, applicantDataMap, eligibilityMethod);
+
+				doSetData(sheet);
+
+				doSetScreenData(sheet, applicantDataMap);
+
+				spreadSheet.setSelectedSheet(sheet.getSheetName());
+			} catch (Exception e) {
+				throw e;
+			}
+
+			/* Setting co-applicant data to corresponding cell based on the configuration either from Fields or */
+			for (Entry<String, Map<String, Object>> coAppData : coApplicantData.entrySet()) {
+				try {
+					Sheet sheet = getSheet("CO_APP", book, coAppData.getValue());
+
+					doSetData(sheet);
+
+					doSetScreenData(sheet, coAppData.getValue());
+				} catch (Exception e) {
+					//
+				}
+			}
+
+			setFinalSheet(book, applicantDataMap);
+
+			this.button_FetchData.setVisible(!isReadOnly);
+
 			getBorderLayoutHeight();
-			this.window_SpreadSheetDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 
 		} catch (Exception e) {
 			MessageUtil.showMessage(e.getMessage());
@@ -220,197 +239,441 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	// Default value "0" to be displayed for input fields numeric
-	public void defaultValues$spreadSheet() {
-		for (int colnum = 1; colnum <= 7; colnum++) {
-			for (int rownum = 5; rownum <= 13; rownum++) {
-				if (rownum % 2 != 0 && colnum % 2 != 0) {
-					Range range = Ranges.range(spreadSheet.getSelectedSheet(), rownum, colnum);
-					if (range.getCellValue() == null) {
-						range.setCellValue(0);
+	private Sheet getFinalSheet() {
+		Sheet sheet = null;
+		Book book = spreadSheet.getBook();
+		int numberOfSheets = book.getNumberOfSheets();
+
+		for (int i = 0; i < numberOfSheets; i++) {
+			sheet = book.getSheetAt(i);
+
+			if (!sheet.isHidden()) {
+				break;
+			}
+		}
+
+		return sheet;
+	}
+
+	private void setFinalSheet(Book book, Map<String, Object> applicantDataMap) {
+		Sheet sheet = getFinalSheet();
+		Ranges.range(sheet).setSheetOrder(spreadSheet.getBook().getNumberOfSheets() - 1);
+
+		String formulaFieldName = "TOT_M_GI_SUM";
+
+		setFormula(sheet, formulaFieldName);
+
+		doSetData(sheet);
+
+		doSetScreenData(sheet, applicantDataMap);
+	}
+
+	private String removeEndOperator(String deriveFormula) {
+		while (StringUtils.endsWith(deriveFormula, "+") || StringUtils.endsWith(deriveFormula, "+")) {
+			deriveFormula = StringUtils.removeEnd(deriveFormula, "+");
+			deriveFormula = StringUtils.removeEnd(deriveFormula, "-");
+		}
+
+		return deriveFormula;
+	}
+
+	private void setFormula(Sheet sheet, String formulaFieldName) {
+		Range range = getRange(sheet, formulaFieldName);
+
+		CellData cellData = range.getCellData();
+		CellType type = cellData.getType();
+
+		if (type != CellType.FORMULA) {
+			return;
+		}
+
+		String completeFormula = cellData.getFormulaValue();
+
+		String formula = getFormula(formulaFieldName, completeFormula);
+
+		String deriveFormula = "";
+		for (String formulaField : StringUtils.split(formula, "+")) {
+			if (deriveFormula.length() > 0) {
+				deriveFormula = deriveFormula + "+";
+			}
+
+			deriveFormula = deriveFormula + deriveFormula(formulaField);
+
+		}
+
+		deriveFormula = removeEndOperator(deriveFormula);
+
+		completeFormula = completeFormula.replace(formula, deriveFormula);
+
+		cellData.setEditText("=" + completeFormula);
+
+	}
+
+	private String deriveFormula(String format) {
+		String finalFormula = "";
+
+		String prefix = format.split("!")[0];
+		String reference = format.split("!")[1];
+
+		String prefix1 = prefix;
+
+		if (prefix.startsWith("APP")) {
+			prefix1 = "CO_" + prefix;
+		}
+
+		Book book = spreadSheet.getBook();
+		int numberOfSheets = book.getNumberOfSheets();
+
+		for (int i = 0; i < numberOfSheets; i++) {
+			Sheet sheet = book.getSheetAt(i);
+
+			if (sheet.isHidden()) {
+				continue;
+			}
+
+			String sheetName = sheet.getSheetName();
+			if (sheetName.startsWith(prefix) || sheetName.startsWith(prefix1)) {
+
+				if (finalFormula.length() > 0) {
+					finalFormula = finalFormula + "+";
+				}
+
+				finalFormula = finalFormula + sheetName + "!" + reference;
+			}
+		}
+
+		return finalFormula;
+	}
+
+	private String getFormula(String formula, String formulaValue) {
+		if (formula.endsWith("SUM") && formulaValue.startsWith("SUM")) {
+			formulaValue = formulaValue.replace("SUM(", "");
+			formulaValue = formulaValue.replace(")", "");
+		}
+
+		return formulaValue;
+	}
+
+	private Range getRange(org.zkoss.zss.api.model.Sheet sheet, String cellName) {
+
+		Range range = null;
+		try {
+			range = Ranges.rangeByName(sheet, cellName);
+		} catch (Exception e) {
+			//
+		}
+
+		if (range != null) {
+			return range;
+		}
+
+		try {
+			range = Ranges.range(sheet, cellName);
+		} catch (Exception e) {
+			//
+		}
+
+		return range;
+	}
+
+	private void setCellValue(Sheet sheet, String cellName, Object object) {
+		Range range = getRange(sheet, cellName);
+
+		if (range == null || range.isWholeColumn()) {
+			return;
+		}
+
+		CellType cellType = range.getCellData().getType();
+
+		if (cellType != null && object == null) {
+			switch (cellType) {
+			case NUMERIC:
+				object = "0.00";
+				break;
+			case STRING:
+			case BLANK:
+				object = "";
+				break;
+			case BOOLEAN:
+				object = false;
+				break;
+			default:
+				object = "";
+				break;
+			}
+		}
+
+		try {
+			if (range.getColumn() < 16383) {
+				range.setCellValue(object);
+			}
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+	}
+
+	private void doSetCellValue(Sheet sheet, String fieldName, Map<String, Object> dataMap, boolean savedData) {
+		fieldName = StringUtils.trim(fieldName);
+
+		String key = fieldName;
+		if (savedData) {
+			String sheetName = sheet.getSheetName();
+			key = sheetName + "_" + fieldName;
+		}
+
+		setCellValue(sheet, fieldName, dataMap.get(key));
+	}
+
+	private Object getCellValue(Sheet sheet, String cellName) {
+		cellName = StringUtils.trim(cellName);
+
+		Range range = getRange(sheet, cellName);
+
+		if (range == null) {
+			return "";
+		}
+
+		return range.getCellValue();
+	}
+
+	private Map<String, Object> getFieldsBySheet() {
+		return convertStringToMap(creditReviewDetails.getFields());
+	}
+
+	private Map<String, Object> getKeyFieldsBySheet() {
+		return convertStringToMap(creditReviewDetails.getFieldKeys());
+	}
+
+	private String[] getFields(Object object) {
+		String[] fields = null;
+		if (object == null || StringUtils.isEmpty(object.toString())) {
+			return new String[0];
+		}
+
+		String[] array = object.toString().split(",");
+
+		fields = new String[array.length];
+
+		int index = 0;
+		for (String fieldName : array) {
+			fields[index++] = fieldName.trim();
+		}
+
+		return fields;
+	}
+
+	/**
+	 * This method will set the data to corresponding cell, here the data is previous saved data of editable fields
+	 * 
+	 * The editable fields are configured in CreditReviewConfig#Fields (input data)
+	 * 
+	 * @param sheet
+	 */
+	private void doSetData(Sheet sheet) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> dataMap = new HashMap<>();
+
+		if (creditReviewData != null) {
+			dataMap = convertStringToMap(creditReviewData.getTemplateData());
+		}
+
+		Map<String, Object> fieldsBySheet = getFieldsBySheet();
+
+		for (Entry<String, Object> fieldMap : fieldsBySheet.entrySet()) {
+			if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+				for (String fieldName : getFields(fieldMap.getValue())) {
+					fieldName = StringUtils.trim(fieldName);
+
+					unProtectField(sheet, fieldName);
+
+					try {
+						doSetCellValue(sheet, fieldName, dataMap, true);
+					} catch (Exception e) {
+						logger.warn(Literal.EXCEPTION, e);
 					}
 				}
 			}
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void doWriteBeanToComponents(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
+	/**
+	 * This method will set the data to corresponding cell, here the data is loaded from the screen
+	 * 
+	 * The editable fields are configured in CreditReviewConfig#FieldKeys (populate data from screen)
+	 * 
+	 * Here the cell data which is set by doSetData method will be overwrite by with screen data
+	 * 
+	 * @param sheet
+	 * @param dataMap
+	 */
+	private void doSetScreenData(Sheet sheet, Map<String, Object> dataMap) {
 		logger.debug(Literal.ENTERING);
 
-		String fields = creditReviewDetails.getFieldKeys();
-		if (StringUtils.isNotBlank(fields)) {
-			String fieldsArray[] = fields.split(",");
-			for (int i = 0; i < fieldsArray.length; i++) {
-				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
-				range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
-			}
-		}
+		Map<String, Object> fieldsBySheet = getKeyFieldsBySheet();
 
-		String protectedCells = creditReviewDetails.getProtectedCells();
-		if (StringUtils.isNoneBlank(protectedCells)) {
-			String protectedCellsArray[] = protectedCells.split(",");
-			for (String protectedCell : protectedCellsArray) {
-				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), protectedCell);
-				CellStyle cellStyle = range.getCellStyle();
-				EditableCellStyle newStyle = range.getCellStyleHelper().createCellStyle(cellStyle);
-				newStyle.setLocked(isEditable);
-				range.setCellStyle(newStyle);
+		for (Entry<String, Object> fieldMap : fieldsBySheet.entrySet()) {
+			if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+				for (String fieldName : getFields(fieldMap.getValue())) {
+					fieldName = StringUtils.trim(fieldName);
+
+					try {
+						doSetCellValue(sheet, fieldName, dataMap, false);
+					} catch (Exception e) {
+						logger.warn(Literal.EXCEPTION, e);
+					}
+				}
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void renderCellsData(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
+	/**
+	 * This method will re-set the cell values in the screen from the screen * The editable fields are configured in
+	 * 
+	 * CreditReviewConfig#FieldKeys (populate data from screen)
+	 * 
+	 * Here the cell data which is set by doSetData method will be overwrite by with screen data
+	 */
+	private void doResetScreenData() {
 		logger.debug(Literal.ENTERING);
 
-		Map<String, Object> dataMap = new HashMap<>();
-		if (creditReviewData != null) {
-			dataMap = convertStringToMap(creditReviewData.getTemplateData());
-			// doFillExternalLiabilities(appExtLiabilities, dataMap);
-		}
+		Map<String, Object> keyFields = getKeyFieldsBySheet();
 
-		String fields = creditReviewDetails.getFields();
+		Book book = spreadSheet.getBook();
+		int numberOfSheets = book.getNumberOfSheets();
 
-		if (StringUtils.isNotBlank(fields)) {
-			String fieldsArray[] = fields.split(",");
-			for (int i = 0; i < fieldsArray.length; i++) {
-				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
-				range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
+		Map<String, Object> applicantData = getApplicantData();
+		Map<String, Map<String, Object>> coApplicantData = getCoApplicantData();
+
+		for (int i = 0; i < numberOfSheets; i++) {
+			Sheet sheet = book.getSheetAt(i);
+
+			if (sheet.isHidden()) {
+				continue;
 			}
-		}
 
-		String protectedCells = creditReviewDetails.getProtectedCells();
-		if (StringUtils.isNoneBlank(protectedCells)) {
-			String protectedCellsArray[] = protectedCells.split(",");
-			for (String protectedCell : protectedCellsArray) {
-				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), protectedCell);
-				CellStyle cellStyle = range.getCellStyle();
-				EditableCellStyle newStyle = range.getCellStyleHelper().createCellStyle(cellStyle);
-				newStyle.setLocked(isEditable);
-				range.setCellStyle(newStyle);
+			String sheetName = sheet.getSheetName();
+
+			for (Entry<String, Object> fieldMap : keyFields.entrySet()) {
+				if (sheetName.startsWith(fieldMap.getKey())) {
+					if (sheetName.startsWith("CO_APP")) {
+						doSetScreenData(sheet, coApplicantData.get(getCIF(sheetName)));
+					} else {
+						doSetScreenData(sheet, applicantData);
+					}
+				}
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	public static Map<String, Object> convertStringToMap(String payload) {
-		logger.debug(Literal.ENTERING);
+	/**
+	 * This method will unprotected the corresponding cell, these cells are editable cells configured in
+	 * CreditReviewConfig#Fields (input data)
+	 * 
+	 * @param sheet
+	 * @param fieldName
+	 */
+	private void unProtectField(Sheet sheet, String fieldName) {
+
+		if (isReadOnly) {
+			return;
+		}
+
+		fieldName = StringUtils.trim(fieldName);
+
+		Range range = getRange(sheet, fieldName);
+
+		if (range != null) {
+			CellStyle cellStyle = range.getCellStyle();
+			EditableCellStyle newStyle = range.getCellStyleHelper().createCellStyle(cellStyle);
+			newStyle.setLocked(false);
+			range.setCellStyle(newStyle);
+		}
+	}
+
+	private Map<String, Object> convertStringToMap(String payload) {
+		Map<String, Object> map = new HashMap<>();
 
 		ObjectMapper obj = new ObjectMapper();
-		Map<String, Object> map = null;
-		try {
-			map = obj.readValue(payload, new TypeReference<HashMap<String, Object>>() {
-			});
-		} catch (JsonParseException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		} catch (JsonMappingException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		} catch (IOException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
+		try {
+			return obj.readValue(payload, new TypeReference<HashMap<String, Object>>() {
+			});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
 		return map;
 	}
 
-	public void doWriteComponentstoBean() {
-		logger.debug(Literal.ENTERING);
-
+	private String convertMapToString(Map<String, Object> dataMap) {
 		ObjectMapper mapper = new ObjectMapper();
-		String jsonInString = null;
-
-		String fields = creditReviewDetails.getFields();
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-
-		if (StringUtils.isNotBlank(fields)) {
-			String fieldsArray[] = fields.split(",");
-			for (int i = 0; i < fieldsArray.length; i++) {
-				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
-				dataMap.put(fieldsArray[i], range.getCellValue());
-			}
-		}
 
 		try {
-			saveConsideredObligations(dataMap);
-			jsonInString = mapper.writeValueAsString(dataMap);
+			return mapper.writeValueAsString(dataMap);
 		} catch (Exception e) {
-			logger.error("Exception in json request string" + e);
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return null;
+	}
+
+	private void doWriteComponentstoBean() {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> dataMap = new HashMap<>();
+
+		Book book = spreadSheet.getBook();
+		int numberOfSheets = book.getNumberOfSheets();
+
+		Map<String, Object> fieldsBySheet = getFieldsBySheet();
+
+		for (int i = 0; i < numberOfSheets; i++) {
+			Sheet sheet = book.getSheetAt(i);
+
+			if (sheet.isHidden()) {
+				continue;
+			}
+
+			String sheetName = sheet.getSheetName();
+
+			for (Entry<String, Object> fieldMap : fieldsBySheet.entrySet()) {
+				if (sheetName.startsWith(fieldMap.getKey())) {
+					for (String fieldName : getFields(fieldMap.getValue())) {
+						String key = sheetName + "_" + StringUtils.trim(fieldName);
+
+						dataMap.put(key, getCellValue(sheet, fieldName));
+					}
+				}
+			}
 		}
 
 		if (this.creditReviewData == null) {
 			this.creditReviewData = new CreditReviewData();
-			// this.creditReviewData.setNewRecord(true);
 		}
 
 		this.creditReviewData.setTemplateName(this.creditReviewDetails.getTemplateName());
 		this.creditReviewData.setTemplateVersion(this.creditReviewDetails.getTemplateVersion());
-		this.creditReviewData.setTemplateData(jsonInString);
+		this.creditReviewData.setTemplateData(convertMapToString(dataMap));
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$button_FetchData(Event event) {
-		logger.debug(Literal.ENTERING);
-		checkCreditRevData();
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void checkCreditRevData() {
-		logger.debug(Literal.ENTERING);
-		try {
-			if (getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) {
-				((FinanceMainBaseCtrl) getFinanceMainDialogCtrl()).isCreditReviewDataChanged(creditReviewDetails,
-						false);
-			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	public void setDataToCells(CreditReviewDetails creditReviewDetails, Map<String, Object> dataMap) {
-		logger.debug(Literal.ENTERING);
-
-		String fields = creditReviewDetails.getFields();
-
-		if (StringUtils.isNotBlank(fields)) {
-			String fieldsArray[] = fields.split(",");
-			for (int i = 0; i < fieldsArray.length; i++) {
-				try {
-					Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
-					range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	public void setDataToCells(String fields, Map<String, BigDecimal> dataMap) {
-		logger.debug(Literal.ENTERING);
-
-		if (StringUtils.isNotBlank(fields)) {
-			String fieldsArray[] = fields.split(",");
-			for (int i = 0; i < fieldsArray.length; i++) {
-				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
-				range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
-				if (dataMap.get(fieldsArray[i]) == null) {
-					dataMap.put(fieldsArray[i], BigDecimal.ZERO);
-				}
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
+		doResetScreenData();
 	}
 
 	public boolean doSave(Radiogroup userAction, boolean isFromLoan) {
 		logger.debug(Literal.ENTERING);
+
 		boolean isDataChanged = checkIsDataChanged(userAction, isFromLoan);
+
 		if (!isDataChanged) {
 			doWriteComponentstoBean();
 
@@ -422,595 +685,281 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			creditReviewData.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			creditReviewData.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		}
+
 		logger.debug(Literal.LEAVING);
+
 		return isDataChanged;
+	}
+
+	private boolean isDataChanged(Sheet sheet, String cellName, Map<String, Object> dataMap) {
+		if (!dataMap.containsKey(cellName)) {
+			return false;
+		}
+
+		Object object1 = dataMap.get(cellName);
+		Object object2 = getCellValue(sheet, cellName);
+
+		if (object1 == null && object2 == null) {
+			return false;
+		}
+
+		if (object1 != null && object2 == null) {
+			return true;
+		}
+
+		if (object1 == null && object2 != null) {
+			return true;
+		}
+
+		if (object1 instanceof BigDecimal || object2 instanceof BigDecimal || object1 instanceof Integer
+				|| object2 instanceof Integer || object1 instanceof Double || object2 instanceof Double) {
+			Double data1 = Double.valueOf(object1.toString());
+
+			Double data2 = Double.valueOf(object2.toString());
+
+			if (data1.compareTo(data2) != 0) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private String getCIF(String sheetName) {
+		String[] tokens = sheetName.split("_");
+
+		return tokens[tokens.length];
+	}
+
+	protected boolean isDataChanged() {
+		Map<String, Object> keyFields = getKeyFieldsBySheet();
+
+		Book book = spreadSheet.getBook();
+		int numberOfSheets = book.getNumberOfSheets();
+
+		Map<String, Object> applicantData = getApplicantData();
+		Map<String, Map<String, Object>> coApplicantData = getCoApplicantData();
+
+		for (int i = 0; i < numberOfSheets; i++) {
+			Sheet sheet = book.getSheetAt(i);
+
+			if (sheet.isHidden()) {
+				continue;
+			}
+
+			String sheetName = sheet.getSheetName();
+
+			for (Entry<String, Object> fieldMap : keyFields.entrySet()) {
+				if (sheetName.startsWith(fieldMap.getKey())) {
+					for (String cellName : getFields(fieldMap.getValue())) {
+
+						boolean dataChanged = false;
+
+						if (sheetName.startsWith("CO_APP")) {
+							dataChanged = isDataChanged(sheet, cellName, coApplicantData.get(getCIF(sheetName)));
+						} else {
+							dataChanged = isDataChanged(sheet, cellName, applicantData);
+						}
+
+						if (dataChanged) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private boolean checkIsDataChanged(Radiogroup userAction, boolean isFromLoan) {
 		logger.debug(Literal.ENTERING);
+
 		boolean isDataChanged = false;
-		if (!(userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_RESUBMITTED)
-				|| userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED)
-				|| userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED))) {
-			if (getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) {
-				isDataChanged = ((FinanceMainBaseCtrl) getFinanceMainDialogCtrl())
-						.isCreditReviewDataChanged(creditReviewDetails, isFromLoan);
-			}
+
+		Object recordStatus = userAction.getSelectedItem().getValue();
+		if (!(PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordStatus)
+				|| PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
+				|| PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus))) {
+
+			isDataChanged = isDataChanged();
+
 			if (isDataChanged) {
-				MessageUtil.showMessage("Loan details has changed.Eligibility needs to be verified.");
+				MessageUtil.showMessage("Loan details has changed, eligibility needs to be verified.");
 			}
 		}
+
 		logger.debug(Literal.LEAVING);
 		return isDataChanged;
 	}
 
-	public void onClickToBeConsidered(ForwardEvent event) {
-		logger.debug(Literal.ENTERING);
+	private Map<String, Object> getApplicantData() {
 
-		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
-		CustomerExtLiability custLiability = (CustomerExtLiability) checkBox.getAttribute("custExtLiability");
-		if (checkBox.isChecked()) {
-			this.totalExposure = this.totalExposure.add(PennantApplicationUtil
-					.formateAmount(custLiability.getInstalmentAmount(), PennantConstants.defaultCCYDecPos));
+		CustomerDialogCtrl customerDialogCtrl = financeMainDialogCtrl.getCustomerDialogCtrl();
+
+		CustomerDetails cd = null;
+		if (customerDialogCtrl != null) {
+			cd = customerDialogCtrl.getCustomerDetails();
 		} else {
-			this.totalExposure = this.totalExposure.subtract(PennantApplicationUtil
-					.formateAmount(custLiability.getInstalmentAmount(), PennantConstants.defaultCCYDecPos));
+			cd = financeMainDialogCtrl.getFinanceDetail().getCustomerDetails();
 		}
 
-		if (financeMainDialogCtrl != null) {
-			BigDecimal totalEmi = PennantApplicationUtil.unFormateAmount(totalExposure,
-					PennantConstants.defaultCCYDecPos);
-			try {
-				financeMainDialogCtrl.getClass().getMethod("setTotalEmiConsideredObligations", BigDecimal.class)
-						.invoke(financeMainDialogCtrl, totalEmi);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
+		if (cd == null) {
+			cd = fd.getCustomerDetails();
 		}
 
-		logger.debug(Literal.LEAVING);
+		return getCustData(cd);
 	}
 
-	public Map<String, Object> saveConsideredObligations(Map<String, Object> dataMap) {
-		logger.debug(Literal.ENTERING);
+	private Map<String, Map<String, Object>> getCoApplicantData() {
+		Map<String, Map<String, Object>> map = new HashMap<>();
 
-		/*
-		 * if (this.listBoxCustomerExternalLiability.getItems().size() > 0) { for (int i = 0; i <
-		 * listBoxCustomerExternalLiability.getItems().size(); i++) { Listitem listitem =
-		 * listBoxCustomerExternalLiability.getItemAtIndex(i); Checkbox checkBox = (Checkbox) getComponent(listitem,
-		 * "toBeConsidered"); CustomerExtLiability custExtLiability = (CustomerExtLiability) checkBox
-		 * .getAttribute("custExtLiability"); if (checkBox.isChecked()) { String key =
-		 * String.valueOf(custExtLiability.getLinkId()) .concat(String.valueOf(custExtLiability.getSeqNo()));
-		 * dataMap.put(key, 1); } } }
-		 */
+		JointAccountDetailDialogCtrl jaddCtrl = financeMainDialogCtrl.getJointAccountDetailDialogCtrl();
 
-		logger.debug(Literal.LEAVING);
+		List<JointAccountDetail> jadList = null;
+		if (jaddCtrl != null) {
+			jadList = jaddCtrl.getJointAccountDetailList();
+		} else {
+			jadList = financeMainDialogCtrl.getFinanceDetail().getJointAccountDetailList();
+		}
+
+		if (jadList == null) {
+			jadList = fd.getJointAccountDetailList();
+		}
+
+		if (jadList == null) {
+			return map;
+		}
+
+		for (JointAccountDetail jad : jadList) {
+			CustomerDetails cd = jad.getCustomerDetails();
+			Customer customer = cd.getCustomer();
+
+			String employmentType = customer.getSubCategory();
+			String custCategory = customer.getCustCtgCode();
+
+			if (StringUtils.isEmpty(employmentType) && PennantConstants.PFF_CUSTCTG_CORP.equals(custCategory)) {
+				employmentType = PennantConstants.EMPLOYMENTTYPE_SENP;
+			}
+
+			String custCIF = customer.getCustCIF();
+
+			map.put(custCIF, getCustData(cd));
+		}
+
+		return map;
+	}
+
+	private Map<String, Object> getCustData(CustomerDetails cd) {
+		Map<String, Object> dataMap = new HashMap<>();
+
+		Customer customer = cd.getCustomer();
+
+		String custCIF = customer.getCustCIF();
+		Date finStartDate = getFinStartDate();
+		Date maturityDate = getMaturityDate();
+		String employmentType = customer.getSubCategory();
+		String custCategory = customer.getCustCtgCode();
+
+		if (StringUtils.isEmpty(employmentType) && PennantConstants.PFF_CUSTCTG_CORP.equals(custCategory)) {
+			employmentType = PennantConstants.EMPLOYMENTTYPE_SENP;
+		}
+
+		if ("SALARIED".equals(employmentType)) {
+			employmentType = "SAL";
+		}
+
+		dataMap.put("CIF", custCIF);
+		dataMap.put("CUST_CTG", custCategory);
+		dataMap.put("CUST_EMPLOYMENT_TYPE", employmentType);
+		dataMap.put("CUST_DOB", customer.getCustDOB());
+		dataMap.put("CUST_AGE", DateUtil.getYearsBetween(SysParamUtil.getAppDate(), customer.getCustDOB()));
+
+		dataMap.put("FIN_START_DATE", finStartDate);
+		dataMap.put("FIN_MATURITY_DATE", maturityDate);
+		dataMap.put("CUST_AGE_AT_MATURITY", DateUtil.getYearsBetween(maturityDate, customer.getCustDOB()));
+
+		dataMap.put("ROI", getROI());
+		dataMap.put("FIN_ASSET_VALUE", getFinAssetValue());
+		dataMap.put("TENOR", getTenor());
+
+		dataMap.putAll(getIncomeMap(cd.getCustomerIncomeList()));
 
 		return dataMap;
 	}
 
-	private Component getComponent(Listitem listitem, String listcellId) {
-		List<Listcell> listcels = listitem.getChildren();
+	private Map<String, Object> getIncomeMap(List<CustomerIncome> list) {
+		Map<String, Object> dataMap = new HashMap<>();
 
-		for (Listcell listcell : listcels) {
-			String id = StringUtils.trimToNull(listcell.getId());
+		int format = PennantConstants.defaultCCYDecPos;
 
-			if (id == null) {
-				continue;
-			}
-
-			id = id.replaceAll("\\d", "");
-			if (StringUtils.equals(id, listcellId)) {
-				return listcell.getFirstChild();
-			}
-		}
-		return null;
-	}
-
-	public void setSpreedSheetData(FinanceDetail aFinanceDetail) {
-		logger.debug(Literal.ENTERING);
-
-		try {
-			ExtendedFieldRender extendedFieldRender = aFinanceDetail.getExtendedFieldRender();
-			Map<String, Object> mapValues = extendedFieldRender.getMapValues();
-			Range range = Ranges.rangeByName(spreadSheet.getBook().getSheet("Scorecard"), "RiskScore");
-			if (range.getCellValue() != null) {
-				if (mapValues.containsKey("RISKSCORE")) {
-					mapValues.put("RISKSCORE", (double) range.getCellValue());
-				}
-			}
-			extendedFieldRender.setMapValues(mapValues);
-			aFinanceDetail.setExtendedFieldRender(extendedFieldRender);
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private BigDecimal getMaxMetricScore(String rule) {
-		BigDecimal max = BigDecimal.ZERO;
-		String[] codevalue = rule.split("Result");
-
-		for (int i = 0; i < codevalue.length; i++) {
-			if (i == 0) {
-				continue;
-			}
-
-			if (codevalue[i] != null && codevalue[i].contains(";")) {
-				String code = codevalue[i].substring(codevalue[i].indexOf('=') + 1, codevalue[i].indexOf(';'));
-
-				if (code.contains("'")) {
-					code = code.replace("'", "");
-				}
-
-				if (code.contains("?")) {
-					String[] fields = code.split("[^a-zA-Z]+");
-
-					HashMap<String, Object> fieldValuesMap = new HashMap<String, Object>();
-
-					for (int j = 0; j < fields.length; j++) {
-						if (!StringUtils.isEmpty(fields[j])) {
-							fieldValuesMap.put(fields[j], BigDecimal.ONE);
-						}
-					}
-					code = String.valueOf(RuleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap, null,
-							RuleReturnType.INTEGER)); // FIXME Code should be checked
-				}
-
-				if (new BigDecimal(code.trim()).compareTo(max) > 0) {
-					max = new BigDecimal(code.trim());
-				}
-			}
+		for (CustomerIncome item : list) {
+			BigDecimal income = item.getIncome();
+			String incomeType = item.getIncomeType();
+			String formatedIncome = CurrencyUtil.format(income, format);
+			dataMap.put(incomeType, formatedIncome);
 		}
 
-		return max;
-	}
-
-	private String getScrSlab(long refId, BigDecimal grpTotalScore, String execCreditWorth, boolean isRetail,
-			List<ScoringSlab> scoringSlabList) throws InterruptedException {
-		logger.debug("Entering");
-		List<ScoringSlab> slabList = scoringSlabList;
-		String creditWorth = "None";
-		BigDecimal minScore = new BigDecimal(35);
-		if (CollectionUtils.isNotEmpty(scoringSlabList)) {
-			minScore = new BigDecimal(slabList.get(0).getLovDescMinScore());
-		}
-		List<Long> scoringValues = new ArrayList<>();
-
-		for (ScoringSlab scoringSlab : slabList) {
-			scoringValues.add(scoringSlab.getScoringSlab());
-		}
-
-		Collections.sort(scoringValues);
-
-		if (slabList != null && !slabList.isEmpty()) {
-			for (Long slab : scoringValues) {
-				if (isRetail) {
-					if (grpTotalScore.compareTo(minScore) >= 0 && grpTotalScore.compareTo(new BigDecimal(slab)) <= 0) {
-
-						for (ScoringSlab scoringSlab : slabList) {
-							if (slab.compareTo(scoringSlab.getScoringSlab()) == 0) {
-								creditWorth = scoringSlab.getCreditWorthness();
-							}
-						}
-						break;
-					}
-				}
-			}
-		} else if (StringUtils.isNotBlank(execCreditWorth)) {
-			creditWorth = execCreditWorth;
-		}
-
-		logger.debug("Leaving");
-		return creditWorth;
-	}
-
-	private Map<String, Object> executeScoringMetrics(CustomerDetails customerDetails,
-			ExtendedFieldRender extendedFieldRender) {
-		logger.debug(Literal.ENTERING);
-
-		Customer customer = customerDetails.getCustomer();
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		dataMap.put("bonus_incentive", 0);
-		dataMap.put("annual_Net_Sal", 0);
-		dataMap.put("dpdL6M", 0);
-		dataMap.put("dpdL12M", 0);
-		dataMap.put("YearOfExp", 0);
-		dataMap.put("splRule", "N");
-		dataMap.put("custEmpSts", "");
-		dataMap.put("custEmpsts", "");
-		dataMap.put("custCity", "");
-		if (StringUtils.equals(customer.getSubCategory(), PennantConstants.EMPLOYMENTTYPE_SALARIED)) {
-			Rule rule = ruleService.getRuleById("LOSVARCA", "BRERULE", "BRERULE");
-			Map<String, Object> mapValues = new HashMap<>();
-			if (extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
-				mapValues = extendedFieldRender.getMapValues();
-			}
-
-			Map<String, Object> resutlMap = new HashMap<String, Object>();
-			if (rule != null) {
-
-				if (!StringUtils.equals("", rule.getSPLRule())) {
-					dataMap.put("splRule", "Y");
-				}
-
-				if (mapValues != null) {
-					dataMap.put("bonus_incentive",
-							mapValues.get("NET_BONUS") == null ? BigDecimal.ZERO
-									: PennantApplicationUtil.formateAmount(
-											new BigDecimal(mapValues.get("NET_BONUS").toString()),
-											PennantConstants.defaultCCYDecPos));// DDE
-					dataMap.put("annual_Net_Sal",
-							mapValues.get("NET_ANNUAL") == null ? BigDecimal.ZERO
-									: mapValues.get("NET_BONUS") == null ? BigDecimal.ZERO
-											: PennantApplicationUtil.formateAmount(
-													new BigDecimal(mapValues.get("NET_ANNUAL").toString()),
-													PennantConstants.defaultCCYDecPos));// DDE
-					dataMap.put("dpdL6M",
-							mapValues.get("CIBIL_DPD60M") == null ? BigDecimal.ZERO : mapValues.get("CIBIL_DPD60M"));
-					dataMap.put("dpdL12M",
-							mapValues.get("CIBIL_DPDL12M") == null ? BigDecimal.ZERO : mapValues.get("CIBIL_DPDL12M"));
-					if (mapValues.get("Score") != null && mapValues.get("Score").equals("000-1")) {
-						dataMap.put("cibilScore", -1);
-					} else {
-						dataMap.put("cibilScore",
-								mapValues.get("Score") == null ? BigDecimal.ZERO : mapValues.get("Score"));
-					}
-				}
-
-				dataMap.put("monthCount_p", 0);
-				dataMap.put("perfiosIncome", BigDecimal.ZERO);
-				if (StringUtils.equals(customer.getSubCategory(), PennantConstants.EMPLOYMENTTYPE_SALARIED)) {
-					if (CollectionUtils.isNotEmpty(customerDetails.getCustomerBankInfoList())) {
-						int i = 1;
-						int bankInfoSize = 0;
-						int noOfMonths = 0;
-						BigDecimal totalSalary = BigDecimal.ZERO;
-						List<CustomerBankInfo> customerBankInfos = customerDetails.getCustomerBankInfoList();
-						if (CollectionUtils.isNotEmpty(customerBankInfos)) {
-							for (CustomerBankInfo customerBankInfo : customerBankInfos) {
-								List<BankInfoDetail> bankInfoDetails = customerBankInfo.getBankInfoDetails();
-								if (CollectionUtils.isNotEmpty(customerBankInfo.getBankInfoDetails())) {
-									for (BankInfoDetail bankInfoDetail : bankInfoDetails) {
-										dataMap.put("emi_" + i, PennantApplicationUtil.formateAmount(
-												bankInfoDetail.getTotalEmi(), PennantConstants.defaultCCYDecPos));
-										dataMap.put("sal_month_" + i, PennantApplicationUtil.formateAmount(
-												bankInfoDetail.getTotalSalary(), PennantConstants.defaultCCYDecPos));
-										dataMap.put("emiBounce_" + i, bankInfoDetail.getEmiBounceNo());
-										dataMap.put("grossReceipts_" + i, BigDecimal.ZERO);
-
-										if (bankInfoDetail.getTotalSalary().compareTo(BigDecimal.ZERO) > 0) {
-											++noOfMonths;
-											totalSalary = totalSalary.add(PennantApplicationUtil.formateAmount(
-													bankInfoDetail.getTotalSalary(),
-													PennantConstants.defaultCCYDecPos));
-										}
-										++i;
-									}
-									bankInfoSize = bankInfoSize + bankInfoDetails.size();
-								}
-							}
-						}
-
-						if (totalSalary.compareTo(BigDecimal.ZERO) > 0) {
-							dataMap.put("perfiosIncome",
-									totalSalary.divide(new BigDecimal(noOfMonths), RoundingMode.HALF_DOWN));
-						}
-						dataMap.put("monthCount_p", bankInfoSize);
-					}
-				}
-
-				if (CollectionUtils.isNotEmpty(customerDetails.getCustomerIncomeList())) {
-					List<CustomerIncome> customerIncomes = customerDetails.getCustomerIncomeList();
-					for (CustomerIncome customerIncome : customerIncomes) {
-						if (StringUtils.equals(customerIncome.getIncomeType(), "RENINC")) {
-							dataMap.put("rental_income", PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));// DDE
-						}
-						if (StringUtils.equals(customerIncome.getIncomeType(), "INTINC")) {
-							dataMap.put("interest_income", PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));// DDE
-						}
-					}
-				}
-
-				String custEmpType = "";
-				if (CollectionUtils.isNotEmpty(customerDetails.getEmploymentDetailsList())) {
-					List<CustomerEmploymentDetail> employmentList = customerDetails.getEmploymentDetailsList();
-					for (CustomerEmploymentDetail customerEmploymentDetail : employmentList) {
-						if (customerEmploymentDetail.isCurrentEmployer())
-							custEmpType = StringUtils.trimToEmpty(customerEmploymentDetail.getCustEmpType());
-					}
-				}
-
-				String custCity = "";
-
-				if (CollectionUtils.isNotEmpty(customerDetails.getAddressList())) {
-					List<CustomerAddres> customerAddressList = customerDetails.getAddressList();
-					if (CollectionUtils.isNotEmpty(customerAddressList)) {
-						for (CustomerAddres address : customerAddressList) {
-							if (StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
-									String.valueOf(address.getCustAddrPriority()))) {
-								custCity = address.getCustAddrCity();
-							}
-						}
-					}
-				}
-
-				dataMap.put("custEmpSts", custEmpType);
-				dataMap.put("custEmpsts", custEmpType);
-				dataMap.put("custCity", custCity);
-
-				String result = (String) RuleExecutionUtil.executeRule(rule.getSQLRule(), dataMap,
-						financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), RuleReturnType.CALCSTRING);
-
-				// creditWorth = calculateScore(scoringMetrics, creditWorth, customer, dataMap, result);
-				JSONParser parser = new JSONParser();
-				JSONObject json = (JSONObject) parser.parse(result.toString());
-				resutlMap = convertStringToMap(json.toString());
-			}
-			// dataMapValues.put(creditWorth, dataMap);
-			if (resutlMap != null)
-				dataMap.putAll(resutlMap);
-		}
-		logger.debug(Literal.LEAVING);
 		return dataMap;
 	}
 
-	private Map<String, Object> calculateScore(List<ScoringMetrics> scoringMetrics, Customer customer,
-			Map<String, Object> dataMap) {
+	private Date getMaturityDate() {
+		return financeMainDialogCtrl.maturityDate_two.getValue();
+	}
 
-		String creditWorth = "None";
-		Map<String, Object> mapValues = new HashMap<>();
-		if (!dataMap.isEmpty()) {
-			CustomerEligibilityCheck customerEligibilityCheck = new CustomerEligibilityCheck();
-			BigDecimal totalGrpMaxScore = BigDecimal.ZERO;
-			BigDecimal totalGrpExecScore = BigDecimal.ZERO;
+	private Date getFinStartDate() {
+		return financeMainDialogCtrl.finStartDate.getValue();
+	}
 
-			String custType = (String) dataMap.get("custType");
+	private BigDecimal getFinAssetValue() {
+		BigDecimal loanAmount = BigDecimal.ZERO;
 
-			if (StringUtils.isEmpty(custType)) {
-				custType = "R";
-			}
-
-			if (customer.getCustDOB() != null) {
-				int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
-				int months = dobMonths % 12;
-				BigDecimal age = BigDecimal.ZERO;
-				if (months <= 9) {
-					age = new BigDecimal((dobMonths / 12) + ".0" + (dobMonths % 12));
-				} else {
-					age = new BigDecimal((dobMonths / 12) + "." + (dobMonths % 12));
-				}
-				customerEligibilityCheck.setCustAge(age);
-			}
-
-			// Get the slab based on the scoreGroupId
-			List<ScoringSlab> scoringSlabList = finScoringDetailService
-					.getScoringSlabsByScoreGrpId(scoringMetrics.get(0).getScoreGroupId(), "_AView");
-
-			customerEligibilityCheck.setDataMap(dataMap);
-
-			// Execute the Metrics
-			scoringMetrics = finScoringDetailService.executeScoringMetrics(scoringMetrics, customerEligibilityCheck);
-			try {
-				for (ScoringMetrics scoringMetric : scoringMetrics) {
-
-					dataMap.put(scoringMetric.getLovDescScoringCode(), scoringMetric.getLovDescExecutedScore());
-
-					if (scoringMetric.getLovDescMetricMaxPoints() != null) {
-						totalGrpMaxScore = totalGrpMaxScore.add(scoringMetric.getLovDescMetricMaxPoints());
-					}
-					if (scoringMetric.getLovDescExecutedScore() != null) {
-						totalGrpExecScore = totalGrpExecScore.add(scoringMetric.getLovDescExecutedScore());
-					}
-				}
-
-				// Get the Scoring Group
-				creditWorth = getScrSlab(scoringMetrics.get(0).getScoreGroupId(), totalGrpExecScore, "", true,
-						scoringSlabList);
-				mapValues.put("CreditWorth", creditWorth);
-				mapValues.put("RiskScore", totalGrpExecScore);
-			} catch (Exception e) {
-				logger.debug(Literal.EXCEPTION, e);
-			}
+		if (financeMainDialogCtrl == null) {
+			return loanAmount;
 		}
-		return mapValues;
+
+		loanAmount = financeMainDialogCtrl.finAssetValue.getActualValue();
+
+		return loanAmount;
 	}
 
-	private void prepareFinacialDetailsForCustomer(CustomerDetails customerDetails, CustomerSalaried custSalaried) {
-		List<CustomerIncome> customerIncomeList = customerDetails.getCustomerIncomeList();
-		if (CollectionUtils.isNotEmpty(customerIncomeList)) {
-			for (CustomerIncome customerIncome : customerIncomeList) {
+	private BigDecimal getROI() {
+		BigDecimal roi = BigDecimal.ZERO;
 
-				if (StringUtils.equals(customerIncome.getIncomeExpense(), PennantConstants.INCOME)) {
-
-					if (StringUtils.equals(customerIncome.getCategory(), PennantConstants.INC_CATEGORY_SALARY)) {
-						switch (customerIncome.getIncomeType()) {
-						case "BS":
-							custSalaried.setBs(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-						case "GP":
-							custSalaried.setGp(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-						case "DA":
-							custSalaried.setDa(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-						case "HRA":
-							custSalaried.setHra(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-						case "CLA":
-							custSalaried.setCla(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-						case "MA":
-							custSalaried.setMa(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-						case "SA":
-							custSalaried.setSa(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-						case "OA":
-							custSalaried.setOa(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-						case "CV":
-							custSalaried.setCv(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-						case "VP":
-							custSalaried.setVp(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-						case "AO":
-							custSalaried.setAo(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-
-						default:
-							break;
-						}
-					} else if (StringUtils.equals(customerIncome.getCategory(), PennantConstants.INC_CATEGORY_OTHER)) {
-						switch (customerIncome.getIncomeType()) {
-						case "RENINC":
-							custSalaried.setRenInc(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-						case "INTINC":
-							custSalaried.setIntInc(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-									PennantConstants.defaultCCYDecPos));
-							break;
-
-						default:
-							break;
-						}
-					}
-				} else if (StringUtils.equals(customerIncome.getIncomeExpense(), PennantConstants.EXPENSE)
-						&& StringUtils.equals(customerIncome.getCategory(), PennantConstants.INC_CATEGORY_SALARY)) {
-					switch (customerIncome.getIncomeType()) {
-					case "PF":
-						custSalaried.setPf(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "PPF":
-						custSalaried.setPpf(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "NPS":
-						custSalaried.setNps(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "IT":
-						custSalaried.setIt(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "EC":
-						custSalaried.setEc(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "LAPF":
-						custSalaried.setLapf(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "HLDS":
-						custSalaried.setHlds(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "PLDS":
-						custSalaried.setPlds(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "ALDS":
-						custSalaried.setAlds(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "ODDS":
-						custSalaried.setOdds(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "OLDS":
-						custSalaried.setOlds(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "IDS":
-						custSalaried.setIds(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "OD":
-						custSalaried.setOd(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-					case "SADV":
-						custSalaried.setSalAdv(PennantApplicationUtil.formateAmount(customerIncome.getIncome(),
-								PennantConstants.defaultCCYDecPos));
-						break;
-
-					default:
-						break;
-					}
-
-				}
-			}
+		if (financeMainDialogCtrl == null) {
+			return roi;
 		}
+
+		String rateBasis = getComboboxValue(financeMainDialogCtrl.repayRateBasis);
+
+		if (CalculationConstants.RATE_BASIS_R.equals(rateBasis)
+				|| CalculationConstants.RATE_BASIS_C.equals(rateBasis)) {
+			if (StringUtils.isNotEmpty(financeMainDialogCtrl.repayRate.getBaseValue())) {
+				roi = financeMainDialogCtrl.repayRate.getEffRateValue();
+			} else {
+				roi = financeMainDialogCtrl.repayProfitRate.getValue();
+			}
+		} else {
+			roi = financeMainDialogCtrl.repayProfitRate.getValue();
+		}
+
+		if (roi == null) {
+			roi = BigDecimal.ZERO;
+		}
+
+		return roi.divide(new BigDecimal(100));
 	}
 
-	public Object getFinanceMainDialogCtrl() {
-		return financeMainDialogCtrl;
+	private int getTenor() {
+		return financeMainDialogCtrl.numberOfTerms_two.intValue();
 	}
 
-	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
-		this.financeMainDialogCtrl = financeMainDialogCtrl;
-	}
-
-	public CreditReviewDetails getCreditReviewDetails() {
-		return creditReviewDetails;
-	}
-
-	public void setCreditReviewDetails(CreditReviewDetails creditReviewDetails) {
-		this.creditReviewDetails = creditReviewDetails;
+	public void doSaveScoreDetail(FinanceDetail afd) {
+		// TODO Auto-generated method stub
 	}
 
 	public CreditReviewData getCreditReviewData() {
 		return creditReviewData;
-	}
-
-	public void setCreditReviewData(CreditReviewData creditReviewData) {
-		this.creditReviewData = creditReviewData;
-	}
-
-	public BigDecimal getTotalExposure() {
-		return totalExposure;
-	}
-
-	public void setTotalExposure(BigDecimal totalExposure) {
-		this.totalExposure = totalExposure;
-	}
-
-	public List<CustomerIncome> getCustomerIncomeList() {
-		return customerIncomeList;
-	}
-
-	public void setCustomerIncomeList(List<CustomerIncome> customerIncomeList) {
-		this.customerIncomeList = customerIncomeList;
-	}
-
-	public void doSave_ScoreDetail(FinanceDetail aFinanceDetail) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Autowired
-	public void setRuleService(RuleService ruleService) {
-		this.ruleService = ruleService;
-	}
-
-	@Autowired
-	public void setFinScoringDetailService(ScoringDetailService finScoringDetailService) {
-		this.finScoringDetailService = finScoringDetailService;
 	}
 
 }

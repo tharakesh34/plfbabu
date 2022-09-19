@@ -346,8 +346,6 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 						valueParm[0] = "docFormat";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 					}
-
-					// TODO: Need to add password protected field in documentdetails
 				}
 			}
 		}

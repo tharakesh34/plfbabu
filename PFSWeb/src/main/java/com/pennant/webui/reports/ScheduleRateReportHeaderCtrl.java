@@ -203,7 +203,7 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 			if (details != null) {
 				this.finReference.setValue(details.getFinReference());
 				this.startDate.setValue(details.getFinStartDate());
-				this.endDate.setValue(DateUtility.getAppDate());
+				this.endDate.setValue(SysParamUtil.getAppDate());
 			} else {
 				this.finReference.setValue("");
 				this.startDate.setValue(null);

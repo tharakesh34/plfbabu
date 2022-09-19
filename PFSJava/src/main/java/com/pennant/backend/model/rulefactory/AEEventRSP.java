@@ -14,12 +14,6 @@ public class AEEventRSP {
 	private Date postDate;
 	private Date valueDate;
 	private Date schdDate;
-	private boolean newRecord = false;
-	private boolean createNow = false;
-	private boolean wif = false;
-	private boolean commitment = false;
-	private boolean alwCmtPostings = false;
-	private boolean isEOD = false;
 	private boolean postingSucess = false;
 	private String errorMessage;
 	private long linkedTranId;
@@ -27,12 +21,8 @@ public class AEEventRSP {
 	private List<ReturnDataSet> returnDataSet = new ArrayList<ReturnDataSet>(1);
 
 	public AEEventRSP() {
-
+		super();
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public long getCustID() {
 		return custID;
@@ -137,5 +127,4 @@ public class AEEventRSP {
 	public void setReturnDataSet(List<ReturnDataSet> returnDataSet) {
 		this.returnDataSet = returnDataSet;
 	}
-
 }

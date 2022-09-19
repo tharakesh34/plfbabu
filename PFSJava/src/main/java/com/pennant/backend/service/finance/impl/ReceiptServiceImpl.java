@@ -40,8 +40,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +98,6 @@ import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BounceReason;
@@ -119,7 +116,6 @@ import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FeeType;
-import com.pennant.backend.model.finance.FinDueData;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -975,16 +971,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 
 				if (payableReserve == null) {
-					BigDecimal payAdv = BigDecimal.ZERO;
-					List<ManualAdvise> payableAdvises = rch.getPayableAdvises();
-					for (ManualAdvise ma : payableAdvises) {
-						if (rcd.getPayAgainstID() == ma.getAdviseID()) {
-							payAdv = ma.getBalanceAmt();
-							break;
-						}
-					}
 					// Update Payable Amount in Reserve
-					manualAdviseDAO.updatePayableReserve(rcd.getPayAgainstID(), payAdv);
+					manualAdviseDAO.updatePayableReserve(rcd.getPayAgainstID(), payableAmt);
 
 					// Save Payable Reserve Log Amount
 					manualAdviseDAO.savePayableReserveLog(receiptSeqID, rcd.getPayAgainstID(), payableAmt);
@@ -1699,7 +1687,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		long serviceUID = Long.MIN_VALUE;
-		long lastMntBy = receiptHeader.getLastMntBy();
 
 		BigDecimal restructBpiAmount = BigDecimal.ZERO;
 		if (rd.getFinanceDetail().getExtendedFieldRender() != null) {
@@ -5424,7 +5411,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rd.setForeClosure(rd.isForeClosure());
 		rd.setActualOdPaid(BigDecimal.ZERO);
 
-		prepareFinDueData(rd);
+		repaymentProcessUtil.prepareDueData(rd);
 
 		if (!AllocationType.MANUAL.equals(rch.getAllocationType())) {
 			rd = receiptCalculator.recalAutoAllocation(rd, false);
@@ -6574,33 +6561,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setFinType(fm.getFinType());
 	}
 
-	private void doEmptyResponseObject(FinanceDetail fd) {
-		fd.setFinScheduleData(null);
-		fd.setDocumentDetailsList(null);
-		fd.setJointAccountDetailList(null);
-		fd.setGurantorsDetailList(null);
-		fd.setCollateralAssignmentList(null);
-		fd.setReturnDataSetList(null);
-		fd.setInterfaceDetailList(null);
-		fd.setFinFlagsDetails(null);
-		fd.setCustomerDetails(null);
-	}
-
-	private WSReturnStatus getWSReturnStatus(String code, String message) {
-		WSReturnStatus status = new WSReturnStatus();
-		status.setReturnCode(code);
-		status.setReturnText(message);
-
-		return status;
-	}
-
 	private void initiateReceipt(FinReceiptData rd, ReceiptPurpose receiptPurpose) {
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinReceiptHeader rch = rd.getReceiptHeader();
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
-		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 
 		BigDecimal earlyPayAmount = rd.getRemBal();
 		String recalType = rch.getEffectSchdMethod();
@@ -6758,7 +6724,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		prepareFinDueData(rd);
+		repaymentProcessUtil.prepareDueData(rd);
 
 		logger.info(Literal.LEAVING);
 		return rd;
@@ -7328,143 +7294,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		finReceiptHeaderDAO.updateMultiReceiptLog(finReceiptQueue);
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	public FinReceiptData prepareFinDueData(FinReceiptData rd) {
-		Date valueDate = rd.getValueDate();
-		FinReceiptHeader rch = rd.getReceiptHeader();
-		FinanceDetail fd = rd.getFinanceDetail();
-		FinScheduleData fsd = fd.getFinScheduleData();
-		List<FinanceScheduleDetail> schedules = fsd.getFinanceScheduleDetails();
-
-		FinanceMain fm = fsd.getFinanceMain();
-		String repayHierarchy = assetClassificationService.getNpaRepayHierarchy(fm.getFinID());
-
-		List<FinDueData> duesList = new ArrayList<>();
-
-		duesList.addAll(repaymentProcessUtil.addAllocations(new FinReceiptData(), valueDate, new FinReceiptHeader(),
-				schedules));
-		duesList.addAll(addFeeAllocations(rch));
-		duesList.addAll(addLatePayAllocations(fsd, valueDate));
-
-		if (CollectionUtils.isEmpty(duesList)) {
-			return rd;
-		}
-
-		duesList = duesList.stream().sorted((d1, d2) -> DateUtil.compare(d1.getDueDate(), d2.getDueDate()))
-				.collect(Collectors.toList());
-
-		if ("".equals(repayHierarchy)) {
-			repayHierarchy = fsd.getFinanceType().getRpyHierarchy();
-		}
-
-		repaymentProcessUtil.setFinDueDataByHierarchy(duesList, repayHierarchy);
-
-		duesList = sortDueDetailsByRelHierarchy(duesList);
-		rd.setDueDataList(duesList);
-
-		return rd;
-	}
-
-	private List<FinDueData> addLatePayAllocations(FinScheduleData fsd, Date valueDate) {
-		List<FinDueData> duesList = new ArrayList<>();
-
-		int schdIdx = 0;
-		for (FinODDetails fod : fsd.getFinODDetails()) {
-			BigDecimal lpiBal = fod.getLPIBal();
-			BigDecimal lppBal = fod.getTotPenaltyBal();
-
-			if (DateUtil.compare(valueDate, fod.getFinODSchdDate()) >= 0) {
-				if (lppBal.compareTo(BigDecimal.ZERO) > 0) {
-					FinDueData dueData = new FinDueData();
-					dueData.setAllocType(RepayConstants.DUETYPE_ODC);
-					dueData.setDueDate(fod.getFinODSchdDate());
-					dueData.setDueAmount(lppBal);
-					dueData.setSchdIdx(schdIdx);
-
-					duesList.add(dueData);
-				}
-				if (lpiBal.compareTo(BigDecimal.ZERO) > 0) {
-					FinDueData dueData = new FinDueData();
-					dueData.setAllocType(RepayConstants.DUETYPE_LPFT);
-					dueData.setDueDate(fod.getFinODSchdDate());
-					dueData.setDueAmount(lpiBal);
-					dueData.setSchdIdx(schdIdx);
-
-					duesList.add(dueData);
-				}
-			}
-
-			schdIdx++;
-		}
-
-		return duesList;
-	}
-
-	private List<FinDueData> addFeeAllocations(FinReceiptHeader rch) {
-		List<FinDueData> duesList = new ArrayList<>();
-		for (ReceiptAllocationDetail rad : rch.getAllocations()) {
-			if (rad.getAllocationTo() == 0) {
-				continue;
-			}
-
-			String allocationType = rad.getAllocationType();
-			FinDueData dueData = new FinDueData();
-
-			switch (allocationType) {
-			case RepayConstants.ALLOCATION_MANADV:
-				dueData.setAllocType(RepayConstants.DUETYPE_MANUALADVISE);
-				dueData.setAdviseId(rad.getAllocationTo());
-				dueData.setDueDate(rad.getValueDate());
-				dueData.setDueAmount(rad.getTotalDue());
-
-				duesList.add(dueData);
-				break;
-			case RepayConstants.ALLOCATION_BOUNCE:
-				dueData.setAllocType(RepayConstants.DUETYPE_BOUNCE);
-				dueData.setAdviseId(rad.getAllocationTo());
-				dueData.setDueDate(rad.getValueDate());
-				dueData.setDueAmount(rad.getTotalDue());
-
-				duesList.add(dueData);
-				break;
-			case RepayConstants.ALLOCATION_FEE:
-				dueData.setAllocType(RepayConstants.DUETYPE_FEES);
-				dueData.setFeeTypeCode(rad.getFeeTypeCode());
-				dueData.setDueDate(rad.getValueDate());
-				dueData.setDueAmount(rad.getTotalDue());
-
-				duesList.add(dueData);
-				break;
-			default:
-				break;
-			}
-		}
-
-		return duesList;
-	}
-
-	public static List<FinDueData> sortDueDetailsByRelHierarchy(List<FinDueData> dueDetails) {
-		if (CollectionUtils.isEmpty(dueDetails)) {
-			return dueDetails;
-		}
-
-		Collections.sort(dueDetails, new Comparator<FinDueData>() {
-			@Override
-			public int compare(FinDueData detail1, FinDueData detail2) {
-				int i = detail1.getRelativeHierarchy() - detail2.getRelativeHierarchy();
-
-				if (i != 0)
-					return i;
-				i = detail1.getDueDate().compareTo(detail2.getDueDate());
-				if (i != 0)
-					return i;
-
-				return Integer.compare(detail1.getHierarchy(), detail2.getHierarchy());
-			}
-		});
-
-		return dueDetails;
 	}
 
 	@Override

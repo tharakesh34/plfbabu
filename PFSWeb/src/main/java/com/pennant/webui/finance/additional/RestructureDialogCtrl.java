@@ -85,6 +85,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -98,6 +99,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -184,6 +186,9 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private RestructureDetail rstDetail;
 	private boolean enquiry = false;
 	private transient StepPolicyService stepPolicyService;
+	private FinanceDetail fd = null;
+	@Autowired
+	private FinFeeDetailService finFeeDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -215,6 +220,10 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				setFinanceMainDialogCtrl((ScheduleDetailDialogCtrl) arguments.get("financeMainDialogCtrl"));
 			} else {
 				setFinanceMainDialogCtrl(null);
+			}
+
+			if (arguments.containsKey("financeDetail")) {
+				fd = (FinanceDetail) arguments.get("financeDetail");
 			}
 
 			if (arguments.containsKey("enquiry")) {
@@ -534,6 +543,12 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {
+				String branchCode = getUserWorkspace().getLoggedInUser().getBranchCode();
+				List<FinFeeDetail> convertToFinanceFees = finFeeDetailService.convertToFinanceFees(fd, branchCode);
+				convertToFinanceFees.stream()
+						.forEach(f1 -> f1.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE));
+				aFinSchData.setFinFeeDetailList(convertToFinanceFees);
+
 				List<RestructureCharge> chargeList = restructureService.getRestructureChargeList(aFinSchData, appDate);
 				doFillCharges(chargeList);
 				rstDetail.setChargeList(chargeList);

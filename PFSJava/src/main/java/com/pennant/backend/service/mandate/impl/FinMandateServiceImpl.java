@@ -201,6 +201,12 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 						// Respective module owner
 						// mandate.setStatus(mandateCustomStatus);
 					}
+					// PSD : 194021
+					mandate.setRoleCode("");
+					mandate.setNextRoleCode("");
+					mandate.setTaskId("");
+					mandate.setNextTaskId("");
+					mandate.setWorkflowId(0);
 					mandate.setRecordType("");
 					mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					getDocument(mandate);
@@ -274,6 +280,12 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			Mandate useExisting = checkExistingMandate(mandate.getMandateID());
 			if (useExisting == null) {
 				if (mandate.getBankBranchID() != 0 && mandate.getBankBranchID() != Long.MIN_VALUE) {
+					// PSD : 194021
+					mandate.setRoleCode("");
+					mandate.setNextRoleCode("");
+					mandate.setTaskId("");
+					mandate.setNextTaskId("");
+					mandate.setWorkflowId(0);
 					mandate.setRecordType("");
 					mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					mandate.setStatus(MandateConstants.STATUS_REJECTED);
@@ -286,7 +298,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 					mandateStatus.setMandateID(mandate.getMandateID());
 					mandateStatus.setStatus(mandate.getStatus());
 					mandateStatus.setReason(Labels.getLabel("Mandate_Rejected_In_Loan"));
-					mandateStatus.setChangeDate(DateUtility.getAppDate());
+					mandateStatus.setChangeDate(SysParamUtil.getAppDate());
 					mandateStatusDAO.save(mandateStatus, "");
 				}
 

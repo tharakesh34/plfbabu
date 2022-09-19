@@ -2222,7 +2222,7 @@ public class FinanceDataValidation {
 
 							if (isNotValidCif) {
 								String[] valueParm = new String[2];
-								valueParm[0] = collateralSetup.getDepositorCif();
+								valueParm[0] = collateralSetup.getCollateralRef();
 								valueParm[1] = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90249", valueParm)));
 								return errorDetails;
@@ -2545,116 +2545,115 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
-	private List<ErrorDetail> documentValidation(FinanceDetail financeDetail) {
-		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		// validate document details
-		List<DocumentDetails> documentDetails = financeDetail.getDocumentDetailsList();
+	private List<ErrorDetail> documentValidation(FinanceDetail fd) {
+		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
+
+		List<DocumentDetails> documents = fd.getDocumentDetailsList();
+
+		if (documents == null) {
+			return errors;
+		}
+
 		AuditDetail auditDetails = null;
-		if (documentDetails != null) {
-			for (DocumentDetails detail : documentDetails) {
-				// validate Dates
-				if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
-					if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "custDocExpDate: "
-								+ DateUtility.format(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
-						valueParm[1] = "custDocIssuedOn: "
-								+ DateUtility.format(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
-						return errorDetails;
-					}
-				}
-
-				DocumentType docType = documentTypeService.getDocumentTypeById(detail.getDocCategory());
-				if (docType == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = detail.getDocCategory();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90401", valueParm)));
-					return errorDetails;
-				}
-
-				/*
-				 * //validate PAN Customer customer = financeDetail.getCustomerDetails().getCustomer(); if(customer !=
-				 * null) { if(StringUtils.equals("03", detail.getDocCategory())){
-				 * if(!StringUtils.equals(detail.getCustDocTitle(), customer.getCustCRCPR())){ String[] valueParm = new
-				 * String[1]; valueParm[0] = customer.getCustCRCPR(); errorDetails.add(ErrorUtil.getErrorDetail(new
-				 * ErrorDetails("90296", valueParm))); return errorDetails; } } }
-				 */
-
-				// validate Is Customer document?
-				if (DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) {
-					CustomerDocument custDocs = new CustomerDocument();
-					custDocs.setCustDocCategory(detail.getDocCategory());
-					custDocs.setCustDocName(detail.getDocName());
-					custDocs.setCustDocIssuedOn(detail.getCustDocIssuedOn());
-					custDocs.setCustDocExpDate(detail.getCustDocExpDate());
-					custDocs.setCustDocTitle(detail.getCustDocTitle());
-					custDocs.setCustDocIssuedCountry(detail.getCustDocIssuedCountry());
-					custDocs.setCustDocSysName(detail.getCustDocSysName());
-					custDocs.setCustDocIssuedOn(detail.getCustDocIssuedOn());
-					custDocs.setCustDocExpDate(detail.getCustDocExpDate());
-					custDocs.setDocUri(detail.getDocUri());
-					custDocs.setCustDocImage(detail.getDocImage());
-					custDocs.setCustDocType(detail.getDoctype());
-					Customer cust = financeDetail.getCustomerDetails().getCustomer();
-					auditDetails = customerDocumentService.validateCustomerDocuments(custDocs, cust);
-				}
-
-				// validate finance documents
-				if (!(DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode()))
-						&& docType.isDocIsMandatory()) {
-					if (StringUtils.isBlank(detail.getDocUri())) {
-						if (detail.getDocImage() == null || detail.getDocImage().length <= 0) {
-							String[] valueParm = new String[2];
-							valueParm[0] = "docContent";
-							valueParm[1] = "docRefId";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
-						}
-					}
-					if (StringUtils.isBlank(detail.getDocName())) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "docName";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					}
-					if (StringUtils.isBlank(detail.getDoctype())) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "docFormat";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					} else if (!StringUtils.equalsIgnoreCase(detail.getDoctype(), "jpg")
-							&& !StringUtils.equalsIgnoreCase(detail.getDoctype(), "png")
-							&& !StringUtils.equalsIgnoreCase(detail.getDoctype(), "pdf")) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "docFormat, Available formats are jpg,png,PDF";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
-					}
-
-					// TODO: Need to add password protected field in
-					// documentdetails
-				}
-
-				if (StringUtils.equals(detail.getDocCategory(), "03")) {
-					Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
-					if (detail.getCustDocTitle() != null) {
-						Matcher matcher = pattern.matcher(detail.getCustDocTitle());
-						if (matcher.find() == false) {
-							String[] valueParm = new String[0];
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90251", valueParm)));
-						}
-					}
-				}
-
-				String doctype = detail.getDoctype();
-				if ("JPG".equalsIgnoreCase(doctype) || "PNG".equalsIgnoreCase(doctype)
-						|| "JPEG".equalsIgnoreCase(doctype) || "JFIF".equalsIgnoreCase(doctype)) {
-					detail.setDoctype(PennantConstants.DOC_TYPE_IMAGE);
+		for (DocumentDetails dd : documents) {
+			// validate Dates
+			if (dd.getCustDocIssuedOn() != null && dd.getCustDocExpDate() != null) {
+				if (dd.getCustDocIssuedOn().compareTo(dd.getCustDocExpDate()) > 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "custDocExpDate: "
+							+ DateUtility.format(dd.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+					valueParm[1] = "custDocIssuedOn: "
+							+ DateUtility.format(dd.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
+					return errors;
 				}
 			}
+
+			DocumentType docType = documentTypeService.getDocumentTypeById(dd.getDocCategory());
+			if (docType == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = dd.getDocCategory();
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90401", valueParm)));
+				return errors;
+			}
+
+			if (DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode())) {
+				CustomerDocument cd = new CustomerDocument();
+				cd.setCustDocCategory(dd.getDocCategory());
+				cd.setCustDocName(dd.getDocName());
+				cd.setCustDocIssuedOn(dd.getCustDocIssuedOn());
+				cd.setCustDocExpDate(dd.getCustDocExpDate());
+				cd.setCustDocTitle(dd.getCustDocTitle());
+				cd.setCustDocIssuedCountry(dd.getCustDocIssuedCountry());
+				cd.setCustDocSysName(dd.getCustDocSysName());
+				cd.setCustDocIssuedOn(dd.getCustDocIssuedOn());
+				cd.setCustDocExpDate(dd.getCustDocExpDate());
+				cd.setDocUri(dd.getDocUri());
+				cd.setCustDocImage(dd.getDocImage());
+				cd.setCustDocType(dd.getDoctype());
+				Customer cust = fd.getCustomerDetails().getCustomer();
+
+				if (cust == null || cust.getCustCtgCode() == null) {
+					FinScheduleData schdData = fd.getFinScheduleData();
+					FinanceMain fm = schdData.getFinanceMain();
+					cust = customerDAO.getCustomerByCIF(fm.getLovDescCustCIF(), "");
+				}
+
+				auditDetails = customerDocumentService.validateCustomerDocuments(cd, cust);
+			}
+
+			// validate finance documents
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(docType.getCategoryCode()))
+					&& docType.isDocIsMandatory()) {
+				if (StringUtils.isBlank(dd.getDocUri())) {
+					if (dd.getDocImage() == null || dd.getDocImage().length <= 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "docContent";
+						valueParm[1] = "docRefId";
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
+					}
+				}
+				if (StringUtils.isBlank(dd.getDocName())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "docName";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				}
+				if (StringUtils.isBlank(dd.getDoctype())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "docFormat";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else if (!StringUtils.equalsIgnoreCase(dd.getDoctype(), "jpg")
+						&& !StringUtils.equalsIgnoreCase(dd.getDoctype(), "png")
+						&& !StringUtils.equalsIgnoreCase(dd.getDoctype(), "pdf")) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "docFormat, Available formats are jpg,png,PDF";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
+				}
+			}
+
+			if (StringUtils.equals(dd.getDocCategory(), "03")) {
+				Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
+				if (dd.getCustDocTitle() != null) {
+					Matcher matcher = pattern.matcher(dd.getCustDocTitle());
+					if (matcher.find() == false) {
+						String[] valueParm = new String[0];
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90251", valueParm)));
+					}
+				}
+			}
+
+			String doctype = dd.getDoctype();
+			if ("JPG".equalsIgnoreCase(doctype) || "PNG".equalsIgnoreCase(doctype) || "JPEG".equalsIgnoreCase(doctype)
+					|| "JFIF".equalsIgnoreCase(doctype)) {
+				dd.setDoctype(PennantConstants.DOC_TYPE_IMAGE);
+			}
 		}
+
 		if (auditDetails != null && auditDetails.getErrorDetails() != null
 				&& !auditDetails.getErrorDetails().isEmpty()) {
 			return auditDetails.getErrorDetails();
 		}
-		return errorDetails;
+		return errors;
 	}
 
 	private List<ErrorDetail> mandateValidation(FinanceDetail financeDetail, String vldGroup) {
@@ -3282,23 +3281,6 @@ public class FinanceDataValidation {
 		}
 		logger.debug(Literal.LEAVING);
 		return errorDetails;
-	}
-
-	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
-		if (StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())) {
-			if (!bankBranch.isEcs()) {
-				isValidBranch = false;
-			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())) {
-			if (!bankBranch.isDda()) {
-				isValidBranch = false;
-			}
-		} else if (StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())) {
-			if (!bankBranch.isNach()) {
-				isValidBranch = false;
-			}
-		}
-		return isValidBranch;
 	}
 
 	public List<ErrorDetail> disbursementValidation(FinanceDetail financeDetail) {
@@ -4149,16 +4131,18 @@ public class FinanceDataValidation {
 		}
 
 		// validate min and max terms with loanType config.
-		if (finMinTerm > 0 && finMaxTerm > 0) {
-			if (numberOfTerms < finMinTerm || numberOfTerms > finMaxTerm) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "Repay";
-				valueParm[1] = String.valueOf(finMinTerm);
-				valueParm[2] = String.valueOf(finMaxTerm);
+		if (numberOfTerms > 0) {
+			if (finMinTerm > 0 && finMaxTerm > 0) {
+				if (numberOfTerms < finMinTerm || numberOfTerms > finMaxTerm) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Repay";
+					valueParm[1] = String.valueOf(finMinTerm);
+					valueParm[2] = String.valueOf(finMaxTerm);
 
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
 
-				return;
+					return;
+				}
 			}
 		}
 
@@ -4756,7 +4740,7 @@ public class FinanceDataValidation {
 			return;
 		}
 
-		if (fm.getPlanEMIHMax() > (fm.getNumberOfTerms() - 1)) {
+		if (fm.getNumberOfTerms() > 0 && fm.getPlanEMIHMax() > (fm.getNumberOfTerms() - 1)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(fm.getNumberOfTerms() - 1);
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90240", valueParm)));
@@ -6120,7 +6104,7 @@ public class FinanceDataValidation {
 
 						// validate paid by Customer method
 						if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finTypeSchdMtd)) {
-							if (paidAmount.compareTo(finTypeFee.getAmount()) != 0) {
+							if (paidAmount.compareTo(finTypeFee.getAmount()) != 0 && !isAPICall) {
 								String[] valueParm = new String[1];
 								valueParm[0] = feeTypeCode;
 								errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90254", valueParm)));

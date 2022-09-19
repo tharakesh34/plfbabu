@@ -1970,47 +1970,44 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	/**
 	 * delete CustomerBankingInformation.
 	 * 
-	 * @param customerBankInfoDetail
+	 * @param cbid
 	 */
 	@Override
-	public WSReturnStatus deleteCustomerBankingInformation(CustomerBankInfoDetail customerBankInfoDetail)
-			throws ServiceException {
+	public WSReturnStatus deleteCustomerBankingInformation(CustomerBankInfoDetail cbid) throws ServiceException {
 
 		logger.debug(Literal.ENTERING);
 		// bean validations
-		validationUtility.validate(customerBankInfoDetail, DeleteValidationGroup.class);
+		validationUtility.validate(cbid, DeleteValidationGroup.class);
 
 		// customer validations
 		CustomerBankInfo customerBankInfo = null;
-		if (StringUtils.isNotBlank(customerBankInfoDetail.getCif())) {
-			Customer customerDetails = customerDetailsService.getCustomerByCIF(customerBankInfoDetail.getCif());
+		if (StringUtils.isNotBlank(cbid.getCif())) {
+			Customer customerDetails = customerDetailsService.getCustomerByCIF(cbid.getCif());
 			if (customerDetails == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = customerBankInfoDetail.getCif();
+				valueParm[0] = cbid.getCif();
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			} else {
 				customerBankInfo = new CustomerBankInfo();
 				customerBankInfo.setCustID(customerDetails.getCustID());
-				customerBankInfo.setBankId(customerBankInfoDetail.getBankId());
+				customerBankInfo.setBankId(cbid.getBankId());
 				// for logging purpose
-				APIErrorHandlerService.logReference(customerBankInfoDetail.getCif());
+				APIErrorHandlerService.logReference(cbid.getCif());
 			}
 		}
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-		CustomerBankInfo custBankInfo = customerBankInfoService
-				.getCustomerBankInfoById(customerBankInfoDetail.getCustomerBankInfo().getBankId());
+		CustomerBankInfo custBankInfo = customerBankInfoService.getCustomerBankInfoById(cbid.getBankId());
 		if (custBankInfo != null) {
-			// call delete customer service
-			response = customerDetailsController
-					.deleteCustomerBankingInformation(customerBankInfoDetail.getCustomerBankInfo());
+			response = customerDetailsController.deleteCustomerBankingInformation(custBankInfo);
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
-			valueParm[0] = String.valueOf(customerBankInfoDetail.getBankId());
-			valueParm[1] = customerBankInfoDetail.getCif();
+			valueParm[0] = String.valueOf(cbid.getBankId());
+			valueParm[1] = cbid.getCif();
 			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return response;
 	}

@@ -36,7 +36,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -408,7 +407,12 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		// TODO CH : Static List method should be changed to Receipt Modes and
 		// Sub receipt mode should be available for filter and list box
-		fillComboBox(receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), ",PRESENT,");
+		if (enqiryModule) {
+			fillComboBox(receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
+		} else {
+			fillComboBox(receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), ",PRESENT,");
+		}
+
 		fillComboBox(receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
 
 		this.finType.setModuleName("FinanceType");

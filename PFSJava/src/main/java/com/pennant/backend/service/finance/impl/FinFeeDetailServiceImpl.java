@@ -56,6 +56,7 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeConfig;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -69,6 +70,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
@@ -667,7 +669,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					if (!finFeeDetailDAO.isFinFeeDetailExists(finFeeDetail, TableType.MAIN_TAB.getSuffix())) {
 						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					}
-				} else if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(finFeeDetail.getRecordType())) {
+				}
+				if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					finFeeDetail.setNewRecord(true);
 				}
 			}
@@ -1609,6 +1612,106 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 		}
 		return limitAmt;
+	}
+
+	@Override
+	public List<FinFeeDetail> convertToFinanceFees(FinanceDetail fd, String userBranch) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinFeeDetail> fees = new ArrayList<>();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		String finBranch = fm.getFinBranch();
+		String finCCY = fm.getFinCcy();
+
+		long custId = 0;
+
+		CustomerDetails cd = fd.getCustomerDetails();
+		if (cd != null) {
+			custId = cd.getCustomer().getCustID();
+		}
+
+		FinanceTaxDetail ftd = fd.getFinanceTaxDetail();
+		Map<String, BigDecimal> taxPer = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch, ftd);
+
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
+
+		List<FinTypeFees> finTypeFeesList = fd.getFinTypeFeesList();
+
+		String roundingMode = fm.getCalRoundingMode();
+		int roundingTarget = fm.getRoundingTarget();
+
+		for (FinTypeFees fee : finTypeFeesList) {
+			FinFeeDetail ffd = new FinFeeDetail();
+			ffd.setNewRecord(true);
+			ffd.setOriginationFee(fee.isOriginationFee());
+			ffd.setFinEvent(fee.getFinEvent());
+			ffd.setFinEventDesc(fee.getFinEventDesc());
+			ffd.setFeeTypeID(fee.getFeeTypeID());
+			ffd.setFeeOrder(fee.getFeeOrder());
+			ffd.setFeeTypeCode(fee.getFeeTypeCode());
+			ffd.setFeeTypeDesc(fee.getFeeTypeDesc());
+			ffd.setFeeScheduleMethod(fee.getFeeScheduleMethod());
+			ffd.setCalculationType(fee.getCalculationType());
+			ffd.setRuleCode(fee.getRuleCode());
+
+			BigDecimal feeAmount = fee.getAmount();
+			BigDecimal finAmount = CalculationUtil.roundAmount(feeAmount, roundingMode, roundingTarget);
+			fee.setAmount(finAmount);
+
+			ffd.setFixedAmount(feeAmount);
+			ffd.setPercentage(fee.getPercentage());
+			ffd.setCalculateOn(fee.getCalculateOn());
+			ffd.setAlwDeviation(fee.isAlwDeviation());
+			ffd.setMaxWaiverPerc(fee.getMaxWaiverPerc());
+			ffd.setAlwModifyFee(fee.isAlwModifyFee());
+			ffd.setAlwModifyFeeSchdMthd(fee.isAlwModifyFeeSchdMthd());
+			ffd.setCalculatedAmount(feeAmount);
+			ffd.setTaxComponent(fee.getTaxComponent());
+			ffd.setTaxApplicable(fee.isTaxApplicable());
+
+			if (fee.isTaxApplicable()) {
+				if (subventionFeeCode.equals(fee.getFeeTypeCode())) {
+					Long mdid = fm.getManufacturerDealerId();
+					taxPer = GSTCalculator.getDealerTaxPercentages(mdid, finCCY, userBranch, finBranch, ftd);
+				}
+
+				convertGSTFinTypeFees(ffd, fee, fd, taxPer);
+
+				fees.add(ffd);
+
+				continue;
+			}
+
+			ffd.setActualAmountOriginal(feeAmount);
+			ffd.setActualAmountGST(BigDecimal.ZERO);
+			ffd.setActualAmount(feeAmount);
+
+			BigDecimal waivedAmount = ffd.getWaivedAmount();
+			BigDecimal netAmountOriginal = ffd.getActualAmountOriginal().subtract(waivedAmount);
+
+			ffd.setNetAmountOriginal(netAmountOriginal);
+			ffd.setNetAmountGST(BigDecimal.ZERO);
+			ffd.setNetAmount(netAmountOriginal);
+
+			if (CalculationConstants.REMFEE_WAIVED_BY_BANK.equals(fee.getFeeScheduleMethod())) {
+				ffd.setWaivedAmount(feeAmount);
+				waivedAmount = feeAmount;
+			}
+
+			BigDecimal paidAmountOriginal = ffd.getPaidAmountOriginal();
+
+			ffd.setRemainingFeeOriginal(ffd.getActualAmount().subtract(waivedAmount).subtract(paidAmountOriginal));
+			ffd.setRemainingFeeGST(BigDecimal.ZERO);
+			ffd.setRemainingFee(ffd.getActualAmount().subtract(waivedAmount).subtract(ffd.getPaidAmount()));
+
+			fees.add(ffd);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return fees;
 	}
 
 	@Override

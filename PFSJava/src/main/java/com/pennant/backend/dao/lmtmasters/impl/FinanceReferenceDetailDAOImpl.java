@@ -1061,7 +1061,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		if (tableType.contains("FINVIEW")) {
 			sql.append(", LovDescFinCcyCode, LovDescProductCodeName, LovDescAggRuleName");
 			sql.append(", AggType, ModuleType, LovDescElgRuleValue, LovDescRuleReturnType, LovDescminScore");
-			sql.append(", LovDescisoverride, LovDescoverrideScore");
+			sql.append(", LovDescisoverride, LovDescoverrideScore, TabCode");
 		}
 
 		sql.append(" from LMTFINREFDETAIL");
@@ -1124,6 +1124,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			rd.setLovDescminScore(rs.getInt("LovDescminScore"));
 			rd.setLovDescisoverride(rs.getBoolean("LovDescisoverride"));
 			rd.setLovDescoverrideScore(rs.getInt("LovDescoverrideScore"));
+			rd.setTabCode(rs.getString("TabCode"));
 		}
 
 		return rd;

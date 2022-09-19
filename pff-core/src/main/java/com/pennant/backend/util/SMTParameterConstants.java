@@ -429,4 +429,5 @@ public class SMTParameterConstants {
 	public static final String USR_PWD_SPECIAL_CHAR_COUNT = "USR_PWD_SPECIAL_CHAR_COUNT";
 	public static final String USR_EXPIRY_DAYS = "USR_EXPIRY_DAYS";
 	public static final String OTP_SENDTO_MAIL = "OTP_SENDTO_MAIL";
+	public static final String EXTERNAL_CUSTOMER_DEDUP = "EXTERNAL_CUSTOMER_DEDUP";
 }

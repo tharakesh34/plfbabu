@@ -607,19 +607,6 @@ public class ManualBlockingDialogCtrl extends GFCBaseCtrl<OverdraftLimit> {
 		return processCompleted;
 	}
 
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering ");
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_ManualBlockingDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving ");
-	}
-
 	@Override
 	protected String getReference() {
 		return this.odl.getCustCIF() + PennantConstants.KEY_SEPERATOR + this.odl.getFinReference();

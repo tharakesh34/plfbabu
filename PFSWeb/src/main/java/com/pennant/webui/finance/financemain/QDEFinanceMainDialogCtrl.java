@@ -1060,7 +1060,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		Date appStartDate = DateUtility.getAppDate();
+		Date appStartDate = SysParamUtil.getAppDate();
 		Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
 		if (!this.custFirstName.isReadonly()) {

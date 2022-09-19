@@ -42,6 +42,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
@@ -414,10 +415,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" mam.MovementID, mam.MovementDate, mam.MovementAmount");
 		sql.append(", mam.PaidAmount, mam.WaivedAmount, mam.Status, rh.ReceiptMode, mam.TaxHeaderId");
 		sql.append(", mam.PaidCGST, mam.PaidSGST, mam.PaidUGST, mam.PaidIGST, mam.PaidCESS");
-		sql.append(", mam.WaivedCGST, mam.WaivedSGST, mam.WaivedUGST, mam.WaivedIGST, mam.WaivedCESS");
+		sql.append(", mam.WaivedCGST, mam.WaivedSGST, mam.WaivedUGST, mam.WaivedIGST, mam.WaivedCESS, ft.TaxComponent");
 		sql.append(" From ManualAdviseMovements mam");
 		sql.append(" Left Join FinReceiptHeader rh ON rh.ReceiptID = mam.ReceiptID");
-		sql.append(" Where AdviseID = ?");
+		sql.append(" Left Join ManualAdvise ma ON ma.AdviseID = mam.AdviseID");
+		sql.append(" Left Join FeeTypes ft ON ft.FeeTypeId = ma.FeeTypeId");
+		sql.append(" Where mam.AdviseID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -445,6 +448,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			mam.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
 			mam.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
 			mam.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+			mam.setTaxComponent(rs.getString("TaxComponent"));
 
 			return mam;
 		});
@@ -1157,7 +1161,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" From ManualAdviseMovements");
 		sql.append(" Where ReceiptID in (");
 		sql.append(commaJoin(receiptList));
-		sql.append(")");
+		sql.append(") Group by AdviseID");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1764,8 +1768,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	private List<ManualAdvise> getAdvises(long finID, Date valueDate, int adviseType, String type) {
 		StringBuilder sql = getSqlQuery(type);
-		sql.append("  Where FinID = ? and AdviseType = ? and (AdviseAmount - PaidAmount - WaivedAmount) > 0");
-		sql.append(" and ValueDate <= ? And Status is null or status = ?");
+		sql.append(" Where FinID = ? and AdviseType = ? and (AdviseAmount - PaidAmount - WaivedAmount) > 0");
+		if (!ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+			sql.append(" and ValueDate <= ?");
+		}
+
+		sql.append("  and (Status is null or status = ?)");
 		sql.append(" order by valuedate, adviseid");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -1775,7 +1783,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setLong(index++, finID);
 			ps.setInt(index++, adviseType);
 
-			ps.setDate(index++, JdbcUtil.getDate(valueDate));
+			if (!ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
+				ps.setDate(index++, JdbcUtil.getDate(valueDate));
+			}
 			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
 		}, new ManualAdviseRM(type));
 	}
@@ -1941,7 +1951,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", ma.WorkflowId, DueCreation, LinkedTranId, HoldDue, Status, Reason, PresentmentId");
 		sql.append(" From ManualAdvise ma");
 		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID");
-		sql.append(" Where FinID = ? and ValueDate > ? And (Status is null OR status = ?) And LinkedTranID = ?");
+		sql.append(" Where FinID = ? and ValueDate = ? and (Status is null OR status = ?) And LinkedTranID = ?");
 		sql.append(" and ft.DueAccReq = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -2089,4 +2099,50 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		return sql;
 	}
 
+	@Override
+	public List<ManualAdvise> getAdviseStatus(String finReference, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Status, ValueDate, AdviseId, FinReference");
+		sql.append(" From ManualAdvise");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			ManualAdvise ma = new ManualAdvise();
+
+			ma.setStatus(rs.getString("Status"));
+			ma.setValueDate(rs.getTimestamp("ValueDate"));
+			ma.setAdviseID(rs.getLong("AdviseId"));
+			ma.setFinReference(rs.getString("Finreference"));
+
+			return ma;
+		}, finReference);
+	}
+
+	@Override
+	public void updateStatus(List<ManualAdvise> list, String type) {
+		String sql = "Update ManualAdvise Set Status  = ? where AdviseId = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ManualAdvise ma = list.get(i);
+
+				int index = 1;
+
+				ps.setString(index++, ma.getStatus());
+				ps.setLong(index++, ma.getAdviseID());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
+	}
 }

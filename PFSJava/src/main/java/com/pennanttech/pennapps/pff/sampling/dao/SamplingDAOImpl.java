@@ -404,8 +404,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		try {
 			sampling = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Sampling not found in sampling{} table/view for the specified KeyReference >> {}", type,
-					keyReference);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return sampling;

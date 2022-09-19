@@ -214,35 +214,30 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 	}
 
-	/**
-	 * Writes the bean data to the components.<br>
-	 * 
-	 * @param academic
-	 * 
-	 */
-	public void doWriteBeanToComponents(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
+	public void doWriteBeanToComponents(CreditReviewDetails crdd, CreditReviewData crd) {
 		logger.debug("Entering");
 
 		Map<String, Object> dataMap = new HashMap<>();
-		if (creditReviewData != null) {
-			dataMap = convertStringToMap(creditReviewData.getTemplateData());
+		if (crd != null) {
+			dataMap = convertStringToMap(crd.getTemplateData());
+
 			doFillExternalLiabilities(appExtLiabilities, dataMap);
 
 			dataMap.putAll(btMap);
-			dataMap.put("Loan_Req", creditReviewDetails.getTotalLoanAmount());
-			dataMap.put("TENOR", creditReviewDetails.getTenor());
-			dataMap.put("ROI", creditReviewDetails.getRoi());
-			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
-			dataMap.put("SNCTNAMNT", creditReviewDetails.getSanctionedAmt());
-			dataMap.put("OTSTNDNGAMNT", creditReviewDetails.getOutStandingLoanAmt());
-			dataMap.put("CC_ACNTKIMIT", creditReviewDetails.getAccountLimit());
-			dataMap.put("LNAMNT_BT", creditReviewDetails.getLoanAmount());
+			dataMap.put("Loan_Req", crdd.getTotalLoanAmount());
+			dataMap.put("TENOR", crdd.getTenor());
+			dataMap.put("ROI", crdd.getRoi());
+			dataMap.put("ABB", crdd.getAvgBankBal());
+			dataMap.put("SNCTNAMNT", crdd.getSanctionedAmt());
+			dataMap.put("OTSTNDNGAMNT", crdd.getOutStandingLoanAmt());
+			dataMap.put("CC_ACNTKIMIT", crdd.getAccountLimit());
+			dataMap.put("LNAMNT_BT", crdd.getLoanAmount());
 			dataMap.put("DSCR_PBDIT", btMap.get("DSCR_PBDIT"));
 			dataMap.put("EMI_ALL_LOANS", btMap.get("EMI_ALL_LOANS"));
 			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
 			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
 			dataMap.put("DSCR", btMap.get("DSCR_GF"));
-			dataMap.put("ABB_EMI", creditReviewDetails.getTotalAbb());
+			dataMap.put("ABB_EMI", crdd.getTotalAbb());
 			dataMap.put("MARGINI", btMap.get("MARGINI"));
 			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
 
@@ -250,26 +245,26 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			doFillExternalLiabilities(appExtLiabilities, dataMap);
 
 			dataMap.putAll(btMap);
-			dataMap.put("Loan_Req", creditReviewDetails.getTotalLoanAmount());
-			dataMap.put("TENOR", creditReviewDetails.getTenor());
-			dataMap.put("ROI", creditReviewDetails.getRoi());
-			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
+			dataMap.put("Loan_Req", crdd.getTotalLoanAmount());
+			dataMap.put("TENOR", crdd.getTenor());
+			dataMap.put("ROI", crdd.getRoi());
+			dataMap.put("ABB", crdd.getAvgBankBal());
 			dataMap.put("DSCR_PBDIT", btMap.get("DSCR_PBDIT"));
 			dataMap.put("EMI_ALL_LOANS", btMap.get("EMI_ALL_LOANS"));
 			dataMap.put("DSCR_GF", btMap.get("DSCR_GF"));
 			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
 			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
 			dataMap.put("DSCR", btMap.get("DSCR_GF"));
-			dataMap.put("ABB_EMI", creditReviewDetails.getTotalAbb());
+			dataMap.put("ABB_EMI", crdd.getTotalAbb());
 			dataMap.put("MARGINI", btMap.get("MARGINI"));
 			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
-			dataMap.put("SNCTNAMNT", creditReviewDetails.getSanctionedAmt());
-			dataMap.put("OTSTNDNGAMNT", creditReviewDetails.getOutStandingLoanAmt());
-			dataMap.put("CC_ACNTKIMIT", creditReviewDetails.getAccountLimit());
-			dataMap.put("LNAMNT_BT", creditReviewDetails.getLoanAmount());
+			dataMap.put("SNCTNAMNT", crdd.getSanctionedAmt());
+			dataMap.put("OTSTNDNGAMNT", crdd.getOutStandingLoanAmt());
+			dataMap.put("CC_ACNTKIMIT", crdd.getAccountLimit());
+			dataMap.put("LNAMNT_BT", crdd.getLoanAmount());
 		}
 
-		String fields = creditReviewDetails.getFields();
+		String fields = crdd.getFields();
 
 		if (StringUtils.isNotBlank(fields)) {
 			String fieldsArray[] = fields.split(",");
@@ -284,10 +279,12 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 		}
 
-		String protectedCells = creditReviewDetails.getProtectedCells();
+		String protectedCells = crdd.getProtectedCells();
 		if (StringUtils.isNoneBlank(protectedCells)) {
 			String protectedCellsArray[] = protectedCells.split(",");
 			for (String protectedCell : protectedCellsArray) {
+				protectedCell = StringUtils.trim(protectedCell);
+
 				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), protectedCell);
 				CellStyle cellStyle = range.getCellStyle();
 				EditableCellStyle newStyle = range.getCellStyleHelper().createCellStyle(cellStyle);
@@ -375,14 +372,13 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		try {
 			saveConsideredObligations(dataMap);
 			jsonInString = mapper.writeValueAsString(dataMap);
-			// setSpreedSheetData(dataMap, aFinanceDetail);
+			setSpreedSheetData(dataMap, aFinanceDetail);
 		} catch (Exception e) {
 			logger.error("Exception in json request string" + e);
 		}
 
 		if (this.creditReviewData == null) {
 			this.creditReviewData = new CreditReviewData();
-			// this.creditReviewData.setNewRecord(true);
 		}
 
 		this.creditReviewData.setTemplateName(this.creditReviewDetails.getTemplateName());
@@ -396,11 +392,13 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		ExtendedFieldRender extendedFieldRender = aFinanceDetail.getExtendedFieldRender();
 		Map<String, Object> mapValues = extendedFieldRender.getMapValues();
 		Object elgAmount = dataMap.get("MAXELGLOANAMOUNT");
+
 		if (elgAmount != null) {
 			mapValues.put("SPRDSHEET", elgAmount.toString());
 		} else {
 			mapValues.put("SPRDSHEET", BigDecimal.ZERO);
 		}
+
 		extendedFieldRender.setMapValues(mapValues);
 		aFinanceDetail.setExtendedFieldRender(extendedFieldRender);
 	}
@@ -414,10 +412,11 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private void checkCreditRevData() {
 		logger.debug(Literal.ENTERING);
 		try {
-			if (getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) {
-				((FinanceMainBaseCtrl) getFinanceMainDialogCtrl()).isCreditReviewDataChanged(creditReviewDetails,
-						false);
-			}
+			// FIXME Murthy
+			/*
+			 * if (getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) { ((FinanceMainBaseCtrl)
+			 * getFinanceMainDialogCtrl()).isCreditReviewDataChanged(creditReviewDetails, false); }
+			 */
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -486,8 +485,10 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				|| userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED)
 				|| userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED))) {
 			if (getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) {
-				isDataChanged = ((FinanceMainBaseCtrl) getFinanceMainDialogCtrl())
-						.isCreditReviewDataChanged(creditReviewDetails, isFromLoan);
+				/*
+				 * FIXME Murthy isDataChanged = ((FinanceMainBaseCtrl) getFinanceMainDialogCtrl())
+				 * .isCreditReviewDataChanged(creditReviewDetails, isFromLoan);
+				 */
 			}
 			if (isDataChanged) {
 				MessageUtil.showMessage("Loan details has changed.Eligibility needs to be verified.");
@@ -587,6 +588,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
 		CustomerExtLiability custLiability = (CustomerExtLiability) checkBox.getAttribute("custExtLiability");
+
 		if (checkBox.isChecked()) {
 			this.totalExposure = this.totalExposure.add(PennantApplicationUtil
 					.formateAmount(custLiability.getInstalmentAmount(), PennantConstants.defaultCCYDecPos));

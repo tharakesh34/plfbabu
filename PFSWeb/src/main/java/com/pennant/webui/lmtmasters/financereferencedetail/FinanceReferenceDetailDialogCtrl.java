@@ -1290,17 +1290,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 				auditDetail, aFinanceReferenceDetail.getUserDetails(), getOverideMap());
 	}
 
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_FinanceReferenceDetailDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-	}
-
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeReferenceDetail);
 	}

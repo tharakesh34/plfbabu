@@ -164,11 +164,7 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 	}
 
 	private boolean isForwardDirection(String activity) {
-		if (StringUtils.contains(activity, "Saved") || StringUtils.contains(activity, "Reverted")
-				|| StringUtils.contains(activity, "Resubmitted")) {
-			return false;
-		}
-
-		return true;
+		return !(StringUtils.contains(activity, "Saved") || StringUtils.contains(activity, "Reverted")
+				|| StringUtils.contains(activity, "Resubmitted"));
 	}
 }

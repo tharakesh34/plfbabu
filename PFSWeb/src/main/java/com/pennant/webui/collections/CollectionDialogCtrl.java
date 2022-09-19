@@ -23,7 +23,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.collection.Collection;
 import com.pennant.backend.service.collection.CollectionService;
@@ -230,7 +230,7 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 			CollectionProcessThread collectionProcessThread = null;
 			try {
 				collectionProcessThread = new CollectionProcessThread(interfaceValue, this.curOdDays,
-						DateUtility.getLastBusinessdate(), getUserWorkspace().getLoggedInUser().getUserId());
+						SysParamUtil.getLastBusinessdate(), getUserWorkspace().getLoggedInUser().getUserId());
 				new Thread(new CollectionProcessThread(collectionProcessThread)).start();
 				Thread.sleep(1000);
 			} catch (Exception e) {

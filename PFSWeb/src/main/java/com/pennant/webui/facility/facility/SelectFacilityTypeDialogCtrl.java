@@ -42,8 +42,8 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReferenceUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.facility.Facility;
@@ -169,7 +169,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 					setWorkFlowId(workFlowDetails.getId());
 					getFacility().setWorkflowId(workFlowDetails.getWorkFlowId());
 				}
-				Date appldate = DateUtility.getAppDate();
+				Date appldate = SysParamUtil.getAppDate();
 				getFacility().setStartDate(appldate);
 				getFacility().setPresentingUnit(FacilityConstants.FACILITY_PRESENTING_UNIT);
 				getFacility().setCustID(customer.getCustID());

@@ -90,7 +90,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Entering : " + event);
 
 		if ("".equals(AccrualProcess.ACC_RUNNING)) {
-			this.valueDate.setValue(DateUtility.getMonthEnd(DateUtility.getAppDate()));
+			this.valueDate.setValue(DateUtility.getMonthEnd(SysParamUtil.getAppDate()));
 			this.valueDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_ProjectedProfitDetails_valueDate.value"), true));
 		}
@@ -249,7 +249,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		reportArgumentsMap.put("userName", getUserWorkspace().getLoggedInUser().getFullName());
 		reportArgumentsMap.put("reportHeading", reportConfiguration.getReportHeading());
 		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
-		reportArgumentsMap.put("appDate", DateUtility.getAppDate());
+		reportArgumentsMap.put("appDate", SysParamUtil.getAppDate());
 		reportArgumentsMap.put("appCcy", SysParamUtil.getAppCurrency());
 		reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 

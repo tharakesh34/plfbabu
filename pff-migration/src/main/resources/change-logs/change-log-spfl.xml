@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -249,13 +249,13 @@
 
 	<changeSet id="ST#11.3_1" author="kavya.n">
 		<createTable tableName="Cust_Docs">
-			<column name ="ID" type="bigInt" autoIncrement="true"/>
+			<column name="ID" type="bigInt" autoIncrement="true" />
 			<column name="CustID" type="bigInt" />
 			<column name="CustDocCategory" type="varchar(50)" />
 			<column name="seq" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.13_pre" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -431,7 +431,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.4_1" author="kavya.n">
 		<sql>
 			<![CDATA[
@@ -511,7 +511,8 @@
 	</changeSet>
 
 	<changeSet id="ST#11.8" author="kavya.n">
-		<createIndex tableName="CustomerDocuments_Temp" indexName="IX_CustDocs_CustID_DocCategory_Temp" unique="true">
+		<createIndex tableName="CustomerDocuments_Temp" indexName="IX_CustDocs_CustID_DocCategory_Temp"
+			unique="true">
 			<column name="CustID" />
 			<column name="CustDocCategory" />
 		</createIndex>
@@ -528,21 +529,22 @@
 			ALTER TABLE CustomerDocuments_Temp ALTER COLUMN Id bigInt NOT NULL
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.10.1" author="kavya.n">
 		<dropPrimaryKey constraintName="PK_CustomerDocuments" tableName="CustomerDocuments" />
 	</changeSet>
-	
+
 	<changeSet id="ST#11.10.2" author="kavya.n">
 		<dropPrimaryKey constraintName="PK_CustomerDocuments_Temp" tableName="CustomerDocuments_Temp" />
 	</changeSet>
-	
+
 	<changeSet id="ST#11.11.1" author="kavya.n">
 		<addPrimaryKey tableName="CustomerDocuments" columnNames="Id" constraintName="PK_CustomerDocuments" />
 	</changeSet>
 
 	<changeSet id="ST#11.12.1" author="kavya.n">
-		<addPrimaryKey tableName="CustomerDocuments_Temp" columnNames="Id" constraintName="PK_CustomerDocuments_Temp" />
+		<addPrimaryKey tableName="CustomerDocuments_Temp" columnNames="Id"
+			constraintName="PK_CustomerDocuments_Temp" />
 	</changeSet>
 
 	<changeSet id="ST#11.18" author="kavya.n">
@@ -605,7 +607,8 @@
 	</changeSet>
 
 	<changeSet id="ST#11.18.4" author="kavya.n">
-		<addPrimaryKey tableName="Document_Status_Temp" columnNames="Id" constraintName="PK_Document_Status_Temp" />
+		<addPrimaryKey tableName="Document_Status_Temp" columnNames="Id"
+			constraintName="PK_Document_Status_Temp" />
 	</changeSet>
 
 	<changeSet id="ST#11.18.5" author="kavya.n">
@@ -639,7 +642,7 @@
 			<column name="Status" type="char(1)" />
 			<column name="Remarks" type="varchar(2000)" />
 			<column name="Covenants" type="varchar(200)" />
-			<column name="Processed" type="int"/>
+			<column name="Processed" type="int" />
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -671,7 +674,7 @@
 			<column name="Status" type="char(1)" />
 			<column name="Remarks" type="varchar(2000)" />
 			<column name="Covenants" type="varchar(200)" />
-			<column name="Processed" type="int"/>
+			<column name="Processed" type="int" />
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -690,11 +693,13 @@
 	</changeSet>
 
 	<changeSet id="ST#11.19.3" author="kavya.n">
-		<addPrimaryKey tableName="Document_Status_Details" columnNames="Id" constraintName="PK_Document_Status_Dtls" />
+		<addPrimaryKey tableName="Document_Status_Details" columnNames="Id"
+			constraintName="PK_Document_Status_Dtls" />
 	</changeSet>
 
 	<changeSet id="ST#11.19.4" author="kavya.n">
-		<addPrimaryKey tableName="Document_Status_Details_Temp" columnNames="Id" constraintName="PK_Document_Status_Dtls_Temp" />
+		<addPrimaryKey tableName="Document_Status_Details_Temp" columnNames="Id"
+			constraintName="PK_Document_Status_Dtls_Temp" />
 	</changeSet>
 
 	<changeSet id="ST#11.19.5" author="kavya.n">
@@ -818,7 +823,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.22" author="kavya.n">
 		<createView viewName="DocumentStatusCovenants_View" replaceIfExists="true">
 			<![CDATA[
@@ -831,15 +836,15 @@
 	       ]]>	
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.23" author="kavya.n">
 		<sql>
 			<![CDATA[
 				drop table Cust_Docs;
-			]]>	
+			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.15" author="kavya.n">
 		<sql>
 			drop table SeqDocumentDetails;
@@ -851,31 +856,11 @@
 			incrementBy="1" />
 	</changeSet>
 
-	<!-- <changeSet id="ST#11.17_1" author="kavya.n" dbms="mssql">
-		<sql splitStatements="false">
-
-			DECLARE @SQLCmd NVARCHAR(MAX);
-			DECLARE @MAXNO BIGINT;
-			SELECT @MAXNO=COALESCE(max(T.ID),0)+1
-			from
-			(select ID from CUSTOMERDOCUMENTS union all select ID from CUSTOMERDOCUMENTS_Temp union all select DocId from DOCUMENTDETAILS union all select DocId from DOCUMENTDETAILS_Temp) T;
-
-			SET @SQLCmd = '
-			ALTER
-			SEQUENCE SEQDOCUMENTDETAILS
-			RESTART WITH
-			' + CAST( @MAXNO AS VARCHAR(30)) +'
-			INCREMENT BY 1
-			MINVALUE -9223372036854775808
-			MAXVALUE 9223372036854775807
-			CACHE ';
-
-
-			EXEC
-			SP_EXECUTESQL @SQLCmd;
-
-		</sql>
-	</changeSet> -->
+	<!-- <changeSet id="ST#11.17_1" author="kavya.n" dbms="mssql"> <sql splitStatements="false"> DECLARE @SQLCmd NVARCHAR(MAX); 
+		DECLARE @MAXNO BIGINT; SELECT @MAXNO=COALESCE(max(T.ID),0)+1 from (select ID from CUSTOMERDOCUMENTS union all select ID from 
+		CUSTOMERDOCUMENTS_Temp union all select DocId from DOCUMENTDETAILS union all select DocId from DOCUMENTDETAILS_Temp) T; SET 
+		@SQLCmd = ' ALTER SEQUENCE SEQDOCUMENTDETAILS RESTART WITH ' + CAST( @MAXNO AS VARCHAR(30)) +' INCREMENT BY 1 MINVALUE -9223372036854775808 
+		MAXVALUE 9223372036854775807 CACHE '; EXEC SP_EXECUTESQL @SQLCmd; </sql> </changeSet> -->
 
 	<changeSet id="ST#11.17_1" author="kavya.n" dbms="postgresql">
 		<sql splitStatements="false">
@@ -884,11 +869,14 @@
 			v_maxval INTEGER;
 			begin
 			select COALESCE(max(T.ID),0)+1 into v_maxval from
-			(select ID from CUSTOMERDOCUMENTS union all select ID from CUSTOMERDOCUMENTS_Temp union all select DocId from DOCUMENTDETAILS union all select DocId from DOCUMENTDETAILS_Temp) T;
+			(select ID
+			from CUSTOMERDOCUMENTS union all select ID from CUSTOMERDOCUMENTS_Temp union all select DocId from DOCUMENTDETAILS
+			union all select DocId from DOCUMENTDETAILS_Temp) T;
 			EXECUTE 'alter sequence SEQDOCUMENTDETAILS
 			restart
 			start
-			with ' || v_maxval;
+			with ' ||
+			v_maxval;
 			end;
 			$$;
 		</sql>
@@ -900,15 +888,18 @@
 			v_maxval INTEGER;
 			begin
 			select COALESCE(max(T.ID),0)+1 into v_maxval from
-			(select ID from CUSTOMERDOCUMENTS union all select ID from CUSTOMERDOCUMENTS_Temp union all select DocId from DOCUMENTDETAILS union all select DocId from DOCUMENTDETAILS_Temp) T;
+			(select ID from
+			CUSTOMERDOCUMENTS union all select ID from CUSTOMERDOCUMENTS_Temp union all select DocId from DOCUMENTDETAILS union
+			all select DocId from DOCUMENTDETAILS_Temp) T;
 			EXECUTE IMMEDIATE 'alter sequence
 			SEQDOCUMENTDETAILS
 			restart
-			start with ' || v_maxval;
+			start with '
+			|| v_maxval;
 			end;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.18" author="murthy.y">
 		<sql>
 		    <![CDATA[
@@ -932,14 +923,16 @@
 			union all
 			select max(DocId) as ID from DOCUMENTDETAILS_Temp) T;
 
-			SET @SQLCmd = '
+			SET @SQLCmd
+			= '
 			ALTER
 			SEQUENCE SEQDOCUMENTDETAILS
 			RESTART WITH
 			' + CAST(
 			@MAXNO AS VARCHAR(30)) +'
 			INCREMENT BY 1
-			MINVALUE -9223372036854775808
+			MINVALUE
+			-9223372036854775808
 			MAXVALUE 9223372036854775807
 			CACHE ';
 
@@ -948,8 +941,8 @@
 
 		</sql>
 	</changeSet>
-			
-	
+
+
 	<changeSet id="ST#11.33.1_pre" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -957,7 +950,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.33.1" author="kavya.n">
 		<createView viewName="DocumentStatus_View" replaceIfExists="true">
 			<![CDATA[
@@ -1024,7 +1017,7 @@
 	       ]]>	
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.33.1_post" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1032,7 +1025,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.34" author="kavya.n">
 		<sql>
      <![CDATA[
@@ -1046,7 +1039,7 @@
          ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.35_pre" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1054,7 +1047,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.35" author="kavya.n">
 		<createView viewName="DocumentStatusCovenants_View" replaceIfExists="true">
 			<![CDATA[
@@ -1073,7 +1066,7 @@
 	       ]]>	
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#11.35_post" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1081,7 +1074,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#58" author="gopalaswamy.m">
 		<sql>
 			<![CDATA[	
@@ -1175,7 +1168,7 @@
 	</changeSet>
 
 	<!-- Duplicate indexes removal start -->
-	
+
 	<changeSet id="200439" author="nagavamsi.p">
 		<sql>
      <![CDATA[
@@ -1183,7 +1176,7 @@
          ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="200464.1" author="nagavamsi.p">
 		<sql>
 			<![CDATA[
@@ -1191,8 +1184,8 @@
              ]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="200464.2.1" author="nagavamsi.p">
+
+	<changeSet id="200464.2.1" author="nagavamsi.p">
 		<sql>
 			<![CDATA[
               ALTER TABLE PRESENTMENT_REQ_DETAILS_TEMP DROP COLUMN  specialhit_file
@@ -1207,7 +1200,7 @@
              ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#201189" author="NagaVamsi.P" dbms="mssql">
 		<sql splitStatements="false">
             <![CDATA[   
@@ -1223,5 +1216,29 @@
             ]]>
 		</sql>
 	</changeSet>
-		
+	
+	<changeSet id="203005.1" author="nagavamsi.p">
+		<dropTable tableName="SEQFINRECEIPTHEADER" />
+	</changeSet>
+
+	<changeSet id="203005.2" author="nagavamsi.p">
+		<createSequence sequenceName="SEQFINRECEIPTHEADER" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	
+	<changeSet id="203005.3" author="nagavamsi.p" dbms="mssql">
+		<sql splitStatements="false">
+			<![CDATA[
+			declare @MAXNO varchar(max),
+                 @SQL varchar(max)
+                SET @MAXNO =
+                (SELECT COALESCE(max(T.ReceiptID),0)+1
+                from (select COALESCE(max(ReceiptID), 0) + 1 ReceiptID from FINRECEIPTHEADER
+                union all
+                select COALESCE(max(ReceiptID), 0) + 1 ReceiptID from FINRECEIPTHEADER_temp)  t) + 1;
+                Set @SQL = 'alter sequence SeqFinReceiptHeader restart with ' + cast(@MAXNO as varchar(max))
+                EXEC (@SQL)
+			]]>
+		</sql>
+	</changeSet>	
+
 </databaseChangeLog>

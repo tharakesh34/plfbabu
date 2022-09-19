@@ -338,7 +338,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 		try {
 			return jdbcOperations.queryForObject(sql, new Object[] { code }, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.debug("Record is not Found in BMTDocumentTypes_AView for the specified DocTypeCode >> {}", code);
+			logger.debug(Message.NO_RECORD_FOUND);
 		}
 
 		return null;

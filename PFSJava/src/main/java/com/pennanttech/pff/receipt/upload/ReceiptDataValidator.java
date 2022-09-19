@@ -346,7 +346,7 @@ public class ReceiptDataValidator {
 		if (rud.isDedupCheck()) {
 			checkDedup(rud);
 		}
-		
+
 		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
 		rud.setFinID(finID);
 
@@ -531,8 +531,8 @@ public class ReceiptDataValidator {
 
 			message.append("Duplicate Receipt exists with combination of ");
 			message.append(" FinReference - ").append(rud.getReference());
-			message.append(", Value Date - ").append(rud.getValueDate());
-			message.append(", Receipt Amount - ").append(rud.getReceiptAmount());
+			message.append(", Value Date - ").append(rud.getStrValueDate());
+			message.append(", Receipt Amount - ").append(rud.getStrReceiptAmount());
 
 			if (StringUtils.isNotBlank(rud.getTransactionRef())) {
 				message.append(" and Transaction Reference").append(rud.getTransactionRef());
@@ -769,7 +769,6 @@ public class ReceiptDataValidator {
 
 		rud.getErrorDetails().add(errorDetail);
 		rud.setReason(errorDetail.getError());
-		rud.setReceiptId(null);
 	}
 
 	public void setError(UploadAlloctionDetail uad, String message) {

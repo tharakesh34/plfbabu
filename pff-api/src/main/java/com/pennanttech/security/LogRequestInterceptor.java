@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.common.logging.LogUtils;
@@ -24,8 +25,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.APIHeader;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.util.APIConstants;
 import com.pennanttech.util.APILogDetailDAO;
 import com.pennanttech.ws.log.model.APILogDetail;
 
@@ -153,7 +159,11 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 			// if messageId is there in HTTP header, set it in APIHeader.
 			case APIHeader.API_MESSAGEID:
 				header.setMessageId(headerMAP.get(key.toLowerCase()).toString().replace("[", "").replace("]", ""));
-				apiLogDetail.setMessageId(header.getMessageId());
+				String messageID = header.getMessageId();
+				apiLogDetail.setMessageId(messageID);
+				if (messageID.length() > 200) {
+					getErrorDetails("92010", new String[] { APIHeader.API_MESSAGEID });
+				}
 				break;
 			// if service version is there in HTTP header, set it in
 			// APIHeader.
@@ -178,6 +188,11 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 			}
 		}
 		apiLogDetail.setResponseGiven(new Timestamp(System.currentTimeMillis()));
+		// if given messageId is notBlank then check the messageId is already processed
+		// or not.
+		if (StringUtils.isNotBlank(apiLogDetail.getMessageId())) {
+			validateMessageId(message, header, apiLogDetail);
+		}
 
 		String serviceName = StringUtils.trimToEmpty(apiLogDetail.getServiceName());
 		int serviceVersion = apiLogDetail.getServiceVersion();
@@ -242,6 +257,66 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 			apiLogDetail.setLanguage(error.substring(0, 2000));
 		}
 
+	}
+
+	/**
+	 * Method for validate the given messageID weather it is already processed or not. if it is already processed then
+	 * sets the previous response as current response in message.
+	 * 
+	 * @param message
+	 * @param header
+	 * @param apiLogDetail
+	 */
+	private void validateMessageId(Message message, APIHeader header, APILogDetail apiLogDetail) {
+		log.debug(Literal.ENTERING);
+		APILogDetail previousApiLogDetail = getLogMessageById(header.getMessageId(), header.getEntityId());
+		if (previousApiLogDetail != null) {
+			// if the given messageId is already processed then sets the previous response
+			// as current response.
+			// conflict response code is 409.
+			Response response = null;
+			response = Response.status(Response.Status.CONFLICT).entity(previousApiLogDetail.getResponse()).build();
+			// put the previous response in message and set the header return code and desc.
+			message.getExchange().put(Response.class, response);
+			header.setReturnCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
+			header.setReturnDesc(APIConstants.RES_DUPLICATE_MSDID);
+			// for logging purpose.
+			apiLogDetail.setReference(previousApiLogDetail.getReference());
+			apiLogDetail.setKeyFields(previousApiLogDetail.getKeyFields());
+			apiLogDetail.setStatusCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
+			apiLogDetail.setError(previousApiLogDetail.getError());
+			apiLogDetail.setKeyFields(previousApiLogDetail.getKeyFields());
+			apiLogDetail.setProcessed(false);
+		} else {
+			apiLogDetail.setProcessed(true);
+		}
+		log.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for check the API log table, based on the given messageId if record found return the latest record
+	 * response otherwise return null.
+	 * 
+	 * @return apiLogDetail
+	 */
+	private APILogDetail getLogMessageById(String messageId, String entityCode) {
+		return apiLogDetailDAO.getAPILog(messageId, entityCode);
+	}
+
+	private void getErrorDetails(String errorCode, String[] valueParm) {
+
+		ServiceExceptionDetails serviceExceptionDetailsArray[] = new ServiceExceptionDetails[1];
+		ServiceExceptionDetails serviceExceptionDetails = new ServiceExceptionDetails();
+		serviceExceptionDetails.setFaultCode(errorCode);
+		// serviceExceptionDetails.setFaultMessage(errorDetailService.getErrorDetailById(errorCode).getErrorMessage());
+		ErrorDetail erroDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, valueParm));
+
+		if (erroDetail != null) {
+			serviceExceptionDetails.setFaultMessage(erroDetail.getError());
+		}
+		// Get the error details from authentication and throw the Fault details
+		serviceExceptionDetailsArray[0] = serviceExceptionDetails;
+		throw new Fault(new ServiceException(serviceExceptionDetailsArray));
 	}
 
 	/**

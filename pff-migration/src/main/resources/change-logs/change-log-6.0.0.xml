@@ -17811,52 +17811,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.48.1_pre" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'feerefundfinancemain_view');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.48.1" author="Gopal.p">
-		<comment>TDS APPLICABLE ADDED</comment>
-		<createView viewName="FEEREFUNDFINANCEMAIN_VIEW" replaceIfExists="true">
-			<![CDATA[
-				SELECT Distinct FM.FINREFERENCE,
-  					FM.FINTYPE,
-  					FM.FINCCY,
-  					FM.FINBRANCH,
-  					FM.CLOSINGSTATUS,
-					FM.TDSAPPLICABLE
-  					FROM FINANCEMAIN FM
-  				INNER JOIN FINRECEIPTHEADER FR ON FR.REFERENCE = FM.FINREFERENCE AND FR.RECEIPTPURPOSE  = 'FEEPAYMENT'
-               		AND (SELECT SUM(FD.PaidAmount) from FINFEEDETAIL FD Where FD.FINREFERENCE = FM.FINREFERENCE) > 0
-  				WHERE FM.CLOSINGSTATUS  = 'C'
-				UNION ALL
-				SELECT Distinct FM.FINREFERENCE,
-  					FM.FINTYPE,
-  					FM.FINCCY,
-  					FM.FINBRANCH,
-  					FM.CLOSINGSTATUS,
-					FM.TDSAPPLICABLE
-  					FROM REJECTFINANCEMAIN FM
-  				INNER JOIN FINRECEIPTHEADER FR ON FM.FINREFERENCE = FR.REFERENCE AND FR.RECEIPTPURPOSE  = 'FEEPAYMENT'
-  				WHERE FR.RECEIPTMODESTATUS != 'C' AND NOT (EXISTS
-  					(SELECT 1 FROM FINANCEMAIN  WHERE FINANCEMAIN.FINREFERENCE = FM.FINREFERENCE
-  						AND FINANCEMAIN.CLOSINGSTATUS  = 'C'))
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.48.1_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'feerefundfinancemain_view');
-			]]>
-		</sql>
-	</changeSet>
-
 	<!-- ST#1211 - Views modification while Merging from HL >> CORE End -->
 
 	<!-- ST#1543 - Big fixes in 5.10.0-SNAPSHOT Starts -->
@@ -26292,4 +26246,12 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="Eligbilit_1" author="murthy.y" >
+		<sql>
+			<![CDATA[
+				DELETE from SECRIGHTS where RIGHTNAME in('FinanceMainDialog_Eligibility_Sal');	
+				INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceMainDialog_Eligibility_Sal', 'FinanceMainDialog', 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

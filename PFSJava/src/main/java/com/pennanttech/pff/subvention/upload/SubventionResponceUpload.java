@@ -23,7 +23,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
-import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -76,7 +75,6 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 	private ManualAdviseDAO manualAdviseDAO;
 	private PostingsDAO postingsDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
-	private AccountProcessUtil accountProcessUtil;
 	private CashBackDetailDAO cashBackDetailDAO;
 	private CashBackProcessService cashBackProcessService;
 
@@ -515,8 +513,6 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 
 		postingsDAO.saveBatch(returnDatasetList);
 
-		accountProcessUtil.procAccountUpdate(returnDatasetList);
-
 		logger.debug("Leaving");
 		return aeEvent;
 	}
@@ -582,11 +578,6 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 	}
 
 	@Autowired
-	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
-		this.accountProcessUtil = accountProcessUtil;
-	}
-
-	@Autowired
 	public void setCashBackDetailDAO(CashBackDetailDAO cashBackDetailDAO) {
 		this.cashBackDetailDAO = cashBackDetailDAO;
 	}
@@ -595,5 +586,4 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 	public void setCashBackProcessService(CashBackProcessService cashBackProcessService) {
 		this.cashBackProcessService = cashBackProcessService;
 	}
-
 }

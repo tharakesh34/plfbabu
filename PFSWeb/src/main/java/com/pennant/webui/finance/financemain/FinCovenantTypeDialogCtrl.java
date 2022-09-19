@@ -730,22 +730,22 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		}
 
 		if (this.receivableDate.isVisible() && this.receivableDate.getValue() != null) {
-			if (DateUtility.compare(this.receivableDate.getValue(), DateUtility.getAppDate()) == -1) {
+			if (DateUtility.compare(this.receivableDate.getValue(), SysParamUtil.getAppDate()) == -1) {
 				throw new WrongValueException(this.receivableDate, Labels.getLabel("DATE_PAST",
 						new String[] { Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value") }));
 			}
 			// 08-06-2018 changed acceptable min date to app date in servicing.
 			if (StringUtils.equals(moduleDefiner, "")) {
-				maxCovreceiveDate = DateUtility.addDays(DateUtility.getAppDate(),
+				maxCovreceiveDate = DateUtility.addDays(SysParamUtil.getAppDate(),
 						+SysParamUtil.getValueAsInt("FUTUREDAYS_COV_RECEIVED_DATE"));
 			} else {
-				maxCovreceiveDate = DateUtility.addDays(DateUtility.getAppDate(),
+				maxCovreceiveDate = DateUtility.addDays(SysParamUtil.getAppDate(),
 						+SysParamUtil.getValueAsInt("FUTUREDAYS_SER_COV_RECEIVED_DATE"));
 			}
 
 			this.receivableDate
 					.setConstraint(new PTDateValidator(Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value"),
-							true, DateUtility.getAppDate(), maxCovreceiveDate, true));
+							true, SysParamUtil.getAppDate(), maxCovreceiveDate, true));
 
 		}
 		logger.debug("Leaving");

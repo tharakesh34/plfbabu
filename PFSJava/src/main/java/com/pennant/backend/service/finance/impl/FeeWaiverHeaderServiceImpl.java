@@ -1732,6 +1732,21 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 							}
 						}
 					}
+				} else {
+					if (RepayConstants.ALLOCATION_BOUNCE.equals(movement.getFeeTypeCode())) {
+						bounceWithGst = totBounce.add(movement.getWaivedAmount());
+					} else if (RepayConstants.ALLOCATION_ODC.equals(movement.getFeeTypeCode())) {
+						totLPP = totLPP.add(movement.getMovementAmount());
+					} else {
+						if (StringUtils.isNotEmpty(movement.getFeeTypeCode())) {
+							FeeType feeType = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(movement.getFeeTypeCode());
+							if (feeType != null) {
+								String feeTypeCode = feeType.getFeeTypeCode();
+								detailsMap.put(feeTypeCode + "_W", movement.getWaivedAmount());
+							}
+						}
+					}
+
 				}
 			}
 

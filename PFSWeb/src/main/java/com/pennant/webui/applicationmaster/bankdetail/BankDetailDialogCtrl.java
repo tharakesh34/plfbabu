@@ -832,25 +832,6 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	}
 
 	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering");
-
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_BankDetailDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)

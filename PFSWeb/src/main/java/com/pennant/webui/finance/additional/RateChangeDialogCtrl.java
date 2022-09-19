@@ -1188,6 +1188,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			finMain.setRecalType(CalculationConstants.RPYCHG_ADJTERMS);
 			finMain.setRecalFromDate(fromDate);
 			finMain.setRecalToDate(maturityDate);
+			finMain.setScheduleMaintained(true);
 			finServInst.setRecalFromDate(fromDate);
 			finServInst.setRecalToDate(maturityDate);
 		}
@@ -1239,12 +1240,28 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						recalculateRate = finServInst.getActualRate();
 					}
 
-					if (recalculateRate.compareTo(fsd.getCalculatedRate()) > 0) {
-						finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
-						finMain.setRecalFromDate(rpyStp.getStepStart());
-						finServInst.setRecalFromDate(finMain.getRecalFromDate());
+					if (CalculationConstants.SCHMTHD_EQUAL.equals(finMain.getScheduleMethod())) {
+						if (recalculateRate.compareTo(fsd.getCalculatedRate()) > 0) {
+							finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+							finMain.setRecalFromDate(rpyStp.getStepStart());
+
+							finServInst.setRecalFromDate(finMain.getRecalFromDate());
+						} else {
+							finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+						}
 					} else {
-						finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+						finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+						for (FinanceScheduleDetail finSch : fsdList) {
+							if (finSch.getSchDate().compareTo(finMain.getEventFromDate()) > 0) {
+								if (!finSch.isRepayOnSchDate()) {
+									continue;
+								}
+								finMain.setRecalFromDate(finSch.getSchDate());
+								break;
+							}
+						}
+						finMain.setResetOrgBal(false);
+						finServInst.setRecalFromDate(finMain.getRecalFromDate());
 					}
 					finServInst.setRecalType(finMain.getRecalType());
 				}

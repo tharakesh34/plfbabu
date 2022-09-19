@@ -197,7 +197,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BaseRateCodeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BaseRateCodeDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BaseRateCodeDialog_btnDelete"));
+		this.btnDelete.setVisible(false); // base rate code should not be deleted.
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_BaseRateCodeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
@@ -820,24 +820,6 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBaseRateCode.getBefImage(), aBaseRateCode);
 		return new AuditHeader(String.valueOf(aBaseRateCode.getId()), null, null, null, auditDetail,
 				aBaseRateCode.getUserDetails(), getOverideMap());
-	}
-
-	/**
-	 * Display Message in Error Box
-	 *
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering");
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_BaseRateCodeDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving");
 	}
 
 	/**

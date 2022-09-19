@@ -599,7 +599,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		if (covenantsService != null) {
+		if (covenantsService != null && !"doReject".equals(StringUtils.trimToEmpty(method))) {
 			auditDetail.setErrorDetails(
 					covenantsService.validatePDDDocuments(finReference, auditDetail.getErrorDetails()));
 		}

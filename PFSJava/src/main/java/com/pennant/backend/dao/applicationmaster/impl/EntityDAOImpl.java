@@ -43,6 +43,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -116,7 +117,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 				return e;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in Entity{} table/view for the specified EntityCode >> {}", type, entityCode);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -315,8 +316,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 				return e;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in Entity{} table/view for the specified DivisionCode >> {}", type,
-					divisionCode);
+			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
 	}

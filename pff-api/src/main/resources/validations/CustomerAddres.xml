@@ -108,12 +108,12 @@
 				<element name="max">8</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-				<message>poBox is invalid. Allowed Characters are [0-9].</message>
+				<message>poBox is invalid. Allowed Characters are [A-Za-z0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-				<element name="regexp">^$|[0-9]+</element>
+				<element name="regexp">^[A-Za-z0-9]+[A-Za-z0-9]*</element>
 			</constraint>
 		</field>
 

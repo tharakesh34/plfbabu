@@ -150,7 +150,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 				return b;
 			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records not found in RMTBranches{} for the BranchCode >> {}", type, id);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		logger.debug(Literal.LEAVING);

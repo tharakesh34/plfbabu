@@ -56,7 +56,7 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
@@ -918,8 +918,8 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		 */
 
 		if (aJVPostingEntry.isNewRecord()) {
-			this.postingDate.setValue(DateUtility.getAppDate());
-			this.valueDate.setValue(DateUtility.getAppDate());
+			this.postingDate.setValue(SysParamUtil.getAppDate());
+			this.valueDate.setValue(SysParamUtil.getAppDate());
 		} else {
 			this.postingDate.setValue(aJVPostingEntry.getPostingDate());
 			this.valueDate.setValue(aJVPostingEntry.getValueDate());

@@ -57,7 +57,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -67,10 +66,8 @@ import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.ErrorControl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
@@ -434,24 +431,6 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 		logger.debug(Literal.ENTERING + event.toString());
 		disbursementInstCtrl.onDoubleClick(this.customerPaymentTxnsListCtrl, this, ModuleType_CUSTPMTTXN, true, null);
 		logger.debug(Literal.LEAVING + event.toString());
-	}
-
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug(Literal.ENTERING);
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_CustomerPaymentTxnsDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**

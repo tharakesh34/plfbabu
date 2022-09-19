@@ -42,15 +42,10 @@ import com.pennant.backend.model.WSReturnStatus;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StatementOfAccount {
 
+	private long finID;
 	private String finReference;
 	private Date startDate;
 	private Date endDate;
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////// Loan Basic Details
-	//////////////////////////////////////////////////////////////////////////////////////////////// ////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
 	private BigDecimal loanAmount = BigDecimal.ZERO;
 	private String loanAmountInWords;
 	private String plrRate;
@@ -111,11 +106,20 @@ public class StatementOfAccount {
 	private String totalPriBalInwords;
 	private String totalPftPaidInWords;
 	private BigDecimal instChrgForCust = BigDecimal.ZERO;
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////// Customer Details
-	//////////////////////////////////////////////////////////////////////////////////////////////// ////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////
+	private String custCtgCode;
+	private BigDecimal bounceDue = BigDecimal.ZERO;
+	private BigDecimal totPenaltyAmt = BigDecimal.ZERO;
+	private BigDecimal otherReceivableDue = BigDecimal.ZERO;
+	private BigDecimal otherPayableDue = BigDecimal.ZERO;
+	private BigDecimal balanceAmt = BigDecimal.ZERO;
+	private BigDecimal odProfit = BigDecimal.ZERO;
+	private BigDecimal odPrincipal = BigDecimal.ZERO;
+	private BigDecimal fdPriBal = BigDecimal.ZERO;
+	private BigDecimal fdodProfit = BigDecimal.ZERO;
+	private List<Map<String, Object>> CustomerDetails = null;
+	private String ucic;
+	private List<SOAFeeDetails> SOAFeeDetails = new ArrayList<SOAFeeDetails>();
+	private String custDetails;
 
 	// Finance Profit Details
 	private String finPurpose;
@@ -268,6 +272,14 @@ public class StatementOfAccount {
 	 */
 	public StatementOfAccount() {
 		super();
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
@@ -1489,4 +1501,115 @@ public class StatementOfAccount {
 		this.instChrgForCust = instChrgForCust;
 	}
 
+	public String getUcic() {
+		return ucic;
+	}
+
+	public void setUcic(String ucic) {
+		this.ucic = ucic;
+	}
+
+	public String getCustCtgCode() {
+		return custCtgCode;
+	}
+
+	public void setCustCtgCode(String custCtgCode) {
+		this.custCtgCode = custCtgCode;
+	}
+
+	public BigDecimal getBounceDue() {
+		return bounceDue;
+	}
+
+	public void setBounceDue(BigDecimal bounceDue) {
+		this.bounceDue = bounceDue;
+	}
+
+	public BigDecimal getTotPenaltyAmt() {
+		return totPenaltyAmt;
+	}
+
+	public void setTotPenaltyAmt(BigDecimal totPenaltyAmt) {
+		this.totPenaltyAmt = totPenaltyAmt;
+	}
+
+	public List<Map<String, Object>> getCustomerDetails() {
+		return CustomerDetails;
+	}
+
+	public void setCustomerDetails(List<Map<String, Object>> customerDetails) {
+		CustomerDetails = customerDetails;
+	}
+
+	public BigDecimal getOtherReceivableDue() {
+		return otherReceivableDue;
+	}
+
+	public void setOtherReceivableDue(BigDecimal otherReceivableDue) {
+		this.otherReceivableDue = otherReceivableDue;
+	}
+
+	public BigDecimal getOtherPayableDue() {
+		return otherPayableDue;
+	}
+
+	public void setOtherPayableDue(BigDecimal otherPayableDue) {
+		this.otherPayableDue = otherPayableDue;
+	}
+
+	public List<SOAFeeDetails> getSOAFeeDetails() {
+		return SOAFeeDetails;
+	}
+
+	public void setSOAFeeDetails(List<SOAFeeDetails> sOAFeeDetails) {
+		SOAFeeDetails = sOAFeeDetails;
+	}
+
+	public BigDecimal getBalanceAmt() {
+		return balanceAmt;
+	}
+
+	public void setBalanceAmt(BigDecimal balanceAmt) {
+		this.balanceAmt = balanceAmt;
+	}
+
+	public BigDecimal getOdProfit() {
+		return odProfit;
+	}
+
+	public void setOdProfit(BigDecimal odProfit) {
+		this.odProfit = odProfit;
+	}
+
+	public BigDecimal getOdPrincipal() {
+		return odPrincipal;
+	}
+
+	public void setOdPrincipal(BigDecimal odPrincipal) {
+		this.odPrincipal = odPrincipal;
+	}
+
+	public BigDecimal getFdPriBal() {
+		return fdPriBal;
+	}
+
+	public void setFdPriBal(BigDecimal fdPriBal) {
+		this.fdPriBal = fdPriBal;
+	}
+
+	public BigDecimal getFdodProfit() {
+		return fdodProfit;
+	}
+
+	public void setFdodProfit(BigDecimal fdodProfit) {
+		this.fdodProfit = fdodProfit;
+	}
+
+	public void setCustDetails(String custDetails) {
+		this.custDetails = custDetails;
+	}
+
+	public String getCustDetails() {
+		return custDetails;
+	}
 }

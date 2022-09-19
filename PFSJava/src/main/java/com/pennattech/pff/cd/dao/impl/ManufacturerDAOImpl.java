@@ -172,6 +172,7 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 			ps.setString(index++, manufacturer.getName());
 			ps.setString(index++, manufacturer.getDescription());
 			ps.setString(index++, manufacturer.getChannel());
+			ps.setBoolean(index++, manufacturer.isActive());
 			ps.setString(index++, manufacturer.getAddressLine1());
 			ps.setString(index++, manufacturer.getAddressLine2());
 			ps.setString(index++, manufacturer.getAddressLine3());
@@ -184,9 +185,6 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 			ps.setString(index++, manufacturer.getManfMobileNo());
 			ps.setString(index++, manufacturer.getManfEmailId());
 			ps.setString(index++, manufacturer.getManfacContactName());
-			ps.setBoolean(index++, manufacturer.isActive());
-			ps.setInt(index++, manufacturer.getVersion());
-			ps.setLong(index++, manufacturer.getLastMntBy());
 			ps.setTimestamp(index++, manufacturer.getLastMntOn());
 			ps.setString(index++, manufacturer.getRecordStatus());
 			ps.setString(index++, manufacturer.getRoleCode());

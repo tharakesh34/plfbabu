@@ -35,8 +35,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -433,7 +433,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	public boolean doWriteComponentsToBean(IncomeExpenseHeader incomeExpenseHeader) throws InterruptedException {
 
 		incomeExpenseHeader.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
-		incomeExpenseHeader.setCreatedOn(DateUtility.getAppDate());
+		incomeExpenseHeader.setCreatedOn(SysParamUtil.getAppDate());
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 		for (Listitem listitem : listBoxSchoolCoreIncomeDetails.getItems()) {
@@ -477,7 +477,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			aSchoolCoreIncome.setIncomeExpense("INCOME");
 			aSchoolCoreIncome.setIncomeExpenseCode("INCOME");
 			aSchoolCoreIncome.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
-			aSchoolCoreIncome.setCreatedOn(DateUtility.getAppDate());
+			aSchoolCoreIncome.setCreatedOn(SysParamUtil.getAppDate());
 
 			boolean isNew = false;
 			isNew = aSchoolCoreIncome.isNewRecord();
@@ -562,7 +562,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			aSchoolNonCoreIncome.setIncomeExpense("INCOME");
 			aSchoolNonCoreIncome.setIncomeExpenseCode("INCOME");
 			aSchoolNonCoreIncome.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
-			aSchoolNonCoreIncome.setCreatedOn(DateUtility.getAppDate());
+			aSchoolNonCoreIncome.setCreatedOn(SysParamUtil.getAppDate());
 
 			boolean isNew = false;
 			isNew = aSchoolNonCoreIncome.isNewRecord();
@@ -634,7 +634,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			IncomeExpenseDetail aSchoolExpense = (IncomeExpenseDetail) listitem.getAttribute("data");
 			aSchoolExpense.setIncomeExpense("EXPENSE");
 			aSchoolExpense.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
-			aSchoolExpense.setCreatedOn(DateUtility.getAppDate());
+			aSchoolExpense.setCreatedOn(SysParamUtil.getAppDate());
 
 			boolean isNew = false;
 			isNew = aSchoolExpense.isNewRecord();

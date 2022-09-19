@@ -197,6 +197,10 @@ public class PennantRegularExpressions {
 	public static final String REGEX_PHONE_AREA = "REGEX_PHONE_AREA";
 	public static final String REGEX_PHONE_NUMBER = "REGEX_PHONE_NUMBER";
 	public static final String REGEX_REPAY_HIERARCHY = "REGEX_REPAY_HIERARCHY";
+	public static final String REGEX_ALPHANUM_SPL_CERSAI1 = "REGEX_ALPHANUM_SPL_CERSAI1";
+	public static final String REGEX_ALPHANUM_SPL_CERSAI2 = "REGEX_ALPHANUM_SPL_CERSAI2";
+	public static final String REGEX_ALPHANUM_SPL_CERSAI3 = "REGEX_ALPHANUM_SPL_CERSAI3";
+	public static final String REGEX_ALPHANUM_SPL_CERSAI4 = "REGEX_ALPHANUM_SPL_CERSAI4";
 
 	private static Map<String, String> regexMapper = new HashMap<String, String>() {
 		private static final long serialVersionUID = -3549857310897774789L;
@@ -209,6 +213,10 @@ public class PennantRegularExpressions {
 			put(REGEX_ALPHA_SPL, "^[A-Za-z]+[A-Za-z.\\>\\<\\!\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}]*");
 			put(REGEX_ALPHANUM, "^[A-Za-z0-9]+[A-Za-z0-9]*");
 			put(REGEX_ALPHANUM_CODE, "^[A-Za-z0-9]+[A-Za-z0-9\\_\\-]*");
+			put(REGEX_ALPHANUM_SPL_CERSAI1, "^[A-Za-z0-9]+[A-Za-z0-9.\\_\\-\\s\\.\\,\\/]*[A-Za-z0-9]+");
+			put(REGEX_ALPHANUM_SPL_CERSAI2, "^[A-Za-z0-9]+[A-Za-z0-9.\\-\\s\\/]*[A-Za-z0-9]+");
+			put(REGEX_ALPHANUM_SPL_CERSAI3, "^[A-Za-z0-9]+[A-Za-z0-9.\\_\\-\\s\\.]*[A-Za-z0-9]+");
+			put(REGEX_ALPHANUM_SPL_CERSAI4, "^[A-Za-z0-9]+[A-Za-z0-9.\\_\\-\\s\\.\\/]*[A-Za-z0-9]+");
 			put(REGEX_ALPHANUM_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9.\\s]*");
 			put(REGEX_ALPHANUM_SPACE_SPL,
 					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\:]*");
@@ -249,7 +257,7 @@ public class PennantRegularExpressions {
 			put(REGEX_UPP_BOX_ALPHANUM, "[A-Za-z0-9]*");
 			put(REGEX_CUSTCIF, "[0-9]{5,7}");
 			put(REGEX_UPPBOX_ALPHA_CODE, "^[A-Za-z]+[A-Za-z\\_\\-]*");
-			put(REGEX_UPPBOX_ALPHANUM_UNDERSCORE, "^[A-Za-z]+[A-Za-z0-9\\_]*");
+			put(REGEX_UPPBOX_ALPHANUM_UNDERSCORE, "^[A-Za-z0-9]+[A-Za-z0-9\\_]*");
 			put(REGEX_ALPHANUM_FL23, "[Aa]{1}[Ee]{1}[a-zA-z0-9]{21}");
 			put(REGEX_ALPHANUM_UNDERSCORE_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9\\_\\s]*");
 			put(REGEX_NUMERIC_MAXLENGTH, "[0-9]{0,12}\\.[0-9]{0,9}");

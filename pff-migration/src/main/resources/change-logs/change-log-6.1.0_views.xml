@@ -5530,7 +5530,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="55_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="55.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_view');
@@ -5538,7 +5538,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="55" author="Gopal.p">
+	<changeSet id="55.1" author="Gopal.p">
 		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.RECEIPTID,
@@ -5634,7 +5634,9 @@
 				    T1.CUSTBANKID,
 					CB.ACCOUNTNUMBER CUSTACCTNUMBER,
 					CB.ACCOUNTHOLDERNAME CUSTACCTHOLDERNAME,
-					T1.MODULETYPE
+					T1.MODULETYPE,
+					T2.SCHEDULEMETHOD,
+                    T2.PROFITDAYSBASIS  PFTDAYSBASIS
 				FROM FINRECEIPTHEADER_TEMP T1
 				JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
 				JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -5742,7 +5744,9 @@
 				    T1.CUSTBANKID,
 					CB.ACCOUNTNUMBER CUSTACCTNUMBER,
 					CB.ACCOUNTHOLDERNAME CUSTACCTHOLDERNAME,
-					T1.MODULETYPE
+					T1.MODULETYPE,
+					T2.SCHEDULEMETHOD,
+                    T2.PROFITDAYSBASIS  PFTDAYSBASIS
 				FROM FINRECEIPTHEADER T1
 				JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
 				JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -5761,7 +5765,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="55_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="55.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finreceiptheader_view');
@@ -10962,6 +10966,192 @@
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'linkedfinances_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#204813_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'feerefundfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#204813" author="Gopal.p">
+		<comment>TDS APPLICABLE ADDED</comment>
+		<createView viewName="FEEREFUNDFINANCEMAIN_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT Distinct FM.FINID,
+					FM.FINREFERENCE,
+  					FM.FINTYPE,
+  					FM.FINCCY,
+  					FM.FINBRANCH,
+  					FM.CLOSINGSTATUS,
+					FM.TDSAPPLICABLE
+  					FROM FINANCEMAIN FM
+  				INNER JOIN FINRECEIPTHEADER FR ON FR.REFERENCE = FM.FINREFERENCE AND FR.RECEIPTPURPOSE  = 'FeePayment'
+               		AND (SELECT SUM(FD.PaidAmount) from FINFEEDETAIL FD Where FD.FINREFERENCE = FM.FINREFERENCE) > 0
+  				WHERE FM.CLOSINGSTATUS  = 'C'
+				UNION ALL
+				SELECT Distinct FM.FINID,
+					FM.FINREFERENCE,
+  					FM.FINTYPE,
+  					FM.FINCCY,
+  					FM.FINBRANCH,
+  					FM.CLOSINGSTATUS,
+					FM.TDSAPPLICABLE
+  					FROM REJECTFINANCEMAIN FM
+  				INNER JOIN FINRECEIPTHEADER FR ON FM.FINREFERENCE = FR.REFERENCE AND FR.RECEIPTPURPOSE  = 'FeePayment'
+  				WHERE FR.RECEIPTMODESTATUS != 'C' AND NOT (EXISTS
+  					(SELECT 1 FROM FINANCEMAIN  WHERE FINANCEMAIN.FINREFERENCE = FM.FINREFERENCE
+  						AND FINANCEMAIN.CLOSINGSTATUS  = 'C'))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#204813_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'feerefundfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#203310_pre" author="Sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_cview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#203310" author="Sandeepkuamr.m">
+		<createView viewName="MANUALADVISE_CVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ADVISEID,
+   					 T1.ADVISETYPE,
+   					 FM.FINID,
+   					 FM.FINREFERENCE,
+                     T1.FEETYPEID,
+                     T1.SEQUENCE,
+                     T1.ADVISEAMOUNT,
+                     T1.PAIDAMOUNT,
+                     T1.WAIVEDAMOUNT,
+                     T1.REMARKS,
+					 T1.VALUEDATE,
+					 T1.POSTDATE,
+					 T1.VERSION,
+					 T1.LASTMNTBY,
+					 T1.LASTMNTON,
+					 T1.RECORDSTATUS,
+					 T1.ROLECODE,
+					 T1.NEXTROLECODE,
+					 T1.TASKID,
+					 T1.NEXTTASKID,
+					 T1.RECORDTYPE,
+					 T1.WORKFLOWID,
+					 T2.FEETYPEDESC,
+					 T2.FEETYPECODE,
+					 T1.BOUNCEID,
+					 T1.RECEIPTID,
+					 T3.BOUNCECODE,
+					 T1.RESERVEDAMT,
+					 T1.BALANCEAMT,
+					 T3.REASON BOUNCECODEDESC,
+					 COALESCE(T2.TAXAPPLICABLE, 0) TAXAPPLICABLE,
+					 COALESCE(T2.TDSREQ, 0)  TDSREQ,
+					 T2.TAXCOMPONENT,
+					 T1.PAIDCGST,
+					 T1.PAIDSGST,
+					 T1.PAIDIGST,
+					 T1.PAIDUGST,
+					 T1.WAIVEDCGST,
+					 T1.WAIVEDSGST,
+					 T1.WAIVEDUGST,
+					 T1.WAIVEDIGST,
+					 T1.WAIVEDCESS,
+					 T1.PAIDCESS,
+					 T1.FINSOURCE,
+					 T1.DUECREATION,
+					 T1.LINKEDTRANID,
+					 T1.TDSPAID,
+					 T1.HOLDDUE,
+					 T1.PRESENTMENTID,
+					 T1.STATUS,
+					 T1.REASON,
+					 T1.DUEDATE
+				FROM MANUALADVISE T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+			    LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+				WHERE NOT EXISTS ( SELECT 1 FROM MANUALADVISE_TEMP MAT WHERE MAT.FINID = T1.FINID and MAT.ADVISEID = T1.ADVISEID and STATUS in ('C','M'))
+			    UNION ALL
+				 SELECT  T1.ADVISEID,
+					    T1.ADVISETYPE,
+					    FM.FINID,
+					    FM.FINREFERENCE,
+					    T1.FEETYPEID,
+					    T1.SEQUENCE,
+					    T1.ADVISEAMOUNT,
+					    T1.PAIDAMOUNT,
+					    T1.WAIVEDAMOUNT,
+					    T1.REMARKS,
+					    T1.VALUEDATE,
+					    T1.POSTDATE,
+					    T1.VERSION,
+					    T1.LASTMNTBY,
+					    T1.LASTMNTON,
+					    T1.RECORDSTATUS,
+					    T1.ROLECODE,
+					    T1.NEXTROLECODE,
+					    T1.TASKID,
+					    T1.NEXTTASKID,
+					    T1.RECORDTYPE,
+					    T1.WORKFLOWID,
+					    T2.FEETYPEDESC,
+					    T2.FEETYPECODE,
+					    T1.BOUNCEID,
+					    T1.RECEIPTID,
+					    T3.BOUNCECODE,
+					    T1.RESERVEDAMT,
+					    T1.BALANCEAMT,
+					    T3.REASON BOUNCECODEDESC,
+					    COALESCE(T2.TAXAPPLICABLE, 0) TAXAPPLICABLE,
+					    COALESCE(T2.TDSREQ, 0) TDSREQ,
+					    T2.TAXCOMPONENT,
+					    T1.PAIDCGST,
+					    T1.PAIDSGST,
+					    T1.PAIDIGST,
+					    T1.PAIDUGST,
+					    T1.WAIVEDCGST,
+					    T1.WAIVEDSGST,
+					    T1.WAIVEDUGST,
+					    T1.WAIVEDIGST,
+					    T1.WAIVEDCESS,
+					    T1.PAIDCESS,
+					    T1.FINSOURCE,
+					    T1.DUECREATION,
+					    T1.LINKEDTRANID,
+					    T1.TDSPAID,
+					    T1.HOLDDUE,
+					    T1.PRESENTMENTID,
+					    T1.STATUS,
+					    T1.REASON,
+					    T1.DUEDATE
+				FROM MANUALADVISE_TEMP T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+			    LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+				WHERE EXISTS (SELECT 1 FROM MANUALADVISE MA WHERE MA.FINID = T1.FINID and MA.ADVISEID = T1.ADVISEID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#203310_post" author="Sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'manualadvise_cview');
 			]]>
 		</sql>
 	</changeSet>

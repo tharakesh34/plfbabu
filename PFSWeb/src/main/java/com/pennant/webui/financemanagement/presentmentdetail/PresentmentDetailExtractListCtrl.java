@@ -291,7 +291,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		try {
 			int alwdDaysFromAppDate = SysParamUtil.getValueAsInt("PRESENTMENT_EXTRACT_ALW_DAYS_FROM_APP_DATE");
 			if (alwdDaysFromAppDate > 0 && DateUtility.getDaysBetween(this.toDate.getValue(),
-					DateUtility.getAppDate()) >= alwdDaysFromAppDate) {
+					SysParamUtil.getAppDate()) >= alwdDaysFromAppDate) {
 				throw new WrongValueException(this.toDate,
 						Labels.getLabel("label_Diff_btwn_To_and_App_date") + " " + alwdDaysFromAppDate);
 			}

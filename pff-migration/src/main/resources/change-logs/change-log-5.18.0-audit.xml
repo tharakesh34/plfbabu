@@ -1171,4 +1171,16 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="PSD#197897.1" author="nagavamsi.p" dbms="postgresql,oracle">
+		<addDefaultValue columnName="NONRVLUTILISED" tableName="AdtLIMITDETAILS" defaultValue="0"/>
+	</changeSet>
+	
+	<changeSet id="PSD#197897.1" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTLimitDetails ADD CONSTRAINT DF_ADTLimitDet_NONRVLUTILISED DEFAULT 0 FOR NONRVLUTILISED;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -24,6 +24,7 @@
  */
 package com.pennant.backend.dao.collateral;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -66,4 +67,13 @@ public interface CollateralSetupDAO {
 	List<CollateralSetup> getCollateralSetupByReference(long custID);
 
 	boolean isNotAssigned(String collateralRef);
+
+	void updateSetupDetail(String collateralref, boolean modified);
+
+	Date getRegistrationDate(String collateralRef);
+
+	Date getExtendedFieldMap(String reference, String tableName, int seqNo);
+
+	void saveCollateralRevisedDate(String collateralRef, Date revDate);
+
 }

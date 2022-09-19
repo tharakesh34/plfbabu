@@ -3492,7 +3492,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custFirstName.setReadonly(isReadOnly("CustomerDialog_custFirstName"));
 				this.custMiddleName.setReadonly(isReadOnly("CustomerDialog_custMiddleName"));
 				this.custLastName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
-				this.custLocalLngName.setReadonly(isReadOnly("CustomerDialog_custLngName"));
+				this.custLocalLngName.setReadonly(isReadOnly("CustomerDialog_custLocalLngName"));
 				this.motherMaidenName.setReadonly(isReadOnly("CustomerDialog_custMotherMaiden"));
 				this.custDftBranch.setReadonly(isReadOnly("CustomerDialog_custDftBranch"));
 				this.custBaseCcy.setReadonly(isReadOnly("CustomerDialog_custBaseCcy"));
@@ -4439,6 +4439,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			// ### 19-06-2018 - End
 
+			boolean alwExtCustDedup = SysParamUtil.isAllowed(SMTParameterConstants.EXTERNAL_CUSTOMER_DEDUP);
+
 			// Check for service tasks. If one exists perform the task(s)
 			String finishedTasks = "";
 			String serviceTasks = getServiceTasks(taskId, aCustomer, finishedTasks);
@@ -4447,17 +4449,23 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				String method = serviceTasks.split(";")[0];
 				if ("doDdeDedup".equals(method) || "doVerifierDedup".equals(method)
 						|| "doApproverDedup".equals(method)) {
-					CustomerDetails tCustomerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
-					String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-					tCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), tCustomerDetails,
-							this.window_CustomerDialog, curLoginUser, "");
-					if (tCustomerDetails.getCustomer().isDedupFound()
-							&& !tCustomerDetails.getCustomer().isSkipDedup()) {
-						processCompleted = false;
-					} else {
-						processCompleted = true;
+					if ((alwExtCustDedup
+							&& (PennantConstants.RCD_STATUS_SUBMITTED.equals(aCustomer.getRecordStatus())
+									&& PennantConstants.RECORD_TYPE_NEW.equals(aCustomer.getRecordType()))
+							&& StringUtils.trimToNull(aCustomer.getCustCoreBank()) == null) || !alwExtCustDedup) {
+						CustomerDetails tCustomerDetails = (CustomerDetails) auditHeader.getAuditDetail()
+								.getModelData();
+						String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
+						tCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), tCustomerDetails,
+								this.window_CustomerDialog, curLoginUser, "");
+						if (tCustomerDetails.getCustomer().isDedupFound()
+								&& !tCustomerDetails.getCustomer().isSkipDedup()) {
+							processCompleted = false;
+						} else {
+							processCompleted = true;
+						}
+						auditHeader.getAuditDetail().setModelData(tCustomerDetails);
 					}
-					auditHeader.getAuditDetail().setModelData(tCustomerDetails);
 				} else {
 					CustomerDetails tCustomerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 					tCustomerDetails.setCustomer(aCustomer);
@@ -7227,24 +7235,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
 				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
 				aCustomerDetails.getUserDetails(), getOverideMap());
-	}
-
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering");
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_CustomerDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving");
 	}
 
 	/**

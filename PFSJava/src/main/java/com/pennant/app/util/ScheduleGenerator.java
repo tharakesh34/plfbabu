@@ -323,7 +323,7 @@ public class ScheduleGenerator {
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
 
 					// FIXME : SATYA - Not Always True
-					if (financeMain.isAllowGrcPftRvw()) {
+					if (FrequencyUtil.isFrqDate(financeMain.getGrcPftRvwFrq(), financeMain.getGrcPeriodEndDate())) {
 						curSchd.setRvwOnSchDate(true);
 					}
 

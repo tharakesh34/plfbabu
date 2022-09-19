@@ -993,7 +993,6 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		AuditHeader aAuditHeader = auditHeader;
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		FinMaintainInstruction fmi = fd.getFinScheduleData().getFinMaintainInstruction();
 
 		if (fd.getExtendedFieldRender() != null) {
@@ -1111,17 +1110,6 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 					map);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_LinkedFinancesDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error(Literal.EXCEPTION, exp);
 		}
 	}
 

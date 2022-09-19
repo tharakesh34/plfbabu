@@ -102,6 +102,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.ProductUtil;
+import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.payment.model.LoanPayment;
 import com.pennanttech.pff.payment.service.LoanPaymentService;
@@ -146,6 +147,7 @@ public class RepaymentProcessUtil {
 	private PostingsPreparationUtil postingsPreparationUtil;
 
 	private ReceiptCalculator receiptCalculator;
+	private AssetClassificationService assetClassificationService;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -1625,17 +1627,17 @@ public class RepaymentProcessUtil {
 				if (payAgainstID != 0) {
 
 					if (isApproval) {
-
 						BigDecimal payableAmt = rcd.getAmount();
 						if (rcd.getPayAdvMovement() != null) {
-
 							TaxHeader taxHeader = rcd.getPayAdvMovement().getTaxHeader();
-							List<Taxes> taxDetails = taxHeader.getTaxDetails();
-							if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
-								for (Taxes taxes : taxDetails) {
-									if (StringUtils.equals(taxes.getTaxType(),
-											FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-										payableAmt = payableAmt.subtract(taxes.getPaidTax());
+							if (taxHeader != null) {
+								List<Taxes> taxDetails = taxHeader.getTaxDetails();
+								if (CollectionUtils.isNotEmpty(taxDetails)) {
+									for (Taxes taxes : taxDetails) {
+										if (StringUtils.equals(taxes.getTaxType(),
+												FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+											payableAmt = payableAmt.subtract(taxes.getPaidTax());
+										}
 									}
 								}
 							}
@@ -2570,6 +2572,61 @@ public class RepaymentProcessUtil {
 		finReceiptDetailDAO.updateReceiptStatusByReceiptId(receiptId, RepayConstants.PAYSTATUS_REALIZED);
 	}
 
+	public List<FinDueData> sortDueDetailsByRelHierarchy(List<FinDueData> dueDetails) {
+		if (CollectionUtils.isEmpty(dueDetails)) {
+			return dueDetails;
+		}
+
+		Collections.sort(dueDetails, new Comparator<FinDueData>() {
+			@Override
+			public int compare(FinDueData detail1, FinDueData detail2) {
+				int i = detail1.getRelativeHierarchy() - detail2.getRelativeHierarchy();
+
+				if (i != 0)
+					return i;
+				i = detail1.getDueDate().compareTo(detail2.getDueDate());
+				if (i != 0)
+					return i;
+
+				return Integer.compare(detail1.getHierarchy(), detail2.getHierarchy());
+			}
+		});
+
+		return dueDetails;
+	}
+
+	public void prepareDueData(FinReceiptData rd) {
+		Date valueDate = rd.getValueDate();
+		FinReceiptHeader rch = rd.getReceiptHeader();
+		FinanceDetail fd = rd.getFinanceDetail();
+		FinScheduleData fsd = fd.getFinScheduleData();
+		List<FinanceScheduleDetail> schedules = fsd.getFinanceScheduleDetails();
+		FinanceMain fm = fsd.getFinanceMain();
+		String repayHierarchy = assetClassificationService.getNpaRepayHierarchy(fm.getFinID());
+
+		List<FinDueData> duesList = new ArrayList<>();
+
+		duesList.addAll(addAllocations(new FinReceiptData(), valueDate, new FinReceiptHeader(), schedules));
+		duesList.addAll(addFeeAllocations(rch));
+		duesList.addAll(addLatePayAllocations(fsd, valueDate));
+
+		if (CollectionUtils.isEmpty(duesList)) {
+			return;
+		}
+
+		duesList = duesList.stream().sorted((d1, d2) -> DateUtil.compare(d1.getDueDate(), d2.getDueDate()))
+				.collect(Collectors.toList());
+
+		if ("".equals(repayHierarchy)) {
+			repayHierarchy = fsd.getFinanceType().getRpyHierarchy();
+		}
+
+		setFinDueDataByHierarchy(duesList, repayHierarchy);
+
+		duesList = sortDueDetailsByRelHierarchy(duesList);
+		rd.setDueDataList(duesList);
+	}
+
 	public FinReceiptData prepareFinDueData(FinReceiptData rd) {
 		logger.debug(Literal.ENTERING);
 
@@ -2635,6 +2692,84 @@ public class RepaymentProcessUtil {
 			schdIdx++;
 		}
 		return dueDataDtls;
+	}
+
+	public List<FinDueData> addLatePayAllocations(FinScheduleData fsd, Date valueDate) {
+		List<FinDueData> duesList = new ArrayList<>();
+
+		int schdIdx = 0;
+		for (FinODDetails fod : fsd.getFinODDetails()) {
+			BigDecimal lpiBal = fod.getLPIBal();
+			BigDecimal lppBal = fod.getTotPenaltyBal();
+
+			if (DateUtil.compare(valueDate, fod.getFinODSchdDate()) >= 0) {
+				if (lppBal.compareTo(BigDecimal.ZERO) > 0) {
+					FinDueData dueData = new FinDueData();
+					dueData.setAllocType(RepayConstants.DUETYPE_ODC);
+					dueData.setDueDate(fod.getFinODSchdDate());
+					dueData.setDueAmount(lppBal);
+					dueData.setSchdIdx(schdIdx);
+
+					duesList.add(dueData);
+				}
+				if (lpiBal.compareTo(BigDecimal.ZERO) > 0) {
+					FinDueData dueData = new FinDueData();
+					dueData.setAllocType(RepayConstants.DUETYPE_LPFT);
+					dueData.setDueDate(fod.getFinODSchdDate());
+					dueData.setDueAmount(lpiBal);
+					dueData.setSchdIdx(schdIdx);
+
+					duesList.add(dueData);
+				}
+			}
+
+			schdIdx++;
+		}
+
+		return duesList;
+	}
+
+	public List<FinDueData> addFeeAllocations(FinReceiptHeader rch) {
+		List<FinDueData> duesList = new ArrayList<>();
+		for (ReceiptAllocationDetail rad : rch.getAllocations()) {
+			if (rad.getAllocationTo() == 0) {
+				continue;
+			}
+
+			String allocationType = rad.getAllocationType();
+			FinDueData dueData = new FinDueData();
+
+			switch (allocationType) {
+			case RepayConstants.ALLOCATION_MANADV:
+				dueData.setAllocType(RepayConstants.DUETYPE_MANUALADVISE);
+				dueData.setAdviseId(rad.getAllocationTo());
+				dueData.setDueDate(rad.getValueDate());
+				dueData.setDueAmount(rad.getTotalDue());
+
+				duesList.add(dueData);
+				break;
+			case RepayConstants.ALLOCATION_BOUNCE:
+				dueData.setAllocType(RepayConstants.DUETYPE_BOUNCE);
+				dueData.setAdviseId(rad.getAllocationTo());
+				dueData.setDueDate(rad.getValueDate());
+				dueData.setDueAmount(rad.getTotalDue());
+
+				duesList.add(dueData);
+				break;
+			case RepayConstants.ALLOCATION_FEE:
+				dueData.setAllocType(RepayConstants.DUETYPE_FEES);
+				dueData.setFeeTypeCode(rad.getFeeTypeCode());
+				dueData.setDueDate(rad.getValueDate());
+				dueData.setDueAmount(rad.getTotalDue());
+
+				duesList.add(dueData);
+				break;
+			default:
+				break;
+			}
+		}
+
+		return duesList;
 	}
 
 	public void setFinDueDataByHierarchy(List<FinDueData> dueDataDtls, String rpyHierarchy) {
@@ -2806,6 +2941,11 @@ public class RepaymentProcessUtil {
 	@Autowired
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
+	}
+
+	@Autowired
+	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
+		this.assetClassificationService = assetClassificationService;
 	}
 
 }

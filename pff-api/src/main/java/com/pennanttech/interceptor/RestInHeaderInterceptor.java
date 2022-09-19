@@ -14,7 +14,6 @@ import java.util.StringTokenizer;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -186,12 +185,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			if (StringUtils.isBlank(apiLogDetail.getAuthKey())) {
 				apiLogDetail.setAuthKey(header.getSecurityInfo());
 			}
-			// if given messageId is notBlank then check the messageId is
-			// already processed or not.
-			if (StringUtils.isNotBlank(apiLogDetail.getMessageId())) {
-				checkDuplicate(message, header, apiLogDetail);
-			}
-
 			logger.debug(Literal.ENTERING);
 
 		} catch (UnsupportedEncodingException e1) { // Invalid request URL
@@ -243,6 +236,10 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 
 			} else if (APIHeader.API_MESSAGEID.equalsIgnoreCase(key)) {
 				isHeaderContainMsgId = true;
+				String messageID = headerMap.get(key).toString().replace("[", "").replace("]", "");
+				if (messageID.length() > 200) {
+					getErrorDetails("92010", new String[] { APIHeader.API_MESSAGEID });
+				}
 			} else if (APIHeader.API_ENTITYID.equalsIgnoreCase(key)) {
 				isHeaderContainEntityId = true;
 			} else if (APIHeader.API_SERVICEVERSION.equalsIgnoreCase(key)) {
@@ -347,7 +344,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		// Read the next token and based on the channel it can be user name or token.
 		if (tokenizer.hasMoreTokens()) {
 			userName = tokenizer.nextToken();
-			// if userid then read the password.
+			// Get next token for user authentication.
 			if (tokenizer.hasMoreTokens()) {
 				password = tokenizer.nextToken();
 			}
@@ -362,7 +359,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			} else if (flag != 1) {
 				getErrorDetails("92004", null);
 			}
-			// if the channel is user and has password.
+			// if the channel is user and has token.
 		} else if (CHANNEL_USER.equals(channel) && !userName.equals("") && !password.equals("")) {
 
 			WebAuthenticationDetails authDetails = new WebAuthenticationDetails((HttpServletRequest) request);
@@ -390,39 +387,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			getErrorDetails("92001", null);
 		}
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void checkDuplicate(Message message, APIHeader header, APILogDetail apiLogDetail) {
-		logger.info(Literal.ENTERING);
-
-		String messageId = header.getMessageId();
-		String entityId = header.getEntityId();
-
-		logger.info("Checking for duplicate meaasge with MessageId: {} and EntityId: {}", messageId, entityId);
-		APILogDetail apiLog = apiLogDetailDAO.getAPILog(messageId, entityId);
-
-		if (apiLog == null) {
-			apiLogDetail.setProcessed(true);
-			logger.debug(Literal.LEAVING);
-			return;
-		}
-
-		logger.info("Message already processed with ID:{}", apiLog.getSeqId());
-
-		Response response = Response.status(Response.Status.CONFLICT).entity(apiLog.getResponse()).build();
-
-		message.getExchange().put(Response.class, response);
-		header.setReturnCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
-		header.setReturnDesc(APIConstants.RES_DUPLICATE_MSDID);
-
-		apiLogDetail.setReference(apiLog.getReference());
-		apiLogDetail.setKeyFields(apiLog.getKeyFields());
-		apiLogDetail.setStatusCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
-		apiLogDetail.setError(apiLog.getError());
-		apiLogDetail.setKeyFields(apiLog.getKeyFields());
-		apiLogDetail.setProcessed(false);
-
-		logger.info(Literal.LEAVING);
 	}
 
 	/*
@@ -517,9 +481,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	}
 
 	/**
-	 * Method to decrypt the password if requied and validate against the actual password.
-	 * 
-	 * Validating password userPassword = dbPassword ,loginPassword = password given by user
+	 * Validates the authorization token.
 	 * 
 	 * @param encPass
 	 * @param rawPass

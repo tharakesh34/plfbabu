@@ -54,15 +54,7 @@
 								<row>
 									<label value="${c:l('label_DisbursementList_LoanType.value')}" />
 									<listbox id="sortOperator_FinType" width="43px" mold="select" rows="1" />
-									<hbox>
-										<hlayout>
-											<space id="space_finType" spacing="1px"></space>
-											<cell colspan="1">
-												<uppercasebox id="finType" width="132px" />
-												<button id="btnFinType" image="/images/icons/LOVSearch.png" />
-											</cell>
-										</hlayout>
-									</hbox>
+									<extendedcombobox id="finType" width="125px" />
 									<label value="${c:l('label_DisbursementList_PartnerBank.value')}" />
 									<listbox id="sortOperator_PartnerBank" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="partnerBank" />

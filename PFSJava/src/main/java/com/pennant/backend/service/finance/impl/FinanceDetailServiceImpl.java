@@ -1822,7 +1822,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 				break;
 			case FinanceConstants.PROCEDT_FINANCETABS:
-				showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getFinRefId()), 3, "0"),
+				showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getTabCode()), 3, "0"),
 						mandInputInStage);
 				break;
 			default:
@@ -2699,15 +2699,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// FinancialSummary Sanction Condition Details
 		// =======================================
 		if (fd.getSanctionDetailsList() != null && sanctionConditionsService != null) {
-			for (SanctionConditions sanctionConditions : fd.getSanctionDetailsList()) {
-				sanctionConditions.setFinReference(finReference);
-				sanctionConditions.setTaskId(fm.getTaskId());
-				sanctionConditions.setNextTaskId(fm.getNextTaskId());
-				sanctionConditions.setRoleCode(fm.getRoleCode());
-				sanctionConditions.setNextRoleCode(fm.getNextRoleCode());
-				sanctionConditions.setRecordStatus(fm.getRecordStatus());
-				sanctionConditions.setWorkflowId(fm.getWorkflowId());
-				sanctionConditions.setLastMntOn(fm.getLastMntOn());
+			for (SanctionConditions sc : fd.getSanctionDetailsList()) {
+				sc.setFinID(fm.getFinID());
+				sc.setFinReference(finReference);
+				sc.setTaskId(fm.getTaskId());
+				sc.setNextTaskId(fm.getNextTaskId());
+				sc.setRoleCode(fm.getRoleCode());
+				sc.setNextRoleCode(fm.getNextRoleCode());
+				sc.setRecordStatus(fm.getRecordStatus());
+				sc.setWorkflowId(fm.getWorkflowId());
+				sc.setLastMntOn(fm.getLastMntOn());
 			}
 			auditDetails.addAll(
 					sanctionConditionsService.doProcess(fd.getSanctionDetailsList(), tableType, auditTranType, false));
@@ -3652,12 +3653,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
-	 * @throws JaxenException
-	 * @throws DatatypeConfigurationException
-	 * @throws AccountNotFoundException
+	 * @throws InterfaceException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, JaxenException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
@@ -3987,9 +3986,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				tranType = PennantConstants.TRAN_ADD;
 				fm.setRecordType("");
 
-				if (!isWIF) {
-					financeMainDAO.save(fm, TableType.MAIN_TAB, isWIF);
-				}
+				financeMainDAO.save(fm, TableType.MAIN_TAB, isWIF);
 
 				if (fm.getOldFinReference() != null && auditHeader.getApiHeader() != null
 						&& StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
@@ -4449,11 +4446,28 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(finOptionService.doApprove(finOptions, TableType.MAIN_TAB, tranType));
 				}
 
+				boolean isRegCol = false;
+
 				// Collateral Assignments Details
 				// =======================================
 				if (fd.getCollateralAssignmentList() != null && !fd.getCollateralAssignmentList().isEmpty()) {
 					List<AuditDetail> details = fd.getAuditDetailMap().get("CollateralAssignments");
 					details = processingCollateralAssignmentList(details, "", fm);
+					for (CollateralAssignment ca : fd.getCollateralAssignmentList()) {
+						int count = collateralAssignmentDAO.getAssignedCollateralCount(ca.getCollateralRef(), "_AView");
+						Date regDate = collateralSetupService.getRegistrationDate(ca.getCollateralRef());
+						if (PennantConstants.RECORD_TYPE_NEW.equals(ca.getRecordType())) {
+							if (count > 1 && regDate != null) {
+								isRegCol = true;
+							}
+						}
+
+						if (isRegCol) {
+							CollateralAssignment collass = collateralSetupService.getCollDetails(ca.getCollateralRef());
+							collateralSetupService.updateCersaiDetails(ca.getCollateralRef(), collass.getSiid(),
+									collass.getAssetid());
+						}
+					}
 					auditDetails.addAll(details);
 				}
 
@@ -5477,7 +5491,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.trace(Literal.LEAVING);
 	}
 
-	private AuditHeader save(String operation, AuditHeader auditHeader, String recordType) throws Exception {
+	private AuditHeader save(String operation, AuditHeader auditHeader, String recordType) {
 		logger.trace(Literal.ENTERING);
 
 		switch (Operation.methodOf(operation)) {

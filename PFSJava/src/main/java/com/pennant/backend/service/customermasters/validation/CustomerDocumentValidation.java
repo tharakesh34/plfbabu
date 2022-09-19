@@ -133,7 +133,6 @@ public class CustomerDocumentValidation {
 		// Check whether the document id exists for another customer.
 		if (!ImplementationConstants.PAN_DUPLICATE_NOT_ALLOWED) {
 			if (StringUtils.isNotEmpty(document.getCustDocTitle())) {
-				long custId = document.getCustID();
 				String docCategory = custDocCategory;
 				String docNumber = document.getCustDocTitle();
 				List<String> duplicateCIFs = customerDocumentDAO.getDuplicateDocByTitle(docCategory, docNumber);
@@ -208,7 +207,7 @@ public class CustomerDocumentValidation {
 			return new ErrorDetail(PennantConstants.KEY_FIELD, "30536",
 					new String[] { Labels.getLabel("DocumentDetails"),
 							Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
-							DateUtility.getAppDate(DateFormat.SHORT_DATE) },
+							SysParamUtil.getAppDate(DateFormat.SHORT_DATE) },
 					new String[] {});
 		}
 

@@ -650,14 +650,19 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 	@Override
 	public boolean isFinTypeFeeExists(long feeTypeId, String finType, int moduleId, boolean originationFee) {
-		String sql = "Select FeeTypeId From FinTypeFees Where FeeTypeId  = ? and FinType = ? and ModuleId = ? and OriginationFee = ?";
+		StringBuilder sql = new StringBuilder("Select count(FeeTypeId) From (");
+		sql.append(" Select FeeTypeId From FinTypeFees Where FeeTypeId  = ? and FinType = ?");
+		sql.append(" and ModuleId = ? and OriginationFee = ?");
+		sql.append(" Union all");
+		sql.append(" Select FeeTypeId From FinTypeFees_temp Where FeeTypeId  = ? and FinType = ?");
+		sql.append(" and ModuleId = ? and OriginationFee = ?");
+		sql.append(" ) T");
 
-		logger.debug(Literal.SQL + sql);
-
-		Object[] obj = new Object[] { feeTypeId, finType, moduleId, originationFee };
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, feeTypeId, finType, moduleId,
+					originationFee, feeTypeId, finType, moduleId, originationFee) > 0;
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return false;

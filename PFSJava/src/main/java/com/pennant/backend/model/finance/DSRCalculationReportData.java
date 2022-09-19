@@ -16,6 +16,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -627,7 +628,7 @@ public class DSRCalculationReportData implements Serializable {
 		// Customer Details
 		reportData.setCustName(detail.getCustomer().getCustShrtName());
 		reportData.setCustCRCPR(detail.getCustomer().getCustCRCPR());
-		reportData.setAppDate(DateUtility.getAppDate(DateFormat.LONG_DATE));
+		reportData.setAppDate(SysParamUtil.getAppDate(DateFormat.LONG_DATE));
 		reportData.setEmpStatus(detail.getCustomer().getLovDescCustEmpStsName());
 		reportData.setJointCust(detail.getCustomer().isJointCust() ? "True" : "False");
 

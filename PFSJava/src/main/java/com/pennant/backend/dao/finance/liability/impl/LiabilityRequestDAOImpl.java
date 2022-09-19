@@ -41,6 +41,7 @@ import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -138,8 +139,8 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (Id, FinID, FinReference, FinEvent, InsPaidStatus, InsClaimAmount");
 		sql.append(", InsClaimReason, InitiatedBy, Version , LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NocDate)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -164,6 +165,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 			ps.setString(index++, lr.getNextTaskId());
 			ps.setString(index++, lr.getRecordType());
 			ps.setLong(index++, lr.getWorkflowId());
+			ps.setDate(index++, JdbcUtil.getDate(lr.getNocDate()));
 		});
 
 		return String.valueOf(lr.getId());

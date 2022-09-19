@@ -293,7 +293,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Left Join Bouncereasons T3 ON T1.bounceid = T3.BounceId");
 		selectSql.append(" Where FinReference = :FinReference");
-		selectSql.append(" and ValueDate <= :ValueDate and Status is null");
+		selectSql.append(" and ValueDate <= :ValueDate and (Status is null or Status ='M')");
+		selectSql.append(" ORDER by T1.adviseID");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 
@@ -513,7 +514,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT FM.FINREFERENCE");
+		sql.append(" SELECT FM.FINID, FM.FINREFERENCE");
 		sql.append(", CASE WHEN RF.PRODUCTCATEGORY = 'ODFCLITY' THEN FM.FINASSETVALUE");
 		sql.append(" ELSE FP.TOTALPRISCHD END LOANAMOUNT");
 		sql.append(", FM.FINASSETVALUE");
@@ -647,7 +648,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" T4.PCCityName CustAddrCity,");
 		selectSql.append(" T5.CpProvinceName CustAddrProvince,");
 		selectSql.append(" T6.PhoneCountryCode, T6.PhoneAreaCode, T6.PhoneNumber,");
-		selectSql.append(" T7.CustEMail, T8.SaluationDesc CustSalutation");
+		selectSql.append(" T7.CustEMail, T8.SaluationDesc CustSalutation, T1.CustCtgCode");
 		selectSql.append(" From Customers T1");
 		selectSql.append(" Left Join CustomerAddresses T2 ON T1.CustID = T2.CustID and T2.custAddrPriority = 5");
 		selectSql.append(" Left Join Bmtcountries T3 on T3.CountryCode = T2.CustAddrCountry");
@@ -1018,18 +1019,24 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinType, 'Primary Customer' ApplicantType, CustCif CustCIF");
+		sql.append(", bp.ProductDesc product");
 		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join BMTProduct bp on bp.ProductCode = FM.FinCategory");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Where fm.CustId = ? and Finreference != ?");
 		sql.append(" Union All ");
 		sql.append(" Select fm.finreference, fm.fintype, 'Co-Applicant' ApplicantType, ja.CustCif CustCIF");
+		sql.append(", bp.ProductDesc product");
 		sql.append(" From FinJointAccountDetails ja");
 		sql.append(" Inner Join FinanceMain fm on fm.finreference = ja.finreference");
+		sql.append(" Inner Join BMTProduct bp on bp.ProductCode = FM.FinCategory");
 		sql.append(" Where fm.CustID = ?");
 		sql.append(" Union All ");
 		sql.append(" Select fm.Finreference, fm.Fintype, 'Borrower' ApplicantType, Guarantorcif CustCIF");
+		sql.append(", bp.ProductDesc product");
 		sql.append(" From FinGuarantorsDetails gr");
 		sql.append(" Inner Join FinanceMain fm on fm.finreference = gr.finreference");
+		sql.append(" Inner Join BMTProduct bp on bp.ProductCode = FM.FinCategory");
 		sql.append(" Where fm.CustID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());

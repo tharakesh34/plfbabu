@@ -319,8 +319,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 			accSetID = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType, event, moduleId },
 					Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Accouting configuration not exists for specified FinType {}, Event {} and ModuleId {}",
-					finType, event, moduleId);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		if (accSetID == null) {
 			return Long.MIN_VALUE;

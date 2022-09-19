@@ -101,7 +101,6 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
@@ -2701,7 +2700,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				this.gracePftFrq.setDisabled(checked ? isReadOnly("WIFFinanceMainDialog_gracePftFrq") : true);
 				this.gracePftFrq.setValue(finType.getFinGrcDftIntFrq());
 				if (this.finStartDate.getValue() == null) {
-					this.finStartDate.setValue(DateUtility.getAppDate());
+					this.finStartDate.setValue(SysParamUtil.getAppDate());
 				}
 				if (this.allowGrace.isChecked()) {
 					this.nextGrcPftDate_two.setValue(
@@ -3551,7 +3550,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
-					Date curBussDate = DateUtility.getAppDate();
+					Date curBussDate = SysParamUtil.getAppDate();
 					if (this.gracePeriodEndDate_two.getValue().before(DateUtility.addDays(curBussDate, 1))) {
 						errorList.add(new ErrorDetail("gracePeriodEndDate", "30548",
 								new String[] { Labels.getLabel("label_FinanceMainBaseCtrl_GracePeriodEndDate.value"),
@@ -5109,7 +5108,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 			aFinanceSchData.getFinanceMain().setFeeChargeAmt(BigDecimal.ZERO);
 
-			Date curBDay = DateUtility.getAppDate();
+			Date curBDay = SysParamUtil.getAppDate();
 			aFinanceSchData.getDisbursementDetails().clear();
 			disbursementDetails = new FinanceDisbursement();
 			disbursementDetails.setDisbDate(aFinanceMain.getFinStartDate());
@@ -5493,7 +5492,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		// FinanceMain Details Tab ---> 1. Basic Details
 
 		if (this.finStartDate.getValue() == null) {
-			this.finStartDate.setValue(DateUtility.getAppDate());
+			this.finStartDate.setValue(SysParamUtil.getAppDate());
 		}
 
 		if (this.finContractDate.getValue() == null) {
@@ -6731,7 +6730,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				custOtherIncome = StringUtils
 						.trimToEmpty(detail.getCustomerDetails().getCustEmployeeDetail().getOtherIncome());
 				int custMonthsofExp = DateUtility.getMonthsBetween(
-						detail.getCustomerDetails().getCustEmployeeDetail().getEmpFrom(), DateUtility.getAppDate());
+						detail.getCustomerDetails().getCustEmployeeDetail().getEmpFrom(), SysParamUtil.getAppDate());
 				custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
 						RoundingMode.CEILING);
 			}
@@ -6752,7 +6751,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if (financeMain.getFixedRateTenor() > 0 && financeMain.getGrcPeriodEndDate() != null) {
 			Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(),
 					financeMain.getFixedRateTenor());
-			if (fixedTenorEndDate.compareTo(DateUtility.getAppDate()) > 0) {
+			if (fixedTenorEndDate.compareTo(SysParamUtil.getAppDate()) > 0) {
 				detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getFixedTenorRate());
 				detail.getCustomerEligibilityCheck().addExtendedField("Finance_Fixed_Tenor", PennantConstants.YES);
 			} else {

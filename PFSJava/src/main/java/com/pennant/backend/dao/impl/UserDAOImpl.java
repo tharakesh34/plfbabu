@@ -184,9 +184,9 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		UserRowMapper rowMapper = new UserRowMapper();
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { usrLogin }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, usrLogin);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("SecUser not exist's for for the specified UsrLogin >> {}", usrLogin);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -208,7 +208,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		UserRowMapper rowMapper = new UserRowMapper();
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { userId }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, userId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

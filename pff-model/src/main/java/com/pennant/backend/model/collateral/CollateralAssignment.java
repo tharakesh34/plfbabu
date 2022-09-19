@@ -75,9 +75,11 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private long assignmentSeq;
 	private String depositorCIF;
 	private String collateralType;
+	private Long assetid = Long.MIN_VALUE;
+	private Long siid = Long.MIN_VALUE;
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("collateralCcy");
 		excludeFields.add("bankValuation");
 		excludeFields.add("collateralValue");
@@ -94,6 +96,9 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		excludeFields.add("depositorCIF");
 		excludeFields.add("collateralType");
 		excludeFields.add("assignPercent");
+		excludeFields.add("siid");
+		excludeFields.add("assetid");
+
 		return excludeFields;
 	}
 
@@ -327,6 +332,22 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 
 	public void setAssignPercent(BigDecimal assignPercent) {
 		this.assignPercent = assignPercent;
+	}
+
+	public Long getAssetid() {
+		return assetid;
+	}
+
+	public void setAssetid(Long assetid) {
+		this.assetid = assetid;
+	}
+
+	public Long getSiid() {
+		return siid;
+	}
+
+	public void setSiid(Long siid) {
+		this.siid = siid;
 	}
 
 }

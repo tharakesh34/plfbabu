@@ -33,7 +33,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -515,10 +514,10 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		if (row_DepositDate.isVisible()) {
 			if (row_ReceiptStatus.isVisible()) {
 				this.depositDate.setConstraint(new PTDateValidator(label, true, finReceiptHeader.getDepositDate(),
-						DateUtility.getAppDate(), true));
+						SysParamUtil.getAppDate(), true));
 			} else {
 				this.depositDate.setConstraint(new PTDateValidator(label, true, finReceiptHeader.getReceiptDate(),
-						DateUtility.getAppDate(), true));
+						SysParamUtil.getAppDate(), true));
 			}
 		}
 
@@ -653,7 +652,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 						bounce.setPaidAmount(BigDecimal.ZERO);
 						bounce.setWaivedAmount(BigDecimal.ZERO);
-						bounce.setValueDate(DateUtility.getAppDate());
+						bounce.setValueDate(SysParamUtil.getAppDate());
 						bounce.setPostDate(SysParamUtil.getPostDate());
 						bounce.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 

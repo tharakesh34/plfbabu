@@ -16,6 +16,7 @@ package com.pennanttech.pennapps.core.resource;
  */
 public class Message {
 	public static final String NO_RECORD_FOUND = "Zero rows were returned when at least one row expected";
+	public static final String NO_TEMPLATE_FOUND = "Template not found";
 	public static final String RECORD_EXISTS = "Results in violation of primary key or unique constraint";
 
 	/**

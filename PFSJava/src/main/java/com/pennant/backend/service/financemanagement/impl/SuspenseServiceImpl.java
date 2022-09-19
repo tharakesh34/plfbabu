@@ -31,8 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -240,18 +238,12 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 			aeEvent.setDataMap(dataMap);
 
-			try {
-				aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
-			} catch (AccountNotFoundException e) {
-				// TODO Auto-generated catch block
-				logger.error(Literal.EXCEPTION, e);
-			}
+			aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
 
 			if (!aeEvent.isPostingSucess()) {
 				String errParm = aeEvent.getErrorMessage();
 				throw new InterfaceException("9999", errParm);
 			}
-
 		}
 
 		if (suspHead.isManualSusp()) {
@@ -446,7 +438,6 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		String tranType = PennantConstants.TRAN_DEL;
 

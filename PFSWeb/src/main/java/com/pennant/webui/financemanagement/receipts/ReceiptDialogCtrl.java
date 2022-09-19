@@ -54,6 +54,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -182,6 +183,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.finance.LinkedFinancesService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
@@ -530,6 +532,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private FinanceMainService financeMainService;
 	Date appDate = SysParamUtil.getAppDate();
 	private transient CustomerDocumentService customerDocumentService;
+	private ManualAdviseService manualAdviseService;
 
 	/**
 	 * default constructor.<br>
@@ -3638,7 +3641,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		} else {
 			this.effScheduleMethod.setVisible(true);
-			this.effScheduleMethod.setDisabled(true);
+			if (getFinanceMain().isManualSchedule()) {
+				this.effScheduleMethod.setDisabled(true);
+			} else {
+				this.effScheduleMethod.setDisabled(false);
+			}
+
 			this.excessAdjustTo.setVisible(false);
 			this.excessAdjustTo.setDisabled(true);
 			scheduleLabel.setValue(Labels.getLabel("label_ReceiptDialog_EffecScheduleMethod.value"));
@@ -4335,7 +4343,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	public void onAllocateWaivedChange(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		// FIXME: PV: CODE REVIEW PENDING
+
 		int idx = (int) event.getData();
 		String id = "AllocateWaived_" + idx;
 
@@ -6462,11 +6470,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 
 				if (StringUtils.isBlank(method)) {
-
 					auditHeader = receiptService.saveOrUpdate(auditHeader);
-
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+						manualAdviseService.cancelManualAdvises(fm);
 
 						if (rch.isNewRecord()) {
 							((FinReceiptData) auditHeader.getAuditDetail().getModelData()).getFinanceDetail()
@@ -7594,12 +7602,20 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		ReceiptAllocationDetail pd = rch.getTotalPastDues();
 		ReceiptAllocationDetail adv = rch.getTotalRcvAdvises();
 		ReceiptAllocationDetail fee = rch.getTotalFees();
+		ReceiptAllocationDetail bounce = rch.getTotalBounces();
 
 		// Total Net Receivable
-		BigDecimal paidByCustomer = pd.getTotalDue().add(adv.getTotalDue()).add(fee.getTotalDue());
-		paidByCustomer = paidByCustomer.subtract(pd.getWaivedAmount()).subtract(pd.getWaivedGST())
-				.subtract(adv.getWaivedAmount()).subtract(adv.getWaivedGST()).subtract(fee.getWaivedAmount())
-				.subtract(pd.getWaivedGST());
+		BigDecimal paidByCustomer = pd.getTotalDue().add(adv.getTotalDue()).add(fee.getTotalDue())
+				.add(bounce.getTotalDue());
+
+		BigDecimal pdWaived = pd.getWaivedAmount().add(pd.getWaivedGST());
+		BigDecimal advWaived = adv.getWaivedAmount().add(adv.getWaivedGST());
+		BigDecimal feeWaived = fee.getWaivedAmount().add(fee.getWaivedGST());
+		BigDecimal bounceWaived = bounce.getWaivedAmount().add(bounce.getWaivedGST());
+
+		BigDecimal totalWaived = pdWaived.add(advWaived).add(feeWaived).add(bounceWaived);
+
+		paidByCustomer = paidByCustomer.subtract(totalWaived);
 		this.paidByCustomer.setValue(PennantApplicationUtil.formateAmount(paidByCustomer, formatter));
 		if ((FinanceConstants.CLOSURE_MAKER.equals(module) || FinanceConstants.CLOSURE_APPROVER.equals(module))
 				&& this.paidByCustomer.getValue().compareTo(BigDecimal.ZERO) <= 0) {
@@ -8262,5 +8278,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
 		this.customerDocumentService = customerDocumentService;
+	}
+
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
 	}
 }

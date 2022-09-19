@@ -159,6 +159,14 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private String assignmentReference;
+	// CERSAI Fields
+	private Date registrationDate;
+	private Date modificationDate;
+	private Date satisfactionDate;
+	private String regStatus;
+	private boolean modified = false;
+	private Long assetId = null;
+	private Long siId = null;
 
 	public CollateralSetup() {
 		super();
@@ -170,7 +178,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("collateralTypeName");
 		excludeFields.add("collateralCcyName");
 		excludeFields.add("customerDetails");
@@ -190,6 +198,14 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 		excludeFields.add("assignmentDetails");
 		excludeFields.add("fromLoan");
 		excludeFields.add("assignmentReference");
+		excludeFields.add("registrationDate");
+		excludeFields.add("modificationDate");
+		excludeFields.add("satisfactionDate");
+		excludeFields.add("regStatus");
+		excludeFields.add("modified");
+		excludeFields.add("assetId");
+		excludeFields.add("siId");
+
 		return excludeFields;
 	}
 
@@ -572,5 +588,61 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	public void setAssignmentReference(String assignmentReference) {
 		this.assignmentReference = assignmentReference;
+	}
+
+	public Date getRegistrationDate() {
+		return registrationDate;
+	}
+
+	public void setRegistrationDate(Date registrationDate) {
+		this.registrationDate = registrationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public Date getSatisfactionDate() {
+		return satisfactionDate;
+	}
+
+	public void setSatisfactionDate(Date satisfactionDate) {
+		this.satisfactionDate = satisfactionDate;
+	}
+
+	public String getRegStatus() {
+		return regStatus;
+	}
+
+	public void setRegStatus(String regStatus) {
+		this.regStatus = regStatus;
+	}
+
+	public boolean isModified() {
+		return modified;
+	}
+
+	public void setModified(boolean modified) {
+		this.modified = modified;
+	}
+
+	public Long getAssetId() {
+		return assetId;
+	}
+
+	public void setAssetId(Long assetId) {
+		this.assetId = assetId;
+	}
+
+	public Long getSiId() {
+		return siId;
+	}
+
+	public void setSiId(Long siId) {
+		this.siId = siId;
 	}
 }

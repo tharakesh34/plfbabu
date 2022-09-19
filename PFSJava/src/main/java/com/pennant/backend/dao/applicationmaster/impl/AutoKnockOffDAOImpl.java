@@ -379,7 +379,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 	@Override
 	public List<AutoKnockOffExcess> getKnockOffExcess(long custID, Date valueDate) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ake.ID, ake.FinReference, ake.AmountType, ake.ValueDate");
+		sql.append(" ake.ID, ake.FinID, ake.FinReference, ake.AmountType, ake.ValueDate");
 		sql.append(", ake.BalanceAmount, ake.ExecutionDay, ake.ThresholdValue, ake.PayableId");
 		sql.append(" From AUTO_KNOCKOFF_EXCESS_STAGE ake");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ake.FinReference and fm.FinIsActive = ?");
@@ -397,6 +397,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 			AutoKnockOffExcess knockOff = new AutoKnockOffExcess();
 
 			knockOff.setID(rs.getLong("ID"));
+			knockOff.setFinID(rs.getLong("FinID"));
 			knockOff.setFinReference(rs.getString("FinReference"));
 			knockOff.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 			knockOff.setBalanceAmount(rs.getBigDecimal("BalanceAmount"));

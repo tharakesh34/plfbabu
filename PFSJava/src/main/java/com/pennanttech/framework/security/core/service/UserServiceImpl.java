@@ -38,8 +38,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.SecLoginlogDAO;
@@ -51,11 +49,9 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.pennapps.core.security.user.AuthenticationError;
 import com.pennanttech.pennapps.core.security.user.UserAuthenticationException;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class UserServiceImpl implements UserService {
-	private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
 
 	private UserDAO userDAO;
 	private SecurityRightDAO securityRightDAO;
@@ -82,7 +78,7 @@ public class UserServiceImpl implements UserService {
 		} else if (user.isUsrAcLocked()) {
 			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED);
 		} else if (user.isDeleted()) {
-			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED);
+			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED); // FIXME
 		}
 
 		Date date = DateUtil.getSysDate();

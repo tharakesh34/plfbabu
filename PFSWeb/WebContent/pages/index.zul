@@ -43,6 +43,7 @@
 											<menupopup>
 												<menuitem id="menuitem_changePasssword" label="Change Password" />
 												<menuitem id="menuitem_logout" label="Log Out" image="/images/icons/logoff.png" />
+												<menuitem id="menuitem_global_logout" label="Global Log Out" image="/images/icons/logoff.png" visible="false"/>
 											</menupopup>
 										</menu>
 									</menubar>

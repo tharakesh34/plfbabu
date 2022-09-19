@@ -837,6 +837,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String moduleDefiner;
 	private Date sanctionedDate;
 	private FinODPenaltyRate penaltyRate = null;
+	private boolean resetFromLastStep;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1077,6 +1078,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("sanBasedPft");
 		excludeFields.add("cpzPosIntact");
 		excludeFields.add("moduleDefiner");
+		excludeFields.add("resetFromLastStep");
+
 		return excludeFields;
 	}
 
@@ -5518,5 +5521,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setStepRecalOnProrata(boolean stepRecalOnProrata) {
 		this.stepRecalOnProrata = stepRecalOnProrata;
+	}
+
+	public boolean isResetFromLastStep() {
+		return resetFromLastStep;
+	}
+
+	public void setResetFromLastStep(boolean resetFromLastStep) {
+		this.resetFromLastStep = resetFromLastStep;
 	}
 }

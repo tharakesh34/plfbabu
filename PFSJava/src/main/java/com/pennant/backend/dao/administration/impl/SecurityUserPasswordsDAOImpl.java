@@ -23,9 +23,7 @@ public class SecurityUserPasswordsDAOImpl extends BasicDao<SecurityUser> impleme
 		super();
 	}
 
-	/**
-	 * This method inserts record into SecUserPasswords
-	 */
+	@Override
 	public long save(SecurityUser securityUser) {
 		logger.debug("Entering ");
 
@@ -38,9 +36,7 @@ public class SecurityUserPasswordsDAOImpl extends BasicDao<SecurityUser> impleme
 		return securityUser.getId();
 	}
 
-	/**
-	 * This method selects the List of records from SecUserPasswords as SecurityUser Objects
-	 */
+	@Override
 	public List<SecurityUser> getUserPreviousPasswords(SecurityUser secUser) {
 		logger.debug("Entering ");
 
@@ -56,9 +52,7 @@ public class SecurityUserPasswordsDAOImpl extends BasicDao<SecurityUser> impleme
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	/**
-	 * This method deletes the record from SecUserPasswords with specific condition
-	 */
+	@Override
 	public void delete(SecurityUser securityUser) {
 		logger.debug("Entering ");
 

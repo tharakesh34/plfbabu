@@ -30,6 +30,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -1251,10 +1252,11 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptPayment_LoanReference.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		} else {
-
-			this.finReference
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptPayment_LoanReference.value"),
-							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+			if (!ImplementationConstants.FINREFERENCE_ALW_FREE_TEXT) {
+				this.finReference.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ReceiptPayment_LoanReference.value"),
+								PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+			}
 		}
 
 		if (isKnockOff) {

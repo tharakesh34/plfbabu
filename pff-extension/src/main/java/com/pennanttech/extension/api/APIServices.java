@@ -149,6 +149,7 @@ public class APIServices {
 		services.add("deleteOperation");
 		services.add("enableUser");
 		services.add("expireUser");
+		services.add("earlySettlement");
 
 		return services;
 	}

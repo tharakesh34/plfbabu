@@ -550,7 +550,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 			setStepAppliedForRights(stepAppliedFor);
 		}
 
-		String calcOfSteps = stepFinance ? financeMain.getCalcOfSteps() : ft.getCalcOfSteps();
+		String calcOfSteps = StringUtils.trimToEmpty(stepFinance ? financeMain.getCalcOfSteps() : ft.getCalcOfSteps());
 		setCalcOfStepsRights(calcOfSteps, ft.isAlwManualSteps());
 
 	}

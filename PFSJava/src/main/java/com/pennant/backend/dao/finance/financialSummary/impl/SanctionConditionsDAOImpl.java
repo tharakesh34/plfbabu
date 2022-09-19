@@ -57,7 +57,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 		sql.append(", t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
 		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
 		sql.append(" From Sanction_Conditions_Temp t1");
-		sql.append(" Left Join FinanceMain t2 on t2.FinID =  t1.FinID");
+		sql.append(" Left Join FinanceMain_Temp t2 on t2.FinID =  t1.FinID");
 		sql.append(" Where t2.FinID = ?");
 		sql.append(" Union All");
 		sql.append(" Select");

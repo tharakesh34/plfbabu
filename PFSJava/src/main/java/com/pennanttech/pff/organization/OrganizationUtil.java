@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -36,7 +36,7 @@ public class OrganizationUtil {
 	}
 
 	public static List<ValueLabel> getFinancialYears() {
-		Date date = DateUtility.getAppDate();
+		Date date = SysParamUtil.getAppDate();
 
 		if (DateUtil.getMonth(date) == Calendar.MARCH + 1) {
 			finacialYears = null;

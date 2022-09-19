@@ -993,7 +993,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.gb_vanDetails.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED));
 		}
 
-		this.extendedDetails.setVisible(ImplementationConstants.ALLOW_PROVISION);
+		if (isOverdraft || consumerDurable) {
+			this.extendedDetails.setVisible(ImplementationConstants.ALLOW_PROVISION);
+		}
 		this.gb_ProvisionRules.setVisible(ImplementationConstants.ALLOW_PROVISION);
 
 		if (isOverdraft && ImplementationConstants.ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS) {
@@ -1709,8 +1711,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (!isOverdraft) {
 			if (!consumerDurable) {
-				this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
-
 				// tasks # >>Start Advance EMI and DSF
 				this.grcAdvIntersetReq.setChecked(aFinanceType.isGrcAdvIntersetReq());
 				fillList(this.grcAdvType, AdvanceType.getGrcList(), aFinanceType.getGrcAdvType());
@@ -1735,6 +1735,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.vanRequired.setChecked(aFinanceType.isAlwVan());
 			}
 			this.subventionReq.setChecked(aFinanceType.isSubventionReq());
+		}
+		if (!consumerDurable) {
+			this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
 		}
 		setVanDetails(aFinanceType.isAlwVan());
 		if (!isOverdraft && !consumerDurable) {
@@ -3744,7 +3747,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			aFinanceType.setFinTypeExpenseList(getFinTypeExpenseListCtrl().onSave());
 		}
 
-		if (!isOverdraft && !consumerDurable) {
+		if (!consumerDurable) {
 			try {
 				aFinanceType.setPutCallRequired(this.putCallRequired.isChecked());
 			} catch (WrongValueException we) {
@@ -4703,8 +4706,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspRemarks.setReadonly(isTrue);
 
 		if (!isOverdraft && !consumerDurable) {
-			this.putCallRequired.setDisabled(isTrue);
-			// tasks # >>Start Advance EMI and DSF
 			this.advIntersetReq.setDisabled(isTrue);
 			this.advType.setDisabled(isTrue);
 			this.advMinTerms.setReadonly(isTrue);
@@ -4723,6 +4724,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.schdOnPMTCal.setDisabled(isTrue);
 			this.subventionReq.setDisabled(isTrue);
 		}
+
+		if (!consumerDurable) {
+			this.putCallRequired.setDisabled(isTrue);
+		}
+
 		readOnlyComponent(isTrue, this.grcAdjReq);
 		readOnlyComponent(isTrue, this.grcPeriodAftrFullDisb);
 		readOnlyComponent(isTrue, this.autoIncrGrcEndDate);
@@ -6788,22 +6794,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug(Literal.LEAVING);
 		return new AuditHeader(String.valueOf(aFinanceType.getId()), null, null, null, auditDetail,
 				aFinanceType.getUserDetails(), getOverideMap());
-	}
-
-	// To Show Error messages
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug(Literal.ENTERING);
-
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_FinanceTypeDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/** To get Note Dialog on clicking the button note */

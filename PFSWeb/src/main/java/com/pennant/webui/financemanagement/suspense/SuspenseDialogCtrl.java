@@ -64,7 +64,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -336,7 +335,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		this.finSuspDate.setValue(aSuspHead.getFinSuspDate());
 		this.finSuspTrfDate.setValue(aSuspHead.getFinSuspTrfDate());
 		if (aSuspHead.getFinSuspDate() == null) {
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			this.finSuspDate.setValue(appDate);
 			this.finSuspTrfDate.setValue(appDate);
 		}
@@ -616,7 +615,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 			getSuspHead().setFinSuspAmt(totSuspAmt);
 			getSuspHead().setFinCurSuspAmt(totSuspAmt);
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			getSuspHead().setFinSuspDate(appDate);
 			getSuspHead().setFinSuspTrfDate(appDate);
 
@@ -693,7 +692,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 				getSuspHead().setFinSuspAmt(totSuspAmt);
 				getSuspHead().setFinCurSuspAmt(totSuspAmt);
-				Date appDate = DateUtility.getAppDate();
+				Date appDate = SysParamUtil.getAppDate();
 				getSuspHead().setFinSuspDate(appDate);
 				getSuspHead().setFinSuspTrfDate(appDate);
 

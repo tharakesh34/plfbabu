@@ -269,7 +269,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", TotalPriPaidInAdv = ?, TotalPftPaidInAdv = ?, LastMdfDate = ?, MaturityDate = ?");
 		sql.append(", FinIsActive = ?, ClosingStatus = ?, FinStatus = ?, ActualODDays = ?, AmzTillLBD = ?");
 		sql.append(", LpiTillLBD = ?, LppTillLBD = ?, GstLpiTillLBD = ?, GstLppTillLBD = ?");
-		sql.append(", GapIntAmz = ?, GapIntAmzLbd = ?");
+		sql.append(", GapIntAmz = ?, GapIntAmzLbd = ?, PrvMthAmz = ?");
 
 		if (isRpyProcess) {
 			sql.append(", LatestRpyDate = ?, LatestRpyPri = ?, LatestRpyPft = ?");
@@ -359,6 +359,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			ps.setBigDecimal(index++, pd.getGstLppTillLBD());
 			ps.setBigDecimal(index++, pd.getGapIntAmz());
 			ps.setBigDecimal(index++, pd.getGapIntAmzLbd());
+			ps.setBigDecimal(index++, pd.getPrvMthAmz());
 
 			if (isRpyProcess) {
 				ps.setDate(index++, JdbcUtil.getDate(pd.getLatestRpyDate()));

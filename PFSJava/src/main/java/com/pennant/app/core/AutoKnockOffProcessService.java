@@ -250,7 +250,7 @@ public class AutoKnockOffProcessService {
 			receiptCalculator.resetPaidAllocations(allocate);
 		}
 
-		repaymentProcessUtil.prepareFinDueData(receiptData);
+		repaymentProcessUtil.prepareDueData(receiptData);
 
 		receiptCalculator.initiateReceipt(receiptData, false);
 		fsd.setFinanceScheduleDetails(schedules);

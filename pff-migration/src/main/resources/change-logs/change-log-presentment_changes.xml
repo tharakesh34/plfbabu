@@ -1,0 +1,932 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="22" author="Alekhya.T">
+		<sql> 
+			<![CDATA[ 
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'ALLOW_PRESENTMENT_DOWNLOAD';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC,SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('ALLOW_PRESENTMENT_DOWNLOAD', 'Presentment Download', 'String', '1', 'Y', 7, 0, NULL, NULL, 'Presentment Download', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="23" author="Alekhya.T">
+		<sql> 
+			<![CDATA[ 
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentDetail_PresentmentFileDownlaod');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentDetail_PresentmentFileDownlaod';  
+ 				
+ 				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_PresentmentDetail_PresentmentFileDownlaod', 'MENU', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+ 				
+ 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENTBATCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentDetail_PresentmentFileDownlaod'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+ 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'PRESENTMENTBATCH_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_PresentmentDetail_PresentmentFileDownlaod'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<!-- ST#293 :: Presentment Response Enhancements changes start -->
+	
+	<changeSet id="ST#293.1.1" author="murthy.y">
+		<createTable tableName="PRESENTMENT_RESP_HEADER">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="DE_Execution_ID" type="bigint" />
+			<column name="Batch_Name" type="varchar(100)" />
+			<column name="Entity_Code" type="varchar(8)" />
+			<column name="Event" type="varchar(8)" />
+			<column name="Total_Records" type="int" />
+			<column name="Sucess_Records" type="int" />
+			<column name="Failure_Records" type="int" />
+			<column name="Start_Time" type="datetime" />
+			<column name="End_Time" type="datetime" />
+			<column name="Status" type="char(1)" />
+			<column name="Remarks" type="varchar(4000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#293.1.2" author="murthy.y">
+		<addPrimaryKey tableName="PRESENTMENT_RESP_HEADER" constraintName="PK_PRESENTMENT_RESP_HDR_ID"
+			columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#293.1.3" author="murthy.y">
+		<addUniqueConstraint tableName="PRESENTMENT_RESP_HEADER" constraintName="UK_PRSNTMNT_RSP_HDR_BN_EC_ENT"
+			columnNames="Batch_Name, Entity_Code, Event" />
+	</changeSet>
+
+	<changeSet id="ST#293.1.4" author="murthy.y">
+		<sql>
+			<![CDATA[
+				INSERT INTO PRESENTMENT_RESP_HEADER (Batch_Name, Entity_Code, Event, Total_Records, Sucess_Records, Failure_Records, Start_Time, End_Time, Status, Remarks)
+				Select FileName, (select SysParmValue from SMTParameters where sysParmCode = 'ENTITYCODE'), 'IMPORT', TotalRecords, SucessRecords, FailedRecords, StartTime, EndTime, NULL, Remarks from BatchFileHeader
+				where ProcessName = 'PRESENTMENT_IMPORT' and (FileName <> '' or FileName <> null) and TotalRecords > 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#293.1.5" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update PRESENTMENT_RESP_HEADER set Total_Records = 0 where Total_Records is null;
+				update PRESENTMENT_RESP_HEADER set Sucess_Records = 0 where Sucess_Records is null;
+				update PRESENTMENT_RESP_HEADER set Failure_Records = 0 where Failure_Records is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#293.1.6" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Total_Records" tableName="PRESENTMENT_RESP_HEADER" defaultValue="0" />
+		<addDefaultValue columnName="Sucess_Records" tableName="PRESENTMENT_RESP_HEADER" defaultValue="0" />
+		<addDefaultValue columnName="Failure_Records" tableName="PRESENTMENT_RESP_HEADER" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#293.1.6" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_RESP_HEADER add constraint DF_PRES_RESP_HEADER_TR default 0 for Total_Records;
+				ALTER TABLE PRESENTMENT_RESP_HEADER add constraint DF_PRES_RESP_HEADER_SR default 0 for Sucess_Records;
+				ALTER TABLE PRESENTMENT_RESP_HEADER add constraint DF_PRES_RESP_HEADER_FR default 0 for Failure_Records;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#293.2.1" author="murthy.y">
+		<createTable tableName="PRESENTMENT_RESP_DTLS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Header_ID" type="bigint" />
+			<column name="Presentment_Reference" type="varchar(50)" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Host_Reference" type="varchar(20)" />
+			<column name="Instalment_No" type="int" />
+			<column name="Amount_Cleared" type="varchar(14)" />
+			<column name="Clearing_Date" type="datetime" />
+			<column name="Clearing_status" type="char(1)" />
+			<column name="Bounce_Code" type="varchar(8)" />
+			<column name="Bounce_Remarks" type="varchar(1000)" />
+			<column name="Reason_Code" type="varchar(100)" />
+			<column name="Bank_Code" type="varchar(8)" />
+			<column name="Bank_Name" type="varchar(50)" />
+			<column name="Branch_Code" type="varchar(8)" />
+			<column name="Branch_Name" type="varchar(50)" />
+			<column name="Partner_Bank_Code" type="varchar(50)" />
+			<column name="Partner_Bank_Name" type="varchar(50)" />
+			<column name="Bank_Address" type="varchar(50)" />
+			<column name="Account_Number" type="varchar(50)" />
+			<column name="Ifsc_Code" type="varchar(20)" />
+			<column name="Umrn_No" type="varchar(20)" />
+			<column name="Micr_Code" type="varchar(20)" />
+			<column name="Cheque_Serial_No" type="varchar(20)" />
+			<column name="Corporate_User_No" type="varchar(50)" />
+			<column name="Corporate_User_Name" type="varchar(100)" />
+			<column name="Dest_Acc_Holder" type="varchar(50)" />
+			<column name="Debit_Credit_Flag" type="char(1)" />
+			<column name="Process_Flag" type="int" />
+			<column name="Thread_ID" type="int" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#293.2.2" author="murthy.y">
+		<addPrimaryKey tableName="PRESENTMENT_RESP_DTLS" constraintName="PK_PRESENTMENT_RESP_DTLS_ID"
+			columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#293.2.3" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_PRES_RESP_DTLS_HEADERID" baseTableName="PRESENTMENT_RESP_DTLS"
+			baseColumnNames="Header_ID" referencedColumnNames="Id" referencedTableName="PRESENTMENT_RESP_HEADER" />
+	</changeSet>
+
+	<changeSet id="ST#293.2.4" author="murthy.y">
+		<createIndex indexName="IDX_PRES_RESP_DTL_PR" tableName="PRESENTMENT_RESP_DTLS">
+			<column name="PRESENTMENT_REFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.2.5" author="murthy.y">
+		<createIndex indexName="IDX_PRES_RESP_DTL_HEADER_ID" tableName="PRESENTMENT_RESP_DTLS">
+			<column name="Header_ID" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#293.2.6" author="murthy.y">
+		<createIndex indexName="IDX_PRES_RESP_DTL_Thread_ID" tableName="PRESENTMENT_RESP_DTLS">
+			<column name="Thread_ID" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#293.2.7" author="murthy.y">
+		<createIndex indexName="IDX_PRES_RESP_DTL_HID_TID" tableName="PRESENTMENT_RESP_DTLS">
+			<column name="Header_ID" />
+			<column name="Thread_ID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.2.8" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Instalment_No" tableName="PRESENTMENT_RESP_DTLS" defaultValue="0" />
+		<addDefaultValue columnName="Process_Flag" tableName="PRESENTMENT_RESP_DTLS" defaultValue="0" />
+		<addDefaultValue columnName="Thread_ID" tableName="PRESENTMENT_RESP_DTLS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#293.2.8" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_RESP_DTLS add constraint DF_PRESENTMENT_RESP_DTLS_INSTNO default 0 for Instalment_No;
+				ALTER TABLE PRESENTMENT_RESP_DTLS add constraint DF_PRESENTMENT_RESP_DTLS_PROCFG default 0 for Process_Flag;
+				ALTER TABLE PRESENTMENT_RESP_DTLS add constraint DF_PRESENTMENT_RESP_DTLS_THREADID default 0 for Thread_ID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#293.3.1" author="murthy.y">
+		<createTable tableName="PRESENTMENT_RESP_DTLS_ERRORS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Header_ID" type="bigint" />
+			<column name="Detail_ID" type="bigint" />
+			<column name="Error_Code" type="varchar(10)" />
+			<column name="Error_Description" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#293.3.2" author="murthy.y">
+		<addPrimaryKey tableName="PRESENTMENT_RESP_DTLS_ERRORS" constraintName="PK_PRSNTMNT_RESP_DTLS_ERS_ID"
+			columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#293.3.3" author="murthy.y">
+		<createIndex indexName="IDX_PRES_RESP_DTLS_E_LOG_DID" tableName="PRESENTMENT_RESP_DTLS_ERRORS">
+			<column name="Detail_Id" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.4.1" author="murthy.y">
+		<createTable tableName="PRESENTMENT_RESP_DTLS_LOG">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Header_ID" type="bigint" />
+			<column name="Presentment_Reference" type="varchar(50)" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Host_Reference" type="varchar(20)" />
+			<column name="Instalment_No" type="int" />
+			<column name="Amount_Cleared" type="varchar(14)" />
+			<column name="Clearing_Date" type="datetime" />
+			<column name="Clearing_status" type="char(1)" />
+			<column name="Bounce_Code" type="varchar(8)" />
+			<column name="Bounce_Remarks" type="varchar(1000)" />
+			<column name="Reason_Code" type="varchar(100)" />
+			<column name="Bank_Code" type="varchar(8)" />
+			<column name="Bank_Name" type="varchar(50)" />
+			<column name="Branch_Code" type="varchar(8)" />
+			<column name="Branch_Name" type="varchar(50)" />
+			<column name="Partner_Bank_Code" type="varchar(50)" />
+			<column name="Partner_Bank_Name" type="varchar(50)" />
+			<column name="Bank_Address" type="varchar(50)" />
+			<column name="Account_Number" type="varchar(50)" />
+			<column name="Ifsc_Code" type="varchar(20)" />
+			<column name="Umrn_No" type="varchar(20)" />
+			<column name="Micr_Code" type="varchar(20)" />
+			<column name="Cheque_Serial_No" type="varchar(20)" />
+			<column name="Corporate_User_No" type="varchar(50)" />
+			<column name="Corporate_User_Name" type="varchar(100)" />
+			<column name="Dest_Acc_Holder" type="varchar(50)" />
+			<column name="Debit_Credit_Flag" type="char(1)" />
+			<column name="Process_Flag" type="int" />
+			<column name="Thread_ID" type="int" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#293.4.2" author="murthy.y">
+		<addPrimaryKey tableName="PRESENTMENT_RESP_DTLS_LOG" constraintName="PK_PRSNTMNT_RESP_DTLS_LOG_ID"
+			columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#293.4.3" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_PRES_RESP_DTLS_L_HEADER_ID" baseTableName="PRESENTMENT_RESP_DTLS_LOG"
+			baseColumnNames="Header_ID" referencedColumnNames="Id" referencedTableName="PRESENTMENT_RESP_HEADER" />
+	</changeSet>
+
+	<changeSet id="ST#293.4.4" author="murthy.y">
+		<createIndex indexName="IDX_PRES_RESP_DTL_L_PR" tableName="PRESENTMENT_RESP_DTLS_LOG">
+			<column name="PRESENTMENT_REFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.4.5" author="murthy.y">
+		<createIndex indexName="IDX_PRES_RESP_DTL_L_HEADER_ID" tableName="PRESENTMENT_RESP_DTLS_LOG">
+			<column name="Header_ID" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#293.4.6" author="murthy.y">
+		<createIndex indexName="IDX_PRES_RESP_DTL_L_Thread_ID" tableName="PRESENTMENT_RESP_DTLS_LOG">
+			<column name="Thread_ID" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#293.4.7" author="murthy.y">
+		<createIndex indexName="IDX_PRES_RESP_DTL_L_HID_TID" tableName="PRESENTMENT_RESP_DTLS_LOG">
+			<column name="Header_ID" />
+			<column name="Thread_ID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.4.8" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Instalment_No" tableName="PRESENTMENT_RESP_DTLS_LOG" defaultValue="0" />
+		<addDefaultValue columnName="Process_Flag" tableName="PRESENTMENT_RESP_DTLS_LOG" defaultValue="0" />
+		<addDefaultValue columnName="Thread_ID" tableName="PRESENTMENT_RESP_DTLS_LOG" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#293.4.8" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_RESP_DTLS_LOG add constraint DF_PRESENTMENT_RESP_DTLS_L_INSTNO default 0 for Instalment_No;
+				ALTER TABLE PRESENTMENT_RESP_DTLS_LOG add constraint DF_PRESENTMENT_RESP_DTLS_L_PROCFG default 0 for Process_Flag;
+				ALTER TABLE PRESENTMENT_RESP_DTLS_LOG add constraint DF_PRESENTMENT_RESP_DTLS_L_THREADID default 0 for Thread_ID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#293.5.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_RESP_PROCESS_THREAD_COUNT';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PRESENTMENT_RESP_PROCESS_THREAD_COUNT', 'Thread count for presentment response process.', 'int ', 1, 1, 10, 0, null, null, 'Thread count for presentment response process.', 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#293.6.1" author="murthy.y">
+		<createIndex indexName="IDX_PRESENTMENTDETAILS_PID" tableName="PRESENTMENTDETAILS">
+			<column name="PRESENTMENTID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.2" author="murthy.y">
+		<createIndex indexName="IDX_PRESENTMENTDETAILS_FR" tableName="PRESENTMENTDETAILS">
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.3" author="murthy.y">
+		<createIndex indexName="IDX_FINANCEMAIN_FR_ISACTIVE" tableName="FINANCEMAIN">
+			<column name="FINREFERENCE" />
+			<column name="FINISACTIVE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.5" author="murthy.y">
+		<createIndex indexName="IDX_FINPFTDETAILS_FR_ISACTIVE" tableName="FINPFTDETAILS">
+			<column name="FINREFERENCE" />
+			<column name="FINISACTIVE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.6" author="murthy.y">
+		<createIndex indexName="IDX_FINDISBURSEMENTDETAILS_FR" tableName="FINDISBURSEMENTDETAILS">
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.7" author="murthy.y">
+		<createIndex indexName="IDX_FINREPAYINSTRUCTION_FR" tableName="FINREPAYINSTRUCTION">
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.8" author="murthy.y">
+		<createIndex indexName="IDX_FINSUSPHEAD_FR_FINISINSUSP" tableName="FINSUSPHEAD">
+			<column name="FINREFERENCE" />
+			<column name="FINISINSUSP" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.9" author="murthy.y">
+		<createIndex indexName="IDX_IRRSCHEDULEDETAIL_FR" tableName="IRRSCHEDULEDETAIL">
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.10" author="murthy.y">
+		<createIndex indexName="IDX_FINEXCESSAMT_EID_RESAMT" tableName="FINEXCESSAMOUNT">
+			<column name="EXCESSID" />
+			<column name="RESERVEDAMT" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.11" author="murthy.y">
+		<createIndex indexName="IDX_FINEXCSSAMTRSR_RSID_PTYP" tableName="FINEXCESSAMOUNTRESERVE">
+			<column name="RECEIPTSEQID" />
+			<column name="PAYMENTTYPE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.12" author="murthy.y">
+		<createIndex indexName="IDX_FXCSAMTRSR_RSID_PTYP_EXID" tableName="FINEXCESSAMOUNTRESERVE">
+			<column name="RECEIPTSEQID" />
+			<column name="PAYMENTTYPE" />
+			<column name="EXCESSID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.13" author="murthy.y">
+		<createIndex indexName="IDX_MANUALADVISE_ADVID_BALAMT" tableName="MANUALADVISE">
+			<column name="ADVISEID" />
+			<column name="BALANCEAMT" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.14" author="murthy.y">
+		<createIndex indexName="IDX_MNULADVSRSRV_RECSEQID" tableName="MANUALADVISERESERVE">
+			<column name="RECEIPTSEQID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.15" author="murthy.y">
+		<createIndex indexName="IDX_FNEXCSSAMN_FINREF_AMTTYPE" tableName="FINEXCESSAMOUNT">
+			<column name="FINREFERENCE" />
+			<column name="AMOUNTTYPE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.16" author="murthy.y">
+		<createIndex indexName="IDX_FINFESCHDULDTL_FEEID" tableName="FINFEESCHEDULEDETAIL">
+			<column name="FEEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.18" author="murthy.y">
+		<createIndex indexName="IDX_LIMITHEADER_CUSTID" tableName="LIMITHEADER">
+			<column name="CUSTOMERID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.19" author="murthy.y">
+		<createIndex indexName="IDX_LIMITHEADER_CUSTGRP" tableName="LIMITHEADER">
+			<column name="CUSTOMERGROUP" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.20" author="murthy.y">
+		<createIndex indexName="IDX_LMTTRNDET_RC_RN_TT_HD_SQ" tableName="LIMITTRANSACTIONDETAILS">
+			<column name="HEADERID" />
+			<column name="REFERENCECODE" />
+			<column name="REFERENCENUMBER" />
+			<column name="TRANSACTIONTYPE" />
+			<column name="SCHSEQ" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.21" author="murthy.y">
+		<createIndex indexName="IDX_DATA_ENGINE_LOG_STID_KID" tableName="DATA_ENGINE_LOG">
+			<column name="STATUSID" />
+			<column name="KEYID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.24" author="murthy.y">
+		<createIndex indexName="IDX_FINREPAYDETAILS_LID" tableName="FINREPAYDETAILS">
+			<column name="LINKEDTRANID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.25" author="murthy.y">
+		<createIndex indexName="IDX_FINREPAYDETAILS_FREF_LID" tableName="FINREPAYDETAILS">
+			<column name="LINKEDTRANID" />
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.26" author="murthy.y">
+		<createIndex indexName="IDX_FINREPAYDETAILS_FREF_SCDT" tableName="FINREPAYDETAILS">
+			<column name="FINREFERENCE" />
+			<column name="FINSCHDDATE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.27" author="murthy.y">
+		<createIndex indexName="IDX_FINODDETAILS_FR_FODSCDT" tableName="FINODDETAILS">
+			<column name="FINREFERENCE" />
+			<column name="FINODSCHDDATE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.28" author="murthy.y">
+		<createIndex indexName="IDX_POSTINGS_PSTS_PREF" tableName="POSTINGS">
+			<column name="POSTSTATUS" />
+			<column name="POSTREF" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.29" author="murthy.y">
+		<createIndex indexName="IDX_FINSTGACCTINGLOG_RCNO" tableName="FINSTAGEACCOUNTINGLOG">
+			<column name="RECEIPTNO" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.31" author="murthy.y">
+		<createIndex indexName="IDX_MANULADVMTS_RID_RSID_ADID" tableName="MANUALADVISEMOVEMENTS">
+			<column name="RECEIPTID" />
+			<column name="RECEIPTSEQID" />
+			<column name="ADVISEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.32" author="murthy.y">
+		<createIndex indexName="IDX_FLEDT_LK_FR_RC" tableName="FINLOGENTRYDETAIL">
+			<column name="LOGKEY" />
+			<column name="FINREFERENCE" />
+			<column name="REVERSALCOMPLETED" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.34" author="murthy.y">
+		<createIndex indexName="IDX_FINLGENTRYDTL_LK_RR" tableName="FINLOGENTRYDETAIL">
+			<column name="LOGKEY" />
+			<column name="REVERSALCOMPLETED" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.35" author="murthy.y">
+		<createIndex indexName="IDX_MANULADVMTS_RID_RSID" tableName="MANUALADVISEMOVEMENTS">
+			<column name="RECEIPTID" />
+			<column name="RECEIPTSEQID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.36" author="murthy.y">
+		<createIndex indexName="IDX_FINODAMZTAXDTL_FR_VD_TR" tableName="FINODAMZTAXDETAIL">
+			<column name="FINREFERENCE" />
+			<column name="VALUEDATE" />
+			<column name="TAXFOR" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.37" author="murthy.y">
+		<createIndex indexName="IDX_DEPOSITMOVEMENTS_RID" tableName="DEPOSITMOVEMENTS">
+			<column name="RECEIPTID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.38" author="murthy.y">
+		<createIndex indexName="IDX_DEPOSITCHEQUES_RID" tableName="DEPOSITCHEQUES">
+			<column name="RECEIPTID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.39" author="murthy.y">
+		<createIndex indexName="IDX_DEPOSITCHEQUES_MID_RID" tableName="DEPOSITCHEQUES">
+			<column name="MOVEMENTID" />
+			<column name="RECEIPTID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.40" author="murthy.y">
+		<createIndex indexName="IDX_PD_FR_SCDT_ER_STS" tableName="PRESENTMENTDETAILS">
+			<column name="FINREFERENCE" />
+			<column name="SCHDATE" />
+			<column name="STATUS" />
+			<column name="EXCLUDEREASON" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.41" author="murthy.y">
+		<createIndex indexName="IDX_PRSNTMNT_RSP_DTL_HI_PR" tableName="PRESENTMENT_RESP_DTLS">
+			<column name="HEADER_ID" />
+			<column name="PRESENTMENT_REFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.43" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_CANRSN" tableName="FINRECEIPTHEADER">
+			<column name="CANCELREASON" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.44" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_COLAGNTID" tableName="FINRECEIPTHEADER">
+			<column name="COLLECTIONAGENTID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.45" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_FINDVSN" tableName="FINRECEIPTHEADER">
+			<column name="FINDIVISION" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.46" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_PSTBRNCH" tableName="FINRECEIPTHEADER">
+			<column name="POSTBRANCH" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.47" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_CSRBRNCH" tableName="FINRECEIPTHEADER">
+			<column name="CASHIERBRANCH" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.49" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_T_CANRSN" tableName="FINRECEIPTHEADER_TEMP">
+			<column name="CANCELREASON" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.50" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_T_COLAGNTID" tableName="FINRECEIPTHEADER_TEMP">
+			<column name="COLLECTIONAGENTID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.51" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_T_FINDVSN" tableName="FINRECEIPTHEADER_TEMP">
+			<column name="FINDIVISION" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.52" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_T_PSTBRNCH" tableName="FINRECEIPTHEADER_TEMP">
+			<column name="POSTBRANCH" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.53" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPHDR_T_CSRBRNCH" tableName="FINRECEIPTHEADER_TEMP">
+			<column name="CASHIERBRANCH" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.55" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPTDTL_BNKCD" tableName="FINRECEIPTDETAIL">
+			<column name="BANKCODE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.56" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPTDTL_FNDGACNT" tableName="FINRECEIPTDETAIL">
+			<column name="FUNDINGAC" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.57" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPTDTL_PAYAGNSTID" tableName="FINRECEIPTDETAIL">
+			<column name="PAYAGAINSTID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.58" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPTDTL_PAYMNTYP" tableName="FINRECEIPTDETAIL">
+			<column name="PAYMENTTYPE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.60" author="murthy.y">
+		<createIndex indexName="IDX_FINRCPTDTL_PAYAGTID_PYMTYP" tableName="FINRECEIPTDETAIL">
+			<column name="PAYAGAINSTID" />
+			<column name="PAYMENTTYPE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.61" author="murthy.y">
+		<createIndex indexName="IDX_MANULADV_T_FETYPID" tableName="MANUALADVISE_TEMP">
+			<column name="FEETYPEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.62" author="murthy.y">
+		<createIndex indexName="IDX_MANULADV_T_BOUNCEID" tableName="MANUALADVISE_TEMP">
+			<column name="BOUNCEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.63" author="murthy.y">
+		<createIndex indexName="IDX_FINFEERCPTS_RCPTID" tableName="FINFEERECEIPTS">
+			<column name="RECEIPTID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.64" author="murthy.y">
+		<createIndex indexName="IDX_FINFEERCPTS_FEEID" tableName="FINFEERECEIPTS">
+			<column name="FEEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.65" author="murthy.y">
+		<createIndex indexName="IDX_FINFEERCPTS_ID" tableName="FINFEERECEIPTS">
+			<column name="ID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.66" author="murthy.y">
+		<createIndex indexName="IDX_FINFEERCPTS_T_RCPTID" tableName="FINFEERECEIPTS_TEMP">
+			<column name="RECEIPTID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.67" author="murthy.y">
+		<createIndex indexName="IDX_FINFEERCPTS_T_FEEID" tableName="FINFEERECEIPTS_TEMP">
+			<column name="FEEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.68" author="murthy.y">
+		<createIndex indexName="IDX_FINFEERCPTS_T_ID" tableName="FINFEERECEIPTS_TEMP">
+			<column name="ID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.69" author="murthy.y">
+		<createIndex indexName="IDX_FINFEEDTL_FEETYPID" tableName="FINFEEDETAIL">
+			<column name="FEETYPEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.70" author="murthy.y">
+		<createIndex indexName="IDX_FINFEEDTL_VASREFRNCE" tableName="FINFEEDETAIL">
+			<column name="VASREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.71" author="murthy.y">
+		<createIndex indexName="IDX_FINFEEDTL_T_FEETYPID" tableName="FINFEEDETAIL_TEMP">
+			<column name="FEETYPEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.72" author="murthy.y">
+		<createIndex indexName="IDX_FINFEEDTL_T_VASREFRNCE" tableName="FINFEEDETAIL_TEMP">
+			<column name="VASREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.73" author="murthy.y">
+		<createIndex indexName="IDX_FFDTL_FR_ACAMT_FSM_OF" tableName="FINFEEDETAIL">
+			<column name="FINREFERENCE" />
+			<column name="ACTUALAMOUNT" />
+			<column name="FEESCHEDULEMETHOD" />
+			<column name="ORIGINATIONFEE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.74" author="murthy.y">
+		<createIndex indexName="IDX_FFDTL_T_FR_ACAMT_FSM_OF" tableName="FINFEEDETAIL_TEMP">
+			<column name="FINREFERENCE" />
+			<column name="ACTUALAMOUNT" />
+			<column name="FEESCHEDULEMETHOD" />
+			<column name="ORIGINATIONFEE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.76" author="murthy.y">
+		<createIndex indexName="IDX_FINMAIN_BUSVER" tableName="FINANCEMAIN">
+			<column name="BUSINESSVERTICAL" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.77" author="murthy.y">
+		<createIndex indexName="IDX_FINMAIN_T_BUSVER" tableName="FINANCEMAIN_TEMP">
+			<column name="BUSINESSVERTICAL" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.78" author="murthy.y">
+		<createIndex indexName="IDX_MANULADV_FETYPID" tableName="MANUALADVISE">
+			<column name="FEETYPEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.79" author="murthy.y">
+		<createIndex indexName="IDX_MANULADV_BOUNCEID" tableName="MANUALADVISE">
+			<column name="BOUNCEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.80" author="murthy.y">
+		<createIndex indexName="IDX_DEPOSITMOVEMENTS_PTNRBNKID" tableName="DEPOSITMOVEMENTS">
+			<column name="PARTNERBANKID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.81" author="murthy.y">
+		<createIndex indexName="IDX_DEPOSITMOVEMENTS_DPSTID" tableName="DEPOSITMOVEMENTS">
+			<column name="DEPOSITID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.82" author="murthy.y">
+		<createIndex indexName="IDX_DEPOSITDETAILS_BRNCHCD" tableName="DEPOSITDETAILS">
+			<column name="BRANCHCODE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#293.6.84" author="murthy.y">
+		<createIndex indexName="IDX_POSTINGS_POSTREF" tableName="POSTINGS">
+			<column name="POSTREF" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#217.1" author="Gopal.p">
+		<addColumn tableName="PRESENTMENT_FILEIMPORT">
+			<column name="Corporate_User_No" type="VARCHAR(50)" />
+			<column name="Corporate_Name" type="VARCHAR(50)" />
+			<column name="UMRN_NO" type="VARCHAR(20)" />
+			<column name="DEST_ACC_HOLDER" type="VARCHAR(50)" />
+			<column name="BANK_NAME" type="VARCHAR(50)" />
+			<column name="IFSC" type="VARCHAR(20)" />
+			<column name="AccNumber" type="VARCHAR(50)" />
+			<column name="PARTNER_BANK" type="VARCHAR(50)" />
+			<column name="ChequeSerialNo" type="VARCHAR(20)" />
+			<column name="BANK_ADDRESS" type="VARCHAR(50)" />
+			<column name="MICR_CODE" type="VARCHAR(20)" />
+			<column name="BOUNCE_REMARKS" type="varchar(100)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#217.2" author="Gopal.p">
+		<addColumn tableName="PRESENTMENT_FILEIMPORT">
+			<column name="HEADER_ID" type="bigint" />
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="57.1_pre" author="Gopal.p">
+		<addColumn tableName="PRESENTMENT_RESP_DTLS">
+			<column name="UTR_NUMBER" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="57.2_pre" author="Gopal.p">
+		<addColumn tableName="PRESENTMENT_RESP_DTLS_LOG">
+			<column name="UTR_NUMBER" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="57.3.0_pre" author="Gopal.p" dbms="mssql">
+    	<dropDefaultValue columnDataType="int" columnName="INSTALMENT_NO" tableName="PRESENTMENT_RESP_DTLS"/>
+    	<dropDefaultValue columnDataType="int" columnName="INSTALMENT_NO" tableName="PRESENTMENT_RESP_DTLS_LOG"/>
+	</changeSet>	
+	
+	<changeSet id="57.3_pre" author="Gopal.p">
+		<modifyDataType tableName="PRESENTMENT_RESP_DTLS" columnName="INSTALMENT_NO" newDataType="char(10)"/>
+		<modifyDataType tableName="PRESENTMENT_RESP_DTLS_LOG" columnName="INSTALMENT_NO" newDataType="char(10)"/>
+	</changeSet>
+	
+	<changeSet id="57.3.0_post" author="Gopal.p" dbms="mssql">
+	  <sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_RESP_DTLS add constraint DF_PRESENTMENT_RESP_DTLS_INSTNO default 0 for Instalment_No;
+				ALTER TABLE PRESENTMENT_RESP_DTLS_LOG add constraint DF_PRESENTMENT_RESP_DTLS_L_INSTNO default 0 for Instalment_No;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="57" author="Gopal.p">
+		<addColumn tableName="PRESENTMENT_FILEIMPORT">
+			<column name="UTR_NUMBER" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="59" author="Gopal.p">
+		<addColumn tableName="PRESENTMENTDETAILS">
+			<column name="UTR_NUMBER" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+    
+    <!-- ST#293 :: Presentment Response Enhancements changes end -->	
+	
+	<changeSet id="7" author="gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_REQUEST');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_REQUEST');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_REQUEST';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST';
+				
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'PRESENTMENT_REQUEST', 'PresentmentRequest.', 3, NULL, NULL, NULL, NULL, 0, 0, NULL,  'ROW:{Name, Batch ID, UMRN NO, Amount, Settelement Date, Account Type, Dealer Code, Payment Due Date, Loan Reference,}', NULL, 'A', '/opt/pff/hdfc/presentment/request', 'Presentment_', '.xlsx', 121, current_timestamp, '${SEQ_FILE},_${yyyyMMddHHmmss}', NULL, 0, NULL, 1, 1);
+				
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST'), 'PRESENTMENT_REQ_DETAILS', 0, 'JOB_ID', 'JOB_ID = :JOB_ID', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST')), 'DEST_ACC_HOLDER',        0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 							'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST')), 'BATCHID',      		  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 							'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST')), 'UMRN_NO',       		  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 							'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST')), 'CHEQUEAMOUNT',       	  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 							'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST')), 'CycleDate',      		  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:dd-MM-yyyy', 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST')), 'ACC_TYPE',      		  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 							'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST')), 'BR_CODE',      		  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 							'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST')), 'CycleDate',      		  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:dd-MM-yyyy', 							'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_REQUEST')), 'AGREEMENTNO',      	  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 			'O');		
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="8" author="gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_RESPONSE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_RESPONSE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_RESPONSE';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE';
+				
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'PRESENTMENT_RESPONSE', 'Presentment Default Response file.', 12, 'Presentment', NULL, NULL, NULL, 0, 1, NULL,  'Corporate User No, Corporate Name, UMRN, Customer to be debited, Customer IFSC, Customer Debit AC, Transaction ID/REF, Amount (Rs), Date of Txn, File No, Status Description, Reason Description', NULL, 'C', '/opt/pff/hdfc/presentment/response', 'Presentment_', '.xlsx', 0, current_timestamp, NULL, NULL, 0, NULL, 1, 1);
+				
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE'), 'PRESENTMENT_FILEIMPORT', 0, 'BatchId', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'BATCHID',        0,'N', NULL, NULL, NULL, 			NULL, '0', NULL, NULL, NULL, NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'UMRN_NO',        0,'N', NULL, NULL, NULL, 			NULL, '1', NULL, NULL, NULL, NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'AMOUNTCLEARED',  0,'N', NULL, NULL, NULL, 			NULL, '2', NULL, NULL, NULL, NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'CLEARINGDATE',   0,'N', NULL, NULL, NULL, 			NULL, '3', NULL, NULL, NULL, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'BFLREFERENCENO', 0,'N', NULL, NULL, NULL, 			NULL, '4', NULL, NULL, NULL, NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'BRANCHCODE', 	0,'N', NULL, NULL, NULL, 			NULL, '5', NULL, NULL, NULL, NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'AGREEMENTNO', 	0,'N', NULL, NULL, NULL, 			NULL, '6', NULL, NULL, NULL, NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'STATUS', 		0,'N', NULL, NULL, NULL, 			NULL, '7', NULL, NULL, NULL, NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'REASONCODE', 	0,'N', NULL, NULL, NULL, 			NULL, '8', NULL, NULL, NULL, NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'BOUNCE_REMARKS', 0,'N', NULL, NULL, NULL, 			NULL, '9', NULL, NULL, NULL, NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'UTR_NUMBER', 	0,'N', NULL, NULL, NULL, 			NULL, '10', NULL, NULL, NULL, NULL, 		'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PRESENTMENT_RESPONSE')), 'HEADER_ID', 		0,'N', NULL, NULL, '${HEADER_ID}',  NULL, '0', NULL, NULL, NULL, NULL, 			'M');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="9" author="gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE', 'Allow instrument type in presement response', 'String', 0, 'Y', 1, 0, '', '', 'Allow instrument type in presement response', '1', '1000', CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>

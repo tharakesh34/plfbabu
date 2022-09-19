@@ -873,7 +873,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal fraction = BigDecimal.ONE;
 		BigDecimal totPerc = BigDecimal.ZERO;
 
-		BigDecimal netAmountOriginal = fee.getNetAmount();
+		BigDecimal netAmountOriginal = fee.getNetAmountOriginal();
 		BigDecimal netTDS = fee.getNetTDS();
 		totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
 

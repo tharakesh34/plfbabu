@@ -734,7 +734,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				} else {
 
-					Date curBussDate = DateUtility.getAppDate();
+					Date curBussDate = SysParamUtil.getAppDate();
 
 					this.earlySettlementDate.setConstraint("");
 					this.earlySettlementDate.setErrorMessage("");
@@ -906,7 +906,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public void onChange$earlySettlementDate(Event event) {
 		logger.debug("Entering" + event.toString());
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 
 		this.earlySettlementDate.setConstraint("");
 		this.earlySettlementDate.setErrorMessage("");
@@ -1830,7 +1830,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		header.setFinReference(this.finReference.getValue());
-		Date curBDay = DateUtility.getAppDate();
+		Date curBDay = SysParamUtil.getAppDate();
 		header.setValueDate(curBDay);
 		header.setFinEvent(moduleDefiner);
 		header.setRepayAmount(PennantApplicationUtil.unFormateAmount(this.rpyAmount.getActualValue(), finFormatter));
@@ -2552,7 +2552,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private boolean isValid(boolean isChgRpy, boolean isSaveProcess) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		if (getFinanceDetail().getFinScheduleData().getFinanceMain() != null && curBussDate
 				.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
 			MessageUtil.showError("Disbursement Date is Same as Current Business Date. Not Allowed for Repayment. ");
@@ -2611,12 +2611,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				boolean futureInstPaid = false;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0) {
+					if (DateUtility.compare(SysParamUtil.getAppDate(), curSchd.getSchDate()) > 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
 
-					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) == 0
+					if (DateUtility.compare(SysParamUtil.getAppDate(), curSchd.getSchDate()) == 0
 							|| closingBal == null) {
 						closingBal = curSchd.getClosingBalance();
 					}
@@ -2930,7 +2930,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		 */
 
 		if (financeMain != null) {
-			earlySettlement.setAppDate(DateUtility.getAppDate(DateFormat.SHORT_DATE));
+			earlySettlement.setAppDate(SysParamUtil.getAppDate(DateFormat.SHORT_DATE));
 			earlySettlement.setFinReference(financeMain.getFinReference());
 			earlySettlement.setFinType(financeMain.getFinType());
 			earlySettlement.setFinTypeDesc(getFinanceType().getFinTypeDesc());

@@ -23,6 +23,7 @@
 	<!-- ====================================================== -->
 
 	<bean id="indexCtrl" class="com.pennant.webui.index.IndexCtrl" parent="basisCtrl" scope="prototype">
+				<property name="userService" ref="userService" />
 	</bean>
 
 	<bean id="welcomeCtrl" class="com.pennant.webui.index.WelcomeCtrl" scope="prototype">
@@ -5943,5 +5944,114 @@
 	</bean>
 	
 	<bean id="forgotpwdDialogCtrl" class="com.pennant.webui.login.ForgotPasswordDialogCtrl" scope="prototype"/>
+	
+	
+	<bean id="averageYieldReportDialogCtrl"
+		class="com.pennant.webui.reports.AverageYieldReportDialogCtrl" scope="prototype" parent="basisListCtrl">
+		<property name="averageYieldReportService" ref="averageYieldReportService" />
+	</bean>
+		
+	<bean id="cersaiFileDownloadListCtrl"
+		class="com.pennant.webui.cersai.cersaidownload.CERSAIFileDownloadListctrl" parent="basisListCtrl">
+		<property name="cersaiDownloadProcess" ref="cersaiDownloadProcess" />
+	</bean>
 
+	<!-- AssetCategory -->
+	<bean id="assetCategoryListCtrl" class="com.pennant.webui.cersai.assetcategory.AssetCategoryListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="assetCategoryService" ref="assetCategoryService" />
+	</bean>
+	<bean id="assetCategoryDialogCtrl" class="com.pennant.webui.cersai.assetcategory.AssetCategoryDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="assetCategoryService" ref="assetCategoryService" />
+	</bean>
+
+	<!-- SecurityInterestType -->
+	<bean id="securityInterestTypeListCtrl"
+		class="com.pennant.webui.cersai.securityinteresttype.SecurityInterestTypeListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="securityInterestTypeService" ref="securityInterestTypeService" />
+	</bean>
+	<bean id="securityInterestTypeDialogCtrl"
+		class="com.pennant.webui.cersai.securityinteresttype.SecurityInterestTypeDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="securityInterestTypeService" ref="securityInterestTypeService" />
+	</bean>
+
+	<!-- AssetSubType -->
+	<bean id="assetSubTypeListCtrl" class="com.pennant.webui.cersai.assetsubtype.AssetSubTypeListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="assetSubTypeService" ref="assetSubTypeService" />
+	</bean>
+	<bean id="assetSubTypeDialogCtrl" class="com.pennant.webui.cersai.assetsubtype.AssetSubTypeDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="assetSubTypeService" ref="assetSubTypeService" />
+	</bean>
+
+	<!-- AssetType -->
+	<bean id="assetTypListCtrl" class="com.pennant.webui.cersai.assettype.AssetTypeListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="assetTypService" ref="assetTypService" />
+	</bean>
+	<bean id="assetTypDialogCtrl" class="com.pennant.webui.cersai.assettype.AssetTypeDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="assetTypService" ref="assetTypService" />
+	</bean>
+
+	<!-- AreaUnit -->
+	<bean id="areaUnitListCtrl" class="com.pennant.webui.cersai.areaunit.AreaUnitListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="areaUnitService" ref="areaUnitService" />
+	</bean>
+	<bean id="areaUnitDialogCtrl" class="com.pennant.webui.cersai.areaunit.AreaUnitDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="areaUnitService" ref="areaUnitService" />
+	</bean>
+
+	<!-- CityMapping -->
+	<bean id="cityMappingListCtrl" class="com.pennant.webui.Interface.citymapping.CityMappingListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="cityMappingService" ref="cityMappingService" />
+	</bean>
+	<bean id="cityMappingDialogCtrl" class="com.pennant.webui.Interface.citymapping.CityMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="cityMappingService" ref="cityMappingService" />
+	</bean>
+
+	<!-- DistrictMapping -->
+	<bean id="districtMappingListCtrl" class="com.pennant.webui.Interface.districtmapping.DistrictMappingListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="districtMappingService" ref="districtMappingService" />
+	</bean>
+	<bean id="districtMappingDialogCtrl" class="com.pennant.webui.Interface.districtmapping.DistrictMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="districtMappingService" ref="districtMappingService" />
+	</bean>
+
+	<!-- ProvinceMapping -->
+	<bean id="provinceMappingListCtrl" class="com.pennant.webui.Interface.provincemapping.ProvinceMappingListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="provinceMappingService" ref="provinceMappingService" />
+	</bean>
+	<bean id="provinceMappingDialogCtrl" class="com.pennant.webui.Interface.provincemapping.ProvinceMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="provinceMappingService" ref="provinceMappingService" />
+	</bean>
+	
+	<!-- CERSAI DATA IMPORT -->	
+	<bean id="cersaiDataFileImportControl" class="com.pennant.webui.cersai.cersaiupload.CersaiDataFileImportCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>	
+	
+	<!-- NESL Report -->
+	<bean id="neslFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.NESLFileDownloadListCtrl" scope="prototype" parent="basisListCtrl">
+		<property name ="nESLPrepareLoansJsonReportService" ref="nESLPrepareLoansJsonReportService"/> 
+		<property name ="nESLPrepareLoansExcelReportService" ref="nESLPrepareLoansExcelReportService"/> 
+ 		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean> 
+	
+	<bean id="custExternalDedupCtrl" class="com.pennant.webui.customermasters.customer.CustExternalDedupCtrl" parent="basisCtrl" scope="prototype"> 
+		<property name="financeMainService" ref="financeMainService" />
+	</bean>
 </beans>

@@ -608,6 +608,27 @@
 											</rows>
 										</grid>
 									</groupbox>
+									<groupbox id="gb_PutCallDetails" visible="true" height="auto">
+										<caption label="${c:l('label_FinanceTypeDialog_PutCallDetails')}" />
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+											<columns>
+												<column width="260px" />
+												<column />
+												<column width="260px" />
+												<column />
+											</columns>
+											<rows>
+												<row visible="true">
+													<label id="label_FinanceTypeDialog_PutCall"
+														value="${c:l('label_FinanceTypeDialog_PutCall.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<checkbox id="putCallRequired" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
 								</groupbox>
 							</div>
 						</tabpanel>

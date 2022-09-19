@@ -416,7 +416,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.setSelectedItem(comboitem);
 		boolean isSelect = true;
 		if (financeScheduleDetails != null) {
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
@@ -459,7 +459,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				dateCombobox.appendChild(comboitem);
 
-				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) >= 0 && isSelect) {
+				if (curSchd.getSchDate().compareTo(SysParamUtil.getAppDate()) >= 0 && isSelect) {
 					dateCombobox.setSelectedItem(comboitem);
 					isSelect = false;
 				}

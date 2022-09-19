@@ -427,6 +427,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
+				if (FinanceConstants.FLAG_RESTRUCTURE_PRIH.equals(curSchd.getBpiOrHoliday())) {
+					continue;
+				}
+
 				// Excluding Present generated file Schedule Terms
 				if (curSchd.getPresentmentId() > 0) {
 					dateCombobox.getItems().clear();
@@ -514,6 +518,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if (financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0) {
 						continue;
 					}
+				}
+
+				if (FinanceConstants.FLAG_RESTRUCTURE_PRIH.equals(curSchd.getBpiOrHoliday())) {
+					continue;
 				}
 
 				// If maturity Terms, not include in list

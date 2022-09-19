@@ -119,8 +119,6 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	private int noOfAccountsIn30dpdL12M = 0;
 	private int noOfAccountsIn1dpdL6M = 0;
 
-	private boolean amountOverdue = false;
-
 	public AbstractCibilEnquiryProcess() {
 		super();
 	}

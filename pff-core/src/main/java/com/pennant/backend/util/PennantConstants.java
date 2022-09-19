@@ -258,6 +258,7 @@ public class PennantConstants {
 	public static final String DOC_TYPE_RAR = "RAR";
 	public static final String DOC_TYPE_TXT = "TXT";
 	public static final String DOC_TYPE_PNG = "PNG";
+	public static final String DOC_TYPE_JSON = "JSON";
 
 	public static final String DOC_TYPE_CODE_PHOTO = "CUSTPHOTO";
 
@@ -932,4 +933,16 @@ public class PennantConstants {
 	public static final String MANUALADVISE_MAINTAIN_MODULE = "MA_MAINTAIN";
 	public static final String MANUALADVISE_CANCEL_MODULE = "MA_CANCEL";
 	public static final String BLOCK_LIMIT_TYPE = "AUTO";
+
+	// Report Type
+	public static final String AVERAGE_YIELD_LOAN_REPORT = "Loan";
+	public static final String AVERAGE_YIELD_PRODUCT_REPORT = "Product";
+
+	public static final String PFF_CUSTCTG_IND = "Individual";
+	public static final String PFF_CUSTCTG_NON_IND = "Non-Individual";
+
+	// Posidex UCIC Type
+	public static final String UCIC_NEW = "NEW";
+	public static final String UCIC_EXISTING = "EXISTING";
+	public static final String UCIC_RETRIGGER = "RETRIGGER";
 }

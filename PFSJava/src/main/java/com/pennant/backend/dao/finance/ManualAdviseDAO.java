@@ -155,4 +155,8 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	List<ManualAdvise> getReceivableAdvises(long finID, Date valueDate, String type);
 
 	List<ManualAdvise> getAdvises(long finID, String type);
+
+	List<ManualAdvise> getAdviseStatus(String finReference, String type);
+
+	void updateStatus(List<ManualAdvise> list, String type);
 }

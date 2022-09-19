@@ -413,6 +413,9 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return null;
 		}
 	}
 

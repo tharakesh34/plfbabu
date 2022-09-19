@@ -87,6 +87,10 @@ public class CustomerDedup implements Serializable {
 	private int appScore;
 	private String sourceSystem;
 	private String address;
+	private String address1;
+	private String address2;
+	private String address3;
+	private String address4;
 	private String panNumber;
 	private String aadharNumber;
 	private String fatherName;
@@ -101,6 +105,30 @@ public class CustomerDedup implements Serializable {
 	@XmlElement(name = "UCIC")
 	private String ucic;
 	private String custCompName;
+	// Added for to show the values for External customer dedup.
+	private String gender;
+	private String city;
+	private String state;
+	private String country;
+	private String pincode;
+	private String phoneType;
+	private String emailType;
+	private String addressType;
+	private String score;
+	private String rank;
+	private String gstin;
+	private String regNo;
+	private String tanNo;
+	private String nrgeaCard;
+	private String bankAccountNo;
+	private String ifscCode;
+	private String corporateLicence;
+	private String spouseName;
+	private String employerName;
+	private String ucicType;
+	private String requestId;
+	private String status;
+	private String statusMessage;
 
 	public CustomerDedup() {
 		super();
@@ -143,7 +171,6 @@ public class CustomerDedup implements Serializable {
 		excludeFields.add("sourceSystem");
 		excludeFields.add("panNumber");
 		excludeFields.add("aadharNumber");
-		excludeFields.add("address");
 		excludeFields.add("fatherName");
 		excludeFields.add("motherName");
 		excludeFields.add("voterID");
@@ -155,6 +182,35 @@ public class CustomerDedup implements Serializable {
 		excludeFields.add("finType");
 		excludeFields.add("ucic");
 		excludeFields.add("custCompName");
+		excludeFields.add("gender");
+		excludeFields.add("city");
+		excludeFields.add("state");
+		excludeFields.add("country");
+		excludeFields.add("pincode");
+		excludeFields.add("phoneType");
+		excludeFields.add("emailType");
+		excludeFields.add("addressType");
+		excludeFields.add("score");
+		excludeFields.add("validatePANinPLF");
+		excludeFields.add("address1");
+		excludeFields.add("address2");
+		excludeFields.add("address3");
+		excludeFields.add("address4");
+		excludeFields.add("rank");
+		excludeFields.add("gstin");
+		excludeFields.add("regNo");
+		excludeFields.add("tanNo");
+		excludeFields.add("nrgeaCard");
+		excludeFields.add("bankAccountNo");
+		excludeFields.add("ifscCode");
+		excludeFields.add("corporateLicence");
+		excludeFields.add("spouseName");
+		excludeFields.add("employerName");
+		excludeFields.add("ucicType");
+		excludeFields.add("requestId");
+		excludeFields.add("status");
+		excludeFields.add("statusMessage");
+
 		return excludeFields;
 	}
 
@@ -604,12 +660,36 @@ public class CustomerDedup implements Serializable {
 		this.sourceSystem = sourceSystem;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getAddress1() {
+		return address1;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setAddress1(String address1) {
+		this.address1 = address1;
+	}
+
+	public String getAddress2() {
+		return address2;
+	}
+
+	public void setAddress2(String address2) {
+		this.address2 = address2;
+	}
+
+	public String getAddress3() {
+		return address3;
+	}
+
+	public void setAddress3(String address3) {
+		this.address3 = address3;
+	}
+
+	public String getAddress4() {
+		return address4;
+	}
+
+	public void setAddress4(String address4) {
+		this.address4 = address4;
 	}
 
 	public String getPanNumber() {
@@ -700,4 +780,195 @@ public class CustomerDedup implements Serializable {
 		this.custCompName = custCompName;
 	}
 
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getPincode() {
+		return pincode;
+	}
+
+	public void setPincode(String pincode) {
+		this.pincode = pincode;
+	}
+
+	public String getPhoneType() {
+		return phoneType;
+	}
+
+	public void setPhoneType(String phoneType) {
+		this.phoneType = phoneType;
+	}
+
+	public String getEmailType() {
+		return emailType;
+	}
+
+	public void setEmailType(String emailType) {
+		this.emailType = emailType;
+	}
+
+	public String getAddressType() {
+		return addressType;
+	}
+
+	public void setAddressType(String addressType) {
+		this.addressType = addressType;
+	}
+
+	public String getScore() {
+		return score;
+	}
+
+	public void setScore(String score) {
+		this.score = score;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getGstin() {
+		return gstin;
+	}
+
+	public void setGstin(String gstin) {
+		this.gstin = gstin;
+	}
+
+	public String getRegNo() {
+		return regNo;
+	}
+
+	public void setRegNo(String regNo) {
+		this.regNo = regNo;
+	}
+
+	public String getTanNo() {
+		return tanNo;
+	}
+
+	public void setTanNo(String tanNo) {
+		this.tanNo = tanNo;
+	}
+
+	public String getNrgeaCard() {
+		return nrgeaCard;
+	}
+
+	public void setNrgeaCard(String nrgeaCard) {
+		this.nrgeaCard = nrgeaCard;
+	}
+
+	public String getBankAccountNo() {
+		return bankAccountNo;
+	}
+
+	public void setBankAccountNo(String bankAccountNo) {
+		this.bankAccountNo = bankAccountNo;
+	}
+
+	public String getIfscCode() {
+		return ifscCode;
+	}
+
+	public void setIfscCode(String ifscCode) {
+		this.ifscCode = ifscCode;
+	}
+
+	public String getCorporateLicence() {
+		return corporateLicence;
+	}
+
+	public void setCorporateLicence(String corporateLicence) {
+		this.corporateLicence = corporateLicence;
+	}
+
+	public String getSpouseName() {
+		return spouseName;
+	}
+
+	public void setSpouseName(String spouseName) {
+		this.spouseName = spouseName;
+	}
+
+	public String getEmployerName() {
+		return employerName;
+	}
+
+	public void setEmployerName(String employerName) {
+		this.employerName = employerName;
+	}
+
+	public String getUcicType() {
+		return ucicType;
+	}
+
+	public void setUcicType(String ucicType) {
+		this.ucicType = ucicType;
+	}
+
+	public String getRank() {
+		return rank;
+	}
+
+	public void setRank(String rank) {
+		this.rank = rank;
+	}
+
+	public String getRequestId() {
+		return requestId;
+	}
+
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+	}
 }

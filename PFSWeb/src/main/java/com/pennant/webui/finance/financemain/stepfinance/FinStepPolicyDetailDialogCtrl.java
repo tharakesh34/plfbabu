@@ -668,11 +668,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 				this.steppedEMI.setReadonly(true);
 				this.steppedEMI.setValue(BigDecimal.ZERO);
 			} else {
-				if (getFinanceStepPolicyDetail().isEMIChange()) {
-					this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
-				} else {
-					this.steppedEMI.setReadonly(true);
-				}
+				this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
 			}
 		} else if (getFinanceStepPolicyDetail() != null && StringUtils
 				.equals(getFinanceStepPolicyDetail().getStepSpecifier(), PennantConstants.STEP_SPECIFIER_GRACE)) {
@@ -683,20 +679,12 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 					this.steppedEMI.setReadonly(true);
 					this.steppedEMI.setValue(BigDecimal.ZERO);
 				} else {
-					if (getFinanceStepPolicyDetail().isEMIChange()) {
-						this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
-					} else {
-						this.steppedEMI.setReadonly(true);
-					}
+					this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
 				}
 			} else {
 				this.label_FinStepPolicyDialog_AutoCal.setVisible(false);
 				this.hbox_autoCal.setVisible(false);
-				if (getFinanceStepPolicyDetail().isEMIChange()) {
-					this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
-				} else {
-					this.steppedEMI.setReadonly(true);
-				}
+				this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
 				this.autoCal.setChecked(false);
 			}
 		}

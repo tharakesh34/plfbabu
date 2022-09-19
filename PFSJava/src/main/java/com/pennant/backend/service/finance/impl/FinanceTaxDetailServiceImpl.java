@@ -666,6 +666,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 
 		long custId = ftd.getTaxCustId();
 		String taxNumber = ftd.getTaxNumber();
+		String applicableFor = ftd.getApplicableFor();
 
 		if (custId != 0) {
 			String panNumber = "";
@@ -699,11 +700,15 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 					gstStateCode = province.getTaxStateCode();
 				}
 				if (auditDetail != null && auditDetail.getModelData() != null) {
-					Object modelObj = auditDetail.getModelData();
-					if (modelObj instanceof CustomerDetails) {
-						panNumber = ((CustomerDetails) modelObj).getCustomer().getCustCRCPR();
-					} else {
+					if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(applicableFor)) {
 						panNumber = customerDAO.getCustCRCPRById(custId, "");
+					} else {
+						Object modelObj = auditDetail.getModelData();
+						if (modelObj instanceof CustomerDetails) {
+							panNumber = ((CustomerDetails) modelObj).getCustomer().getCustCRCPR();
+						} else {
+							panNumber = customerDAO.getCustCRCPRById(custId, "");
+						}
 					}
 				}
 				if (StringUtils.isNotBlank(gstStateCode)) { // if GST State Code is not available

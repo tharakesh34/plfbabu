@@ -42,8 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -298,11 +296,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 			aeEvent.setDataMap(dataMap);
-			try {
-				aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
-			} catch (AccountNotFoundException e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
+
+			aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
 
 			if (!aeEvent.isPostingSucess()) {
 				String errParm = aeEvent.getErrorMessage();
@@ -729,11 +724,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			}
 
 			doSave_PftDetails(pftDetail, isNew);
-
-			// Account Details Update
-			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				accountProcessUtil.procAccountUpdate(accountingSetEntries);
-			}
 		}
 
 		logger.debug(Literal.LEAVING);

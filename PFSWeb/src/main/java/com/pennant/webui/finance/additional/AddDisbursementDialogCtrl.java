@@ -710,7 +710,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
-						aFinScheduleData.getFinanceType().getFinSchdMthd())) {
+						aFinScheduleData.getFinanceType().getFinSchdMthd())
+						&& !aFinScheduleData.getFinanceType().isDroplineOD()) {
 					List<FinanceScheduleDetail> schList = aFinScheduleData.getFinanceScheduleDetails();
 					BigDecimal outstandingBal = BigDecimal.ZERO;
 					for (int i = 0; i < schList.size(); i++) {
@@ -1729,7 +1730,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				// Till Date to Date Setting
-				if (fillAfter != null && curSchd.getSchDate().compareTo(fillAfter) < 0) {
+				if (fillAfter != null && curSchd.getSchDate().compareTo(fillAfter) <= 0) {
 					continue;
 				}
 

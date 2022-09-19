@@ -484,9 +484,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"CustomerBankInfo details not found in CustomerBankInfo{} table/view for the specified CustID >> {} and BankName >> {} and BankId >> {}",
-					type, cbi.getCustID(), cbi.getBankName(), cbi.getBankId());
+			logger.warn(Message.NO_RECORD_FOUND);
 			cbi = null;
 		}
 		return null;

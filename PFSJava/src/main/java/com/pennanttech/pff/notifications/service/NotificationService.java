@@ -90,6 +90,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
@@ -377,8 +378,6 @@ public class NotificationService extends GenericService<Notification> {
 					try {
 						parseMail(template, data);
 					} catch (Exception e) {
-						logger.error("Template {}", template);
-						logger.error("Data {}", data);
 						logger.error(Literal.EXCEPTION, e);
 						throw new AppException("999", ERROR_MESSAGE);
 					}
@@ -542,7 +541,6 @@ public class NotificationService extends GenericService<Notification> {
 				throw new AppException("Unable to read or process freemarker configuration or template", e);
 			} catch (TemplateException e) {
 				logger.error("Template {}", template);
-				logger.error("Data Map {}", model);
 				throw new AppException("Problem initializing freemarker or rendering template ", e);
 			}
 
@@ -642,8 +640,6 @@ public class NotificationService extends GenericService<Notification> {
 		try {
 			parseMail(template, data);
 		} catch (Exception e) {
-			logger.error("Template {}", template);
-			logger.error("Data {}", data);
 			logger.error(Literal.EXCEPTION, e);
 			throw new AppException("999", ERROR_MESSAGE);
 		}
@@ -1269,7 +1265,7 @@ public class NotificationService extends GenericService<Notification> {
 			int templateId = (Integer) RuleExecutionUtil.executeRule(rule, fieldsAndValues, null,
 					RuleReturnType.INTEGER);
 			if (templateId == 0) {
-				logger.warn(String.format("Template not found for the notification rule %s", rule));
+				logger.warn(Message.NO_TEMPLATE_FOUND);
 				return null;
 			}
 

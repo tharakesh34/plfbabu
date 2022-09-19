@@ -252,7 +252,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 		Date grcEndDate = fm.getGrcPeriodEndDate();
 
-		if (fm.isAllowGrcPeriod() && schdDate.compareTo(grcEndDate) < 0) {
+		if (fm.isAllowGrcPeriod() && schdDate.compareTo(grcEndDate) <= 0) {
 			// Set Next Grace Capitalization Date
 			Date nextGrcCpzDate = fm.getNextGrcCpzDate();
 			if (fm.isAllowGrcCpz() && nextGrcCpzDate.compareTo(grcEndDate) < 0
@@ -270,7 +270,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			// Set Next Grace Profit Review Date
 			Date nextGrcPftRvwDate = fm.getNextGrcPftRvwDate();
-			if (fm.isAllowGrcPftRvw() && nextGrcPftRvwDate.compareTo(grcEndDate) < 0
+			if (fm.isAllowGrcPftRvw() && nextGrcPftRvwDate.compareTo(grcEndDate) <= 0
 					&& schdDate.compareTo(nextGrcPftRvwDate) == 0) {
 				finEODEvent.setIdxGrcPftRvw(iSchd);
 				custEODEvent.setDateRollover(true);

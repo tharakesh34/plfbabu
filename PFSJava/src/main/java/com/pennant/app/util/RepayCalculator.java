@@ -444,6 +444,7 @@ public class RepayCalculator implements Serializable {
 		BigDecimal toPay = BigDecimal.ZERO;
 
 		RepayScheduleDetail rsd = new RepayScheduleDetail();
+		rsd.setFinID(fm.getFinID());
 		rsd.setFinReference(rd.getFinReference());
 		rsd.setSchDate(curSchd.getSchDate());
 		rsd.setDefSchdDate(curSchd.getSchDate());

@@ -52,6 +52,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.core.util.ProductUtil;
 
 public class RateReviewService extends ServiceHelper {
 	private Logger logger = LogManager.getLogger(RateReviewService.class);
@@ -226,6 +227,12 @@ public class RateReviewService extends ServiceHelper {
 		// finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 
 		// Rate Changes applied for Finance Schedule Data
+
+		if (ProductUtil.isOverDraft(fm)) {
+			schdData.setOverdraftScheduleDetails(
+					overdraftScheduleDetailDAO.getOverdraftScheduleDetails(fm.getFinID(), "", false));
+		}
+		
 		schdData = ScheduleCalculator.refreshRates(schdData);
 
 		FinanceProfitDetail newProfitDetail = accrualService.calProfitDetails(fm, schedules, profitDetail, valueDate);

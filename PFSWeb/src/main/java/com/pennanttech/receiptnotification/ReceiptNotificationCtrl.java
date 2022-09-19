@@ -11,7 +11,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -63,7 +63,7 @@ public class ReceiptNotificationCtrl extends GFCBaseListCtrl<String> implements 
 		logger.debug(Literal.ENTERING);
 
 		if (receiptNotificationService != null) {
-			String notification = receiptNotificationService.sendReceiptNotifycation(DateUtility.getAppDate());
+			String notification = receiptNotificationService.sendReceiptNotifycation(SysParamUtil.getAppDate());
 			MessageUtil.showMessage(notification);
 		}
 		logger.debug(Literal.LEAVING);

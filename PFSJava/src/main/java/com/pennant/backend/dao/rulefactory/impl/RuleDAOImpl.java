@@ -87,7 +87,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module, event }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Rule not exist for the specified Rule Code {}, Module {} and Event {}", id, module, type);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return null;
@@ -279,8 +279,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module, event }, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Rule not exist's for the specified RuleCode >> {}, RuleModule >> {}, RuleEvent >> {}", id,
-					module, event);
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return "";

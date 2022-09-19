@@ -72,4 +72,7 @@ public interface CollateralAssignmentDAO {
 
 	BigDecimal getCollateralValue(String finReference);
 
+	CollateralAssignment getCollateralDetails(String collateralRef);
+
+	void updateCersaiDetails(String ref, Long siId, Long assetId);
 }

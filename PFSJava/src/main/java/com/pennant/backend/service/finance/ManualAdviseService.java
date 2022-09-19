@@ -70,4 +70,6 @@ public interface ManualAdviseService {
 	int getFutureDatedAdvises(long finID);
 
 	int cancelFutureDatedAdvises();
+
+	void cancelManualAdvises(FinanceMain fm);
 }

@@ -474,7 +474,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		StringBuilder sql = new StringBuilder("Update FinReceiptHeader");
 		sql.append(type);
 		sql.append(" Set Reference = ?");
-		sql.append(" Where ExtReference = ? and Reference is null");
+		sql.append(" Where ExtReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -563,11 +563,14 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public boolean isExtRefAssigned(String extReference) {
-		String sql = "Select count(ReceiptID) From FinReceiptHeader Where ExtReference = ? and Reference is not null";
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder(" Select COUNT(Reference)  From FinReceiptHeader frh");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = frh.Reference");
+		sql.append(" Where ExtReference = ?  and Reference is not null");
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, extReference) > 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, extReference) > 0;
 	}
 
 	// FIXME Move to PresentmentDetailDAO
@@ -1174,7 +1177,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			sql.append(", FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory");
 			sql.append(", NextRepayRvwDate, CollectionAgentCode, CollectionAgentDesc, PostBranchDesc");
 			sql.append(", CashierBranchDesc, FinDivisionDesc, EntityCode, ClosureTypeDesc");
-			sql.append(", CustAcctNumber, CustAcctHolderName");
+			sql.append(", CustAcctNumber, CustAcctHolderName, ScheduleMethod, PftDaysBasis");
 
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
 				sql.append(", ScheduleMethod, PftDaysBasis, CustID, CustomerCIF");
@@ -1296,6 +1299,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				rh.setClosureTypeDesc(rs.getString("ClosureTypeDesc"));
 				rh.setCustAcctNumber(rs.getString("CustAcctNumber"));
 				rh.setCustAcctHolderName(rs.getString("custAcctHolderName"));
+				rh.setScheduleMethod(rs.getString("ScheduleMethod"));
+				rh.setPftDaysBasis(rs.getString("PftDaysBasis"));
 
 				if (StringUtils.trimToEmpty(type).contains("FView")) {
 					rh.setScheduleMethod(rs.getString("ScheduleMethod"));

@@ -2641,8 +2641,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnRestructure(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<>();
 
+		map.put("financeDetail", getFinanceDetail());
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 

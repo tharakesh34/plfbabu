@@ -368,6 +368,10 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> fileFormatList;
 	private static List<ValueLabel> calChargeList;
 	private static List<ValueLabel> chargeCalOnList;
+	private static List<ValueLabel> cersaiTypeList;
+	private static List<ValueLabel> mappingTypes;
+	private static List<ValueLabel> reportFormatList;
+	private static List<ValueLabel> custCtgList;
 
 	/**
 	 * Gets the list of applications.
@@ -517,7 +521,7 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getRegexType() {
 
 		if (regexType == null) {
-			regexType = new ArrayList<ValueLabel>(16);
+			regexType = new ArrayList<ValueLabel>(18);
 			regexType.add(getValueLabel("REGEX_ALPHA", "label_REGEX_ALPHA"));
 			regexType.add(getValueLabel("REGEX_NUMERIC", "label_REGEX_NUMERIC"));
 			regexType.add(getValueLabel("REGEX_ALPHANUM", "label_REGEX_ALPHANUM"));
@@ -533,6 +537,17 @@ public class PennantStaticListUtil {
 			regexType.add(getValueLabel("REGEX_SPECIAL_REGX", "label_REGEX_SPECIAL_REGX"));
 			regexType.add(getValueLabel("REGEX_TELEPHONE", "label_REGEX_TELEPHONE"));
 			regexType.add(new ValueLabel("REGEX_ADDRESS", Labels.getLabel("label_ADDRESS_REGEX")));
+			if (ImplementationConstants.ALLOW_CERSAI) {
+				regexType.add(new ValueLabel("REGEX_ALPHANUM_SPACE", Labels.getLabel("label_REGEX_ALPHANUM_SPACE")));
+				regexType.add(new ValueLabel("REGEX_ALPHANUM_SPL_CERSAI1",
+						Labels.getLabel("label_REGEX_ALPHANUM_SPL_CERSAI1")));
+				regexType.add(new ValueLabel("REGEX_ALPHANUM_SPL_CERSAI2",
+						Labels.getLabel("label_REGEX_ALPHANUM_SPL_CERSAI2")));
+				regexType.add(new ValueLabel("REGEX_ALPHANUM_SPL_CERSA3",
+						Labels.getLabel("label_REGEX_ALPHANUM_SPL_CERSAI3")));
+				regexType.add(new ValueLabel("REGEX_ALPHANUM_SPL_CERSA4",
+						Labels.getLabel("label_REGEX_ALPHANUM_SPL_CERSAI4")));
+			}
 		}
 		return regexType;
 
@@ -5626,6 +5641,51 @@ public class PennantStaticListUtil {
 		}
 
 		return recalTypes;
+	}
+
+	public static List<ValueLabel> getCersaiTypeList() {
+		if (cersaiTypeList == null) {
+			cersaiTypeList = new ArrayList<>(3);
+			cersaiTypeList.add(new ValueLabel(CersaiConstants.ADD, Labels.getLabel("label_CERSAI_Add")));
+			cersaiTypeList.add(new ValueLabel(CersaiConstants.MODIFY, Labels.getLabel("label_CERSAI_Modify")));
+			cersaiTypeList.add(new ValueLabel(CersaiConstants.SATISFY, Labels.getLabel("label_CERSAI_Satisfaction")));
+		}
+
+		return cersaiTypeList;
+	}
+
+	public static List<ValueLabel> getMappingTypes() {
+		if (mappingTypes == null) {
+			mappingTypes = new ArrayList<>(3);
+			mappingTypes.add(new ValueLabel(String.valueOf(CersaiConstants.CIBIL), Labels.getLabel("label_CIBIL")));
+			mappingTypes.add(new ValueLabel(String.valueOf(CersaiConstants.CERSAI), Labels.getLabel("label_CERSAI")));
+			mappingTypes.add(new ValueLabel(String.valueOf(CersaiConstants.OTHER), Labels.getLabel("label_OTHER")));
+		}
+
+		return mappingTypes;
+	}
+
+	public static List<ValueLabel> getReportFormatList() {
+		if (reportFormatList == null) {
+			reportFormatList = new ArrayList<>(2);
+			reportFormatList
+					.add(new ValueLabel(PennantConstants.DOC_TYPE_JSON, Labels.getLabel("label_ReportFormat_JSON")));
+			reportFormatList
+					.add(new ValueLabel(PennantConstants.DOC_TYPE_EXCEL, Labels.getLabel("label_ReportFormat_Excel")));
+		}
+
+		return reportFormatList;
+	}
+
+	public static List<ValueLabel> getCustCtgList() {
+		if (custCtgList == null) {
+			custCtgList = new ArrayList<>(2);
+			custCtgList.add(new ValueLabel(PennantConstants.PFF_CUSTCTG_IND, Labels.getLabel("label_Nesl_Individual")));
+			custCtgList.add(
+					new ValueLabel(PennantConstants.PFF_CUSTCTG_NON_IND, Labels.getLabel("label_Nesl_NonIndividual")));
+		}
+
+		return custCtgList;
 	}
 
 }

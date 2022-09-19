@@ -59,8 +59,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -135,7 +135,6 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	private Row row_remarks;
 
 	protected Listbox listFeeWaiverEnqDetails;
-	private Map<String, BigDecimal> taxPercentages;
 	protected Tabs feeWaiverTabs;
 	protected Tab feeWaiverTab;
 	protected Tabpanels feeWaiverTabPanels;
@@ -350,7 +349,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		appendFinBasicDetails(this.financeMain);
 
 		if (aFeeWaiverHeader.isNewRecord()) {
-			this.valueDate.setValue(DateUtility.getAppDate());
+			this.valueDate.setValue(SysParamUtil.getAppDate());
 		} else {
 			this.valueDate.setValue(aFeeWaiverHeader.getValueDate());
 		}
@@ -507,7 +506,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			wve.add(we);
 		}
 		try {
-			aFeeWaiverHeader.setPostingDate(DateUtility.getAppDate());
+			aFeeWaiverHeader.setPostingDate(SysParamUtil.getAppDate());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -561,7 +560,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		if (!this.valueDate.isReadonly()) {
 			this.valueDate
 					.setConstraint(new PTDateValidator(Labels.getLabel("label_feeWaiverHeaderDialog_ValueDate.value"),
-							true, null, DateUtility.getAppDate(), true));
+							true, null, SysParamUtil.getAppDate(), true));
 		}
 
 		if (this.listFeeWaiverDetails != null && this.listFeeWaiverDetails.getItems().size() > 0) {
@@ -1440,6 +1439,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 					break;
 				} else {
 					detail.setCurrWaiverAmount(amount);
+					detail.setWaivedAmount(amount);
 					// Preparing GST
 					prepareGST(detail, amount);
 					detail.setBalanceAmount(detail.getReceivableAmount().subtract(detail.getCurrWaiverAmount()));

@@ -39,13 +39,9 @@ public class AccountingUtil {
 	}
 
 	public static List<ValueLabel> getpostingPurposeList() {
-		List<ValueLabel> list = new ArrayList<>(5);
+		List<ValueLabel> list = new ArrayList<>(1);
 
 		list.add(new ValueLabel(PostAgainst.LOAN.code(), Labels.getLabel("label_Finance")));
-		list.add(new ValueLabel(PostAgainst.CUSTOMER.code(), Labels.getLabel("label_Customer")));
-		list.add(new ValueLabel(PostAgainst.COLLATERAL.code(), Labels.getLabel("label_Collateral")));
-		list.add(new ValueLabel(PostAgainst.LIMIT.code(), Labels.getLabel("label_Limit")));
-		list.add(new ValueLabel(PostAgainst.ENTITY.code(), Labels.getLabel("label_Entity")));
 
 		return list;
 	}

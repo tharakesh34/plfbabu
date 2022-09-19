@@ -154,8 +154,27 @@
 		<modifyDataType tableName="AdtFinTypePartnerBanks" columnName="PaymentMode" newDataType="varchar(20)" />
 	</changeSet>
 	
+	<changeSet id="ST#432.5_pre" author="vijaya.a" dbms="oracle">
+		<sql>
+			<![CDATA[
+			alter table AdtFinReceiptDetail add PaymentType_bkp varchar(20);
+			update AdtFinReceiptDetail set PaymentType_bkp=PaymentType;
+			update AdtFinReceiptDetail set PaymentType=null;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#432.5" author="vijaya.a">
 		<modifyDataType tableName="AdtFinReceiptDetail" columnName="PaymentType" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="ST#432.5_post" author="vijaya.a" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update AdtFinReceiptDetail set PaymentType=PaymentType_bkp;
+				alter table AdtFinReceiptDetail drop column PaymentType_bkp;
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="DE#326" author="gopalaSwamy.m" >

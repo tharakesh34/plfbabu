@@ -382,9 +382,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		 * Filter.OP_LESS_OR_EQUAL); filters[1] = new Filter("EndDate", DateUtility.formateDate(appDate,
 		 * PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL); filters[2] = new Filter("LovDescProductName",
 		 * StringUtils.trimToEmpty(this.finType.getValue()), Filter.OP_EQUAL); if
-		 * (StringUtils.equals(FinServiceEvent.PREAPPROVAL, requestSource)) { filters[3] = new
-		 * Filter("FinEvent", FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL); } else { filters[3] = new
-		 * Filter("FinEvent", FinServiceEvent.ORG, Filter.OP_EQUAL); }
+		 * (StringUtils.equals(FinServiceEvent.PREAPPROVAL, requestSource)) { filters[3] = new Filter("FinEvent",
+		 * FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL); } else { filters[3] = new Filter("FinEvent",
+		 * FinServiceEvent.ORG, Filter.OP_EQUAL); }
 		 * 
 		 * this.promotionCode.setFilters(filters); if (!setFilters) { JdbcSearchObject<FinanceWorkFlow> searchObject =
 		 * new JdbcSearchObject<FinanceWorkFlow>( FinanceWorkFlow.class);
@@ -450,7 +450,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		if (StringUtils.isNotBlank(this.productCategory)) {
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			Date wifAvailableDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("MAX_WIF_BACKDAYS"));
 			filters[1] = new Filter("lovDescProductCodeName", this.productCategory, Filter.OP_EQUAL);
 			filters[2] = new Filter("LastMntOn", wifAvailableDate, Filter.OP_GREATER_OR_EQUAL);
@@ -560,7 +560,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			filters = new Filter[5];
 		}
 
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		filters[0] = new Filter("StartDate", appDate, Filter.OP_LESS_OR_EQUAL);
 		filters[1] = new Filter("EndDate", appDate, Filter.OP_GREATER_OR_EQUAL);
 		if (StringUtils.equals(FinServiceEvent.PREAPPROVAL, requestSource)) {
@@ -1058,8 +1058,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					vasRecording.setPostingAgainst(finTypeVASProducts.getRecAgainst());
 					vasRecording.setProductCtg(finTypeVASProducts.getProductCtgDesc());
 					vasRecording.setManufacturerDesc(finTypeVASProducts.getManufacturerDesc());
-					vasRecording.setValueDate(DateUtility.getAppDate());
-					vasRecording.setAccrualTillDate(DateUtility.getAppDate());
+					vasRecording.setValueDate(SysParamUtil.getAppDate());
+					vasRecording.setAccrualTillDate(SysParamUtil.getAppDate());
 					vasRecording.setFee(finTypeVASProducts.getVasFee());
 					vasRecording.setRecordType(PennantConstants.RCD_ADD);
 					vasRecordingList.add(vasRecording);
@@ -1576,8 +1576,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// FIXME: preApproved will be only if requestSource is Preapproved. why
 		// it is required again?
 		/*
-		 * if (StringUtils.equals(requestSource, FinServiceEvent.PREAPPROVAL)) {
-		 * this.labelRow.setVisible(false); this.wIfReferenceRow.setVisible(false); }
+		 * if (StringUtils.equals(requestSource, FinServiceEvent.PREAPPROVAL)) { this.labelRow.setVisible(false);
+		 * this.wIfReferenceRow.setVisible(false); }
 		 */}
 
 	/**

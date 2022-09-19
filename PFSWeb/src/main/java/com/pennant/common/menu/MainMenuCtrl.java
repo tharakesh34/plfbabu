@@ -268,6 +268,12 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_SubventionMISReport":
 		case "menu_Item_SubventionAmortReport":
 			return ImplementationConstants.ALLOW_SUBVENTION;
+		case "menu_Item_CersaiDownload":
+		case "menu_Item_CersaiUpload":
+		case "menu_Item_CersaiReport":
+		case "menu_Item_CersaiModificationReport":
+		case "menu_Item_CersaiSatisfactionReport":
+			return ImplementationConstants.ALLOW_CERSAI;
 		default:
 			break;
 		}

@@ -339,7 +339,7 @@ public class PresentmentDetailExtractService {
 
 		pd.setSchInsDue(BigDecimal.ZERO);
 		pd.setSchPenaltyDue(BigDecimal.ZERO);
-		// pDetail.setAdvanceAmt(schAmtDue);
+		pd.setAdvanceAmt(schAmtDue);
 		pd.setAdviseAmt(BigDecimal.ZERO);
 		pd.setExcessID(0);
 		pd.setReceiptID(0);
@@ -493,10 +493,6 @@ public class PresentmentDetailExtractService {
 	private void doPDCCalculations(PresentmentHeader ph, PresentmentDetail pd) {
 		logger.debug(Literal.ENTERING);
 
-		BigDecimal emiInAdvanceAmt;
-		long finID = pd.getFinID();
-
-		// Cheque Status
 		if (!PennantConstants.CHEQUESTATUS_NEW.equals(pd.getMandateStatus())) {
 			if (PennantConstants.CHEQUESTATUS_PRESENT.equals(pd.getMandateStatus())) {
 				pd.setExcludeReason(RepayConstants.CHEQUESTATUS_PRESENT);
@@ -544,8 +540,6 @@ public class PresentmentDetailExtractService {
 	private void doCalculations(PresentmentHeader ph, PresentmentDetail pd) {
 		logger.debug(Literal.ENTERING);
 
-		long finID = pd.getFinID();
-		// Mandate Rejected
 		String mandateStatus = pd.getMandateStatus();
 		if (MandateConstants.STATUS_REJECTED.equals(mandateStatus)) {
 			pd.setExcludeReason(RepayConstants.PEXC_MANDATE_REJECTED);

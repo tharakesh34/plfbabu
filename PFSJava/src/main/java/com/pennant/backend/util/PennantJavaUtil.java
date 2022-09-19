@@ -149,6 +149,14 @@ import com.pennant.backend.model.bmtmasters.ProductDeviation;
 import com.pennant.backend.model.bmtmasters.RatingCode;
 import com.pennant.backend.model.bmtmasters.RatingType;
 import com.pennant.backend.model.bmtmasters.SICCodes;
+import com.pennant.backend.model.cersai.AreaUnit;
+import com.pennant.backend.model.cersai.AssetCategory;
+import com.pennant.backend.model.cersai.AssetSubType;
+import com.pennant.backend.model.cersai.AssetTyp;
+import com.pennant.backend.model.cersai.CityMapping;
+import com.pennant.backend.model.cersai.DistrictMapping;
+import com.pennant.backend.model.cersai.ProvinceMapping;
+import com.pennant.backend.model.cersai.SecurityInterestType;
 import com.pennant.backend.model.collateral.Collateral;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -548,6 +556,7 @@ public class PennantJavaUtil {
 	private static String WF_EXPENSEUPLOAD = "EXPENSEUPLOAD";
 	private static String WF_OCRMAINTENANCE = "OCRMAINTENANCE";
 	private final static String EXT_FIELDS_MAINT = "EXT_FIELDS_MAINT";
+	private final static String baseRate_WF = "BASERATE_WORKFLOW";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -924,7 +933,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("BaseRate",
 				new ModuleMapping("BaseRate", BaseRate.class, new String[] { "RMTBaseRates", "RMTBaseRates_AView" },
-						masterWF, new String[] { "BRType", "Currency", "BREffDate" },
+						baseRate_WF, new String[] { "BRType", "Currency", "BREffDate" },
 						new Object[][] { { "BRTypeIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("BaseRateCode",
@@ -3716,10 +3725,20 @@ public class PennantJavaUtil {
 						new String[] { "Asset_Class_Codes", "Asset_Class_Codes_Aview" }, masterWF,
 						new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 600));
 
+		ModuleUtil.register("RuleAssetClassCode",
+				new ModuleMapping("RuleAssetClassCode", AssetClassCode.class,
+						new String[] { "Asset_Class_Codes", "Asset_Class_Codes_Aview" }, masterWF,
+						new String[] { "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 600));
+
 		ModuleUtil.register("AssetSubClassCode",
 				new ModuleMapping("AssetSubClassCode", AssetSubClassCode.class,
 						new String[] { "Asset_Sub_Class_Codes", "Asset_Sub_Class_Codes_Aview" }, masterWF,
 						new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 600));
+
+		ModuleUtil.register("RuleSubClassCode",
+				new ModuleMapping("RuleSubClassCode", AssetSubClassCode.class,
+						new String[] { "Asset_Sub_Class_Codes", "Asset_Sub_Class_Codes_Aview" }, masterWF,
+						new String[] { "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("AssetClassSetupHeader",
 				new ModuleMapping("AssetClassSetupHeader", AssetClassSetupHeader.class,
@@ -3730,6 +3749,45 @@ public class PennantJavaUtil {
 				new ModuleMapping("Provision", Provision.class,
 						new String[] { "Loan_Provisions", "Loan_Provisions_AView" }, masterWF,
 						new String[] { "FinReference", "ProvisionAmt" }, null, 300));
+
+		ModuleUtil.register("AssetCategory",
+				new ModuleMapping("AssetCategory", AssetCategory.class,
+						new String[] { "CERSAI_AssetCategory", "CERSAI_AssetCategory_AView" }, masterWF,
+						new String[] { "Id", "Description" }, null, 600));
+
+		ModuleUtil.register("SecurityInterestType",
+				new ModuleMapping("SecurityInterestType", SecurityInterestType.class,
+						new String[] { "CERSAI_SIType", "CERSAI_SIType_AView" }, masterWF,
+						new String[] { "Id", "Description", "AssetCategoryId" }, null, 600));
+
+		ModuleUtil.register("AssetSubType",
+				new ModuleMapping("AssetSubType", AssetSubType.class,
+						new String[] { "CERSAI_AssetSubType", "CERSAI_AssetSubType_AView" }, masterWF,
+						new String[] { "Id", "Description", "AssetTypeId" }, null, 600));
+
+		ModuleUtil.register("AssetTyp",
+				new ModuleMapping("AssetTyp", AssetTyp.class,
+						new String[] { "CERSAI_AssetType", "CERSAI_AssetType_AView" }, masterWF,
+						new String[] { "Id", "Description", "AssetCategoryId" }, null, 600));
+
+		ModuleUtil.register("AreaUnit",
+				new ModuleMapping("AreaUnit", AreaUnit.class,
+						new String[] { "CERSAI_AreaUnit", "CERSAI_AreaUnit_AView" }, masterWF,
+						new String[] { "Id", "Description" }, null, 600));
+
+		ModuleUtil.register("CityMapping",
+				new ModuleMapping("CityMapping", CityMapping.class, new String[] { "CityMapping", "CityMapping_AView" },
+						masterWF, new String[] { "MappingValue", "CityCode", "MappingType" }, null, 600));
+
+		ModuleUtil.register("DistrictMapping",
+				new ModuleMapping("DistrictMapping", DistrictMapping.class,
+						new String[] { "DistrictMapping", "DistrictMapping_AView" }, masterWF,
+						new String[] { "MappingValue", "District", "MappingType" }, null, 600));
+
+		ModuleUtil.register("ProvinceMapping",
+				new ModuleMapping("ProvinceMapping", ProvinceMapping.class,
+						new String[] { "ProvinceMapping", "ProvinceMapping_AView" }, masterWF,
+						new String[] { "MappingValue", "Province", "MappingType" }, null, 600));
 
 		registerCustomModules();
 	}

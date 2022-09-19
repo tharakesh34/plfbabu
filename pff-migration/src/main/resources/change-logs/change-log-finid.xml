@@ -2000,7 +2000,11 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
-
+	
+	<changeSet id="60.5" author="murthy.y">
+		<dropForeignKeyConstraint baseTableName="creditreviewdata" constraintName="fk_creditreviewdata_finid"/>
+	</changeSet>
+	
 	<changeSet id="61" author="murthy.y">
 		<addColumn tableName="customerdedupdetail">
 			<column name="FinID" type="bigint" />
@@ -5721,6 +5725,46 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="200_pre2.1" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				Insert into FINID_MAPPING (FinID, FinReference)       
+				Select SEQ_FINANCEMAIN.nextval+FinID FinID, FinReference from (
+                select distinct FinID, FinReference from FinanceMain
+                union all
+                select distinct FinID, FinReference from FinanceMain_Temp where FinReference not in (select FinReference from FinanceMain)
+                union all
+                select distinct FinID, FinReference from RejectFinanceMain where FinReference not in (select FinReference from FinanceMain union all select FinReference from FinanceMain_Temp)
+                union all
+                select distinct FinID, FinReference from WIFFinanceMain where FinReference not in (select FinReference from FinanceMain union all select FinReference from FinanceMain_Temp)
+                union all
+                select distinct FinID, FinReference from WIFFinanceMain_Temp where FinReference not in (select FinReference from FinanceMain union all select FinReference from FinanceMain_Temp)
+                ) T Where FinID = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="200_pre2.1" author="murthy.y" dbms="sqlserver">
+		<sql>
+			<![CDATA[
+				Insert into FINID_MAPPING (FinID, FinReference)       
+				Select NEXT VALUE FOR dbo.SEQ_FINANCEMAIN+FinID FinID, FinReference from (
+                select distinct FinID, FinReference from FinanceMain
+                union all
+                select distinct FinID, FinReference from FinanceMain_Temp where FinReference not in (select FinReference from FinanceMain)
+                union all
+                select distinct FinID, FinReference from RejectFinanceMain where FinReference not in (select FinReference from FinanceMain union all select FinReference from FinanceMain_Temp)
+                union all
+                select distinct FinID, FinReference from WIFFinanceMain where FinReference not in (select FinReference from FinanceMain union all select FinReference from FinanceMain_Temp)
+                union all
+                select distinct FinID, FinReference from WIFFinanceMain_Temp where FinReference not in (select FinReference from FinanceMain union all select FinReference from FinanceMain_Temp)
+                ) T Where FinID = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 	 
 	<changeSet id="200_pre3" author="murthy.y">
 		<sql>

@@ -254,6 +254,14 @@
 														<button id="btnAddSecondaryAccounts" label="${c:l('label_Add')}" sclass="z-toolbarbutton" />
 													</hbox>
 												</row>
+												<row id="row_SanctionedDate" visible="false">
+													<label id="label_FinanceMainDialog_SanctionExposureDate"
+														value="${c:l('label_FinanceMainDialog_SanctionExposureDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="sanctionedDate" width="125px" readonly="true" />
+													</hbox>
+												</row>
 												<row id="row_Revolving_DP" visible="false">
 													<label id="label_FinanceTypeDialog_AllowRevolving" value="${c:l('label_FinanceTypeDialog_AllowRevolving.value')}"
 														visible="false" />

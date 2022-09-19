@@ -47,7 +47,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Window;
 
@@ -122,7 +121,6 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 		} catch (LicenseException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		Executions.sendRedirect("/csrfLogout.zul");
 	}
 
 	/**
@@ -158,11 +156,11 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	 *         false, if the right is not granted to the user.<br>
 	 */
 	public boolean isAllowed(String rightName) {
-		return getGrantedAuthoritySet().contains(rightName);
+		return getGrantedAuthoritySet().contains(rightName.toLowerCase());
 	}
 
 	public boolean isReadOnly(String rightName) {
-		return !isAllowed(rightName);
+		return !isAllowed(rightName.toLowerCase());
 
 	}
 
@@ -205,12 +203,13 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	}
 
 	public void allocateAuthorities(String page, String roleCode, String menuRightName) {
-
 		final Collection<SecurityRight> rights = getSecurityRights(page, roleCode, menuRightName);
 
 		for (final SecurityRight right : rights) {
-			if (!getGrantedAuthoritySet().contains(right.getRightName())) {
-				this.grantedAuthoritySet.add(right.getRightName());
+			String rightName = right.getRightName();
+			rightName = rightName.toLowerCase();
+			if (!getGrantedAuthoritySet().contains(rightName)) {
+				this.grantedAuthoritySet.add(rightName);
 			}
 		}
 	}

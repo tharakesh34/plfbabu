@@ -41,8 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -199,11 +197,7 @@ public class ProvisionCalculationUtil implements Serializable {
 				dataMap = amountCodes.getDeclaredFieldValues();
 				aeEvent.setDataMap(dataMap);
 
-				try {
-					aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
-				} catch (AccountNotFoundException e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
+				aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
 
 				isPostingsSuccess = aeEvent.isPostingSucess();
 

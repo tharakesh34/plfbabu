@@ -973,25 +973,6 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 				aDocumentType.getUserDetails(), getOverideMap());
 	}
 
-	/**
-	 * Display Message in Error Box
-	 * 
-	 * @param e (Exception)
-	 */
-	@SuppressWarnings("unused")
-	private void showMessage(Exception e) {
-		logger.debug("Entering");
-
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_DocumentTypeDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-		logger.debug("Leaving");
-	}
-
 	public void onCheck$docIsPdfExtRequired(Event event) {
 		doCheckPdfExt();
 	}

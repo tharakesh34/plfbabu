@@ -248,7 +248,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 				}
 				tdCPZAmount = PennantApplicationUtil.formateAmount(tdCPZAmount, formatter);
-				finAvailableAmt = finAssetValue.subtract(finCurrAssetValue).subtract(tdCPZAmount);
+				finAvailableAmt = finAssetValue.subtract(finCurrAssetValue);
 				this.cpzIntAmt.setValue(tdCPZAmount);
 			} else {
 				finAvailableAmt = finAssetValue.subtract(finCurrAssetValue);
