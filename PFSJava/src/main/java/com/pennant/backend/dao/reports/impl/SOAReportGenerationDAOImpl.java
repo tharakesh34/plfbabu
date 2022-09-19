@@ -431,8 +431,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		} catch (EmptyResultDataAccessException e) {
 			finReceiptAllocationDetailsList = new ArrayList<ReceiptAllocationDetail>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 
@@ -758,8 +756,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		} catch (EmptyResultDataAccessException e) {
 			finRepayHeadersList = new ArrayList<FinRepayHeader>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 
@@ -822,8 +818,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		} catch (EmptyResultDataAccessException e) {
 			presentmentDetailsList = new ArrayList<PresentmentDetail>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 
@@ -856,8 +850,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		} catch (EmptyResultDataAccessException e) {
 			finRepayScheduleDetailsList = new ArrayList<RepayScheduleDetail>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 
@@ -891,8 +883,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		} catch (EmptyResultDataAccessException e) {
 			vasRecordingsList = new ArrayList<VASRecording>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 
@@ -933,8 +923,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		} catch (EmptyResultDataAccessException e) {
 			finFeeScheduleDetailsList = new ArrayList<FinFeeScheduleDetail>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 
@@ -1007,8 +995,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		} catch (DataAccessException e) {
 			applicantDetails = new ArrayList<ApplicantDetail>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 
@@ -1084,8 +1070,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		} catch (DataAccessException e) {
 			feeWaiverDetails = new ArrayList<FeeWaiverDetail>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 
@@ -1172,8 +1156,6 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		} catch (EmptyResultDataAccessException e) {
 			finReceiptAllocationDetailsMap = new HashMap<>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 

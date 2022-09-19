@@ -377,22 +377,16 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 	@Override
 	public void updateChequeStatus(long chequeDetailsId, String chequestatus) {
 		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(
-					"update CHEQUEDETAIL Set Chequestatus = :Chequestatus  where ChequeDetailsId = :ChequeDetailsId ");
-			logger.trace(Literal.SQL + sql.toString());
 
-			source = new MapSqlParameterSource();
-			source.addValue("Chequestatus", chequestatus);
-			source.addValue("ChequeDetailsId", chequeDetailsId);
-			jdbcTemplate.update(sql.toString(), source);
-		} finally {
-			source = null;
-			sql = null;
-		}
+		StringBuilder sql = new StringBuilder();
+		sql.append("update CHEQUEDETAIL Set Chequestatus = :Chequestatus  where ChequeDetailsId = :ChequeDetailsId ");
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Chequestatus", chequestatus);
+		source.addValue("ChequeDetailsId", chequeDetailsId);
+		jdbcTemplate.update(sql.toString(), source);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -448,8 +442,8 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		sql.append(" and cd.ChequeDetailsID != ?");
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(),
-					Integer.class, bankBranchID, accountNo, String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
+			return jdbcOperations.queryForObject(sql.toString(), Integer.class, bankBranchID, accountNo,
+					String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
 		} catch (Exception e) {
 			//
 		}
@@ -468,8 +462,8 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		sql.append(" and cd.ChequeDetailsID != ?");
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(),
-					Integer.class, bankBranchID, accountNo, String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
+			return jdbcOperations.queryForObject(sql.toString(), Integer.class, bankBranchID, accountNo,
+					String.valueOf(chequeSerialNo), chequeDetailsID) > 0;
 		} catch (Exception e) {
 			//
 		}

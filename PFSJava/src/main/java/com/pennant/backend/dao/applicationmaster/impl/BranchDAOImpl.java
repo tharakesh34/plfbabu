@@ -380,8 +380,6 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		} catch (EmptyResultDataAccessException e) {
 			finFeeDetailsList = new ArrayList<Branch>();
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 
@@ -407,8 +405,6 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		} catch (EmptyResultDataAccessException e) {
 			unionterrotory = false;
 		} finally {
-			source = null;
-			sql = null;
 			logger.debug(Literal.LEAVING);
 		}
 

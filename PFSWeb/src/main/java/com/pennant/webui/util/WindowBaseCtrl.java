@@ -77,9 +77,4 @@ public abstract class WindowBaseCtrl extends Window implements AfterCompose {
 	public int hashCode() {
 		return super.hashCode();
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
 }
