@@ -110,7 +110,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 			ps.setString(index++, uma.getRecordType());
 			ps.setLong(index++, uma.getWorkflowId());
 			ps.setString(index++, uma.getRejectStage());
-			ps.setLong(index++, uma.getManualAdviseId());
+			ps.setLong(index, uma.getManualAdviseId());
 		});
 
 	}
@@ -165,7 +165,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 			ps.setLong(index++, uma.getAdviseId());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, uma.getVersion());
+				ps.setInt(index, uma.getVersion());
 			}
 		});
 

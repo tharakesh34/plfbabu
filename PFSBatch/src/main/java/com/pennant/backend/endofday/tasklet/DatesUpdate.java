@@ -25,7 +25,6 @@ public class DatesUpdate extends SequenceDao<Object> implements Tasklet {
 
 	private DateService dateService;
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
-	private SequenceDao<Object> sequenceDao;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
