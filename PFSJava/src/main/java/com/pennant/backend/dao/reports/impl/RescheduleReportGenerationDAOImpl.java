@@ -40,7 +40,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 			ps.setDate(index++, fromDate);
 			ps.setDate(index++, toDate);
 			ps.setString(index++, AccountingEvent.SCDCHG);
-			ps.setString(index++, AccountingEvent.RATCHG);
+			ps.setString(index, AccountingEvent.RATCHG);
 		}, rowMapper);
 	}
 

@@ -217,7 +217,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		ps.setString(index++, td.getTaskId());
 		ps.setString(index++, td.getNextTaskId());
 		ps.setString(index++, td.getRecordType());
-		ps.setLong(index++, td.getWorkflowId());
+		ps.setLong(index, td.getWorkflowId());
 	}
 
 	@Override
@@ -271,7 +271,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 			ps.setString(index++, th.getTaskId());
 			ps.setString(index++, th.getNextTaskId());
 			ps.setString(index++, th.getRecordType());
-			ps.setLong(index++, th.getWorkflowId());
+			ps.setLong(index, th.getWorkflowId());
 
 		});
 

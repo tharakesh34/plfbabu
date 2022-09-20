@@ -140,7 +140,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 				ps.setString(index++, sd.getNextTaskId());
 				ps.setString(index++, sd.getRecordType());
 				ps.setLong(index++, sd.getWorkflowId());
-				ps.setBigDecimal(index++, sd.getSubVentionAmt());
+				ps.setBigDecimal(index, sd.getSubVentionAmt());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -182,7 +182,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 			ps.setLong(index++, sd.getWorkflowId());
 			ps.setBigDecimal(index++, sd.getSubVentionAmt());
 
-			ps.setLong(index++, sd.getFinID());
+			ps.setLong(index, sd.getFinID());
 		});
 
 		if (recordCount == 0) {
@@ -202,7 +202,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, sd.getFinID());
+				ps.setLong(index, sd.getFinID());
 			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -231,7 +231,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 			ps.setBigDecimal(index++, ssd.getDiscountedPft());
 			ps.setBigDecimal(index++, ssd.getPresentValue());
 			ps.setBigDecimal(index++, ssd.getFutureValue());
-			ps.setBigDecimal(index++, ssd.getClosingBal());
+			ps.setBigDecimal(index, ssd.getClosingBal());
 
 		});
 
@@ -249,7 +249,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -274,7 +274,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 			ps.setLong(index++, finID);
 
 			if (disbSeqID != 0) {
-				ps.setLong(index++, disbSeqID);
+				ps.setLong(index, disbSeqID);
 			}
 
 		}, (rs, rowNum) -> {
@@ -306,7 +306,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 			int index = 1;
 
 			ps.setBigDecimal(index++, totalSubVentionAmt);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 

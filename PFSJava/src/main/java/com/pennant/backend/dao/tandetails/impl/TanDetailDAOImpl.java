@@ -52,7 +52,7 @@ public class TanDetailDAOImpl extends SequenceDao<TanDetail> implements TanDetai
 				ps.setString(index++, tanDetail.getTaskId());
 				ps.setString(index++, tanDetail.getNextTaskId());
 				ps.setString(index++, tanDetail.getRecordType());
-				ps.setLong(index++, tanDetail.getWorkflowId());
+				ps.setLong(index, tanDetail.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -88,7 +88,7 @@ public class TanDetailDAOImpl extends SequenceDao<TanDetail> implements TanDetai
 			ps.setString(index++, tANMapping.getRecordType());
 			ps.setLong(index++, tANMapping.getWorkflowId());
 
-			ps.setLong(index++, tANMapping.getId());
+			ps.setLong(index, tANMapping.getId());
 		});
 
 	}
@@ -104,8 +104,8 @@ public class TanDetailDAOImpl extends SequenceDao<TanDetail> implements TanDetai
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index, tanDetail.getTanNumber());
-			ps.setLong(index++, tanDetail.getId());
+			ps.setString(index++, tanDetail.getTanNumber());
+			ps.setLong(index, tanDetail.getId());
 		});
 
 	}

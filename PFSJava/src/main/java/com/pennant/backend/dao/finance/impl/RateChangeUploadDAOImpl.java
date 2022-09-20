@@ -97,7 +97,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 					ps.setString(index++, entityCode);
 					ps.setInt(index++, 0);
 					ps.setInt(index++, 0);
-					ps.setInt(index++, 0);
+					ps.setInt(index, 0);
 
 					return ps;
 				}
@@ -124,7 +124,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 				ps.setObject(index++, id);
 				ps.setString(index++, err.getCode());
-				ps.setString(index++, err.getError());
+				ps.setString(index, err.getError());
 			}
 
 			public int getBatchSize() {
@@ -147,7 +147,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			ps.setInt(index++, rcuh.getFailureRecords());
 			ps.setString(index++, rcuh.getStatus());
 
-			ps.setObject(index++, rcuh.getId());
+			ps.setObject(index, rcuh.getId());
 
 		});
 	}
@@ -185,7 +185,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, batchId);
+			ps.setLong(index, batchId);
 
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
@@ -216,7 +216,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			ps.setLong(index++, rcUpload.getFinID());
 			ps.setString(index++, StringUtils.trimToEmpty(rcUpload.getUploadStatusRemarks()));
 			ps.setString(index++, rcUpload.getStatus());
-			ps.setObject(index++, rcUpload.getId());
+			ps.setObject(index, rcUpload.getId());
 
 		});
 	}
@@ -240,7 +240,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 			ps.setString(index++, remarks.toString());
 			ps.setString(index++, deStatus.getStatus());
-			ps.setString(index++, header.getBatchRef());
+			ps.setString(index, header.getBatchRef());
 
 		});
 	}

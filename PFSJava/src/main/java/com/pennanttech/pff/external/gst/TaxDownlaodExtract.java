@@ -135,7 +135,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 			ps.setBoolean(index++, true);
 			ps.setBigDecimal(index++, BigDecimal.ZERO);
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index, JdbcUtil.getDate(toDate));
 		}, rs -> {
 			TaxDownload taxDownload = null;
 
@@ -196,7 +196,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 			ps.setString(index++, EXTRACTION_TYPE_SUMMARY);
 			ps.setBigDecimal(index++, BigDecimal.ZERO);
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index, JdbcUtil.getDate(toDate));
 
 		}, rs -> {
 			TaxDownload td = new TaxDownload();
@@ -885,7 +885,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 				ps.setDate(index++, JdbcUtil.getDate(appDate));
 				ps.setDate(index++, JdbcUtil.getDate(appDate));
 				ps.setInt(index++, 0);
-				ps.setInt(index++, 0);
+				ps.setInt(index, 0);
 			});
 		} catch (Exception e) {
 			//
@@ -909,7 +909,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 			int index = 1;
 
 			ps.setDate(index++, JdbcUtil.getDate(appDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index, JdbcUtil.getDate(toDate));
 		});
 	}
 
@@ -921,7 +921,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		jdbcOperations.update(sql, ps -> {
 			int index = 1;
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index, JdbcUtil.getDate(toDate));
 		});
 	}
 
@@ -934,7 +934,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 			int index = 1;
 
 			ps.setLong(index++, recordCnt);
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 
 		});
 	}
@@ -1115,7 +1115,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index, JdbcUtil.getDate(toDate));
 
 		}, (rs, rowNum) -> {
 			TaxDownload td = new TaxDownload();
@@ -1190,7 +1190,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setDate(index++, JdbcUtil.getDate(toDate));
+			ps.setDate(index, JdbcUtil.getDate(toDate));
 
 		}, (rs, rowNum) -> {
 			TaxDownload td = new TaxDownload();

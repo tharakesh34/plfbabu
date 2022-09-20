@@ -177,7 +177,7 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 				ps.setString(index++, tdsReceivable.getTaskId());
 				ps.setString(index++, tdsReceivable.getNextTaskId());
 				ps.setString(index++, tdsReceivable.getRecordType());
-				ps.setLong(index++, tdsReceivable.getWorkflowId());
+				ps.setLong(index, tdsReceivable.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -226,9 +226,9 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 
 			ps.setLong(index++, tdsReceivable.getId());
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, tdsReceivable.getPrevMntOn());
+				ps.setTimestamp(index, tdsReceivable.getPrevMntOn());
 			} else {
-				ps.setInt(index++, tdsReceivable.getVersion() - 1);
+				ps.setInt(index, tdsReceivable.getVersion() - 1);
 			}
 
 		});

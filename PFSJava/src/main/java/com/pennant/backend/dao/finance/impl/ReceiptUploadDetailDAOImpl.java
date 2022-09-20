@@ -81,7 +81,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			ps.setLong(index++, id);
 
 			if (getsucessrcdOnly) {
-				ps.setInt(index++, ReceiptDetailStatus.SUCCESS.getValue());
+				ps.setInt(index, ReceiptDetailStatus.SUCCESS.getValue());
 			}
 
 		}, (rs, rowNum) -> {
@@ -180,7 +180,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			ps.setString(index++, rud.getBounceReason());
 			ps.setString(index++, rud.getCancelReason());
 			ps.setDate(index++, JdbcUtil.getDate(rud.getBounceDate()));
-			ps.setObject(index++, rud.getReceiptId());
+			ps.setObject(index, rud.getReceiptId());
 		});
 
 		return rud.getUploadDetailId();
@@ -194,7 +194,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
-			ps.setLong(index++, uploadHeaderId);
+			ps.setLong(index, uploadHeaderId);
 		});
 	}
 
@@ -216,7 +216,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 
 			ps.setInt(index++, rud.getProcessingStatus());
 			ps.setString(index++, rud.getReason());
-			ps.setLong(index++, rud.getUploadDetailId());
+			ps.setLong(index, rud.getUploadDetailId());
 		});
 	}
 
@@ -229,7 +229,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			int index = 1;
 
 			ps.setLong(index++, receiptId);
-			ps.setLong(index++, uploadDetailId);
+			ps.setLong(index, uploadDetailId);
 		});
 	}
 
@@ -242,7 +242,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			int index = 1;
 
 			ps.setString(index++, errorMsg);
-			ps.setString(index++, id);
+			ps.setString(index, id);
 
 		});
 	}
@@ -301,7 +301,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 				ps.setObject(index++, l1);
 			}
 
-			ps.setInt(index++, ReceiptDetailStatus.SUCCESS.getValue());
+			ps.setInt(index, ReceiptDetailStatus.SUCCESS.getValue());
 		}, (rs, rowNum) -> {
 			return JdbcUtil.getLong(rs.getObject(1));
 		});
@@ -354,7 +354,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 				}
 			}
 
-			ps.setInt(index++, ReceiptDetailStatus.INPROGRESS.getValue());
+			ps.setInt(index, ReceiptDetailStatus.INPROGRESS.getValue());
 		}, (rs, rowNum) -> {
 			ThreadAllocation thread = new ThreadAllocation();
 			thread.setReference(rs.getString("Reference"));
@@ -390,7 +390,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			}
 
 			ps.setInt(index++, threadId);
-			ps.setInt(index++, ReceiptDetailStatus.INPROGRESS.getValue());
+			ps.setInt(index, ReceiptDetailStatus.INPROGRESS.getValue());
 		}, rowMapper);
 
 		return rudList.stream().sorted((f1, f2) -> DateUtil.compare(f1.getValueDate(), f2.getValueDate()))
@@ -422,7 +422,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 					ps.setLong(index++, uploadHeader);
 				}
 
-				ps.setInt(index++, ReceiptDetailStatus.INPROGRESS.getValue());
+				ps.setInt(index, ReceiptDetailStatus.INPROGRESS.getValue());
 			}
 
 			@Override
@@ -451,7 +451,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 				ps.setLong(index++, uploadHeader);
 			}
 
-			ps.setInt(index++, ReceiptDetailStatus.SUCCESS.getValue());
+			ps.setInt(index, ReceiptDetailStatus.SUCCESS.getValue());
 		});
 
 	}
@@ -482,7 +482,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			ps.setInt(index++, ReceiptDetailStatus.SUCCESS.getValue());
 
 			if (isOnline) {
-				ps.setString(index++, rud.getTransactionRef());
+				ps.setString(index, rud.getTransactionRef());
 			}
 
 		}, (rs, roNum) -> {

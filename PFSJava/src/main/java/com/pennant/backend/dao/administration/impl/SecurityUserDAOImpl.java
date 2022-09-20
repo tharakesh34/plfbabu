@@ -761,7 +761,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			int index = 1;
 			ps.setBoolean(index++, seu.isUsrEnabled());
 			ps.setBoolean(index++, seu.isDeleted());
-			ps.setLong(index++, seu.getUsrID());
+			ps.setLong(index, seu.getUsrID());
 		});
 	}
 }

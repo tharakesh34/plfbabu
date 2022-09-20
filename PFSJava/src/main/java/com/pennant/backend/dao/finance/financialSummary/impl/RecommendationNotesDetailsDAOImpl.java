@@ -75,7 +75,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			RecommendationNotes rn = new RecommendationNotes();
 
@@ -113,7 +113,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 				int index = 1;
 
 				ps.setLong(index++, rn.getId());
-				ps.setLong(index++, rn.getFinID());
+				ps.setLong(index, rn.getFinID());
 			});
 
 			if (recordCount <= 0) {
@@ -157,7 +157,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 				ps.setString(index++, rn.getTaskId());
 				ps.setString(index++, rn.getNextTaskId());
 				ps.setString(index++, rn.getRecordType());
-				ps.setLong(index++, rn.getWorkflowId());
+				ps.setLong(index, rn.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -202,7 +202,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 			ps.setLong(index++, rn.getFinID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, rn.getVersion() - 1);
+				ps.setInt(index, rn.getVersion() - 1);
 			}
 		});
 

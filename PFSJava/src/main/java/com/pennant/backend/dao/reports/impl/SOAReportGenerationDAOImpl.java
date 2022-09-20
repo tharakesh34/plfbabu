@@ -1033,7 +1033,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 			ps.setLong(index++, custID);
 			ps.setString(index++, finReference);
 			ps.setLong(index++, custID);
-			ps.setLong(index++, custID);
+			ps.setLong(index, custID);
 		}, (rs, rowNum) -> {
 			OtherFinanceDetail ofd = new OtherFinanceDetail();
 

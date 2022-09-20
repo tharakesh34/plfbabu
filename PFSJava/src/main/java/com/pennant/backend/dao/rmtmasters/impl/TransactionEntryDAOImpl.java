@@ -327,7 +327,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 				ps.setString(index++, finType);
 				ps.setString(index++, finEvent);
 				ps.setInt(index++, refType);
-				ps.setString(index++, "%" + roleCode + "%");
+				ps.setString(index, "%" + roleCode + "%");
 			}
 		}, new RowMapper<TransactionEntry>() {
 			@Override

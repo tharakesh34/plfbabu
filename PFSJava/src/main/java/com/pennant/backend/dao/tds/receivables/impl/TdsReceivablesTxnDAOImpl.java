@@ -105,7 +105,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 				ps.setString(index++, tdsReceivablesTxn.getNextTaskId());
 				ps.setString(index++, tdsReceivablesTxn.getRecordType());
 				ps.setLong(index++, tdsReceivablesTxn.getWorkflowId());
-				ps.setString(index++, tdsReceivablesTxn.getModule());
+				ps.setString(index, tdsReceivablesTxn.getModule());
 
 			});
 
@@ -152,7 +152,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 			ps.setLong(index++, tdsReceivablesTxn.getWorkflowId());
 			ps.setString(index++, tdsReceivablesTxn.getModule());
 
-			ps.setLong(index++, tdsReceivablesTxn.getId());
+			ps.setLong(index, tdsReceivablesTxn.getId());
 
 		});
 	}
@@ -510,7 +510,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, Status.getCode());
-			ps.setLong(index++, Id);
+			ps.setLong(index, Id);
 		});
 	}
 

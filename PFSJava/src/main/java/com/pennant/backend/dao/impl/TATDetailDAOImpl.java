@@ -70,7 +70,7 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 				ps.setString(index++, tat.getRoleCode());
 				ps.setTimestamp(index++, tat.gettATStartTime());
 				ps.setTimestamp(index++, tat.gettATEndTime());
-				ps.setString(index++, tat.getFinType());
+				ps.setString(index, tat.getFinType());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -101,7 +101,7 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 			ps.setTimestamp(index++, tatDetail.getTriggerTime());
 
 			ps.setString(index++, aTatDetail.getReference());
-			ps.setLong(index++, aTatDetail.getSerialNo());
+			ps.setLong(index, aTatDetail.getSerialNo());
 		});
 
 		logger.debug(Literal.LEAVING);
