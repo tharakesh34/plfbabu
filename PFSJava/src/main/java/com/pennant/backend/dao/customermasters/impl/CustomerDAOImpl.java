@@ -830,7 +830,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custId);
+			ps.setLong(index, custId);
 		}, (rs, rowNum) -> {
 			FinanceProfitDetail fpd = new FinanceProfitDetail();
 
@@ -1518,7 +1518,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custId);
+			ps.setLong(index, custId);
 		}, (rs, rowNum) -> {
 			FinanceEnquiry fm = new FinanceEnquiry();
 
@@ -2807,7 +2807,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			ps.setString(index++, segmentType);
 
 			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
-				ps.setLong(index++, finID);
+				ps.setLong(index, finID);
 			}
 		}, (rs, rowNum) -> {
 			FinanceEnquiry finEnqy = new FinanceEnquiry();

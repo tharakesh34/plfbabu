@@ -360,7 +360,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 			int index = 1;
 			ps.setString(index++, "%" + financeRefDetail.getMandInputInStage() + "%");
 			ps.setString(index++, financeRefDetail.getFinType());
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, rowNum) -> {
 			FinanceReferenceDetail br = new FinanceReferenceDetail();
 

@@ -158,7 +158,7 @@ public class FeePostingsDAOImpl extends SequenceDao<FeePostings> implements FeeP
 			ps.setString(index++, fp.getTaskId());
 			ps.setString(index++, fp.getNextTaskId());
 			ps.setString(index++, fp.getRecordType());
-			ps.setLong(index++, fp.getWorkflowId());
+			ps.setLong(index, fp.getWorkflowId());
 		});
 	}
 
@@ -205,7 +205,7 @@ public class FeePostingsDAOImpl extends SequenceDao<FeePostings> implements FeeP
 			ps.setLong(index++, fp.getPostId());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, fp.getVersion() - 1);
+				ps.setInt(index, fp.getVersion() - 1);
 			}
 
 		});
@@ -227,7 +227,7 @@ public class FeePostingsDAOImpl extends SequenceDao<FeePostings> implements FeeP
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, fp.getPostId());
+				ps.setLong(index, fp.getPostId());
 			});
 
 			if (recordCount <= 0) {

@@ -135,7 +135,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 				ps.setString(index++, crd.getTaskId());
 				ps.setString(index++, crd.getNextTaskId());
 				ps.setString(index++, crd.getRecordType());
-				ps.setLong(index++, crd.getWorkflowId());
+				ps.setLong(index, crd.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -170,7 +170,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 			ps.setLong(index++, crd.getFinID());
 			ps.setInt(index++, crd.getTemplateVersion());
-			ps.setString(index++, crd.getTemplateName());
+			ps.setString(index, crd.getTemplateName());
 		});
 
 		if (recordCount == 0) {

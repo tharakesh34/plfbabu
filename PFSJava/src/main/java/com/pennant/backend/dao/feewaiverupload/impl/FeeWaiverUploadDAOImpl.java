@@ -60,7 +60,7 @@ public class FeeWaiverUploadDAOImpl extends SequenceDao<FeeWaiverUpload> impleme
 			ps.setString(index++, fwu.getTaskId());
 			ps.setString(index++, fwu.getNextTaskId());
 			ps.setString(index++, fwu.getRecordType());
-			ps.setLong(index++, fwu.getWorkflowId());
+			ps.setLong(index, fwu.getWorkflowId());
 
 		});
 
@@ -103,7 +103,7 @@ public class FeeWaiverUploadDAOImpl extends SequenceDao<FeeWaiverUpload> impleme
 			ps.setString(index++, fwu.getRejectStage());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, fwu.getVersion() - 1);
+				ps.setInt(index, fwu.getVersion() - 1);
 			}
 		});
 

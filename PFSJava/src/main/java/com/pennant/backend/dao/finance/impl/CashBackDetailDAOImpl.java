@@ -49,7 +49,7 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 				ps.setBigDecimal(index++, cbd.getCess());
 				ps.setString(index++, cbd.getManfMerchId());
 				ps.setString(index++, cbd.getStoreName());
-				ps.setLong(index++, cbd.getLinkedTranId());
+				ps.setLong(index, cbd.getLinkedTranId());
 			}
 
 			@Override

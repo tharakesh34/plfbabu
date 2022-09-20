@@ -147,7 +147,7 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, collateralRef);
+			ps.setString(index, collateralRef);
 		}, (rs, rowNum) -> {
 			CollateralThirdParty ctp = new CollateralThirdParty();
 

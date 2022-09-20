@@ -167,7 +167,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, ch.getFileHeader());
 				ps.setString(index++, ch.getFileType());
 				ps.setLong(index++, ch.getTotalRecords());
-				ps.setDate(index++, JdbcUtil.getDate(ch.getFileDate()));
+				ps.setDate(index, JdbcUtil.getDate(ch.getFileDate()));
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -619,7 +619,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, collDetails.getReasonOthers());
 				ps.setString(index++, collDetails.getBatchRefNumber());
 				ps.setString(index++, collDetails.getReasonForDelay());
-				ps.setLong(index++, collDetails.getBatchId());
+				ps.setLong(index, collDetails.getBatchId());
 
 			});
 		} catch (Exception e) {
@@ -746,7 +746,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setLong(index++, colDtl.getPincode());
 				ps.setString(index++, colDtl.getCountry());
 				ps.setString(index++, colDtl.getBatchRefNumber());
-				ps.setLong(index++, colDtl.getBatchId());
+				ps.setLong(index, colDtl.getBatchId());
 
 			});
 		} catch (Exception e) {
@@ -861,7 +861,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, cma.getState());
 				ps.setLong(index++, cma.getPincode());
 				ps.setString(index++, cma.getCountry());
-				ps.setLong(index++, cma.getBatchId());
+				ps.setLong(index, cma.getBatchId());
 
 			});
 		} catch (Exception e) {
@@ -915,7 +915,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, cima.getLatitudeLongitude1());
 				ps.setString(index++, cima.getLatitudeLongitude2());
 				ps.setString(index++, cima.getLatitudeLongitude3());
-				ps.setString(index++, cima.getLatitudeLongitude4());
+				ps.setString(index, cima.getLatitudeLongitude4());
 
 			});
 		} catch (Exception e) {
@@ -961,7 +961,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ps.setString(index++, cia.getDesignClass());
 				ps.setString(index++, cia.getTradeMarkAppNumber());
 				ps.setDate(index++, JdbcUtil.getDate(cia.getTradeMarkAppDate()));
-				ps.setLong(index++, cia.getBatchId());
+				ps.setLong(index, cia.getBatchId());
 
 			});
 		} catch (Exception e) {

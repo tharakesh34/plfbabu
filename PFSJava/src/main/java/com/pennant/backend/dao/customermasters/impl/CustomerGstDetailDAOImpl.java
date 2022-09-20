@@ -45,7 +45,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			CustomerGST custGst = new CustomerGST();
 

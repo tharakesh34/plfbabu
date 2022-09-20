@@ -77,7 +77,7 @@ public class DealRecommendationMeritsDAOImpl extends SequenceDao<DealRecommendat
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, finReference);
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 		}, (rs, rowNum) -> {
 			DealRecommendationMerits drm = new DealRecommendationMerits();
 

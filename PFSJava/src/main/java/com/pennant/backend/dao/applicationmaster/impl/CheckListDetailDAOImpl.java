@@ -151,7 +151,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 				int index = 1;
 
 				ps.setLong(index++, checkListDetail.getCheckListId());
-				ps.setLong(index++, checkListDetail.getAnsSeqNo());
+				ps.setLong(index, checkListDetail.getAnsSeqNo());
 			});
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -203,7 +203,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 			ps.setString(index++, cld.getTaskId());
 			ps.setString(index++, cld.getNextTaskId());
 			ps.setString(index++, cld.getRecordType());
-			ps.setLong(index++, cld.getWorkflowId());
+			ps.setLong(index, cld.getWorkflowId());
 		});
 
 		return cld.getId();
@@ -250,7 +250,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 			ps.setLong(index++, cld.getAnsSeqNo());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, cld.getVersion() - 1);
+				ps.setInt(index, cld.getVersion() - 1);
 			}
 		});
 

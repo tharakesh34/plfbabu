@@ -492,7 +492,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		List<Mandate> mandates = jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, respBatchId);
+			ps.setLong(index, respBatchId);
 		}, (rs, rowNum) -> {
 			Mandate m = new Mandate();
 
@@ -640,7 +640,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 				ps.setString(index++, respmandate.getReason());
 				ps.setString(index++, respmandate.getStatus());
-				ps.setLong(index++, respmandate.getMandateID());
+				ps.setLong(index, respmandate.getMandateID());
 			});
 		} catch (Exception e) {
 			//
@@ -665,7 +665,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 					ps.setString(index++, "Y");
 				}
 
-				ps.setString(index++, respMandate.getReason());
+				ps.setString(index, respMandate.getReason());
 
 			});
 		} catch (Exception e) {
@@ -776,7 +776,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 			ps.setString(index++, respmandate.getReason());
 			ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
-			ps.setLong(index++, requestId);
+			ps.setLong(index, requestId);
 
 		});
 	}
@@ -792,7 +792,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			ps.setString(index++, respmandate.getStatus());
 			ps.setString(index++, respmandate.getReason());
 			ps.setLong(index++, id);
-			ps.setLong(index++, respmandate.getMandateID());
+			ps.setLong(index, respmandate.getMandateID());
 		});
 	}
 
@@ -816,7 +816,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setString(index++, remarks.toString());
-				ps.setLong(index++, respBatchId);
+				ps.setLong(index, respBatchId);
 			});
 		} catch (Exception e) {
 			//
@@ -872,7 +872,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 				ps.setLong(index++, mandateId);
 				ps.setString(index++, repayMethod);
-				ps.setLong(index++, finID);
+				ps.setLong(index, finID);
 
 			});
 		} catch (EmptyResultDataAccessException e) {
