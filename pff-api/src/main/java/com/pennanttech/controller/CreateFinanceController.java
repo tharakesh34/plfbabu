@@ -178,7 +178,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -636,53 +635,48 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	private void validateChequeDetails(FinanceDetail fd) {
-		FinScheduleData schdData = fd.getFinScheduleData();
-
-		ChequeHeader ch = fd.getChequeHeader();
-		List<ChequeDetail> cdList = ch.getChequeDetailList();
-
-		String[] valueParm = new String[2];
 		boolean date = true;
+		FinScheduleData schdData = fd.getFinScheduleData();
+		ChequeHeader ch = fd.getChequeHeader();
+		List<ChequeDetail> cheques = ch.getChequeDetailList();
 
-		for (ChequeDetail cd : cdList) {
-			if (!InstrumentType.isPDC(cd.getChequeType())) {
+		for (ChequeDetail cheque : cheques) {
+			if (!InstrumentType.isPDC(cheque.getChequeType())) {
 				continue;
 			}
 
-			List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+			List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 			for (FinanceScheduleDetail fsd : schedules) {
-				if (DateUtil.compare(fsd.getSchDate(), cd.getChequeDate()) == 0) {
-					date = true;
-					cd.seteMIRefNo(fsd.getInstNumber());
-					if (fsd.getRepayAmount().compareTo(cd.getAmount()) == 0) {
-						break;
-					}
 
-					String schDate = DateUtil.format(fsd.getSchDate(), DateFormat.FULL_DATE);
-
-					valueParm[0] = "Cheque Date " + schDate;
-					valueParm[1] = String.valueOf("Amount :" + fsd.getRepayAmount() + "INR");
-
-					schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
-
-					return;
-				} else {
+				if (DateUtil.compare(fsd.getSchDate(), cheque.getChequeDate()) != 0) {
 					date = false;
+					continue;
 				}
-			}
 
-			if (date) {
+				date = true;
+				cheque.seteMIRefNo(fsd.getInstNumber());
+
+				if (fsd.getRepayAmount().compareTo(cheque.getAmount()) == 0) {
+					break;
+				}
+
+				String[] valueParm = new String[2];
+				valueParm[0] = "Cheque Date " + new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
+				valueParm[1] = String.valueOf("Amount :" + fsd.getRepayAmount() + "INR");
+				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 				return;
 			}
 
+			if (date) {
+				continue;
+			}
+
+			String[] valueParm = new String[2];
 			valueParm[0] = "Cheque Date";
 			valueParm[1] = "ScheduleDates";
 			schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
-
-			return;
+			break;
 		}
-
-		return;
 	}
 
 	private WSReturnStatus prepareAgrrementDetails(AuditHeader auditHeader) {

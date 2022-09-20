@@ -1135,7 +1135,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		doRemoveValidation();
 
 		doSetGenValidation();
-		doWriteComponentsToBean(new ChequeHeader(), true);
+		doWriteComponentsToBean(chequeHeader, true);
 
 		if (StringUtils.trimToNull(this.bankBranchID.getValue()) == null) {
 			logger.debug(Literal.LEAVING);
@@ -1417,6 +1417,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			Combobox subComboBox = (Combobox) subListCell.get(Field.DUE_DATE.index()).getFirstChild();
 
 			String subStrChequeDate = subComboBox.getSelectedItem().getLabel();
+			if (Labels.getLabel(COMBO_SELECT).equals(subStrChequeDate)) {
+				continue;
+			}
 			Date subChequeDate = DateUtil.parseShortDate(subStrChequeDate);
 
 			if (chequeDate.compareTo(subChequeDate) == 0) {
@@ -2600,7 +2603,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			Listcell listcell = list.get(Field.DUE_DATE.index());
 			Combobox combobox = (Combobox) listcell.getFirstChild();
 
-			Date chqDate = DateUtil.parseShortDate(combobox.getSelectedItem().getLabel());
+			String comboItem = combobox.getSelectedItem().getLabel();
+
+			if (Labels.getLabel(COMBO_SELECT).equals(comboItem)) {
+				return false;
+			}
+
+			Date chqDate = DateUtil.parseShortDate(comboItem);
 			if (chequeDate.compareTo(chqDate) == 0) {
 				return true;
 			}

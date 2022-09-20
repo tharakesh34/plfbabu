@@ -891,11 +891,14 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		FinanceMain fm = schdData.getFinanceMain();
 		String repaymentMethod = fm.getFinRepayMethod();
 
-		if (mandate == null || (!(InstrumentType.isManual(repaymentMethod) || InstrumentType.isPDC(repaymentMethod))
+		if (mandate == null && (!(InstrumentType.isManual(repaymentMethod) || InstrumentType.isPDC(repaymentMethod))
 				&& fd.isStp())) {
 			return ErrorUtil.getError("90502", "Mandate");
 		}
 
+		if (mandate == null) {
+			return null;
+		}
 		if (InstrumentType.isManual(repaymentMethod)) {
 			return ErrorUtil.getError("90329", "Mandate", "finRepayMethod is " + repaymentMethod);
 		}
