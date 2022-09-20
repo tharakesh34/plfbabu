@@ -583,7 +583,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param event
 	 */
-	@SuppressWarnings("unchecked")
 	public void onCreate$window_FinanceEnquiryDialog(ForwardEvent event) {
 		logger.debug("Entering");
 

@@ -372,7 +372,7 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setString(index++, productCode);
+				ps.setString(index, productCode);
 			}
 		}, new RowMapper<VASPremiumCalcDetails>() {
 			@Override

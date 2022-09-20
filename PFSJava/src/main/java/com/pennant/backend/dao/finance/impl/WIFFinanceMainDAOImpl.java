@@ -191,7 +191,7 @@ public class WIFFinanceMainDAOImpl extends BasicDao<FinanceMain> implements WIFF
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, fm.getFinID());
+				ps.setLong(index, fm.getFinID());
 			});
 
 			if (recordCount <= 0) {
@@ -301,7 +301,7 @@ public class WIFFinanceMainDAOImpl extends BasicDao<FinanceMain> implements WIFF
 			ps.setString(index++, fm.getTaskId());
 			ps.setString(index++, fm.getNextTaskId());
 			ps.setString(index++, fm.getRecordType());
-			ps.setLong(index++, fm.getWorkflowId());
+			ps.setLong(index, fm.getWorkflowId());
 		});
 
 		return fm.getFinReference();
@@ -406,7 +406,7 @@ public class WIFFinanceMainDAOImpl extends BasicDao<FinanceMain> implements WIFF
 			ps.setLong(index++, fm.getWorkflowId());
 			ps.setBigDecimal(index++, fm.getMinDownPayPerc());
 
-			ps.setLong(index++, fm.getFinID());
+			ps.setLong(index, fm.getFinID());
 		});
 
 		if (recordCount <= 0) {

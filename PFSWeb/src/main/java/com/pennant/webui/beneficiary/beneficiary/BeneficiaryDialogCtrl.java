@@ -496,7 +496,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	 * 
 	 * @param beneficiary The entity that need to be render.
 	 */
-	@SuppressWarnings("rawtypes")
 	public void doShowDialog(Beneficiary beneficiary) {
 		logger.debug("Entering");
 

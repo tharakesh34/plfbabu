@@ -73,8 +73,4 @@ public abstract class WindowBaseCtrl extends Window implements AfterCompose {
 			}
 		}
 	}
-
-	public int hashCode() {
-		return super.hashCode();
-	}
 }

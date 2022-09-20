@@ -73,7 +73,7 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 				ps.setString(index++, scheduleHeader.getFinEvent());
 				ps.setString(index++, scheduleHeader.getFinReference());
 				ps.setInt(index++, scheduleHeader.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(scheduleHeader.getLastMntBy()));
+				ps.setLong(index++, JdbcUtil.getLong(scheduleHeader.getLastMntBy()));
 				ps.setTimestamp(index++, scheduleHeader.getLastMntOn());
 				ps.setString(index++, scheduleHeader.getRecordStatus());
 				ps.setString(index++, scheduleHeader.getRoleCode());
@@ -81,7 +81,7 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 				ps.setString(index++, scheduleHeader.getTaskId());
 				ps.setString(index++, scheduleHeader.getNextTaskId());
 				ps.setString(index++, scheduleHeader.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(scheduleHeader.getWorkflowId()));
+				ps.setLong(index, JdbcUtil.getLong(scheduleHeader.getWorkflowId()));
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -259,8 +259,6 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 		ps.setDate(index++, JdbcUtil.getDate(varODSchdDtl.getSchDate()));
 		ps.setBigDecimal(index++, varODSchdDtl.getDroplineAmount());
 		ps.setString(index++, varODSchdDtl.getStatus());
-		ps.setString(index++, varODSchdDtl.getReason());
-
+		ps.setString(index, varODSchdDtl.getReason());
 	}
-
 }
