@@ -125,7 +125,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 				ps.setString(index++, assetClassCode.getTaskId());
 				ps.setString(index++, assetClassCode.getNextTaskId());
 				ps.setString(index++, assetClassCode.getRecordType());
-				ps.setLong(index++, assetClassCode.getWorkflowId());
+				ps.setLong(index, assetClassCode.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -164,7 +164,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 			ps.setString(index++, assetClassCode.getRecordType());
 			ps.setLong(index++, assetClassCode.getWorkflowId());
 
-			ps.setLong(index++, assetClassCode.getId());
+			ps.setLong(index, assetClassCode.getId());
 		});
 	}
 
@@ -179,7 +179,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, assetClassCode.getId());
+			ps.setLong(index, assetClassCode.getId());
 
 		});
 

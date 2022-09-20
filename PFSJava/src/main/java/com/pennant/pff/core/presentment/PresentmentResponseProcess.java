@@ -484,7 +484,6 @@ public class PresentmentResponseProcess implements Runnable {
 		List<FinODDetails> overDueList = finEODEvent.getFinODDetails();
 
 		long finID = pd.getFinID();
-		String finReference = pd.getFinReference();
 
 		try {
 			fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overDueList, null, false);
@@ -512,8 +511,6 @@ public class PresentmentResponseProcess implements Runnable {
 		logger.info(Literal.ENTERING);
 
 		long receiptID = rh.getReceiptID();
-		Long finID = rh.getFinID();
-		String reference = rh.getReference();
 		String excessAdjustTo = rh.getExcessAdjustTo();
 
 		List<FinReceiptDetail> receiptDetails = rh.getReceiptDetails();

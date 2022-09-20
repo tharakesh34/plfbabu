@@ -66,7 +66,6 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
-import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -113,9 +112,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.external.util.StaticListUtil;
-
-import freemarker.template.Configuration;
 
 /**
  * This is the controller class for the /customer.zul file.
@@ -315,7 +311,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private List<CustomerPhoneNumber> customerPhoneNumberDetailList = new ArrayList<CustomerPhoneNumber>();
 	protected Listheader listheader_CustPhone_RecordStatus;
 	protected Listheader listheader_CustPhone_RecordType;
-	private List<CustomerPhoneNumber> phoneNumberList = new ArrayList<CustomerPhoneNumber>();
 
 	protected Listbox listBoxCustomerEmails;
 	private List<CustomerEMail> customerEmailDetailList = new ArrayList<CustomerEMail>();
@@ -381,13 +376,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private List<CustomerBankInfo> CustomerBankInfoList;
 	private Object financeMainDialogCtrl;
 	private String module = "";
-	private static Map<String, String> cibilIdTypes = new HashMap<>();
-	private static Map<String, String> cibilAddrCategory = StaticListUtil.getCibilAddrCategory();
-	private static Map<String, String> cibilResidenceCode = StaticListUtil.getCibilResidenceCode();
-	private static Map<String, String> cibilPhoneTypes = new HashMap<>();
-	private static Map<String, String> cibilOccupationTypes = StaticListUtil.getCibilOccupationCode();
-	private static Map<String, String> cibilloanTypes = new HashMap<>();
-	private Map<String, Configuration> TEMPLATES = new HashMap<String, Configuration>();
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	protected ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
 	protected NotesDAO notesDAO;
@@ -2847,16 +2835,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-	}
-
-	private Notes getNotes(String finReference, String moduleName) {
-		logger.debug("Entering ");
-		Notes notes = new Notes();
-		notes.setModuleName(moduleName);
-		notes.setReference(finReference);
-		notes.setVersion(0);
-		logger.debug("Leaving ");
-		return notes;
 	}
 
 	public void onClick$imgbasicDetails(Event event) {

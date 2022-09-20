@@ -1152,7 +1152,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 			ps.setLong(index++, pd.getReceiptID());
 
-			ps.setLong(index++, pd.getId());
+			ps.setLong(index, pd.getId());
 		});
 	}
 
@@ -1437,7 +1437,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			for (Long id : headerIdList) {
 				ps.setLong(index++, id);
 			}
-			ps.setInt(index++, RepayConstants.PEXC_EMIINCLUDE);
+			ps.setInt(index, RepayConstants.PEXC_EMIINCLUDE);
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 			pd.setId(rs.getLong("Id"));
@@ -1535,7 +1535,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setString(index++, status);
 			ps.setString(index++, null);
 			ps.setLong(index++, id);
-			ps.setString(index++, utrNumber);
+			ps.setString(index, utrNumber);
 		});
 	}
 
@@ -1550,8 +1550,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setString(index++, status);
 			ps.setString(index++, null);
 			ps.setObject(index++, linkedTranId);
-			ps.setLong(index, id);
-			ps.setString(index++, utrNumber);
+			ps.setLong(index++, id);
+			ps.setString(index, utrNumber);
 		});
 	}
 
@@ -1570,7 +1570,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setObject(index++, pd.getBounceID());
 			ps.setObject(index++, pd.getManualAdviseId());
 			ps.setString(index++, pd.getUtrNumber());
-			ps.setLong(index++, pd.getId());
+			ps.setLong(index, pd.getId());
 		});
 	}
 
@@ -1674,7 +1674,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setString(index++, status);
 			ps.setString(index++, remarks);
 			ps.setTimestamp(index++, curTimeStamp);
-			ps.setLong(index++, headerId);
+			ps.setLong(index, headerId);
 
 		});
 	}

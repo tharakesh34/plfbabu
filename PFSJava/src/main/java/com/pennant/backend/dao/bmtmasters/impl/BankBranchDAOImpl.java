@@ -174,7 +174,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			ps.setString(index++, bankBranch.getTaskId());
 			ps.setString(index++, bankBranch.getNextTaskId());
 			ps.setString(index++, bankBranch.getRecordType());
-			ps.setLong(index++, bankBranch.getWorkflowId());
+			ps.setLong(index, bankBranch.getWorkflowId());
 
 		});
 
@@ -232,7 +232,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			ps.setLong(index++, bankBranch.getBankBranchID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, bankBranch.getVersion() - 1);
+				ps.setInt(index, bankBranch.getVersion() - 1);
 			}
 		});
 
@@ -499,7 +499,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		sql.append(" Where Ifsc = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-		
+
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				return rs.getInt("Count");

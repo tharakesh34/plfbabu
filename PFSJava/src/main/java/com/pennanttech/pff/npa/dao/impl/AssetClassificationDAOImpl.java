@@ -394,7 +394,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setString(index++, finReference);
 			}
 
-			ps.setInt(index++, 0);
+			ps.setInt(index, 0);
 
 		}, (rs, rowNum) -> {
 			NpaProvisionStage nps = new NpaProvisionStage();
@@ -442,7 +442,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setBoolean(index++, true);
 
 				ps.setTimestamp(index++, ac.getCreatedOn());
-				ps.setTimestamp(index++, ac.getLastMntOn());
+				ps.setTimestamp(index, ac.getLastMntOn());
 			});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -471,7 +471,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setBoolean(index++, ac.isNpaStage());
 				ps.setLong(index++, ac.getNpaClassID());
 
-				ps.setLong(index++, ac.getId());
+				ps.setLong(index, ac.getId());
 			});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -628,7 +628,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			ps.setObject(index++, ac.getLinkedTranID());
 			ps.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
 
-			ps.setLong(index++, ac.getId());
+			ps.setLong(index, ac.getId());
 
 		});
 	}

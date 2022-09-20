@@ -139,7 +139,7 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 				ps.setString(index++, ascc.getTaskId());
 				ps.setString(index++, ascc.getNextTaskId());
 				ps.setString(index++, ascc.getRecordType());
-				ps.setLong(index++, ascc.getWorkflowId());
+				ps.setLong(index, ascc.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -179,7 +179,7 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 			ps.setString(index++, ascc.getRecordType());
 			ps.setLong(index++, ascc.getWorkflowId());
 
-			ps.setLong(index++, ascc.getId());
+			ps.setLong(index, ascc.getId());
 		});
 
 	}

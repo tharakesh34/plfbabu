@@ -129,7 +129,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				ps.setString(index++, acsh.getTaskId());
 				ps.setString(index++, acsh.getNextTaskId());
 				ps.setString(index++, acsh.getRecordType());
-				ps.setLong(index++, acsh.getWorkflowId());
+				ps.setLong(index, acsh.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -167,9 +167,8 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 			ps.setString(index++, asch.getRecordType());
 			ps.setLong(index++, asch.getWorkflowId());
 
-			ps.setLong(index++, asch.getId());
+			ps.setLong(index, asch.getId());
 		});
-
 	}
 
 	@Override
@@ -183,7 +182,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, AssetClassSetupHeader.getId());
+			ps.setLong(index, AssetClassSetupHeader.getId());
 
 		});
 	}
@@ -270,7 +269,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				ps.setString(index++, acsd.getTaskId());
 				ps.setString(index++, acsd.getNextTaskId());
 				ps.setString(index++, acsd.getRecordType());
-				ps.setLong(index++, acsd.getWorkflowId());
+				ps.setLong(index, acsd.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
@@ -320,7 +319,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 			ps.setString(index++, acsd.getRecordType());
 			ps.setLong(index++, acsd.getWorkflowId());
 
-			ps.setLong(index++, acsd.getId());
+			ps.setLong(index, acsd.getId());
 		});
 	}
 

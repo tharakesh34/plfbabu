@@ -69,7 +69,7 @@ public class UploadTaxPercentDAOImpl extends BasicDao<UploadTaxPercent> implemen
 				ps.setString(index++, tax.getFeeTypeCode());
 				ps.setBigDecimal(index++, tax.getTaxPercent());
 				ps.setString(index++, tax.getStatus());
-				ps.setString(index++, tax.getReason());
+				ps.setString(index, tax.getReason());
 
 			}
 

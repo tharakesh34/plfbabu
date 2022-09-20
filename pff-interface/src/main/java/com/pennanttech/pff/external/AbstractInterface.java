@@ -68,7 +68,7 @@ public class AbstractInterface {
 			ps.setLong(index++, status.getSuccessRecords());
 			ps.setLong(index++, status.getFailedRecords());
 			ps.setString(index++, status.getRemarks());
-			ps.setLong(index++, status.getId());
+			ps.setLong(index, status.getId());
 		});
 	}
 
