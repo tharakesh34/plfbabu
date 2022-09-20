@@ -605,10 +605,8 @@ public class TdsReceivablesTxnDialogCtrl extends GFCBaseCtrl<TdsReceivablesTxn> 
 
 				if (StringUtils.equals("R", tdsReceivablesTxn.getModule())) {
 
-					Listitem item = null;
-					Listcell lc;// 1
-					item = new Listitem();
-					lc = new Listcell();
+					Listitem item = new Listitem();
+					Listcell lc;
 
 					// FinReference
 					lc = new Listcell(tdsReceivablesTxn.getFinReference());// 2
@@ -722,10 +720,8 @@ public class TdsReceivablesTxnDialogCtrl extends GFCBaseCtrl<TdsReceivablesTxn> 
 		try {
 			BigDecimal balanceAmount = BigDecimal.ZERO;
 
-			Listitem item = null;
-			Listcell lc;// 1
-			item = new Listitem();
-			lc = new Listcell();
+			Listitem item = new Listitem();
+			Listcell lc;
 
 			// FinReference
 			lc = new Listcell(tdsReceivablesPost.getFinReference());// 2

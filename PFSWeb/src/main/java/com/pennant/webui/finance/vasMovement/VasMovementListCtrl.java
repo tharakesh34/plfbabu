@@ -182,7 +182,7 @@ public class VasMovementListCtrl extends GFCBaseListCtrl<VasMovement> {
 
 		// Get the selected entity.
 		long finID = (Long) selectedItem.getAttribute("finID");
-		String finReference = (String) selectedItem.getAttribute("id");
+
 		VasMovement vasMovement = vasMovementService.getVasMovementById(finID);
 
 		if (vasMovement == null) {

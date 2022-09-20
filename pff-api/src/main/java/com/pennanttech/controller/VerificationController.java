@@ -686,7 +686,7 @@ public class VerificationController {
 	 */
 	public WSReturnStatus initiateRCU(FinanceDetail financeDetail, VerificationType verificationType) {
 		logger.debug(Literal.ENTERING);
-		Verification response = new Verification();
+
 		try {
 			Verification verification = financeDetail.getRcuVerification();
 			// set RCU documents
@@ -1101,7 +1101,6 @@ public class VerificationController {
 	public WSReturnStatus initiateLV(FinanceDetail financeDetail, VerificationType lv) {
 		logger.debug(Literal.ENTERING);
 
-		Verification response = new Verification();
 		try {
 			// set LVdocuments
 			setLVDocuments(financeDetail);
