@@ -70,7 +70,7 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 			ps.setDate(index++, JdbcUtil.getDate(dr.getRequestDate()));
 			ps.setString(index++, dr.getResponseRef());
 
-			ps.setLong(index++, dr.getDealerResponseId());
+			ps.setLong(index, dr.getDealerResponseId());
 		});
 	}
 
@@ -118,7 +118,7 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 			ps.setTimestamp(index++, dr.getRequestDate());
 			ps.setTimestamp(index++, dr.getResponseDate());
 			ps.setString(index++, dr.getResponseRef());
-			ps.setBoolean(index++, dr.isProcessed());
+			ps.setBoolean(index, dr.isProcessed());
 		});
 
 		return dr.getId();

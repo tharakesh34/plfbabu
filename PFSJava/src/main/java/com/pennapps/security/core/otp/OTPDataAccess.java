@@ -114,7 +114,7 @@ public class OTPDataAccess extends BasicDao<OTPMessage> {
 			int index = 1;
 
 			ps.setTimestamp(index++, new Timestamp(sentOn.getTime()));
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 
 		});
 	}
@@ -129,7 +129,7 @@ public class OTPDataAccess extends BasicDao<OTPMessage> {
 
 			ps.setInt(index++, status);
 
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 
 		});
 	}
@@ -146,7 +146,7 @@ public class OTPDataAccess extends BasicDao<OTPMessage> {
 			ps.setTimestamp(index++, new Timestamp(message.getReceivedOn().getTime()));
 
 			ps.setLong(index++, message.getId());
-			ps.setInt(index++, OTPStatus.SENT.getKey());
+			ps.setInt(index, OTPStatus.SENT.getKey());
 
 		}) == 1;
 	}

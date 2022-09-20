@@ -106,7 +106,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
 			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_SUBVENTIONAMOUNT);
 			ps.setInt(index++, 0);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			ProjectedAmortization pamz = new ProjectedAmortization();
 
@@ -197,7 +197,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 				ps.setBigDecimal(index++, amz.getUnAmortizedAmount());
 				ps.setBigDecimal(index++, amz.getCurMonthAmz());
 				ps.setBigDecimal(index++, amz.getPrvMonthAmz());
-				ps.setBoolean(index++, amz.isActive());
+				ps.setBoolean(index, amz.isActive());
 			}
 
 			@Override
@@ -234,7 +234,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 				ps.setLong(index++, amz.getFinID());
 				ps.setLong(index++, amz.getReferenceID());
-				ps.setString(index++, amz.getIncomeType());
+				ps.setString(index, amz.getIncomeType());
 
 			}
 
@@ -275,7 +275,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 				ps.setLong(index++, amz.getFinID());
 				ps.setLong(index++, amz.getReferenceID());
-				ps.setString(index++, amz.getIncomeType());
+				ps.setString(index, amz.getIncomeType());
 			}
 
 			@Override
@@ -418,7 +418,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 					ps.setBigDecimal(index++, pa.getPartialPaidAmt());
 					ps.setBigDecimal(index++, pa.getPartialAMZPerc());
 					ps.setBoolean(index++, pa.isMonthEnd());
-					ps.setBigDecimal(index++, pa.getAvgPOS());
+					ps.setBigDecimal(index, pa.getAvgPOS());
 				}
 
 				@Override
@@ -480,7 +480,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 				ps.setDate(index++, JdbcUtil.getDate(pamz.getMonthEndDate()));
 				ps.setBigDecimal(index++, pamz.getAmortizedAmount());
 				ps.setBigDecimal(index++, pamz.getCumulativeAmount());
-				ps.setBigDecimal(index++, pamz.getUnAmortizedAmount());
+				ps.setBigDecimal(index, pamz.getUnAmortizedAmount());
 			}
 
 			@Override
@@ -524,7 +524,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			ps.setLong(index++, pamz.getStatus());
 			ps.setTimestamp(index++, pamz.getStartTime());
 			ps.setTimestamp(index++, pamz.getEndTime());
-			ps.setLong(index++, pamz.getLastMntBy());
+			ps.setLong(index, pamz.getLastMntBy());
 
 		});
 
@@ -590,7 +590,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			ps.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
 			ps.setLong(index++, status);
 
-			ps.setLong(index++, amzId);
+			ps.setLong(index, amzId);
 		});
 	}
 
@@ -657,7 +657,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			ps.setLong(index++, pa.getStatus());
 			ps.setTimestamp(index++, pa.getStartTime());
 			ps.setTimestamp(index++, pa.getEndTime());
-			ps.setLong(index++, pa.getLastMntBy());
+			ps.setLong(index, pa.getLastMntBy());
 		});
 
 		return pa.getAmzLogId();
@@ -674,7 +674,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 			ps.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
 			ps.setLong(index++, status);
-			ps.setLong(index++, amzId);
+			ps.setLong(index, amzId);
 		});
 	}
 
@@ -695,7 +695,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 				ps.setLong(index++, pa.getFinID());
 				ps.setDate(index++, JdbcUtil.getDate(pa.getAccruedOn()));
-				ps.setBoolean(index++, pa.isMonthEnd());
+				ps.setBoolean(index, pa.isMonthEnd());
 			}
 
 			@Override
@@ -760,7 +760,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			ps.setInt(index++, 0);
 			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getMonthStart(monthEndDate)));
 			ps.setDate(index++, JdbcUtil.getDate(monthEndDate));
-			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_FEE);
+			ps.setString(index, AmortizationConstants.AMZ_INCOMETYPE_FEE);
 		});
 	}
 
@@ -790,7 +790,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			ps.setDate(index++, JdbcUtil.getDate(appDate));
 			ps.setDate(index++, JdbcUtil.getDate(monthEndDate));
 			ps.setBoolean(index++, true);
-			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
+			ps.setString(index, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
 		});
 
 	}
@@ -836,7 +836,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			int index = 1;
 
 			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_FEE);
-			ps.setDate(index++, JdbcUtil.getDate(appDate));
+			ps.setDate(index, JdbcUtil.getDate(appDate));
 		});
 	}
 
@@ -938,7 +938,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			ps.setInt(index++, EodConstants.PROGRESS_WAIT);
 			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 			ps.setBoolean(index++, isEOMProcess);
-			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getMonthStart(amzMonth)));
+			ps.setDate(index, JdbcUtil.getDate(DateUtil.getMonthStart(amzMonth)));
 		});
 	}
 
@@ -962,7 +962,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 			ps.setInt(index++, progress);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -979,7 +979,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			ps.setInt(index++, amz.getThreadId());
 			ps.setInt(index++, amz.getProgress());
 
-			ps.setLong(index++, amz.getFinID());
+			ps.setLong(index, amz.getFinID());
 		});
 	}
 
@@ -996,7 +996,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 					ps.setLong(index++, noOfRows);
 					ps.setInt(index++, threadId);
-					ps.setInt(index++, 0);
+					ps.setInt(index, 0);
 				});
 			} else if (App.DATABASE == Database.ORACLE) {
 				logger.trace(Literal.SQL + UPDATE_ORCL_RC);
@@ -1006,7 +1006,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 					ps.setInt(index++, threadId);
 					ps.setInt(index++, 0);
-					ps.setLong(index++, noOfRows);
+					ps.setLong(index, noOfRows);
 				});
 			} else {
 				return defaultUpdate(threadId);
@@ -1020,7 +1020,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			int index = 1;
 
 			ps.setString(index++, String.valueOf(threadId));
-			ps.setString(index++, String.valueOf(0));
+			ps.setString(index, String.valueOf(0));
 		});
 	}
 
@@ -1050,7 +1050,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			ps.setDate(index++, JdbcUtil.getDate(appDate));
 			ps.setDate(index++, JdbcUtil.getDate(monthEndDate));
 			ps.setBoolean(index++, true);
-			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_SUBVENTIONAMOUNT);
+			ps.setString(index, AmortizationConstants.AMZ_INCOMETYPE_SUBVENTIONAMOUNT);
 		});
 	}
 }

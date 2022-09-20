@@ -74,7 +74,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 					ps.setObject(index++, paymentID);
 				}
 
-				ps.setString(index++, "APPROVED");
+				ps.setString(index, "APPROVED");
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -259,7 +259,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			int index = 1;
 
 			ps.setLong(index++, headerId);
-			ps.setString(index++, "APPROVED");
+			ps.setString(index, "APPROVED");
 
 		}, (rs, rowNum) -> {
 			FinAdvancePayments fa = new FinAdvancePayments();
@@ -361,7 +361,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				ps.setString(index++, req.getPartnerBankAccount());
 				ps.setString(index++, req.getChequeNumber());
 				ps.setDate(index++, JdbcUtil.getDate(req.getDownloadedOn()));
-				ps.setString(index++, req.getPrintLocBranchDesc());
+				ps.setString(index, req.getPrintLocBranchDesc());
 
 				return ps;
 			}, keyHolder);
@@ -471,7 +471,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			ps.setLong(index++, request.getUserId());
 			ps.setInt(index++, request.getProcessFlag());
 			ps.setDate(index++, JdbcUtil.getDate(request.getProcessedOn()));
-			ps.setString(index++, request.getFailureReason());
+			ps.setString(index, request.getFailureReason());
 		});
 	}
 
@@ -590,7 +590,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 			ps.setString(index++, detail.getUtrNo());
 
-			ps.setLong(index++, detail.getDownload_Referid());
+			ps.setLong(index, detail.getDownload_Referid());
 		});
 	}
 
@@ -647,7 +647,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			int index = 1;
 
 			ps.setString(index++, "APPROVED");
-			ps.setDate(index++, JdbcUtil.getDate(llDate));
+			ps.setDate(index, JdbcUtil.getDate(llDate));
 		}, (rs, rowNum) -> {
 			FinAdvancePayments fap = new FinAdvancePayments();
 			fap.setPaymentId(rs.getLong("PaymentId"));
@@ -749,7 +749,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			}
 
 			if (req.getToDate() != null) {
-				ps.setDate(index++, JdbcUtil.getDate(req.getToDate()));
+				ps.setDate(index, JdbcUtil.getDate(req.getToDate()));
 			}
 
 		}, (rs, rowNum) -> {

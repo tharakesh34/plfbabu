@@ -157,7 +157,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 				ps.setString(index++, ch.getTaskId());
 				ps.setString(index++, ch.getNextTaskId());
 				ps.setString(index++, ch.getRecordType());
-				ps.setLong(index++, ch.getWorkflowId());
+				ps.setLong(index, ch.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -195,7 +195,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 			ps.setString(index++, ch.getRecordType());
 			ps.setLong(index++, ch.getWorkflowId());
 
-			ps.setLong(index++, ch.getHeaderID());
+			ps.setLong(index, ch.getHeaderID());
 		});
 
 		if (recordCount == 0) {

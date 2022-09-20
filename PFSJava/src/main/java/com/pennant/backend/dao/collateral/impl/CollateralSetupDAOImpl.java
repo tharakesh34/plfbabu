@@ -111,7 +111,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			ps.setBoolean(index++, cs.isModified());
 			ps.setDate(index++, JdbcUtil.getDate(cs.getRegistrationDate()));
 			ps.setDate(index++, JdbcUtil.getDate(cs.getModificationDate()));
-			ps.setDate(index++, JdbcUtil.getDate(cs.getSatisfactionDate()));
+			ps.setDate(index, JdbcUtil.getDate(cs.getSatisfactionDate()));
 
 		});
 
@@ -162,7 +162,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			ps.setString(index++, cs.getRecordType());
 			ps.setLong(index++, cs.getWorkflowId());
 
-			ps.setString(index++, cs.getCollateralRef());
+			ps.setString(index, cs.getCollateralRef());
 		});
 
 		if (recordCount <= 0) {
@@ -242,7 +242,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, depositorId);
+			ps.setLong(index, depositorId);
 		}, rowMapper);
 
 	}
@@ -582,7 +582,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 				int index = 1;
 
 				ps.setString(index++, collateralRef);
-				ps.setDate(index++, JdbcUtil.getDate(revDate));
+				ps.setDate(index, JdbcUtil.getDate(revDate));
 
 			});
 		} catch (DuplicateKeyException e) {

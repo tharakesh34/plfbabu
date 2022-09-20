@@ -153,7 +153,7 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, collateralRef);
+			ps.setString(index, collateralRef);
 		}, (rs, rowNum) -> {
 			CoOwnerDetail cc = new CoOwnerDetail();
 

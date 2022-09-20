@@ -113,7 +113,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 				ps.setLong(index++, fieldDetail.getModuleId());
 				ps.setString(index++, fieldDetail.getFieldName());
-				ps.setInt(index++, fieldDetail.getExtendedType());
+				ps.setInt(index, fieldDetail.getExtendedType());
 			});
 
 			if (recordCount <= 0) {
@@ -190,7 +190,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 				ps.setString(index++, fieldDetail.getTaskId());
 				ps.setString(index++, fieldDetail.getNextTaskId());
 				ps.setString(index++, fieldDetail.getRecordType());
-				ps.setLong(index++, fieldDetail.getWorkflowId());
+				ps.setLong(index, fieldDetail.getWorkflowId());
 			});
 		} catch (Exception e) {
 			//
@@ -260,7 +260,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			ps.setInt(index++, fieldDetail.getExtendedType());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, fieldDetail.getVersion() - 1);
+				ps.setInt(index, fieldDetail.getVersion() - 1);
 			}
 
 		});
@@ -286,7 +286,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 
-				ps.setLong(index++, id);
+				ps.setLong(index, id);
 			}
 		}, rowMapper);
 	}
@@ -881,7 +881,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 				int index = 1;
 
 				ps.setLong(index++, efd.getModuleId());
-				ps.setString(index++, efd.getFieldName());
+				ps.setString(index, efd.getFieldName());
 			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
@@ -902,7 +902,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			int index = 1;
 
 			ps.setLong(index++, id);
-			ps.setLong(index++, extendedType);
+			ps.setLong(index, extendedType);
 
 		}, rowMapper);
 		return sortExtendFields(efd);

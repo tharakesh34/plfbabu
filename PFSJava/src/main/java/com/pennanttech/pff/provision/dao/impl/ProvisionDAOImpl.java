@@ -392,11 +392,11 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setObject(index++, p.getLinkedTranId());
 			ps.setObject(index++, p.getChgLinkedTranId());
 			ps.setInt(index++, p.getVersion());
-			ps.setObject(index++, JdbcUtil.setLong(p.getCreatedBy()));
+			ps.setObject(index++, JdbcUtil.getLong(p.getCreatedBy()));
 			ps.setTimestamp(index++, p.getCreatedOn());
-			ps.setObject(index++, JdbcUtil.setLong(p.getApprovedBy()));
+			ps.setObject(index++, JdbcUtil.getLong(p.getApprovedBy()));
 			ps.setTimestamp(index++, p.getApprovedOn());
-			ps.setLong(index++, JdbcUtil.setLong(p.getLastMntBy()));
+			ps.setLong(index++, JdbcUtil.getLong(p.getLastMntBy()));
 			ps.setTimestamp(index++, p.getLastMntOn());
 			ps.setString(index++, p.getRecordStatus());
 			ps.setString(index++, p.getRoleCode());
@@ -404,7 +404,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, p.getTaskId());
 			ps.setString(index++, p.getNextTaskId());
 			ps.setString(index++, p.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(p.getWorkflowId()));
+			ps.setLong(index, JdbcUtil.getLong(p.getWorkflowId()));
 		});
 	}
 
@@ -483,11 +483,11 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setObject(index++, p.getLinkedTranId());
 			ps.setObject(index++, p.getChgLinkedTranId());
 			ps.setInt(index++, p.getVersion());
-			ps.setObject(index++, JdbcUtil.setLong(p.getCreatedBy()));
+			ps.setObject(index++, JdbcUtil.getLong(p.getCreatedBy()));
 			ps.setTimestamp(index++, p.getCreatedOn());
-			ps.setObject(index++, JdbcUtil.setLong(p.getApprovedBy()));
+			ps.setObject(index++, JdbcUtil.getLong(p.getApprovedBy()));
 			ps.setTimestamp(index++, p.getApprovedOn());
-			ps.setLong(index++, JdbcUtil.setLong(p.getLastMntBy()));
+			ps.setLong(index++, JdbcUtil.getLong(p.getLastMntBy()));
 			ps.setTimestamp(index++, p.getLastMntOn());
 			ps.setString(index++, p.getRecordStatus());
 			ps.setString(index++, p.getRoleCode());
@@ -495,9 +495,9 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, p.getTaskId());
 			ps.setString(index++, p.getNextTaskId());
 			ps.setString(index++, p.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(p.getWorkflowId()));
+			ps.setLong(index++, JdbcUtil.getLong(p.getWorkflowId()));
 
-			ps.setLong(index++, p.getId());
+			ps.setLong(index, p.getId());
 		});
 	}
 

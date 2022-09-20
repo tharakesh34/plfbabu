@@ -172,7 +172,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			DirectorDetail cd = new DirectorDetail();
 			cd.setDirectorId(rs.getLong("DirectorId"));

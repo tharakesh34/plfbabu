@@ -218,7 +218,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				ps.setString(i++, pd.getTaskId());
 				ps.setString(i++, pd.getNextTaskId());
 				ps.setString(i++, pd.getRecordType());
-				ps.setLong(i++, pd.getWorkflowId());
+				ps.setLong(i, pd.getWorkflowId());
 
 			}
 
@@ -795,7 +795,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setLong(index++, ph.getWorkflowId());
 			ps.setLong(index++, ph.getdBStatusId());
 			ps.setString(index++, ph.getBankCode());
-			ps.setString(index++, ph.getEntityCode());
+			ps.setString(index, ph.getEntityCode());
 		});
 
 		return ph.getId();
@@ -1051,7 +1051,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			if (includeData) {
 				ps.setInt(index++, RepayConstants.PEXC_EMIINCLUDE);
 				ps.setInt(index++, RepayConstants.PEXC_EMIINADVANCE);
-				ps.setString(index++, RepayConstants.PEXC_APPROV);
+				ps.setString(index, RepayConstants.PEXC_APPROV);
 			}
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
@@ -1117,7 +1117,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			int index = 1;
 			ps.setLong(index++, custId);
 			ps.setDate(index++, JdbcUtil.getDate(schData));
-			ps.setString(index++, RepayConstants.PEXC_APPROV);
+			ps.setString(index, RepayConstants.PEXC_APPROV);
 		}, (rs, rowNum) -> {
 			PresentmentDetail pd = new PresentmentDetail();
 
@@ -1743,7 +1743,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setInt(index++, thread);
 			ps.setLong(index++, from);
 			ps.setLong(index++, to);
-			ps.setLong(index++, headerId);
+			ps.setLong(index, headerId);
 
 		});
 	}
@@ -1777,7 +1777,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 					ps.setLong(index++, headerId);
 					ps.setLong(index++, detailId);
 					ps.setString(index++, errorCode);
-					ps.setString(index++, errorDesc);
+					ps.setString(index, errorDesc);
 
 					return ps;
 				}
@@ -1809,7 +1809,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 					ps.setLong(index++, id);
 					ps.setString(index++, presentmentRef);
 					ps.setString(index++, errorCode);
-					ps.setString(index++, errorDesc);
+					ps.setString(index, errorDesc);
 
 					return ps;
 				}
@@ -1830,7 +1830,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				ps.setString(index++, errorCode);
 				ps.setString(index++, errorDesc);
 				ps.setLong(index++, id);
-				ps.setString(index++, presentmentRef);
+				ps.setString(index, presentmentRef);
 
 			});
 		}
@@ -1955,7 +1955,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, headerId);
+			ps.setLong(index, headerId);
 		}, (rs, rowNum) -> {
 			return rs.getString("Presentment_Reference");
 		});
@@ -2003,7 +2003,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setDate(index++, JdbcUtil.getDate(presentment.getSetilmentDate()));
 			ps.setString(index++, presentment.getStatus());
 			ps.setString(index++, presentment.getReturnReason());
-			ps.setString(index++, presentment.getUmrnNo());
+			ps.setString(index, presentment.getUmrnNo());
 		});
 
 	}
@@ -2160,7 +2160,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setBigDecimal(index++, pd.getLppAmount());
 			ps.setBigDecimal(index++, pd.getBounceAmount());
 
-			ps.setLong(index++, pd.getId());
+			ps.setLong(index, pd.getId());
 		});
 	}
 

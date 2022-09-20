@@ -120,7 +120,7 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, pm.getFinID());
+				ps.setLong(index, pm.getFinID());
 			});
 
 			if (recordCount <= 0) {
@@ -172,7 +172,7 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 			ps.setLong(index++, pm.getProvChgLinkedTranId());
 			ps.setBigDecimal(index++, pm.getPrvovisionRate());
 			ps.setInt(index++, pm.getDueDays());
-			ps.setBigDecimal(index++, pm.getPriBal());
+			ps.setBigDecimal(index, pm.getPriBal());
 		});
 
 		return pm.getId();
@@ -207,7 +207,7 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 
 			ps.setLong(index++, pm.getFinID());
 			ps.setDate(index++, JdbcUtil.getDate(pm.getProvMovementDate()));
-			ps.setInt(index++, pm.getProvMovementSeq());
+			ps.setInt(index, pm.getProvMovementSeq());
 		});
 
 		if (recordCount <= 0) {

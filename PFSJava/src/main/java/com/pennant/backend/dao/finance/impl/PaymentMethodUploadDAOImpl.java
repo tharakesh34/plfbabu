@@ -55,7 +55,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 					ps.setString(index++, fileName);
 					ps.setInt(index++, 0);
 					ps.setInt(index++, 0);
-					ps.setInt(index++, 0);
+					ps.setInt(index, 0);
 
 					return ps;
 				}
@@ -81,7 +81,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 			ps.setInt(index++, header.getFailureRecords());
 			ps.setString(index++, header.getStatus());
 
-			ps.setObject(index++, header.getId());
+			ps.setObject(index, header.getId());
 
 		});
 	}
@@ -95,7 +95,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 		List<PaymentMethodUpload> list = this.jdbcOperations.query(sql, ps -> {
 			int index = 1;
 
-			ps.setLong(index++, batchId);
+			ps.setLong(index, batchId);
 		}, (rs, rowNum) -> {
 			PaymentMethodUpload pmu = new PaymentMethodUpload();
 
@@ -127,7 +127,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 				ps.setObject(index++, id);
 				ps.setString(index++, err.getCode());
-				ps.setString(index++, err.getError());
+				ps.setString(index, err.getError());
 			}
 
 			public int getBatchSize() {
@@ -150,7 +150,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 			ps.setString(index++, deStatus.getStatus());
 			ps.setLong(index++, deStatus.getSuccessRecords());
 			ps.setLong(index++, deStatus.getFailedRecords());
-			ps.setLong(index++, deStatus.getId());
+			ps.setLong(index, deStatus.getId());
 		});
 
 	}
@@ -172,7 +172,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, batchId);
+			ps.setLong(index, batchId);
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
@@ -203,7 +203,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 			ps.setLong(index++, pu.getFinID());
 			ps.setString(index++, StringUtils.trimToEmpty(pu.getUploadStatusRemarks()));
 			ps.setString(index++, pu.getStatus());
-			ps.setObject(index++, pu.getId());
+			ps.setObject(index, pu.getId());
 
 		});
 	}
@@ -219,7 +219,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 			ps.setString(index++, changePayment.getFinRepayMethod());
 			ps.setObject(index++, changePayment.getMandateId());
-			ps.setObject(index++, changePayment.getFinID());
+			ps.setObject(index, changePayment.getFinID());
 
 		});
 	}

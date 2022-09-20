@@ -181,7 +181,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 			ps.setString(index++, ds.getTaskId());
 			ps.setString(index++, ds.getNextTaskId());
 			ps.setString(index++, ds.getRecordType());
-			ps.setLong(index++, ds.getWorkflowId());
+			ps.setLong(index, ds.getWorkflowId());
 		});
 
 		return ds.getId();
@@ -231,7 +231,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 				ps.setString(index++, ds.getTaskId());
 				ps.setString(index++, ds.getNextTaskId());
 				ps.setString(index++, ds.getRecordType());
-				ps.setLong(index++, ds.getWorkflowId());
+				ps.setLong(index, ds.getWorkflowId());
 			}
 
 			@Override
@@ -327,7 +327,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 			ps.setString(index++, ds.getNextTaskId());
 			ps.setString(index++, ds.getRecordType());
 			ps.setLong(index++, ds.getWorkflowId());
-			ps.setLong(index++, ds.getId());
+			ps.setLong(index, ds.getId());
 		});
 
 	}
@@ -361,7 +361,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 			int index = 1;
 			ps.setInt(index++, 0);
 			ps.setString(index++, " ");
-			ps.setLong(index++, docId);
+			ps.setLong(index, docId);
 		});
 
 	}

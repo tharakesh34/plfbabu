@@ -342,7 +342,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 			int index = 1;
 
 			ps.setString(index++, ref);
-			ps.setString(index++, module);
+			ps.setString(index, module);
 		}, (rs, rowNum) -> {
 			DocumentDetails dd = new DocumentDetails();
 

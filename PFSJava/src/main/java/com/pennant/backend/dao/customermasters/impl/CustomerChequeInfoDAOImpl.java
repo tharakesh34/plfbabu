@@ -117,7 +117,7 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			CustomerChequeInfo cci = new CustomerChequeInfo();
 

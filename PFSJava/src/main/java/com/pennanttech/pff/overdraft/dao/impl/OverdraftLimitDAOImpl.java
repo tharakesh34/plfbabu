@@ -100,7 +100,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 			ps.setInt(index++, odlh.getVersion() + 1);
 
 			ps.setLong(index++, odlh.getId());
-			ps.setTimestamp(index++, odlh.getPrevMntOn());
+			ps.setTimestamp(index, odlh.getPrevMntOn());
 		});
 
 		if (count == 0) {
@@ -135,7 +135,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 			ps.setString(index++, odlh.getRecordType());
 			ps.setLong(index++, odlh.getWorkflowId());
 
-			ps.setLong(index++, odlh.getId());
+			ps.setLong(index, odlh.getId());
 		});
 	}
 
@@ -224,7 +224,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 				ps.setString(index++, odld.getNarration());
 				ps.setString(index++, odld.getNarration1());
 				ps.setString(index++, odld.getNarration2());
-				ps.setString(index++, odld.getNarration3());
+				ps.setString(index, odld.getNarration3());
 			}
 
 			@Override
@@ -246,7 +246,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 			ps.setBoolean(index++, false);
 			ps.setString(index++, OverdraftConstants.AUTO_BLOCK_STATUS);
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 
 	}
@@ -296,7 +296,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 				ps.setString(index++, OverdraftConstants.AUTO_BLOCK_STATUS);
 
 				ps.setLong(index++, limit.getId());
-				ps.setTimestamp(index++, limit.getPrevMntOn());
+				ps.setTimestamp(index, limit.getPrevMntOn());
 			}
 
 			@Override

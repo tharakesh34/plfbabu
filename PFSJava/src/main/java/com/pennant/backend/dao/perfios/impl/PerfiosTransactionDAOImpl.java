@@ -27,7 +27,7 @@ public class PerfiosTransactionDAOImpl extends BasicDao<PerfiosTransaction> impl
 					preparedStatement.setString(index++, "C");
 					preparedStatement.setString(index++, perfios.getStatus());
 					preparedStatement.setString(index++, perfios.getStatusDesc());
-					preparedStatement.setString(index++, perfios.getTransationId());
+					preparedStatement.setString(index, perfios.getTransationId());
 				}
 			});
 		} catch (DataAccessException e) {

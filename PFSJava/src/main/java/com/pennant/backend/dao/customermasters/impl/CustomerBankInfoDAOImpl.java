@@ -133,7 +133,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			CustomerBankInfo cbi = new CustomerBankInfo();
 
@@ -550,7 +550,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 				ps.setLong(index++, bankId);
-				ps.setDate(index++, JdbcUtil.getDate(monthYear));
+				ps.setDate(index, JdbcUtil.getDate(monthYear));
 			}
 		}, rowMapper);
 	}
@@ -568,7 +568,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setLong(index++, bankId);
+				ps.setLong(index, bankId);
 			}
 		}, rowMapper);
 	}
@@ -668,7 +668,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				int index = 1;
 				ps.setLong(index++, bankId);
 				ps.setDate(index++, JdbcUtil.getDate(monthYear));
-				ps.setInt(index++, day);
+				ps.setInt(index, day);
 			}
 		}, rowMapper);
 	}
@@ -688,7 +688,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 				ps.setLong(index++, bankId);
-				ps.setDate(index++, JdbcUtil.getDate(monthYear));
+				ps.setDate(index, JdbcUtil.getDate(monthYear));
 			}
 		}, rowMapper);
 	}

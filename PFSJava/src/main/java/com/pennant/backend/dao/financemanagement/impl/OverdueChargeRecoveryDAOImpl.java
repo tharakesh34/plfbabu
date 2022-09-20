@@ -204,7 +204,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 			ps.setBigDecimal(index++, odcr.getWaivedAmt());
 			ps.setBigDecimal(index++, odcr.getPenaltyPaid());
 			ps.setBigDecimal(index++, odcr.getPenaltyBal());
-			ps.setBoolean(index++, odcr.isRcdCanDel());
+			ps.setBoolean(index, odcr.isRcdCanDel());
 		});
 
 		return odcr.getId();
@@ -242,7 +242,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 			ps.setLong(index++, odcr.getFinID());
 			ps.setDate(index++, JdbcUtil.getDate(odcr.getFinODSchdDate()));
 			ps.setString(index++, odcr.getFinODFor());
-			ps.setDate(index++, JdbcUtil.getDate(odcr.getMovementDate()));
+			ps.setDate(index, JdbcUtil.getDate(odcr.getMovementDate()));
 
 		});
 
@@ -284,10 +284,10 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 				ps.setDate(index++, JdbcUtil.getDate(odcr.getFinODSchdDate()));
 				ps.setString(index++, odcr.getFinODFor());
 
-				ps.setBoolean(index++, false);
+				ps.setBoolean(index, false);
 			} else {
 				ps.setDate(index++, JdbcUtil.getDate(odcr.getMovementDate()));
-				ps.setBoolean(index++, true);
+				ps.setBoolean(index, true);
 			}
 		});
 
@@ -316,7 +316,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 			ps.setDate(index++, JdbcUtil.getDate(odcr.getFinODSchdDate()));
 			ps.setString(index++, odcr.getFinODFor());
 			ps.setDate(index++, JdbcUtil.getDate(odcr.getMovementDate()));
-			ps.setBoolean(index++, true);
+			ps.setBoolean(index, true);
 
 		});
 
@@ -356,7 +356,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, finID);
-			ps.setInt(index++, 0);
+			ps.setInt(index, 0);
 		}, (rs, rowNum) -> {
 			OverdueChargeRecovery odr = new OverdueChargeRecovery();
 
