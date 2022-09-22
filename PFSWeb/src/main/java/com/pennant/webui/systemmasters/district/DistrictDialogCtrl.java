@@ -367,6 +367,13 @@ public class DistrictDialogCtrl extends GFCBaseCtrl<District> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_DistrictDialog_DistrictName.value"),
 							PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}
+
+		if (!this.hostReferenceNo.isReadonly()) {
+			this.hostReferenceNo
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DistrictDialog_HostReferenceNo.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, false));
+		}
+		
 		logger.debug("Leaving");
 	}
 
