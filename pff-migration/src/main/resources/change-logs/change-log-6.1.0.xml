@@ -37,4 +37,13 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="PSD#205798" author="vasudevarao.s">
+		<dropNotNullConstraint tableName="COVENANTS" columnName="REMARKS" columnDataType="varchar(500)" />
+	</changeSet>
+
+	<changeSet id="PSD#205798.01" author="vasudevarao.s">
+		<dropNotNullConstraint tableName="COVENANTS_TEMP" columnName="REMARKS" columnDataType="varchar(500)" />
+	</changeSet>
+
+
 </databaseChangeLog>

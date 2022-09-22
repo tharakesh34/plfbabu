@@ -38,5 +38,9 @@
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#205798" author="vasudevarao.s">
+		<dropNotNullConstraint tableName="AdtCOVENANTS" columnName="REMARKS" columnDataType="varchar(500)" />
+    </changeSet>
 
 </databaseChangeLog>
