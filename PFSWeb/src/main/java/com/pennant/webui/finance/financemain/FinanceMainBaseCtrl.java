@@ -160,6 +160,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ValueLabel;
@@ -2112,7 +2113,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (StringUtils.isEmpty(moduleDefiner)) {
-			if ((this.tDSApplicable.isChecked() && isTabVisible(StageTabConstants.TANDetails)) || onLoad) {
+			if ((this.tDSApplicable.isChecked()) || onLoad) {
 				appendTANDetailsTab(onLoad);
 				if (onLoad && !this.tDSApplicable.isChecked()) {
 					Tab tanTab = getTab(AssetConstants.UNIQUE_ID_TAN_DETAILS);
@@ -2204,7 +2205,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Linking/DeLinking Loans
-		if (isTabVisible(StageTabConstants.Linked) && StringUtils.isEmpty(moduleDefiner)) {
+		if (StringUtils.isEmpty(moduleDefiner)) {
 			appendLinkedFinancesTab();
 		}
 
@@ -2256,15 +2257,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param tabID
 	 * @return
 	 */
-	private boolean isTabVisible(String tabCode) {
-		String strTabCode = StringUtils.leftPad(tabCode, 3, "0");
-		boolean showTab = false;
+	private boolean isTabVisible(long tabID) {
+		String strTabId = StringUtils.leftPad(String.valueOf(tabID), 3, "0");
+		boolean showTab = true;
 		String roles = "";
 
-		if (getFinanceDetail().getShowTabDetailMap().containsKey(strTabCode)) {
-			roles = getFinanceDetail().getShowTabDetailMap().get(strTabCode);
-			if (StringUtils.contains(roles, getRole() + ",")) {
-				showTab = true;
+		if (getFinanceDetail().getShowTabDetailMap().containsKey(strTabId)) {
+			roles = getFinanceDetail().getShowTabDetailMap().get(strTabId);
+			if (!StringUtils.contains(roles, getRole() + ",")) {
+				showTab = false;
 			}
 		}
 		return showTab;

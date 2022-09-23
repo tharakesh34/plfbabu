@@ -3,25 +3,23 @@ package com.pennant.backend.util;
 public class StageTabConstants {
 
 	// Process Editor Condition Constants
-	public static final String AdvancePayment = "ADVPAY";
-	public static final String CoApplicants = "COAPP";
-	public static final String TaxDetail = "TAXDET";
-	public static final String Documents = "DOCUMENT";
-	public static final String Covenant = "COVENANT";
-	public static final String Mandate = "MANDATE";
-	public static final String Cheque = "CHEQUE";
-	public static final String Collaterals = "COLLATER";
-	public static final String VAS = "VAS";
-	public static final String ExtendedField = "EXNTFLDS";
-	public static final String QueryMangement = "QRYMGMT";
-	public static final String PSLDetails = "PSLDTLS";
-	public static final String CreditReviewDetails = "CRTAB";
-	public static final String LegalDetails = "LegalDet";
-	public static final String FinancialSummary = "FinSumry";
-	public static final String DMSInterface = "";
-	public static final String OCR = "OCR";
-	public static final String PMAY = "PMAY";
-	public static final String PricingDetails = "PRITAB";
-	public static final String TANDetails = "TANTAB";
-	public static final String Linked = "Linked";
+	public static final long AdvancePayment = 1;
+	public static final long CoApplicants = 2;
+	public static final long TaxDetail = 3;
+	public static final long Documents = 4;
+	public static final long Covenant = 5;
+	public static final long Mandate = 6;
+	public static final long Cheque = 7;
+	public static final long Collaterals = 8;
+	public static final long VAS = 9;
+	public static final long ExtendedField = 10;
+	public static final long QueryMangement = 11;
+	public static final long PSLDetails = 12;
+	public static final long CreditReviewDetails = 13;
+	public static final long LegalDetails = 14;
+	public static final long FinancialSummary = 15;
+	public static final long DMSInterface = 16;
+	public static final long OCR = 17;
+	public static final long PMAY = 18;
+	public static final long PricingDetails = 19;
 }
