@@ -38,7 +38,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setBigDecimal(index++, BigDecimal.ZERO);
+			ps.setBigDecimal(index, BigDecimal.ZERO);
 
 		}, (rs, rowNum) -> {
 			LowerTaxDeduction ltd = new LowerTaxDeduction();
@@ -97,7 +97,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 				ps.setString(index++, ltd.getTaskId());
 				ps.setString(index++, ltd.getNextTaskId());
 				ps.setString(index++, ltd.getRecordType());
-				ps.setLong(index++, ltd.getWorkflowId());
+				ps.setLong(index, ltd.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -135,7 +135,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 			ps.setString(index++, ltd.getRecordType());
 			ps.setLong(index++, ltd.getWorkflowId());
 
-			ps.setLong(index++, ltd.getFinID());
+			ps.setLong(index, ltd.getFinID());
 		});
 
 		if (recordCount == 0) {

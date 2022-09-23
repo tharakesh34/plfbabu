@@ -61,7 +61,7 @@ public class ISRADetailDAOImpl extends SequenceDao<ISRADetail> implements ISRADe
 			ps.setString(index++, iSRADetail.getTaskId());
 			ps.setString(index++, iSRADetail.getNextTaskId());
 			ps.setString(index++, iSRADetail.getRecordType());
-			ps.setLong(index++, iSRADetail.getWorkflowId());
+			ps.setLong(index, iSRADetail.getWorkflowId());
 
 		});
 
@@ -103,7 +103,7 @@ public class ISRADetailDAOImpl extends SequenceDao<ISRADetail> implements ISRADe
 			ps.setString(index++, israDetail.getRecordType());
 			ps.setLong(index++, israDetail.getWorkflowId());
 
-			ps.setLong(index++, israDetail.getId());
+			ps.setLong(index, israDetail.getId());
 		});
 	}
 
@@ -117,7 +117,7 @@ public class ISRADetailDAOImpl extends SequenceDao<ISRADetail> implements ISRADe
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finRef);
+			ps.setString(index, finRef);
 		});
 	}
 
@@ -200,7 +200,7 @@ public class ISRADetailDAOImpl extends SequenceDao<ISRADetail> implements ISRADe
 			ps.setString(index++, liquidDetail.getTaskId());
 			ps.setString(index++, liquidDetail.getNextTaskId());
 			ps.setString(index++, liquidDetail.getRecordType());
-			ps.setLong(index++, liquidDetail.getWorkflowId());
+			ps.setLong(index, liquidDetail.getWorkflowId());
 
 		});
 	}
@@ -215,7 +215,7 @@ public class ISRADetailDAOImpl extends SequenceDao<ISRADetail> implements ISRADe
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, israDetailId);
+			ps.setLong(index, israDetailId);
 		});
 	}
 
@@ -283,7 +283,7 @@ public class ISRADetailDAOImpl extends SequenceDao<ISRADetail> implements ISRADe
 			ps.setString(index++, liquidDetail.getRecordType());
 			ps.setLong(index++, liquidDetail.getWorkflowId());
 
-			ps.setLong(index++, liquidDetail.getId());
+			ps.setLong(index, liquidDetail.getId());
 		});
 	}
 
@@ -297,7 +297,7 @@ public class ISRADetailDAOImpl extends SequenceDao<ISRADetail> implements ISRADe
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, liquidDetail.getId());
+			ps.setLong(index, liquidDetail.getId());
 		});
 
 	}

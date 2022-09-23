@@ -141,7 +141,7 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 				ps.setString(index++, manufacturer.getTaskId());
 				ps.setString(index++, manufacturer.getNextTaskId());
 				ps.setString(index++, manufacturer.getRecordType());
-				ps.setLong(index++, manufacturer.getWorkflowId());
+				ps.setLong(index, manufacturer.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -196,9 +196,9 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 
 			ps.setLong(index++, manufacturer.getManufacturerId());
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, manufacturer.getPrevMntOn());
+				ps.setTimestamp(index, manufacturer.getPrevMntOn());
 			} else {
-				ps.setInt(index++, manufacturer.getVersion() - 1);
+				ps.setInt(index, manufacturer.getVersion() - 1);
 			}
 		});
 

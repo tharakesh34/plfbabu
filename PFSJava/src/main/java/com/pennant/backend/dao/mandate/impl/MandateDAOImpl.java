@@ -210,7 +210,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setLong(index++, mdt.getPartnerBankId());
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
-			ps.setString(index++, mdt.geteMandateReferenceNo());
+			ps.setString(index, mdt.geteMandateReferenceNo());
 		});
 
 		return mdt.getId();
@@ -287,7 +287,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setLong(index++, mdt.getMandateID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, mdt.getVersion() - 1);
+				ps.setInt(index, mdt.getVersion() - 1);
 			}
 		});
 
@@ -359,7 +359,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.geteMandateReferenceNo());
 
 			ps.setLong(index++, mdt.getMandateID());
-			ps.setString(index++, mdt.getStatus());
+			ps.setString(index, mdt.getStatus());
 		});
 	}
 
@@ -379,7 +379,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mandateStatusAwaitcon);
 			ps.setString(index++, mandateRef);
 			ps.setString(index++, approvalId);
-			ps.setLong(index++, mandateID);
+			ps.setLong(index, mandateID);
 		});
 	}
 
@@ -394,7 +394,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 			ps.setBoolean(index++, active);
 			ps.setString(index++, status);
-			ps.setLong(index++, mandateID);
+			ps.setLong(index, mandateID);
 		});
 	}
 
@@ -411,7 +411,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, mandateID);
+			ps.setLong(index, mandateID);
 		}, (rs, rowNum) -> {
 			FinanceEnquiry mndts = new FinanceEnquiry();
 
@@ -455,7 +455,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			int index = 1;
 
 			ps.setString(index++, orgReference);
-			ps.setLong(index++, mandateID);
+			ps.setLong(index, mandateID);
 		});
 	}
 
@@ -483,7 +483,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setLong(index++, custID);
 			ps.setBoolean(index++, true);
 			ps.setBoolean(index++, true);
-			ps.setLong(index++, mandateID);
+			ps.setLong(index, mandateID);
 		}, (rs, rowNum) -> {
 			Mandate mndts = new Mandate();
 
@@ -513,7 +513,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			int index = 1;
 
 			ps.setString(index++, statusInprocess);
-			ps.setLong(index++, mandateID);
+			ps.setLong(index, mandateID);
 		});
 	}
 
@@ -740,7 +740,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mandate.getOrgReference());
 			ps.setString(index++, mandate.getReason());
 
-			ps.setLong(index++, mandate.getMandateID());
+			ps.setLong(index, mandate.getMandateID());
 		});
 	}
 

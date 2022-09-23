@@ -109,7 +109,7 @@ public class LegalPropertyTitleDAOImpl extends SequenceDao<LegalPropertyTitle> i
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setLong(index++, legalId);
+				ps.setLong(index, legalId);
 			}
 		}, new RowMapper<LegalPropertyTitle>() {
 			@Override

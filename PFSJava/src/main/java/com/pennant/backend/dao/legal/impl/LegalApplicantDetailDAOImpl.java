@@ -118,7 +118,7 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setLong(index++, legalId);
+				ps.setLong(index, legalId);
 			}
 		}, new RowMapper<LegalApplicantDetail>() {
 			@Override

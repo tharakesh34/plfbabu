@@ -109,7 +109,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			int index = 1;
 
 			ps.setLong(index++, id);
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, rowMapper);
 
 		return jvpList.stream().sorted((j1, j2) -> Long.compare(j1.getTxnReference(), j2.getTxnReference()))
@@ -129,7 +129,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			int index = 1;
 
 			ps.setLong(index++, id);
-			ps.setString(index++, PennantConstants.POSTSTS_SUCCESS);
+			ps.setString(index, PennantConstants.POSTSTS_SUCCESS);
 		}, rowMapper);
 	}
 
@@ -147,7 +147,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 				ps.setLong(index++, jve.getBatchReference());
 				ps.setLong(index++, jve.getTxnReference());
-				ps.setLong(index++, jve.getAcEntryRef());
+				ps.setLong(index, jve.getAcEntryRef());
 			});
 
 			if (recordCount <= 0) {
@@ -231,7 +231,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			ps.setString(index++, jve.getNextTaskId());
 			ps.setString(index++, jve.getRecordType());
 			ps.setLong(index++, jve.getWorkflowId());
-			ps.setLong(index++, jve.getDerivedTxnRef());
+			ps.setLong(index, jve.getDerivedTxnRef());
 		});
 
 		return jve.getId();
@@ -294,7 +294,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 			ps.setLong(index++, jve.getBatchReference());
 			ps.setLong(index++, jve.getTxnReference());
-			ps.setLong(index++, jve.getAcEntryRef());
+			ps.setLong(index, jve.getAcEntryRef());
 		});
 
 		if (recordCount <= 0) {
@@ -318,7 +318,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 			ps.setLong(index++, jve.getBatchReference());
 			ps.setLong(index++, jve.getTxnReference());
-			ps.setLong(index++, jve.getAcEntryRef());
+			ps.setLong(index, jve.getAcEntryRef());
 		});
 
 		if (recordCount <= 0) {
@@ -375,7 +375,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 			ps.setLong(index++, jve.getBatchReference());
 			ps.setLong(index++, jve.getTxnReference());
-			ps.setLong(index++, jve.getAcEntryRef());
+			ps.setLong(index, jve.getAcEntryRef());
 		});
 
 		if (recordCount <= 0) {
@@ -407,7 +407,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 			ps.setLong(index++, jve.getBatchReference());
 			ps.setString(index++, jve.getAccount());
-			ps.setInt(index++, 0);
+			ps.setInt(index, 0);
 
 		});
 
@@ -430,7 +430,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 				ps.setLong(index++, jve.getBatchReference());
 				ps.setLong(index++, jve.getTxnReference());
-				ps.setLong(index++, jve.getAcEntryRef());
+				ps.setLong(index, jve.getAcEntryRef());
 			});
 
 		} catch (DataAccessException e) {
@@ -535,7 +535,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			int index = 1;
 
 			ps.setLong(index++, batchRef);
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, rowMapper);
 	}
 
@@ -565,9 +565,9 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 				if (isTxnRefWise) {
 					ps.setLong(index++, jve.getBatchReference());
 					ps.setLong(index++, jve.getTxnReference());
-					ps.setLong(index++, jve.getAcEntryRef());
+					ps.setLong(index, jve.getAcEntryRef());
 				} else {
-					ps.setLong(index++, jve.getBatchReference());
+					ps.setLong(index, jve.getBatchReference());
 				}
 			}
 
@@ -594,7 +594,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			int index = 1;
 
 			ps.setDate(index++, JdbcUtil.getDate(jve.getDaySeqDate()));
-			ps.setInt(index++, jve.getDaySeqNo());
+			ps.setInt(index, jve.getDaySeqNo());
 		});
 
 		return getJVPostingCount(jve);
@@ -617,7 +617,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			int index = 1;
 
 			ps.setInt(index++, jve.getDaySeqNo());
-			ps.setDate(index++, JdbcUtil.getDate(jve.getDaySeqDate()));
+			ps.setDate(index, JdbcUtil.getDate(jve.getDaySeqDate()));
 		});
 
 		if (recordCount <= 0) {
@@ -636,7 +636,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 				int index = 1;
 
 				ps.setLong(index++, batchReference);
-				ps.setInt(index++, 0);
+				ps.setInt(index, 0);
 			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);

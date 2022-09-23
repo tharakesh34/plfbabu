@@ -181,7 +181,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				ps.setBoolean(index++, ma.isHoldDue());
 				ps.setDate(index++, JdbcUtil.getDate(ma.getDueDate()));
 				ps.setString(index++, ma.getStatus());
-				ps.setString(index++, ma.getReason());
+				ps.setString(index, ma.getReason());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -248,7 +248,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, ma.getRecordType());
 			ps.setLong(index++, ma.getWorkflowId());
 
-			ps.setLong(index++, ma.getAdviseID());
+			ps.setLong(index, ma.getAdviseID());
 
 		});
 
@@ -273,9 +273,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 				ps.setLong(index++, ma.getAdviseID());
 				if (tableType == TableType.TEMP_TAB) {
-					ps.setTimestamp(index++, ma.getPrevMntOn());
+					ps.setTimestamp(index, ma.getPrevMntOn());
 				} else {
-					ps.setLong(index++, ma.getVersion() - 1);
+					ps.setLong(index, ma.getVersion() - 1);
 				}
 			});
 
@@ -329,7 +329,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setBigDecimal(index++, ma.getWaivedIGST());
 			ps.setBigDecimal(index++, ma.getWaivedCESS());
 			ps.setBigDecimal(index++, ma.getTdsPaid());
-			ps.setLong(index++, ma.getAdviseID());
+			ps.setLong(index, ma.getAdviseID());
 		});
 	}
 
@@ -373,7 +373,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setBigDecimal(index++, mam.getWaivedSGST());
 			ps.setBigDecimal(index++, mam.getWaivedIGST());
 			ps.setBigDecimal(index++, mam.getWaivedUGST());
-			ps.setBigDecimal(index++, mam.getWaivedCESS());
+			ps.setBigDecimal(index, mam.getWaivedCESS());
 		});
 	}
 
@@ -390,7 +390,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, receiptID);
+			ps.setLong(index, receiptID);
 		}, (rs, rowNum) -> {
 			ManualAdviseMovements ma = new ManualAdviseMovements();
 
@@ -426,7 +426,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			ManualAdviseMovements mam = new ManualAdviseMovements();
 
@@ -492,7 +492,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setLong(index++, receiptSeqID);
 
 			if (StringUtils.contains(type, "View")) {
-				ps.setInt(index++, adviseType);
+				ps.setInt(index, adviseType);
 			}
 		}, (rs, rowNum) -> {
 			ManualAdviseMovements mam = new ManualAdviseMovements();
@@ -533,7 +533,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			ps.setString(index++, status);
 			ps.setLong(index++, receiptID);
-			ps.setLong(index++, receiptSeqID);
+			ps.setLong(index, receiptSeqID);
 		});
 	}
 
@@ -545,7 +545,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, receiptSeqID);
+			ps.setLong(index, receiptSeqID);
 		}, (rs, rowNum) -> {
 			ManualAdviseReserve ma = new ManualAdviseReserve();
 
@@ -590,7 +590,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			ps.setLong(index++, payAgainstID);
 			ps.setLong(index++, receiptSeqID);
-			ps.setBigDecimal(index++, reserveAmt);
+			ps.setBigDecimal(index, reserveAmt);
 		});
 	}
 
@@ -605,7 +605,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			ps.setBigDecimal(index++, diffInReserve);
 			ps.setLong(index++, receiptID);
-			ps.setLong(index++, payAgainstID);
+			ps.setLong(index, payAgainstID);
 		});
 
 		if (recordCount <= 0) {
@@ -629,7 +629,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setLong(index++, receiptID);
 
 			if (payAgainstID != 0) {
-				ps.setLong(index++, payAgainstID);
+				ps.setLong(index, payAgainstID);
 			}
 		});
 	}
@@ -646,7 +646,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setBigDecimal(index++, reserveAmt);
 			ps.setBigDecimal(index++, reserveAmt);
 			ps.setLong(index++, payAgainstID);
-			ps.setBigDecimal(index++, reserveAmt);
+			ps.setBigDecimal(index, reserveAmt);
 		});
 
 		if (recordCount <= 0) {
@@ -665,7 +665,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			ps.setBigDecimal(index++, reserveAmt);
 			ps.setBigDecimal(index++, reserveAmt);
-			ps.setLong(index++, payAgainstID);
+			ps.setLong(index, payAgainstID);
 		});
 
 		if (recordCount <= 0) {
@@ -716,7 +716,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
 			ps.setInt(index++, 0);
-			ps.setLong(index++, adviseID);
+			ps.setLong(index, adviseID);
 		});
 
 		if (recordCount <= 0) {
@@ -819,7 +819,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			int index = 1;
 
 			ps.setInt(index++, 1);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();
 
@@ -956,7 +956,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			ps.setLong(index++, finID);
 			ps.setInt(index++, FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
-			ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
+			ps.setDate(index, JdbcUtil.getDate(SysParamUtil.getAppDate()));
 
 		}, (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();
@@ -1029,7 +1029,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			int index = 1;
 
 			ps.setInt(index++, adviseType);
-			ps.setLong(index++, feeTypeID);
+			ps.setLong(index, feeTypeID);
 		}, (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();
 
@@ -1077,7 +1077,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
-			ps.setLong(index++, adviseID);
+			ps.setLong(index, adviseID);
 		});
 
 		if (recordCount <= 0) {
@@ -1101,7 +1101,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			int index = 1;
 			ps.setLong(index++, finID);
 			ps.setInt(index++, adviseType);
-			ps.setString(index++, feeTypeCode);
+			ps.setString(index, feeTypeCode);
 		}, (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();
 
@@ -1205,7 +1205,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			int index = 1;
 
 			ps.setLong(index++, receiptID);
-			ps.setLong(index++, receiptSeqID);
+			ps.setLong(index, receiptSeqID);
 		}, (rs, rowNum) -> {
 			ManualAdviseMovements mam = new ManualAdviseMovements();
 
@@ -1294,7 +1294,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			ps.setLong(index++, finID);
 			ps.setString(index++, AdvanceRuleCode.ADVINT.name());
-			ps.setString(index++, AdvanceRuleCode.ADVEMI.name());
+			ps.setString(index, AdvanceRuleCode.ADVEMI.name());
 
 		}, (rs, rownum) -> {
 			ManualAdvise ma = new ManualAdvise();
@@ -1375,7 +1375,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
-			ps.setLong(index++, adviseID);
+			ps.setLong(index, adviseID);
 		});
 
 		if (recordCount <= 0) {
@@ -1573,7 +1573,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setInt(index++, FinanceConstants.MANUAL_ADVISE_PAYABLE);
+			ps.setInt(index, FinanceConstants.MANUAL_ADVISE_PAYABLE);
 		}, (rs, rowNum) -> {
 
 			ManualAdvise ma = new ManualAdvise();
@@ -1646,7 +1646,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setLong(index++, finID);
 			ps.setInt(index++, FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 			ps.setLong(index++, 0);
-			ps.setBigDecimal(index++, BigDecimal.ZERO);
+			ps.setBigDecimal(index, BigDecimal.ZERO);
 		}, (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();
 
@@ -1786,7 +1786,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			if (!ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
 				ps.setDate(index++, JdbcUtil.getDate(valueDate));
 			}
-			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
+			ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
 		}, new ManualAdviseRM(type));
 	}
 
@@ -1801,7 +1801,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			int index = 1;
 			ps.setLong(index++, finID);
 			if (DateUtil.compare(dueDate, null) != 0) {
-				ps.setDate(index++, JdbcUtil.getDate(dueDate));
+				ps.setDate(index, JdbcUtil.getDate(dueDate));
 			}
 		}, new ManualAdviseRM(type));
 	}
@@ -1822,7 +1822,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				ps.setString(index++, Labels.getLabel("label_EOD_ManualAdvise_Cancel_Reason.Msg"));
 				ps.setLong(index++, fm.getFinID());
 				ps.setDate(index++, JdbcUtil.getDate(fm.getMaturityDate()));
-				ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
+				ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
 			}
 
 			@Override
@@ -1870,7 +1870,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		List<ManualAdviseMovements> movements = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setDate(index++, JdbcUtil.getDate(dueDate));
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			ManualAdviseMovements mam = new ManualAdviseMovements();
 
@@ -1936,7 +1936,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setLong(index++, finID);
 			ps.setDate(index++, JdbcUtil.getDate(valueDate));
 			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
-			ps.setInt(index++, 0);
+			ps.setInt(index, 0);
 		}, new ManualAdviseRowMapper());
 	}
 
@@ -1962,7 +1962,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setDate(index++, JdbcUtil.getDate(valueDate));
 			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
 			ps.setInt(index++, 0);
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, new ManualAdviseRowMapper());
 	}
 
@@ -1980,7 +1980,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 			ps.setLong(index++, ma.getFinID());
 			ps.setLong(index++, ma.getAdviseID());
-			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
+			ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
 		});
 	}
 
@@ -2017,7 +2017,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_CANCELLED);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_MATURED);
-			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
+			ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
 		});
 	}
 
@@ -2041,7 +2041,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_CANCELLED);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_MATURED);
-			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
+			ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
 		});
 	}
 
@@ -2065,7 +2065,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_MATURED);
 			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
 			ps.setString(index++, PennantConstants.MANUALADVISE_CANCEL);
-			ps.setString(index++, Labels.getLabel("label_EOD_ManualAdvise_Cancel_Reason.Msg"));
+			ps.setString(index, Labels.getLabel("label_EOD_ManualAdvise_Cancel_Reason.Msg"));
 		});
 	}
 
@@ -2136,7 +2136,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				int index = 1;
 
 				ps.setString(index++, ma.getStatus());
-				ps.setLong(index++, ma.getAdviseID());
+				ps.setLong(index, ma.getAdviseID());
 			}
 
 			@Override

@@ -57,7 +57,7 @@ public class ManualScheduleDAOImpl extends SequenceDao<ManualScheduleHeader> imp
 				ps.setString(index++, schdHdr.getFinEvent());
 				ps.setString(index++, schdHdr.getFinReference());
 				ps.setInt(index++, schdHdr.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(schdHdr.getLastMntBy()));
+				ps.setLong(index++, JdbcUtil.getLong(schdHdr.getLastMntBy()));
 				ps.setTimestamp(index++, schdHdr.getLastMntOn());
 				ps.setString(index++, schdHdr.getRecordStatus());
 				ps.setString(index++, schdHdr.getRoleCode());
@@ -65,7 +65,7 @@ public class ManualScheduleDAOImpl extends SequenceDao<ManualScheduleHeader> imp
 				ps.setString(index++, schdHdr.getTaskId());
 				ps.setString(index++, schdHdr.getNextTaskId());
 				ps.setString(index++, schdHdr.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(schdHdr.getWorkflowId()));
+				ps.setLong(index, JdbcUtil.getLong(schdHdr.getWorkflowId()));
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -225,7 +225,7 @@ public class ManualScheduleDAOImpl extends SequenceDao<ManualScheduleHeader> imp
 		ps.setBoolean(index++, schdDtl.isPftOnSchDate());
 		ps.setBoolean(index++, schdDtl.isRvwOnSchDate());
 		ps.setString(index++, schdDtl.getStatus());
-		ps.setString(index++, schdDtl.getReason());
+		ps.setString(index, schdDtl.getReason());
 	}
 
 	@Override

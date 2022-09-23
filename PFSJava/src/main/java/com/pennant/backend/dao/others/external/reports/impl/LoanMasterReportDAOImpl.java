@@ -396,7 +396,7 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setString(index++, id);
+				ps.setString(index, id);
 			}
 		}, new RowMapper<FinAdvancePayments>() {
 			@Override
@@ -453,7 +453,7 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setString(index++, reference);
+				ps.setString(index, reference);
 			}
 		}, new RowMapper<FinFeeDetail>() {
 			@Override

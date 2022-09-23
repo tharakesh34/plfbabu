@@ -62,7 +62,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setString(index++, linkedFinReference);
+			ps.setString(index, linkedFinReference);
 		});
 	}
 
@@ -77,7 +77,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -200,7 +200,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 		}, (rs, i) -> {
 			return getRowMapper(type, rs);
 		});
@@ -307,7 +307,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		ps.setString(index++, lnkdFinance.getTaskId());
 		ps.setString(index++, lnkdFinance.getNextTaskId());
 		ps.setString(index++, lnkdFinance.getRecordType());
-		ps.setLong(index++, lnkdFinance.getWorkflowId());
+		ps.setLong(index, lnkdFinance.getWorkflowId());
 	}
 
 	private void setUpdateParameterizedFields(LinkedFinances lnkdFinance, PreparedStatement ps) throws SQLException {
