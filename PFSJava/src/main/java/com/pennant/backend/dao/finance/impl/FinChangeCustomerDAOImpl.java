@@ -137,7 +137,7 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 				ps.setString(index++, fcc.getTaskId());
 				ps.setString(index++, fcc.getNextTaskId());
 				ps.setString(index++, fcc.getRecordType());
-				ps.setLong(index++, fcc.getWorkflowId());
+				ps.setLong(index, fcc.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -177,9 +177,9 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 			ps.setLong(index++, fcc.getId());
 
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, fcc.getPrevMntOn());
+				ps.setTimestamp(index, fcc.getPrevMntOn());
 			} else {
-				ps.setInt(index++, fcc.getVersion() - 1);
+				ps.setInt(index, fcc.getVersion() - 1);
 			}
 		});
 
@@ -203,9 +203,9 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 				ps.setLong(index++, fcc.getId());
 
 				if (TableType.TEMP_TAB.equals(tableType)) {
-					ps.setTimestamp(index++, fcc.getPrevMntOn());
+					ps.setTimestamp(index, fcc.getPrevMntOn());
 				} else {
-					ps.setInt(index++, fcc.getVersion() - 1);
+					ps.setInt(index, fcc.getVersion() - 1);
 				}
 			});
 

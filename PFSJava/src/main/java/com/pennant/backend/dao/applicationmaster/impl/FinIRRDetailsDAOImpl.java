@@ -65,7 +65,7 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			FinIRRDetails irr = new FinIRRDetails();
 
@@ -146,7 +146,7 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 			int index = 1;
 
 			ps.setLong(index++, entity.getiRRID());
-			ps.setLong(index++, entity.getFinID());
+			ps.setLong(index, entity.getFinID());
 		});
 	}
 
@@ -216,7 +216,7 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 		ps.setString(index++, irr.getTaskId());
 		ps.setString(index++, irr.getNextTaskId());
 		ps.setString(index++, irr.getRecordType());
-		ps.setLong(index++, irr.getWorkflowId());
+		ps.setLong(index, irr.getWorkflowId());
 	}
 
 }

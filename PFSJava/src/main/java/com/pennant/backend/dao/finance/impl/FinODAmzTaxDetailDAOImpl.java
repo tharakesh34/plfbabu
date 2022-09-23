@@ -113,7 +113,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 			ps.setBigDecimal(index++, tr.getIGST());
 			ps.setBigDecimal(index++, tr.getUGST());
 			ps.setBigDecimal(index++, tr.getSGST());
-			ps.setBigDecimal(index++, tr.getCESS());
+			ps.setBigDecimal(index, tr.getCESS());
 
 		});
 	}
@@ -190,7 +190,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 			ps.setBigDecimal(index++, tid.getIGST());
 			ps.setBigDecimal(index++, tid.getUGST());
 			ps.setBigDecimal(index++, tid.getSGST());
-			ps.setBigDecimal(index++, tid.getCESS());
+			ps.setBigDecimal(index, tid.getCESS());
 		});
 	}
 
@@ -247,7 +247,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		return jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, num) -> {
 			FinODAmzTaxDetail oda = new FinODAmzTaxDetail();
 
@@ -280,7 +280,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		return jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, finID);
-			ps.setInt(index++, 0);
+			ps.setInt(index, 0);
 		}, (rs, num) -> {
 			FinODAmzTaxDetail oda = new FinODAmzTaxDetail();
 
@@ -317,7 +317,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 			ps.setString(index++, "B");
 			ps.setString(index++, "C");
 			ps.setLong(index++, finID);
-			ps.setString(index++, type);
+			ps.setString(index, type);
 
 		}, (rs, num) -> {
 			FinTaxIncomeDetail tid = new FinTaxIncomeDetail();
@@ -353,7 +353,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 				ps.setBigDecimal(index++, oda.getWaivedAmount());
 				ps.setLong(index++, oda.getFinID());
 				ps.setDate(index++, JdbcUtil.getDate(oda.getValueDate()));
-				ps.setString(index++, oda.getTaxFor());
+				ps.setString(index, oda.getTaxFor());
 			}
 
 			@Override
@@ -387,7 +387,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 					ps.setString(index++, oda.getFinReference());
 					ps.setBigDecimal(index++, oda.getPaidAmount());
 					ps.setBigDecimal(index++, oda.getWaivedAmount());
-					ps.setObject(index++, oda.getTaxHeaderId());
+					ps.setObject(index, oda.getTaxHeaderId());
 				}
 
 				@Override

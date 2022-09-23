@@ -68,7 +68,7 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 			ps.setString(index++, ff.getTaskId());
 			ps.setString(index++, ff.getNextTaskId());
 			ps.setString(index++, ff.getRecordType());
-			ps.setLong(index++, ff.getWorkflowId());
+			ps.setLong(index, ff.getWorkflowId());
 		});
 	}
 
@@ -102,7 +102,7 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 			ps.setLong(index++, ff.getFinID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, ff.getVersion() - 1);
+				ps.setInt(index, ff.getVersion() - 1);
 			}
 
 		});
