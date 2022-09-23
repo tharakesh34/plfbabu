@@ -254,7 +254,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			int index = 1;
 			ps.setString(index++, financeType);
 			ps.setString(index++, finEvent);
-			ps.setBoolean(index++, true);
+			ps.setBoolean(index, true);
 		}, (rs, rowNum) -> {
 			return getRowMapper(rs, StringUtils.trimToEmpty(type));
 		});
@@ -631,7 +631,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 				}
 			}
 
-			ps.setBoolean(index++, true);
+			ps.setBoolean(index, true);
 
 		}, (rs, rowNum) -> {
 			FinanceReferenceDetail frd = new FinanceReferenceDetail();
@@ -1002,7 +1002,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			ps.setString(index++, financeType);
 			ps.setString(index++, finEvent);
 			ps.setInt(index++, finRefType);
-			ps.setBoolean(index++, true);
+			ps.setBoolean(index, true);
 		}, (rs, rowNum) -> {
 			return getRowMapper(rs, StringUtils.trimToEmpty(type));
 		});
@@ -1145,7 +1145,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 			ps.setString(index++, limitCode);
 			ps.setString(index++, finType);
-			ps.setBoolean(index++, true);
+			ps.setBoolean(index, true);
 		}, (rs, rowNum) -> {
 			FinanceReferenceDetail frd = new FinanceReferenceDetail();
 

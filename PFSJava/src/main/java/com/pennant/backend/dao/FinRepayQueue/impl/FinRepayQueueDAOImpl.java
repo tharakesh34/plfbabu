@@ -63,7 +63,7 @@ public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements Fin
 				ps.setBigDecimal(index++, frq.getPenaltyPayNow());
 				ps.setBigDecimal(index++, frq.getLatePayPftPayNow());
 				ps.setBigDecimal(index++, frq.getSchdRate());
-				ps.setString(index++, frq.getLinkedFinRef());
+				ps.setString(index, frq.getLinkedFinRef());
 			}
 
 			@Override
@@ -95,7 +95,7 @@ public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements Fin
 
 			ps.setLong(index++, frq.getFinID());
 			ps.setString(index++, frq.getFinRpyFor());
-			ps.setDate(index++, JdbcUtil.getDate(frq.getRpyDate()));
+			ps.setDate(index, JdbcUtil.getDate(frq.getRpyDate()));
 		});
 	}
 

@@ -83,7 +83,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -101,7 +101,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setString(index++, finEvent);
+			ps.setString(index, finEvent);
 		}, rowMapper);
 	}
 
@@ -119,7 +119,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 			ps.setLong(index++, finID);
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
-			ps.setString(index++, finEvent);
+			ps.setString(index, finEvent);
 		}, rowMapper);
 	}
 
@@ -148,7 +148,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			ps.setLong(index++, finID);
 			ps.setDate(index++, JdbcUtil.getDate(fromDate));
 			ps.setString(index++, finEvent);
-			ps.setString(index++, serviceReqNo);
+			ps.setString(index, serviceReqNo);
 		}, rowMapper);
 	}
 
@@ -161,7 +161,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		return this.jdbcOperations.query(sql, ps -> {
 			int index = 1;
 
-			ps.setString(index++, notificationFlag);
+			ps.setString(index, notificationFlag);
 		}, (rs, num) -> {
 			LMSServiceLog lmsLog = new LMSServiceLog();
 
@@ -189,7 +189,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 				int index = 1;
 
 				ps.setString(index++, notificationFlag);
-				ps.setLong(index++, id);
+				ps.setLong(index, id);
 			});
 		} catch (Exception e) {
 			throw e;
@@ -247,7 +247,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 				ps.setBigDecimal(index++, sl.getOldRate());
 				ps.setBigDecimal(index++, sl.getNewRate());
 				ps.setDate(index++, JdbcUtil.getDate(sl.getEffectiveDate()));
-				ps.setString(index++, sl.getNotificationFlag());
+				ps.setString(index, sl.getNotificationFlag());
 			}
 
 			@Override
@@ -282,7 +282,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, new FinServiceInstructionRowMapper());
 	}
 
@@ -375,7 +375,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		ps.setLong(index++, fsd.getLinkedTranID());
 		ps.setObject(index++, fsd.getLogKey());
 		ps.setDate(index++, JdbcUtil.getDate(fsd.getInitiatedDate()));
-		ps.setDate(index++, JdbcUtil.getDate(fsd.getApprovedDate()));
+		ps.setDate(index, JdbcUtil.getDate(fsd.getApprovedDate()));
 
 	}
 

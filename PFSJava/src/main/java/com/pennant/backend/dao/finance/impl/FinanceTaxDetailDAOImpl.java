@@ -172,7 +172,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				ps.setString(index++, td.getTaskId());
 				ps.setString(index++, td.getNextTaskId());
 				ps.setString(index++, td.getRecordType());
-				ps.setLong(index++, td.getWorkflowId());
+				ps.setLong(index, td.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -228,9 +228,9 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 			ps.setLong(index++, td.getFinID());
 
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, td.getPrevMntOn());
+				ps.setTimestamp(index, td.getPrevMntOn());
 			} else {
-				ps.setInt(index++, td.getVersion() - 1);
+				ps.setInt(index, td.getVersion() - 1);
 			}
 
 		});
@@ -279,7 +279,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, taxCustId);
-			ps.setString(index++, taxNumber);
+			ps.setString(index, taxNumber);
 		}, (rs, rowNum) -> {
 			FinanceTaxDetail gd = new FinanceTaxDetail();
 

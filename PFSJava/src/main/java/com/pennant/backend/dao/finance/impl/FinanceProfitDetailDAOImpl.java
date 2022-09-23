@@ -388,7 +388,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 				ps.setBigDecimal(index++, pd.getTdPftCpz());
 				ps.setDate(index++, JdbcUtil.getDate(pd.getLastMdfDate()));
-				ps.setLong(index++, pd.getFinID());
+				ps.setLong(index, pd.getFinID());
 			}
 
 			@Override
@@ -555,7 +555,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			ps.setBigDecimal(index++, pd.getPrvMthGapIntAmz());
 			ps.setBigDecimal(index++, pd.getSvAmount());
 			ps.setBigDecimal(index++, pd.getCbAmount());
-			ps.setInt(index++, pd.getNOAutoIncGrcEnd());
+			ps.setInt(index, pd.getNOAutoIncGrcEnd());
 		});
 	}
 
@@ -586,7 +586,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			ps.setBigDecimal(index++, pd.getLatestRpyPri());
 			ps.setBigDecimal(index++, pd.getLatestRpyPft());
 
-			ps.setLong(index++, pd.getFinID());
+			ps.setLong(index, pd.getFinID());
 		});
 	}
 
@@ -600,7 +600,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			int index = 1;
 
 			ps.setBoolean(index++, isActive);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -737,7 +737,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				ps.setBigDecimal(index++, fpd.getPrvMthGapIntAmz());
 			}
 
-			ps.setLong(index++, fpd.getFinID());
+			ps.setLong(index, fpd.getFinID());
 
 		});
 
@@ -806,7 +806,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			int index = 1;
 			ps.setBoolean(index++, finIsActive);
 			ps.setString(index++, closingStatus);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -887,7 +887,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			int index = 1;
 			ps.setBigDecimal(index++, pd.getAssignBPI1());
 			ps.setBigDecimal(index++, pd.getAssignBPI2());
-			ps.setLong(index++, pd.getFinID());
+			ps.setLong(index, pd.getFinID());
 		});
 
 	}
@@ -908,7 +908,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setDate(index++, JdbcUtil.getDate(curMonthStart));
+			ps.setDate(index, JdbcUtil.getDate(curMonthStart));
 		}, (rs, rowNum) -> {
 			FinanceProfitDetail fpd = new FinanceProfitDetail();
 
@@ -1039,7 +1039,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			int index = 1;
 
 			ps.setString(index++, amzMethod);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 
 		});
 	}
@@ -1055,7 +1055,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 			ps.setBigDecimal(index++, pd.getTotalPftPaid());
 			ps.setBigDecimal(index++, pd.getTotalPriPaid());
-			ps.setLong(index++, pd.getFinID());
+			ps.setLong(index, pd.getFinID());
 		});
 
 		if (recordCount <= 0) {

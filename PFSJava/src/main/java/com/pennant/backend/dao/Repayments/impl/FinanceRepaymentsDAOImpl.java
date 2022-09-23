@@ -129,7 +129,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 					ps.setBigDecimal(index++, fr.getPenaltyPaid());
 					ps.setBigDecimal(index++, fr.getPenaltyWaived());
 					ps.setLong(index++, fr.getReceiptId());
-					ps.setLong(index++, fr.getWaiverId());
+					ps.setLong(index, fr.getWaiverId());
 
 				}
 
@@ -168,7 +168,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		List<FinanceRepayments> repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, finID);
-			ps.setDate(index++, JdbcUtil.getDate(finSchdDate));
+			ps.setDate(index, JdbcUtil.getDate(finSchdDate));
 
 		}, (rs, rowNum) -> {
 			FinanceRepayments rpd = new FinanceRepayments();
@@ -308,7 +308,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			ps.setBigDecimal(index++, rph.getRealizeUnLPI());
 			ps.setBigDecimal(index++, rph.getPartialPaidAmount());
 			ps.setBigDecimal(index++, rph.getFutPriAmount());
-			ps.setBigDecimal(index++, rph.getFutPftAmount());
+			ps.setBigDecimal(index, rph.getFutPftAmount());
 
 		});
 
@@ -348,7 +348,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			ps.setBigDecimal(index++, rph.getFeeAmount());
 			ps.setBigDecimal(index++, rph.getExcessAmount());
 
-			ps.setLong(index++, rph.getFinID());
+			ps.setLong(index, rph.getFinID());
 
 		});
 
@@ -390,7 +390,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, rowMapper);
 	}
 
@@ -412,7 +412,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			ps.setLong(index++, finID);
 			ps.setDate(index++, JdbcUtil.getDate(schDate));
 			ps.setString(index++, "C");
-			ps.setString(index++, "B");
+			ps.setString(index, "B");
 
 		}, (rs, rowNum) -> {
 			RepayScheduleDetail rsd = new RepayScheduleDetail();
@@ -495,7 +495,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 				ps.setBigDecimal(index++, rsd.getPriSchdWaivedNow());
 				ps.setBigDecimal(index++, rsd.getSchdFeeWaivedNow());
 				ps.setObject(index++, rsd.getTaxHeaderId());
-				ps.setLong(index++, rsd.getWaiverId());
+				ps.setLong(index, rsd.getWaiverId());
 			}
 
 			@Override
@@ -547,7 +547,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, rowMapper);
 	}
 
@@ -607,7 +607,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, repayId);
+			ps.setLong(index, repayId);
 		}, rowMapper);
 	}
 
@@ -912,7 +912,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		List<FinanceRepayments> repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 
 		}, new RepayListRM());
 
@@ -943,9 +943,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			ps.setLong(index++, finID);
 
 			if (linkedTranID > 0) {
-				ps.setLong(index++, linkedTranID);
+				ps.setLong(index, linkedTranID);
 			} else if (postDate != null) {
-				ps.setDate(index++, JdbcUtil.getDate(postDate));
+				ps.setDate(index, JdbcUtil.getDate(postDate));
 			}
 
 		}, new RepayListRM());

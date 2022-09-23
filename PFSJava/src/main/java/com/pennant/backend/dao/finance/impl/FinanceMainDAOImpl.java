@@ -513,7 +513,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setDate(index++, JdbcUtil.getDate(curBD));
-			ps.setDate(index++, JdbcUtil.getDate(nextBD));
+			ps.setDate(index, JdbcUtil.getDate(nextBD));
 		}, (rs, rowNum) -> {
 			return rs.getLong("FinID");
 		});
@@ -869,7 +869,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(index++, fm.getTaskId());
 				ps.setString(index++, fm.getNextTaskId());
 				ps.setString(index++, fm.getRecordType());
-				ps.setLong(index++, fm.getWorkflowId());
+				ps.setLong(index, fm.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -1035,9 +1035,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setLong(index++, fm.getFinID());
 				if (tableType == TableType.MAIN_TAB || !finalize) {
 					if (tableType == TableType.TEMP_TAB) {
-						ps.setTimestamp(index++, fm.getPrevMntOn());
+						ps.setTimestamp(index, fm.getPrevMntOn());
 					} else {
-						ps.setInt(index++, fm.getVersion() - 1);
+						ps.setInt(index, fm.getVersion() - 1);
 					}
 				}
 			});
@@ -1122,7 +1122,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custId);
+			ps.setLong(index, custId);
 		}, (rs, rowNum) -> {
 			FinanceEnquiry fm = new FinanceEnquiry();
 
@@ -1539,7 +1539,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(index++, fm.getNextUserId());
 			}
 
-			ps.setLong(index++, fm.getFinID());
+			ps.setLong(index, fm.getFinID());
 		});
 	}
 
@@ -1598,7 +1598,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setDate(index++, JdbcUtil.getDate(fm.getClosedDate()));
 			}
 
-			ps.setLong(index++, fm.getFinID());
+			ps.setLong(index, fm.getFinID());
 		});
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -1638,7 +1638,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setDate(index++, JdbcUtil.getDate(closedDate == null ? SysParamUtil.getAppDate() : closedDate));
 			}
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -1662,7 +1662,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custID);
+			ps.setLong(index, custID);
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
@@ -1777,7 +1777,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(index++, repayMethod);
 			}
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 
 		});
 
@@ -1993,7 +1993,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custId);
+			ps.setLong(index, custId);
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
@@ -2037,7 +2037,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, collateralRef);
+			ps.setString(index, collateralRef);
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
@@ -2249,7 +2249,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, id);
+			ps.setLong(index, id);
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 			fm.setFinID(rs.getLong("FinID"));
@@ -2494,7 +2494,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setString(index++, finType);
 			ps.setString(index++, "C");
 			ps.setDate(index++, JdbcUtil.getDate(finApprovalStartDate));
-			ps.setDate(index++, JdbcUtil.getDate(finApprovalEndDate));
+			ps.setDate(index, JdbcUtil.getDate(finApprovalEndDate));
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
@@ -2603,7 +2603,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			ps.setInt(index++, 0);
 			ps.setString(index++, "NEW");
-			ps.setBoolean(index++, true);
+			ps.setBoolean(index, true);
 
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
@@ -2842,7 +2842,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setLong(index++, fm.getLastMntBy());
 			ps.setTimestamp(index++, fm.getLastMntOn());
 			ps.setBigDecimal(index++, fm.getFinAssetValue());
-			ps.setLong(index++, fm.getFinID());
+			ps.setLong(index, fm.getFinID());
 		});
 	}
 
@@ -2901,7 +2901,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setDate(index++, JdbcUtil.getDate(curMonthStart));
+			ps.setDate(index, JdbcUtil.getDate(curMonthStart));
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
@@ -3755,7 +3755,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setLong(index++, fm.getFinId());
 			ps.setString(index++, fm.getFinreference());
 			ps.setString(index++, fm.getHostreference());
-			ps.setString(index++, fm.getOldhostreference());
+			ps.setString(index, fm.getOldhostreference());
 		});
 	}
 
@@ -3846,7 +3846,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setString(index++, fm.getNextTaskId());
 			ps.setString(index++, fm.getRecordStatus());
 			ps.setString(index++, fm.getNextRoleCode());
-			ps.setLong(index++, fm.getFinID());
+			ps.setLong(index, fm.getFinID());
 		});
 
 		if (recordCount == 0) {
@@ -4103,7 +4103,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, custId);
+			ps.setLong(index, custId);
 		}, (rs, rowNum) -> {
 			FinanceEnquiry fm = new FinanceEnquiry();
 
@@ -5170,9 +5170,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setLong(index++, fm.getFinID());
 
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, fm.getPrevMntOn());
+				ps.setTimestamp(index, fm.getPrevMntOn());
 			} else {
-				ps.setInt(index++, fm.getVersion());
+				ps.setInt(index, fm.getVersion());
 			}
 
 		});
@@ -5316,7 +5316,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			int index = 1;
 
 			ps.setString(index++, rcdMaintainSts);
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 
 		});
 	}
@@ -5331,7 +5331,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			int index = 1;
 
 			ps.setString(index++, rcdMaintainSts);
-			ps.setString(index++, finReference);
+			ps.setString(index, finReference);
 
 		});
 	}
@@ -5392,7 +5392,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(index++, fm.getNextTaskId());
 				ps.setLong(index++, fm.getWorkflowId());
 				ps.setString(index++, fm.getRecordType());
-				ps.setLong(index++, fm.getFinID());
+				ps.setLong(index, fm.getFinID());
 
 			}
 
@@ -5429,7 +5429,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(index++, fm.getNextTaskId());
 				ps.setString(index++, fm.getApproved());
 				ps.setString(index++, fm.getProcessAttributes());
-				ps.setLong(index++, fm.getFinID());
+				ps.setLong(index, fm.getFinID());
 			}
 
 			@Override

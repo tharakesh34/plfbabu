@@ -90,7 +90,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, receiptID);
+			ps.setLong(index, receiptID);
 		}, (rs, rowNum) -> {
 			FinReceiptDetail rd = new FinReceiptDetail();
 
@@ -174,7 +174,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			ps.setString(index++, receiptDetail.getStatus());
 			ps.setInt(index++, receiptDetail.getPayOrder());
 			ps.setLong(index++, receiptDetail.getLogKey());
-			ps.setLong(index++, receiptDetail.getBankBranchID());
+			ps.setLong(index, receiptDetail.getBankBranchID());
 		});
 
 		return receiptDetail.getId();
@@ -199,7 +199,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			int index = 1;
 			ps.setString(index++, status);
 			ps.setLong(index++, receiptID);
-			ps.setLong(index++, receiptSeqID);
+			ps.setLong(index, receiptSeqID);
 		});
 	}
 
@@ -289,7 +289,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			ps.setLong(index++, fundingAc);
 			ps.setLong(index++, receiptID);
 			ps.setString(index++, DisbursementConstants.PAYMENT_TYPE_CHEQUE);
-			ps.setString(index++, DisbursementConstants.PAYMENT_TYPE_DD);
+			ps.setString(index, DisbursementConstants.PAYMENT_TYPE_DD);
 		});
 
 	}
@@ -622,7 +622,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setString(index++, reference);
+			ps.setString(index, reference);
 		}, (rs, rowNum) -> {
 			FinReceiptHeader rch = new FinReceiptHeader();
 
@@ -647,7 +647,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		return jdbcOperations.query(sql, ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			FinReceiptHeader rch = new FinReceiptHeader();
 

@@ -274,7 +274,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				ps.setInt(index++, fsd.getInstNumber());
 				ps.setString(index++, fsd.getBpiOrHoliday());
 				ps.setBoolean(index++, fsd.isFrqDate());
-				ps.setBoolean(index++, fsd.isRecalLock());
+				ps.setBoolean(index, fsd.isRecalLock());
 			}
 
 			@Override
@@ -333,7 +333,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		ps.setLong(index++, schd.getFinID());
 		ps.setDate(index++, JdbcUtil.getDate(schd.getSchDate()));
-		ps.setLong(index++, schd.getSchSeq());
+		ps.setLong(index, schd.getSchSeq());
 	}
 
 	private StringBuilder getUpdateQuery() {
@@ -383,7 +383,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 				ps.setLong(index++, schd.getFinID());
 				ps.setDate(index++, JdbcUtil.getDate(schd.getSchDate()));
-				ps.setInt(index++, schd.getSchSeq());
+				ps.setInt(index, schd.getSchSeq());
 
 			}
 
@@ -800,7 +800,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				ps.setBoolean(index++, schedule.isTDSApplicable());
 				ps.setBigDecimal(index++, schedule.getTDSAmount());
 				ps.setLong(index++, schedule.getFinID());
-				ps.setDate(index++, JdbcUtil.getDate(schedule.getSchDate()));
+				ps.setDate(index, JdbcUtil.getDate(schedule.getSchDate()));
 			}
 
 			@Override
@@ -881,7 +881,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			ps.setBoolean(index++, curSchd.isSchPriPaid());
 			ps.setBigDecimal(index++, curSchd.getTDSPaid());
 			ps.setLong(index++, curSchd.getFinID());
-			ps.setDate(index++, JdbcUtil.getDate(curSchd.getSchDate()));
+			ps.setDate(index, JdbcUtil.getDate(curSchd.getSchDate()));
 
 		});
 
@@ -1135,7 +1135,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 				ps.setBigDecimal(index++, schedule.getTDSAmount());
 				ps.setLong(index++, schedule.getFinID());
-				ps.setDate(index++, JdbcUtil.getDate(schedule.getSchDate()));
+				ps.setDate(index, JdbcUtil.getDate(schedule.getSchDate()));
 			}
 
 			@Override
