@@ -391,7 +391,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		ps.setLong(index++, collDtl.getNoOfBrrowers());
 		ps.setLong(index++, collDtl.getNoOfAssetOwners());
 		ps.setLong(index++, collDtl.getNoOfConsortiumMemebers());
-		ps.setLong(index++, JdbcUtil.setLong(collDtl.getSiTypeId()));
+		ps.setLong(index++, JdbcUtil.getLong(collDtl.getSiTypeId()));
 		ps.setString(index++, collDtl.getSiTypeOthers());
 		ps.setString(index++, collDtl.getFinancingTypeId());
 		ps.setDate(index++, JdbcUtil.getDate(collDtl.getSiCreationDate()));

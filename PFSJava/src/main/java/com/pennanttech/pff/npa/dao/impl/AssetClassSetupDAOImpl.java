@@ -119,7 +119,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				ps.setInt(index++, acsh.getVersion());
 				ps.setLong(index++, acsh.getCreatedBy());
 				ps.setTimestamp(index++, acsh.getCreatedOn());
-				ps.setLong(index++, JdbcUtil.setLong(acsh.getApprovedBy()));
+				ps.setLong(index++, JdbcUtil.getLong(acsh.getApprovedBy()));
 				ps.setTimestamp(index++, acsh.getApprovedOn());
 				ps.setLong(index++, acsh.getLastMntBy());
 				ps.setTimestamp(index++, acsh.getLastMntOn());
@@ -259,7 +259,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 				ps.setInt(index++, acsd.getVersion());
 				ps.setLong(index++, acsd.getCreatedBy());
 				ps.setTimestamp(index++, acsd.getCreatedOn());
-				ps.setLong(index++, JdbcUtil.setLong(acsd.getApprovedBy()));
+				ps.setLong(index++, JdbcUtil.getLong(acsd.getApprovedBy()));
 				ps.setTimestamp(index++, acsd.getApprovedOn());
 				ps.setLong(index++, acsd.getLastMntBy());
 				ps.setTimestamp(index++, acsd.getLastMntOn());
@@ -307,7 +307,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 			ps.setInt(index++, acsd.getVersion());
 			ps.setLong(index++, acsd.getCreatedBy());
 			ps.setTimestamp(index++, acsd.getCreatedOn());
-			ps.setLong(index++, JdbcUtil.setLong(acsd.getApprovedBy()));
+			ps.setLong(index++, JdbcUtil.getLong(acsd.getApprovedBy()));
 			ps.setTimestamp(index++, acsd.getApprovedOn());
 			ps.setLong(index++, acsd.getLastMntBy());
 			ps.setTimestamp(index++, acsd.getLastMntOn());

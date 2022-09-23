@@ -123,7 +123,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 				ps.setString(index++, rd.getSplRate());
 				ps.setBigDecimal(index++, rd.getMargin());
 				ps.setBigDecimal(index++, rd.getGrcMaxAmount());
-				ps.setLong(index++, JdbcUtil.setLong(rd.getReceiptID()));
+				ps.setLong(index++, JdbcUtil.getLong(rd.getReceiptID()));
 				ps.setInt(index++, rd.getVersion());
 				ps.setLong(index++, rd.getLastMntBy());
 				ps.setTimestamp(index++, rd.getLastMntOn());

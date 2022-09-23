@@ -129,7 +129,7 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 				ps.setInt(index++, ascc.getVersion());
 				ps.setLong(index++, ascc.getCreatedBy());
 				ps.setTimestamp(index++, ascc.getCreatedOn());
-				ps.setLong(index++, JdbcUtil.setLong(ascc.getApprovedBy()));
+				ps.setLong(index++, JdbcUtil.getLong(ascc.getApprovedBy()));
 				ps.setTimestamp(index++, ascc.getApprovedOn());
 				ps.setLong(index++, ascc.getLastMntBy());
 				ps.setTimestamp(index++, ascc.getLastMntOn());

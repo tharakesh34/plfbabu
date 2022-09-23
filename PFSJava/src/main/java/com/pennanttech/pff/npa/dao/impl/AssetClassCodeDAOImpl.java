@@ -115,7 +115,7 @@ public class AssetClassCodeDAOImpl extends SequenceDao<AssetClassCode> implement
 				ps.setInt(index++, assetClassCode.getVersion());
 				ps.setLong(index++, assetClassCode.getCreatedBy());
 				ps.setTimestamp(index++, assetClassCode.getCreatedOn());
-				ps.setLong(index++, JdbcUtil.setLong(assetClassCode.getApprovedBy()));
+				ps.setLong(index++, JdbcUtil.getLong(assetClassCode.getApprovedBy()));
 				ps.setTimestamp(index++, assetClassCode.getApprovedOn());
 				ps.setLong(index++, assetClassCode.getLastMntBy());
 				ps.setTimestamp(index++, assetClassCode.getLastMntOn());
