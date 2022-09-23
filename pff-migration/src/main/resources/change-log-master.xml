@@ -26,6 +26,7 @@
 	<include file="change-logs/change-log-gst_details.xml" />
 	<include file="change-logs/change-log-5.18.0.xml" />
 	<include file="change-logs/change-log-CDProduct.xml" />
+	<include file="change-logs/change-log-CERSAI.xml" />
 	<include file="change-logs/change-log-6.0.0.xml" />
 	<include file="change-logs/change-log-account-updater.xml"/>
 	<include file="change-logs/change-log-islamic_code_removal.xml" />
