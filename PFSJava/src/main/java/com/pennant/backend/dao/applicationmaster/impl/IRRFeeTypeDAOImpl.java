@@ -112,7 +112,7 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
-				ps.setLong(index++, iRRID);
+				ps.setLong(index, iRRID);
 			}
 		}, new RowMapper<IRRFeeType>() {
 			@Override

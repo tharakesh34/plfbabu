@@ -182,7 +182,7 @@ public class GSTDetailDAOImpl extends SequenceDao<GSTDetail> implements GSTDetai
 			ps.setString(index++, gst.getTaskId());
 			ps.setString(index++, gst.getNextTaskId());
 			ps.setString(index++, gst.getRecordType());
-			ps.setLong(index++, gst.getWorkflowId());
+			ps.setLong(index, gst.getWorkflowId());
 		});
 
 		return gst.getId();
@@ -240,7 +240,7 @@ public class GSTDetailDAOImpl extends SequenceDao<GSTDetail> implements GSTDetai
 			ps.setLong(index++, gst.getCustID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, gst.getVersion() - 1);
+				ps.setInt(index, gst.getVersion() - 1);
 			}
 		});
 

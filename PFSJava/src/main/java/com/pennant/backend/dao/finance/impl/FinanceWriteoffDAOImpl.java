@@ -94,7 +94,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, finID);
+				ps.setLong(index, finID);
 			});
 
 			if (recordCount <= 0) {
@@ -138,7 +138,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 			ps.setString(index++, fwo.getRemarks());
 			ps.setBigDecimal(index++, fwo.getWrittenoffSchFee());
 			ps.setBigDecimal(index++, fwo.getUnpaidSchFee());
-			ps.setBigDecimal(index++, fwo.getWriteoffSchFee());
+			ps.setBigDecimal(index, fwo.getWriteoffSchFee());
 		});
 
 		return fwo.getFinReference();
@@ -177,7 +177,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 			ps.setBigDecimal(index++, fwo.getUnpaidSchFee());
 			ps.setBigDecimal(index++, fwo.getWriteoffSchFee());
 
-			ps.setLong(index++, fwo.getFinID());
+			ps.setLong(index, fwo.getFinID());
 		});
 
 		if (recordCount <= 0) {
@@ -239,7 +239,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 				int index = 1;
 
 				ps.setLong(index++, finID);
-				ps.setLong(index++, seqNo);
+				ps.setLong(index, seqNo);
 			});
 
 			if (recordCount <= 0) {
@@ -280,7 +280,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 			ps.setString(index++, payment.getTaskId());
 			ps.setString(index++, payment.getNextTaskId());
 			ps.setString(index++, payment.getRecordType());
-			ps.setLong(index++, payment.getWorkflowId());
+			ps.setLong(index, payment.getWorkflowId());
 		});
 
 		return payment.getFinReference();
@@ -314,7 +314,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 			ps.setString(index++, Payment.getNextTaskId());
 			ps.setString(index++, Payment.getRecordType());
 			ps.setLong(index++, Payment.getWorkflowId());
-			ps.setLong(index++, Payment.getFinID());
+			ps.setLong(index, Payment.getFinID());
 		});
 
 		if (recordCount <= 0) {
