@@ -184,7 +184,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 			ps.setString(index++, fsh.getTaskId());
 			ps.setString(index++, fsh.getNextTaskId());
 			ps.setString(index++, fsh.getRecordType());
-			ps.setLong(index++, fsh.getWorkflowId());
+			ps.setLong(index, fsh.getWorkflowId());
 		});
 
 		return fsh.getFinID();
@@ -227,7 +227,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 			ps.setString(index++, fsh.getRecordType());
 			ps.setLong(index++, fsh.getWorkflowId());
 
-			ps.setLong(index++, fsh.getFinID());
+			ps.setLong(index, fsh.getFinID());
 		});
 
 		if (recordCount <= 0) {
@@ -247,7 +247,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, fsh.getFinID());
+				ps.setLong(index, fsh.getFinID());
 			});
 
 			if (recordCount <= 0) {
@@ -282,7 +282,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 			ps.setBigDecimal(index++, fsd.getFinTrfAmt());
 			ps.setDate(index++, JdbcUtil.getDate(fsd.getFinODDate()));
 			ps.setDate(index++, JdbcUtil.getDate(fsd.getFinTrfFromDate()));
-			ps.setLong(index++, fsd.getLinkedTranId());
+			ps.setLong(index, fsd.getLinkedTranId());
 		});
 
 		return fsd.getFinID();
@@ -335,7 +335,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 				ps.setLong(index++, id);
 			}
 
-			ps.setInt(index++, 1);
+			ps.setInt(index, 1);
 		}, (rs, rowNum) -> {
 			FinStatusDetail fsd = new FinStatusDetail();
 

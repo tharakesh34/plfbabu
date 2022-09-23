@@ -86,7 +86,7 @@ public class FinPlanEmiHolidayDAOImpl extends BasicDao<FinPlanEmiHoliday> implem
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -108,7 +108,7 @@ public class FinPlanEmiHolidayDAOImpl extends BasicDao<FinPlanEmiHoliday> implem
 
 					ps.setLong(index++, emih.getFinID());
 					ps.setString(index++, emih.getFinReference());
-					ps.setInt(index++, emih.getPlanEMIHMonth());
+					ps.setInt(index, emih.getPlanEMIHMonth());
 				}
 
 				@Override
@@ -132,7 +132,7 @@ public class FinPlanEmiHolidayDAOImpl extends BasicDao<FinPlanEmiHoliday> implem
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		});
 	}
 
@@ -154,7 +154,7 @@ public class FinPlanEmiHolidayDAOImpl extends BasicDao<FinPlanEmiHoliday> implem
 
 					ps.setLong(index++, emih.getFinID());
 					ps.setString(index++, emih.getFinReference());
-					ps.setDate(index++, JdbcUtil.getDate(emih.getPlanEMIHDate()));
+					ps.setDate(index, JdbcUtil.getDate(emih.getPlanEMIHDate()));
 				}
 
 				@Override

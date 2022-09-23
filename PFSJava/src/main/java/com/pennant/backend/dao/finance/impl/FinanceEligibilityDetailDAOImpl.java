@@ -40,7 +40,7 @@ public class FinanceEligibilityDetailDAOImpl extends BasicDao<FinanceEligibility
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(index, finID);
 		}, (rs, rowNum) -> {
 			FinanceEligibilityDetail ed = new FinanceEligibilityDetail();
 
@@ -97,7 +97,7 @@ public class FinanceEligibilityDetailDAOImpl extends BasicDao<FinanceEligibility
 				ps.setInt(index++, ed.getOverridePerc());
 				ps.setBoolean(index++, ed.isUserOverride());
 				ps.setTimestamp(index++, ed.getLastMntOn());
-				ps.setLong(index++, ed.getLastMntBy());
+				ps.setLong(index, ed.getLastMntBy());
 			}
 
 			@Override
@@ -132,7 +132,7 @@ public class FinanceEligibilityDetailDAOImpl extends BasicDao<FinanceEligibility
 				ps.setTimestamp(index++, ed.getLastMntOn());
 				ps.setLong(index++, ed.getLastMntBy());
 				ps.setLong(index++, ed.getFinID());
-				ps.setLong(index++, ed.getElgRuleCode());
+				ps.setLong(index, ed.getElgRuleCode());
 			}
 
 			@Override

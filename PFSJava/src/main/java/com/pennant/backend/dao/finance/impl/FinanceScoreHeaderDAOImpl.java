@@ -127,7 +127,7 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 			ps.setBoolean(index++, sh.isOverride());
 			ps.setInt(index++, sh.getOverrideScore());
 			ps.setString(index++, sh.getCreditWorth());
-			ps.setLong(index++, sh.getCustId());
+			ps.setLong(index, sh.getCustId());
 
 		});
 
@@ -215,7 +215,7 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 				ps.setLong(index++, fsd.getSubGroupId());
 				ps.setLong(index++, fsd.getRuleId());
 				ps.setBigDecimal(index++, fsd.getMaxScore());
-				ps.setBigDecimal(index++, fsd.getExecScore());
+				ps.setBigDecimal(index, fsd.getExecScore());
 			}
 
 			@Override

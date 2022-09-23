@@ -112,7 +112,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 				ps.setString(index++, id);
-				ps.setInt(index++, moduleId);
+				ps.setInt(index, moduleId);
 			}
 		}, rowMapper);
 	}
@@ -140,7 +140,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 			ps.setString(index++, finEvent);
 			ps.setInt(index++, 1);
 			ps.setBoolean(index++, origination);
-			ps.setInt(index++, moduleId);
+			ps.setInt(index, moduleId);
 		}, new FinTypeRowMapper(type));
 	}
 
@@ -222,7 +222,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 				for (String finEvent : finEvents) {
 					ps.setString(index++, finEvent);
 				}
-				ps.setInt(index++, moduleId);
+				ps.setInt(index, moduleId);
 			}
 		}, rowMapper);
 	}
@@ -480,7 +480,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 					ps.setString(index++, finType);
 				}
 				ps.setString(index++, finEvent);
-				ps.setInt(index++, moduleId);
+				ps.setInt(index, moduleId);
 			}
 		}, new RowMapper<FinTypeFees>() {
 			@Override
@@ -736,7 +736,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 			ps.setString(index++, finEvent);
 			ps.setInt(index++, 1);
 			ps.setBoolean(index++, false);
-			ps.setInt(index++, FinanceConstants.MODULEID_FINTYPE);
+			ps.setInt(index, FinanceConstants.MODULEID_FINTYPE);
 		}, (rs, rowNum) -> {
 			FinTypeFees fsd = new FinTypeFees();
 
