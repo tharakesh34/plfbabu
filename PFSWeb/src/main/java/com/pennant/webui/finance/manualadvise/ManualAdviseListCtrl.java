@@ -239,6 +239,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		ManualAdvise manualadvise = new ManualAdvise();
 		manualadvise.setNewRecord(true);
 		manualadvise.setWorkflowId(getWorkFlowId());
+		manualadvise.setValueDate(SysParamUtil.getAppDate());
 		// Display the dialog page.
 		doShowDialogPage(manualadvise);
 

@@ -113,75 +113,72 @@
 												<column width="35%" />
 											</columns>
 											<rows>
-												<row id="row0">
-													<label id="label_AdviseType"
-														value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" visible="true" />
-													<hbox visible="true">
+												<row>
+													<label value="${c:l('label_ManualAdviseDialog_AdviseType.value')}"
+														visible="true" />
+													<hbox>
 														<space spacing="2px" sclass="mandatory" />
 														<combobox id="adviseType" width="120px" />
 													</hbox>
-													<label id="label_FinReference"
-														value="${c:l('label_ManualAdviseDialog_FinReference.value')}" visible="false" />
+													<label
+														value="${c:l('label_ManualAdviseDialog_Eligible_Amount.value')}" />
+													<currencyBox id="eligibleAmount" width="162px" />
+												</row>
+												<row>
+													<label value="${c:l('label_ManualAdviseDialog_FinReference.value')}"
+														visible="false" />
 													<hbox visible="false">
 														<extendedcombobox id="finReference" />
 													</hbox>
 												</row>
-												<row id="row1">
+												<row>
 													<label id="label_FeeTypeID"
 														value="${c:l('label_ManualAdviseDialog_FeeTypeID.value')}" />
 													<hbox>
 														<extendedcombobox id="feeTypeID" />
 													</hbox>
-													<label id="label_AdviseAmount"
+													<label
 														value="${c:l('label_ManualAdviseDialog_AdviseAmount.value')}" />
 													<hbox>
 														<currencyBox id="adviseAmount" width="162px" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ManualAdviseDialog_ValueDate"
-														value="${c:l('label_ManualAdviseDialog_ValueDate.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_ValueDate.value')}" />
 													<hbox id="hbox_ManualAdviseDialog_ValueDate">
 														<space spacing="2px" sclass="mandatory" />
 														<datebox id="valueDate" width="100px" />
 													</hbox>
-													<label id="label_ManualAdviseDialog_PostDate"
-														value="${c:l('label_ManualAdviseDialog_PostDate.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_PostDate.value')}" />
 													<hbox id="hbox_ManualAdviseDialog_PostDate">
 														<space spacing="2px" sclass="mandatory" />
 														<datebox id="postDate" width="100px" />
 													</hbox>
 												</row>
-												<row id="row2" visible="false">
-													<label id="label_PaidAmount"
-														value="${c:l('label_ManualAdviseDialog_PaidAmount.value')}" />
+												<row visible="false">
+													<label value="${c:l('label_ManualAdviseDialog_PaidAmount.value')}" />
 													<currencyBox id="paidAmount" width="162px" />
 
-													<label id="label_WaivedAmount"
-														value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_WaivedAmount.value')}" />
 													<currencyBox id="waivedAmount" width="162px" />
 												</row>
-												<row id="row3">
-													<label id="label_Remarks"
-														value="${c:l('label_ManualAdviseDialog_Remarks.value')}" />
+												<row id="reasonRow">
+													<label value="${c:l('label_ManualAdviseDialog_Reason.value')}" />
 													<hbox>
-														<space spacing="2px" />
-														<textbox id="remarks" maxlength="100" width="400px" rows="4"
-															multiline="true" />
-													</hbox>
-													<label id="label_Reason"
-														value="${c:l('label_ManualAdviseDialog_Reason.value')}" />
-													<hbox>
-														<space id="space_Reason" spacing="2px" sclass="mandatory" />
+														<space spacing="2px" sclass="mandatory" />
 														<textbox id="reason" />
 													</hbox>
 												</row>
-												<row id="row4">
-													<hbox id="hbox_Sequence">
-														<label id="label_Sequence"
-															value="${c:l('label_ManualAdviseDialog_Sequence.value')}" />
-														<intbox id="sequence" width="90px" maxlength="14" />
-													</hbox>
+												<row>
+													<label value="${c:l('label_ManualAdviseDialog_Remarks.value')}" />
+													<cell colspan="3">
+														<textbox id="remarks" maxlength="100" width="800px" rows="4"
+															multiline="true" />
+													</cell>
+												</row>
+												<row visible="false">
+													<label value="${c:l('label_ManualAdviseDialog_Sequence.value')}" />
+													<intbox id="sequence" width="90px" maxlength="14" />
 												</row>
 											</rows>
 										</grid>
@@ -195,55 +192,48 @@
 											</columns>
 											<rows>
 												<row>
-													<label id="label_ManualAdviseDialog_TaxComponent"
+													<label
 														value="${c:l('label_ManualAdviseDialog_TaxComponent.value')}" />
 													<label id="label_TaxComponent" style="font-weight:bold;" />
 												</row>
 												<row>
-													<label id="label_ManualAdviseDialog_AdviseAmount"
+													<label
 														value="${c:l('label_ManualAdviseDialog_AdviseAmount.value')}" />
 													<decimalbox id="feeAmount" maxlength="18" readonly="true"
 														style="border:none; background-color:white; font-weight:bold;" />
 												</row>
 												<row>
-													<label id="label_ManualAdviseDialog_CGST"
-														value="${c:l('label_ManualAdviseDialog_CGST.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_CGST.value')}" />
 													<decimalbox id="cgst" maxlength="18" readonly="true"
 														style="border:none; background-color:white; font-weight:bold;" />
 												</row>
 												<row>
-													<label id="label_ManualAdviseDialog_SGST"
-														value="${c:l('label_ManualAdviseDialog_SGST.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_SGST.value')}" />
 													<decimalbox id="sgst" maxlength="18" readonly="true"
 														style="border:none; background-color:white; font-weight:bold;" />
 												</row>
 												<row>
-													<label id="label_ManualAdviseDialog_IGST"
-														value="${c:l('label_ManualAdviseDialog_IGST.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_IGST.value')}" />
 													<decimalbox id="igst" maxlength="18" readonly="true"
 														style="border:none; background-color:white; font-weight:bold;" />
 												</row>
 												<row>
-													<label id="label_ManualAdviseDialog_UGST"
-														value="${c:l('label_ManualAdviseDialog_UGST.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_UGST.value')}" />
 													<decimalbox id="ugst" maxlength="18" readonly="true"
 														style="border:none; background-color:white; font-weight:bold;" />
 												</row>
 												<row>
-													<label id="label_ManualAdviseDialog_CESS"
-														value="${c:l('label_ManualAdviseDialog_CESS.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_CESS.value')}" />
 													<decimalbox id="cess" maxlength="18" readonly="true"
 														style="border:none; background-color:white; font-weight:bold;" />
 												</row>
 												<row>
-													<label id="label_ManualAdviseDialog_TotalGST"
-														value="${c:l('label_ManualAdviseDialog_TotalGST.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_TotalGST.value')}" />
 													<decimalbox id="totalGST" maxlength="18" readonly="true"
 														style="border:none; background-color:white; font-weight:bold;" />
 												</row>
 												<row>
-													<label id="label_ManualAdviseDialog_Total"
-														value="${c:l('label_ManualAdviseDialog_Total.value')}" />
+													<label value="${c:l('label_ManualAdviseDialog_Total.value')}" />
 													<decimalbox id="total" maxlength="18" readonly="true"
 														style="border:none; background-color:white; font-weight:bold;" />
 												</row>

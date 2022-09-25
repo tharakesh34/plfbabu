@@ -54,7 +54,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
-import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -83,6 +82,7 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * Service implementation for methods that depends on <b>ManualAdvise</b>.<br>
@@ -169,6 +169,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			return null;
 		}
 
+		manualAdvise.setFeeType(this.feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID()));
+
 		// Document Details
 		List<DocumentDetails> documents = documentDetailsDAO.getDocumentDetailsByRef(
 				String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
@@ -196,17 +198,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public String getTaxComponent(Long adviseID, String type) {
 		return manualAdviseDAO.getTaxComponent(adviseID, type);
-	}
-
-	@Override
-	public ManualAdvise getAdviceFeeType(ManualAdvise manualAdvise) {
-		FeeType feeType = this.feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID());
-		if (feeType != null) {
-			com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
-			BeanUtils.copyProperties(feeType, modelFeeType);
-			manualAdvise.setFeeType(modelFeeType);
-		}
-		return manualAdvise;
 	}
 
 	@Override
@@ -957,6 +948,48 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public BigDecimal getBalanceAmt(long finID, Date valueDate) {
 		return manualAdviseDAO.getBalanceAmt(finID, valueDate);
+	}
+
+	@Override
+	public BigDecimal getEligibleAmount(String reference, Date valueDate, long feeType, String linkTo, long recvId) {
+		logger.debug(Literal.ENTERING);
+
+		BigDecimal payableAmnt = manualAdviseDAO.getExistingPayableAmount(reference, feeType);
+
+		if (payableAmnt == null) {
+			payableAmnt = BigDecimal.ZERO;
+		}
+
+		if (Allocation.MANADV.equals(linkTo)) {
+			BigDecimal paidAmount = manualAdviseDAO.getPaidAmountsByFeeType(reference, recvId, valueDate);
+
+			if (paidAmount == null) {
+				paidAmount = BigDecimal.ZERO;
+			}
+
+			logger.debug(Literal.LEAVING);
+			return paidAmount.subtract(payableAmnt);
+		}
+
+		BigDecimal paidAmount = manualAdviseDAO.getPaidAmountsbyAllocation(reference, linkTo);
+
+		if (paidAmount == null) {
+			paidAmount = BigDecimal.ZERO;
+		}
+
+		BigDecimal eligibleAmt = paidAmount.subtract(payableAmnt);
+
+		logger.debug(Literal.LEAVING);
+		return eligibleAmt.compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : eligibleAmt;
+	}
+
+	public boolean isDuplicatePayble(long finID, long feeTypeId, String linkTo) {
+		return manualAdviseDAO.isDuplicatePayble(finID, feeTypeId, linkTo);
+	}
+
+	@Override
+	public boolean isPaybleExist(long finID, long feeTypeID, String linkTo) {
+		return manualAdviseDAO.isPaybleExist(finID, feeTypeID, linkTo);
 	}
 
 	@Autowired

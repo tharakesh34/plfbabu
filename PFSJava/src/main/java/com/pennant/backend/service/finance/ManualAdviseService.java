@@ -55,8 +55,6 @@ public interface ManualAdviseService {
 
 	String getTaxComponent(Long adviseID, String type);
 
-	ManualAdvise getAdviceFeeType(ManualAdvise manualAdvise);
-
 	List<ReturnDataSet> getAccountingSetEntries(ManualAdvise manualAdvise);
 
 	long getNewAdviseID();
@@ -70,4 +68,11 @@ public interface ManualAdviseService {
 	int getFutureDatedAdvises(long finID);
 
 	int cancelFutureDatedAdvises();
+
+	BigDecimal getEligibleAmount(String finReference, Date valueDate, long id, String linkTo, long recFee);
+
+	boolean isDuplicatePayble(long finID, long feeTypeId, String linkTo);
+
+	boolean isPaybleExist(long finID, long feeTypeID, String linkTo);
+
 }

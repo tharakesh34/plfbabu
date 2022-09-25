@@ -131,6 +131,8 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 	private String reason;
 	private Long presentmentID;
 	private boolean invoiceReq;
+	private BigDecimal eligibleAmount;
+	private String payableLinkTo;
 
 	public String getFinSource() {
 		return finSource;
@@ -199,6 +201,9 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 		entity.setReason(this.reason);
 		entity.setPresentmentID(this.presentmentID);
 		entity.setInvoiceReq(this.invoiceReq);
+		entity.setEligibleAmount(this.eligibleAmount);
+		entity.setPayableLinkTo(this.payableLinkTo);
+		
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -239,6 +244,8 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 		excludeFields.add("tdsReq");
 		excludeFields.add("dueDate");
 		excludeFields.add("invoiceReq");
+		excludeFields.add("eligibleAmount");
+		excludeFields.add("payableLinkTo");
 		return excludeFields;
 	}
 
@@ -668,6 +675,22 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 
 	public void setInvoiceReq(boolean invoiceReq) {
 		this.invoiceReq = invoiceReq;
+	}
+
+	public BigDecimal getEligibleAmount() {
+		return eligibleAmount;
+	}
+
+	public void setEligibleAmount(BigDecimal eligibleAmount) {
+		this.eligibleAmount = eligibleAmount;
+	}
+
+	public String getPayableLinkTo() {
+		return payableLinkTo;
+	}
+
+	public void setPayableLinkTo(String payableLinkTo) {
+		this.payableLinkTo = payableLinkTo;
 	}
 
 }

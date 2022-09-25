@@ -31,47 +31,36 @@ import com.pennant.backend.model.finance.FeeType;
 import com.pennanttech.pff.core.TableType;
 
 public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
-	FeeType getFeeTypeById(long id, String type);
 
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param feeTypeID   feeTypeID of the feeType.
-	 * @param feeTypeCode feeTypeCode of the feeType.
-	 * @param tableType   The type of the table.
-	 * @return true if the record exists.
-	 */
 	boolean isDuplicateKey(long feeTypeID, String feeTypeCode, TableType tableType);
 
-	FeeType getApprovedFeeTypeByFeeCode(String feeTyeCode);
-
-	int getAccountingSetIdCount(long accountSetId, String type);
-
-	Long getFinFeeTypeIdByFeeType(String feeTypeCode, String type);
-
-	FeeType getTaxDetailByCode(String feeTypeCode);
-
-	String getTaxCompByCode(String feeTypeCode);
-
-	/**
-	 * Get List of ManualAdvise FeeType details by AdviseType
-	 * 
-	 * @param adviceType
-	 * @return
-	 */
-	List<FeeType> getManualAdviseFeeType(int adviceType, String type);
-
-	Long getFeeTypeId(String feeTypeCode);
-
-	boolean isFeeTypeAmortzReq(String feeTypeCode);
-
-	List<FeeType> getAMZReqFeeTypes();
-
-	String getTaxComponent(String feeTypeCode);
+	FeeType getFeeTypeById(long id, String type);
 
 	List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type);
 
 	List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String type);
 
+	List<FeeType> getManualAdviseFeeType(int adviceType, String type);
+
+	List<FeeType> getAMZReqFeeTypes();
+
+	FeeType getApprovedFeeTypeByFeeCode(String feeTyeCode);
+
+	FeeType getTaxDetailByCode(String feeTypeCode);
+
+	int getAccountingSetIdCount(long accountSetId, String type);
+
+	Long getFinFeeTypeIdByFeeType(String feeTypeCode, String type);
+
+	String getTaxCompByCode(String feeTypeCode);
+
+	Long getFeeTypeId(String feeTypeCode);
+
+	boolean isFeeTypeAmortzReq(String feeTypeCode);
+
+	String getTaxComponent(String feeTypeCode);
+
 	long getManualAdviseFeeTypeById(long id);
+
+	FeeType getFeeTypeByRecvFeeTypeId(long id);
 }

@@ -155,4 +155,15 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	List<ManualAdvise> getReceivableAdvises(long finID, Date valueDate, String type);
 
 	List<ManualAdvise> getAdvises(long finID, String type);
+
+	BigDecimal getExistingPayableAmount(String reference, long feetYpeId);
+
+	BigDecimal getPaidAmountsByFeeType(String reference, long feetYpeId, Date valueDate);
+
+	public BigDecimal getPaidAmountsbyAllocation(String reference, String payableLinkTo);
+
+	boolean isDuplicatePayble(long finID, long feeTypeId, String payablelinkTo);
+
+	boolean isPaybleExist(long finID, long feeTypeId, String payablelinkTo);
+
 }

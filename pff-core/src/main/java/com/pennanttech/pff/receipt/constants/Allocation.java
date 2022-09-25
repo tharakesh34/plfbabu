@@ -20,6 +20,7 @@ public class Allocation {
 	public static final String FUT_TDS = "FUTTDS";
 	public static final String KOEMI = "KOFFEMI";
 	public static final String KOLPI = "KOFFLPI";
+	public static final String ADHOC = "ADHOC";
 
 	private Allocation() {
 		super();

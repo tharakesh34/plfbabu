@@ -257,14 +257,33 @@ public class FeePostingController extends ExtendedTestClass {
 		}
 
 		// validate Advise Amount
-		if (manualAdvise.getAdviseAmount() == null || manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) <= 0) {
+		BigDecimal adviseAmount = manualAdvise.getAdviseAmount();
+
+		if (adviseAmount == null) {
+			adviseAmount = BigDecimal.ZERO;
+		}
+
+		if (adviseAmount.compareTo(BigDecimal.ZERO) <= 0) {
 			String[] errorParam = new String[1];
 			errorParam[0] = "AdviseAmount ";
 			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", errorParam));
 			return error;
 		}
 
-		// validate Value Date
+		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(manualAdvise.getFeeTypeCode());
+
+		BigDecimal eligibleAmount = manualAdviseService.getEligibleAmount(manualAdvise.getFinReference(),
+				manualAdvise.getValueDate(), feeType.getFeeTypeID(), feeType.getPayableLinkTo(),
+				feeType.getRecvFeeTypeId());
+
+		if (adviseAmount.compareTo(eligibleAmount) > 0) {
+			String[] errorparam = new String[2];
+			errorparam[0] = "Advise Amount : " + adviseAmount;
+			errorparam[1] = "Eligible Amount : " + eligibleAmount;
+			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("12723", errorparam));
+			return error;
+		}
+
 		if (manualAdvise.getValueDate() == null) {
 			String[] errorParam = new String[1];
 			errorParam[0] = "ValueDate ";

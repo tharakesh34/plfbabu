@@ -35,6 +35,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.overdraft.OverdraftConstants;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
@@ -361,6 +362,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> calcOfstepsList;
 	private static List<ValueLabel> stepsAppliedFor;
 	private static List<ValueLabel> stepDisbCalCodes;
+	private static List<ValueLabel> maCategories;
 	// ### START SFA_20210405 -->
 	private static ArrayList<ValueLabel> receivableOrPayable;
 	private static List<ValueLabel> certificateQuarter;
@@ -5646,4 +5648,19 @@ public class PennantStaticListUtil {
 		return recalTypes;
 	}
 
+	public static List<ValueLabel> getManualAdviseCategory() {
+		if (maCategories == null) {
+			maCategories = new ArrayList<>();
+
+			maCategories.add(new ValueLabel(Allocation.ADHOC, "Adhoc"));
+			maCategories.add(new ValueLabel(Allocation.PFT, "Interest"));
+			maCategories.add(new ValueLabel(Allocation.PRI, "Principal"));
+			maCategories.add(new ValueLabel(Allocation.BOUNCE, "Bounce"));
+			maCategories.add(new ValueLabel(Allocation.ODC, "ODC"));
+			maCategories.add(new ValueLabel(Allocation.LPFT, "LPFT"));
+			maCategories.add(new ValueLabel(Allocation.MANADV, "Other Receivables"));
+		}
+
+		return maCategories;
+	}
 }

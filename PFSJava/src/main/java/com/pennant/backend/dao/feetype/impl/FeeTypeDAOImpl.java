@@ -25,23 +25,15 @@
 
 package com.pennant.backend.dao.feetype.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.model.finance.FeeType;
@@ -59,88 +51,164 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
-	private static Logger logger = LogManager.getLogger(FeeTypeDAOImpl.class);
 
 	public FeeTypeDAOImpl() {
 		super();
 	}
 
 	@Override
-	public FeeType getFeeTypeById(final long feeTypeId, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, Refundable, AdviseType");
-		sql.append(", AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense");
-		sql.append(", HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet, TdsReq");
+	public String save(FeeType ft, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert into FeeTypes");
+		sql.append(tableType.getSuffix());
+		sql.append(" (FeeTypeID, FeeTypeCode, FeeTypeDesc, ManualAdvice, AdviseType, AccountSetId, Active");
+		sql.append(", TaxComponent, TaxApplicable, Refundable, FeeIncomeOrExpense, HostFeeTypeCode");
+		sql.append(", AmortzReq, DueAccReq, DueAccSet, TdsReq, PayableLinkTo, RecvFeeTypeId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(")");
+		sql.append(" Values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		if (type.contains("View")) {
-			sql.append(", AccountSetCode, AccountSetCodeName, DueAcctSetCode, DueAcctSetCodeName, AcType, AcTypeDesc");
+		if (ft.getId() == Long.MIN_VALUE) {
+			ft.setId(getNextValue("SeqFeeTypes"));
 		}
 
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FeeTypes");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FeeTypeID = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FeeType fee = new FeeType();
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
-				fee.setFeeTypeID(rs.getLong("FeeTypeID"));
-				fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
-				fee.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-				fee.setActive(rs.getBoolean("Active"));
-				fee.setManualAdvice(rs.getBoolean("ManualAdvice"));
-				fee.setRefundable(rs.getBoolean("Refundable"));
-				fee.setAdviseType(rs.getInt("AdviseType"));
-				fee.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
-				fee.setTaxComponent(rs.getString("TaxComponent"));
-				fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-				fee.setFeeIncomeOrExpense(rs.getString("FeeIncomeOrExpense"));
-				fee.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
-				fee.setAmortzReq(rs.getBoolean("AmortzReq"));
-				fee.setDueAccReq(rs.getBoolean("DueAccReq"));
-				fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
-				fee.setTdsReq(rs.getBoolean("TdsReq"));
+				ps.setLong(index++, ft.getFeeTypeID());
+				ps.setString(index++, ft.getFeeTypeCode());
+				ps.setString(index++, ft.getFeeTypeDesc());
+				ps.setBoolean(index++, ft.isManualAdvice());
+				ps.setInt(index++, ft.getAdviseType());
+				ps.setObject(index++, ft.getAccountSetId());
+				ps.setBoolean(index++, ft.isActive());
+				ps.setString(index++, ft.getTaxComponent());
+				ps.setBoolean(index++, ft.isTaxApplicable());
+				ps.setBoolean(index++, ft.isRefundable());
+				ps.setString(index++, ft.getFeeIncomeOrExpense());
+				ps.setString(index++, ft.getHostFeeTypeCode());
+				ps.setBoolean(index++, ft.isAmortzReq());
+				ps.setBoolean(index++, ft.isDueAccReq());
+				ps.setObject(index++, ft.getDueAccSet());
+				ps.setBoolean(index++, ft.isTdsReq());
+				ps.setString(index++, ft.getPayableLinkTo());
+				ps.setObject(index++, ft.getRecvFeeTypeId());
+				ps.setInt(index++, ft.getVersion());
+				ps.setLong(index++, ft.getLastMntBy());
+				ps.setTimestamp(index++, ft.getLastMntOn());
+				ps.setString(index++, ft.getRecordStatus());
+				ps.setString(index++, ft.getRoleCode());
+				ps.setString(index++, ft.getNextRoleCode());
+				ps.setString(index++, ft.getTaskId());
+				ps.setString(index++, ft.getNextTaskId());
+				ps.setString(index++, ft.getRecordType());
+				ps.setLong(index, ft.getWorkflowId());
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
 
-				if (type.contains("View")) {
-					fee.setAccountSetCode(rs.getString("AccountSetCode"));
-					fee.setAccountSetCodeName(rs.getString("AccountSetCodeName"));
-					fee.setDueAcctSetCode(rs.getString("DueAcctSetCode"));
-					fee.setDueAcctSetCodeName(rs.getString("DueAcctSetCodeName"));
-					fee.setAcType(rs.getString("AcType"));
-					fee.setAcTypeDesc(rs.getString("AcTypeDesc"));
+		return String.valueOf(ft.getFeeTypeID());
+	}
+
+	@Override
+	public void update(FeeType ft, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update FeeTypes");
+		sql.append(tableType.getSuffix());
+		sql.append(" Set FeeTypeCode = ?, FeeTypeDesc = ?, ManualAdvice = ?, AdviseType = ?, AccountSetId = ?");
+		sql.append(", Active = ?, TaxComponent = ?, TaxApplicable = ?, Refundable = ?");
+		sql.append(", FeeIncomeOrExpense = ?, HostFeeTypeCode = ?, AmortzReq = ?, DueAccReq = ?");
+		sql.append(", DueAccSet = ?, TdsReq = ?, PayableLinkTo = ?, RecvFeeTypeId = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FeeTypeID = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, ft.getFeeTypeCode());
+			ps.setString(index++, ft.getFeeTypeDesc());
+			ps.setBoolean(index++, ft.isManualAdvice());
+			ps.setInt(index++, ft.getAdviseType());
+			ps.setObject(index++, ft.getAccountSetId());
+			ps.setBoolean(index++, ft.isActive());
+			ps.setString(index++, ft.getTaxComponent());
+			ps.setBoolean(index++, ft.isTaxApplicable());
+			ps.setBoolean(index++, ft.isRefundable());
+			ps.setString(index++, ft.getFeeIncomeOrExpense());
+			ps.setString(index++, ft.getHostFeeTypeCode());
+			ps.setBoolean(index++, ft.isAmortzReq());
+			ps.setBoolean(index++, ft.isDueAccReq());
+			ps.setObject(index++, ft.getDueAccSet());
+			ps.setBoolean(index++, ft.isTdsReq());
+			ps.setString(index++, ft.getPayableLinkTo());
+			ps.setObject(index++, ft.getRecvFeeTypeId());
+			ps.setInt(index++, ft.getVersion());
+			ps.setLong(index++, ft.getLastMntBy());
+			ps.setTimestamp(index++, ft.getLastMntOn());
+			ps.setString(index++, ft.getRecordStatus());
+			ps.setString(index++, ft.getRoleCode());
+			ps.setString(index++, ft.getNextRoleCode());
+			ps.setString(index++, ft.getTaskId());
+			ps.setString(index++, ft.getNextTaskId());
+			ps.setString(index++, ft.getRecordType());
+			ps.setLong(index++, ft.getWorkflowId());
+
+			ps.setLong(index++, ft.getFeeTypeID());
+			if (tableType == TableType.TEMP_TAB) {
+				ps.setTimestamp(index, ft.getPrevMntOn());
+			} else {
+				ps.setInt(index, ft.getVersion() - 1);
+			}
+		});
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public void delete(FeeType ft, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From FeeTypes");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where FeeTypeID = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, ft.getFeeTypeID());
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setTimestamp(2, ft.getPrevMntOn());
+				} else {
+					ps.setInt(2, ft.getVersion() - 1);
 				}
+			});
 
-				fee.setVersion(rs.getInt("Version"));
-				fee.setLastMntBy(rs.getLong("LastMntBy"));
-				fee.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				fee.setRecordStatus(rs.getString("RecordStatus"));
-				fee.setRoleCode(rs.getString("RoleCode"));
-				fee.setNextRoleCode(rs.getString("NextRoleCode"));
-				fee.setTaskId(rs.getString("TaskId"));
-				fee.setNextTaskId(rs.getString("NextTaskId"));
-				fee.setRecordType(rs.getString("RecordType"));
-				fee.setWorkflowId(rs.getLong("WorkflowId"));
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
 
-				return fee;
-
-			}, feeTypeId);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
 	}
 
 	@Override
 	public boolean isDuplicateKey(long feeTypeID, String feeTypeCode, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
 		String sql;
-		String whereClause = "FeeTypeCode = :feeTypeCode and FeeTypeID != :feeTypeID";
+		String whereClause = "FeeTypeCode = ? and FeeTypeID != ?";
+		Object[] obj = new Object[] { feeTypeCode, feeTypeID };
+
 		switch (tableType) {
 		case MAIN_TAB:
 			sql = QueryUtil.getCountQuery("FeeTypes", whereClause);
@@ -150,141 +218,98 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			break;
 		default:
 			sql = QueryUtil.getCountQuery(new String[] { "FeeTypes_Temp", "FeeTypes" }, whereClause);
+			obj = new Object[] { feeTypeCode, feeTypeID, feeTypeCode, feeTypeID };
 			break;
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("feeTypeID", feeTypeID);
-		paramSource.addValue("feeTypeCode", feeTypeCode);
+		logger.debug(Literal.SQL.concat(sql));
 
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
 	@Override
-	public String save(FeeType feeType, TableType tableType) {
-		logger.debug(Literal.ENTERING);
+	public FeeType getFeeTypeById(final long feeTypeId, String type) {
+		StringBuilder sql = getFeeTypeQuery(type);
+		sql.append(" Where FeeTypeID = ?");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into FeeTypes");
-		sql.append(tableType.getSuffix());
-		sql.append(" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active");
-		sql.append(", TaxComponent, TaxApplicable, refundable, FeeIncomeOrExpense");
-		sql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode,  AmortzReq, DueAccReq, DueAccSet,TdsReq)");
-		sql.append(" values(");
-		sql.append(" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active");
-		sql.append(", :TaxComponent, :TaxApplicable, :refundable,  :FeeIncomeOrExpense");
-		sql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode, :AmortzReq ,:DueAccReq, :DueAccSet,:TdsReq)");
-
-		// Get the identity sequence number.
-		if (feeType.getId() == Long.MIN_VALUE) {
-			feeType.setId(getNextValue("SeqFeeTypes"));
-		}
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(feeType);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
+			return this.jdbcOperations.queryForObject(sql.toString(), new FeeTypeRM(type), feeTypeId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		logger.debug("Leaving");
-		return String.valueOf(feeType.getFeeTypeID());
 	}
 
 	@Override
-	public void update(FeeType feeType, TableType tableType) {
-		logger.debug(Literal.ENTERING);
+	public List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type) {
+		StringBuilder sql = getFeeTypeQuery(type);
+		sql.append(" Where FeeTypeID IN (");
+		sql.append(JdbcUtil.getInCondition(feeTypeIds));
+		sql.append(") and Active = ?");
 
-		StringBuilder sql = new StringBuilder("update FeeTypes");
-		sql.append(tableType.getSuffix());
-		sql.append(" set feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
-		sql.append(" active=:active,");
-		sql.append(" manualAdvice = :manualAdvice, AdviseType = :AdviseType, AccountSetId = :AccountSetId ");
-		sql.append(" , TaxComponent = :TaxComponent, TaxApplicable = :TaxApplicable,refundable =:refundable,");
-		sql.append(" FeeIncomeOrExpense = :FeeIncomeOrExpense");
-		sql.append(
-				", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(
-				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		sql.append(
-				" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq ,DueAccReq =:DueAccReq, DueAccSet =:DueAccSet,TdsReq =:TdsReq");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		sql.append(" where FeeTypeID =:FeeTypeID");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+			for (Long id : feeTypeIds) {
+				ps.setLong(index++, id);
+			}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
-		int recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
+			ps.setInt(index, 1);
+		}, new FeeTypeRM(type));
 	}
 
 	@Override
-	public void delete(FeeType feeType, TableType tableType) {
-		logger.debug(Literal.ENTERING);
+	public List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String type) {
+		StringBuilder sql = getFeeTypeQuery(type);
+		sql.append(" Where feeTypeCode in (");
+		sql.append(JdbcUtil.getInCondition(feeTypeCodes));
+		sql.append(") and Active = ?");
 
-		StringBuilder sql = new StringBuilder("delete From FeeTypes");
-		sql.append(tableType.getSuffix());
-		sql.append(" where FeeTypeID =:FeeTypeID");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
-		int recordCount = 0;
-
-		try {
-			recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (String feeTypeCode : feeTypeCodes) {
+				ps.setString(index++, feeTypeCode);
+			}
+			ps.setInt(index, 1);
+		}, new FeeTypeRM(type));
 	}
 
-	/**
-	 * Fetch the Record FeeType details by Fee code
-	 * 
-	 * @param feeTypeCode (String)
-	 * @return FeeType
-	 */
+	@Override
+	public List<FeeType> getManualAdviseFeeType(int adviceType, String type) {
+		StringBuilder sql = getManualAdviseFeeTypeQuery(type);
+		sql.append(" Where AdviseType = ? and ManualAdvice = ? and Active = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), new ManualAdviseFeeTypeRM(), adviceType, 1, 1);
+	}
+
+	@Override
+	public List<FeeType> getAMZReqFeeTypes() {
+		StringBuilder sql = getManualAdviseFeeTypeQuery("");
+		sql.append(" Where AmortzReq = ? and Active = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), new ManualAdviseFeeTypeRM(), true, true);
+	}
+
 	@Override
 	public FeeType getApprovedFeeTypeByFeeCode(String feeTypeCd) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId");
 		sql.append(", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable, DueAccReq");
-		sql.append(", DueAccSet, TdsReq, FeeIncomeOrExpense");
+		sql.append(", DueAccSet, TdsReq, FeeIncomeOrExpense, PayableLinkTo, RecvFeeTypeId");
 		sql.append(" from FeeTypes");
 		sql.append(" Where FeeTypeCode = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
@@ -306,6 +331,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
 				fee.setTdsReq(rs.getBoolean("TdsReq"));
 				fee.setFeeIncomeOrExpense(rs.getString("FeeIncomeOrExpense"));
+				fee.setPayableLinkTo(rs.getString("PayableLinkTo"));
+				fee.setRecvFeeTypeId(rs.getLong("RecvFeeTypeId"));
 
 				return fee;
 			}, feeTypeCd);
@@ -313,39 +340,6 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-	}
-
-	@Override
-	public int getAccountingSetIdCount(long accountSetId, String type) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder("Select Count(*) From FeeTypes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AccountSetId = :AccountSetId");
-		logger.debug("selectSql: " + selectSql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("AccountSetId", accountSetId);
-
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-	}
-
-	@Override
-	public Long getFinFeeTypeIdByFeeType(String feeTypeCode, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FeeTypeID From FeeTypes");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FeeTypeCode = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return jdbcOperations.queryForObject(sql.toString(), Long.class, feeTypeCode);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Fee is not found in FeeTypes{} for the specified FeeTypeCode >> {}", type, feeTypeCode);
-		}
-
-		return null;
 	}
 
 	@Override
@@ -358,7 +352,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(" From FeeTypes");
 		sql.append(" Where FeeTypeCode = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
@@ -389,53 +383,51 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	}
 
 	@Override
-	public String getTaxCompByCode(String feeTypeCode) {
-		logger.debug("Entering");
+	public int getAccountingSetIdCount(long accountSetId, String type) {
+		StringBuilder sql = new StringBuilder("Select Count(AccountSetId) From FeeTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where AccountSetId = ?");
 
-		String taxType = null;
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT TaxComponent From FeeTypes");
-		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode ");
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		logger.debug("selectSql: " + selectSql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FeeTypeCode", feeTypeCode);
-
-		try {
-			taxType = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			taxType = null;
-		}
-
-		logger.debug("Leaving");
-		return taxType;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, accountSetId);
 	}
 
 	@Override
-	public List<FeeType> getManualAdviseFeeType(int adviceType, String type) {
-		logger.debug(Literal.ENTERING);
+	public Long getFinFeeTypeIdByFeeType(String feeTypeCode, String type) {
+		StringBuilder sql = new StringBuilder("Select FeeTypeID From FeeTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FeeTypeCode = ?");
 
-		FeeType feeType = new FeeType();
-		feeType.setAdviseType(adviceType);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		StringBuilder selectSql = new StringBuilder("Select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active,");
-		selectSql.append(" ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable, ");
-		selectSql.append(" TaxComponent,refundable ,DueAccReq ,DueAccSet ,TdsReq  From FeeTypes");
-		selectSql.append(type);
-		selectSql.append(" Where AdviseType = :AdviseType AND ManualAdvice=1 AND Active=1");
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), Long.class, feeTypeCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 
-		logger.debug("sql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
-		RowMapper<FeeType> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeType.class);
+	@Override
+	public String getTaxCompByCode(String feeTypeCode) {
+		String sql = "Select TaxComponent From FeeTypes Where FeeTypeCode = ?";
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, feeTypeCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override
 	public Long getFeeTypeId(String feeTypeCode) {
 		String sql = "Select FeeTypeID From FeeTypes Where FeeTypeCode = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, feeTypeCode);
@@ -447,18 +439,12 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 	@Override
 	public boolean isFeeTypeAmortzReq(String feeTypeCode) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select AmortzReq From FeeTypes Where FeeTypeCode = ?";
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT AmortzReq From FeeTypes");
-		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode ");
-
-		logger.trace(Literal.SQL + selectSql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FeeTypeCode", feeTypeCode);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Boolean.class);
+			return this.jdbcOperations.queryForObject(sql, Boolean.class, feeTypeCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return false;
@@ -466,123 +452,24 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	}
 
 	@Override
-	public List<FeeType> getAMZReqFeeTypes() {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId");
-		sql.append(", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable, DueAccReq");
-		sql.append(", DueAccSet, TdsReq");
-		sql.append(" from FeeTypes");
-		sql.append(" Where AmortzReq = ? and Active = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setBoolean(1, true);
-				ps.setBoolean(2, true);
-			}
-		}, new RowMapper<FeeType>() {
-			@Override
-			public FeeType mapRow(ResultSet rs, int rowNum) throws SQLException {
-				FeeType fee = new FeeType();
-
-				fee.setFeeTypeID(rs.getLong("FeeTypeID"));
-				fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
-				fee.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-				fee.setActive(rs.getBoolean("Active"));
-				fee.setManualAdvice(rs.getBoolean("ManualAdvice"));
-				fee.setAdviseType(rs.getInt("AdviseType"));
-				fee.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
-				fee.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
-				fee.setAmortzReq(rs.getBoolean("AmortzReq"));
-				fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-				fee.setTaxComponent(rs.getString("TaxComponent"));
-				fee.setRefundable(rs.getBoolean("Refundable"));
-				fee.setDueAccReq(rs.getBoolean("DueAccReq"));
-				fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
-				fee.setTdsReq(rs.getBoolean("TdsReq"));
-
-				return fee;
-			}
-		});
-	}
-
-	@Override
 	public String getTaxComponent(String feeTypeCode) {
 		String sql = "Select TaxComponent from FeeTypes Where FeeTypeCode = ?";
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql, new Object[] { feeTypeCode }, String.class);
+			return jdbcOperations.queryForObject(sql, String.class, feeTypeCode);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Fee Type is not exists for the Specified Code >> {}", feeTypeCode);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
-
-		return null;
-	}
-
-	@Override
-	public List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("feeTypeIds", feeTypeIds);
-		mapSqlParameterSource.addValue("Active", 1);
-
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, ");
-		selectSql.append(" AdviseType, AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense,");
-		if (type.contains("View")) {
-			selectSql.append(" AccountSetCode, AccountSetCodeName, AcType, AcTypeDesc,");
-		}
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode, AmortzReq, TaxApplicable");
-		selectSql.append(" From FeeTypes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FeeTypeID IN (:feeTypeIds) and Active =:Active");
-
-		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FeeType> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeType.class);
-
-		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
-	}
-
-	@Override
-	public List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("feeTypeCodes", feeTypeCodes);
-		mapSqlParameterSource.addValue("Active", 1);
-
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, ");
-		selectSql.append(" AdviseType, AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense,");
-		if (type.contains("View")) {
-			selectSql.append(" AccountSetCode, AccountSetCodeName, AcType, AcTypeDesc,");
-		}
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode, AmortzReq, TaxApplicable");
-		selectSql.append(" From FeeTypes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where feeTypeCode IN (:feeTypeCodes) and Active =:Active");
-
-		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FeeType> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeType.class);
-
-		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 
 	@Override
 	public long getManualAdviseFeeTypeById(long id) {
 		String sql = "Select FeeTypeID From FeeTypes_AView Where AdviseType = ? and ManualAdvice = ? and Active = ? and FeeTypeID = ?";
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql));
 
 		try {
 			return jdbcOperations.queryForObject(sql, Long.class, 1, 1, 1, id);
@@ -592,4 +479,135 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		}
 	}
 
+	@Override
+	public FeeType getFeeTypeByRecvFeeTypeId(long feeTypeID) {
+		String sql = "Select FeeTypeID, FeeTypeCode, FeeTypeDesc From FeeTypes Where FeeTypeID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				FeeType ft = new FeeType();
+
+				ft.setFeeTypeID(rs.getLong("FeeTypeID"));
+				ft.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				ft.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+
+				return ft;
+			}, feeTypeID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	private StringBuilder getManualAdviseFeeTypeQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice");
+		sql.append(", AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable");
+		sql.append(", TaxComponent, Refundable, DueAccReq, DueAccSet, TdsReq");
+		sql.append(" From FeeTypes");
+		sql.append(type);
+
+		return sql;
+	}
+
+	private class ManualAdviseFeeTypeRM implements RowMapper<FeeType> {
+
+		@Override
+		public FeeType mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FeeType ft = new FeeType();
+
+			ft.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ft.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			ft.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+			ft.setActive(rs.getBoolean("Active"));
+			ft.setManualAdvice(rs.getBoolean("ManualAdvice"));
+			ft.setAdviseType(rs.getInt("AdviseType"));
+			ft.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
+			ft.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
+			ft.setAmortzReq(rs.getBoolean("AmortzReq"));
+			ft.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+			ft.setTaxComponent(rs.getString("TaxComponent"));
+			ft.setRefundable(rs.getBoolean("Refundable"));
+			ft.setDueAccReq(rs.getBoolean("DueAccReq"));
+			ft.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
+			ft.setTdsReq(rs.getBoolean("TdsReq"));
+
+			return ft;
+		}
+	}
+
+	private StringBuilder getFeeTypeQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, Refundable");
+		sql.append(", AdviseType, AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense");
+		sql.append(", HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet, TdsReq");
+
+		if (type.contains("View")) {
+			sql.append(", AccountSetCode, AccountSetCodeName, DueAcctSetCode, DueAcctSetCodeName, AcType, AcTypeDesc");
+		}
+
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", PayableLinkTo, RecvFeeTypeId");
+		sql.append(" From FeeTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
+	}
+
+	private class FeeTypeRM implements RowMapper<FeeType> {
+		private String type;
+
+		public FeeTypeRM(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public FeeType mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FeeType ft = new FeeType();
+
+			ft.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ft.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			ft.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+			ft.setActive(rs.getBoolean("Active"));
+			ft.setManualAdvice(rs.getBoolean("ManualAdvice"));
+			ft.setRefundable(rs.getBoolean("Refundable"));
+			ft.setAdviseType(rs.getInt("AdviseType"));
+			ft.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
+			ft.setTaxComponent(rs.getString("TaxComponent"));
+			ft.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+			ft.setFeeIncomeOrExpense(rs.getString("FeeIncomeOrExpense"));
+			ft.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
+			ft.setAmortzReq(rs.getBoolean("AmortzReq"));
+			ft.setDueAccReq(rs.getBoolean("DueAccReq"));
+			ft.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
+			ft.setTdsReq(rs.getBoolean("TdsReq"));
+
+			if (type.contains("View")) {
+				ft.setAccountSetCode(rs.getString("AccountSetCode"));
+				ft.setAccountSetCodeName(rs.getString("AccountSetCodeName"));
+				ft.setDueAcctSetCode(rs.getString("DueAcctSetCode"));
+				ft.setDueAcctSetCodeName(rs.getString("DueAcctSetCodeName"));
+				ft.setAcType(rs.getString("AcType"));
+				ft.setAcTypeDesc(rs.getString("AcTypeDesc"));
+			}
+
+			ft.setVersion(rs.getInt("Version"));
+			ft.setLastMntBy(rs.getLong("LastMntBy"));
+			ft.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ft.setRecordStatus(rs.getString("RecordStatus"));
+			ft.setRoleCode(rs.getString("RoleCode"));
+			ft.setNextRoleCode(rs.getString("NextRoleCode"));
+			ft.setTaskId(rs.getString("TaskId"));
+			ft.setNextTaskId(rs.getString("NextTaskId"));
+			ft.setRecordType(rs.getString("RecordType"));
+			ft.setWorkflowId(rs.getLong("WorkflowId"));
+			ft.setPayableLinkTo(rs.getString("PayableLinkTo"));
+			ft.setRecvFeeTypeId(rs.getLong("RecvFeeTypeId"));
+
+			return ft;
+		}
+	}
 }

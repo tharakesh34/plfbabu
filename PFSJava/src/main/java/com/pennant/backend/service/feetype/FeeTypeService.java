@@ -54,4 +54,5 @@ public interface FeeTypeService {
 
 	List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String string);
 
+	FeeType getFeeTypeByRecvFeeTypeId(long recvFeeTypeId);
 }
