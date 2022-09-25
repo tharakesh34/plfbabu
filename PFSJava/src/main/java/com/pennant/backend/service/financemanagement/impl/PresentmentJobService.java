@@ -96,7 +96,8 @@ public class PresentmentJobService extends AbstractInterface {
 
 				logger.debug("No of Records in Exclude List  : {}", excludeList.size());
 
-				if (StringUtils.isEmpty(ph.getPartnerAcctNumber()) && ph.getPartnerBankId() == 0) {
+				if (StringUtils.isEmpty(ph.getPartnerAcctNumber())
+						&& (ph.getPartnerBankId() == null || ph.getPartnerBankId() <= 0)) {
 					Presentment pb = getPartnerBankId(ph.getLoanType(), ph.getMandateType());
 					ph.setPartnerAcctNumber(pb.getAccountNo());
 					ph.setPartnerBankId(pb.getPartnerBankId());

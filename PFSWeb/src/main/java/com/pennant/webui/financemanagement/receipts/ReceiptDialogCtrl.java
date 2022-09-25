@@ -2718,7 +2718,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					rcd.setPartnerBankAcType(partnerBank.getAcType());
 				}
 			} else {
-				rcd.setFundingAc(0);
+				rcd.setFundingAc(null);
 				rcd.setFundingAcDesc("");
 			}
 		}
@@ -2969,7 +2969,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 									receiptDetail.setPartnerBankAcType(partnerBank.getAcType());
 								}
 							} else {
-								receiptDetail.setFundingAc(0);
+								receiptDetail.setFundingAc(null);
 								receiptDetail.setFundingAcDesc("");
 							}
 						}

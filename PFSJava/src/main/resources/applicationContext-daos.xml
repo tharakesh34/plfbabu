@@ -8,6 +8,7 @@
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<import resource="classpath:applicationContext-jdbc.xml" />
+	<import resource="classpath:presentment-extraction-job.xml" />
 
 	<!-- ====================================================== -->
 	<!-- Audit Details Configuration -->
@@ -12762,6 +12763,9 @@
 	<bean name="provisionServiceTarget" class="com.pennanttech.pff.provision.service.impl.ProvisionServiceImpl" />
 
 	<bean name="customerDataService" class="com.pennant.backend.service.customermasters.impl.CustomerDataService" />
-	
 
+	<!-- PresentmentExtractionStage -->
+	<bean id="presentmentDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentDAOImpl" parent="sequenceDao" />
+
+	<bean name="presentmentEngine" class="com.pennant.pff.presentment.service.PresentmentEngine"/>
 </beans>

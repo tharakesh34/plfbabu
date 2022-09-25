@@ -61,7 +61,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date presentmentDate;
 	@XmlElement(name = "partnerBank")
-	private long partnerBankId;
+	private Long partnerBankId;
 	private String partnerBankCode;
 	private String partnerBankName;
 	private String partnerAcctNumber;
@@ -117,6 +117,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private List<PresentmentDetail> presentmentDetailsList;
 
 	private Date appDate;
+	private Date dueDate;
 
 	public PresentmentHeader(long id) {
 		super();
@@ -159,11 +160,11 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.presentmentDate = presentmentDate;
 	}
 
-	public long getPartnerBankId() {
+	public Long getPartnerBankId() {
 		return partnerBankId;
 	}
 
-	public void setPartnerBankId(long partnerBankId) {
+	public void setPartnerBankId(Long partnerBankId) {
 		this.partnerBankId = partnerBankId;
 	}
 
@@ -507,6 +508,14 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setAppDate(Date appDate) {
 		this.appDate = appDate;
+	}
+
+	public Date getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
 	}
 
 }

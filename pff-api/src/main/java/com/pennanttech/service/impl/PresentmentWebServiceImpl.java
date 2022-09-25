@@ -174,7 +174,7 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 
 		long headerId = presentmentHeader.getId();
 		String reference = presentmentHeader.getReference();
-		long partnerBankId = presentmentHeader.getPartnerBankId();
+		Long partnerBankId = presentmentHeader.getPartnerBankId();
 
 		logger.info("PresentmentHeader Id >>{}", headerId);
 		logger.info("Presentment Batch Reference >>{}", reference);
@@ -209,7 +209,7 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
 			return response;
 		}
-		if (partnerBankId <= 0) {
+		if (partnerBankId == null || partnerBankId <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "PartnerBank Id";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));

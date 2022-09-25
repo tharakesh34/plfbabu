@@ -1079,7 +1079,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							receiptDetail.setPartnerBankAcType(partnerBank.getAcType());
 						}
 					} else {
-						receiptDetail.setFundingAc(0);
+						receiptDetail.setFundingAc(null);
 						receiptDetail.setFundingAcDesc("");
 					}
 				}

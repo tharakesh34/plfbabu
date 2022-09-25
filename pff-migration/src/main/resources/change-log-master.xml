@@ -42,7 +42,8 @@
 	<include file="change-logs/change-log-meta-data.xml" />
 	<include file="change-logs/change-log-6.1.0.xml" />
 	<include file="change-logs/change-log-6.1.0_views.xml" /> -->
-	<include file="change-logs/change-log-6.2.0.xml" />
+	<!-- <include file="change-logs/change-log-6.2.0.xml" /> -->
+	<include file="change-logs/change-log-presentment.xml" />
 	
 	
 </databaseChangeLog>

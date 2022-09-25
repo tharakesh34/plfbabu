@@ -1552,4 +1552,110 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="" author="saikrishna.b">
+		<createTable tableName="Presentment_Exclude_Codes">
+			<column name="ID" type="bigint" />
+			<column name="Code" type="varchar(20)" />
+			<column name="Description" type="varchar(100)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcludeId" type="int"/>
+			<column name="BounceID" type="bigint" />
+			<column name="CreateBounceOnDueDate" type="boolean" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMnton" type="datetime" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean" >
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFloWId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Version" tableName="Presentment_Exclude_Codes" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_EXCLUDE_CODES ADD CONSTRAINT DF_PEC_VERSION DEFAULT 0 FOR Version;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Active" tableName="Presentment_Exclude_Codes" defaultValue="false" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_EXCLUDE_CODES ADD CONSTRAINT DF_PEC_ACTIVE DEFAULT false FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="CreateBounceOnDueDate" tableName="Presentment_Exclude_Codes" defaultValue="false" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_EXCLUDE_CODES ADD CONSTRAINT DF_PEC_CREATEBOUNCEONDUEDATE DEFAULT false FOR CREATEBOUNCEONDUEDATE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_Exclude_Codes" columnNames="ID" constraintName="pk_presentment_exclude_codes" />
+	</changeSet>
+
+	<changeSet id="" author="saikrishna.b">
+		<addUniqueConstraint tableName="Presentment_Exclude_Codes" columnNames="Code" constraintName="uk_pec_code" />
+	</changeSet>
+
+	<changeSet id="" author="saikrishna.b">
+		<addForeignKeyConstraint constraintName="fk_pec_bounceid" referencedTableName="BounceReasons" referencedColumnNames="BounceId" baseTableName="Presentment_Exclude_Codes" baseColumnNames="BounceId" />
+	</changeSet>
+	
+	<changeSet id="" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(1, 'EMI_IN_ADVANCE', 			'Due adjusted from the EMI in Advance', 	1, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(2, 'EMI_HOLD', 				'EMI is marked as hold', 					2, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(3, 'MANDATE_HOLD', 			'Mandate is marked as hold', 				3, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(4, 'MANDATE_NOT_APPROVED', 	'Mandate is not registered', 				4, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(5, 'MANDATE_EXPIRED', 		'Mandate Expired', 							5, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(6, 'MANUAL_EXCLUDE', 			'Excluded Manually', 						6, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(7, 'MANDATE_REJECTED',		'Mandate rejected',							7, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(8, 'INT_ADV', 				'Due adjusted from interest in advance', 	8, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(9, 'EMI_ADV', 				'Due adjusted from EMI in advance', 		9, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>	
+	</changeSet>
+	
 </databaseChangeLog>

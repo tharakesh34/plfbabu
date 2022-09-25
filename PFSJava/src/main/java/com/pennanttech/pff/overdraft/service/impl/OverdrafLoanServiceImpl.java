@@ -1052,9 +1052,9 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 
 		for (PresentmentDetail pd : presentments) {
 
-			if (appDate.compareTo(pd.getDueDate()) >= 0) {
-				chargesCalculation(pd, bounceTaxComponent);
-			}
+			pd.setAppDate(appDate);
+
+			chargesCalculation(pd, bounceTaxComponent);
 
 			if (CollectionUtils.isEmpty(pd.getPresentmentCharges())) {
 				continue;
@@ -1168,61 +1168,64 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 
 		int seqNo = 1;
 		for (ManualAdvise advise : advises) {
-			if (overdraftTxnChrgFeeType != advise.getFeeTypeID()) {
-				continue;
+			if (pd.getAppDate().compareTo(advise.getDueDate()) <= 0) {
+
+				if (overdraftTxnChrgFeeType != advise.getFeeTypeID()) {
+					continue;
+				}
+
+				BigDecimal adviseBal = BigDecimal.ZERO;
+				adviseBal = adviseBal.add(advise.getAdviseAmount());
+				adviseBal = adviseBal.subtract(advise.getPaidAmount());
+				adviseBal = adviseBal.subtract(advise.getWaivedAmount());
+
+				if (adviseBal.compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
+
+				String taxComponent = null;
+				if (advise.getBounceID() == 0) {
+					taxComponent = advise.getTaxComponent();
+				} else {
+					taxComponent = bounceTaxComponent;
+				}
+
+				TaxAmountSplit tax = GSTCalculator.calculateGST(taxPercmap, taxComponent, adviseBal);
+
+				BigDecimal paidGST = CalculationUtil.getTotalPaidGST(advise);
+				BigDecimal waiedGST = CalculationUtil.getTotalWaivedGST(advise);
+				BigDecimal gstAmount = tax.gettGST().subtract(paidGST).subtract(waiedGST);
+
+				BigDecimal actFeeAmount = adviseBal;
+
+				BigDecimal feeAmount = adviseBal;
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+					feeAmount = adviseBal.add(gstAmount);
+				}
+
+				totalCharges = totalCharges.add(feeAmount);
+
+				PresentmentCharge pc = new PresentmentCharge();
+				if (advise.getBounceID() == 0) {
+					pc.setFeeType(RepayConstants.FEE_TYPE_MANUAL_ADVISE);
+				} else {
+					pc.setFeeType(RepayConstants.FEE_TYPE_BOUNCE);
+				}
+
+				pc.setCgstAmount(tax.getcGST().subtract(advise.getPaidCGST()).subtract(advise.getWaivedCGST()));
+				pc.setSgstAmount(tax.getsGST().subtract(advise.getPaidSGST()).subtract(advise.getWaivedSGST()));
+				pc.setUgstAmount(tax.getuGST().subtract(advise.getPaidUGST()).subtract(advise.getWaivedUGST()));
+				pc.setIgstAmount(tax.getiGST().subtract(advise.getPaidIGST()).subtract(advise.getWaivedIGST()));
+				pc.setCessAmount(tax.getCess().subtract(advise.getPaidCESS()).subtract(advise.getWaivedCESS()));
+
+				pc.setActualFeeAmount(actFeeAmount);
+				pc.setFeeAmount(feeAmount);
+				pc.setSeqNo(seqNo++);
+				pc.setAdviseId(advise.getAdviseID());
+
+				charges.add(pc);
 			}
-
-			BigDecimal adviseBal = BigDecimal.ZERO;
-			adviseBal = adviseBal.add(advise.getAdviseAmount());
-			adviseBal = adviseBal.subtract(advise.getPaidAmount());
-			adviseBal = adviseBal.subtract(advise.getWaivedAmount());
-
-			if (adviseBal.compareTo(BigDecimal.ZERO) <= 0) {
-				continue;
-			}
-
-			String taxComponent = null;
-			if (advise.getBounceID() == 0) {
-				taxComponent = advise.getTaxComponent();
-			} else {
-				taxComponent = bounceTaxComponent;
-			}
-
-			TaxAmountSplit tax = GSTCalculator.calculateGST(taxPercmap, taxComponent, adviseBal);
-
-			BigDecimal paidGST = CalculationUtil.getTotalPaidGST(advise);
-			BigDecimal waiedGST = CalculationUtil.getTotalWaivedGST(advise);
-			BigDecimal gstAmount = tax.gettGST().subtract(paidGST).subtract(waiedGST);
-
-			BigDecimal actFeeAmount = adviseBal;
-
-			BigDecimal feeAmount = adviseBal;
-
-			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-				feeAmount = adviseBal.add(gstAmount);
-			}
-
-			totalCharges = totalCharges.add(feeAmount);
-
-			PresentmentCharge pc = new PresentmentCharge();
-			if (advise.getBounceID() == 0) {
-				pc.setFeeType(RepayConstants.FEE_TYPE_MANUAL_ADVISE);
-			} else {
-				pc.setFeeType(RepayConstants.FEE_TYPE_BOUNCE);
-			}
-
-			pc.setCgstAmount(tax.getcGST().subtract(advise.getPaidCGST()).subtract(advise.getWaivedCGST()));
-			pc.setSgstAmount(tax.getsGST().subtract(advise.getPaidSGST()).subtract(advise.getWaivedSGST()));
-			pc.setUgstAmount(tax.getuGST().subtract(advise.getPaidUGST()).subtract(advise.getWaivedUGST()));
-			pc.setIgstAmount(tax.getiGST().subtract(advise.getPaidIGST()).subtract(advise.getWaivedIGST()));
-			pc.setCessAmount(tax.getCess().subtract(advise.getPaidCESS()).subtract(advise.getWaivedCESS()));
-
-			pc.setActualFeeAmount(actFeeAmount);
-			pc.setFeeAmount(feeAmount);
-			pc.setSeqNo(seqNo++);
-			pc.setAdviseId(advise.getAdviseID());
-
-			charges.add(pc);
 		}
 
 		pd.setPresentmentCharges(charges);

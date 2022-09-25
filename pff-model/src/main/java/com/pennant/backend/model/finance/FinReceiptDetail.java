@@ -50,7 +50,7 @@ public class FinReceiptDetail implements Serializable {
 	@XmlElement
 	private String chequeAcNo;
 	@XmlElement(name = "fundingAccount")
-	private long fundingAc = 0;
+	private Long fundingAc = 0L;
 	private String fundingAcCode;
 	private String fundingAcDesc;
 	@XmlElement
@@ -323,11 +323,11 @@ public class FinReceiptDetail implements Serializable {
 		this.chequeAcNo = chequeAcNo;
 	}
 
-	public long getFundingAc() {
+	public Long getFundingAc() {
 		return fundingAc;
 	}
 
-	public void setFundingAc(long fundingAc) {
+	public void setFundingAc(Long fundingAc) {
 		this.fundingAc = fundingAc;
 	}
 

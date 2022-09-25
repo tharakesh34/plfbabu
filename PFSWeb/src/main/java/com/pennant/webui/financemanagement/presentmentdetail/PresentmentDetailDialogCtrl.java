@@ -383,7 +383,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void doWriteBeanToComponents(PresentmentHeader aPresentmentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		if (presentmentHeader.getPartnerBankId() != 0) {
+		if (presentmentHeader.getPartnerBankId() != null && presentmentHeader.getPartnerBankId() != 0) {
 			this.partnerBank.setValue(String.valueOf(presentmentHeader.getPartnerBankId()));
 			this.partnerBank.setDescription(presentmentHeader.getPartnerBankName());
 			if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {

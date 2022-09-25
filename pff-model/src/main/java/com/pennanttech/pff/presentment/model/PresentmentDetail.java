@@ -50,7 +50,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	@XmlElement(name = "presentmentId")
 	private long id = Long.MIN_VALUE;
 	@XmlElement(name = "presentmentHeaderId")
-	private long headerId = Long.MIN_VALUE;
+	private Long headerId = Long.MIN_VALUE;
 	private long responseId;
 	@XmlElement
 	private String batchReference;
@@ -65,7 +65,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private Date schDate;
 	private Date defSchdDate;
 	private Date originalSchDate;
-	private long mandateId;
+	private Long mandateId;
 	private BigDecimal schAmtDue;
 	private BigDecimal schPriDue;
 	private BigDecimal schPftDue;
@@ -107,7 +107,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String errorCode;
 	private String errorDesc;
 	private String entityCode;
-	private long partnerBankId;
+	private Long partnerBankId;
 
 	private FinanceDetail financeDetail;
 
@@ -138,6 +138,27 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String bankName;
 	private Date approvedDate;
 	private Date dueDate;
+
+	private String finBranch;
+	private int instNumber;
+	private BigDecimal profitSchd = BigDecimal.ZERO;
+	private BigDecimal principalSchd = BigDecimal.ZERO;
+	private BigDecimal feeSchd = BigDecimal.ZERO;
+	private BigDecimal schdPftPaid = BigDecimal.ZERO;
+	private BigDecimal schdPriPaid = BigDecimal.ZERO;
+	private BigDecimal schdFeePaid = BigDecimal.ZERO;
+	private BigDecimal tdsPaid = BigDecimal.ZERO;
+	private String emandateSource;
+	private Long chequeId;
+	private String chequeType;
+	private String chequeStatus;
+	private Date chequeDate;
+	private String branchCode;
+	private FinExcessAmount advInExcess;
+	private FinExcessAmount emiInAdv;
+	private boolean dueExist;
+	private boolean bpiPaidOnInstDate;
+	private String instrumentType;
 
 	public PresentmentDetail() {
 		super();
@@ -214,6 +235,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		entity.setClearingStatus(this.clearingStatus);
 		entity.setFinisActive(this.finisActive);
 		entity.setRepresentmentDate(this.representmentDate);
+		entity.setInstrumentType(this.instrumentType);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -250,6 +272,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		excludeFields.add("presentmentType");
 		excludeFields.add("hostReference");
 		excludeFields.add("representmentDate");
+		excludeFields.add("intrumentType");
 
 		return excludeFields;
 	}
@@ -268,11 +291,11 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.id = id;
 	}
 
-	public long getHeaderId() {
+	public Long getHeaderId() {
 		return headerId;
 	}
 
-	public void setHeaderId(long headerId) {
+	public void setHeaderId(Long headerId) {
 		this.headerId = headerId;
 	}
 
@@ -540,11 +563,11 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.mandateExpiryDate = mandateExpiryDate;
 	}
 
-	public long getMandateId() {
+	public Long getMandateId() {
 		return mandateId;
 	}
 
-	public void setMandateId(long mandateId) {
+	public void setMandateId(Long mandateId) {
 		this.mandateId = mandateId;
 	}
 
@@ -690,11 +713,11 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		this.advStage = advStage;
 	}
 
-	public long getPartnerBankId() {
+	public Long getPartnerBankId() {
 		return partnerBankId;
 	}
 
-	public void setPartnerBankId(long partnerBankId) {
+	public void setPartnerBankId(Long partnerBankId) {
 		this.partnerBankId = partnerBankId;
 	}
 
@@ -880,6 +903,166 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
+	}
+
+	public String getFinBranch() {
+		return finBranch;
+	}
+
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
+	}
+
+	public int getInstNumber() {
+		return instNumber;
+	}
+
+	public void setInstNumber(int instNumber) {
+		this.instNumber = instNumber;
+	}
+
+	public BigDecimal getProfitSchd() {
+		return profitSchd;
+	}
+
+	public void setProfitSchd(BigDecimal profitSchd) {
+		this.profitSchd = profitSchd;
+	}
+
+	public BigDecimal getPrincipalSchd() {
+		return principalSchd;
+	}
+
+	public void setPrincipalSchd(BigDecimal principalSchd) {
+		this.principalSchd = principalSchd;
+	}
+
+	public BigDecimal getFeeSchd() {
+		return feeSchd;
+	}
+
+	public void setFeeSchd(BigDecimal feeSchd) {
+		this.feeSchd = feeSchd;
+	}
+
+	public BigDecimal getSchdPftPaid() {
+		return schdPftPaid;
+	}
+
+	public void setSchdPftPaid(BigDecimal schdPftPaid) {
+		this.schdPftPaid = schdPftPaid;
+	}
+
+	public BigDecimal getSchdPriPaid() {
+		return schdPriPaid;
+	}
+
+	public void setSchdPriPaid(BigDecimal schdPriPaid) {
+		this.schdPriPaid = schdPriPaid;
+	}
+
+	public BigDecimal getSchdFeePaid() {
+		return schdFeePaid;
+	}
+
+	public void setSchdFeePaid(BigDecimal schdFeePaid) {
+		this.schdFeePaid = schdFeePaid;
+	}
+
+	public BigDecimal getTdsPaid() {
+		return tdsPaid;
+	}
+
+	public void setTdsPaid(BigDecimal tdsPaid) {
+		this.tdsPaid = tdsPaid;
+	}
+
+	public String getEmandateSource() {
+		return emandateSource;
+	}
+
+	public void setEmandateSource(String emandateSource) {
+		this.emandateSource = emandateSource;
+	}
+
+	public Long getChequeId() {
+		return chequeId;
+	}
+
+	public void setChequeId(Long chequeId) {
+		this.chequeId = chequeId;
+	}
+
+	public String getChequeType() {
+		return chequeType;
+	}
+
+	public void setChequeType(String chequeType) {
+		this.chequeType = chequeType;
+	}
+
+	public String getChequeStatus() {
+		return chequeStatus;
+	}
+
+	public void setChequeStatus(String chequeStatus) {
+		this.chequeStatus = chequeStatus;
+	}
+
+	public Date getChequeDate() {
+		return chequeDate;
+	}
+
+	public void setChequeDate(Date chequeDate) {
+		this.chequeDate = chequeDate;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public FinExcessAmount getAdvInExcess() {
+		return advInExcess;
+	}
+
+	public void setAdvInExcess(FinExcessAmount advInExcess) {
+		this.advInExcess = advInExcess;
+	}
+
+	public FinExcessAmount getEmiInAdv() {
+		return emiInAdv;
+	}
+
+	public void setEmiInAdv(FinExcessAmount emiInAdv) {
+		this.emiInAdv = emiInAdv;
+	}
+
+	public boolean isDueExist() {
+		return dueExist;
+	}
+
+	public void setDueExist(boolean dueExist) {
+		this.dueExist = dueExist;
+	}
+
+	public boolean isBpiPaidOnInstDate() {
+		return bpiPaidOnInstDate;
+	}
+
+	public void setBpiPaidOnInstDate(boolean bpiPaidOnInstDate) {
+		this.bpiPaidOnInstDate = bpiPaidOnInstDate;
+	}
+
+	public String getInstrumentType() {
+		return instrumentType;
+	}
+
+	public void setInstrumentType(String instrumentType) {
+		this.instrumentType = instrumentType;
 	}
 
 }

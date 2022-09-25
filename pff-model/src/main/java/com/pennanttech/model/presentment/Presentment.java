@@ -103,7 +103,7 @@ public class Presentment {
 	private Date processedDate;
 	private long responseID;
 	private String partnerBankName;
-	private long partnerBankId;
+	private Long partnerBankId;
 	@XmlElement(name = "ifsc")
 	private String IFSC;
 	private String chequeSerialNo;
@@ -555,11 +555,11 @@ public class Presentment {
 		this.emandateSource = emandateSource;
 	}
 
-	public long getPartnerBankId() {
+	public Long getPartnerBankId() {
 		return partnerBankId;
 	}
 
-	public void setPartnerBankId(long partnerBankId) {
+	public void setPartnerBankId(Long partnerBankId) {
 		this.partnerBankId = partnerBankId;
 	}
 

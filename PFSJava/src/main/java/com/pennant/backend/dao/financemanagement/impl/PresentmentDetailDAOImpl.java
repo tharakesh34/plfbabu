@@ -192,7 +192,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				ps.setLong(i++, pd.getFinID());
 				ps.setString(i++, pd.getFinReference());
 				ps.setDate(i++, JdbcUtil.getDate(pd.getSchDate()));
-				ps.setLong(i++, pd.getMandateId());
+				ps.setObject(i++, pd.getMandateId());
 				ps.setBigDecimal(i++, pd.getSchAmtDue());
 				ps.setBigDecimal(i++, pd.getSchPriDue());
 				ps.setBigDecimal(i++, pd.getSchPftDue());
@@ -767,7 +767,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setLong(index++, ph.getId());
 			ps.setString(index++, ph.getReference());
 			ps.setDate(index++, JdbcUtil.getDate(ph.getPresentmentDate()));
-			ps.setLong(index++, ph.getPartnerBankId());
+			ps.setObject(index++, ph.getPartnerBankId());
 			ps.setDate(index++, JdbcUtil.getDate(ph.getFromDate()));
 			ps.setDate(index++, JdbcUtil.getDate(ph.getToDate()));
 			ps.setString(index++, ph.getPresentmentType());
@@ -895,14 +895,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	@Override
-	public void updatePresentmentHeader(long presentmentId, int manualExclude, long partnerBankId) {
+	public void updatePresentmentHeader(long presentmentId, int manualExclude, Long partnerBankId) {
 		String sql = " UPDATE PresentmentHeader Set Status = ?, PartnerBankId = ? Where ID = ?";
 		logger.debug(Literal.SQL + sql);
 
 		this.jdbcOperations.update(sql, ps -> {
 			ps.setInt(1, manualExclude);
 			ps.setLong(2, partnerBankId);
-			ps.setLong(3, presentmentId);
+			ps.setObject(3, presentmentId);
 		});
 	}
 
@@ -995,7 +995,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" Id, PresentmentId, FinID, FinReference, SchDate, MandateId, SchAmtDue, SchPriDue, SchPftDue");
 		sql.append(", SchFeeDue, SchInsDue, SchPenaltyDue, AdvanceAmt, ExcessID, AdviseAmt, PresentmentAmt");
-		sql.append(", TDSAmount, ExcludeReason, EmiNo, Atatus, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", TDSAmount, ExcludeReason, EmiNo, Status, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PresentmentRef");
 		sql.append(", ECSReturn, ReceiptID, ErrorCode, ErrorDesc, ManualAdviseId");
 		if (StringUtils.containsIgnoreCase(type, "View")) {

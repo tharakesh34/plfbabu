@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="satish" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.0" author="saikrishna.b">
+		<createTable tableName="Presentment_Stage">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="FinType" type="varchar(8)" />
+			<column name="ProductCategory" type="varchar(8)" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="BpiTreatment" type="char(1)" />
+			<column name="GrcPeriodEndDate" type="datetime" />
+			<column name="GrcAdvType" type="varchar(10)" />
+			<column name="AdvType" type="varchar(10)" />
+			<column name="AdvStage" type="varchar(10)" />
+			<column name="SchDate" type="datetime" />
+			<column name="DefSchdDate" type="datetime" />
+			<column name="SchSeq" type="bigint" />
+			<column name="InstNumber" type="int" />
+			<column name="BpiOrHoliday" type="char(1)" />
+			<column name="ProfitSchd" type="decimal(18,0)" />
+			<column name="PrincipalSchd" type="decimal(18,0)" />
+			<column name="FeeSchd" type="decimal(18,0)" />
+			<column name="TDSAmount" type="decimal(18,0)" />
+			<column name="SchdPftPaid" type="decimal(18,0)" />
+			<column name="SchdPriPaid" type="decimal(18,0)" />
+			<column name="SchdFeePaid" type="decimal(18,0)" />
+			<column name="TDSPaid" type="decimal(18,0)" />
+			<column name="InstrumentType" type="varchar(20)" />
+			<column name="MandateId" type="bigint" />
+			<column name="MandateType" type="varchar(20)" />
+			<column name="EmandateSource" type="varchar(50)" />
+			<column name="MandateStatus" type="varchar(20)" />
+			<column name="MandateExpiryDate" type="datetime" />
+			<column name="ChequeID" type="int" />
+			<column name="ChequeType" type="varchar(8)" />
+			<column name="ChequeStatus" type="varchar(10)" />
+			<column name="ChequeDate" type="datetime" />
+			<column name="PartnerBankId" type="bigint" />
+			<column name="BranchCode" type="varchar(12)" />
+			<column name="BankCode" type="varchar(8)" />
+			<column name="DueDate" type="datetime" />
+			<column name="EmployerId" type="bigint" />
+			<column name="EmployerName" type="varchar(50)" />
+			<column name="HeaderId" type="bigint" />
+			<column name="ProcessingFlag" type="smallint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="1.1" author="saikrishna.b">
+		<addPrimaryKey tableName="Presentment_Stage" columnNames="ID" constraintName="pk_presentment_stage_ID" />
+	</changeSet>
+	
+	<changeSet id="1.2" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessingFlag" tableName="Presentment_Stage" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="1.2" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PRESENTMENT_STAGE ADD CONSTRAINT DF_PS_PROCESSINGFLAG DEFAULT 0 FOR PROCESSINGFLAG;
+			]]>
+		</sql>
+	</changeSet>
+
+</databaseChangeLog>

@@ -178,7 +178,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		}
 
 		long presentmentId = ph.getId();
-		long partnerBankId = ph.getPartnerBankId();
+		Long partnerBankId = ph.getPartnerBankId();
 		String userAction = ph.getUserAction();
 
 		switch (userAction) {
@@ -322,7 +322,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		List<Long> includeList = ph.getIncludeList();
 		List<Long> excludeList = ph.getExcludeList();
 		long id = ph.getId();
-		long partnerBankId = ph.getPartnerBankId();
+		Long partnerBankId = ph.getPartnerBankId();
 
 		int count = 0;
 		if (CollectionUtils.isNotEmpty(includeList)) {
@@ -345,7 +345,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		List<Long> includeList = ph.getIncludeList();
 		List<Long> excludeList = ph.getExcludeList();
 		long id = ph.getId();
-		long partnerBankId = ph.getPartnerBankId();
+		Long partnerBankId = ph.getPartnerBankId();
 
 		int count = 0;
 		if (CollectionUtils.isNotEmpty(includeList)) {
@@ -359,7 +359,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.presentmentDetailDAO.updatePresentmentHeader(id, RepayConstants.PEXC_AWAITING_CONF, partnerBankId);
 	}
 
-	private void resubmitPresentments(long presentmentId, long partnerBankId) {
+	private void resubmitPresentments(long presentmentId, Long partnerBankId) {
 		this.presentmentDetailDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED,
 				partnerBankId);
 	}
