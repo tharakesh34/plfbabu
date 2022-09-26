@@ -156,11 +156,11 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	 *         false, if the right is not granted to the user.<br>
 	 */
 	public boolean isAllowed(String rightName) {
-		return getGrantedAuthoritySet().contains(rightName.toLowerCase());
+		return getGrantedAuthoritySet().contains(rightName);
 	}
 
 	public boolean isReadOnly(String rightName) {
-		return !isAllowed(rightName.toLowerCase());
+		return !isAllowed(rightName);
 
 	}
 
@@ -207,7 +207,6 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 
 		for (final SecurityRight right : rights) {
 			String rightName = right.getRightName();
-			rightName = rightName.toLowerCase();
 			if (!getGrantedAuthoritySet().contains(rightName)) {
 				this.grantedAuthoritySet.add(rightName);
 			}
