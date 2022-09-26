@@ -159,6 +159,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ValueLabel;
@@ -1090,6 +1091,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	protected ExternalLiabilityDAO externalLiabilityDAO;
 	private OverdraftLimitDAO overdraftLimitDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	protected CurrencyBox appliedLoanAmt;
 
 	@Autowired(required = false)
@@ -2251,13 +2253,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param tabID
 	 * @return
 	 */
-	private boolean isTabVisible(long tabID) {
-		String strTabId = StringUtils.leftPad(String.valueOf(tabID), 3, "0");
+	private boolean isTabVisible(String tabCode) {
+		String strTabCode = StringUtils.leftPad(tabCode, 3, "0");
 		boolean showTab = true;
 		String roles = "";
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-		if (getFinanceDetail().getShowTabDetailMap().containsKey(strTabId)) {
-			roles = getFinanceDetail().getShowTabDetailMap().get(strTabId);
+		if (getFinanceDetail().getShowTabDetailMap().containsKey(strTabCode)
+				|| financeReferenceDetailDAO.isTabCodeExists(strTabCode, financeMain.getFinType(), "_FINVIEW")) {
+			roles = getFinanceDetail().getShowTabDetailMap().get(strTabCode);
 			if (!StringUtils.contains(roles, getRole() + ",")) {
 				showTab = false;
 			}
@@ -23884,6 +23888,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setOverdraftLimitDAO(OverdraftLimitDAO overdraftLimitDAO) {
 		this.overdraftLimitDAO = overdraftLimitDAO;
+	}
+
+	@Autowired
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
 	}
 
 	@Autowired

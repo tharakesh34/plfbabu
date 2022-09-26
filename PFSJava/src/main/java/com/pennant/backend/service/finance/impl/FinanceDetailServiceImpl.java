@@ -1822,7 +1822,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 				break;
 			case FinanceConstants.PROCEDT_FINANCETABS:
-				showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getFinRefId()), 3, "0"),
+				showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getTabCode()), 3, "0"),
 						mandInputInStage);
 				break;
 			default:

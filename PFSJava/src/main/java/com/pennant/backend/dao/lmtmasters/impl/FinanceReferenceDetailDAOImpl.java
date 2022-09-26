@@ -1157,4 +1157,16 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			return frd;
 		});
 	}
+
+	@Override
+	public boolean isTabCodeExists(String tabCode, String finType, String type) {
+		StringBuilder sql = new StringBuilder("Select Count(TabCode) From LMTFINREFDETAIL");
+		sql.append(type);
+		sql.append(" Where TabCode = ? and Fintype = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), tabCode, finType) > 0;
+	}
+
 }
