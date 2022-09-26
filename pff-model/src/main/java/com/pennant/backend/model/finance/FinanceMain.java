@@ -1080,7 +1080,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("cpzPosIntact");
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("securityMandateID");
-		excludeFields.add("alwRpyMethods");
+		excludeFields.add("alwdrpymethods");
 		return excludeFields;
 	}
 
