@@ -33,11 +33,10 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public interface MandateDAO {
-	Mandate getMandate();
-
-	Mandate getNewMandate();
 
 	Mandate getMandateById(Long id, String type);
+
+	Mandate getMandateByFinReference(String finReference, String type);
 
 	Mandate getMandateByStatus(long id, String status, String type);
 
@@ -59,7 +58,7 @@ public interface MandateDAO {
 
 	void updateOrgReferecne(long mandateID, String orgReference, String type);
 
-	Mandate getMandateByOrgReference(String orgReference, String status, String type);
+	Mandate getMandateByOrgReference(String orgReference, Boolean isSecurityMandate, String status, String type);
 
 	int getBranch(long bankBranchID, String type);
 
@@ -92,5 +91,7 @@ public interface MandateDAO {
 	public List<PresentmentDetail> getPresentmentDetailsList(String finreference, long mandateID, String status);
 
 	List<FinanceMain> getLoans(long custId, String finRepayMethod);
+
+	Mandate getEmployerDetails(long custID);
 
 }

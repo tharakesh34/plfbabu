@@ -1039,19 +1039,24 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		doRemoveValidation();
 		doSetValidation();
+		if (!fm.getFinRepayMethod().equals(InstrumentType.PDC)) {
+			ch.setChequeSerialNo(0);
+			ch.setTotalAmount(BigDecimal.ZERO);
+		} else {
 
-		List<WrongValueException> wve = doWriteComponentsToBean(ch, false);
+			List<WrongValueException> wve = doWriteComponentsToBean(ch, false);
 
-		if (!wve.isEmpty() && parenttab != null) {
-			parenttab.setSelected(true);
-		} else if (!this.btnGen.isDisabled()) {
-			WrongValueException exception = validateChequeCount(schdData);
-			if (exception != null) {
-				wve.add(exception);
+			if (!wve.isEmpty() && parenttab != null) {
+				parenttab.setSelected(true);
+			} else if (!this.btnGen.isDisabled()) {
+				WrongValueException exception = validateChequeCount(schdData);
+				if (exception != null) {
+					wve.add(exception);
+				}
 			}
-		}
 
-		showErrorDetails(wve);
+			showErrorDetails(wve);
+		}
 
 		if (StringUtils.isBlank(ch.getRecordType())) {
 			ch.setVersion(ch.getVersion() + 1);
@@ -1716,7 +1721,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	private Date getSchdDate(Listitem listitem) {
 		Combobox combobox = (Combobox) listitem.getChildren().get(Field.DUE_DATE.index()).getFirstChild();
-		return DateUtil.parseShortDate(combobox.getSelectedItem().getLabel());
+		String combovalue = combobox.getSelectedItem().getLabel();
+		if (Labels.getLabel(COMBO_SELECT).equals(combovalue)) {
+			return null;
+		}
+		return DateUtil.parseShortDate(combovalue);
 	}
 
 	private void setWorkflowDetailsOnDelete(ChequeDetail cd) {

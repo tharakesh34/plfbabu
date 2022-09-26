@@ -768,19 +768,38 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cif }, (rs, i) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				Customer c = new Customer();
 
 				c.setCustID(rs.getLong("CustID"));
 				c.setCustCIF(rs.getString("CustCIF"));
 
 				return c;
-			});
+			}, cif);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in Customers{} for the specified CustCIF >> {}", type, cif);
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
+	}
 
-		return null;
+	public Customer getCustomer(String cif) {
+		String sql = "Select CustID, CustCIF From Customers Where CustCIF = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				Customer c = new Customer();
+
+				c.setCustID(rs.getLong("CustID"));
+				c.setCustCIF(rs.getString("CustCIF"));
+
+				return c;
+			}, cif);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	/**

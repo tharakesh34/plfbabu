@@ -330,6 +330,7 @@ import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.finance.psldetails.PSLDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
+import com.pennant.webui.mandate.mandate.SecurityMandateDialogCtrl;
 import com.pennant.webui.pdfupload.PdfParserCaller;
 import com.pennant.webui.systemmasters.pmay.PMAYDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -915,6 +916,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient ChequeDetailDialogCtrl chequeDetailDialogCtrl;
 	private transient DeviationDetailDialogCtrl deviationDetailDialogCtrl;
 	private transient MandateDialogCtrl mandateDialogCtrl;
+	private transient SecurityMandateDialogCtrl securityMandateDialogCtrl;
 	private transient FinanceTaxDetailDialogCtrl financeTaxDetailDialogCtrl;
 	private transient FinAdvancePaymentsListCtrl finAdvancePaymentsListCtrl;
 	private transient FinFeeDetailListCtrl finFeeDetailListCtrl;
@@ -2149,6 +2151,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				appendMandateDetailTab(onLoad);
 			}
 
+			if (isTabVisible(StageTabConstants.SECMANDATES)) {
+				appendSecurityMandatedetailtab(onLoad);
+			}
+
 			if (isTabVisible(StageTabConstants.Cheque)) {
 				appendChequeDetailTab(onLoad);
 			}
@@ -2619,7 +2625,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void appendChequeDetailTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		if (onLoad) {
-			createTab(AssetConstants.UNIQUE_ID_CHEQUE, false);
+			createTab(AssetConstants.UNIQUE_ID_CHEQUE, true);
 		} else {
 			final Map<String, Object> map = getDefaultArguments();
 			ChequeHeader chequeHeader = null;
@@ -3073,10 +3079,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_MANDATE));
 			map.put("fromLoan", true);
 			map.put("MandateType", this.finRepayMethod.getValue());
+			map.put("securityMandate", false);
 			Executions.createComponents("/WEB-INF/pages/Mandate/MandateDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_MANDATE), map);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected void appendSecurityMandatedetailtab(boolean onLoad) {
+		logger.debug(Literal.ENTERING);
+
+		if (onLoad) {
+			createTab(AssetConstants.UNIQUE_ID_SECURITYMANDATE, false);
+		} else {
+			final Map<String, Object> map = getDefaultArguments();
+			map.put("tab", getTab(AssetConstants.UNIQUE_ID_SECURITYMANDATE));
+			map.put("fromLoan", true);
+			map.put("securityMandate", true);
+			Executions.createComponents("/WEB-INF/pages/Mandate/SecurityMandateDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_SECURITYMANDATE), map);
+		}
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**
@@ -3256,6 +3281,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			mandateDialogCtrl.doSetLabels(getFinBasicDetails());
 			if (ImplementationConstants.MANDATE_ALLOW_CO_APP) {
 				mandateDialogCtrl.doSetCustomerFilters();
+			}
+			break;
+		case AssetConstants.UNIQUE_ID_SECURITYMANDATE:
+			securityMandateDialogCtrl.doSetLabels(getFinBasicDetails());
+			if (ImplementationConstants.MANDATE_ALLOW_CO_APP) {
+				securityMandateDialogCtrl.doSetCustomerFilters();
 			}
 			break;
 		case AssetConstants.UNIQUE_ID_TAX:
@@ -8101,6 +8132,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			mandateDialogCtrl.doSave_Mandate(afd, mandateTab, recSave);
 		}
 
+		Tab secmandateTab = getTab(AssetConstants.UNIQUE_ID_SECURITYMANDATE);
+		if (securityMandateDialogCtrl != null && secmandateTab.isVisible()) {
+			securityMandateDialogCtrl.doSave_Mandate(afd, secmandateTab, recSave);
+		}
+
 		// Linked Finances Details
 		if (!(StringUtils.endsWithIgnoreCase(this.userAction.getSelectedItem().getLabel(), "Cancel")
 				|| StringUtils.contains(this.userAction.getSelectedItem().getLabel(), "Reject"))) {
@@ -8112,6 +8148,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// PDC
 		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
 		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()
+				&& (InstrumentType.isPDC(getFinanceMain().getFinRepayMethod()) ||finType.isChequeCaptureReq())
 				&& (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 						&& !this.userAction.getSelectedItem().getLabel().contains("Reject")
 						&& !this.userAction.getSelectedItem().getLabel().contains("Resubmit")
@@ -18136,6 +18173,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			repymethod = this.finRepayMethod.getSelectedItem().getValue().toString();
 		}
 
+		if (PennantConstants.List_Select.equals(repymethod)) {
+			return;
+		}
+
 		if (InstrumentType.isManual(repymethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
 			this.row_Escrow.setVisible(true);
 			if (!this.escrow.isChecked()) {
@@ -18152,6 +18193,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (getMandateDialogCtrl() != null) {
 			getMandateDialogCtrl().checkTabDisplay(repymethod, true);
+		}
+
+		if (getSecurityMandateDialogCtrl() != null) {
+			getSecurityMandateDialogCtrl().checkTabDisplay(repymethod, true);
 		}
 
 		if (getChequeDetailDialogCtrl() != null) {
@@ -18289,6 +18334,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Closing Mandate Details Window
 		if (mandateDialogCtrl != null) {
 			mandateDialogCtrl.closeDialog();
+		}
+
+		if (securityMandateDialogCtrl != null) {
+			securityMandateDialogCtrl.closeDialog();
 		}
 
 		// Closing Finance Tax Details Window
@@ -24191,6 +24240,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setOverdraftLimitDAO(OverdraftLimitDAO overdraftLimitDAO) {
 		this.overdraftLimitDAO = overdraftLimitDAO;
+	}
+
+	public SecurityMandateDialogCtrl getSecurityMandateDialogCtrl() {
+		return securityMandateDialogCtrl;
+	}
+
+	public void setSecurityMandateDialogCtrl(SecurityMandateDialogCtrl securityMandateDialogCtrl) {
+		this.securityMandateDialogCtrl = securityMandateDialogCtrl;
 	}
 
 }

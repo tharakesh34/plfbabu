@@ -82,8 +82,8 @@ import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.spreadsheet.SpreadSheet;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -197,6 +197,8 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private FinRepayHeader finRepayHeader;
 	@XmlElement(name = "mandateDetail")
 	private Mandate mandate;
+	@XmlElement(name = "securityMandateDetail")
+	private Mandate securityMandate;
 	@XmlElement(name = "taxDetail")
 	private FinanceTaxDetail financeTaxDetail;
 	@XmlElementWrapper(name = "financeFlags")
@@ -1657,5 +1659,13 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 
 	public void setPaymentMode(String paymentMode) {
 		this.paymentMode = paymentMode;
+	}
+
+	public Mandate getSecurityMandate() {
+		return securityMandate;
+	}
+
+	public void setSecurityMandate(Mandate securityMandate) {
+		this.securityMandate = securityMandate;
 	}
 }

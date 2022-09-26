@@ -2950,7 +2950,16 @@ public class CreateFinanceController extends SummaryDetailService {
 		} else {
 			auditHeader = getAuditHeader(fd.getMandate(), PennantConstants.TRAN_ADD);
 		}
-		finMandateService.saveOrUpdate(fd, auditHeader, type);
+
+		if (fd.getMandate() != null) {
+			Mandate mandate = fd.getMandate();
+			finMandateService.saveOrUpdate(fm, mandate, auditHeader, type);
+		}
+
+		if (fd.getSecurityMandate() != null) {
+			Mandate mandate = fd.getSecurityMandate();
+			finMandateService.saveOrUpdate(fm, mandate, auditHeader, type);
+		}
 
 		if (extMandateId == Long.MIN_VALUE || extMandateId == 0) {
 			Long mandateId = fm.getMandateID();

@@ -6269,7 +6269,9 @@
 		</property>
 	</bean>
 
-	<bean name="mandateServiceTarget" class="com.pennant.backend.service.mandate.impl.MandateServiceImpl"/>
+	<bean name="mandateServiceTarget" class="com.pennant.backend.service.mandate.impl.MandateServiceImpl">
+	<property name="bankBranchService" ref="bankBranchService" />
+	</bean>
 	
 	<!-- Finance Mandate -->
 	<bean id="finMandateService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

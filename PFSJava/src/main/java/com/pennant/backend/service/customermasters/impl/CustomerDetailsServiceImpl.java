@@ -720,6 +720,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return customerDAO.checkCustomerByCIF(cif, type);
 	}
 
+	@Override
+	public Customer getCustomer(String cif) {
+		return customerDAO.getCustomer(cif);
+	}
+
 	/**
 	 * Get Customer and Customer Documents
 	 */

@@ -58,6 +58,8 @@ public interface CustomerDAO {
 
 	Customer checkCustomerByCIF(String cifId, String type);
 
+	Customer getCustomer(String cif);
+
 	WIFCustomer getWIFCustomerByCIF(long cifId, String type);
 
 	Customer getCustomerForPostings(long custId);

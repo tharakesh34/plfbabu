@@ -592,6 +592,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	/* Mandate */
 	private Long mandateID;
+	private Long securityMandateID;
 
 	private BigDecimal refundAmount = BigDecimal.ZERO;
 	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
@@ -837,6 +838,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String moduleDefiner;
 	private Date sanctionedDate;
 	private FinODPenaltyRate penaltyRate = null;
+	private String alwdrpymethods;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1077,6 +1079,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("sanBasedPft");
 		excludeFields.add("cpzPosIntact");
 		excludeFields.add("moduleDefiner");
+		excludeFields.add("securityMandateID");
+		excludeFields.add("alwRpyMethods");
 		return excludeFields;
 	}
 
@@ -1395,6 +1399,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setLovDescLimitRefName(this.lovDescLimitRefName);
 		entity.setProductCategory(this.productCategory);
 		entity.setMandateID(this.mandateID);
+		entity.setSecurityMandateID(this.securityMandateID);
 		entity.setRefundAmount(this.refundAmount);
 		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
 		if (lovDescNextUsersRolesMap != null) {
@@ -1573,6 +1578,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setSanBasedPft(this.sanBasedPft);
 		entity.setCpzPosIntact(this.cpzPosIntact);
 		entity.setModuleDefiner(this.moduleDefiner);
+		entity.setAlwdrpymethods(this.alwdrpymethods);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -5519,4 +5525,21 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setStepRecalOnProrata(boolean stepRecalOnProrata) {
 		this.stepRecalOnProrata = stepRecalOnProrata;
 	}
+
+	public Long getSecurityMandateID() {
+		return securityMandateID;
+	}
+
+	public void setSecurityMandateID(Long securityMandateID) {
+		this.securityMandateID = securityMandateID;
+	}
+
+	public String getAlwdrpymethods() {
+		return alwdrpymethods;
+	}
+
+	public void setAlwdrpymethods(String alwdrpymethods) {
+		this.alwdrpymethods = alwdrpymethods;
+	}
+
 }

@@ -39,8 +39,6 @@ import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public interface MandateService {
 
-	Mandate getMandate();
-
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
 	Mandate getMandateById(long id);
@@ -92,4 +90,6 @@ public interface MandateService {
 	List<FinanceMain> getLoans(long custId, String finRepayMethod);
 
 	ErrorDetail validate(FinanceDetail fd, String vldGroup);
+
+	Mandate getEmployerDetails(long custID);
 }

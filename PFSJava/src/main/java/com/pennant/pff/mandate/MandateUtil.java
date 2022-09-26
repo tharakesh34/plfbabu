@@ -1,6 +1,7 @@
 package com.pennant.pff.mandate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.zkoss.util.resource.Labels;
@@ -48,6 +49,15 @@ public class MandateUtil {
 		return instrumentTypes;
 	}
 
+	public static List<ValueLabel> excludeRepayMethods(String... instrumentTypes) {
+		List<ValueLabel> repayMethods = new ArrayList<ValueLabel>(getRepayMethods());
+		List<String> instrumentCodes = Arrays.asList(instrumentTypes);
+
+		repayMethods.removeIf(x -> instrumentCodes.contains(x.getValue()));
+		
+		return repayMethods;
+	}
+
 	public static List<ValueLabel> getRepayMethods() {
 		if (repaymentMethods != null) {
 			return repaymentMethods;
@@ -63,7 +73,6 @@ public class MandateUtil {
 			case EMANDATE:
 			case PDC:
 			case SI:
-			case SII:
 			case DAS:
 				repaymentMethods.add(new ValueLabel(item.name(), item.code()));
 				break;
@@ -121,4 +130,10 @@ public class MandateUtil {
 	private static boolean isEanbled(InstrumentType mandateType) {
 		return FeatureExtension.getValueAsBoolean(mandateType.name() + "_ALLOWED", true);
 	}
+
+	public static List<ValueLabel> excludeRepayMethods(InstrumentType das, InstrumentType si) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

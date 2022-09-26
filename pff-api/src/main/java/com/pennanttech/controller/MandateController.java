@@ -446,6 +446,15 @@ public class MandateController extends ExtendedTestClass {
 	private ErrorDetail prepareRequiredData(Mandate mandate) {
 		logger.debug(Literal.ENTERING);
 
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		mandate.setUserDetails(userDetails);
+
+		mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		mandate.setInputDate(SysParamUtil.getAppDate());
+		mandate.setLastMntBy(userDetails.getUserId());
+		mandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		mandate.setSourceId(APIConstants.FINSOURCE_ID_API);
+
 		String ifsc = mandate.getIFSC();
 		String micr = mandate.getMICR();
 		String bankCode = mandate.getBankCode();
@@ -457,18 +466,12 @@ public class MandateController extends ExtendedTestClass {
 			return bankBranch.getError();
 		}
 
-		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		mandate.setUserDetails(userDetails);
 		if (StringUtils.isBlank(mandate.getPeriodicity())) {
 			mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
 		}
-		mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		mandate.setIFSC(bankBranch.getIFSC());
 		mandate.setBankBranchID(bankBranch.getBankBranchID());
-		mandate.setInputDate(SysParamUtil.getAppDate());
-		mandate.setLastMntBy(userDetails.getUserId());
-		mandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		mandate.setSourceId(APIConstants.FINSOURCE_ID_API);
+
 		logger.debug(Literal.LEAVING);
 
 		return null;

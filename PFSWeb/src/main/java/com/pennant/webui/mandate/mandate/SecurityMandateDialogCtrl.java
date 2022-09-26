@@ -14,8 +14,8 @@
  ********************************************************************************************
  * FILE HEADER *
  ********************************************************************************************
- * * FileName : MandateDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2016 * * Modified
- * Date : 18-10-2016 * * Description : * *
+ * * FileName : SelectMandateDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2016 * *
+ * Modified Date : 18-10-2016 * * Description : * *
  ********************************************************************************************
  * Date Author Version Comments *
  ********************************************************************************************
@@ -147,9 +147,9 @@ import com.pennanttech.pff.external.BankAccountValidationService;
  * This is the controller class for the /WEB-INF/pages/Mandate/mandateDialog.zul file. <br>
  * ************************************************************<br>
  */
-public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
+public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(MandateDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SecurityMandateDialogCtrl.class);
 
 	protected Window window_MandateDialog;
 	private Tabpanel tabPanel_dialogWindow;
@@ -254,7 +254,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private int ccyFormatter = 0;
 	private int maxAccNoLength;
 	private int minAccNoLength;
-	private boolean issecurityMandate = false;
+	private boolean issecurityMandate = true;
 	private transient BankAccountValidation bankAccountValidations;
 
 	private List<FinanceMain> customerLoans = new ArrayList<>();
@@ -271,7 +271,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * default constructor.<br>
 	 */
-	public MandateDialogCtrl() {
+	public SecurityMandateDialogCtrl() {
 		super();
 	}
 
@@ -284,8 +284,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		FinanceDetail fd = (FinanceDetail) arguments.get("financeDetail");
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
-		if (fd.getMandate() != null) {
-			this.mandate = fd.getMandate();
+		if (fd.getSecurityMandate() != null) {
+			this.mandate = fd.getSecurityMandate();
 			if (!StringUtils.equals(fm.getFinReference(), mandate.getOrgReference())) {
 				this.mandate.setUseExisting(true);
 			}
@@ -324,11 +324,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			issecurityMandate = (Boolean) arguments.get("securityMandate");
 		}
 
-		
 		if (issecurityMandate) {
 			mandateTypeList = MandateUtil.excludeRepayMethods(InstrumentType.DAS.code(), InstrumentType.SI.code());
 		}
-			fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
+		fillComboBox(this.mandateType, mandate.getMandateType(), mandateTypeList, "");
 
 	}
 
@@ -1022,7 +1021,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			doDesignByMode();
 
 			if (fromLoan) {
-				financeMainDialogCtrl.setMandateDialogCtrl(this);
+				financeMainDialogCtrl.setSecurityMandateDialogCtrl(this);
 
 				if (parenttab != null) {
 					checkTabDisplay(aMandate.getMandateType(), false);
@@ -2527,10 +2526,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
 		doEditFieldByInstrument(instrumentType);
+
 		if (issecurityMandate) {
 			mandateTypeList = MandateUtil.excludeRepayMethods(InstrumentType.DAS.code(), InstrumentType.SI.code());
 		}
-
 		if (!InstrumentType.isPDC(val)) {
 			for (ValueLabel valueLabel : mandateTypeList) {
 				if (val.equals(valueLabel.getValue())) {
@@ -2595,8 +2594,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.mandate.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		this.mandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		this.mandate.setUserDetails(getUserWorkspace().getLoggedInUser());
-
-		fd.setMandate(this.mandate);
+		// fd.setMandate(this.mandate);
+		fd.setSecurityMandate(this.mandate);
 
 		logger.debug(Literal.LEAVING);
 	}

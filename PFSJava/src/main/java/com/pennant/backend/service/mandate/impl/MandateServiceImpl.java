@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -116,7 +117,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -135,6 +136,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		} else {
 			getDocument(mandate);
 			mandateDAO.update(mandate, tableType);
+
 			if (StringUtils.trimToEmpty(mandate.getModule()).equals(MandateConstants.MODULE_REGISTRATION)) {
 				com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 				mandateStatus.setMandateID(mandate.getMandateID());
@@ -146,27 +148,18 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		auditHeaderDAO.addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * Mandates by using MandateDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtMandates by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -174,17 +167,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		mandateDAO.delete(mandate, "");
 
 		auditHeaderDAO.addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
-
-	/**
-	 * getMandateById fetch the details by using MandateDAO's getMandateById method.
-	 * 
-	 * @param id   (int)
-	 * @param type (String) ""/_Temp/_View
-	 * @return Mandate
-	 */
 
 	@Override
 	public Mandate getMandateById(long id) {
@@ -196,34 +181,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return mandateDAO.getMandateByStatus(id, status, "_View");
 	}
 
-	/**
-	 * getApprovedMandateById fetch the details by using MandateDAO's getMandateById method . with parameter id and type
-	 * as blank. it fetches the approved records from the Mandates.
-	 * 
-	 * @param id (int)
-	 * @return Mandate
-	 */
-
 	public Mandate getApprovedMandateById(long id) {
 		return mandateDAO.getMandateById(id, "_AView");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using mandateDAO.delete with parameters
-	 * mandate,"" b) NEW Add new record in to main table by using mandateDAO.save with parameters mandate,"" c) EDIT
-	 * Update record in the main table by using mandateDAO.update with parameters mandate,"" 3) Delete the record from
-	 * the workFlow table by using mandateDAO.delete with parameters mandate,"_Temp" 4) Audit the record in to
-	 * AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
-	 * AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
@@ -275,13 +238,23 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 					mandate.setStatus(MandateStatus.NEW);
 				}
 			}
-
-			if (InstrumentType.isEMandate(mandate.getMandateType())) {
+			
+			String mandateType = mandate.getMandateType();
+			InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
+			switch (instrumentType) {
+			case EMANDATE:
+			case DAS:
+			case SI:
 				if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 					mandate.setStatus(MandateStatus.APPROVED);
 				} else {
 					mandate.setStatus(MandateStatus.AWAITCON);
 				}
+				
+				break;
+
+			default:
+				break;
 			}
 
 			getDocument(mandate);
@@ -304,8 +277,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			mandateStatus.setChangeDate(mandate.getInputDate());
 
 			mandateStatusDAO.save(mandateStatus, "");
-
-			// Mandate Registration purpose
 
 			try {
 
@@ -352,13 +323,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		auditHeader.getAuditDetail().setModelData(mandate);
 
 		auditHeaderDAO.addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -370,18 +341,18 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		mandateDAO.delete(mandate, "_Temp");
 
 		auditHeaderDAO.addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -426,19 +397,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	}
 
-	/**
-	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
-	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from mandateDAO.getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @param boolean     onlineRequest
-	 * @return auditHeader
-	 */
-
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		Mandate mandate = (Mandate) auditDetail.getModelData();
 
@@ -455,32 +415,20 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		valueParm[0] = String.valueOf(mandate.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_MandateID") + ":" + valueParm[0];
 
-		if (mandate.isNewRecord()) { // for New record or new record into work flow
+		if (mandate.isNewRecord()) {
 
-			if (!mandate.isWorkflow()) {// With out Work flow only new records
-				if (befMandate != null) { // Record Already Exists in the table
-											// then error
+			if (!mandate.isWorkflow()) {
+				if (befMandate != null) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
-			} else { // with work flow
-				if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																						// records
-																						// type
-																						// is
-																						// new
-					if (befMandate != null || tempMandate != null) { // if
-																		// records
-																		// already
-																		// exists
-																		// in
-																		// the
-																		// main
-																		// table
+			} else {
+				if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					if (befMandate != null || tempMandate != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				} else { // if records not exists in the Main flow table
+				} else {
 					if (befMandate == null || tempMandate != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
@@ -488,13 +436,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				}
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!mandate.isWorkflow()) { // With out Work flow for update and
-											// delete
+			if (!mandate.isWorkflow()) {
 
-				if (befMandate == null) { // if records not exists in the main
-											// table
+				if (befMandate == null) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -513,8 +457,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				}
 			} else {
 
-				if (tempMandate == null) { // if records not exists in the Work
-											// flow table
+				if (tempMandate == null) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -557,11 +500,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "90405", errParm1, valueParm1), usrLanguage));
 			}
-			/*
-			 * //BarCode Unique Validation int count = mandateDAO.getBarCodeCount(barCode, mandate.getMandateID(),
-			 * "_View"); if (count > 0) { auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
-			 * ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm1, valueParm1), usrLanguage)); }
-			 */
+
 		}
 		List<ErrorDetail> errorDetails = ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage);
 		if (errorDetails != null) {
@@ -634,7 +573,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			}
 		}
 
-		// Business Validation for Default Mandate
 		if (mandate.isDefaultMandate()) {
 			if (mandateDAO.getMandateCount(mandate.getCustID(), mandate.getMandateID()) >= 1) {
 				valueParm[0] = String.valueOf(mandate.getCustID());
@@ -644,7 +582,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			}
 		}
 
-		// Mandate Periodicity Validation
 		if (StringUtils.isEmpty(mandate.getOrgReference())) {
 			return auditDetail;
 		}
@@ -835,15 +772,15 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	@Override
 	public List<FinanceMain> getLoans(long custId, String finRepayMethod) {
-		return mandateDAO.getLoans(custId, finRepayMethod);
+		List<FinanceMain> loans = mandateDAO.getLoans(custId, finRepayMethod);
+		
+		return loans.stream().filter(fm -> fm.getAlwdrpymethods().contains(finRepayMethod))
+				.collect(Collectors.toList());
 	}
 
-	/**
-	 * @return the mandate
-	 */
 	@Override
-	public Mandate getMandate() {
-		return mandateDAO.getMandate();
+	public Mandate getEmployerDetails(long custID) {
+		return mandateDAO.getEmployerDetails(custID);
 	}
 
 	@Override

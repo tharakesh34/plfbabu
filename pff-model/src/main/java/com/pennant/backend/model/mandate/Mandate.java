@@ -197,7 +197,9 @@ public class Mandate extends AbstractWorkflowEntity {
 	private boolean hold;
 	private Long holdReasons;
 	private boolean securityMandate;
+	@XmlElement
 	private Long employeeID;
+	@XmlElement
 	private String employerName;
 
 	public Mandate() {

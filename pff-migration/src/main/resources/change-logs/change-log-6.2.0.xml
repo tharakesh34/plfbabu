@@ -1362,6 +1362,8 @@
 				UPDATE BMTBankDetail_Temp SET Ecs = 0 where Ecs is null;
 				UPDATE BMTBankDetail_Temp SET Cheque = 0 where Cheque is null;
 				UPDATE BMTBankDetail_Temp SET Emandate = 0 where Emandate is null;
+				UPDATE BMTBankDetail_Temp SET UpdateBranches = 0 where UpdateBranches is null;
+				
 			]]>
 		</sql>
 	</changeSet>
@@ -1375,6 +1377,7 @@
 				UPDATE BMTBankDetail SET Ecs = 0 where Ecs is null;
 				UPDATE BMTBankDetail SET Cheque = 0 where Cheque is null;
 				UPDATE BMTBankDetail SET Emandate = 0 where Emandate is null;
+				UPDATE BMTBankDetail SET UpdateBranches = 0 where UpdateBranches is null;
 			]]>
 		</sql>
 	</changeSet>
@@ -1656,6 +1659,15 @@
 				INSERT INTO PRESENTMENT_EXCLUDE_CODES (ID, CODE, DESCRIPTION, EXCLUDEID, BOUNCEID, CREATEBOUNCEONDUEDATE, VERSION, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY,LASTMNTON, ACTIVE, RECORDSTATUS,ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOwID) VALUES(9, 'EMI_ADV', 				'Due adjusted from EMI in advance', 		9, NULL, NULL, 1, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1000, CURRENT_TIMESTAMP, 1, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>	
+	</changeSet>
+	
+	<changeSet id="ST#76.5" author="saikiran.n">
+		<sql>
+            <![CDATA[
+            	DELETE FROM STAGETABDETAIL WHERE TABCODE = 'SECMAN';
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, ACTIVE) VALUES (22, 'SECMAN', 'Security Mandates', 1);
+            ]]>
+		</sql>
 	</changeSet>
 	
 </databaseChangeLog>

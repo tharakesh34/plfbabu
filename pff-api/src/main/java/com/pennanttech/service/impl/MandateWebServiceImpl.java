@@ -108,7 +108,31 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 		APIErrorHandlerService.logKeyFields(logFields);
 
 		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
-			response = mandateController.createMandate(mandate);
+
+			if (InstrumentType.isDAS(mandate.getMandateType())) {
+				Mandate mndt = new Mandate();
+				mndt.setSourceId(PennantConstants.FINSOURCE_ID_API);
+				mndt.setMandateType(mandate.getMandateType());
+				mndt.setOrgReference(mandate.getOrgReference());
+				mndt.setEntityCode(mandate.getEntityCode());
+				mndt.setCustCIF(mandate.getCustCIF());
+				mndt.setEmployeeID(mandate.getEmployeeID());
+				mndt.setEmployerName(mandate.getEmployerName());
+				response = mandateController.createMandate(mndt);
+			} else if (InstrumentType.isSI(mandate.getMandateType())) {
+				Mandate mndt = new Mandate();
+				mndt.setMandateType(mandate.getMandateType());
+				mndt.setOrgReference(mandate.getOrgReference());
+				mndt.setEntityCode(mandate.getEntityCode());
+				mndt.setCustCIF(mandate.getCustCIF());
+				mndt.setBankBranchID(mandate.getBankBranchID());
+				mndt.setCity(mandate.getCity());
+
+				response = mandateController.createMandate(mndt);
+			} else {
+				response = mandateController.createMandate(mandate);
+			}
+
 		} else {
 			response = new Mandate();
 			response.setReturnStatus(returnStatus);
@@ -426,7 +450,230 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 	private WSReturnStatus doMandateValidation(Mandate mandate) {
 		logger.debug("Entering");
 
+		String mandateType = mandate.getMandateType();
+
+		InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
+
 		WSReturnStatus returnStatus = new WSReturnStatus();
+
+		returnStatus = basicDetailValidation(mandate, returnStatus);
+
+		switch (instrumentType) {
+		case ECS:
+		case DD:
+		case NACH:
+		case EMANDATE:
+			returnStatus = accountDetailValidation(mandate, returnStatus);
+
+			returnStatus = mandateDetailValidation(mandate, returnStatus);
+			break;
+
+		case DAS:
+			returnStatus = dasDetailValidation(mandate, returnStatus);
+		default:
+			break;
+		}
+
+		if (mandate.getPartnerBankId() <= 0 && StringUtils.isNotBlank(mandate.getPartnerBankCode())) {
+			PartnerBank partnerBank = partnerBankDAO.getPartnerBankByCode(mandate.getPartnerBankCode(), "");
+			if (partnerBank == null) {
+				String[] valueParm1 = new String[2];
+				valueParm1[0] = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value");
+				valueParm1[1] = mandate.getPartnerBankCode();
+				return getErrorDetails("90224", valueParm1);
+			} else {
+				mandate.setPartnerBankId(partnerBank.getPartnerBankId());
+			}
+		}
+
+		logger.debug("Leaving");
+
+		return returnStatus;
+	}
+
+	private WSReturnStatus mandateDetailValidation(Mandate mandate, WSReturnStatus returnStatus) {
+		// validate status
+		if (StringUtils.isNotBlank(mandate.getStatus())) {
+			List<ValueLabel> status = MandateUtil.getMandateStatus();
+			boolean sts = false;
+			for (ValueLabel value : status) {
+				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
+					sts = true;
+					break;
+				}
+			}
+			if (!sts) {
+				String[] valueParm = new String[1];
+				valueParm[0] = mandate.getStatus();
+				return getErrorDetails("90309", valueParm);
+			}
+		}
+
+		// validate periodicity
+		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
+			ErrorDetail errorDetail = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
+			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = mandate.getPeriodicity();
+				return getErrorDetails("90207", valueParm);
+			}
+		}
+
+		if (!mandate.isOpenMandate()) {
+			if (mandate.getExpiryDate() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "expiryDate";
+				return getErrorDetails("90502", valueParm);
+			}
+		}
+		// validate Dates
+		if (mandate.getExpiryDate() != null) {
+			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
+					|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "ExpiryDate";
+				valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
+				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+				return getErrorDetails("90318", valueParm);
+			}
+		}
+		if (mandate.getStartDate() != null) {
+			Date appDate = SysParamUtil.getAppDate();
+			Date mandbackDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
+			if (mandate.getStartDate().before(mandbackDate)
+					|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "mandate start date";
+				valueParm[1] = DateUtility.formatToLongDate(mandbackDate);
+				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+				return getErrorDetails("90318", valueParm);
+			}
+		}
+
+		if (InstrumentType.isEMandate(mandate.getMandateType())) {
+			if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
+				String[] valueParm1 = new String[1];
+				valueParm1[0] = "eMandateReferenceNo";
+				return getErrorDetails("90502", valueParm1);
+			}
+			if (StringUtils.isBlank(mandate.geteMandateSource())) {
+				String[] valueParm1 = new String[1];
+				valueParm1[0] = "eMandateSource";
+				return getErrorDetails("90502", valueParm1);
+			} else {
+				int count = mandateService.validateEmandateSource(mandate.geteMandateSource());
+				if (count == 0) {
+					String[] valueParm1 = new String[1];
+					valueParm1[0] = "eMandateSource " + mandate.geteMandateSource();
+					return getErrorDetails("90501", valueParm1);
+				}
+			}
+		}
+
+		// barCode validation
+		if (ImplementationConstants.ALLOW_BARCODE) {
+			if (StringUtils.isBlank(mandate.getBarCodeNumber())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "barCode";
+				return getErrorDetails("90502", valueParm);
+			}
+		}
+		List<ErrorDetail> errors = mandateService.doValidations(mandate);
+		if (errors != null && !errors.isEmpty()) {
+			for (ErrorDetail errorDetails : errors) {
+				if (StringUtils.isNotBlank(errorDetails.getCode())) {
+					returnStatus = (APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
+							errorDetails.getError()));
+					return returnStatus;
+				}
+			}
+		}
+		return returnStatus;
+	}
+
+	private WSReturnStatus dasDetailValidation(Mandate mandate, WSReturnStatus returnStatus) {
+		if (mandate.getEmployeeID() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "employeeID";
+			return getErrorDetails("90502", valueParm);
+		}
+		return returnStatus;
+	}
+
+	private WSReturnStatus accountDetailValidation(Mandate mandate, WSReturnStatus returnStatus) {
+		// validate AccType
+		if (StringUtils.isNotBlank(mandate.getAccType())) {
+			List<ValueLabel> accType = PennantStaticListUtil.getAccTypeList();
+			boolean accTypeSts = false;
+			for (ValueLabel value : accType) {
+				if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
+					accTypeSts = true;
+					break;
+				}
+			}
+			if (!accTypeSts) {
+				String[] valueParm = new String[1];
+				valueParm[0] = mandate.getAccType();
+				return getErrorDetails("90308", valueParm);
+			}
+		}
+		// validate Phone number
+		String mobileNumber = mandate.getPhoneNumber();
+		if (StringUtils.isNotBlank(mobileNumber)) {
+			if (!(mobileNumber.matches("\\d{10}"))) {
+				return getErrorDetails("90278", null);
+			}
+		}
+
+		String ifsc = mandate.getIFSC();
+		String micr = mandate.getMICR();
+		String bankCode = mandate.getBankCode();
+		String branchCode = mandate.getBranchCode();
+
+		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
+
+		if (bankBranch.getError() != null) {
+			WSReturnStatus status = new WSReturnStatus();
+			status.setReturnCode(bankBranch.getError().getCode());
+			status.setReturnText("");
+
+			ErrorDetail ed = ErrorUtil.getErrorDetailById(bankBranch.getError().getCode());
+
+			if (ed != null) {
+				status.setReturnText(ErrorUtil.getErrorMessage(ed.getMessage(), bankBranch.getError().getParameters()));
+			}
+
+			return status;
+		}
+
+		mandate.setBankCode(bankBranch.getBankCode());
+		mandate.setMICR(bankBranch.getMICR());
+
+		if (!bankBranchService.validateBranchCode(bankBranch, mandate.getMandateType())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = mandate.getMandateType();
+			return getErrorDetails("90333", valueParm);
+		}
+		// validate AccNumber length
+		if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
+			BankDetail bankDetails = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+			int length = mandate.getAccNumber().length();
+			if (bankDetails != null) {
+				int maxAccNoLength = bankDetails.getAccNoLength();
+				int minAccNolength = bankDetails.getMinAccNoLength();
+				if (length < minAccNolength || length > maxAccNoLength) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "AccountNumber";
+					valueParm[1] = String.valueOf(minAccNolength) + " characters";
+					valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
+					return getErrorDetails("BNK001", valueParm);
+				}
+			}
+		}
+		return returnStatus;
+	}
+
+	private WSReturnStatus basicDetailValidation(Mandate mandate, WSReturnStatus returnStatus) {
 		// validate customer
 		String custCIF = mandate.getCustCIF();
 		Customer customer = null;
@@ -537,184 +784,6 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				return getErrorDetails("90307", valueParm);
 			}
 		}
-
-		// validate AccType
-		if (StringUtils.isNotBlank(mandate.getAccType())) {
-			List<ValueLabel> accType = PennantStaticListUtil.getAccTypeList();
-			boolean accTypeSts = false;
-			for (ValueLabel value : accType) {
-				if (StringUtils.equals(value.getValue(), mandate.getAccType())) {
-					accTypeSts = true;
-					break;
-				}
-			}
-			if (!accTypeSts) {
-				String[] valueParm = new String[1];
-				valueParm[0] = mandate.getAccType();
-				return getErrorDetails("90308", valueParm);
-			}
-		}
-		// validate Phone number
-		String mobileNumber = mandate.getPhoneNumber();
-		if (StringUtils.isNotBlank(mobileNumber)) {
-			if (!(mobileNumber.matches("\\d{10}"))) {
-				return getErrorDetails("90278", null);
-			}
-		}
-		// validate status
-		if (StringUtils.isNotBlank(mandate.getStatus())) {
-			List<ValueLabel> status = MandateUtil.getMandateStatus();
-			boolean sts = false;
-			for (ValueLabel value : status) {
-				if (StringUtils.equals(value.getValue(), mandate.getStatus())) {
-					sts = true;
-					break;
-				}
-			}
-			if (!sts) {
-				String[] valueParm = new String[1];
-				valueParm[0] = mandate.getStatus();
-				return getErrorDetails("90309", valueParm);
-			}
-		}
-
-		// validate periodicity
-		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
-			ErrorDetail errorDetail = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
-			if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = mandate.getPeriodicity();
-				return getErrorDetails("90207", valueParm);
-			}
-		}
-
-		String ifsc = mandate.getIFSC();
-		String micr = mandate.getMICR();
-		String bankCode = mandate.getBankCode();
-		String branchCode = mandate.getBranchCode();
-
-		BankBranch bankBranch = bankBranchService.getBankBranch(ifsc, micr, bankCode, branchCode);
-
-		if (bankBranch.getError() != null) {
-			WSReturnStatus status = new WSReturnStatus();
-			status.setReturnCode(bankBranch.getError().getCode());
-			status.setReturnText("");
-
-			ErrorDetail ed = ErrorUtil.getErrorDetailById(bankBranch.getError().getCode());
-
-			if (ed != null) {
-				status.setReturnText(ErrorUtil.getErrorMessage(ed.getMessage(), bankBranch.getError().getParameters()));
-			}
-
-			return status;
-		}
-
-		mandate.setBankCode(bankBranch.getBankCode());
-		mandate.setMICR(bankBranch.getMICR());
-
-		if (!bankBranchService.validateBranchCode(bankBranch, mandate.getMandateType())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = mandate.getMandateType();
-			return getErrorDetails("90333", valueParm);
-		}
-		// validate AccNumber length
-		if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
-			BankDetail bankDetails = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-			int length = mandate.getAccNumber().length();
-			if (bankDetails != null) {
-				int maxAccNoLength = bankDetails.getAccNoLength();
-				int minAccNolength = bankDetails.getMinAccNoLength();
-				if (length < minAccNolength || length > maxAccNoLength) {
-					String[] valueParm = new String[3];
-					valueParm[0] = "AccountNumber";
-					valueParm[1] = String.valueOf(minAccNolength) + " characters";
-					valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
-					return getErrorDetails("BNK001", valueParm);
-				}
-			}
-		}
-
-		if (!mandate.isOpenMandate()) {
-			if (mandate.getExpiryDate() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "expiryDate";
-				return getErrorDetails("90502", valueParm);
-			}
-		}
-		// validate Dates
-		if (mandate.getExpiryDate() != null) {
-			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
-					|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "ExpiryDate";
-				valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
-				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-				return getErrorDetails("90318", valueParm);
-			}
-		}
-		if (mandate.getStartDate() != null) {
-			Date appDate = SysParamUtil.getAppDate();
-			Date mandbackDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
-			if (mandate.getStartDate().before(mandbackDate)
-					|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "mandate start date";
-				valueParm[1] = DateUtility.formatToLongDate(mandbackDate);
-				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-				return getErrorDetails("90318", valueParm);
-			}
-		}
-		// barCode validation
-		if (ImplementationConstants.ALLOW_BARCODE) {
-			if (StringUtils.isBlank(mandate.getBarCodeNumber())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "barCode";
-				return getErrorDetails("90502", valueParm);
-			}
-		}
-		List<ErrorDetail> errors = mandateService.doValidations(mandate);
-		if (errors != null && !errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				if (StringUtils.isNotBlank(errorDetails.getCode())) {
-					returnStatus = (APIErrorHandlerService.getFailedStatus(errorDetails.getCode(),
-							errorDetails.getError()));
-					return returnStatus;
-				}
-			}
-		}
-		if (mandate.getPartnerBankId() <= 0 && StringUtils.isNotBlank(mandate.getPartnerBankCode())) {
-			PartnerBank partnerBank = partnerBankDAO.getPartnerBankByCode(mandate.getPartnerBankCode(), "");
-			if (partnerBank == null) {
-				String[] valueParm1 = new String[2];
-				valueParm1[0] = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value");
-				valueParm1[1] = mandate.getPartnerBankCode();
-				return getErrorDetails("90224", valueParm1);
-			} else {
-				mandate.setPartnerBankId(partnerBank.getPartnerBankId());
-			}
-		}
-
-		if (InstrumentType.isEMandate(mandate.getMandateType())) {
-			if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
-				String[] valueParm1 = new String[1];
-				valueParm1[0] = "eMandateReferenceNo";
-				return getErrorDetails("90502", valueParm1);
-			}
-			if (StringUtils.isBlank(mandate.geteMandateSource())) {
-				String[] valueParm1 = new String[1];
-				valueParm1[0] = "eMandateSource";
-				return getErrorDetails("90502", valueParm1);
-			} else {
-				int count = mandateService.validateEmandateSource(mandate.geteMandateSource());
-				if (count == 0) {
-					String[] valueParm1 = new String[1];
-					valueParm1[0] = "eMandateSource " + mandate.geteMandateSource();
-					return getErrorDetails("90501", valueParm1);
-				}
-			}
-		}
-		logger.debug("Leaving");
-
 		return returnStatus;
 	}
 
@@ -814,7 +883,29 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				}
 			}
 
-			response = mandateController.doApproveMandate(mandate);
+			if (InstrumentType.isDAS(mandate.getMandateType())) {
+				Mandate mndt = new Mandate();
+				mndt.setMandateType(mandate.getMandateType());
+				mndt.setOrgReference(mandate.getOrgReference());
+				mndt.setEntityCode(mandate.getEntityCode());
+				mndt.setCustCIF(mandate.getCustCIF());
+				mndt.setEmployeeID(mandate.getEmployeeID());
+				mndt.setEmployerName(mandate.getEmployerName());
+				response = mandateController.doApproveMandate(mndt);
+			} else if (InstrumentType.isSI(mandate.getMandateType())) {
+				Mandate mndt = new Mandate();
+				mndt.setMandateType(mandate.getMandateType());
+				mndt.setOrgReference(mandate.getOrgReference());
+				mndt.setEntityCode(mandate.getEntityCode());
+				mndt.setCustCIF(mandate.getCustCIF());
+				mndt.setBankBranchID(mandate.getBankBranchID());
+				mndt.setCity(mandate.getCity());
+
+				response = mandateController.doApproveMandate(mndt);
+			} else {
+				response = mandateController.doApproveMandate(mandate);
+			}
+
 		} else {
 			response = new Mandate();
 			response.setReturnStatus(returnStatus);

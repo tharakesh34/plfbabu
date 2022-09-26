@@ -23,4 +23,5 @@ public class StageTabConstants {
 	public static final long PMAY = 18;
 	public static final long PricingDetails = 19;
 	public static final long TANDetails = 24;
+	public static final long SECMANDATES = 22;
 }

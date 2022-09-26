@@ -38,11 +38,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.mandate.MandateDAO;
-import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -63,26 +61,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public Mandate getMandate() {
-		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Mandate");
-		Mandate mandate = new Mandate();
-
-		if (workFlowDetails != null) {
-			mandate.setWorkflowId(workFlowDetails.getWorkFlowId());
-		}
-
-		return mandate;
-	}
-
-	@Override
-	public Mandate getNewMandate() {
-		Mandate mandate = getMandate();
-		mandate.setNewRecord(true);
-
-		return mandate;
-	}
-
-	@Override
 	public Mandate getMandateById(Long id, String type) {
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where MandateID = ?");
@@ -91,6 +69,24 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), id);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Override
+	public Mandate getMandateByFinReference(String finReference, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where OrgReference = ? and SecurityMandate = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), finReference, true);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -113,14 +109,16 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public Mandate getMandateByOrgReference(final String orgReference, String status, String type) {
+	public Mandate getMandateByOrgReference(String orgReference, Boolean isSecurityMandate, String status,
+			String type) {
 		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where OrgReference = ?  and Status = ?");
+		sql.append(" Where OrgReference = ?  and Status = ? and SecurityMandate = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), orgReference, status);
+			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), orgReference, status,
+					isSecurityMandate);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -814,12 +812,12 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 	public List<FinanceMain> getLoans(long custId, String finRepayMethod) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID, FinReference, fm.FinType, fm.FinRepayMethod");
+		sql.append(" FinID, FinReference, fm.FinType, fm.FinRepayMethod, ft.alwdrpymethods");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
-		sql.append(" Where fm.FinIsActive = ? and fm.CustId = ? and fm.FinRepayMethod = ?");
+		sql.append(" Where fm.FinIsActive = ? and fm.CustId = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
@@ -828,8 +826,37 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));
 			fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
+			fm.setAlwdrpymethods(rs.getString("alwdrpymethods"));
 
 			return fm;
-		}, 1, custId, finRepayMethod);
+		}, 1, custId);
 	}
+
+	@Override
+	public Mandate getEmployerDetails(long custID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" EmployerID, EmpName ");
+		sql.append(" From CustomerEmpDetails ced");
+		sql.append(" Inner Join EmployerDetail ed on ed.EmployerID = ced.CustEmpName ");
+		sql.append(" Where EmpIsActive = ?  and AllowDas = ? and CustID = ? ");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Mandate mdt = new Mandate();
+
+				mdt.setEmployeeID(rs.getLong("EmployerID"));
+				mdt.setEmployerName(rs.getString("EmpName"));
+
+				return mdt;
+			}, 1, 1, custID);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
+	}
+
 }

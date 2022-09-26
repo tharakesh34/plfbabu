@@ -12,9 +12,9 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.perfios.PerfiosHeader;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
-import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennanttech.pennapps.core.InterfaceException;
 
@@ -93,6 +93,8 @@ public interface CustomerDetailsService {
 	boolean getCustomerByCoreBankId(String custCoreBank);
 
 	Customer checkCustomerByCIF(String cif, String type);
+
+	Customer getCustomer(String cif);
 
 	int updateCustCRCPR(String custDocTitle, long custID);
 

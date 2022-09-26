@@ -112,23 +112,33 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	}
 
 	@Override
+	public Mandate getSecurityMandate(String finReference) {
+		Mandate mandate = mandateDAO.getMandateByFinReference(finReference, "_View");
+		if (mandate != null && mandate.getDocumentRef() != null && mandate.getDocumentRef() > 0) {
+			byte[] data = getDocumentImage(mandate.getDocumentRef());
+			if (data != null) {
+				mandate.setDocImage(data);
+			}
+		}
+		return mandate;
+	}
+
+	@Override
 	public List<Mandate> getMnadateByCustID(long custID, long mandateID) {
 		return mandateDAO.getMnadateByCustID(custID, mandateID);
 	}
 
 	@Override
-	public void saveOrUpdate(FinanceDetail fd, AuditHeader auditHeader, String tableType) {
+	public void saveOrUpdate(FinanceMain fm, Mandate mandate, AuditHeader auditHeader, String tableType) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
-		Mandate mandate = fd.getMandate();
-		boolean isMandateReq = checkRepayMethod(fm);
+		boolean isMandateReq = InstrumentType.mandateRequired(fm.getFinRepayMethod());
 
 		String finReference = fm.getFinReference();
 
 		if (!isMandateReq) {
-			deleteMandate(finReference, auditDetails);
+			deleteMandate(finReference, mandate, auditDetails);
 			fm.setMandateID(0L);
 			addAudit(auditHeader, auditDetails);
 
@@ -151,19 +161,38 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 		Mandate useExisting = checkExistingMandate(mandate.getMandateID());
 
+		boolean isSecurityMandate = mandate.isSecurityMandate();
+
 		if (useExisting != null) {
-			deleteMandate(finReference, auditDetails);
-			fm.setMandateID(mandate.getMandateID());
+			deleteMandate(finReference, mandate, auditDetails);
+			if (!mandate.isSecurityMandate()) {
+				fm.setMandateID(mandate.getMandateID());
+			}
 		} else {
-			Mandate oldmandate = mandateDAO.getMandateByOrgReference(finReference, MandateStatus.FIN, tableType);
+			Mandate oldmandate = mandateDAO.getMandateByOrgReference(finReference, isSecurityMandate, MandateStatus.FIN,
+					tableType);
+
+			/*
+			 * if (mandate.isSecurityMandate() && !oldmandate.isSecurityMandate()) { oldmandate = null; }
+			 */
+
+			mandate.setOrgReference(finReference);
 
 			if (oldmandate != null) {
 				mandate.setMandateID(oldmandate.getMandateID());
+				mandate.setOrgReference(fm.getFinReference());
+				mandate.setStatus(MandateStatus.FIN);
+				getDocument(mandate);
 				mandateDAO.updateFinMandate(mandate, tableType);
 				auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_UPD));
 			} else {
+				mandate.setStatus(MandateStatus.FIN);
+				mandate.setOrgReference(fm.getFinReference());
+				getDocument(mandate);
 				long mandateID = mandateDAO.save(mandate, tableType);
-				fm.setMandateID(mandateID);
+				if (!mandate.isSecurityMandate()) {
+					fm.setMandateID(mandateID);
+				}
 				auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_ADD));
 			}
 
@@ -174,10 +203,11 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 		addAudit(auditHeader, auditDetails);
 		logger.debug(" Leaving ");
+
 	}
 
 	@Override
-	public void doApprove(FinanceDetail fd, AuditHeader auditHeader, String tableType) {
+	public void doApprove(FinanceDetail fd, Mandate mandate, AuditHeader auditHeader, String tableType) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
@@ -188,14 +218,12 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			customer = fd.getCustomerDetails().getCustomerEMailList();
 		}
 
-		Mandate mandate = fd.getMandate();
-
-		boolean isMandateReq = checkRepayMethod(fm);
+		boolean isMandateReq = InstrumentType.mandateRequired(fm.getFinRepayMethod());
 
 		if (!isMandateReq) {
 			fm.setMandateID(0L);
 
-			deleteMandate(fm.getFinReference(), auditDetails);
+			deleteMandate(fm.getFinReference(), mandate, auditDetails);
 			addAudit(auditHeader, auditDetails);
 
 			logger.debug(Literal.LEAVING);
@@ -204,7 +232,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		}
 
 		if (mandate == null) {
-			deleteMandate(fm.getFinReference(), auditDetails);
+			deleteMandate(fm.getFinReference(), mandate, auditDetails);
 			addAudit(auditHeader, auditDetails);
 
 			logger.debug(Literal.LEAVING);
@@ -232,8 +260,10 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			getDocument(mandate);
 
 			long mandateID = mandateDAO.save(mandate, tableType);
-			fm.setMandateID(mandateID);
 
+			if (!mandate.isSecurityMandate()) {
+				fm.setMandateID(mandateID);
+			}
 			auditDetails.add(getAuditDetails(mandate, 1, PennantConstants.TRAN_ADD));
 
 			com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
@@ -283,7 +313,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			}
 		}
 
-		deleteMandate(fm.getFinReference(), auditDetails);
+		deleteMandate(fm.getFinReference(), mandate, auditDetails);
 		addAudit(auditHeader, auditDetails);
 
 		logger.debug(Literal.LEAVING);
@@ -320,25 +350,23 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			}
 		}
 
-		deleteMandate(fm.getFinReference(), auditDetails);
+		deleteMandate(fm.getFinReference(), mandate, auditDetails);
 		addAudit(auditHeader, auditDetails);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void deleteMandate(String finreferece, List<AuditDetail> auditDetails) {
-		Mandate oldmandate = mandateDAO.getMandateByOrgReference(finreferece, MandateStatus.FIN, "_Temp");
+	private void deleteMandate(String finreferece, Mandate mandate, List<AuditDetail> auditDetails) {
+
+		boolean securityMandate = mandate.isSecurityMandate();
+		Mandate oldmandate = mandateDAO.getMandateByOrgReference(finreferece, securityMandate, MandateStatus.FIN,
+				"_Temp");
 
 		if (oldmandate != null) {
 			mandateDAO.delete(oldmandate, "_Temp");
 			auditDetails.add(getAuditDetails(oldmandate, 2, PennantConstants.TRAN_DEL));
 		}
 
-	}
-
-	private boolean checkRepayMethod(FinanceMain finmain) {
-		String rpymentod = StringUtils.trimToEmpty(finmain.getFinRepayMethod());
-		return InstrumentType.isManual(rpymentod);
 	}
 
 	private Mandate checkExistingMandate(long mandateID) {
@@ -357,13 +385,11 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	}
 
 	@Override
-	public void validateMandate(AuditDetail auditDetail, FinanceDetail fd) {
-		Mandate mandate = fd.getMandate();
-
+	public void validateMandate(AuditDetail auditDetail, FinanceDetail fd, Mandate mandate) {
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		if (checkRepayMethod(fm) && !fd.isActionSave() && mandate != null) {
+		if (InstrumentType.mandateRequired(fm.getFinRepayMethod()) && !fd.isActionSave() && mandate != null) {
 
 			BigDecimal exposure = BigDecimal.ZERO;
 
@@ -492,8 +518,9 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	@Override
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		if (checkRepayMethod(financeMain) && !financeDetail.isActionSave() && mandate != null) {
+		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
+		if (InstrumentType.mandateRequired(fm.getFinRepayMethod()) && !financeDetail.isActionSave()
+				&& mandate != null) {
 			if (!mandate.isUseExisting()) {
 				// prompt for Open Mandate
 				int count = getMnadateByCustID(mandate.getCustID(), mandate.getMandateID()).size();

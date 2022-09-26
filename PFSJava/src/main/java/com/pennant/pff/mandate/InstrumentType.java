@@ -120,4 +120,25 @@ public enum InstrumentType {
 
 		return null;
 	}
+
+	public static boolean mandateRequired(String instrumentType) {
+		InstrumentType object = getType(instrumentType);
+
+		if (object == null || object == MANUAL) {
+			return false;
+		}
+
+		switch (object) {
+		case NACH:
+		case ECS:
+		case EMANDATE:
+		case SI:
+		case DAS:
+			return true;
+
+		default:
+			return false;
+		}
+	}
+
 }
