@@ -3650,7 +3650,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		boolean alwCashMode = ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE;
 
 		if (!autoReceipt && fsi.isNewReceipt() && !ReceiptMode.isFundingAccountReq(receiptMode)
-				|| (alwCashMode && ReceiptMode.CASH.equals(receiptMode)) && fundingAccount > 0) {
+				&& !ReceiptMode.CASH.equals(receiptMode) || (alwCashMode && fundingAccount > 0)) {
 			String receipts = AccountConstants.PARTNERSBANK_RECEIPTS;
 			String finType = fm.getFinType();
 			if (finTypePartnerBankDAO.getPartnerBankCount(finType, receiptMode, receipts, fundingAccount) <= 0) {
