@@ -65,7 +65,6 @@
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />

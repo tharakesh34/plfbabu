@@ -3410,7 +3410,6 @@
 		<property name="payOrderIssueHeaderDAO" ref="payOrderIssueHeaderDAO" />
 		<property name="tatDetailDAO" ref="tatDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="overdraftScheduleDetailDAO" ref="overdraftScheduleDetailDAO" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
@@ -3716,7 +3715,6 @@
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
@@ -4421,7 +4419,6 @@
 		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="financeDetailService" ref="financeDetailService" />
@@ -4729,7 +4726,6 @@
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
@@ -10560,7 +10556,6 @@
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
