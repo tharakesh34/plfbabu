@@ -110,7 +110,6 @@ public class FetchCustomerDedupDetails {
 					if (dataObject != null) {
 						ShowCustomerDedupListBox details = (ShowCustomerDedupListBox) dataObject;
 
-						System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
 						logger.debug("The User Action is " + details.getUserAction());
 						int userAction = details.getUserAction();
 

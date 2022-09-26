@@ -138,7 +138,6 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.core.AccrualService;
-import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.AEAmounts;
@@ -160,7 +159,6 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ValueLabel;
@@ -248,7 +246,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
@@ -314,7 +311,6 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
-import com.pennant.webui.customermasters.collateraldelink.CollateralDelinkDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.dedup.dedupparm.DedupValidation;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
@@ -968,7 +964,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DedupParmService dedupParmService;
 	private NotificationsService notificationsService;
 	private DedupValidation dedupValidation;
-	private InstallmentDueService installmentDueService;
 	private AdvancePaymentService advancePaymentService;
 	private MailTemplateService mailTemplateService;
 	private LegalDetailService legalDetailService;
@@ -1065,7 +1060,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	private BaseRateCodeService baseRateCodeService;
 	private transient SpreadsheetCtrl spreadSheetCtrl;
-	private CollateralDelinkDialogCtrl collateralDelinkDialogCtrl;
 	private transient LinkedFinancesDialogCtrl linkedFinancesDialogCtrl;
 
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
@@ -2392,46 +2386,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			logger.debug(Literal.LEAVING);
 		}
-	}
-
-	private void appendPricingTab() {
-		if (isTabVisible(StageTabConstants.PricingDetails) && StringUtils.isEmpty(moduleDefiner)) {
-			boolean splitted = false;
-			if (financeDetail.getPricingDetail() != null) {
-				if (CollectionUtils.isNotEmpty(financeDetail.getPricingDetail().getFinanceMains())) {
-					if (StringUtils
-							.isNotBlank(financeDetail.getPricingDetail().getFinanceMains().get(0).getParentRef())) {
-						splitted = true;
-					}
-				}
-			}
-
-			Tab tab = getTab("PRICINGDETAILS");
-			if (tab == null) {
-				appendPricingDetailsTab(true);
-				appendPricingDetailsTab(false);
-			} else {
-				tab.setVisible(true);
-				// pricingDetailListCtrl.doSetFieldProperties(this.loanCategory.getSelectedItem().getValue().toString());
-			}
-
-			if (!splitted) {
-				Tab feetab = getTab("FEE");
-				if (feetab != null) {
-					feetab.setVisible(false);
-					feetab = null;
-					// finFeeDetailListCtrl = null;
-				}
-
-				Tab vasTab = getTab("VAS");
-				if (vasTab != null) {
-					vasTab.setVisible(false);
-					vasTab = null;
-					finVasRecordingDialogCtrl = null;
-				}
-			}
-		}
-
 	}
 
 	/**
@@ -4819,7 +4773,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 		final Map<String, Object> map = new HashMap<String, Object>();
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		Map<String, String> dataMapList = getFinanceDetail().getDataMap();
+
 		long custId = financeMain.getCustID();
 		boolean createTab = false;
 		if (getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW) == null) {
@@ -5267,8 +5221,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onChangecustPayAmount(Event event) {
 		logger.debug("Entering" + event.toString());
 		BigDecimal totalCustPayAmt = BigDecimal.ZERO;
-
-		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		this.custPaymentAmount.setValue(PennantApplicationUtil.formateAmount(totalCustPayAmt,
 				CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
@@ -9169,22 +9121,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 		return false;
-	}
-
-	/**
-	 * Area code of a mobile number should be "+971" when repay method is DDA
-	 * 
-	 * @param phoneNumber
-	 */
-	private boolean validateDDAMobileNumber(String phoneNumber) {
-		String[] mobileNum = PennantApplicationUtil.unFormatPhoneNumber(phoneNumber);
-		if (mobileNum != null && mobileNum.length > 0) {
-			mobileNum[0] = "+" + mobileNum[0];
-			if (!StringUtils.equals(mobileNum[0], "+971")) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	// WorkFlow Creations
@@ -15786,15 +15722,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		long finID = financeMain.getFinID();
-		String finReference = financeMain.getFinReference();
 
 		List<FinFeeDetail> finFeeDetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 
 		if (CollectionUtils.isEmpty(finFeeDetailList)) {
 			return;
 		}
-
-		FeeRule feeRule;
 
 		BigDecimal deductFeeDisb = BigDecimal.ZERO;
 		BigDecimal addFeeToFinance = BigDecimal.ZERO;
@@ -21734,10 +21667,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.financeTaxDetailDialogCtrl = financeTaxDetailDialogCtrl;
 	}
 
-	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
-		this.installmentDueService = installmentDueService;
-	}
-
 	@Autowired
 	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
 		this.advancePaymentService = advancePaymentService;
@@ -22276,7 +22205,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				String finReference = lmain.getFinReference();
 				String aggName = StringUtils.trimToEmpty(frefdata.getLovDescNamelov());
 				String reportName = "";
-				String aggPath = "", templateName = "";
+				String templateName = "";
 				if (StringUtils.trimToEmpty(frefdata.getLovDescAggReportName()).contains("/")) {
 					String aggRptName = StringUtils.trimToEmpty(frefdata.getLovDescAggReportName());
 					templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
@@ -23922,10 +23851,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setLinkedFinancesDialogCtrl(LinkedFinancesDialogCtrl linkedFinancesDialogCtrl) {
 		this.linkedFinancesDialogCtrl = linkedFinancesDialogCtrl;
-	}
-
-	public void setCollateralDelinkDialogCtrl(CollateralDelinkDialogCtrl collateralDelinkDialogCtrl) {
-		this.collateralDelinkDialogCtrl = collateralDelinkDialogCtrl;
 	}
 
 	public void setFeeTypeService(FeeTypeService feeTypeService) {

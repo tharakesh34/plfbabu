@@ -1634,7 +1634,6 @@
 		<property name="dedupValidation" ref="dedupValidation" />
 		<property name="reScheduleService" ref="reScheduleService" />
 		<property name="accrualService" ref="accrualService" />
-		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="pdfParserCaller" ref="pdfParserCaller" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
