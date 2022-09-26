@@ -262,9 +262,6 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
-	<!-- Ext Tables DAO Details -->
-	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl" parent="basicDao" />
-
 	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener">
 		<property name="eODConfigDAO" ref="eODConfigDAO" />
 		<property name="bpsDAO" ref="bpsDAO" />

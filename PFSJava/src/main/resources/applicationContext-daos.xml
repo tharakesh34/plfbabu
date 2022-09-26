@@ -6125,10 +6125,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!-- Ext Tables DAO Details -->
-	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl" parent="basicDao" />
-
-
 	<!-- Document Manager Details -->
 	<bean id="documentManagerDAO" class="com.pennant.backend.dao.documentdetails.impl.DocumentManagerDAOImpl"
 		parent="sequenceDao" />
