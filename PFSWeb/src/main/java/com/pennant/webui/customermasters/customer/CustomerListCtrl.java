@@ -250,6 +250,8 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 				if (isWorkFlowEnabled() && customerDetails.getCustomer().getWorkflowId() == 0) {
 					customerDetails.getCustomer().setWorkflowId(getWorkFlowId());
 				}
+
+				logUserAccess("menu_Item_NewCustomer", String.valueOf(custID));
 				doShowDialogPage(customerDetails);
 			} else {
 				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

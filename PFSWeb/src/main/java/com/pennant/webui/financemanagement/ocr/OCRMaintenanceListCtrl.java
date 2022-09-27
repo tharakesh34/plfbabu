@@ -148,6 +148,8 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 			if (isWorkFlowEnabled() && finOcrHeader.getWorkflowId() == 0) {
 				finOcrHeader.setWorkflowId(getWorkFlowId());
 			}
+
+			logUserAccess("menu_Item_OCRMaintenance", finOcrHeader.getFinReference());
 			doShowDialogPage(finOcrHeader);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

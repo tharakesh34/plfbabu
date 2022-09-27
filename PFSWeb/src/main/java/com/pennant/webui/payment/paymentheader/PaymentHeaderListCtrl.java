@@ -243,6 +243,9 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 			if (isWorkFlowEnabled() && paymentheader.getWorkflowId() == 0) {
 				paymentheader.setWorkflowId(getWorkFlowId());
 			}
+
+			logUserAccess("menu_Item_PaymentInstructions", paymentheader.getFinReference());
+
 			doShowDialogPage(paymentheader);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

@@ -41,9 +41,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -113,14 +111,12 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where UsrId = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(su);
-
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		LoggedInUser ud = su.getUserDetails();
 
 		try {
-			if (this.jdbcOperations.update(sql.toString(), beanParameters) > 0) {
+			if (this.jdbcOperations.update(sql.toString(), su.getId()) > 0) {
 				return;
 			}
 

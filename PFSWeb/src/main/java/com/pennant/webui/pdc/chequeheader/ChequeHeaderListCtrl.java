@@ -217,6 +217,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 			if (isWorkFlowEnabled() && chequeheader.getWorkflowId() == 0) {
 				chequeheader.setWorkflowId(getWorkFlowId());
 			}
+			logUserAccess("menu_Item_ChequeHeader", chequeheader.getFinReference());
 			doShowDialogPage(chequeheader);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

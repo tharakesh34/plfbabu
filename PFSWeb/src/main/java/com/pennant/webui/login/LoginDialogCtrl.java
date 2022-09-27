@@ -224,24 +224,24 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 			return AuthenticationError.USER_NOT_FOUND.message();
 		}
 
-		if (StringUtils.isEmpty(secUser.getUsrEmail()) || StringUtils.isEmpty(secUser.getUsrMobile())) {
-			return "E-Mail or Mobile Number is madatory. Please contact system administartor.";
+		if (StringUtils.isEmpty(secUser.getUsrEmail()) && StringUtils.isEmpty(secUser.getUsrMobile())) {
+			return AuthenticationError.EMAIL_OR_MOB_MANDATORY.message();
 		}
 
 		if (secUser.isDeleted()) {
-			return "User account is deleted. Please contact system administartor.";
+			return AuthenticationError.DELETED_USER.message();
 		}
 
 		if (!secUser.isUsrEnabled()) {
-			return "User account is disabled. Please contact system administartor.";
+			return AuthenticationError.DISABLED_USER.message();
 		}
 
 		if (secUser.isUsrAcLocked()) {
-			return "User account is locked. Please contact system adminstrator.";
+			return AuthenticationError.USER_LOCKED.message();
 		}
 
 		if (!AuthenticationType.DAO.name().equals(secUser.getAuthType())) {
-			return "Password reset not allowed for internal user.";
+			return AuthenticationError.EXTERNAL_USER.message();
 		}
 
 		return null;

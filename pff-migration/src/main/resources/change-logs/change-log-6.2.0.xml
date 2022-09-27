@@ -1113,32 +1113,32 @@
 	<changeSet id="ST#88.2" author="Mounika.M">
 		<sql>
 			<![CDATA[
-				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select MAX(Seqno)+1 from SeqMailTemplate), 'SU', 'OTP', 'RESPWD_OTP', 'Reset Password', 1, 'Dear User Your One Time Password(OTP)  to log in to Your System.', 1, 'Dear User Your OTP is.', 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP')
-				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select MAX(Seqno)+1 from SeqMailTemplate), 'SU', 'OTP', 'TWO_FACTOR_OTP', 'Two Factor Authentication', 1, 'Dear User Your One Time Password(OTP)  to log in to Your System.', 1, 'Dear User Your OTP is.', 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP')
+				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select MAX(Seqno)+1 from SeqMailTemplate), 'SU', 'OTP', 'RESPWD_OTP', 'Reset Password', 1, 'Dear User your OTP', 1, 'Dear User Your OTP is.', 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP')
+				INSERT INTO TEMPLATES (TEMPLATEID, TEMPLATEFOR, MODULE, TEMPLATECODE, TEMPLATEDESC, SMSTEMPLATE, SMSCONTENT, EMAILTEMPLATE, EMAILCONTENT, EMAILFORMAT, EMAILSUBJECT, EMAILSENDTO, TURNAROUNDTIME, REPEAT, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, EVENT) VALUES((Select MAX(Seqno)+1 from SeqMailTemplate), 'SU', 'OTP', 'TWO_FACTOR_OTP', 'Two Factor Authentication', 1, 'Dear User Your OTP', 1, 'Dear User Your OTP is.', 'H', 'LOGIN OTP', null, 0, 0, 1, 2, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 'OTP')
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> 
 	
-	<changeSet id="1.1" author="ganeshdurga.n">
+	<changeSet id="ST#166.1" author="ganeshdurga.n">
 		<createTable tableName="USER_ACCESS_AUDIT">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
+			<column name="UsrLoginId" type="bigint" />
 			<column name="MenuItem" type="varchar(200)" />
 			<column name="Module" type="varchar(200)"/>
 			<column name="Reference" type="varchar(200)"/>
 			<column name="Role" type="varchar(200)"/>
 			<column name="AccessedBy" type="bigint" />
 			<column name="AccessedOn" type="datetime" />
-			<column name="AccessedIp" type="varchar(200)" />
 		</createTable>
 	</changeSet>
 
-	<changeSet id="1.2" author="ganeshdurga.n">
+	<changeSet id="ST#166.2" author="ganeshdurga.n">
 		<addPrimaryKey constraintName="PK_USER_ACCESS_AUDIT" tableName="USER_ACCESS_AUDIT" columnNames="Id" />
 	</changeSet>
 
-	<changeSet id="1.3" author="ganeshdurga.n">
+	<changeSet id="ST#166.3" author="ganeshdurga.n">
 		<addForeignKeyConstraint baseColumnNames="AccessedBy" baseTableName="USER_ACCESS_AUDIT"
 			constraintName="FK_SECUSERS_ACCESSEDBY" referencedColumnNames="USRID" referencedTableName="SECUSERS" />
 	</changeSet>

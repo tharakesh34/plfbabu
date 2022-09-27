@@ -1159,8 +1159,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(
-				" ReceiptID, ReceiptDate, ReceiptType, RecAgainst, FinID, Reference, ReceiptPurpose, RcdMaintainSts");
+		sql.append(" ReceiptID, ReceiptDate, ReceiptType, RecAgainst");
+		sql.append(", FinID, Reference, ReceiptPurpose, RcdMaintainSts");
 		sql.append(", InstructionUID, ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount, EffectSchdMethod");
 		sql.append(", ReceiptModeStatus, RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate");
 		sql.append(", Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");

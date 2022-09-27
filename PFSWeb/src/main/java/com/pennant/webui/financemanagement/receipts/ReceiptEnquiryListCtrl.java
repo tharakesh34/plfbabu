@@ -100,6 +100,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private transient ReceiptService receiptService;
 	private String module;
+	private String menuItemName = null;
 
 	/**
 	 * The default constructor.
@@ -132,6 +133,9 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ReceiptEnquiryList(Event event) {
+
+		menuItemName = getMenuItemName(event, menuItemName);
+
 		// Set the page level components.
 		setPageComponents(window_ReceiptEnquiryList, borderLayout_ReceiptEnquiryList, listBoxReceipt,
 				pagingReceiptList);
@@ -264,6 +268,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			if (isWorkFlowEnabled() && header.getWorkflowId() == 0) {
 				header.setWorkflowId(getWorkFlowId());
 			}
+			logUserAccess(menuItemName, header.getReference());
 			doShowDialogPage(header);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

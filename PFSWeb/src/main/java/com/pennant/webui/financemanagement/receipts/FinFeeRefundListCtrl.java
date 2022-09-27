@@ -207,6 +207,8 @@ public class FinFeeRefundListCtrl extends GFCBaseListCtrl<FinFeeRefundHeader> {
 			if (isWorkFlowEnabled() && header.getWorkflowId() == 0) {
 				header.setWorkflowId(getWorkFlowId());
 			}
+
+			logUserAccess("menu_Item_FinFeeRefunds", header.getFinReference());
 			doShowDialogPage(header);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

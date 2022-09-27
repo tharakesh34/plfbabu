@@ -139,6 +139,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private Map<Long, FinReceiptHeader> recHeaderMap = new HashMap<Long, FinReceiptHeader>();
 	private Map<Long, FinReceiptHeader> headerMap = new HashMap<Long, FinReceiptHeader>(); // it has all data
 	private String module;
+	private String menuItemName = null;
 	private ReceiptService receiptService;
 	private NonLanReceiptService nonLanReceiptService;
 
@@ -175,6 +176,8 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 */
 	public void onCreate$window_NonLanReceiptList(Event event) {
 		logger.debug("Entering " + event.toString());
+
+		menuItemName = getMenuItemName(event, menuItemName);
 
 		// Set the page level components.
 		setPageComponents(window_NonLanReceiptList, borderLayout_ReceiptList, listBoxReceipts, pagingReceiptList);
@@ -682,6 +685,8 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		if (finReceiptHeader.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			finReceiptHeader.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
+
+		logUserAccess(menuItemName, finReceiptHeader.getReference());
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finReceiptHeader", finReceiptHeader);

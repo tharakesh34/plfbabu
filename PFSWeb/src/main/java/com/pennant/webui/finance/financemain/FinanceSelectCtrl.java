@@ -197,6 +197,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private String workflowCode = "";
 	private String eventCodeRef = "";
 	private String menuItemRightName = null;
+	private String menuItemName = null;
 	private Tab tab;
 	private Tabbox tabbox;
 
@@ -258,14 +259,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void onCreate$window_FinanceSelect(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		if (event.getTarget() != null && event.getTarget().getParent() != null
-				&& event.getTarget().getParent().getParent() != null
-				&& event.getTarget().getParent().getParent().getParent() != null
-				&& event.getTarget().getParent().getParent().getParent().getParent() != null) {
-			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
-
-			String menuItemName = tabbox.getSelectedTab().getId();
-			menuItemName = menuItemName.trim().replace("tab_", "menu_Item_");
+		menuItemName = getMenuItemName(event, menuItemName);
+		if (StringUtils.isEmpty(menuItemName)) {
 			if (getUserWorkspace().getHasMenuRights().containsKey(menuItemName)) {
 				menuItemRightName = getUserWorkspace().getHasMenuRights().get(menuItemName);
 			}
@@ -1337,58 +1332,74 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				&& !moduleDefiner.equals(FinServiceEvent.LINKDELINK)
 				&& !moduleDefiner.equals(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinanceMainDialog(item);
 
 		} else if (moduleDefiner.equals(FinServiceEvent.EARLYRPY) || moduleDefiner.equals(FinServiceEvent.SCHDRPY)
 				|| moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
 				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinanceRepaymentDialog(item);
 
 		} else if (moduleDefiner.equals(FinServiceEvent.RECEIPT)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinanceReceiptDialog(item);
 
 		} else if (moduleDefiner.equals(FinServiceEvent.WRITEOFF)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinanceWriteoffDialog(item);
 
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELFIN)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinanceCancellationDialog(item);
 
 		} else if (moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
 				|| moduleDefiner.equals(FinServiceEvent.RPYBASICMAINTAIN)
 				|| moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinMaintenanceDialog(item);
 
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELRPY)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinanceRepayCancelDialog(item);
 
 		} else if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinCovenantMaintanceDialog(item);
 		} else if (moduleDefiner.equals(FinServiceEvent.COLLATERAL)) {
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinCollateralsMaintanceDialog(item);
 		} else if (moduleDefiner.equals(FinServiceEvent.FINOPTION)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinFinoptionMaintanceDialog(item);
 		} else if (moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFeeWaiverHeaderDialog(item);
 		} else if (moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openLinkDelinkMaintenanceDialog(item);
 
 		} else if (moduleDefiner.equals(FinServiceEvent.CHANGETDS)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openFinChangeTDSMaintanceDialog(item);
 		} else if (moduleDefiner.equals(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN)) {
 
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openExtendedFieldsMaintanceDialog(item);
 		} else if (moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)) {
+
+			userAccessLog(menuItemName, item, moduleDefiner);
 			openLoanDownsizingDialog(item);
 		} else {
 			if (this.getListBoxFinance().getSelectedItem() != null) {
@@ -4035,6 +4046,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		logger.debug("Leaving ");
+	}
+
+	private void userAccessLog(String menu, Listitem item, String module) {
+		final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+		logUserAccess(menu, aFinanceMain.getFinReference(), module);
 	}
 
 	public void setSearchObj(JdbcSearchObject<FinanceMain> searchObj) {

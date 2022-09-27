@@ -331,6 +331,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 			if (isWorkFlowEnabled() && legaldetail.getWorkflowId() == 0) {
 				legaldetail.setWorkflowId(getWorkFlowId());
 			}
+			logUserAccess("menu_Item_LegalDetailEnquiry", legaldetail.getLegalReference());
 			doShowDialogPage(legaldetail);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

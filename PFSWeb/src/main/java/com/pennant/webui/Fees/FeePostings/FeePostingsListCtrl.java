@@ -207,6 +207,8 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 			if (isWorkFlowEnabled() && feePostings.getWorkflowId() == 0) {
 				feePostings.setWorkflowId(getWorkFlowId());
 			}
+
+			logUserAccess("menu_Item_FeePostings", feePostings.getReference());
 			doShowDialogPage(feePostings);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

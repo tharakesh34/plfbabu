@@ -239,6 +239,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 			if (isWorkFlowEnabled() && financetaxdetail.getWorkflowId() == 0) {
 				financetaxdetail.setWorkflowId(getWorkFlowId());
 			}
+			logUserAccess("menu_Item_FinanceTaxDetail", financetaxdetail.getFinReference());
 			doShowDialogPage(financetaxdetail);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

@@ -390,6 +390,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 			receiptData.setReceiptHeader(header);
 
+			logUserAccess("menu_Item_FeeReceiptCancellation", header.getExtReference());
 			doShowDialogPage(receiptData);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

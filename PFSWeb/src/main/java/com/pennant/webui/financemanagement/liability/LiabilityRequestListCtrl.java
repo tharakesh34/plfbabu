@@ -356,6 +356,8 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 			if (isWorkFlowEnabled() && aLiabilityRequest.getWorkflowId() == 0) {
 				aLiabilityRequest.setWorkflowId(getWorkFlowId());
 			}
+
+			logUserAccess("menu_Item_NOCIssuance", aLiabilityRequest.getFinReference());
 			doShowDialogPage(aLiabilityRequest);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

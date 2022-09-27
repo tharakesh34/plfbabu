@@ -204,7 +204,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			return null;
 		}
 
-		long finID = rch.getFinID();
+		Long finID = rch.getFinID();
 
 		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "_AView");
 		rch.setReceiptDetails(rcdList);

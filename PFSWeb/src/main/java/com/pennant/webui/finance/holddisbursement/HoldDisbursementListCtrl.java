@@ -217,6 +217,9 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 			if (isWorkFlowEnabled() && holddisbursement.getWorkflowId() == 0) {
 				holddisbursement.setWorkflowId(getWorkFlowId());
 			}
+
+			logUserAccess("menu_Item_HoldDisbursement", holddisbursement.getFinReference());
+
 			doShowDialogPage(holddisbursement);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

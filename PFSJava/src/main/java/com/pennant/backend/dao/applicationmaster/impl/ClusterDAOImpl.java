@@ -115,7 +115,7 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "entity = :entity AND code = :code AND Id = :Id";
+		String whereClause = "entity = :entity AND code = :code";
 
 		switch (tableType) {
 		case MAIN_TAB:

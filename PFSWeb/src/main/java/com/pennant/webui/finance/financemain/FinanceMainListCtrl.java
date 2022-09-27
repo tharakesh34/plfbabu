@@ -619,6 +619,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				validateCustExistance(financeDetail);
 			}
 		}
+		logUserAccess("menu_Item_NewFinanceMain", financeDetail.getFinReference());
 
 		logger.debug(Literal.LEAVING);
 	}

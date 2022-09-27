@@ -95,6 +95,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	private List<Property> listAdviseType = PennantStaticListUtil.getManualAdvisePropertyTypes();
 	private FinanceMain financeMain = null;
 	private String module = null;
+	private String menuItemName = null;
 
 	/**
 	 * default constructor.<br>
@@ -161,6 +162,9 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	 */
 	public void onCreate$window_ManualAdviseList(Event event) {
 		logger.debug(Literal.ENTERING);
+
+		menuItemName = getMenuItemName(event, menuItemName);
+
 		// Set the page level components.
 		setPageComponents(window_ManualAdviseList, borderLayout_ManualAdviseList, listBoxManualAdvise,
 				pagingManualAdviseList);
@@ -275,6 +279,8 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 			if (isWorkFlowEnabled() && manualadvise.getWorkflowId() == 0) {
 				manualadvise.setWorkflowId(getWorkFlowId());
 			}
+
+			logUserAccess(menuItemName, manualadvise.getFinReference(), moduleCode);
 			doShowDialogPage(manualadvise);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

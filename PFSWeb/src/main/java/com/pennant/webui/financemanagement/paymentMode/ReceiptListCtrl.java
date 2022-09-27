@@ -155,6 +155,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private Map<Long, FinReceiptHeader> headerMap = new HashMap<Long, FinReceiptHeader>(); // it has all data
 
 	private String module;
+	private String menuItemName = null;
 	private ReceiptService receiptService;
 
 	private String workflowCode = FinServiceEvent.RECEIPT;
@@ -211,6 +212,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 */
 	public void onCreate$window_ReceiptList(Event event) {
 		logger.debug("Entering " + event.toString());
+
+		menuItemName = getMenuItemName(event, menuItemName);
 
 		// Set the page level components.
 		setPageComponents(window_ReceiptList, borderLayout_ReceiptList, listBoxReceipts, pagingReceiptList);
@@ -883,6 +886,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 			if (doCheckAuthority(rch, whereCond)
 					|| StringUtils.equals(rch.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
+
+				logUserAccess(menuItemName, finReceiptData.getReceiptHeader().getReference());
 				doShowReceiptView(rch, finReceiptData);
 			} else {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));
@@ -890,6 +895,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		} else {
 			if (doCheckAuthority(rch, whereCond)
 					|| StringUtils.equals(rch.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
+
+				logUserAccess(menuItemName, finReceiptData.getReceiptHeader().getReference());
 				doShowReceiptView(rch, finReceiptData);
 			} else {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));

@@ -285,6 +285,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		aCustomerFinanceDetail.setLastMntByUser(PennantApplicationUtil.getFullName(aCustomerFinanceDetail.getUsrFName(),
 				aCustomerFinanceDetail.getLastMntByUser(), ""));
 
+		logUserAccess("menu_Item_FinanceApprovalStsInquiry", aCustomerFinanceDetail.getFinReference());
 		doShowDialogPage(aCustomerFinanceDetail, reasonDetailsList);
 		// Since it is a inquiry role check may not be required.
 		// // Check whether the user has authority to change/view the record.

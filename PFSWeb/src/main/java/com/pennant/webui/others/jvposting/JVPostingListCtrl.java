@@ -258,6 +258,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 					 * .getLoggedInUser().getLoginUsrID(), jVPosting); if (userAcces) { showDetailView(jVPosting); }
 					 * else { MessageUtil.showErrorMessage(Labels .getLabel("RECORD_NOTALLOWED")); } } else {
 					 */
+					logUserAccess("menu_Item_JVPosting", jVPosting.getReference(), moduleCode);
 					doShowDialogPage(jVPosting);
 					// }
 				}

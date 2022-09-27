@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -57,10 +58,13 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennapps.core.access.log.UserAccess;
+import com.pennapps.core.access.log.UserAccessDAO;
 
 public class AbstractListController<T> extends AbstractController<T> {
 	private static final long serialVersionUID = 6332080471910971732L;
@@ -103,6 +107,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 	protected List<SearchFilterControl> searchControls = new ArrayList<>();
 	protected transient PagedListService pagedListService;
 	protected transient AuditHeaderDAO auditHeaderDAO;
+	protected transient UserAccessDAO userAccessDAO;
 	protected boolean applyDefaultFilter = true;
 
 	protected AbstractListController() {
@@ -614,6 +619,53 @@ public class AbstractListController<T> extends AbstractController<T> {
 		return aruments;
 	}
 
+	protected void logUserAccess(String menuItem, String ref) {
+		logUserAccess(menuItem, ref, moduleCode);
+	}
+
+	protected void logUserAccess(String menuItem, String ref, String module) {
+		if (!App.getBooleanProperty("user.access.log.req")) {
+			return;
+		}
+
+		LoggedInUser usr = getUserWorkspace().getLoggedInUser();
+		UserAccess menuAccess = new UserAccess();
+
+		menuAccess.setMenuItem(Labels.getLabel(menuItem));
+		menuAccess.setUsrLoginId(usr.getLoginLogId());
+		menuAccess.setAccessedBy(usr.getUserId());
+		menuAccess.setModule(module);
+		menuAccess.setReference(ref);
+		menuAccess.setRole(getRole());
+
+		userAccessDAO.logUserAccess(menuAccess);
+	}
+
+	protected String getMenuItemName(Event event, String menuItemName) {
+		Component parent = getParent(event.getTarget());
+
+		parent = getParent(parent);
+
+		parent = getParent(parent);
+
+		parent = getParent(parent);
+
+		if (parent == null) {
+			return "";
+		}
+
+		menuItemName = ((Tabbox) parent).getSelectedTab().getId();
+		return menuItemName.trim().replace("tab_", "menu_Item_");
+	}
+
+	private Component getParent(Component parent) {
+		if (parent == null) {
+			return null;
+		}
+
+		return parent.getParent();
+	}
+
 	public void setItemRender(ListitemRenderer<T> listitemRenderer) {
 		this.listitemRenderer = listitemRenderer;
 	}
@@ -636,6 +688,11 @@ public class AbstractListController<T> extends AbstractController<T> {
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
+	public void setUserAccessDAO(UserAccessDAO userAccessDAO) {
+		this.userAccessDAO = userAccessDAO;
 	}
 
 }

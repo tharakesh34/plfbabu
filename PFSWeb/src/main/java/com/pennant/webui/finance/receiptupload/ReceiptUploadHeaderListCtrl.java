@@ -468,6 +468,8 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			if (isWorkFlowEnabled() && receiptUploadHeader.getWorkflowId() == 0) {
 				receiptUploadHeader.setWorkflowId(getWorkFlowId());
 			}
+
+			logUserAccess("menu_Item_ReceiptUpload", String.valueOf(id));
 			doShowDialogPage(receiptUploadHeader);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

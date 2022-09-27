@@ -218,6 +218,8 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 			if (isWorkFlowEnabled() && aPayOrderIssueHeader.getWorkflowId() == 0) {
 				aPayOrderIssueHeader.setWorkflowId(getWorkFlowId());
 			}
+
+			logUserAccess("menu_Item_PaymentOrderIssue", finRef);
 			doShowDialogPage(aPayOrderIssueHeader);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

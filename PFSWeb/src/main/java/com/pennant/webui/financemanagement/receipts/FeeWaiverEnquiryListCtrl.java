@@ -986,6 +986,8 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// FinanceDetails
 		FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain);
 
+		logUserAccess("menu_Item_FeeWaiverEnquiry", feeWaiverHeader.getFinReference(),
+				moduleDefiner);
 		showFeeWaiverHeaderView(feeWaiverHeader, financeDetail);
 		logger.debug("Leaving ");
 	}

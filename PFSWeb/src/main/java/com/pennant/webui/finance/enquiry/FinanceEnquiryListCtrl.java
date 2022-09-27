@@ -163,6 +163,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 
 	private transient boolean approvedList = false; // autowired
 	private transient boolean rejectedList = false;
+	private String menuItemName = null;
 
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
@@ -196,6 +197,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 */
 	public void onCreate$window_FinanceEnquiry(Event event) {
 		logger.debug("Entering" + event.toString());
+
+		menuItemName = getMenuItemName(event, menuItemName);
 
 		// Listbox Sorting
 
@@ -1118,6 +1121,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		final FinanceEnquiry aFinanceEnquiry = (FinanceEnquiry) item.getAttribute("data");
 		if (!rejectedList) {
 
+			logUserAccess(menuItemName, aFinanceEnquiry.getFinReference(),
+					this.enquiryType.getValue());
+
 			Map<String, Object> map = getDefaultArguments();
 			map.put("financeEnquiry", aFinanceEnquiry);
 			map.put("financeEnquiryListCtrl", this);
@@ -1141,6 +1147,10 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 				return;
 			}
+
+			logUserAccess(menuItemName, aFinanceEnquiry.getFinReference(),
+					this.enquiryType.getValue());
+
 			Map<String, Object> arg = getDefaultArguments();
 			arg.put("reinstateFinance", aReinstateFinance);
 			arg.put("financeEnquiryListCtrl", this);

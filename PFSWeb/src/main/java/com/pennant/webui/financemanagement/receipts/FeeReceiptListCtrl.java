@@ -271,6 +271,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 			header.setFinCategory(financeDetailService.getFinCategory(header.getFinType()));
 
+			logUserAccess("menu_Item_FeeReceipts", header.getReference());
 			doShowDialogPage(header);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

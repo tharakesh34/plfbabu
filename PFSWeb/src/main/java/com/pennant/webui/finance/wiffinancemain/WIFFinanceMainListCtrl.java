@@ -298,6 +298,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			} else {
+				logUserAccess("menu_Item_WIFFinanceMain", aWIFFinanceMain.getFinReference());
 				showDetailView(financeDetail);
 			}
 		}
