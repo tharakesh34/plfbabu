@@ -1860,14 +1860,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 	}
 
-	@Override
-	public ArrayList<Customer> getCustomerByLimitRule(String queryCode, String sqlQuery) {
-		logger.debug("insertSql: " + queryCode);
-
-		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
-		return (ArrayList<Customer>) this.jdbcTemplate.query(queryCode, typeRowMapper);
-	}
-
 	/**
 	 * Method for get total number of records from specified master table.<br>
 	 * 

@@ -33,7 +33,6 @@ import com.pennant.backend.model.limit.LimitReferenceMapping;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
-import com.pennant.backend.service.limitservice.impl.LimitRuleManagement;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -87,7 +86,6 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	// on the values are edited since the last init.
 
 	// ServiceDAOs / Domain Classes
-	private transient LimitRuleManagement limitRuleManagementService;
 	private transient LimitManagement limitManagement;
 	private transient LimitDetailService limitDetailService;
 	private transient PagedListService pagedListService;
@@ -495,14 +493,6 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 
 	public void setLimitDetailService(LimitDetailService limitDetailService) {
 		this.limitDetailService = limitDetailService;
-	}
-
-	public LimitRuleManagement getLimitRuleManagementService() {
-		return limitRuleManagementService;
-	}
-
-	public void setLimitRuleManagementService(LimitRuleManagement limitRuleManagementService) {
-		this.limitRuleManagementService = limitRuleManagementService;
 	}
 
 	public LimitManagement getLimitManagement() {
