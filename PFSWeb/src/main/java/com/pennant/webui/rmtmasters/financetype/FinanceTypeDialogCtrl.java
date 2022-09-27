@@ -3048,9 +3048,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			if (validate) {
-				isValidComboValue(this.cbFinScheduleOn, Labels.getLabel("label_FinanceTypeDialog_FinScheduleOn.value"));
-			}
 			aFinanceType.setFinScheduleOn(getComboboxValue(this.cbFinScheduleOn));
 		} catch (WrongValueException we) {
 			wve.add(we);

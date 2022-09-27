@@ -3653,7 +3653,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			List<ValueLabel> epyMethodList = getEffectiveSchdMethods();
 			String defaultMethod = "";
 
-			if (!epyMethodList.isEmpty()) {
+			if (!epyMethodList.isEmpty() && rch.getEffectSchdMethod() != null) {
 				defaultMethod = StringUtils.isEmpty(rch.getEffectSchdMethod()) ? epyMethodList.get(0).getValue()
 						: rch.getEffectSchdMethod();
 			}

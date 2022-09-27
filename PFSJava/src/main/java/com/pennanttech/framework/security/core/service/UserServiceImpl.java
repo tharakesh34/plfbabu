@@ -50,14 +50,13 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.pennapps.core.security.user.AuthenticationError;
 import com.pennanttech.pennapps.core.security.user.UserAuthenticationException;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class UserServiceImpl implements UserService {
 
 	private UserDAO userDAO;
 	private SecurityRightDAO securityRightDAO;
 	private SecLoginlogDAO secLoginlogDAO;
-
-	private static final String LONG_TIME = "HH:mm:ss a";
 
 	public UserServiceImpl() {
 		super();
@@ -78,12 +77,12 @@ public class UserServiceImpl implements UserService {
 		} else if (user.isUsrAcLocked()) {
 			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED);
 		} else if (user.isDeleted()) {
-			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED); // FIXME
+			throw new UserAuthenticationException(AuthenticationError.ACCOUN_LOCKED);
 		}
 
 		Date date = DateUtil.getSysDate();
-		String strTime = DateUtil.format(date, LONG_TIME);
-		date = DateUtil.parse(strTime, LONG_TIME);
+		String strTime = DateUtil.format(date, DateFormat.LONG_TIME);
+		date = DateUtil.parse(strTime, DateFormat.LONG_TIME);
 
 		Date expiredDate = user.getUsrAcExpDt();
 
@@ -93,13 +92,13 @@ public class UserServiceImpl implements UserService {
 
 		Date signonFrom = user.getUsrCanSignonFrom();
 		if (signonFrom != null && date.compareTo(signonFrom) < 0) {
-			String strSignOnFrom = DateUtil.format(signonFrom, LONG_TIME);
+			String strSignOnFrom = DateUtil.format(signonFrom, DateFormat.LONG_TIME);
 			throw new UserAuthenticationException(AuthenticationError.LOGIN_BEFORE, strSignOnFrom);
 		}
 
 		Date signOnTo = user.getUsrCanSignonTo();
 		if (signOnTo != null && date.compareTo(signOnTo) > 0) {
-			String strSignOnTo = DateUtil.format(signonFrom, LONG_TIME);
+			String strSignOnTo = DateUtil.format(signonFrom, DateFormat.LONG_TIME);
 			throw new UserAuthenticationException(AuthenticationError.LOGIN_AFTER, strSignOnTo);
 		}
 		return user;
