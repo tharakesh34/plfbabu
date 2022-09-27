@@ -160,7 +160,6 @@
 											sclass="z-toolbarbutton" />
 									</hbox>
 								</row>
-
 								<row>
 									<label value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
 									<hbox>
@@ -171,6 +170,7 @@
 							</rows>
 						</grid>
 					</groupbox>
+					<space/>
 					<groupbox>
 					<caption label="${c:l('label_Cheque_Detail_PDC')}" />
 						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" >
@@ -183,7 +183,6 @@
 							fixedLayout="true" sizedByContent="true" span="true" width="100%" style="overflow:auto;" multiple="false">
 							<listhead sizable="true">
 								<listheader id="listHeaderCheckBox" hflex="min" align="center" />
-								<listheader label="${c:l('listheader_ChequeType.label')}" align="left" hflex="min" />
 								<listheader label="${c:l('listheader_ChequeSerialNo.label')}" align="left" hflex="min" />
 								<listheader label="${c:l('listheader_AccountType.label')}" align="left" hflex="min" />
 								<listheader label="${c:l('listheader_AccHolder_Name.label')}" align="left" hflex="min" />
@@ -199,6 +198,7 @@
 							</listhead>
 						</listbox>
 					</groupbox>
+					<space/>
 					<groupbox>
 						<caption label="${c:l('label_Cheque_Detail_SPDC')}" />
 						<space/>
@@ -206,7 +206,6 @@
 							fixedLayout="true" sizedByContent="true" span="true" width="100%" style="overflow:auto;" multiple="false">
 							<listhead sizable="true">
 								<listheader id="listSPDCHeaderCheckBox" hflex="min" align="center" />
-								<listheader label="${c:l('listheader_ChequeType.label')}" align="left" hflex="min" />
 								<listheader label="${c:l('listheader_ChequeSerialNo.label')}" align="left" hflex="min" />
 								<listheader label="${c:l('listheader_AccountType.label')}" align="left" hflex="min" />
 								<listheader label="${c:l('listheader_AccHolder_Name.label')}" align="left" hflex="min" />

@@ -202,6 +202,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.subvention.service.SubventionService;
 import com.pennanttech.model.dms.DMSModule;
@@ -216,6 +217,7 @@ import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.rits.cloning.Cloner;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
@@ -1695,13 +1697,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			}
 		}
 
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceDetail(fd);
+		postingDTO.setUserBranch(branchCode);
+
 		// Disbursement Instruction Posting
 		if (AccountingEvent.isDisbursementEvent(eventCode) && !ImplementationConstants.HOLD_DISB_INST_POST) {
-			AccountingEngine.post(AccountingEvent.DISBINS, fd, branchCode);
+			AccountingEngine.post(AccountingEvent.DISBINS, postingDTO);
 		}
 
 		if (FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
-			AccountingEngine.post(AccountingEvent.VAS_FEE, fd, branchCode);
+			AccountingEngine.post(AccountingEvent.VAS_FEE, postingDTO);
 		}
 
 		if (isNew) {
@@ -2473,16 +2479,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return isFeeMatched;
 	}
 
-	/**
-	 * Method for Processing each stage Accounting Entry details for particular Finance
-	 * 
-	 * @param auditHeader
-	 * @param list
-	 * @return
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
-	 */
 	protected AEEvent executeBounceDueAccounting(FinanceMain fm, Date valueDate, ManualAdvise advise, String postBranch,
 			String accFor) {
 		logger.debug("Entering");
@@ -2490,32 +2486,24 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		List<Long> acSetIdList = new ArrayList<>();
 		BigDecimal dueAmount = advise.getAdviseAmount();
 
-		// Bounce Tax Details
-		FeeType feeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+		FeeType feeType = feeTypeDAO.getTaxDetailByCode(Allocation.BOUNCE);
 		if (feeType == null || feeType.getAccountSetId() == null || feeType.getAccountSetId() <= 0) {
-			logger.debug("Leaving");
 			return null;
 		}
 
-		// If Due accounting creation is not required
 		if (!feeType.isAmortzReq()) {
-			logger.debug("Leaving");
 			return null;
 		}
+
 		acSetIdList.add(feeType.getAccountSetId());
-		boolean taxApplicable = feeType.isTaxApplicable();
 		String taxType = feeType.getTaxComponent();
 
-		// If NO Accounting Sets added against stage, no action to be done
-		if (acSetIdList == null || acSetIdList.isEmpty()) {
-			logger.debug("Leaving");
+		if (acSetIdList.isEmpty()) {
 			return null;
 		}
 
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAeAmountCodes(new AEAmountCodes());
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-
 		aeEvent.setFinID(fm.getFinID());
 		aeEvent.setFinReference(fm.getFinReference());
 		aeEvent.setCustID(fm.getCustID());
@@ -2535,52 +2523,50 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		aeEvent.setAccountingEvent(AccountingEvent.MANFEE);
 		aeEvent.getAcSetIDList().addAll(acSetIdList);
-		amountCodes = aeEvent.getAeAmountCodes();
+
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setFinType(fm.getFinType());
 
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+
 		dataMap.put("bounceCharge", dueAmount);
+		dataMap.put("bounceCharge_CGST", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_SGST", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_UGST", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_IGST", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_CESS", BigDecimal.ZERO);
 
-		// Calculate total GST percentage
 		TaxHeader taxHeader = null;
-		if (taxApplicable) {
-
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
+		if (feeType.isTaxApplicable()) {
+			Map<String, BigDecimal> taxes = GSTCalculator.getTaxPercentages(fm);
 
 			taxHeader = new TaxHeader();
 			taxHeader.setNewRecord(true);
 			taxHeader.setRecordType(PennantConstants.RCD_ADD);
 			taxHeader.setVersion(taxHeader.getVersion() + 1);
-			if (taxHeader.getTaxDetails() == null) {
-				taxHeader.setTaxDetails(new ArrayList<>());
-			}
+			taxHeader.setTaxDetails(new ArrayList<>());
 
-			// CGST
-			Taxes cgstTax = getTaxDetail(RuleConstants.CODE_CGST, taxPercentages.get(RuleConstants.CODE_CGST));
+			Taxes cgstTax = getTaxDetail(RuleConstants.CODE_CGST, taxes.get(RuleConstants.CODE_CGST));
 			taxHeader.getTaxDetails().add(cgstTax);
 
-			// SGST
-			Taxes sgstTax = getTaxDetail(RuleConstants.CODE_SGST, taxPercentages.get(RuleConstants.CODE_SGST));
+			Taxes sgstTax = getTaxDetail(RuleConstants.CODE_SGST, taxes.get(RuleConstants.CODE_SGST));
 			taxHeader.getTaxDetails().add(sgstTax);
 
-			// IGST
-			Taxes igstTax = getTaxDetail(RuleConstants.CODE_IGST, taxPercentages.get(RuleConstants.CODE_IGST));
+			Taxes igstTax = getTaxDetail(RuleConstants.CODE_IGST, taxes.get(RuleConstants.CODE_IGST));
 			taxHeader.getTaxDetails().add(igstTax);
 
-			// UGST
-			Taxes ugstTax = getTaxDetail(RuleConstants.CODE_UGST, taxPercentages.get(RuleConstants.CODE_UGST));
+			Taxes ugstTax = getTaxDetail(RuleConstants.CODE_UGST, taxes.get(RuleConstants.CODE_UGST));
 			taxHeader.getTaxDetails().add(ugstTax);
 
-			// CESS percentage
-			Taxes cessTax = getTaxDetail(RuleConstants.CODE_CESS, taxPercentages.get(RuleConstants.CODE_CESS));
+			Taxes cessTax = getTaxDetail(RuleConstants.CODE_CESS, taxes.get(RuleConstants.CODE_CESS));
 			taxHeader.getTaxDetails().add(cessTax);
 
 			TaxAmountSplit taxSplit = null;
-			if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-				taxSplit = GSTCalculator.getExclusiveGST(dueAmount, taxPercentages);
-			} else if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-				taxSplit = GSTCalculator.getInclusiveGST(dueAmount, taxPercentages);
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
+				taxSplit = GSTCalculator.getExclusiveGST(dueAmount, taxes);
+			} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
+				taxSplit = GSTCalculator.getInclusiveGST(dueAmount, taxes);
 			}
 
 			cgstTax.setPaidTax(taxSplit.getcGST());
@@ -2594,15 +2580,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			dataMap.put("bounceCharge_IGST", taxSplit.getiGST());
 			dataMap.put("bounceCharge_UGST", taxSplit.getuGST());
 			dataMap.put("bounceCharge_CESS", taxSplit.getCess());
-
-		} else {
-
-			dataMap.put("bounceCharge_CGST", BigDecimal.ZERO);
-			dataMap.put("bounceCharge_SGST", BigDecimal.ZERO);
-			dataMap.put("bounceCharge_UGST", BigDecimal.ZERO);
-			dataMap.put("bounceCharge_IGST", BigDecimal.ZERO);
-			dataMap.put("bounceCharge_CESS", BigDecimal.ZERO);
-
 		}
 
 		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinID());
@@ -2615,28 +2592,23 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 		aeEvent.setDataMap(dataMap);
 
-		// Prepare Accounting Set of entries with valid account & Post amounts
-		// =======================================
 		try {
-			aeEvent.setDataMap(dataMap);
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.ENTERING, e);
 			aeEvent.setErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetail("Accounting Engine",
 					PennantConstants.ERR_UNDEF, "E", "Accounting Engine Failed to Create Postings:" + e.getMessage(),
 					new String[] {}, new String[] {})).getMessage());
 			return aeEvent;
 		}
 
-		// Prepared Postings execution
 		if (!aeEvent.isPostingSucess()) {
 			throw new InterfaceException("9998", "Bounce charge due accounting postings failed.");
 		}
 
-		// GST Invoice Creation
 		createGSTInvoiceForBounce(fm, advise, aeEvent, feeType, taxHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return aeEvent;
 	}
 

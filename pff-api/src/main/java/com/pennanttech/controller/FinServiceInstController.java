@@ -151,6 +151,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
@@ -2551,7 +2552,12 @@ public class FinServiceInstController extends SummaryDetailService {
 				fd.getFinScheduleData().setFinanceMain(fm);
 
 				List<FinAdvancePayments> advancePaymentsList = fd.getAdvancePaymentsList();
-				AccountingEngine.post(AccountingEvent.DISBINS, fd, fm.getFinBranch());
+
+				PostingDTO postingDTO = new PostingDTO();
+				postingDTO.setFinanceDetail(fd);
+				postingDTO.setUserBranch(fm.getFinBranch());
+
+				AccountingEngine.post(AccountingEvent.DISBINS, postingDTO);
 
 				List<FinAdvancePayments> advPayList = advancePaymentsList;
 

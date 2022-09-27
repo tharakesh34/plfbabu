@@ -80,6 +80,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -299,7 +300,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		fd.getFinScheduleData().setFinanceMain(poih.getFinanceMain());
 
 		if (!ImplementationConstants.HOLD_DISB_INST_POST) {
-			AccountingEngine.post(AccountingEvent.DISBINS, fd, auditHeader.getAuditBranchCode());
+			PostingDTO postingDTO = new PostingDTO();
+			postingDTO.setFinanceDetail(fd);
+			postingDTO.setUserBranch(auditHeader.getAuditBranchCode());
+			AccountingEngine.post(AccountingEvent.DISBINS, postingDTO);
 			for (FinAdvancePayments fap : poih.getFinAdvancePaymentsList()) {
 				if (fap.getLinkedTranId() == Long.MIN_VALUE) {
 					posted = false;

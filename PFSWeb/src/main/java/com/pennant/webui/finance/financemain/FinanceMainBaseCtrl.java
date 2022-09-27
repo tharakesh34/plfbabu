@@ -302,6 +302,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
@@ -15683,14 +15684,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceDetail(financeDetail);
+
 		// Disb Instruction Posting
 		if (AccountingEvent.isDisbursementEvent(eventCode)) {
 			if (!ImplementationConstants.HOLD_DISB_INST_POST) {
-				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.DISBINS, financeDetail, null));
+				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.DISBINS, postingDTO));
 			}
 
 			if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
-				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.VAS_FEE, financeDetail, null));
+				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.VAS_FEE, postingDTO));
 			}
 		}
 

@@ -184,29 +184,29 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		CHEQUE_TYPE(1),
 
-		CHEQUE_SERIAL_NO(2),
+		CHEQUE_SERIAL_NO(1),
 
-		ACCOUNT_TYPE(3),
+		ACCOUNT_TYPE(2),
 
-		ACC_HOLDER_NAME(4),
+		ACC_HOLDER_NAME(3),
 
-		ACCOUNT_NO(5),
+		ACCOUNT_NO(4),
 
-		BANK_IFSC_CODE(6),
+		BANK_IFSC_CODE(5),
 
-		MICR_CODE(7),
+		MICR_CODE(6),
 
-		DUE_DATE(8),
+		DUE_DATE(7),
 
-		INSTALLMENT_NO(9),
+		INSTALLMENT_NO(8),
 
-		AMOUNT(10),
+		AMOUNT(9),
 
-		CHEQUE_STATUS(11),
+		CHEQUE_STATUS(10),
 
-		BTN_UPLOAD(12),
+		BTN_UPLOAD(11),
 
-		BTN_VIEW(13);
+		BTN_VIEW(12);
 
 		private final int index;
 
@@ -803,7 +803,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			ch.setNoOfCheques(this.totNoOfCheques.getValue());
+			Integer chequeNo = this.totNoOfCheques.getValue();
+			ch.setNoOfCheques(chequeNo == null ? 0 : chequeNo);
 		} catch (WrongValueException we) {
 			if (!isGenarate) {
 				wve.add(we);
@@ -1039,24 +1040,19 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		doRemoveValidation();
 		doSetValidation();
-		if (!fm.getFinRepayMethod().equals(InstrumentType.PDC)) {
-			ch.setChequeSerialNo(0);
-			ch.setTotalAmount(BigDecimal.ZERO);
-		} else {
 
-			List<WrongValueException> wve = doWriteComponentsToBean(ch, false);
+		List<WrongValueException> wve = doWriteComponentsToBean(ch, false);
 
-			if (!wve.isEmpty() && parenttab != null) {
-				parenttab.setSelected(true);
-			} else if (!this.btnGen.isDisabled()) {
-				WrongValueException exception = validateChequeCount(schdData);
-				if (exception != null) {
-					wve.add(exception);
-				}
+		if (!wve.isEmpty() && parenttab != null) {
+			parenttab.setSelected(true);
+		} else if (!this.btnGen.isDisabled()) {
+			WrongValueException exception = validateChequeCount(schdData);
+			if (exception != null) {
+				wve.add(exception);
 			}
-
-			showErrorDetails(wve);
 		}
+
+		showErrorDetails(wve);
 
 		if (StringUtils.isBlank(ch.getRecordType())) {
 			ch.setVersion(ch.getVersion() + 1);
@@ -1344,8 +1340,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			appendSelectBox(listitem, isReadOnly, cd);
 
-			appendChequeType(listitem, cd);
-
 			appendChequeSerialNo(listitem, cd);
 
 			appendAccountType(listitem, cd);
@@ -1459,7 +1453,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				continue;
 			}
 
-			List<Listcell> sublist = selectecListItem.getChildren();
+			List<Listcell> sublist = listitem.getChildren();
 
 			Intbox subintbox = (Intbox) sublist.get(Field.CHEQUE_SERIAL_NO.index()).getFirstChild();
 
@@ -1523,9 +1517,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<Listitem> listItems = getListItems();
 
 		for (Listitem listitem : listItems) {
+			ChequeDetail cd = (ChequeDetail) listitem.getAttribute("data");
+
 			List<Listcell> listcell = listitem.getChildren();
 
 			ChequeDetail cheque = getChequeDetail(listcell, cheques);
+			cheque.setChequeType(cd.getChequeType());
 
 			Combobox accType = (Combobox) listcell.get(Field.ACCOUNT_TYPE.index()).getFirstChild();
 			Combobox chequeSts = (Combobox) listcell.get(Field.CHEQUE_STATUS.index()).getFirstChild();
@@ -1556,14 +1553,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			accType.clearErrorMessage();
 
-			cheque.setChequeType(listcell.get(Field.CHEQUE_TYPE.index()).getLabel());
 			cheque.setChequeSerialNo(
 					((Intbox) listcell.get(Field.CHEQUE_SERIAL_NO.index()).getFirstChild()).getValue());
 			cheque.setAccountType(accType.getSelectedItem().getValue().toString());
 			cheque.setAccHolderName(listcell.get(Field.ACC_HOLDER_NAME.index()).getLabel());
 			cheque.setAccountNo(listcell.get(Field.ACCOUNT_NO.index()).getLabel());
 
-			cheque.setChequeCcy(this.ccy);
 			cheque.setChequeStatus(chequeSts.getSelectedItem().getValue().toString());
 
 			String cbAccType = getComboboxValue(accType);
@@ -1608,6 +1603,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 		cheque.setNewRecord(true);
 		cheque.setRecordType(PennantConstants.RCD_ADD);
+		cheque.setChequeCcy(this.ccy);
 
 		if (CollectionUtils.isEmpty(cheques)) {
 			return cheque;
@@ -1628,6 +1624,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					cd.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
+				cd.setChequeCcy(this.ccy);
 				cd.setOldCheque(true);
 				return cd;
 			}
@@ -2304,11 +2301,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		Listcell lc = new Listcell();
 		lc.appendChild(checkBox);
 
-		listitem.appendChild(lc);
-	}
-
-	private void appendChequeType(Listitem listitem, ChequeDetail cd) {
-		Listcell lc = new Listcell(cd.getChequeType());
 		listitem.appendChild(lc);
 	}
 

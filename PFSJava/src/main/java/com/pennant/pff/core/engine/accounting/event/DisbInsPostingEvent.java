@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -19,6 +20,7 @@ import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -27,9 +29,16 @@ public class DisbInsPostingEvent extends PostingEvent {
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private VehicleDealerService vehicleDealerService;
 
+	public DisbInsPostingEvent() {
+		super();
+	}
+
 	@Override
-	public List<AEEvent> prepareAEEvents(FinanceDetail fd, String userBranch) {
+	public List<AEEvent> prepareAEEvents(PostingDTO postingDTO) {
 		logger.info(LITERAL3, AccountingEvent.DISBINS);
+
+		FinanceDetail fd = postingDTO.getFinanceDetail();
+		String userBranch = postingDTO.getUserBranch();
 
 		String moduleDefiner = fd.getModuleDefiner();
 		FinScheduleData fschdData = fd.getFinScheduleData();
@@ -47,7 +56,9 @@ public class DisbInsPostingEvent extends PostingEvent {
 	}
 
 	@Override
-	public void setEventDetails(List<AEEvent> aeEvents, FinanceDetail fd) {
+	public void setEventDetails(List<AEEvent> aeEvents, PostingDTO postingDTO) {
+		FinanceDetail fd = postingDTO.getFinanceDetail();
+
 		List<FinAdvancePayments> advPaymentsList = fd.getAdvancePaymentsList();
 
 		for (FinAdvancePayments fap : advPaymentsList) {
@@ -203,10 +214,12 @@ public class DisbInsPostingEvent extends PostingEvent {
 		return null;
 	}
 
+	@Autowired
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
+	@Autowired
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
 	}

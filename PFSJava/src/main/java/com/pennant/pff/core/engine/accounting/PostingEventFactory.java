@@ -7,6 +7,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 public class PostingEventFactory {
 	private PostingEvent disbInsPostingEvent;
 	private PostingEvent vasFeePostingEvent;
+	private PostingEvent bouncePostingEvent;
 
 	public PostingEvent getAccountingEventEvent(String accEvent) {
 		switch (accEvent) {
@@ -14,6 +15,8 @@ public class PostingEventFactory {
 			return disbInsPostingEvent;
 		case AccountingEvent.VAS_FEE:
 			return vasFeePostingEvent;
+		case AccountingEvent.MANFEE:
+			return bouncePostingEvent;
 		default:
 			break;
 		}
@@ -29,5 +32,11 @@ public class PostingEventFactory {
 	public void setVasFeePostingEvent(PostingEvent vasFeePostingEvent) {
 		this.vasFeePostingEvent = vasFeePostingEvent;
 	}
+
+	public void setBouncePostingEvent(PostingEvent bouncePostingEvent) {
+		this.bouncePostingEvent = bouncePostingEvent;
+	}
+	
+	
 
 }

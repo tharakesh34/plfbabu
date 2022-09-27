@@ -67,7 +67,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.LatePayMarkingService;
-import com.pennant.app.core.NPAService;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -134,7 +133,6 @@ public class ReceiptCalculator {
 	private LatePayMarkingService latePayMarkingService;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-	private NPAService npaService;
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 	private AssetClassificationService assetClassificationService;
 
@@ -5182,14 +5180,6 @@ public class ReceiptCalculator {
 
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	public NPAService getNpaService() {
-		return npaService;
-	}
-
-	public void setNpaService(NPAService npaService) {
-		this.npaService = npaService;
 	}
 
 	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {

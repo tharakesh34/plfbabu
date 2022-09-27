@@ -30,6 +30,8 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.TaxAmountSplit;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.GSTRate;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -1191,6 +1193,64 @@ public class GSTCalculator {
 		gstPercentages.put(RuleConstants.CODE_TOTAL_GST, totalGST);
 
 		return gstPercentages;
+	}
+
+	public static TaxHeader prepareTaxHeader(FinanceMain fm, String taxType, BigDecimal dueAmount) {
+		TaxHeader taxHeader = null;
+
+		Map<String, BigDecimal> taxes = getTaxPercentages(fm);
+
+		taxHeader = new TaxHeader();
+		taxHeader.setNewRecord(true);
+		taxHeader.setRecordType(PennantConstants.RCD_ADD);
+		taxHeader.setVersion(taxHeader.getVersion() + 1);
+		taxHeader.setTaxDetails(new ArrayList<>());
+
+		Taxes cgstTax = getTaxDetail(RuleConstants.CODE_CGST, taxes.get(RuleConstants.CODE_CGST));
+		taxHeader.getTaxDetails().add(cgstTax);
+
+		Taxes sgstTax = getTaxDetail(RuleConstants.CODE_SGST, taxes.get(RuleConstants.CODE_SGST));
+		taxHeader.getTaxDetails().add(sgstTax);
+
+		Taxes igstTax = getTaxDetail(RuleConstants.CODE_IGST, taxes.get(RuleConstants.CODE_IGST));
+		taxHeader.getTaxDetails().add(igstTax);
+
+		Taxes ugstTax = getTaxDetail(RuleConstants.CODE_UGST, taxes.get(RuleConstants.CODE_UGST));
+		taxHeader.getTaxDetails().add(ugstTax);
+
+		Taxes cessTax = getTaxDetail(RuleConstants.CODE_CESS, taxes.get(RuleConstants.CODE_CESS));
+		taxHeader.getTaxDetails().add(cessTax);
+
+		TaxAmountSplit taxSplit = null;
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
+			taxSplit = GSTCalculator.getExclusiveGST(dueAmount, taxes);
+		} else {
+			taxSplit = GSTCalculator.getInclusiveGST(dueAmount, taxes);
+		}
+
+		cgstTax.setPaidTax(taxSplit.getcGST());
+		sgstTax.setPaidTax(taxSplit.getsGST());
+		igstTax.setPaidTax(taxSplit.getiGST());
+		ugstTax.setPaidTax(taxSplit.getuGST());
+		cessTax.setPaidTax(taxSplit.getCess());
+
+		return taxHeader;
+	}
+
+	private static Taxes getTaxDetail(String taxType, BigDecimal taxPerc) {
+		Taxes taxes = new Taxes();
+		taxes.setTaxType(taxType);
+		taxes.setTaxPerc(taxPerc);
+		return taxes;
+	}
+
+	public static BigDecimal getPaidTax(String taxType, List<Taxes> taxes) {
+		for (Taxes tax : taxes) {
+			if (tax.getTaxType().equals(taxType)) {
+				return tax.getPaidTax();
+			}
+		}
+		return BigDecimal.ZERO;
 	}
 
 	@Autowired

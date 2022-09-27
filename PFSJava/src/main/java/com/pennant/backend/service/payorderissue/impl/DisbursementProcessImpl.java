@@ -30,6 +30,7 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -232,7 +233,11 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		list.add(disbursement);
 		financeDetail.setAdvancePaymentsList(list);
 
-		AccountingEngine.post(AccountingEvent.DISBINS, financeDetail, fm.getFinBranch());
+		PostingDTO postingDTO = new PostingDTO();
+		postingDTO.setFinanceDetail(financeDetail);
+		postingDTO.setUserBranch(fm.getFinBranch());
+
+		AccountingEngine.post(AccountingEvent.DISBINS, postingDTO);
 
 		for (FinAdvancePayments advPayment : list) {
 			finAdvancePaymentsDAO.updateLinkedTranId(advPayment);

@@ -68,6 +68,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class PresentmentResponseProcess implements Runnable {
 	private static final Logger logger = LogManager.getLogger(PresentmentResponseProcess.class);
@@ -303,13 +304,27 @@ public class PresentmentResponseProcess implements Runnable {
 		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(0);
 		Customer customer = custEODEvent.getCustomer();
 
+		ReceiptDTO receiptDTO = new ReceiptDTO();
+
+		receiptDTO.setFinType(finEODEvent.getFinType());
+		receiptDTO.setPresentmentDetail(pd);
+		receiptDTO.setBussinessDate(pd.getSchDate());
+		receiptDTO.setCustomer(customer);
+		receiptDTO.setFinanceMain(finEODEvent.getFinanceMain());
+		receiptDTO.setProfitDetail(finEODEvent.getFinProfitDetail());
+		receiptDTO.setSchedules(finEODEvent.getFinanceScheduleDetails());
+		receiptDTO.setNoReserve(false);
+		receiptDTO.setPdDetailsExits(true);
+		receiptDTO.setValuedate(pd.getSchDate());
+		receiptDTO.setPostDate(pd.getSchDate());
+
 		logger.info("Creating presentment receipt for inactive loan.");
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 
 		try {
-			receiptPaymentService.processprestment(pd, finEODEvent, customer, pd.getSchDate(), false, true);
+			receiptPaymentService.createReceipt(receiptDTO);
 			receiptID = pd.getReceiptID();
 
 			transactionManager.commit(transactionStatus);

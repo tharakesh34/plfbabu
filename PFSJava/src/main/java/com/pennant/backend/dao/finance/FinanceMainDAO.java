@@ -389,7 +389,7 @@ public interface FinanceMainDAO {
 	Map<String, Object> getExtendedFields(String reference, String tableName);
 
 	// FIXME the below method should be moved to corresponding DAO classes of CD/OverDraft
-	FinanceMain getFinanceMainByReference(String FinReference, boolean active);
+	FinanceMain getFinanceMainByReference(String finReference, boolean active);
 
 	boolean isOverDraft(String finReference);
 
@@ -404,4 +404,6 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getForFinanceExposer(long custId);
 
 	int getBucketByFinStatus(long finID);
+
+	Map<Integer, String> getBounceForPD();
 }

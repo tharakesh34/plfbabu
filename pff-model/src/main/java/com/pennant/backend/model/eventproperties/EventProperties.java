@@ -3,6 +3,8 @@ package com.pennant.backend.model.eventproperties;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EventProperties implements Serializable {
 	private static final long serialVersionUID = -2785381430191820055L;
@@ -63,6 +65,7 @@ public class EventProperties implements Serializable {
 	private String phase;
 	private boolean covenantModule;
 	private int overDraftMonthlyLimit;
+	private Map<Integer, String> presentmentExcludeBounce = new HashMap<>();
 
 	private boolean parameterLoaded;
 	private boolean cacheLoaded;
@@ -594,6 +597,14 @@ public class EventProperties implements Serializable {
 
 	public void setCacheLoaded(boolean cacheLoaded) {
 		this.cacheLoaded = cacheLoaded;
+	}
+
+	public Map<Integer, String> getPresentmentExcludeBounce() {
+		return presentmentExcludeBounce;
+	}
+
+	public void setPresentmentExcludeBounce(Map<Integer, String> presentmentExcludeBounce) {
+		this.presentmentExcludeBounce = presentmentExcludeBounce;
 	}
 
 }

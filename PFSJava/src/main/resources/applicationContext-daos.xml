@@ -4574,7 +4574,7 @@
 	</bean>
 
 	<bean name="receiptCancellationServiceTarget"
-		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" parent="genericFinanceDetailService" />
+		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
 
 	<!--============ Overdue Charge Recovery Details ============== -->
 	<bean id="overdueChargeRecoveryDAO"
@@ -5252,7 +5252,6 @@
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="npaService" ref="npaService" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 	</bean>
 
@@ -6269,9 +6268,7 @@
 		</property>
 	</bean>
 
-	<bean name="mandateServiceTarget" class="com.pennant.backend.service.mandate.impl.MandateServiceImpl">
-	<property name="bankBranchService" ref="bankBranchService" />
-	</bean>
+	<bean name="mandateServiceTarget" class="com.pennant.backend.service.mandate.impl.MandateServiceImpl"/>
 	
 	<!-- Finance Mandate -->
 	<bean id="finMandateService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -12012,30 +12009,21 @@
 		parent="abstractInterface" />
 
 
-	<!-- Start Accounting Engine -->
+	<!-- Accounting Engine Start -->
 	<bean id="postingEvent" class="com.pennant.pff.core.engine.accounting.event.PostingEvent" abstract="true" />
 
 	<bean id="disbInsPostingEvent" class="com.pennant.pff.core.engine.accounting.event.DisbInsPostingEvent"
-		parent="postingEvent">
-		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
-		<property name="vehicleDealerService" ref="vehicleDealerService" />
-	</bean>
+		parent="postingEvent"/>
 
 	<bean id="vasFeePostingEvent" class="com.pennant.pff.core.engine.accounting.event.VASFeePostingEvent"
-		parent="postingEvent">
-		<property name="vehicleDealerService" ref="vehicleDealerService" />
-	</bean>
+		parent="postingEvent"/>
+	
+	<bean id="bouncePostingEvent" class="com.pennant.pff.core.engine.accounting.event.BouncePostingEvent"
+		parent="postingEvent"/>
 
-	<bean id="postingEventFactory" class="com.pennant.pff.core.engine.accounting.PostingEventFactory">
-		<property name="disbInsPostingEvent" ref="disbInsPostingEvent" />
-		<property name="vasFeePostingEvent" ref="vasFeePostingEvent" />
-	</bean>
+	<bean id="postingEventFactory" class="com.pennant.pff.core.engine.accounting.PostingEventFactory"/>
 
-	<bean id="accountingEngine" class="com.pennant.pff.core.engine.accounting.AccountingEngine">
-		<property name="factory" ref="postingEventFactory" />
-		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="engineExecution" ref="engineExecution" />
-	</bean>
+	<bean id="accountingEngine" class="com.pennant.pff.core.engine.accounting.AccountingEngine"/>
 	<!-- Accounting Engine End -->
 
 	<!-- Fee Waiver UploadHeader -->
@@ -12212,7 +12200,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
-	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper" />
+	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" />
 
 	<!-- DB-Based Scheduler -->
 	<bean id="jobJmxClient" class="com.pennanttech.pennapps.core.job.monitor.JobJmxClient" />

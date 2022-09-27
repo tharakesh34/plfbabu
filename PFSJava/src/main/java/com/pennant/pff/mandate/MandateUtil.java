@@ -54,7 +54,7 @@ public class MandateUtil {
 		List<String> instrumentCodes = Arrays.asList(instrumentTypes);
 
 		repayMethods.removeIf(x -> instrumentCodes.contains(x.getValue()));
-		
+
 		return repayMethods;
 	}
 
@@ -119,10 +119,11 @@ public class MandateUtil {
 			return chequeTypesList;
 		}
 
-		chequeTypesList = new ArrayList<>(3);
+		String labelSPDC = InstrumentType.SPDC.code().concat("/").concat(InstrumentType.UDC.code());
+
+		chequeTypesList = new ArrayList<>(2);
 		chequeTypesList.add(new ValueLabel(InstrumentType.PDC.name(), InstrumentType.PDC.code()));
-		chequeTypesList.add(new ValueLabel(InstrumentType.SPDC.name(), InstrumentType.SPDC.code()));
-		chequeTypesList.add(new ValueLabel(InstrumentType.UDC.name(), InstrumentType.UDC.code()));
+		chequeTypesList.add(new ValueLabel(InstrumentType.SPDC.name(), labelSPDC));
 
 		return chequeTypesList;
 	}

@@ -5,9 +5,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennanttech.pennapps.core.AppException;
 
 public abstract class PostingEvent {
@@ -18,9 +18,9 @@ public abstract class PostingEvent {
 	protected static final String LITERAL3 = "Preparing AEEvents for the accounting evnet {}";
 	protected static final String LITERAL4 = "AEEvents preparing completed for the accounting evnet {}";
 
-	public abstract List<AEEvent> prepareAEEvents(FinanceDetail fd, String userBranch);
+	public abstract List<AEEvent> prepareAEEvents(PostingDTO postingDTO);
 
-	public void setEventDetails(List<AEEvent> aeEvents, FinanceDetail fd) {
+	public void setEventDetails(List<AEEvent> aeEvents, PostingDTO postingDTO) {
 
 	}
 
