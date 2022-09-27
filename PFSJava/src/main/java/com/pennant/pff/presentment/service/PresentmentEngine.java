@@ -145,7 +145,7 @@ public class PresentmentEngine {
 
 	private long saveHeader(PresentmentDetail pd, Date fromDate, Date toDate, String instrumentType,
 			String presentmentType) {
-		long headerId = presentmentDetailDAO.getSeqNumber("SeqPresentmentHeader");
+		long headerId = presentmentDAO.getSeqNumber("SeqPresentmentHeader");
 
 		String reference = StringUtils.leftPad(String.valueOf(headerId), 15, "0");
 
@@ -176,7 +176,7 @@ public class PresentmentEngine {
 		ph.setSuccessRecords(0);
 		ph.setFailedRecords(0);
 
-		presentmentDetailDAO.savePresentmentHeader(ph);
+		presentmentDAO.savePresentmentHeader(ph);
 
 		return headerId;
 	}
@@ -244,16 +244,6 @@ public class PresentmentEngine {
 		}
 
 		doCalculations(ph, pd);
-
-		boolean dueExists = true;
-		if (FinanceConstants.PRODUCT_ODFACILITY.equals(productCategory)
-				&& ph.getAppDate().compareTo(pd.getSchDate()) < 0) {
-			dueExists = false;
-		}
-
-		if (dueExists) {
-			return;
-		}
 
 	}
 
@@ -489,7 +479,7 @@ public class PresentmentEngine {
 			finExcessAmountDAO.updateExcessEMIAmount(emiInAdvance, "R");
 		}
 
-		presentmentDetailDAO.saveList(presentments);
+		presentmentDAO.saveList(presentments);
 
 		presentments.stream().filter(pd -> RepayConstants.PEXC_EMIINCLUDE == pd.getExcludeReason())
 				.forEach(includeList::add);
@@ -508,7 +498,7 @@ public class PresentmentEngine {
 			}
 		}
 
-		presentmentDetailDAO.updateSchdWithPresentmentId(includeList);
+		presentmentDAO.updateSchdWithPresentmentId(includeList);
 
 		List<PresentmentDetail> cheques = new ArrayList<>();
 		for (PresentmentDetail pd : includeList) {

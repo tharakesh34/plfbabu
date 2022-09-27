@@ -12023,7 +12023,11 @@
 
 	<bean id="postingEventFactory" class="com.pennant.pff.core.engine.accounting.PostingEventFactory"/>
 
-	<bean id="accountingEngine" class="com.pennant.pff.core.engine.accounting.AccountingEngine"/>
+	<bean id="accountingEngine" class="com.pennant.pff.core.engine.accounting.AccountingEngine">
+		<property name="factory" ref="postingEventFactory" />
+		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="engineExecution" ref="engineExecution" />
+	</bean>
 	<!-- Accounting Engine End -->
 
 	<!-- Fee Waiver UploadHeader -->

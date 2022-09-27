@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 public interface PresentmentDAO {
 	int extarct(Date dueDate);
@@ -52,6 +53,8 @@ public interface PresentmentDAO {
 
 	void clearQueue();
 
+	long saveList(List<PresentmentDetail> presentments);
+
 	/*
 	 * void orderByPartnerBankIdAndBankCode();
 	 * 
@@ -64,4 +67,9 @@ public interface PresentmentDAO {
 
 	long getNextValue();
 
+	long getSeqNumber(String tableName);
+
+	long savePresentmentHeader(PresentmentHeader presentmentHeader);
+
+	int updateSchdWithPresentmentId(List<PresentmentDetail> presenetments);
 }

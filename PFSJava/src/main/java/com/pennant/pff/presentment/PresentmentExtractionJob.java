@@ -58,11 +58,9 @@ public class PresentmentExtractionJob {
 
 				.next(grouping()).on("FAILED").fail()
 
-				.from(grouping()).on("*").to(extraction()).on("FAILED").fail()
+				.next(extraction()).on("FAILED").fail()
 
-				.from(extraction()).on("*").to(clear()).on("FAILED").fail()
-
-				.from(clear()).on("*").end("COMPLETED").on("FAILED").fail()
+				.next(clear()).on("*").end("COMPLETED").on("FAILED").fail()
 
 				.end()
 
