@@ -49,7 +49,6 @@ import com.pennanttech.controller.MandateController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pffws.MandateRestService;
 import com.pennanttech.pffws.MandateSoapService;
 import com.pennanttech.util.APIConstants;
