@@ -36,6 +36,7 @@ package com.pennant.backend.endofday.main;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -56,6 +57,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.AmortizationConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AMZBatchMonitor {
 
@@ -170,8 +172,8 @@ public class AMZBatchMonitor {
 				if (resultSet.next()) {
 					jobExecutionId = resultSet.getLong(1);
 				}
-			} catch (Exception e) {
-				logger.warn("Exception: ", e);
+			} catch (SQLException e) {
+				logger.warn(Literal.EXCEPTION, e);
 			} finally {
 				try {
 					if (resultSet != null) {
@@ -183,8 +185,8 @@ public class AMZBatchMonitor {
 					if (connection != null) {
 						connection.close();
 					}
-				} catch (Exception e) {
-					logger.warn("Exception: ", e);
+				} catch (SQLException e) {
+					logger.warn(Literal.EXCEPTION, e);
 				}
 			}
 
@@ -218,7 +220,7 @@ public class AMZBatchMonitor {
 					avgTime = resultSet.getLong(1);
 				}
 
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				logger.warn("Exception: ", e);
 			} finally {
 				try {
@@ -231,7 +233,7 @@ public class AMZBatchMonitor {
 					if (connection != null) {
 						connection.close();
 					}
-				} catch (Exception e) {
+				} catch (SQLException e) {
 					logger.warn("Exception: ", e);
 				}
 			}
