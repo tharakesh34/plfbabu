@@ -37,7 +37,6 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,27 +69,18 @@ public class CapitalizationPostings implements Tasklet {
 
 	private DataSource dataSource;
 
-	private Date dateValueDate = null;
-	private Date dateAppDate = null;
-
-	private ExecutionContext jobExecutionContext;
-	private ExecutionContext stepExecutionContext;
-
 	public CapitalizationPostings() {
-
+		super();
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
-		dateAppDate = EODUtil.getDate("APP_DATE", context);
+		Date dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
+		Date dateAppDate = EODUtil.getDate("APP_DATE", context);
 
 		logger.debug("START: Capitalization Postings for Value Date: " + dateValueDate);
 
-		jobExecutionContext = context.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
-		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
-
+		ExecutionContext stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		// READ REPAYMENTS DUE TODAY
@@ -103,6 +93,8 @@ public class CapitalizationPostings implements Tasklet {
 
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
+			sqlStatement.setObject(1, dateValueDate);
+			sqlStatement.setObject(2, dateValueDate);
 			resultSet = sqlStatement.executeQuery();
 
 			List<FinanceProfitDetail> pftDetailsList = new ArrayList<FinanceProfitDetail>();
@@ -151,21 +143,13 @@ public class CapitalizationPostings implements Tasklet {
 
 			if (pftDetailsList.size() > 0) {
 				financeProfitDetailDAO.updateCpzDetail(pftDetailsList);
-				pftDetailsList = null;
 			}
-
-		} catch (SQLException e) {
-			logger.error("Exception: ", e);
-			throw new SQLException(e.getMessage()) {
-			};
 		} finally {
-			pftDetail = null;
 			if (resultSet != null) {
 				resultSet.close();
 			}
 			if (sqlStatement != null) {
 				sqlStatement.close();
-
 			}
 		}
 
@@ -184,15 +168,11 @@ public class CapitalizationPostings implements Tasklet {
 		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinID, T1.FinReference, T1.FinBranch, T1.FinType, ");
 		selQuery.append(" T1.FinCcy , T1.CustID , T2.CpzAmount, T1.TotalCpz ,");
 		selQuery.append(" (SELECT SUM(CpzAmount)  TotCurCpzAmt FROM  FinScheduleDetails ");
-		selQuery.append(" WHERE DefSchdDate < '");
-		selQuery.append(dateValueDate);
-		selQuery.append("' )  PrvCpzAmt ");
+		selQuery.append(" WHERE DefSchdDate < ? )  PrvCpzAmt ");
 		selQuery.append(" FROM FinanceMain  T1 INNER JOIN RMTFinanceTypes  T3  ");
 		selQuery.append(" ON T1.FinType = T3.FinType , FinScheduleDetails  T2 ");
 		selQuery.append(" WHERE T1.FinReference = T2.FinReference ");
-		selQuery.append(" AND T2.DefSchdDate = '");
-		selQuery.append(dateValueDate);
-		selQuery.append("'");
+		selQuery.append(" AND T2.DefSchdDate = ?");
 		selQuery.append(" AND T2.CpzOnSchDate= 1 AND T2.CpzAmount > 0 AND T1.FinIsActive = 1");
 		return selQuery.toString();
 
