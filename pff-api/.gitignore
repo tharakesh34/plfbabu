@@ -1,3 +1,6 @@
 /target/
 /.settings/
 /.gitignore
+/test-output/
+/.temp-AuthKey.crackDown-classpath-arg-1664338257294.txt
+/hs_err_pid8112.log
