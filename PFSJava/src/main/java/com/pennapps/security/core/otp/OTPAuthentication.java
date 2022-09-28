@@ -42,8 +42,9 @@ public class OTPAuthentication {
 
 	public String generateOTP() {
 		StringBuilder builder = new StringBuilder();
+		int len = length;
 
-		while (length-- != 0) {
+		while (len-- != 0) {
 			builder.append(fromat.charAt((int) (Math.random() * fromat.length())));
 		}
 
