@@ -71,6 +71,29 @@ public class AbstractController {
 		logDetail.setError(errorMessage);
 	}
 
+	protected void logReference(String reference) {
+		APILogDetail apiLog = getAPILog();
+		if (apiLog != null) {
+			apiLog.setReference(reference);
+		}
+	}
+
+	protected void logException(String exception) {
+		APILogDetail apiLog = getAPILog();
+
+		if (apiLog != null) {
+			if (exception.length() > 1990) {
+				exception = exception.substring(0, 1990);
+			}
+
+			apiLog.setError(exception);
+		}
+	}
+
+	private APILogDetail getAPILog() {
+		return (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_LOG_KEY);
+	}
+
 	private String getErrorMessage(String errorMessage, String[] errorParameters) {
 		String error = StringUtils.trimToEmpty(errorMessage);
 

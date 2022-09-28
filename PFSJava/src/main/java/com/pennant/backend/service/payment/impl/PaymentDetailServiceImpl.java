@@ -65,6 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.UploadConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -536,7 +537,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		logger.debug("Entering");
 
 		// Excess Amount Reserve
-		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+		if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
 			FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(paymentDetail.getPaymentDetailId(),
 					paymentDetail.getReferenceId());
@@ -605,7 +606,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		logger.debug("Entering");
 
 		// Excess Amount Reserve
-		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+		if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
 			FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(paymentDetail.getPaymentDetailId(),
 					paymentDetail.getReferenceId());
@@ -641,7 +642,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		ManualAdviseMovements manualMovement = null;
 
 		// Excess Amounts
-		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+		if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
 			finExcessAmountDAO.updateUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
 
@@ -717,7 +718,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			taxHeader.setNewRecord(true);
 			taxHeader.setRecordType(PennantConstants.RCD_ADD);
 			taxHeader.setVersion(taxHeader.getVersion() + 1);
-			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+			if (AdviseType.isPayable(paymentDetail.getAmountType())) {
 				List<Taxes> taxDetails = paymentDetail.getTaxHeader().getTaxDetails();
 				taxHeader.setTaxDetails(taxDetails);
 			}
@@ -747,7 +748,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 				TableType.MAIN_TAB.getSuffix());
 		if (detailsList != null && !detailsList.isEmpty()) {
 			for (PaymentDetail paymentDetail : detailsList) {
-				if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+				if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
 					finExcessAmountDAO.updateExcessAmount(paymentDetail.getReferenceId(), "U",
 							paymentDetail.getAmount().negate());
 				} else {

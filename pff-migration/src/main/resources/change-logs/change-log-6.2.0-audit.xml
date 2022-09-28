@@ -145,5 +145,32 @@
 		<addNotNullConstraint tableName="AdtSecusers" columnName="CreatedOn"
 			columnDataType="datetime" />
 	</changeSet>
+	
+	<changeSet id="ST#103.01" author="vasudevarao.s">
+		<addColumn tableName="ADTFEETYPES">
+			<column name="PayableLinkTo" type="varchar(30)" />
+			<column name="RecvFeeTypeId" type="Bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#103.02" author="vasudevarao.s" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTFEETYPES SET RECVFEETYPEID = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#103.03" author="vasudevarao.s" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTFEETYPES ADD CONSTRAINT DF_FEETYPES_RFTI DEFAULT 0 FOR RECVFEETYPEID;
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="ST#103.04" author="vasudevarao.s" dbms="postgresql, oracle">
+		<addDefaultValue columnName="RecvFeeTypeId" tableName="ADTFEETYPES" defaultValue="0" />
+	</changeSet>	
+	
 </databaseChangeLog>

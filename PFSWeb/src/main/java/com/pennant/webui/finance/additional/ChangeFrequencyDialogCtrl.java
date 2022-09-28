@@ -94,8 +94,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Row row_GrcPeriodEndDate;
 	protected Row row_grcNextRepayDate;
 
-	// not auto wired vars
-	private FinScheduleData finScheduleData; // overhanded per param
+	private FinScheduleData finScheduleData;
 	private ScheduleDetailDialogCtrl financeMainDialogCtrl;
 
 	private transient ChangeFrequencyService changeFrequencyService;
@@ -624,7 +623,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	private void doShowRecalType(String recalType, boolean allowChange) {
-		fillComboBox(this.recalType, recalType, this.recalTypes, "");
+		fillComboBox(this.recalType, recalType, this.recalTypes);
 		this.recalType.setDisabled(!allowChange);
 	}
 

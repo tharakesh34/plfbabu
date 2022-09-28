@@ -261,10 +261,6 @@ public class FinanceConstants {
 	// Finance Disbursement Status
 	public static final String DISB_STATUS_CANCEL = "C";
 
-	// Manual Advise Types
-	public static final int MANUAL_ADVISE_RECEIVABLE = 1; // Receivable Advise
-	public static final int MANUAL_ADVISE_PAYABLE = 2; // Payable Advise
-
 	public static final String FEES_AGAINST_LOAN = "FC";
 	public static final String FEES_AGAINST_BOUNCE = "BC";
 	public static final String FEES_AGAINST_ADVISE = "AD";

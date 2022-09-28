@@ -102,6 +102,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
@@ -433,7 +434,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		if (getDisbursementInstructionsDialogCtrl() != null) {
 			getDisbursementInstructionsDialogCtrl().closeDialog();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1241,7 +1242,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 
 		for (PaymentDetail detail : getPaymentDetailList()) {
-			if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
+			if (!AdviseType.isPayable(detail.getAmountType())) {
 				continue;
 			}
 
@@ -1543,7 +1544,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		BigDecimal avaAmount = BigDecimal.ZERO;
 		for (PaymentDetail detail : getPaymentDetailList()) {
-			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
+			if (AdviseType.isPayable(detail.getAmountType())) {
 				avaAmount = detail.getAvailableAmount().add(avaAmount);
 				if (detail.getTaxHeader() != null
 						&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
@@ -1572,7 +1573,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 
 		for (PaymentDetail detail : getPaymentDetailList()) {
-			if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
+			if (!AdviseType.isPayable(detail.getAmountType())) {
 				continue;
 			}
 
@@ -1673,8 +1674,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 */
 	private PaymentDetail calTaxDetail(PaymentDetail detail) {
 
-		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())
-				|| detail.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+		if (!AdviseType.isPayable(detail.getAmountType()) || detail.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
 			detail.setTaxHeader(null);
 			return detail;
 		}
@@ -1751,7 +1751,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 			for (PaymentDetail paymentDetail : paymentDetaislList) {
 
-				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+				if (AdviseType.isPayable(paymentDetail.getAmountType())) {
 					this.listheader_PaymentHeaderDialog_button.setVisible(true);
 					amtType = paymentDetail.getAmountType();
 					avaAmount = paymentDetail.getAvailableAmount().add(avaAmount);
@@ -1863,7 +1863,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				}
 			}
 			// Manual Advise
-			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(amtType)) {
+			if (AdviseType.isPayable(amtType)) {
 				Button button = new Button();
 				item = new Listitem();
 				Listcell lc;
@@ -2058,7 +2058,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		if (paymentDetail != null && !paymentDetail.isEmpty()) {
 
 			for (PaymentDetail advise : paymentDetail) {
-				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(advise.getAmountType())) {
+				if (AdviseType.isPayable(advise.getAmountType())) {
 					item = new Listitem();
 					Listcell lc;
 					lc = new Listcell();

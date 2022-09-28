@@ -58,10 +58,10 @@ import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.service.finance.UploadHeaderService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -707,9 +707,9 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 					error = true;
 				} else {
 					String adviseType = "";
-					if (fee.getAdviseType() == FinanceConstants.MANUAL_ADVISE_RECEIVABLE) {
+					if (AdviseType.isReceivable(fee.getAdviseType())) {
 						adviseType = UploadConstants.UPLOAD_RECEIVABLE_ADVISE;
-					} else if (fee.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE) {
+					} else if (AdviseType.isPayable(fee.getAdviseType())) {
 						adviseType = UploadConstants.UPLOAD_PAYABLE_ADVISE;
 					}
 					if (!StringUtils.equals(adviseType, type)) {

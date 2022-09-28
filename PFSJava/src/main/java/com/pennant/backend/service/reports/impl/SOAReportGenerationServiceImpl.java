@@ -117,6 +117,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -1763,7 +1764,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		List<SOAFeeDetails> soaFeeDetailsList = new ArrayList<>();
 		// Charges Receivable
 		for (ManualAdvise advise : manualAdviseList) {
-			if (FinanceConstants.MANUAL_ADVISE_RECEIVABLE == advise.getAdviseType()) {
+			if (AdviseType.isReceivable(advise.getAdviseType())) {
 				BigDecimal advAmount = advise.getAdviseAmount();
 				BigDecimal bal = BigDecimal.ZERO;
 				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advise.getTaxComponent())) {

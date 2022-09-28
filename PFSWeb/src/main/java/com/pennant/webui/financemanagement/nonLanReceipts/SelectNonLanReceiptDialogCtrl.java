@@ -65,6 +65,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -642,7 +643,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 							bounce.setNewRecord(true);
 						}
 
-						bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+						bounce.setAdviseType(AdviseType.RECEIVABLE.id());
 						bounce.setFinReference(receiptHeader.getReference());
 						bounce.setFeeTypeID(0);
 						bounce.setSequence(0);

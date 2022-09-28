@@ -186,6 +186,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -685,7 +686,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			// Manual Advise Movements
-			int advisetype = Integer.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+			int advisetype = AdviseType.RECEIVABLE.id();
 			rcd.setAdvMovements(manualAdviseDAO.getAdvMovementsByReceiptSeq(rcd.getReceiptID(), rcd.getReceiptSeqID(),
 					advisetype, "_TView"));
 
@@ -4891,7 +4892,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	@Override
 	public Date getManualAdviseMaxDate(long finID, Date valueDate) {
-		return manualAdviseDAO.getManualAdviseDate(finID, valueDate, "", FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		return manualAdviseDAO.getManualAdviseDate(finID, valueDate, "", AdviseType.RECEIVABLE.id());
 	}
 
 	public void setFinReceiptData(FinReceiptData rd) {
@@ -5692,7 +5693,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				ManualAdvise ma = new ManualAdvise();
 				ma.setNewRecord(true);
 				FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
-				ma.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+				ma.setAdviseType(AdviseType.RECEIVABLE.id());
 				ma.setFinReference(rch.getReference());
 				ma.setFeeTypeID(feeType.getFeeTypeID());
 				ma.setSequence(0);

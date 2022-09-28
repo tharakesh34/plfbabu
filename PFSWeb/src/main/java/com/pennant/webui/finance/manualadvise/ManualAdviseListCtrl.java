@@ -45,12 +45,12 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.Property;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.webui.finance.manualadvise.model.ManualAdviseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -92,7 +92,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	protected Listheader listheader_AdviseStatus;
 
 	private transient ManualAdviseService manualAdviseService;
-	private List<Property> listAdviseType = PennantStaticListUtil.getManualAdvisePropertyTypes();
+	private List<ValueLabel> listAdviseType = AdviseType.getList();
 	private FinanceMain financeMain = null;
 	private String module = null;
 	private String menuItemName = null;
@@ -188,7 +188,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 			registerField("status", listheader_AdviseStatus);
 		}
 		// comboBox list
-		fillList(adviseType, listAdviseType, null);
+		fillComboBox(adviseType, null, listAdviseType, "");
 		// Render the page and display the data.
 		doRenderPage();
 
@@ -243,6 +243,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		ManualAdvise manualadvise = new ManualAdvise();
 		manualadvise.setNewRecord(true);
 		manualadvise.setWorkflowId(getWorkFlowId());
+		manualadvise.setValueDate(SysParamUtil.getAppDate());
 		// Display the dialog page.
 		doShowDialogPage(manualadvise);
 

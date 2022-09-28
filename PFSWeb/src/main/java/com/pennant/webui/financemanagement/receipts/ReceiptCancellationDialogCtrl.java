@@ -119,6 +119,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -725,7 +726,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				bounce.setNewRecord(true);
 			}
 
-			bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+			bounce.setAdviseType(AdviseType.RECEIVABLE.id());
 			Long finID = aReceiptHeader.getFinID();
 			bounce.setFinID(finID == null ? 0 : finID);
 			bounce.setFinReference(aReceiptHeader.getReference());

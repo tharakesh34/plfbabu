@@ -260,7 +260,7 @@ public class ExtendedFieldsEnquiryDialogCtrl extends GFCBaseCtrl<Object> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	private void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
+	public void fillComboBox(Combobox combobox, String value, List<ValueLabel> list) {
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();
 		combobox.setReadonly(true);

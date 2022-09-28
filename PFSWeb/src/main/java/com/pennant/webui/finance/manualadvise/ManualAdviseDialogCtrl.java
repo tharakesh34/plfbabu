@@ -25,6 +25,7 @@
 package com.pennant.webui.finance.manualadvise;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,13 +53,13 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
-import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Space;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
@@ -98,6 +99,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -113,6 +115,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * This is the controller class for the /WEB-INF/pages/finance/ManualAdvise/manualAdviseDialog.zul file. <br>
@@ -121,11 +124,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(ManualAdviseDialogCtrl.class);
-
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
+	
 	protected Window window_ManualAdviseDialog;
 	protected Combobox adviseType;
 	protected ExtendedCombobox finReference;
@@ -135,29 +134,28 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected CurrencyBox paidAmount;
 	protected CurrencyBox waivedAmount;
 	protected Textbox remarks;
-	private ManualAdvise manualAdvise;
+	protected Row reasonRow;
+	protected Textbox reason;
 	protected Listbox listBoxAdviseMovements;
 	protected Datebox valueDate;
 	protected Datebox postDate;
-
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Tabpanel tabpanelBasicdetails;
 	protected Tab adviseDetails;
-
-	protected Hbox hbox_Sequence;
 	protected Groupbox adviseMovements;
 	protected Label label_FeeTypeID;
 
+	private ManualAdvise manualAdvise;
 	private transient ManualAdviseListCtrl manualAdviseListCtrl;
 	private transient ManualAdviseService manualAdviseService;
 	private FinanceDetailService financeDetailService;
 	private FinFeeDetailService finFeeDetailService;
 	private transient FinanceTaxDetailService financeTaxDetailService;
 
-	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
+	private List<ValueLabel> listAdviseType = AdviseType.getList();
 
-	public static final int DEFAULT_ADVISETYPE = FinanceConstants.MANUAL_ADVISE_RECEIVABLE;
+	public static final int DEFAULT_ADVISETYPE = AdviseType.RECEIVABLE.id();
 
 	// FinanceDetails Fields
 	protected Label lbl_LoanReference;
@@ -183,6 +181,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	// TDS details
 	protected Groupbox gb_TDSDetails;
 	protected Decimalbox tds;
+	protected CurrencyBox eligibleAmount;
 
 	private FinanceMain financeMain;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
@@ -192,9 +191,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private String selectMethodName = "onSelectTab";
 	private boolean isAccountingExecuted = false;
 
-	private Label label_Reason = null;
-	private Space space_Reason = null;
-	private Textbox reason = null;
 	protected A userActivityLog;
 
 	private String module = null;
@@ -277,11 +273,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		/*
-		 * this.finReference.setModuleName("FinanceMain"); this.finReference.setValueColumn("FinReference");
-		 * this.finReference.setValidateColumns(new String[] { "FinReference" });
-		 * this.finReference.setMandatoryStyle(true);
-		 */
 		this.feeTypeID.setModuleName("FeeType");
 		this.feeTypeID.setValueColumn("FeeTypeCode");
 		this.feeTypeID.setDescColumn("FeeTypeDesc");
@@ -304,9 +295,14 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.sequence.setMaxlength(10);
 		this.remarks.setMaxlength(100);
 		this.reason.setMaxlength(250);
-		this.hbox_Sequence.setVisible(false);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.postDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		this.eligibleAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
+		this.eligibleAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.eligibleAmount.setScale(PennantConstants.defaultCCYDecPos);
+
+		this.reasonRow.setVisible(PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module));
 
 		if (enqiryModule) {
 			this.groupboxWf.setVisible(false);
@@ -454,6 +450,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				this.feeTypeID.setAttribute("TDSApplicable", false);
 				this.feeTypeID.setAttribute("TaxComponent", "");
 			}
+
+			if (details != null) {
+				setEligibleAmount(details);
+			}
 		}
 
 		calculateGST();
@@ -468,6 +468,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		setFeeTypeFilters();
 
 		calculateGST();
+
 		calculateTDS();
 
 		logger.debug(Literal.LEAVING);
@@ -710,6 +711,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
 		setFeeTypeFilters();
+
 		// this.finReference.setValue(aManualAdvise.getFinReference());
 		this.feeTypeID.setAttribute("FeeTypeID", aManualAdvise.getFeeTypeID());
 		this.feeTypeID.setAttribute("TaxApplicable", aManualAdvise.isTaxApplicable());
@@ -743,6 +745,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			}
 			this.valueDate.setValue(aManualAdvise.getValueDate());
 			this.postDate.setValue(aManualAdvise.getPostDate());
+
+			FeeType feeType = manualAdvise.getFeeType();
+
+			if (feeType != null) {
+				setEligibleAmount(feeType);
+			}
 		}
 		if (enqiryModule) {
 			this.adviseMovements.setVisible(true);
@@ -753,9 +761,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.adviseMovements.setVisible(false);
 		}
 
-		if (this.reason.isVisible()) {
-			this.reason.setValue(manualAdvise.getReason());
-		}
+		this.reason.setValue(manualAdvise.getReason());
 
 		this.recordStatus.setValue(manualAdvise.getRecordStatus());
 
@@ -893,7 +899,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		doSetLOVValidation();
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
 
 		// Advise Type
 		try {
@@ -989,16 +995,28 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 		// Reason
 		try {
-			if (this.reason.isVisible()) {
-				aManualAdvise.setReason(this.reason.getValue());
+			aManualAdvise.setReason(this.reason.getValue());
+
+			if (StringUtils.isNotEmpty(aManualAdvise.getReason())) {
 				aManualAdvise.setStatus(PennantConstants.MANUALADVISE_CANCEL);
 			} else {
 				aManualAdvise.setReason(null);
 				aManualAdvise.setStatus(null);
 			}
+
 			if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)) {
 				aManualAdvise.setStatus(PennantConstants.MANUALADVISE_MAINTAIN);
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (this.eligibleAmount.getActualValue() != null) {
+				aManualAdvise.setEligibleAmount(PennantApplicationUtil
+						.unFormateAmount(this.eligibleAmount.getActualValue(), PennantConstants.defaultCCYDecPos));
+			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1064,10 +1082,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		// this.finReference.setConstraint(new
-		// PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FinReference.value"),
-		// null, true, true));
-
 		this.feeTypeID.setConstraint(
 				new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FeeTypeID.value"), null, true, true));
 
@@ -1086,10 +1100,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 					Labels.getLabel("label_ManualAdviseDialog_ValueDate.value"), true, null, null, true));
 		}
 
-		if (this.reason.isVisible()) {
+		if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module) && !this.reason.isReadonly()) {
 			this.reason.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_Reason.value"), null, true));
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1100,7 +1115,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 
 		this.adviseType.setConstraint("");
-		// this.finReference.setConstraint("");
 		this.feeTypeID.setConstraint("");
 		this.sequence.setConstraint("");
 		this.adviseAmount.setConstraint("");
@@ -1108,10 +1122,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.waivedAmount.setConstraint("");
 		this.remarks.setConstraint("");
 		this.valueDate.setConstraint("");
-
-		if (this.reason.isVisible()) {
-			this.reason.setConstraint("");
-		}
+		this.eligibleAmount.setConstraint("");
+		this.reason.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1174,10 +1186,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
+		this.eligibleAmount.setReadonly(true);
+
 		if (this.manualAdvise.isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			// readOnlyComponent(isReadOnly("ManualAdviseDialog_FinReference"),
-			// this.finReference);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_FeeTypeID"), this.feeTypeID);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseType"), this.adviseType);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
@@ -1187,9 +1199,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
 		} else {
 			this.btnCancel.setVisible(true);
-			// readOnlyComponent(true, this.finReference);
 			readOnlyComponent(true, this.feeTypeID);
-			// readOnlyComponent(true, this.adviseAmount);
 			readOnlyComponent(true, this.paidAmount);
 			readOnlyComponent(true, this.waivedAmount);
 			readOnlyComponent(true, this.adviseType);
@@ -1201,13 +1211,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_Remarks"), this.remarks);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
-			// readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseType"),
-			// this.adviseType);
 		} else {
 			readOnlyComponent(true, this.adviseAmount);
 			readOnlyComponent(true, this.remarks);
 			readOnlyComponent(true, this.valueDate);
-			// readOnlyComponent(true, this.adviseType);
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -1235,21 +1242,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				readOnlyComponent(!isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
 				readOnlyComponent(!isReadOnly("ManualAdviseDialog_Remarks"), this.remarks);
 			}
-			label_Reason.setVisible(true);
-			space_Reason.setVisible(true);
-			reason.setVisible(true);
 			if (!enqiryModule) {
 				readOnlyComponent(isReadOnly("ManualAdviseDialog_Reason"), this.reason);
 			}
-		} else {
-			label_Reason.setVisible(false);
-			space_Reason.setVisible(false);
-			reason.setVisible(false);
 		}
+
 		if (enqiryModule && PennantConstants.MANUALADVISE_CANCEL.equals(manualAdvise.getStatus())) {
-			label_Reason.setVisible(true);
-			space_Reason.setVisible(true);
-			reason.setVisible(true);
 			readOnlyComponent(true, this.reason);
 		}
 
@@ -1271,10 +1269,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		readOnlyComponent(true, this.remarks);
 		readOnlyComponent(true, this.valueDate);
 		readOnlyComponent(true, this.postDate);
-
-		if (this.reason.isVisible()) {
-			readOnlyComponent(true, this.reason);
-		}
+		readOnlyComponent(true, this.eligibleAmount);
+		readOnlyComponent(true, this.reason);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1303,6 +1299,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.paidAmount.setValue("");
 		this.waivedAmount.setValue("");
 		this.remarks.setValue("");
+		this.eligibleAmount.setValue("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1323,7 +1320,15 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				return;
 			}
 		}
+
 		doWriteComponentsToBean(aManualAdvise);
+
+		String errMsg = validatePayableAmount(aManualAdvise);
+
+		if (errMsg != null) {
+			MessageUtil.showError(errMsg);
+			return;
+		}
 
 		// Accounting Details Tab Addition
 		if (!StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
@@ -1817,6 +1822,101 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		arrayList.add(4, this.lbl_startDate.getValue());
 		arrayList.add(5, this.lbl_MaturityDate.getValue());
 		return arrayList;
+	}
+
+	private boolean isValidPayableLink(String linkTo, int adviseType) {
+		if (AdviseType.isPayable(adviseType) || linkTo == null) {
+			return false;
+		}
+
+		switch (linkTo) {
+		case Allocation.PFT:
+		case Allocation.PRI:
+		case Allocation.MANADV:
+		case Allocation.BOUNCE:
+		case Allocation.ODC:
+		case Allocation.LPFT:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	private void setEligibleAmount(FeeType ft) {
+		String linkTo = ft.getPayableLinkTo();
+
+		BigDecimal amount = BigDecimal.ZERO;
+		if (Allocation.ADHOC.equals(linkTo)) {
+			amount = BigDecimal.ZERO;
+		} else if (isValidPayableLink(linkTo, ft.getAdviseType())) {
+			amount = manualAdviseService.getEligibleAmount(manualAdvise, ft);
+			amount = PennantApplicationUtil.formateAmount(amount, PennantConstants.defaultCCYDecPos);
+		}
+
+		this.eligibleAmount.setValue(amount);
+	}
+
+	private String validatePayableAmount(final ManualAdvise ma) {
+		Radio item = this.userAction.getSelectedItem();
+		if (!isValidUserAction(item)) {
+			return null;
+		}
+
+		Object dataObject = feeTypeID.getObject();
+		FeeType feeType = (FeeType) dataObject;
+
+		if (feeType == null || !isValidPayableLink(feeType.getPayableLinkTo(), ma.getAdviseType())) {
+			return null;
+		}
+
+		long finID = ma.getFinID();
+		long fee = feeType.getFeeTypeID();
+		String linkTo = feeType.getPayableLinkTo();
+
+		if (manualAdviseService.isDuplicatePayble(finID, fee, linkTo) && !item.getLabel().contains("Approve")
+				&& ma.isNewRecord()) {
+			return Labels.getLabel("label_Payable_Maintenance");
+		}
+
+		BigDecimal advAmount = ma.getAdviseAmount();
+		BigDecimal eblAmount = ma.getEligibleAmount();
+
+		if (advAmount == null) {
+			advAmount = BigDecimal.ZERO;
+		}
+
+		if (eblAmount == null) {
+			eblAmount = BigDecimal.ZERO;
+		}
+
+		if (advAmount.compareTo(eblAmount) > 0) {
+			eblAmount = PennantApplicationUtil.formateAmount(eblAmount, PennantConstants.defaultCCYDecPos);
+
+			String[] params = new String[] { Labels.getLabel("label_ManualAdviseDialog_AdviseAmount.value"),
+					Labels.getLabel("label_ManualAdviseDialog_Eligible_Amount.value") };
+			return Labels.getLabel("label_ManualAdviseDialog_Eligible_Amount.validation", params);
+		}
+
+		if (manualAdviseService.isPaybleExist(finID, feeType.getFeeTypeID(), linkTo)) {
+			return Labels.getLabel("label_Payable_DuplicateIntrest");
+		}
+
+		return null;
+	}
+
+	private boolean isValidUserAction(Radio item) {
+		if (item == null) {
+			return false;
+		}
+
+		switch (item.getLabel().toUpperCase()) {
+		case "CANCEL":
+		case "REJECT":
+		case "RESUBMIT":
+			return false;
+		default:
+			return true;
+		}
 	}
 
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {

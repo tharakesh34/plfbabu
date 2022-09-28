@@ -54,6 +54,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -942,7 +943,7 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 
 		ma.setAdviseID(manualAdviseService.getNewAdviseID());
 		ma.setFinReference(fm.getFinReference());
-		ma.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		ma.setAdviseType(AdviseType.RECEIVABLE.id());
 		ma.setAdviseAmount(feeAmount);
 		ma.setBalanceAmt(feeAmount);
 

@@ -6,10 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.APIHeader;
@@ -18,7 +17,6 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -40,11 +38,11 @@ import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.pff.accounting.PostAgainst;
-import com.pennant.ws.exception.ServiceException;
+import com.pennant.pff.api.controller.AbstractController;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -55,132 +53,90 @@ import com.pennanttech.ws.model.finance.TaxDetail;
 import com.pennanttech.ws.model.manualAdvice.ManualAdviseResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class FeePostingController extends ExtendedTestClass {
-	private final Logger logger = LogManager.getLogger(getClass());
-
+public class FeePostingController extends AbstractController {
 	private FeePostingService feePostingService;
-	private FeeTypeDAO feeTypeDAO;
 	private FinanceDetailService financeDetailService;
 	private FinanceTaxDetailService financeTaxDetailService;
 	private FinFeeDetailService finFeeDetailService;
 	private ManualAdviseService manualAdviseService;
+
+	private FeeTypeDAO feeTypeDAO;
 	private FinanceMainDAO financeMainDAO;
 
-	/**
-	 * Method for create FeePostings in PLF system.
-	 * 
-	 * @param feePostings
-	 * @return WSReturnStatus
-	 * @throws ServiceException
-	 */
-	public WSReturnStatus doFeePostings(FeePostings feePostings) {
+	private static final String ERR_90502 = "90502";
+	private static final String ERR_90224 = "90224";
+
+	public WSReturnStatus doFeePostings(FeePostings fp) {
 		logger.debug(Literal.ENTERING);
-		// for logging purpose
-		APIErrorHandlerService.logReference(feePostings.getFeeTyeCode());
+
+		logReference(fp.getFeeTyeCode());
+
 		try {
-			doSetPrepareData(feePostings);
-			AuditHeader auditHeader = getAuditHeader(feePostings, PennantConstants.TRAN_WF);
+			prepareFeePostings(fp);
 
-			auditHeader = feePostingService.doApprove(auditHeader);
+			AuditHeader auditHeader = feePostingService.doApprove(getAuditHeader(fp, PennantConstants.TRAN_WF));
 
-			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-				}
-			} else {
-				return APIErrorHandlerService.getSuccessStatus();
+			List<ErrorDetail> errors = auditHeader.getErrorMessage();
+
+			if (CollectionUtils.isNotEmpty(errors)) {
+				ErrorDetail error = errors.get(0);
+				return getFailedStatus(error.getCode(), error.getError());
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
-			APIErrorHandlerService.logUnhandledException(e);
+			logger.error(Literal.EXCEPTION, e);
+			logException(e.getMessage());
 			return APIErrorHandlerService.getFailedStatus();
 		}
-		logger.debug(Literal.LEAVING);
+
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 
-	public ManualAdviseResponse doCreateAdvise(ManualAdvise manualAdvise) {
+	public ManualAdviseResponse doCreateAdvise(ManualAdvise ma) {
 		logger.debug(Literal.ENTERING);
 
 		ManualAdviseResponse response = new ManualAdviseResponse();
-		LoggedInUser userDetails = null;
 		AuditHeader auditHeader = null;
 
-		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(manualAdvise.getFeeTypeCode());
+		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(ma.getFeeTypeCode());
 		if (feeType == null) {
-			String[] param = new String[2];
-			param[0] = "feeType";
-			param[1] = manualAdvise.getFeeTypeCode();
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90224", param));
+			response.setReturnStatus(getFailedStatus(ERR_90224, "feeType", ma.getFeeTypeCode()));
 			return response;
 		}
+
 		boolean taxApplicable = feeType.isTaxApplicable();
 		String taxComp = feeType.getTaxComponent();
-		manualAdvise.setFeeTypeID(feeType.getFeeTypeID());
 
-		// set BalanceAmt only when advise type is Payable
-		if (StringUtils.equals(String.valueOf(manualAdvise.getAdviseType()),
-				String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))) {
-			manualAdvise.setBalanceAmt(manualAdvise.getAdviseAmount());
+		BigDecimal balanceAmt = ma.getBalanceAmt();
+
+		if (AdviseType.isPayable(ma.getAdviseType())) {
+			balanceAmt = ma.getAdviseAmount();
 		}
 
-		// if tax applicable , calculate GST Details
+		ma.setFeeTypeID(feeType.getFeeTypeID());
+		ma.setBalanceAmt(balanceAmt);
+
 		if (taxApplicable) {
-			response = calculateGST(manualAdvise, taxApplicable, taxComp);
+			response.setTaxDetail(calculateGST(ma, taxComp));
 		}
 
-		userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		manualAdvise.setVersion(1);
-		manualAdvise.setPostDate(SysParamUtil.getAppDate());
-		manualAdvise.setUserDetails(userDetails);
-		manualAdvise.setLastMntBy(userDetails.getUserId());
-		manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		manualAdvise.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		manualAdvise.setNewRecord(true);
+		prepareManualAdvise(ma);
 
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
-				.get(APIHeader.API_HEADER_KEY);
+		auditHeader = getAuditHeader(ma, PennantConstants.TRAN_WF);
 
-		// set Workflow details
-		if (!manualAdvise.isStp()) {
-			String workflowType = ModuleUtil.getWorkflowType("ManualAdvise");
-			WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workflowType);
-			WorkflowEngine engine = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
-			manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-			manualAdvise.setWorkflowId(workFlowDetails.getWorkflowId());
-			manualAdvise.setRoleCode(workFlowDetails.getFirstTaskOwner());
-			manualAdvise.setNextRoleCode(workFlowDetails.getFirstTaskOwner());
-			manualAdvise.setTaskId(engine.getUserTaskId(manualAdvise.getRoleCode()));
-			manualAdvise.setNextTaskId(engine.getUserTaskId(manualAdvise.getNextRoleCode()) + ";");
-
-			auditHeader = getAuditHeader(manualAdvise, PennantConstants.TRAN_WF);
-			auditHeader.setApiHeader(reqHeaderDetails);
-
-			auditHeader = manualAdviseService.saveOrUpdate(auditHeader);
-			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().isEmpty()) {
-				for (ErrorDetail error : auditHeader.getOverideMessage()) {
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(error.getCode(), error.getError()));
-					return response;
-				}
-			}
+		if (!ma.isStp()) {
+			manualAdviseService.saveOrUpdate(auditHeader);
 		} else {
-			manualAdvise.setFinSource(PennantConstants.FINSOURCE_ID_API);
-			manualAdvise.setFinSourceId(PennantConstants.FINSOURCE_ID_API);
-			manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-
-			auditHeader = getAuditHeader(manualAdvise, PennantConstants.TRAN_ADD);
-			auditHeader.setApiHeader(reqHeaderDetails);
-
-			auditHeader = manualAdviseService.doApprove(auditHeader);
-			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().isEmpty()) {
-				for (ErrorDetail error : auditHeader.getOverideMessage()) {
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(error.getCode(), error.getError()));
-					return response;
-				}
-			}
+			manualAdviseService.doApprove(auditHeader);
 		}
 
-		// set Advise ID and GST detail to response
+		List<ErrorDetail> errors = auditHeader.getOverideMessage();
+
+		if (CollectionUtils.isNotEmpty(errors)) {
+			ErrorDetail error = errors.get(0);
+			response.setReturnStatus(getFailedStatus(error.getCode(), error.getError()));
+			return response;
+		}
+
 		ManualAdvise advise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
 		response.setAdviseId(advise.getAdviseID());
 
@@ -188,230 +144,206 @@ public class FeePostingController extends ExtendedTestClass {
 		return response;
 	}
 
-	/**
-	 * Validate Payable/Receivable advise detail
-	 * 
-	 * @param manualAdvise
-	 * @return {@link FinFeeDetail}
-	 */
-	public ManualAdviseResponse validateAdviseDetail(ManualAdvise manualAdvise) {
-		ManualAdviseResponse error = new ManualAdviseResponse();
+	public ManualAdviseResponse validateAdviseDetail(ManualAdvise ma) {
+		ManualAdviseResponse response = new ManualAdviseResponse();
 
-		// Validate Advise Type
-		if (manualAdvise.getAdviseType() <= 0) {
-			String[] errorParam = new String[1];
-			errorParam[0] = "AdviseType ";
-			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", errorParam));
-			return error;
-		} else {
-			boolean isAdvise = false;
-			List<ValueLabel> adviseTypes = PennantStaticListUtil.getManualAdviseTypes();
-			for (ValueLabel adviseType : adviseTypes) {
-				if (manualAdvise.getAdviseType() == Integer.valueOf(adviseType.getValue())) {
-					isAdvise = true;
-					break;
-				}
-			}
-			if (!isAdvise) {
-				String[] errorParam = new String[2];
-				errorParam[0] = "AdviseType ";
-				errorParam[1] = String.valueOf(manualAdvise.getAdviseType());
-				error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90224", errorParam));
-				return error;
-			}
+		if (ma.getAdviseType() <= 0) {
+			response.setReturnStatus(getFailedStatus(ERR_90502, "AdviseType "));
+			return response;
 		}
 
-		// Mandatory validation for FeeTypeCode
-		if (StringUtils.isBlank(manualAdvise.getFeeTypeCode())) {
-			String[] errorParam = new String[1];
-			errorParam[0] = "FeeTypeCode ";
-			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", errorParam));
-			return error;
-		} else {
-			// validate FeeTypeCode
-			Long feeId = feeTypeDAO.getFinFeeTypeIdByFeeType(manualAdvise.getFeeTypeCode(), "_AView");
-			if (feeId == null) {
-				String[] param = new String[2];
-				param[0] = "feeType";
-				param[1] = manualAdvise.getFeeTypeCode();
-				error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90224", param));
-				return error;
-			}
-
-			// Validate FeeTypeCode is Applicable for AdviseType or not
-			boolean isFeeType = false;
-			List<FeeType> feeTypes = feeTypeDAO.getManualAdviseFeeType(manualAdvise.getAdviseType(), "_AView");
-			for (FeeType feeType : feeTypes) {
-				if (StringUtils.equals(manualAdvise.getFeeTypeCode(), feeType.getFeeTypeCode())) {
-					isFeeType = true;
-					break;
-				}
-			}
-			if (!isFeeType) {
-				String[] errorParam = new String[2];
-				errorParam[0] = manualAdvise.getFeeTypeCode();
-				errorParam[1] = "AdviseType: " + manualAdvise.getAdviseType();
-				error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90329", errorParam));
-				return error;
-			}
+		if (ma.getValueDate() == null) {
+			response.setReturnStatus(getFailedStatus(ERR_90502, "ValueDate "));
+			return response;
 		}
 
-		// validate Advise Amount
-		if (manualAdvise.getAdviseAmount() == null || manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) <= 0) {
-			String[] errorParam = new String[1];
-			errorParam[0] = "AdviseAmount ";
-			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", errorParam));
-			return error;
+		if (!(AdviseType.isPayable(ma.getAdviseType()) || AdviseType.isReceivable(ma.getAdviseType()))) {
+			response.setReturnStatus(getFailedStatus(ERR_90224, "AdviseType ", String.valueOf(ma.getAdviseType())));
+			return response;
 		}
 
-		// validate Value Date
-		if (manualAdvise.getValueDate() == null) {
-			String[] errorParam = new String[1];
-			errorParam[0] = "ValueDate ";
-			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", errorParam));
-			return error;
+		BigDecimal adviseAmount = ma.getAdviseAmount();
+		if (adviseAmount == null) {
+			adviseAmount = BigDecimal.ZERO;
 		}
 
-		return error;
+		if (adviseAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			response.setReturnStatus(getFailedStatus(ERR_90502, "AdviseAmount "));
+			return response;
+		}
+
+		String feeTypeCode = ma.getFeeTypeCode();
+
+		if (StringUtils.isBlank(feeTypeCode)) {
+			response.setReturnStatus(getFailedStatus(ERR_90502, "FeeTypeCode "));
+			return response;
+		}
+
+		if (!feeTypeDAO.isValidFee(feeTypeCode, ma.getAdviseType())) {
+			response.setReturnStatus(getFailedStatus("90329", feeTypeCode, "AdviseType: " + ma.getAdviseType()));
+			return response;
+		}
+
+		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(feeTypeCode);
+
+		if (feeType == null) {
+			response.setReturnStatus(getFailedStatus(ERR_90224, "feeType", feeTypeCode));
+			return response;
+		}
+
+		BigDecimal eligibleAmount = manualAdviseService.getEligibleAmount(ma, feeType);
+
+		if (adviseAmount.compareTo(eligibleAmount) > 0) {
+			String adviseAmt = "Advise Amount : " + adviseAmount;
+			String eligibleAmt = "Eligible Amount : " + eligibleAmount;
+			response.setReturnStatus(getFailedStatus("12723", adviseAmt, eligibleAmt));
+			return response;
+		}
+
+		return response;
 	}
 
-	/**
-	 * For Calculating the GST amount, converting fees as FinFeeDetail and FinTypeFees and this is for inquiry purpose
-	 * only, these values are not saving. GST Calculation is having FinFeeDetailService, Return finFeeDetail object with
-	 * GST details.
-	 */
+	private void prepareFeePostings(FeePostings fp) {
+		LoggedInUser loggedInUser = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
-	private ManualAdviseResponse calculateGST(ManualAdvise manualAdvise, boolean taxApplicable, String taxComp) {
+		fp.setUserDetails(loggedInUser);
+		fp.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		fp.setNewRecord(true);
+		fp.setVersion(1);
+		fp.setPostDate(SysParamUtil.getAppDate());
+		fp.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		fp.setLastMntBy(loggedInUser.getUserId());
+		fp.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		fp.setSourceId(APIConstants.FINSOURCE_ID_API);
+
+		if (PostAgainst.isLoan(fp.getPostAgainst())) {
+			fp.setPostingDivision(financeMainDAO.getLovDescFinDivisionByReference(fp.getReference()));
+		}
+	}
+
+	private void prepareManualAdvise(ManualAdvise ma) {
+		LoggedInUser loggedInUser = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		ma.setVersion(1);
+		ma.setPostDate(SysParamUtil.getAppDate());
+		ma.setUserDetails(loggedInUser);
+		ma.setLastMntBy(loggedInUser.getUserId());
+		ma.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		ma.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ma.setNewRecord(true);
+
+		if (!ma.isStp()) {
+			String workflowType = ModuleUtil.getWorkflowType("ManualAdvise");
+			WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workflowType);
+			WorkflowEngine engine = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+			ma.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+			ma.setWorkflowId(workFlowDetails.getWorkflowId());
+			ma.setRoleCode(workFlowDetails.getFirstTaskOwner());
+			ma.setNextRoleCode(workFlowDetails.getFirstTaskOwner());
+			ma.setTaskId(engine.getUserTaskId(ma.getRoleCode()));
+			ma.setNextTaskId(engine.getUserTaskId(ma.getNextRoleCode()) + ";");
+		} else {
+			ma.setFinSource(PennantConstants.FINSOURCE_ID_API);
+			ma.setFinSourceId(PennantConstants.FINSOURCE_ID_API);
+			ma.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		}
+	}
+
+	private TaxDetail calculateGST(ManualAdvise ma, String taxComp) {
 		logger.debug(Literal.ENTERING);
-		FinFeeDetail finFeeDetail = new FinFeeDetail();
-		ManualAdviseResponse mar = new ManualAdviseResponse();
-		FinanceDetail fd = financeDetailService.getFinSchdDetailById(manualAdvise.getFinID(), "", false);
+
+		FinFeeDetail fee = new FinFeeDetail();
+
+		FinanceDetail fd = financeDetailService.getFinSchdDetailById(ma.getFinID(), "", false);
 
 		if (fd == null) {
-			return mar;
+			return null;
 		}
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		fd.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finID));
 
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
-		finFeeDetail.setCalculatedAmount(manualAdvise.getAdviseAmount());
-
-		finFeeDetail.setTaxComponent(taxComp);
-		finFeeDetail.setTaxApplicable(taxApplicable);
+		fee.setCalculatedAmount(ma.getAdviseAmount());
+		fee.setTaxComponent(taxComp);
+		fee.setTaxApplicable(true);
 
 		FinTypeFees finTypeFee = new FinTypeFees();
 		finTypeFee.setTaxComponent(taxComp);
-		finTypeFee.setTaxApplicable(taxApplicable);
-		finTypeFee.setAmount(manualAdvise.getAdviseAmount());
+		finTypeFee.setTaxApplicable(true);
+		finTypeFee.setAmount(ma.getAdviseAmount());
 
-		finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, fd, taxPercentages);
-		finFeeDetailService.calculateFees(finFeeDetail, schdData, taxPercentages);
+		finFeeDetailService.convertGSTFinTypeFees(fee, finTypeFee, fd, taxPercentages);
+		finFeeDetailService.calculateFees(fee, schdData, taxPercentages);
 
 		String taxComponent = "";
-
-		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
 			taxComponent = Labels.getLabel("label_FeeTypeDialog_Exclusive");
-		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
 			taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
 		}
 
 		TaxDetail taxDetail = new TaxDetail();
 
-		TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-		BigDecimal totalGstAmount = BigDecimal.ZERO;
-		BigDecimal totalAmount = BigDecimal.ZERO;
-		Taxes cgstTax = new Taxes();
-		Taxes sgstTax = new Taxes();
-		Taxes igstTax = new Taxes();
-		Taxes ugstTax = new Taxes();
-		Taxes cessTax = new Taxes();
+		TaxHeader taxHeader = fee.getTaxHeader();
+
+		BigDecimal totalGST = BigDecimal.ZERO;
 
 		List<Taxes> taxDetails = taxHeader.getTaxDetails();
 		for (Taxes taxes : taxDetails) {
-			if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
-				cgstTax = taxes;
-			} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
-				sgstTax = taxes;
-			} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
-				igstTax = taxes;
-			} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
-				ugstTax = taxes;
-			} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
-				cessTax = taxes;
+			BigDecimal netTax = taxes.getNetTax();
+			totalGST = totalGST.add(netTax);
+
+			switch (taxes.getTaxType()) {
+			case RuleConstants.CODE_CGST:
+				taxDetail.setNetCGST(netTax);
+				break;
+			case RuleConstants.CODE_SGST:
+				taxDetail.setNetSGST(netTax);
+				break;
+			case RuleConstants.CODE_IGST:
+				taxDetail.setNetIGST(netTax);
+				break;
+			case RuleConstants.CODE_UGST:
+				taxDetail.setNetUGST(netTax);
+				break;
+			case RuleConstants.CODE_CESS:
+				taxDetail.setNetCESS(netTax);
+				break;
+			default:
+				break;
 			}
 		}
 
-		// Total GST Amount
-		totalGstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax()).add(ugstTax.getNetTax())
-				.add(cessTax.getNetTax());
-
-		taxDetail.setNetCGST(cgstTax.getNetTax());
-		taxDetail.setNetSGST(sgstTax.getNetTax());
-		taxDetail.setNetIGST(igstTax.getNetTax());
-		taxDetail.setNetUGST(ugstTax.getNetTax());
-		taxDetail.setNetCESS(cessTax.getNetTax());
-		taxDetail.setNetTGST(totalGstAmount);
-
-		// Total Amount include GST
-		totalAmount = finFeeDetail.getNetAmountOriginal().add(totalGstAmount);
-		taxDetail.setTotal(totalAmount);
-
-		taxDetail.setAdviseAmount(finFeeDetail.getNetAmountOriginal());
+		taxDetail.setNetTGST(totalGST);
+		taxDetail.setTotal(fee.getNetAmountOriginal().add(totalGST));
+		taxDetail.setAdviseAmount(fee.getNetAmountOriginal());
 		taxDetail.setGstType(taxComponent);
-		mar.setTaxDetail(taxDetail);
 
 		logger.debug(Literal.LEAVING);
-		return mar;
+		return taxDetail;
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aManualAdvise
-	 * @param tranType
-	 * @return AuditHeader
-	 */
+	private AuditHeader getAuditHeader(ManualAdvise ma, String tranType) {
+		AuditDetail ad = new AuditDetail(tranType, 1, ma.getBefImage(), ma);
 
-	private AuditHeader getAuditHeader(ManualAdvise aManualAdvise, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aManualAdvise.getBefImage(), aManualAdvise);
-		return new AuditHeader(aManualAdvise.getFinReference(), null, null, null, auditDetail,
-				aManualAdvise.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+		String finReference = ma.getFinReference();
+		LoggedInUser userDtls = ma.getUserDetails();
+
+		AuditHeader ah = new AuditHeader(finReference, null, null, null, ad, userDtls, new HashMap<>());
+		ah.setApiHeader(PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY));
+
+		return ah;
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aFeePostings
-	 * @param tranType
-	 * @return AuditHeader
-	 */
-	private AuditHeader getAuditHeader(FeePostings aFeePostings, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFeePostings.getBefImage(), aFeePostings);
-		return new AuditHeader(String.valueOf(aFeePostings.getId()), String.valueOf(aFeePostings.getId()), null, null,
-				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
-	}
+	private AuditHeader getAuditHeader(FeePostings fp, String tranType) {
+		AuditDetail ad = new AuditDetail(tranType, 1, fp.getBefImage(), fp);
+		String id = String.valueOf(fp.getId());
 
-	private void doSetPrepareData(FeePostings feePostings) {
-		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		feePostings.setUserDetails(userDetails);
-		feePostings.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		feePostings.setNewRecord(true);
-		feePostings.setVersion(1);
-		feePostings.setPostDate(SysParamUtil.getAppDate());
-		feePostings.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		feePostings.setLastMntBy(userDetails.getUserId());
-		feePostings.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		feePostings.setSourceId(APIConstants.FINSOURCE_ID_API);
-
-		if (PostAgainst.isLoan(feePostings.getPostAgainst())) {
-			feePostings.setPostingDivision(financeMainDAO.getLovDescFinDivisionByReference(feePostings.getReference()));
-		}
+		return new AuditHeader(id, id, null, null, ad, fp.getUserDetails(), new HashMap<>());
 	}
 
 	public void setFeePostingService(FeePostingService feePostingService) {

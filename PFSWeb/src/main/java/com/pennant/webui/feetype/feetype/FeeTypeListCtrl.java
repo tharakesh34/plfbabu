@@ -183,6 +183,12 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 			return;
 		}
 
+		if (feeType.getRecvFeeTypeId() > 0) {
+			FeeType feeTypeData = feeTypeService.getFeeTypeByRecvFeeTypeId(feeType.getRecvFeeTypeId());
+			feeType.setRecvFeeTypeCode(feeTypeData.getFeeTypeCode());
+			feeType.setRecvFeeTypeDesc(feeTypeData.getFeeTypeDesc());
+		}
+
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " where FeeTypeID=?";
 

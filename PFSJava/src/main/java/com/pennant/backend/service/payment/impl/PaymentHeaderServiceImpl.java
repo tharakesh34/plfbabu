@@ -69,7 +69,6 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
 import com.pennant.backend.service.feetype.FeeTypeService;
-import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.payment.PaymentDetailService;
@@ -83,6 +82,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -746,7 +746,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			List<ManualAdviseMovements> movements = new ArrayList<ManualAdviseMovements>();
 
 			for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
-				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+				if (AdviseType.isPayable(paymentDetail.getAmountType())) {
 					ManualAdviseMovements advMov = prepareAdviseRefund(paymentDetail);
 					if (advMov != null) {
 						movements.add(advMov);
@@ -839,7 +839,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				movement.setTaxHeader(taxHeader);
 			}
 
-			if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+			if (!AdviseType.isPayable(paymentDetail.getAmountType())) {
 				manualAdviseDAO.saveMovement(movement, "");
 			}
 		}

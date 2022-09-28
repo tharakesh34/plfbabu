@@ -37,10 +37,10 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.UploadManualAdviseService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.UploadConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAdvise>
@@ -379,9 +379,9 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseID(Long.MIN_VALUE);
 		if (UploadConstants.UPLOAD_PAYABLE_ADVISE.equals(uploadManualAdvise.getAdviseType())) {
-			manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+			manualAdvise.setAdviseType(AdviseType.PAYABLE.id());
 		} else {
-			manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+			manualAdvise.setAdviseType(AdviseType.RECEIVABLE.id());
 		}
 		manualAdvise.setFinID(uploadManualAdvise.getFinID());
 		manualAdvise.setFinReference(uploadManualAdvise.getFinReference());

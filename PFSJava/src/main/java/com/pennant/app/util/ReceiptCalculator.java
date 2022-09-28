@@ -109,6 +109,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -2506,7 +2507,7 @@ public class ReceiptCalculator {
 
 		ManualAdviseMovements movement = new ManualAdviseMovements();
 		movement.setAdviseID(allocate.getAllocationTo());
-		movement.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		movement.setAdviseType(AdviseType.RECEIVABLE.id());
 		movement.setMovementDate(valueDate);
 		movement.setMovementAmount(allocate.getPaidNow());
 

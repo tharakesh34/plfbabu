@@ -38,9 +38,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class FeeType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
-	// FIXME GDP: Copied from java. We need to remove this bean from java.
-
+	
 	private long feeTypeID = Long.MIN_VALUE;
 	private String feeTypeCode;
 	private String feeTypeDesc;
@@ -54,24 +52,23 @@ public class FeeType extends AbstractWorkflowEntity {
 	private FeeType befImage;
 	private LoggedInUser userDetails;
 	private String hostFeeTypeCode;
-	// GST fields
 	private boolean taxApplicable;
 	private String taxComponent;
-
 	private boolean amortzReq;
 	private boolean refundable;
-
 	private boolean dueAccReq;
 	private Long dueAccSet;
 	private String dueAcctSetCode;
 	private String dueAcctSetCodeName;
 	private boolean tdsReq;
-
-	// ### START SFA_20210405 -->
 	private String acType;
 	private String acTypeDesc;
 	private String feeIncomeOrExpense;
-	// ### END SFA_20210405 <--
+	private String payableLinkTo;
+	private Long recvFeeTypeId;
+	private String recvFeeTypeCode;
+	private String recvFeeTypeDesc;
+	private String allocationtype;
 
 	public FeeType() {
 		super();
@@ -110,6 +107,11 @@ public class FeeType extends AbstractWorkflowEntity {
 		entity.setAcType(this.acType);
 		entity.setAcTypeDesc(this.acTypeDesc);
 		entity.setFeeIncomeOrExpense(this.feeIncomeOrExpense);
+		entity.setPayableLinkTo(this.payableLinkTo);
+		entity.setRecvFeeTypeId(this.recvFeeTypeId);
+		entity.setRecvFeeTypeCode(this.recvFeeTypeCode);
+		entity.setRecvFeeTypeDesc(this.recvFeeTypeDesc);
+		entity.setAllocationtype(this.allocationtype);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -132,6 +134,10 @@ public class FeeType extends AbstractWorkflowEntity {
 		excludeFields.add("dueAcctSetCodeName");
 		excludeFields.add("acType");
 		excludeFields.add("acTypeDesc");
+		excludeFields.add("recvFeeTypeCode");
+		excludeFields.add("recvFeeTypeDesc");
+		excludeFields.add("allocationtype");
+
 		return excludeFields;
 	}
 
@@ -347,4 +353,43 @@ public class FeeType extends AbstractWorkflowEntity {
 		this.feeIncomeOrExpense = feeIncomeOrExpense;
 	}
 
+	public String getPayableLinkTo() {
+		return payableLinkTo;
+	}
+
+	public void setPayableLinkTo(String payableLinkTo) {
+		this.payableLinkTo = payableLinkTo;
+	}
+
+	public Long getRecvFeeTypeId() {
+		return recvFeeTypeId;
+	}
+
+	public void setRecvFeeTypeId(Long recvFeeTypeId) {
+		this.recvFeeTypeId = recvFeeTypeId;
+	}
+
+	public String getRecvFeeTypeCode() {
+		return recvFeeTypeCode;
+	}
+
+	public void setRecvFeeTypeCode(String recvFeeTypeCode) {
+		this.recvFeeTypeCode = recvFeeTypeCode;
+	}
+
+	public String getRecvFeeTypeDesc() {
+		return recvFeeTypeDesc;
+	}
+
+	public void setRecvFeeTypeDesc(String recvFeeTypeDesc) {
+		this.recvFeeTypeDesc = recvFeeTypeDesc;
+	}
+
+	public String getAllocationtype() {
+		return allocationtype;
+	}
+
+	public void setAllocationtype(String allocationtype) {
+		this.allocationtype = allocationtype;
+	}
 }

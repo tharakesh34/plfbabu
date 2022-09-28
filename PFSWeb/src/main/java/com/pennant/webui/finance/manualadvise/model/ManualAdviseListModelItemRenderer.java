@@ -36,7 +36,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.fee.AdviseType;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -54,8 +54,8 @@ public class ManualAdviseListModelItemRenderer implements ListitemRenderer<Manua
 	public void render(Listitem item, ManualAdvise manualAdvise, int count) {
 
 		Listcell lc;
-		lc = new Listcell(PennantStaticListUtil.getPropertyValue(PennantStaticListUtil.getManualAdvisePropertyTypes(),
-				manualAdvise.getAdviseType()));
+
+		lc = new Listcell(AdviseType.adviseType(manualAdvise.getAdviseType()).name());
 		lc.setParent(item);
 		lc = new Listcell(manualAdvise.getFinReference());
 		lc.setParent(item);

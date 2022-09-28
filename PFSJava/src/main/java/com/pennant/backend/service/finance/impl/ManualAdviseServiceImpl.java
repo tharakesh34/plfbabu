@@ -84,6 +84,7 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * Service implementation for methods that depends on <b>ManualAdvise</b>.<br>
@@ -170,6 +171,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			return null;
 		}
 
+		manualAdvise.setFeeType(this.feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID()));
+
 		// Document Details
 		List<DocumentDetails> documents = documentDetailsDAO.getDocumentDetailsByRef(
 				String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
@@ -197,17 +200,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public String getTaxComponent(Long adviseID, String type) {
 		return manualAdviseDAO.getTaxComponent(adviseID, type);
-	}
-
-	@Override
-	public ManualAdvise getAdviceFeeType(ManualAdvise manualAdvise) {
-		FeeType feeType = this.feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID());
-		if (feeType != null) {
-			com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
-			BeanUtils.copyProperties(feeType, modelFeeType);
-			manualAdvise.setFeeType(modelFeeType);
-		}
-		return manualAdvise;
 	}
 
 	@Override
@@ -984,6 +976,39 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public BigDecimal getBalanceAmt(long finID, Date valueDate) {
 		return manualAdviseDAO.getBalanceAmt(finID, valueDate);
+	}
+
+	@Override
+	public BigDecimal getEligibleAmount(ManualAdvise ma, FeeType feeType) {
+		logger.debug(Literal.ENTERING);
+
+		String reference = ma.getFinReference();
+		Date valueDate = ma.getValueDate();
+
+		long feeTypeID = feeType.getFeeTypeID();
+		String linkTo = feeType.getPayableLinkTo();
+		Long recvId = feeType.getRecvFeeTypeId();
+
+		BigDecimal eligibleAmt = BigDecimal.ZERO;
+		if (Allocation.MANADV.equals(linkTo) && recvId != null) {
+			eligibleAmt = manualAdviseDAO.getPaidAmountsByFeeType(reference, recvId, valueDate);
+		} else {
+			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(reference, linkTo);
+		}
+
+		eligibleAmt = eligibleAmt.subtract(manualAdviseDAO.getExistingPayableAmount(reference, feeTypeID));
+
+		logger.debug(Literal.LEAVING);
+		return eligibleAmt.compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : eligibleAmt;
+	}
+
+	public boolean isDuplicatePayble(long finID, long feeTypeId, String linkTo) {
+		return manualAdviseDAO.isDuplicatePayble(finID, feeTypeId, linkTo);
+	}
+
+	@Override
+	public boolean isPaybleExist(long finID, long feeTypeID, String linkTo) {
+		return manualAdviseDAO.isPaybleExist(finID, feeTypeID, linkTo);
 	}
 
 	@Autowired

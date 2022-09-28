@@ -58,6 +58,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
@@ -773,9 +774,9 @@ public class AdvancePaymentService extends ServiceHelper {
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseID(Long.MIN_VALUE);
 		if (adviseAmount.compareTo(BigDecimal.ZERO) > 0) {
-			manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+			manualAdvise.setAdviseType(AdviseType.RECEIVABLE.id());
 		} else {
-			manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+			manualAdvise.setAdviseType(AdviseType.PAYABLE.id());
 		}
 		manualAdvise.setFinReference(finReference);
 		manualAdvise.setFeeTypeID(feeTypeID == null ? 0 : feeTypeID);
@@ -893,7 +894,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				continue;
 			}
 
-			if (FinanceConstants.MANUAL_ADVISE_RECEIVABLE == manualAdvise.getAdviseType()) {
+			if (AdviseType.isReceivable(manualAdvise.getAdviseType())) {
 				previousAdvInt = previousAdvInt.add(manualAdvise.getAdviseAmount());
 			} else {
 				previousAdvInt = previousAdvInt.subtract(manualAdvise.getAdviseAmount());
@@ -914,7 +915,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				continue;
 			}
 
-			if (FinanceConstants.MANUAL_ADVISE_RECEIVABLE == manualAdvise.getAdviseType()) {
+			if (AdviseType.isReceivable(manualAdvise.getAdviseType())) {
 				previousAdvEmi = previousAdvEmi.add(manualAdvise.getAdviseAmount());
 			} else {
 				previousAdvEmi = previousAdvEmi.subtract(manualAdvise.getAdviseAmount());
@@ -981,7 +982,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseID(Long.MIN_VALUE);
-		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		manualAdvise.setAdviseType(AdviseType.RECEIVABLE.id());
 		manualAdvise.setFinReference(finReference);
 		manualAdvise.setFeeTypeID(feeTypeID);
 		manualAdvise.setSequence(0);

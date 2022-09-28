@@ -46,7 +46,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
-import com.pennant.backend.util.FinanceConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -117,7 +117,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" FinReference in (Select FinReference from FinExcessAmount  where BalanceAmt > 0 union ");
 		sql.append(" Select FinReference from ManualAdvise Where  AdviseType = ");
-		sql.append(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+		sql.append(AdviseType.PAYABLE.id());
 		sql.append(" AND HoldDue=0 And adviseAmount - PaidAmount > 0)");
 
 		this.finReference.setMaxlength(20);

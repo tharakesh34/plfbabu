@@ -30,6 +30,7 @@ import java.util.List;
 
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
@@ -55,8 +56,6 @@ public interface ManualAdviseService {
 
 	String getTaxComponent(Long adviseID, String type);
 
-	ManualAdvise getAdviceFeeType(ManualAdvise manualAdvise);
-
 	List<ReturnDataSet> getAccountingSetEntries(ManualAdvise manualAdvise);
 
 	long getNewAdviseID();
@@ -72,4 +71,10 @@ public interface ManualAdviseService {
 	int cancelFutureDatedAdvises();
 
 	void cancelManualAdvises(FinanceMain fm);
+
+	BigDecimal getEligibleAmount(ManualAdvise ma, FeeType feeType);
+
+	boolean isDuplicatePayble(long finID, long feeTypeId, String linkTo);
+
+	boolean isPaybleExist(long finID, long feeTypeID, String linkTo);
 }

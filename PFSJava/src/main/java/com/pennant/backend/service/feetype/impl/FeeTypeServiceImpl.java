@@ -42,6 +42,7 @@ import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -58,56 +59,14 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the feeTypeDAO
-	 */
-	public FeeTypeDAO getFeeTypeDAO() {
-		return feeTypeDAO;
-	}
-
-	/**
-	 * @param feeTypeDAO the feeTypeDAO to set
-	 */
-	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
-		this.feeTypeDAO = feeTypeDAO;
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FeeTypes/FeeTypes_Temp by using
-	 * FeeTypesDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
-	 * FeeTypesDAO's update method 3) Audit the record in to AuditHeader and AdtFeeTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		logger.debug(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader);
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -119,89 +78,26 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		}
 
 		if (feeType.isNewRecord()) {
-			feeType.setFeeTypeID(Long.parseLong(getFeeTypeDAO().save(feeType, tableType)));
+			feeType.setFeeTypeID(Long.parseLong(feeTypeDAO.save(feeType, tableType)));
 			auditHeader.getAuditDetail().setModelData(feeType);
 			auditHeader.setAuditReference(String.valueOf(feeType.getFeeTypeID()));
 		} else {
-			getFeeTypeDAO().update(feeType, tableType);
+			feeTypeDAO.update(feeType, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * FeeTypes by using FeeTypesDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtFeeTypes by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-	@Override
-	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
-
-		auditHeader = businessValidation(auditHeader, "delete");
-
-		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
-			return auditHeader;
-		}
-
-		FeeType feeType = (FeeType) auditHeader.getAuditDetail().getModelData();
-		getFeeTypeDAO().delete(feeType, TableType.MAIN_TAB);
-
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
-		return auditHeader;
-	}
-
-	/**
-	 * getFeeTypesById fetch the details by using FeeTypesDAO's getFeeTypesById method.
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return FeeTypes
-	 */
-	@Override
-	public FeeType getFeeTypeById(long id) {
-		return getFeeTypeDAO().getFeeTypeById(id, "_View");
-	}
-
-	/**
-	 * getApprovedFeeTypesById fetch the details by using FeeTypesDAO's getFeeTypesById method . with parameter id and
-	 * type as blank. it fetches the approved records from the FeeTypes.
-	 * 
-	 * @param id (String)
-	 * @return FeeTypes
-	 */
-	public FeeType getApprovedFeeTypeById(long id) {
-		return getFeeTypeDAO().getFeeTypeById(id, "_AView");
-	}
-
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getFeeTypeDAO().delete with parameters
-	 * feeType,"" b) NEW Add new record in to main table by using getFeeTypeDAO().save with parameters feeType,"" c)
-	 * EDIT Update record in the main table by using getFeeTypeDAO().update with parameters feeType,"" 3) Delete the
-	 * record from the workFlow table by using getFeeTypeDAO().delete with parameters feeType,"_Temp" 4) Audit the
-	 * record in to AuditHeader and AdtFeeTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtFeeTypes by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
-	 * Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -210,7 +106,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		FeeType feeType = new FeeType();
 		BeanUtils.copyProperties((FeeType) auditHeader.getAuditDetail().getModelData(), feeType);
 
-		getFeeTypeDAO().delete(feeType, TableType.TEMP_TAB);
+		feeTypeDAO.delete(feeType, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(feeType.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(feeTypeDAO.getFeeTypeById(feeType.getFeeTypeID(), ""));
@@ -219,7 +115,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		if (feeType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getFeeTypeDAO().delete(feeType, TableType.MAIN_TAB);
+			feeTypeDAO.delete(feeType, TableType.MAIN_TAB);
 
 		} else {
 			feeType.setRoleCode("");
@@ -231,40 +127,52 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 			if (feeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				feeType.setRecordType("");
-				getFeeTypeDAO().save(feeType, TableType.MAIN_TAB);
+				feeTypeDAO.save(feeType, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				feeType.setRecordType("");
-				getFeeTypeDAO().update(feeType, TableType.MAIN_TAB);
+				feeTypeDAO.update(feeType, TableType.MAIN_TAB);
 			}
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(feeType);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
 
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFeeTypeDAO().delete with parameters feeType,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtFeeTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
+	@Override
+	public AuditHeader delete(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader);
+
+		if (!auditHeader.isNextProcess()) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+
+		FeeType feeType = (FeeType) auditHeader.getAuditDetail().getModelData();
+		feeTypeDAO.delete(feeType, TableType.MAIN_TAB);
+
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "doReject");
+		logger.debug(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -272,60 +180,22 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		FeeType feeType = (FeeType) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFeeTypeDAO().delete(feeType, TableType.TEMP_TAB);
+		feeTypeDAO.delete(feeType, TableType.TEMP_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
-		auditHeader.setAuditDetail(auditDetail);
-		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
-		return auditHeader;
+	@Override
+	public FeeType getFeeTypeById(long id) {
+		return feeTypeDAO.getFeeTypeById(id, "_View");
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getFeeTypeDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-	 * the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @param method
-	 * @return
-	 */
-
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-		logger.debug("Entering");
-
-		// Get the model object.
-		FeeType feeType = (FeeType) auditDetail.getModelData();
-
-		// Check the unique keys.
-		if (feeType.isNewRecord() && feeTypeDAO.isDuplicateKey(feeType.getFeeTypeID(), feeType.getFeeTypeCode(),
-				feeType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ": " + feeType.getFeeTypeCode();
-
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
-		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
-		logger.debug("Leaving");
-		return auditDetail;
+	@Override
+	public FeeType getApprovedFeeTypeById(long id) {
+		return feeTypeDAO.getFeeTypeById(id, "_AView");
 	}
 
 	@Override
@@ -335,7 +205,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 
 	@Override
 	public String getTaxCompByCode(String feeTypeCode) {
-		return getFeeTypeDAO().getTaxCompByCode(feeTypeCode);
+		return feeTypeDAO.getTaxCompByCode(feeTypeCode);
 	}
 
 	@Override
@@ -346,7 +216,6 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	@Override
 	public List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type) {
 		return feeTypeDAO.getFeeTypeListByIds(feeTypeIds, type);
-
 	}
 
 	@Override
@@ -354,4 +223,47 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		return feeTypeDAO.getFeeTypeListByCodes(feeTypeCodes, type);
 	}
 
+	@Override
+	public FeeType getFeeTypeByRecvFeeTypeId(long id) {
+		return feeTypeDAO.getFeeTypeByRecvFeeTypeId(id);
+	}
+
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader = nextProcess(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
+
+		FeeType feeType = (FeeType) auditDetail.getModelData();
+
+		if (feeType.isNewRecord() && feeTypeDAO.isDuplicateKey(feeType.getFeeTypeID(), feeType.getFeeTypeCode(),
+				feeType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ": " + feeType.getFeeTypeCode();
+
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
 }

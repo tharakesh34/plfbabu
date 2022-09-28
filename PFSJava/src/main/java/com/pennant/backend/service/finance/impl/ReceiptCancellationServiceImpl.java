@@ -146,6 +146,7 @@ import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.eod.cache.FeeTypeConfigCache;
 import com.pennant.pff.eod.cache.RuleConfigCache;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -1051,7 +1052,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		ManualAdvise manualAdvise = new ManualAdvise();
-		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		manualAdvise.setAdviseType(AdviseType.RECEIVABLE.id());
 		manualAdvise.setFinID(finID);
 		manualAdvise.setFinReference(finReference);
 		manualAdvise.setFeeTypeID(feeTypeDAO.getFeeTypeId(PennantConstants.FEETYPE_BOUNCE));
@@ -1396,7 +1397,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						dueCreated = manualAdvise.isDueCreation();
 
 						if (!dueCreated) {
-							if (manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_RECEIVABLE) {
+							if (AdviseType.isReceivable(manualAdvise.getAdviseType())) {
 								if (taxHeader != null) {
 									mam.setDebitInvoiceId(taxHeader.getInvoiceID());
 								}

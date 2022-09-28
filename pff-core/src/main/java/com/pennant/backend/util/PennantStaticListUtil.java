@@ -35,6 +35,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.overdraft.OverdraftConstants;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
@@ -186,8 +187,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> receiptModeStatus;
 	private static List<ValueLabel> enqReceiptModeStatus;
 	private static List<ValueLabel> allocationMethods;
-	private static List<ValueLabel> manualAdviseTypes;
-	private static List<Property> manualAdvisePropertyTypes;
 	private static List<Property> reasonTypeList;
 	private static List<Property> categoryTypeList;
 	private static List<ValueLabel> actionList;
@@ -372,6 +371,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> mappingTypes;
 	private static List<ValueLabel> reportFormatList;
 	private static List<ValueLabel> custCtgList;
+	private static List<ValueLabel> maCategories;
 
 	/**
 	 * Gets the list of applications.
@@ -3304,28 +3304,6 @@ public class PennantStaticListUtil {
 		return allocationMethods;
 	}
 
-	public static List<ValueLabel> getManualAdviseTypes() {
-		if (manualAdviseTypes == null) {
-			manualAdviseTypes = new ArrayList<ValueLabel>(2);
-			manualAdviseTypes.add(new ValueLabel(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE),
-					Labels.getLabel("label_ManualAdvise_Receivable")));
-			manualAdviseTypes.add(new ValueLabel(String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE),
-					Labels.getLabel("label_ManualAdvise_Payable")));
-		}
-		return manualAdviseTypes;
-	}
-
-	public static List<Property> getManualAdvisePropertyTypes() {
-		if (manualAdvisePropertyTypes == null) {
-			manualAdvisePropertyTypes = new ArrayList<Property>(2);
-			manualAdvisePropertyTypes.add(new Property(FinanceConstants.MANUAL_ADVISE_RECEIVABLE,
-					Labels.getLabel("label_ManualAdvise_Receivable")));
-			manualAdvisePropertyTypes.add(new Property(FinanceConstants.MANUAL_ADVISE_PAYABLE,
-					Labels.getLabel("label_ManualAdvise_Payable")));
-		}
-		return manualAdvisePropertyTypes;
-	}
-
 	public static List<Property> getReasonType() {
 		if (reasonTypeList == null) {
 			reasonTypeList = new ArrayList<>(3);
@@ -5688,4 +5666,19 @@ public class PennantStaticListUtil {
 		return custCtgList;
 	}
 
+	public static List<ValueLabel> getManualAdviseCategory() {
+		if (maCategories == null) {
+			maCategories = new ArrayList<>();
+
+			maCategories.add(new ValueLabel(Allocation.ADHOC, "Adhoc"));
+			maCategories.add(new ValueLabel(Allocation.PFT, "Interest"));
+			maCategories.add(new ValueLabel(Allocation.PRI, "Principal"));
+			maCategories.add(new ValueLabel(Allocation.BOUNCE, "Bounce"));
+			maCategories.add(new ValueLabel(Allocation.ODC, "ODC"));
+			maCategories.add(new ValueLabel(Allocation.LPFT, "LPFT"));
+			maCategories.add(new ValueLabel(Allocation.MANADV, "Other Receivables"));
+		}
+
+		return maCategories;
+	}
 }

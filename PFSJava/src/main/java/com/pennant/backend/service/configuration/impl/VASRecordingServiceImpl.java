@@ -124,6 +124,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -1764,7 +1765,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseID(Long.MIN_VALUE);
-		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+		manualAdvise.setAdviseType(AdviseType.PAYABLE.id());
 		manualAdvise.setFinReference(vASRecording.getPrimaryLinkRef());
 		manualAdvise.setFeeTypeID(vASRecording.getVasConfiguration().getFeeType());
 		manualAdvise.setSequence(0);
@@ -1806,7 +1807,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseID(Long.MIN_VALUE);
-		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		manualAdvise.setAdviseType(AdviseType.RECEIVABLE.id());
 		manualAdvise.setFinReference(vASRecording.getVasReference());
 		manualAdvise.setFeeTypeID(vASRecording.getVasConfiguration().getFeeType());
 		manualAdvise.setSequence(0);

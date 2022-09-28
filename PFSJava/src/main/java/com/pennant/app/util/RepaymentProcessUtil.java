@@ -93,6 +93,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -982,7 +983,7 @@ public class RepaymentProcessUtil {
 				if (dueCreated) {
 					// Due Created and GST invoice not Generated
 					if (PennantConstants.NO.equals(isGSTInvOnDue)) {
-						if (manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE) {
+						if (AdviseType.isPayable(manualAdvise.getAdviseType())) {
 							payPaidMovementList.add(movement);
 						} else {
 							rcvPaidMovementList.add(movement);
@@ -1013,7 +1014,7 @@ public class RepaymentProcessUtil {
 					}
 
 				} else {
-					if (manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE) {
+					if (AdviseType.isPayable(manualAdvise.getAdviseType())) {
 						payPaidMovementList.add(movement);
 					} else {
 						rcvPaidMovementList.add(movement);
@@ -1455,7 +1456,7 @@ public class RepaymentProcessUtil {
 								}
 							}
 
-							if (FinanceConstants.MANUAL_ADVISE_PAYABLE == ma.getAdviseType()) {
+							if (AdviseType.isPayable(ma.getAdviseType())) {
 								ma.setBalanceAmt(ma.getPaidAmount().add(ma.getWaivedAmount()).negate());
 							}
 

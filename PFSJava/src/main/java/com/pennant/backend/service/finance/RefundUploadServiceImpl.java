@@ -51,11 +51,11 @@ import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
@@ -383,7 +383,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 		if (UploadConstants.REFUNDUPLOAD_MANUAL_ADVISE_PAYABLE.equals(refundUpload.getType())) {
 			BigDecimal totalAmount = BigDecimal.ZERO;
 			List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(finID,
-					FinanceConstants.MANUAL_ADVISE_PAYABLE, refundUpload.getFeeType());
+					AdviseType.PAYABLE.id(), refundUpload.getFeeType());
 
 			if (CollectionUtils.isNotEmpty(advises)) {
 
@@ -1015,7 +1015,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 					reason = "Fee Type is mandatory for Type is M.";
 				} else {
 					List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(fm.getFinID(),
-							FinanceConstants.MANUAL_ADVISE_PAYABLE, refundUpload.getFeeType());
+							AdviseType.PAYABLE.id(), refundUpload.getFeeType());
 					if (CollectionUtils.isNotEmpty(advises)) {
 						for (ManualAdvise advise : advises) {
 							availableAmount = availableAmount.add(advise.getBalanceAmt());

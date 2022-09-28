@@ -70,6 +70,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -362,7 +363,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		ManualAdvise ma = new ManualAdvise();
 		ma.setAdviseID(manualAdviseService.getNewAdviseID());
 		ma.setFinReference(finMain.getFinReference());
-		ma.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+		ma.setAdviseType(AdviseType.PAYABLE.id());
 		ma.setAdviseAmount(cashbackAmount);
 		ma.setBalanceAmt(ma.getAdviseAmount());
 		ma.setHoldDue(true);
