@@ -207,6 +207,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -4974,7 +4975,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 
 			FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
-			bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+			bounce.setAdviseType(AdviseType.RECEIVABLE.id());
 			bounce.setFinID(fm.getFinID());
 			bounce.setFinReference(header.getReference());
 			bounce.setFeeTypeID(feeType.getFeeTypeID());
