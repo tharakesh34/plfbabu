@@ -44,6 +44,21 @@
 	<changeSet id="PSD#205798.01" author="vasudevarao.s">
 		<dropNotNullConstraint tableName="COVENANTS_TEMP" columnName="REMARKS" columnDataType="varchar(500)" />
 	</changeSet>
-
-
+	
+	 <changeSet id="PSD#205878.1" author="Mounika.M">
+    	<modifyDataType tableName="QueryDetail" columnName="QryNotes" newDataType="varchar(2000)"/>
+    </changeSet>
+    
+    <changeSet id="PSD#205878.2" author="Mounika.M">
+    	<modifyDataType tableName="QueryDetail" columnName="Status" newDataType="varchar(100)"/>
+    </changeSet>
+    
+     <changeSet id="PSD#205878.3" author="Mounika.M">
+		<modifyDataType tableName="Querydetail_Temp" columnName="QryNotes" newDataType="varchar(2000)"/>
+     </changeSet>
+     
+      <changeSet id="PSD#205878.4" author="Mounika.M">
+      	<modifyDataType tableName="Querydetail_Temp" columnName="Status" newDataType="varchar(100)"/>
+     </changeSet>
+     
 </databaseChangeLog>
