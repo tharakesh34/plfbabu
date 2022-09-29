@@ -61,12 +61,10 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class CapitalizationPostings implements Tasklet {
-
 	private Logger logger = LogManager.getLogger(CapitalizationPostings.class);
 
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private SuspensePostingUtil suspensePostingUtil;
-
 	private DataSource dataSource;
 
 	public CapitalizationPostings() {
@@ -84,72 +82,59 @@ public class CapitalizationPostings implements Tasklet {
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		// READ REPAYMENTS DUE TODAY
-		Connection connection = null;
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
+		List<FinanceProfitDetail> pftDetailsList = new ArrayList<FinanceProfitDetail>();
 		FinanceProfitDetail pftDetail = null;
 
-		try {
+		try (Connection connection = DataSourceUtils.doGetConnection(dataSource);
+				PreparedStatement statement = connection.prepareStatement(prepareSelectQuery());) {
+			statement.setObject(1, dateValueDate);
+			statement.setObject(2, dateValueDate);
 
-			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(prepareSelectQuery());
-			sqlStatement.setObject(1, dateValueDate);
-			sqlStatement.setObject(2, dateValueDate);
-			resultSet = sqlStatement.executeQuery();
+			try (ResultSet resultSet = statement.executeQuery();) {
+				while (resultSet.next()) {
+					// Amount Codes preparation using FinProfitDetails
+					AEEvent aeEvent = new AEEvent();
+					AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+					aeEvent.setFinReference(resultSet.getString("FinReference"));
+					amountCodes.setCpzCur(resultSet.getBigDecimal("CpzAmount"));
+					amountCodes.setCpzPrv(resultSet.getBigDecimal("PrvCpzAmt") == null ? BigDecimal.ZERO
+							: resultSet.getBigDecimal("PrvCpzAmt"));
+					amountCodes.setCpzTot(resultSet.getBigDecimal("TotalCpz"));
+					amountCodes.setCpzNxt(amountCodes.getCpzTot().subtract(amountCodes.getCpzPrv())
+							.subtract(amountCodes.getCpzCur()));
 
-			List<FinanceProfitDetail> pftDetailsList = new ArrayList<FinanceProfitDetail>();
+					// **** Accounting Set Execution for Amortization ******//
+					aeEvent.setFinID(resultSet.getLong("FinID"));
+					aeEvent.setFinReference(resultSet.getString("FinReference"));
+					aeEvent.setAccountingEvent(AccountingEvent.COMPOUND);
+					aeEvent.setBranch(resultSet.getString("FinBranch"));
+					aeEvent.setCcy(resultSet.getString("FinCcy"));
+					aeEvent.setPostDate(dateAppDate);
+					aeEvent.setValueDate(dateValueDate);
+					aeEvent.setSchdDate(resultSet.getDate("NextRepayDate"));
+					aeEvent.setFinType(resultSet.getString("FinType"));
+					aeEvent.setCustID(resultSet.getLong("CustID"));
 
-			while (resultSet.next()) {
+					// Postings Process
+					// FIXME: 050517 Needs to fill return dataset
+					// getPostingsPreparationUtil().processPostingDetails(aeEvent);
 
-				// Amount Codes preparation using FinProfitDetails
-				AEEvent aeEvent = new AEEvent();
-				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-				aeEvent.setFinReference(resultSet.getString("FinReference"));
-				amountCodes.setCpzCur(resultSet.getBigDecimal("CpzAmount"));
-				amountCodes.setCpzPrv(resultSet.getBigDecimal("PrvCpzAmt") == null ? BigDecimal.ZERO
-						: resultSet.getBigDecimal("PrvCpzAmt"));
-				amountCodes.setCpzTot(resultSet.getBigDecimal("TotalCpz"));
-				amountCodes.setCpzNxt(
-						amountCodes.getCpzTot().subtract(amountCodes.getCpzPrv()).subtract(amountCodes.getCpzCur()));
+					// Update Finance Profit Details
+					pftDetail = new FinanceProfitDetail();
+					pftDetail.setTdPftCpz(
+							resultSet.getBigDecimal("CpzAmount").add(resultSet.getBigDecimal("PrvCpzAmt")));
+					pftDetail.setLastMdfDate(dateValueDate);
 
-				// **** Accounting Set Execution for Amortization ******//
-
-				aeEvent.setFinID(resultSet.getLong("FinID"));
-				aeEvent.setFinReference(resultSet.getString("FinReference"));
-				aeEvent.setAccountingEvent(AccountingEvent.COMPOUND);
-				aeEvent.setBranch(resultSet.getString("FinBranch"));
-				aeEvent.setCcy(resultSet.getString("FinCcy"));
-				aeEvent.setPostDate(dateAppDate);
-				aeEvent.setValueDate(dateValueDate);
-				aeEvent.setSchdDate(resultSet.getDate("NextRepayDate"));
-				aeEvent.setFinType(resultSet.getString("FinType"));
-				aeEvent.setCustID(resultSet.getLong("CustID"));
-
-				// Postings Process
-				// FIXME: 050517 Needs to fill return dataset
-				// getPostingsPreparationUtil().processPostingDetails(aeEvent);
-
-				// Update Finance Profit Details
-				pftDetail = new FinanceProfitDetail();
-				pftDetail.setTdPftCpz(resultSet.getBigDecimal("CpzAmount").add(resultSet.getBigDecimal("PrvCpzAmt")));
-				pftDetail.setLastMdfDate(dateValueDate);
-
-				pftDetailsList.add(pftDetail);
-				if (pftDetailsList.size() == 500) {
-					financeProfitDetailDAO.updateCpzDetail(pftDetailsList);
-					pftDetailsList.clear();
+					pftDetailsList.add(pftDetail);
+					if (pftDetailsList.size() == 500) {
+						financeProfitDetailDAO.updateCpzDetail(pftDetailsList);
+						pftDetailsList.clear();
+					}
 				}
 			}
 
 			if (pftDetailsList.size() > 0) {
 				financeProfitDetailDAO.updateCpzDetail(pftDetailsList);
-			}
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
 			}
 		}
 
@@ -164,7 +149,6 @@ public class CapitalizationPostings implements Tasklet {
 	 * @return
 	 */
 	private String prepareSelectQuery() {
-
 		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinID, T1.FinReference, T1.FinBranch, T1.FinType, ");
 		selQuery.append(" T1.FinCcy , T1.CustID , T2.CpzAmount, T1.TotalCpz ,");
 		selQuery.append(" (SELECT SUM(CpzAmount)  TotCurCpzAmt FROM  FinScheduleDetails ");
@@ -175,7 +159,6 @@ public class CapitalizationPostings implements Tasklet {
 		selQuery.append(" AND T2.DefSchdDate = ?");
 		selQuery.append(" AND T2.CpzOnSchDate= 1 AND T2.CpzAmount > 0 AND T1.FinIsActive = 1");
 		return selQuery.toString();
-
 	}
 
 	// ******************************************************//
@@ -201,9 +184,4 @@ public class CapitalizationPostings implements Tasklet {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-
-	public DataSource getDataSource() {
-		return dataSource;
-	}
-
 }
