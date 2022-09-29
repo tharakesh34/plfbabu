@@ -12,7 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -35,9 +34,6 @@ public class TestFinanceMainDAO {
 
 	@Autowired
 	private FinanceDisbursementDAO financeDisbursementDAO;
-
-	@Autowired
-	private FinODDetailsDAO finODDetailsDAO;
 
 	@Autowired
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
@@ -145,7 +141,7 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getFinanceByCustId(1463, "");
 
-		List<FinanceMain> fm = financeMainDAO.getFinanceByCollateralRef("CT2930100001");
+		financeMainDAO.getFinanceByCollateralRef("CT2930100001");
 
 		financeMainDAO.getFinReferencesByMandateId(347);
 
@@ -243,9 +239,6 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getRcdMaintenanceByRef(500, "");
 
 		financeMainDAO.getFinanceMainByOldFinReference("", true);
-
-		Date dt3 = DateUtil.parse("05/04/2019", DateFormat.SHORT_DATE);
-		Date dt4 = DateUtil.parse("04/12/2033", DateFormat.SHORT_DATE);
 
 		// financeMainDAO.getFinancesByFinApprovedDate(dt3, dt4);// EntityCode column does not exist in FinanceMain
 
@@ -479,7 +472,6 @@ public class TestFinanceMainDAO {
 	@Transactional
 	@Rollback(true)
 	public void testDeleteTemp() {
-		Date dt1 = DateUtil.parse("01/02/2019", DateFormat.SHORT_DATE);
 		fm = new FinanceMain();
 		fm = financeMainDAO.getFinanceMainById(5345, "_Temp", false);
 		financeMainDAO.delete(fm, TableType.TEMP_TAB, false, false);
@@ -491,7 +483,6 @@ public class TestFinanceMainDAO {
 	@Rollback(true)
 	public void testDeleteMain() {
 		// DependencyFoundException
-		Date dt1 = DateUtil.parse("01/02/2019", DateFormat.SHORT_DATE);
 		fm = new FinanceMain();
 		fm = financeMainDAO.getFinanceMainById(5354, "", false);
 		financeDisbursementDAO.deleteByFinReference(5354, "", false, 0);

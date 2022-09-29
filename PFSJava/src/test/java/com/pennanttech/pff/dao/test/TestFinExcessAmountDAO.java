@@ -18,7 +18,6 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 @ContextConfiguration(locations = "classpath:dao-test-context.xml")
@@ -39,11 +38,11 @@ public class TestFinExcessAmountDAO {
 
 		finExcessAmountDAO.updateExcess(list.get(0));
 
-		List<FinExcessMovement> excList = finExcessAmountDAO.getFinExcessAmount(2);
-		List<FinExcessMovement> excList1 = finExcessAmountDAO.getFinExcessAmount(-1);
+		finExcessAmountDAO.getFinExcessAmount(2);
+		finExcessAmountDAO.getFinExcessAmount(-1);
 
-		boolean isExists = finExcessAmountDAO.isFinExcessAmtExists(3468);
-		boolean isExist = finExcessAmountDAO.isFinExcessAmtExists(1);
+		finExcessAmountDAO.isFinExcessAmtExists(3468);
+		finExcessAmountDAO.isFinExcessAmtExists(1);
 
 		fe = finExcessAmountDAO.getFinExcessAmount(3468, "E");
 		finExcessAmountDAO.getFinExcessAmount(367, "");
@@ -87,8 +86,6 @@ public class TestFinExcessAmountDAO {
 		finExcessAmountDAO.updExcessAfterRealize(3049, "E", new BigDecimal(10000));
 
 		Date dt = DateUtil.getSysDate();
-
-		Date dt1 = DateUtil.parse("19/08/2021", DateFormat.SHORT_DATE);
 
 		finExcessAmountDAO.getFinExcessMovement(518, "UPFRONT", dt);
 		finExcessAmountDAO.getFinExcessMovement(500, "UPFRONT", dt);

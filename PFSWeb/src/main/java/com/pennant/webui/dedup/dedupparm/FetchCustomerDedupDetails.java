@@ -384,7 +384,6 @@ public class FetchCustomerDedupDetails {
 		String country = "";
 		String pincode = "";
 		String addressType = "";
-		String drivingLicence = masterDefDAO.getMasterCode("DOC_TYPE", "DRIVING_LICENCE");
 		String drivingLicenceNo = "";
 
 		String voterIdCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, PennantConstants.VOTER_ID);

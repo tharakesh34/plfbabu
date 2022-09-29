@@ -201,7 +201,6 @@ public class SummaryDetailService extends ExtendedTestClass {
 	private BigDecimal calculateTotFeeChargeAmt(FinScheduleData schdData) {
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 		BigDecimal totFeeAmount = BigDecimal.ZERO;
 		// Fetch total fee details to capture total fee paid by customer
 		List<FinFeeDetail> feeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "");

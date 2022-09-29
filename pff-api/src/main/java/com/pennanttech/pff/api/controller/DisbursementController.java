@@ -100,7 +100,6 @@ public class DisbursementController extends ExtendedTestClass {
 		for (FinAdvancePayments fap : disbInstructions) {
 			long paymentId = fap.getPaymentId();
 			String channel = fap.getChannel();
-			String disbParty = fap.getPaymentDetail();
 			String finReference = fap.getFinReference();
 			String disbType = fap.getPaymentType();
 
