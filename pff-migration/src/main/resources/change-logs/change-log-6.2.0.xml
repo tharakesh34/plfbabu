@@ -30,8 +30,7 @@
 	<changeSet id="ST#76.1" author="saikiran.n">
 		<addColumn tableName="Mandates_Temp">
 			<column name="SwapEffectiveDate" type="datetime" />
-			<column name="Hold" type="boolean" />
-			<column name="HoldReasons" type="bigint" />
+			<column name="HoldReason" type="bigint" />
 			<column name="SecurityMandate" type="boolean" />
 			<column name="EmployeeID" type="bigint" />
 			<column name="EmployerName" type="varchar(200)" />
@@ -39,8 +38,8 @@
 	</changeSet>
 
 	<changeSet id="ST#76.1.1" author="saikiran.n">
-		<addForeignKeyConstraint constraintName="fk_mandates_temp_holdreasons"
-			referencedTableName="BounceReasons" baseColumnNames="HoldReasons" baseTableName="Mandates_Temp"
+		<addForeignKeyConstraint constraintName="fk_mandates_temp_holdreason"
+			referencedTableName="BounceReasons" baseColumnNames="HoldReason" baseTableName="Mandates_Temp"
 			referencedColumnNames="BounceId" />
 	</changeSet>
 
@@ -53,27 +52,23 @@
 	<changeSet id="ST#76.1.3" author="saikiran.n">
 		<sql>
 			<![CDATA[
-				UPDATE MANDATES_TEMP SET HOLD = 0;
 				UPDATE MANDATES_TEMP SET SECURITYMANDATE = 0;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#76.1.4" author="saikiran.n">
-		<addNotNullConstraint tableName="MANDATES_TEMP" columnName="HOLD" columnDataType="boolean" />
 		<addNotNullConstraint tableName="MANDATES_TEMP" columnName="SECURITYMANDATE"
 			columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="ST#76.1.5" author="saikiran.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="Hold" tableName="Mandates_Temp" defaultValue="0" />
 		<addDefaultValue columnName="SecurityMandate" tableName="Mandates_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="ST#76.1.5" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE Mandates_Temp ADD CONSTRAINT DF_MANDATES_TEMP_HOLD DEFAULT 0 FOR HOLD;
 				ALTER TABLE Mandates_Temp ADD CONSTRAINT DF_MANDATES_TEMP_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
 			]]>
 		</sql>
@@ -82,8 +77,7 @@
 	<changeSet id="ST#76.2" author="saikiran.n">
 		<addColumn tableName="Mandates">
 			<column name="SwapEffectiveDate" type="datetime" />
-			<column name="Hold" type="boolean" />
-			<column name="HoldReasons" type="bigint" />
+			<column name="HoldReason" type="bigint" />
 			<column name="SecurityMandate" type="boolean" />
 			<column name="EmployeeID" type="bigint" />
 			<column name="EmployerName" type="varchar(200)" />
@@ -91,8 +85,8 @@
 	</changeSet>
 
 	<changeSet id="ST#76.2.1" author="saikiran.n">
-		<addForeignKeyConstraint constraintName="fk_mandates_holdreasons"
-			referencedTableName="BounceReasons" baseColumnNames="HoldReasons" baseTableName="Mandates"
+		<addForeignKeyConstraint constraintName="fk_mandates_holdreason"
+			referencedTableName="BounceReasons" baseColumnNames="HoldReason" baseTableName="Mandates"
 			referencedColumnNames="BounceId" />
 	</changeSet>
 
@@ -105,26 +99,22 @@
 	<changeSet id="ST#76.2.3" author="saikiran.n">
 		<sql>
 			<![CDATA[
-				UPDATE MANDATES SET HOLD = 0;
 				UPDATE MANDATES SET SECURITYMANDATE = 0;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#76.2.4" author="saikiran.n">
-		<addNotNullConstraint tableName="MANDATES" columnName="HOLD" columnDataType="boolean" />
 		<addNotNullConstraint tableName="MANDATES" columnName="SECURITYMANDATE" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="ST#76.2.5" author="saikiran.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="Hold" tableName="Mandates" defaultValue="0" />
 		<addDefaultValue columnName="SecurityMandate" tableName="Mandates" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="ST#76.2.5" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE Mandates ADD CONSTRAINT DF_MANDATES_HOLD DEFAULT 0 FOR HOLD;
 				ALTER TABLE Mandates ADD CONSTRAINT DF_MANDATES_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
 			]]>
 		</sql>
@@ -205,8 +195,7 @@
 						, M.EMANDATESOURCE
 						, M.EMANDATEREFERENCENO
 						, FM.FINTYPE
-						, M.HOLD
-						, M.HOLDREASONS
+						, M.HOLDREASON
 						, M.SWAPEFFECTIVEDATE
 						, M.SECURITYMANDATE
 						, M.EMPLOYEEID
@@ -302,8 +291,7 @@
 					, M.EMANDATESOURCE
 					, M.EMANDATEREFERENCENO
 					, FM.FINTYPE
-					, M.HOLD
-					, M.HOLDREASONS
+					, M.HOLDREASON
 					, M.SWAPEFFECTIVEDATE
 					, M.SECURITYMANDATE
 					, M.EMPLOYEEID
@@ -399,8 +387,7 @@
 					    , M.EMANDATESOURCE
 					    , M.EMANDATEREFERENCENO
 						, FM.FINTYPE
-						, M.HOLD
-						, M.HOLDREASONS
+						, M.HOLDREASON
 						, M.SWAPEFFECTIVEDATE
 						, M.SECURITYMANDATE
 						, M.EMPLOYEEID
@@ -474,8 +461,7 @@
 						, M.EMANDATESOURCE
 						, M.EMANDATEREFERENCENO
 						, FM.FINTYPE
-						, M.HOLD
-						, M.HOLDREASONS
+						, M.HOLDREASON
 						, M.SWAPEFFECTIVEDATE
 						, M.SECURITYMANDATE
 						, M.EMPLOYEEID
@@ -521,22 +507,14 @@
 			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'MandateDialog_SwapEffectiveDate', 'MandateDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SwapEffectiveDate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SwapEffectiveDate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				
-				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_Hold');
-				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_Hold');
-				DELETE FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_Hold';
+							
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason';
 					
-			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3, 'MandateDialog_Hold', 'MandateDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_Hold'), 1, 0, 1000 , CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_Hold'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				
-				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReasons');
-				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReasons');
-				DELETE FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReasons';
-					
-			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3,'MandateDialog_HoldReasons', 'MandateDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReasons'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReasons'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			    INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 3,'MandateDialog_HoldReason', 'MandateDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_HoldReason'), 1, 0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
 				
 				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SecurityMandate');
 				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_SecurityMandate');
@@ -565,7 +543,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#81.1" author="nagavamsi.p">
+	<!-- <changeSet id="ST#81.1" author="nagavamsi.p">
 		<addColumn tableName="EMPLOYERDETAIL_TEMP">
 			<column name="AllowDAS" type="boolean" />
 		</addColumn>
@@ -1668,6 +1646,6 @@
 				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, ACTIVE) VALUES (22, 'SECMAN', 'Security Mandates', 1);
             ]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 	
 </databaseChangeLog>

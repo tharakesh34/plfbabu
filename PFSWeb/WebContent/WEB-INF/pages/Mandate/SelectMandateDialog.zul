@@ -32,7 +32,7 @@
 					<groupbox>
 						<grid sclass="GridLayoutNoBorder" sizedByContent="true" style="border:0px; padding:0px;">
 							<columns>
-								<column width="350px" />
+								<column width="250px" />
 								<column />
 							</columns>
 							<rows>

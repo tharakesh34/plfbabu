@@ -40,7 +40,6 @@ import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
-import com.pennant.webui.financemanagement.paymentMode.SelectReceiptPaymentDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -48,7 +47,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = LogManager.getLogger(SelectReceiptPaymentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectMandateDialogCtrl.class);
 
 	protected Window window_SelectMandateDialog;
 	protected Textbox custCIF;
@@ -120,17 +119,17 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	public void onChange$custCIF(Event event) {
-		Customer customer = fetchCustomerDataByCIF();
+		Customer customer = fetchCustomerDataByCIF(this.custCIF.getValue());
 		setCustomerData(customer);
 	}
 
-	public Customer fetchCustomerDataByCIF() {
+	public Customer fetchCustomerDataByCIF(String custCIF) {
 		Customer customer = new Customer();
 		this.custCIF.setConstraint("");
 		this.custCIF.setErrorMessage("");
 		this.custCIF.clearErrorMessage();
 
-		String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
+		String cif = StringUtils.trimToEmpty(custCIF);
 
 		if (this.custCIF.getValue().trim().isEmpty()) {
 			MessageUtil.showError("Invalid Customer Please Select valid Customer");
@@ -180,21 +179,10 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 	}
 
-	public CustomerDetails fetchCustomerData() {
+	public CustomerDetails fetchCustomerData(String custCIF) {
 		CustomerDetails customerDetails = null;
 		try {
-			this.custCIF.setConstraint("");
-			this.custCIF.setErrorMessage("");
-			this.custCIF.clearErrorMessage();
-			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
-
-			Customer customer = null;
-			if (StringUtils.isEmpty(cif)) {
-				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_CustomerDialog_CoreCustID.value") }));
-			} else {
-				customer = customerDataService.getCheckCustomerByCIF(cif);
-			}
+			Customer customer = customerDataService.getCheckCustomerByCIF(custCIF);
 
 			if (customer != null) {
 				customerDetails = customerDataService.getCustomerDetailsbyID(customer.getId(), true, "_AView");
@@ -203,20 +191,41 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
+
 		return customerDetails;
 	}
 
 	public void onClick$btnProceed(Event event) {
-		logger.debug(Literal.ENTERING);
-		if (!doSetValidation()) {
+
+		doSetValidation();
+
+		List<WrongValueException> exceptins = doSetData();
+
+		doRemoveValidation();
+
+		if (!exceptins.isEmpty()) {
+			WrongValueException[] wvea = new WrongValueException[exceptins.size()];
+			for (int i = 0; i < exceptins.size(); i++) {
+				wvea[i] = (WrongValueException) exceptins.get(i);
+			}
+
+			throw new WrongValuesException(wvea);
+		}
+
+		CustomerDetails cd = fetchCustomerData(mandate.getCustCIF());
+
+		if (cd == null) {
+			MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
 			return;
 		}
-		if (validCustomerDetails()) {
-			return;
-		}
+
+		Customer customer = cd.getCustomer();
+		mandate.setCustShrtName(customer.getCustShrtName());
+		mandate.setCustID(customer.getCustID());
+
+		doRemoveValidation();
+
 		doShowDialog();
-		logger.debug(Literal.LEAVING);
 	}
 
 	private void doShowDialog() {
@@ -278,63 +287,56 @@ public class SelectMandateDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		return aruments;
 	}
 
-	private boolean validCustomerDetails() {
-		CustomerDetails customerDetails = fetchCustomerData();
+	private List<WrongValueException> doSetData() {
+		List<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		if (customerDetails == null) {
-			MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
-			return true;
+		String custCIF = null;
+		try {
+			custCIF = this.custCIF.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			mandate.setEntityCode(this.entityCode.getValue());
+			mandate.setEntityDesc(this.entityCode.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			mandate.setMandateType(getComboboxValue(this.mandateTypes));
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
 		mandate.setNewRecord(true);
-		mandate.setMandateType(this.mandateTypes.getValue());
-		mandate.setMandateType(getComboboxValue(this.mandateTypes));
-		mandate.setCustCIF(customerDetails.getCustomer().getCustCIF());
-		mandate.setCustShrtName(customerDetails.getCustomer().getCustShrtName());
-		mandate.setCustID(customerDetails.getCustomer().getCustID());
+		mandate.setCustCIF(custCIF);
 
-		mandate.setEntityCode(this.entityCode.getValue());
-		mandate.setEntityDesc(this.entityCode.getDescription());
-		return false;
+		return wve;
 	}
 
-	private boolean doSetValidation() {
-		doClearMessage();
-		doRemoveValidation();
+	private void doSetValidation() {
+		this.custCIF.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_SelectMandate_Customer.value"), null, true, true));
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		try {
-			if (StringUtils.isEmpty(this.custCIF.getValue())) {
-				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
-						new String[] { Labels.getLabel("label_SelectCollateralTypeDialog_CustCIF.value") }));
-			}
+		this.entityCode.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_MandateDialog_EntityCode.value"), null, true, true));
 
-			if (!this.mandateTypes.isDisabled()) {
-				this.mandateTypes.setConstraint(new StaticListValidator(mandateTypeList,
-						Labels.getLabel("label_MandateDialog_MandateType.value")));
-			}
+		String label = Labels.getLabel("label_SelectMandate_MandateTypes.value");
+		label = label.concat(" is Mandatory ");
+		this.mandateTypes.setConstraint(new StaticListValidator(mandateTypeList, label));
 
-			if (!this.entityCode.isReadonly()) {
-				this.entityCode.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_MandateDialog_EntityCode.value"), null, true, true));
-			}
-		} catch (WrongValueException e) {
-			wve.add(e);
-		}
-
-		if (wve.size() > 0) {
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = wve.get(i);
-			}
-			throw new WrongValuesException(wvea);
-		}
-		return true;
 	}
 
 	private void doRemoveValidation() {
 		this.custCIF.setConstraint("");
+		this.entityCode.setConstraint("");
 		this.mandateTypes.setConstraint("");
+
+		this.custCIF.clearErrorMessage();
+		this.entityCode.clearErrorMessage();
+		this.mandateTypes.clearErrorMessage();
 	}
 
 	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {

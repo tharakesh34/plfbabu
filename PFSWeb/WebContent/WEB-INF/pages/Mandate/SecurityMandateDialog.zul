@@ -154,10 +154,8 @@
 									<label id="amountInWords" style="font-weight:bold;" />
 								</row>
 								<row id="holdRow" visible="false">
-									<label value="${c:l('label_MandateDialog_Hold.value')}" />
-									<checkbox id="hold" checked="false" />
 									<label value="${c:l('label_MandateDialog_HoldReasons.value')}" />
-									<extendedcombobox id="holdReasons" width="200px" />
+									<extendedcombobox id="holdReason" width="200px" />
 								</row>
 								<row id="mandateStatusRow">
 									<label value="${c:l('label_MandateDialog_RegStatus.value')}" />
@@ -199,6 +197,30 @@
 							</columns>
 							<rows>
 								<row>
+									<label value="${c:l('label_MandateDialog_AccNumber.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="accNumber" width="200px" />
+										<button id="btnFetchAccountDetails"
+											tooltiptext="${c:l('label_FetchAccountDetails.tooltiptext')}" image="/images/icons/more.png" />
+									</hbox>
+									<label value="${c:l('label_MandateDialog_AccType.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="accType" width="200px" />
+									</hbox>
+
+								</row>
+								<row>
+									<label value="${c:l('label_MandateDialog_AccHolderName.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="accHolderName" maxlength="100" width="200px" />
+									</hbox>
+									<label value="${c:l('label_MandateDialog_JointAccHolderName.value')}" />
+									<textbox id="jointAccHolderName" maxlength="50" width="200px" />
+								</row>
+								<row>
 									<label value="${c:l('label_MandateDialog_BankBranchID.value')}" />
 									<extendedcombobox id="bankBranchID" />
 								</row>
@@ -216,29 +238,6 @@
 									<textbox id="micr" maxlength="50" width="200px" readonly="true" />
 									<label value="${c:l('label_MandateDialog_Ifsc.value')}" />
 									<textbox id="ifsc" maxlength="50" width="200px" readonly="true" />
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_AccType.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<combobox id="accType" width="200px" />
-									</hbox>
-									<label value="${c:l('label_MandateDialog_AccNumber.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<textbox id="accNumber" width="200px" />
-										<button id="btnFetchAccountDetails"
-											tooltiptext="${c:l('label_FetchAccountDetails.tooltiptext')}" image="/images/icons/more.png" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MandateDialog_AccHolderName.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<textbox id="accHolderName" maxlength="100" width="200px" />
-									</hbox>
-									<label value="${c:l('label_MandateDialog_JointAccHolderName.value')}" />
-									<textbox id="jointAccHolderName" maxlength="50" width="200px" />
 								</row>
 								<row>
 									<label value="${c:l('label_MandateDialog_PhoneCountryCode.value')}" />

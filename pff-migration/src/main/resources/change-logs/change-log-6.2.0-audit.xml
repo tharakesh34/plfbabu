@@ -42,8 +42,7 @@
 	<changeSet id="ST#76.1" author="saikiran.n">
 		<addColumn tableName="AdtMandates">
 			<column name="SwapEffectiveDate" type="datetime" />
-			<column name="Hold" type="boolean" />
-			<column name="HoldReasons" type="bigint" />
+			<column name="HoldReason" type="bigint" />
 			<column name="SecurityMandate" type="boolean" />
 			<column name="EmployeeID" type="bigint" />
 			<column name="EmployerName" type="varchar(200)" />
@@ -53,33 +52,29 @@
 	<changeSet id="ST#76.2" author="saikiran.n">
 		<sql>
 			<![CDATA[
-				UPDATE ADTMANDATES SET HOLD = 0;
 				UPDATE ADTMANDATES SET SECURITYMANDATE = 0;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#76.3" author="saikiran.n">
-		<addNotNullConstraint tableName="ADTMANDATES" columnName="HOLD" columnDataType="boolean" />
 		<addNotNullConstraint tableName="ADTMANDATES" columnName="SECURITYMANDATE"
 			columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="ST#76.4" author="saikiran.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="Hold" tableName="ADTMANDATES" defaultValue="0" />
 		<addDefaultValue columnName="SecurityMandate" tableName="ADTMANDATES" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="ST#76.4" author="saikiran.n" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMANDATES_HOLD DEFAULT 0 FOR HOLD;
 				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMANDATES_SECURITYMANDATE DEFAULT 0 FOR SECURITYMANDATE;
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#81" author="nagavamsi.p">
+	<!-- <changeSet id="ST#81" author="nagavamsi.p">
 		<addColumn tableName="ADTEMPLOYERDETAIL">
 			<column name="AllowDAS" type="boolean" />
 		</addColumn>
@@ -128,6 +123,6 @@
 			<column name="AllowedSources" type="varchar(50)" />
 			<column name="UpdateBranches" type="boolean" />
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
 
 </databaseChangeLog>

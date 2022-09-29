@@ -158,10 +158,10 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId,  RecordType, WorkflowId");
 		sql.append(", OrgReference, BarCodeNumber, SwapIsActive, PrimaryMandateId, EntityCode, PartnerBankId");
-		sql.append(", DefaultMandate, EMandateSource, EMandateReferenceNo, Hold, HoldReasons");
-		sql.append(", SwapEffectiveDate, SecurityMandate,  employeeID, employerName)");
+		sql.append(", DefaultMandate, EMandateSource, EMandateReferenceNo, HoldReason");
+		sql.append(", SwapEffectiveDate, SecurityMandate,  EmployeeID, EmployerName)");
 		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?");
 		sql.append(",? ,?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -214,8 +214,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
-			ps.setBoolean(index++, mdt.isHold());
-			ps.setObject(index++, mdt.getHoldReasons());
+			ps.setObject(index++, mdt.getHoldReason());
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
 			ps.setBoolean(index++, mdt.isSecurityMandate());
 			ps.setObject(index++, mdt.getEmployeeID());
@@ -237,8 +236,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", InputDate = ?, BarCodeNumber = ?, SwapIsActive = ?, PrimaryMandateId = ?, EntityCode = ?");
-		sql.append(", PartnerBankId = ?, DefaultMandate = ?, EMandateSource = ?, EMandateReferenceNo = ?, Hold = ?");
-		sql.append(", HoldReasons = ?, SwapEffectiveDate = ?, SecurityMandate = ?, employeeID = ?, employerName = ?");
+		sql.append(", PartnerBankId = ?, DefaultMandate = ?, EMandateSource = ?, EMandateReferenceNo = ?");
+		sql.append(", HoldReason = ?, SwapEffectiveDate = ?, SecurityMandate = ?, EmployeeID = ?, EmployerName = ?");
 		sql.append(" Where MandateID = ?");
 		if (!type.endsWith("_Temp")) {
 			sql.append(" and Version= ?");
@@ -293,8 +292,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
-			ps.setBoolean(index++, mdt.isHold());
-			ps.setObject(index++, mdt.getHoldReasons());
+			ps.setObject(index++, mdt.getHoldReason());
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
 			ps.setBoolean(index++, mdt.isSecurityMandate());
 			ps.setObject(index++, mdt.getEmployeeID());
@@ -324,7 +322,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", BarCodeNumber = ?, SwapIsActive = ?, EntityCode = ?, PartnerBankId = ?, DefaultMandate = ?");
-		sql.append(", EMandateSource = ?, EMandateReferenceNo = ?, Hold = ?, HoldReasons = ?");
+		sql.append(", EMandateSource = ?, EMandateReferenceNo = ?, HoldReason = ?");
 		sql.append(", SwapEffectivedate = ?, SecurityMandate = ?, EmployeeID = ?, EmployerName = ?");
 		sql.append("  Where MandateID = ? and Status = ?");
 
@@ -374,8 +372,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
-			ps.setBoolean(index++, mdt.isHold());
-			ps.setObject(index++, mdt.getHoldReasons());
+			ps.setObject(index++, mdt.getHoldReason());
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
 			ps.setBoolean(index++, mdt.isSecurityMandate());
 			ps.setObject(index++, mdt.getEmployeeID());
@@ -656,7 +653,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
 		sql.append(", NextTaskId, RecordType, WorkflowId, BarCodeNumber, SwapIsActive, PrimaryMandateId");
 		sql.append(", EntityCode, PartnerBankId, DefaultMandate, EMandateSource, EMandateReferenceNo");
-		sql.append(", Hold, HoldReasons, SwapEffectiveDate, SecurityMandate, EmployeeID, EmployerName");
+		sql.append(", HoldReason, SwapEffectiveDate, SecurityMandate, EmployeeID, EmployerName");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", finType, CustCIF, CustShrtName, BankCode, BranchCode");
@@ -664,7 +661,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			sql.append(", PartnerBankCode, PartnerBankName");
 		}
 
-		sql.append(" from Mandates");
+		sql.append(" From Mandates");
 		sql.append(StringUtils.trimToEmpty(type));
 
 		return sql;
@@ -726,8 +723,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			mndts.setDefaultMandate(rs.getBoolean("DefaultMandate"));
 			mndts.seteMandateSource(rs.getString("EMandateSource"));
 			mndts.seteMandateReferenceNo(rs.getString("EMandateReferenceNo"));
-			mndts.setHold(rs.getBoolean("Hold"));
-			mndts.setHoldReasons(JdbcUtil.getLong(rs.getObject("HoldReasons")));
+			mndts.setHoldReason(JdbcUtil.getLong(rs.getObject("HoldReason")));
 			mndts.setSwapEffectiveDate(rs.getTimestamp("SwapEffectiveDate"));
 			mndts.setSecurityMandate(rs.getBoolean("SecurityMandate"));
 			mndts.setEmployeeID(JdbcUtil.getLong(rs.getObject("EmployeeID")));

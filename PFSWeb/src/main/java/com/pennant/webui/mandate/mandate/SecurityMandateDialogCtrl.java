@@ -151,7 +151,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(SecurityMandateDialogCtrl.class);
 
-	protected Window window_MandateDialog;
+	protected Window window_SecurityMandateDialog;
 	private Tabpanel tabPanel_dialogWindow;
 	protected Groupbox basicDetailsGroupbox;
 	protected Label labelUseExisting;
@@ -179,8 +179,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected CurrencyBox maxLimit;
 	protected FrequencyBox periodicity;
 	protected Row holdRow;
-	private Checkbox hold;
-	private ExtendedCombobox holdReasons;
+	private ExtendedCombobox holdReason;
 	protected Label regStatus;
 	protected Row mandateStatusRow;
 	protected Combobox mandateStatus;
@@ -362,10 +361,10 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.mandateRef.setReadonly(false);
 	}
 
-	public void onCreate$window_MandateDialog(Event event) {
+	public void onCreate$window_SecurityMandateDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_MandateDialog);
+		setPageComponents(window_SecurityMandateDialog);
 
 		if (arguments.containsKey("enqModule")) {
 			enqModule = (Boolean) arguments.get("enqModule");
@@ -540,13 +539,13 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.eMandateSource.setValidateColumns(new String[] { "Code" });
 
 		this.eMandateReferenceNo.setMaxlength(50);
-		this.holdReasons.setModuleName("BounceReason");
-		this.holdReasons.setDisplayStyle(2);
-		this.holdReasons.setValueColumn("BounceID");
-		this.holdReasons.setTextBoxWidth(200);
-		this.holdReasons.setValueType(DataType.LONG);
-		this.holdReasons.setDescColumn("Reason");
-		this.holdReasons.setValidateColumns(new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" });
+		this.holdReason.setModuleName("BounceReason");
+		this.holdReason.setDisplayStyle(2);
+		this.holdReason.setValueColumn("BounceID");
+		this.holdReason.setTextBoxWidth(200);
+		this.holdReason.setValueType(DataType.LONG);
+		this.holdReason.setDescColumn("Reason");
+		this.holdReason.setValidateColumns(new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" });
 
 		this.employeeID.setInputAllowed(true);
 		this.employeeID.setMandatoryStyle(true);
@@ -1094,8 +1093,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.umrNumber);
 			readOnlyComponent(true, this.eMandateReferenceNo);
 			readOnlyComponent(true, this.eMandateSource);
-			readOnlyComponent(true, this.hold);
-			readOnlyComponent(true, this.holdReasons);
+			readOnlyComponent(true, this.holdReason);
 			readOnlyComponent(true, this.partnerBank);
 			readOnlyComponent(true, this.externalMandate);
 		}
@@ -1104,11 +1102,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				|| enqiryModule) {
 			holdRow.setVisible(true);
 
-			readOnlyComponent(isReadOnly("MandateDialog_Hold"), this.hold);
+			readOnlyComponent(isReadOnly("MandateDialog_HoldReason"), this.holdReason);
 
-			if (this.hold.isChecked()) {
-				readOnlyComponent(isReadOnly("MandateDialog_HoldReasons"), this.holdReasons);
-			}
 		}
 
 	}
@@ -1217,8 +1212,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_DefaultMandate"), this.defaultMandate);
 		readOnlyComponent(isReadOnly("MandateDialog_Active"), this.active);
 		readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
-		readOnlyComponent(isReadOnly("MandateDialog_Hold"), this.hold);
-		readOnlyComponent(isReadOnly("MandateDialog_HoldReasons"), this.holdReasons);
+		readOnlyComponent(isReadOnly("MandateDialog_HoldReasons"), this.holdReason);
 		readOnlyComponent(isReadOnly("MandateDialog_SecurityMandate"), this.securityMandate);
 		readOnlyComponent(isReadOnly("MandateDialog_EmployeeID"), this.employeeID);
 		readOnlyComponent(isReadOnly("MandateDialog_EmployerName"), this.employerName);
@@ -1333,8 +1327,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.txnDetails);
 		readOnlyComponent(true, this.documentName);
 		readOnlyComponent(true, this.btnUploadDoc);
-		readOnlyComponent(true, this.hold);
-		readOnlyComponent(true, this.holdReasons);
+		readOnlyComponent(true, this.holdReason);
 		readOnlyComponent(true, this.swapMandate);
 		readOnlyComponent(true, this.swapEffectiveDate);
 		readOnlyComponent(true, this.employeeID);
@@ -1442,12 +1435,10 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			this.active.setChecked(true);
-			this.hold.setChecked(false);
 		} else {
 			this.inputDate.setValue(aMandate.getInputDate());
-			this.hold.setChecked(aMandate.isHold());
-			if (aMandate.getHoldReasons() != null) {
-				this.holdReasons.setValue(String.valueOf(aMandate.getHoldReasons()));
+			if (aMandate.getHoldReason() != null) {
+				this.holdReason.setValue(String.valueOf(aMandate.getHoldReason()));
 			}
 
 			this.swapMandate.setChecked(aMandate.isSwapIsActive());
@@ -1855,8 +1846,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
-			if (this.hold.isChecked() && !this.holdReasons.isReadonly()) {
-				aMandate.setHoldReasons(Long.valueOf(this.holdReasons.getValue()));
+			if (MandateStatus.isHold(getComboboxValue(this.mandateStatus)) && !this.holdReason.isReadonly()) {
+				aMandate.setHoldReason(Long.valueOf(this.holdReason.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1871,12 +1862,6 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			aMandate.setEmployerName(this.employerName.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aMandate.setHold(this.hold.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2096,7 +2081,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.eMandateReferenceNo.setConstraint("");
 		this.eMandateSource.setConstraint("");
 		this.partnerBank.setConstraint("");
-		this.holdReasons.setConstraint("");
+		this.holdReason.setConstraint("");
 		this.employeeID.setConstraint("");
 		this.employerName.setConstraint("");
 	}
@@ -2122,7 +2107,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.finReference.setErrorMessage("");
 		this.partnerBank.setErrorMessage("");
 
-		this.holdReasons.setErrorMessage("");
+		this.holdReason.setErrorMessage("");
 		this.employeeID.setErrorMessage("");
 		this.employerName.setErrorMessage("");
 	}
@@ -2310,8 +2295,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.eMandateSource.setValue("");
 		this.eMandateReferenceNo.setValue("");
 
-		this.hold.setChecked(false);
-		this.holdReasons.setValue("");
+		this.holdReason.setValue("");
 		this.employeeID.setValue("");
 		this.employerName.setValue("");
 
@@ -2528,7 +2512,8 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		doEditFieldByInstrument(instrumentType);
 
 		if (issecurityMandate) {
-			mandateTypeList = MandateUtil.excludeRepayMethods(InstrumentType.DAS.code(), InstrumentType.SI.code());
+			mandateTypeList = MandateUtil.excludeRepayMethods(InstrumentType.DAS.code(), InstrumentType.SI.code(),
+					instrumentType.MANUAL.code());
 		}
 		if (!InstrumentType.isPDC(val)) {
 			for (ValueLabel valueLabel : mandateTypeList) {
@@ -2665,12 +2650,14 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onCheck$hold(Event event) {
-		if (this.hold.isChecked()) {
-			this.holdReasons.setReadonly(false);
+	public void onChange$mandateStatus(Event event) {
+		String mandateStatus = getComboboxValue(this.mandateStatus);
+
+		if (MandateStatus.isHold(mandateStatus)) {
+			this.holdReason.setReadonly(false);
 		} else {
-			this.holdReasons.setValue("");
-			this.holdReasons.setReadonly(true);
+			this.holdReason.setValue("");
+			this.holdReason.setReadonly(true);
 		}
 	}
 

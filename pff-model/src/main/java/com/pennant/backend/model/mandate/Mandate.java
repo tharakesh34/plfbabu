@@ -194,8 +194,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	@XmlElement
 	private Boolean pennyDropStatus;
 	private Date swapEffectiveDate;
-	private boolean hold;
-	private Long holdReasons;
+	private Long holdReason;
 	private boolean securityMandate;
 	@XmlElement
 	private Long employeeID;
@@ -980,20 +979,12 @@ public class Mandate extends AbstractWorkflowEntity {
 		this.swapEffectiveDate = swapEffectiveDate;
 	}
 
-	public boolean isHold() {
-		return hold;
+	public Long getHoldReason() {
+		return holdReason;
 	}
 
-	public void setHold(boolean hold) {
-		this.hold = hold;
-	}
-
-	public Long getHoldReasons() {
-		return holdReasons;
-	}
-
-	public void setHoldReasons(Long holdReasons) {
-		this.holdReasons = holdReasons;
+	public void setHoldReason(Long holdReason) {
+		this.holdReason = holdReason;
 	}
 
 	public boolean isSecurityMandate() {
