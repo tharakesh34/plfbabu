@@ -141,10 +141,11 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			saveUserDivisions(securityUser, tableType.getSuffix(), null);
 		}
 
-		List<AuditDetail> auditDtls = auditHeader.getAuditDetails();
-		if (CollectionUtils.isNotEmpty(auditDtls)) {
-			auditDetails.addAll(processingDetailList(auditDtls, tableType.getSuffix(), securityUser));
+		List<AuditDetail> userDivBranchs = securityUser.getAuditDetailMap().get("UserDivBranchs");
+		if (CollectionUtils.isNotEmpty(userDivBranchs)) {
+			auditDetails.addAll(processingDetailList(userDivBranchs, tableType.getSuffix(), securityUser));
 		}
+
 
 		List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
 		if (CollectionUtils.isNotEmpty(reportingManagers)) {
