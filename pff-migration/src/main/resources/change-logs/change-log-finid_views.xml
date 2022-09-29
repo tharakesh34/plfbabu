@@ -11980,12 +11980,4 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="3" author="nagavamsi.p">
-		<sql>
-			<![CDATA[
-				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (22, 'Linked', 'Linking/De-Linking  details', 1);
-			]]>
-		</sql>
-	</changeSet>
-	
 </databaseChangeLog>
