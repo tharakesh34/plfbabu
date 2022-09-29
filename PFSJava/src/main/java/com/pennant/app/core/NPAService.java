@@ -34,7 +34,6 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -167,7 +166,6 @@ public class NPAService extends ServiceHelper {
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
-		FinanceMain financeMain = finEODEvent.getFinanceMain();
 		Provision oldProvision = provisionDAO.getProvisionByFinId(finID, TableType.MAIN_TAB, false);
 		if (oldProvision != null && oldProvision.isManualProvision()) {
 			return finEODEvent;

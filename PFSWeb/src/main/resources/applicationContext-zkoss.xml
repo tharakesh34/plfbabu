@@ -3367,7 +3367,6 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="limitDetailService" ref="limitDetailService" />
-		<property name="limitRuleManagementService" ref="limitRuleManagementService" />
 		<property name="limitManagement" ref="limitManagement" />
 	</bean>
 

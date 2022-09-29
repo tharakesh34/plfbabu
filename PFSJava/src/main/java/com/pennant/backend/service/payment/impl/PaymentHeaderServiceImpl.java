@@ -69,7 +69,6 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
 import com.pennant.backend.service.feetype.FeeTypeService;
-import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.payment.PaymentDetailService;

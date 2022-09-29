@@ -27,7 +27,6 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.LoggedInUser;

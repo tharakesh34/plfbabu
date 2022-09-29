@@ -14,7 +14,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -49,7 +48,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.manual.schedule.ManualScheduleDetail;
 import com.pennant.backend.model.finance.manual.schedule.ManualScheduleHeader;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -95,8 +93,6 @@ public class ManualScheduleDialogCtrl extends GFCBaseCtrl<ManualScheduleHeader> 
 	protected Label finBasic_custShrtName;
 	protected Label label_finAmount;
 	protected Label label_UploadManualScheduleDialog_installments;
-
-	private Media media = null;
 
 	private FinanceDetail financeDetail;
 	private FinScheduleData finScheduleData;

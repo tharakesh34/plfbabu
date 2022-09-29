@@ -70,6 +70,10 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="01_post" author="hemasai.r">
+		<addPrimaryKey tableName="AdtCERSAI_AreaUnit" columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtCERSAI_AreaUnit"/>
+	</changeSet>
+	
 	<changeSet id="ST#222.101" author="hemasai.r">
 		<createTable tableName="AdtCERSAI_AssetCategory">
 			<column name="AuditId" type="bigint">
@@ -99,6 +103,10 @@
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.101_post" author="hemasai.r">
+		<addPrimaryKey tableName="AdtCERSAI_AssetCategory" columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtCERSAI_AssetCategory"/>
 	</changeSet>
 	
 	<changeSet id="ST#222.201" author="hemasai.r">
@@ -133,6 +141,10 @@
 		</createTable>
 	</changeSet>	
 	
+	<changeSet id="ST#222.201_post" author="hemasai.r">
+		<addPrimaryKey tableName="AdtCERSAI_SIType" columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtCERSAI_SIType"/>
+	</changeSet>
+	
 	<changeSet id="ST#222.301" author="hemasai.r">
 		<createTable tableName="AdtCERSAI_AssetSubType">
 			<column name="AuditId" type="bigint">
@@ -163,6 +175,10 @@
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.301_post" author="hemasai.r">
+		<addPrimaryKey tableName="AdtCERSAI_AssetSubType" columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtCERSAI_AssetSubType"/>
 	</changeSet>
 	
 	<changeSet id="ST#222.401" author="hemasai.r">
@@ -197,6 +213,9 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#222.401_post" author="hemasai.r">
+		<addPrimaryKey tableName="AdtCERSAI_AssetType" columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtCERSAI_AssetType"/>
+	</changeSet>
 	
 	<changeSet id="ST#222.601" author="hemasai.r">
 		<createTable tableName="AdtCityMapping">
@@ -228,6 +247,10 @@
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#222.601_post" author="hemasai.r">
+		<addPrimaryKey tableName="AdtCityMapping" columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtCityMapping"/>
 	</changeSet>
 	
 	<changeSet id="ST#222.701" author="hemasai.r">
@@ -262,6 +285,14 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id ="ST#222.701.1" author= "saisandeep.b">
+		<renameTable newTableName="AdtDistrictMapping" oldTableName = "AdtDistrictsMapping"/>
+	</changeSet>
+	
+	<changeSet id="ST#222.701_post" author="hemasai.r">
+		<addPrimaryKey tableName="AdtDistrictMapping" columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtDistrictMapping"/>
+	</changeSet>
+	
 	<changeSet id="ST#222.801" author="hemasai.r">
 		<createTable tableName="AdtProvinceMapping">
 			<column name="AuditId" type="bigint">
@@ -294,7 +325,7 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id ="ST#222.701.1" author= "saisandeep.b">
-		<renameTable newTableName="AdtDistrictMapping" oldTableName = "AdtDistrictsMapping"/>
+	<changeSet id="ST#222.801_post" author="hemasai.r">
+		<addPrimaryKey tableName="AdtProvinceMapping" columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_AdtProvinceMapping"/>
 	</changeSet>
 </databaseChangeLog>

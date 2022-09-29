@@ -1289,19 +1289,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private FinReceiptData copy(FinReceiptData rd) {
-		FinReceiptData recData = rd.copyEntity();
-		FinanceDetail fd = new FinanceDetail();
-
-		FinScheduleData schD = rd.getFinanceDetail().getFinScheduleData();
-		fd.setFinScheduleData(schD.copyEntity());
-		fd.getFinScheduleData().setFinPftDeatil(schD.getFinPftDeatil().copyEntity());
-		fd.getFinScheduleData().setFinanceMain(schD.getFinanceMain().copyEntity());
-		recData.setFinanceDetail(fd);
-
-		return recData;
-	}
-
 	public void executeAccounting() {
 		FinReceiptData tempReceiptData = receiptData.copyEntity();
 

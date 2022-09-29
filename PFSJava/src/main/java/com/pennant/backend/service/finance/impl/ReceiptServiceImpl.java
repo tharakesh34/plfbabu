@@ -1329,6 +1329,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinScheduleData schdData = fd.getFinScheduleData();
 		List<FinFeeDetail> feeDetailsList = schdData.getFinFeeDetailList();
 		String finReference = receiptData.getFinReference();
+		Long finId = receiptData.getFinID();
 
 		List<FinFeeDetail> oldFeedetails = receiptData.getFinFeeDetails();
 		if (CollectionUtils.isNotEmpty(oldFeedetails)) {
@@ -1364,6 +1365,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fee.setTaskId("");
 			fee.setNextTaskId("");
 			fee.setWorkflowId(0);
+			fee.setFinID(finId);
 			fee.setFinReference(finReference);
 
 			TaxHeader taxHeader = fee.getTaxHeader();

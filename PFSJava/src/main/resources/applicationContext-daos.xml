@@ -6154,42 +6154,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-
-	<!-- <bean name="limitRuleManagement" class="com.pennant.backend.service.limitservice.impl.LimitRuleManagement"> <property 
-		name="limitDetailDAO" ref="limitDetailDAO" /> <property name="limitHeaderDAO" ref="limitHeaderDAO" /> <property name="limitReferenceMappingDAO" 
-		ref="limitReferenceMappingDAO" /> <property name="limitTransactionDetailDAO" ref="limitTransactionDetailDAO" /> <property 
-		name="customerDAO" ref="customerDAO" /> <property name="limitRuleDAO" ref="limitRuleDAO" /> <property name="financeMainDAO" 
-		ref="financeMainDAO" /> </bean> -->
-
-
-	<bean id="limitRuleManagementService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="limitRuleManagementServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="processLimitRuleTransactions*">PROPAGATION_REQUIRED</prop>
-				<prop key="updateRuleBasedLimits*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="limitRuleManagementServiceTarget"
-		class="com.pennant.backend.service.limitservice.impl.LimitRuleManagement">
-		<property name="limitDetailDAO" ref="limitDetailDAO" />
-		<property name="limitHeaderDAO" ref="limitHeaderDAO" />
-		<property name="limitReferenceMappingDAO" ref="limitReferenceMappingDAO" />
-		<property name="limitTransactionDetailDAO" ref="limitTransactionDetailDAO" />
-		<property name="customerDAO" ref="customerDAO" />
-		<property name="limitRuleDAO" ref="limitRuleDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-	</bean>
-
 	<!-- Bank Branch -->
 	<bean id="bankBranchDAO" class="com.pennant.backend.dao.bmtmasters.impl.BankBranchDAOImpl" parent="sequenceDao" />
 
