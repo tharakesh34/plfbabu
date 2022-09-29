@@ -933,7 +933,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("BaseRate",
 				new ModuleMapping("BaseRate", BaseRate.class, new String[] { "RMTBaseRates", "RMTBaseRates_AView" },
-						baseRate_WF, new String[] { "BRType", "Currency", "BREffDate" },
+						masterWF, new String[] { "BRType", "Currency", "BREffDate" },
 						new Object[][] { { "BRTypeIsActive", "0", 1 } }, 300));
 
 		ModuleUtil.register("BaseRateCode",
