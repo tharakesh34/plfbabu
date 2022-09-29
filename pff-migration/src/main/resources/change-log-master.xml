@@ -35,13 +35,13 @@
 	<include file="change-logs/change-log-finid.xml" /> 
 	<include file="change-logs/change-log-6.0.0-pt.xml" />
 	<include file="change-logs/change-log-finid_views.xml" />
-	<include file="change-logs/change-log-security-seq-reseed_post.xml" />
 	<include file="change-logs/change-log-indexes.xml" />
 	<include file="change-logs/change-log-hl-missing-indexes.xml" />
 	<include file="change-logs/change-log-otp.xml" />
 	<include file="change-logs/change-log-db-cleanup.xml" /> 
-	<include file="change-logs/change-log-meta-data.xml" />
 	<include file="change-logs/change-log-6.1.0.xml" />
 	<include file="change-logs/change-log-6.1.0_views.xml" />
+	<include file="change-logs/change-log-security-seq-reseed_post.xml" />
+	<include file="change-logs/change-log-meta-data.xml" />
 	
 </databaseChangeLog>
