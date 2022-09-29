@@ -1770,9 +1770,9 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="ST#222.801.2_pre" author="saisandeep.b">
-		<addNotNullConstraint tableName="ProvinceMapping" columnName="MappingType" columnDataType="varchar(20)" />	
-		<addNotNullConstraint tableName="ProvinceMapping" columnName="Province" columnDataType="varchar(8)" />	
+	<changeSet id="ST#222.802.2_pre" author="saisandeep.b">
+		<addNotNullConstraint tableName="ProvinceMapping_Temp" columnName="MappingType" columnDataType="varchar(20)" />	
+		<addNotNullConstraint tableName="ProvinceMapping_Temp" columnName="Province" columnDataType="varchar(8)" />	
 	</changeSet>
 	
 	<changeSet id="ST#222.802.2" author="saisandeep.b">
