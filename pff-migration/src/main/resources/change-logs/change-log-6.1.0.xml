@@ -61,4 +61,13 @@
       	<modifyDataType tableName="Querydetail_Temp" columnName="Status" newDataType="varchar(100)"/>
      </changeSet>
      
+     <changeSet id="Linked_1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM STAGETABDETAIL WHERE TABCODE = 'Linked';
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, ACTIVE) VALUES ((SELECT MAX(TABID)+1 FROM STAGETABDETAIL), 'Linked', 'Linking/De-Linking  details', 1);
+			]]>
+		</sql>
+	</changeSet>
+     
 </databaseChangeLog>
