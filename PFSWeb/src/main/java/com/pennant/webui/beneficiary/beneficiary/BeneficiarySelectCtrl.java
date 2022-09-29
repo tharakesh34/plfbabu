@@ -277,6 +277,7 @@ public class BeneficiarySelectCtrl extends GFCBaseCtrl<Beneficiary> {
 					// do nothing
 				} else {
 					searchObject.addFilter(new Filter("CustCIF", this.custCIF.getValue(), searchOpId));
+					searchObject.addFilter(new Filter("BeneficiaryActive", 1, Filter.OP_EQUAL));
 				}
 			}
 		}
