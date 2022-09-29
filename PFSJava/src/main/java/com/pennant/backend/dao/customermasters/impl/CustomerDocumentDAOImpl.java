@@ -678,7 +678,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		public CustomerDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
 			CustomerDocument cd = new CustomerDocument();
 
-			cd.setID(rs.getLong("Id"));
+			cd.setID(rs.getLong("ID"));
 			cd.setCustID(rs.getLong("CustID"));
 			cd.setCustDocType(rs.getString("CustDocType"));
 			cd.setCustDocTitle(rs.getString("CustDocTitle"));
