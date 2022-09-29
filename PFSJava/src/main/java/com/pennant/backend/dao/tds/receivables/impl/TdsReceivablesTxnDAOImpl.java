@@ -50,6 +50,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -385,13 +386,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tanId }, Date.class);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tanId }, Date.class);
 	}
 
 	@Override
@@ -405,13 +400,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tanId }, Date.class);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tanId }, Date.class);
 	}
 
 	@Override
@@ -472,13 +461,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, fromDate, toDate, tANId);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, fromDate, toDate, tANId);
 	}
 
 	@Override
@@ -487,13 +470,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, receivableId);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, receivableId);
 	}
 
 	@Override
@@ -653,7 +630,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, receiptId);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return 0;
